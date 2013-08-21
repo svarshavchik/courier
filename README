@@ -1,0 +1,56 @@
+# This is a shared repository by all Courier-related projects. Each project
+# is in a separate subdirectory.
+#
+# Some additional setup is needed before hacking on the source code. All
+# projects also pull a shared repository that contains modules that are
+# shared by multiple Courier projects. If you want to hack the "courier"
+# project, you must pull the shared repository into the courier/libs directory.
+#
+# Additionally, clean and smudge filters must be set up in order to properly
+# support sysconftool-based configuration files.
+#
+# To set up a project directory, run this script with two parameters:
+#
+# A) the project directory to set up.
+# B) The URL to the shared library module git repository.
+#
+# For example:
+#
+# sh README courier http://www.example.com/courier-libs.git
+#
+# The URL for the shared library module is purposefully not given in this
+# README in case it changes in the future. If you're reading this README,
+# you should already know what it is.
+#
+# What this script does is as follows:
+
+projdir="$1"
+gitrepo="$2"
+
+set -e
+
+# 1) Pull in the shared module git repo
+
+cd $projdir
+git clone $gitrepo libs
+
+# 2) Set up the filters for both repositories
+
+for dir in libs ../..
+do
+    cd $dir
+
+    git config --add filter.keywords.clean 'perl -pe "s/\\\$Id:[^\\\$]*\\\$/\\\$Id:\\\$/"'
+    git config --add filter.keywords.smudge 'perl -pe "s/\\\$Id:\\\$/\\\$Id: `git log --pretty=format:\"%ai %H\" -n 1 -- %f`\\\$/"'
+
+    # Apply the filters manually
+
+    git ls-files '*.in' '*.dist' | while read F
+    do
+	rm $F
+	git checkout -- $F
+    done
+done
+
+# Now, cd into $projdir, and run the autobloat script to rebuild the autotools
+# stuff.
