@@ -1,0 +1,23 @@
+
+RANDFILE = @mydatadir@/esmtpd.rand
+
+[ req ]
+default_bits = 1024
+encrypt_key = yes
+distinguished_name = req_dn
+x509_extensions = cert_type
+prompt = no
+default_md = sha1
+
+[ req_dn ]
+C=US
+ST=NY
+L=New York
+O=Courier Mail Server
+OU=Automatically-generated ESMTP STARTTLS key
+CN=localhost
+emailAddress=postmaster@example.com
+
+
+[ cert_type ]
+nsCertType = server

@@ -1,0 +1,9 @@
+#! @SHELL@
+#
+# Copyright 2002-2010 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+
+. @filterbindir@/init
+
+$GS -P -sDEVICE=faxg3 $FAXRES -dBATCH -sOutputFile=$OUTDIR/f%04d -dNOPAUSE -q -dSAFER -

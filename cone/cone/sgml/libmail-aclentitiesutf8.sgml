@@ -1,0 +1,10 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<note>
+  <para>
+<replaceable>username</replaceable>
+and
+<replaceable>groupname</replaceable> must specified using the
+<literal>UTF-8</literal> character set.</para>
+</note>

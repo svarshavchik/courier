@@ -1,0 +1,56 @@
+#! @SHELL@
+#
+# Copyright 1998 - 2005 Double Precision, Inc.
+# See COPYING for distribution information.
+
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+sbindir=@sbindir@
+sysconfdir=@sysconfdir@
+
+if test ! -f @sysconfdir@/imapd
+then
+	echo "@sysconfdir@/imapd does not exist, forgot make install-configure?"
+	exit 1
+fi
+
+if test ! -f @sysconfdir@/imapd-ssl
+then
+	echo "@sysconfdir@/imapd-ssl does not exist, forgot make install-configure?"
+	exit 1
+fi
+
+. @sysconfdir@/imapd-ssl
+. @sysconfdir@/imapd
+
+case $1 in
+start)
+	umask $IMAP_UMASK
+	@ULIMIT@ $IMAP_ULIMITD
+	@SETENV@ -i @SHELL@ -c " set -a ; \
+				prefix=@prefix@ ; \
+				exec_prefix=@exec_prefix@ ; \
+				sbindir=@sbindir@ ; \
+				bindir=@bindir@ ; \
+				. @sysconfdir@/imapd ; \
+				. @sysconfdir@/imapd-ssl ; \
+		IMAP_STARTTLS=$IMAPDSTARTTLS ; \
+		PROXY_HOSTNAME=$PROXY_HOSTNAME ; \
+		TLS_PROTOCOL=$TLS_STARTTLS_PROTOCOL ; \
+		@MKDIR_P@ `dirname $PIDFILE` ; \
+		@courierlogger@ -pid=$PIDFILE -start $LOGGEROPTS \
+		@sbindir@/couriertcpd -address=$ADDRESS \
+			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
+			$TCPDOPTS \
+			$PORT @libexecdir@/courier/imaplogin \
+				@bindir@/imapd ${MAILDIRPATH}"
+	;;
+stop)
+	@courierlogger@ -pid=$PIDFILE -stop
+	;;
+restart)
+	@courierlogger@ -pid=$PIDFILE -restart
+	;;
+esac
+exit 0

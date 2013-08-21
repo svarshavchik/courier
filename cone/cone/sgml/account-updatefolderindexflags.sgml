@@ -1,0 +1,72 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-updatefolderindexflags">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::updateFolderIndexFlags</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::updateFolderIndexFlags</refname>
+      <refpurpose>Update status of multiple messages</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>updateFolderIndexFlags</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	  <paramdef>bool <parameter>doFlip</parameter></paramdef>
+	  <paramdef>bool <parameter>enableDisable</parameter></paramdef>
+	  <paramdef>const messageInfo &amp;<parameter>msgInfo</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This is a version of
+<link linkend="account-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+that updates the status of multiple messages with one request.</para>
+
+      &libmail-amsglist;
+
+      <para>
+<parameter>msgInfo</parameter> selects which message status flags
+should be updated in every message.
+See
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+
+      &libmail-updateflags;
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-account-return;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="account-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

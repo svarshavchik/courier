@@ -1,0 +1,88 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getmessagestructure">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getMessageStructure</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getMessageStructure</refname>
+      <refpurpose>Return message MIME structure</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+#include &lt;libmail/structure.H&gt;
+
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getMessageStructure</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; &amp;<parameter>msgList</parameter></paramdef>
+	  <paramdef>std::vector&lt;mail::mimestruct&gt; &amp;<parameter>structures</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      &libmail-accterrmsg;
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::mimestruct myMimeStruct=mail-&gt;<function>getMessageStructure</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      &libmail-amsglist;
+
+      <para>
+This function returns the MIME structure information of each message
+specified by <parameter>msgList</parameter>.
+This function initializes the
+<parameter>structures</parameter>
+array to the same size as <parameter>msgList</parameter>, with each
+array member containing the MIME structure for the corresponding
+message in <parameter>msgList</parameter>.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-account-return;
+
+      <para>
+The second version of <function>mail::ACCOUNT::getMessageStructure</function>
+returns the MIME structure of a single message, ignoring any error
+condition (a failure results in the returned
+<structname>mail::mimestruct</structname> object being completely
+empty).</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mimestruct"><citerefentry>
+	    <refentrytitle>mail::mimestruct</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="account-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

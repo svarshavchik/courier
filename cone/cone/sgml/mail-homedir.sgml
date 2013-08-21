@@ -1,0 +1,43 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-homedir">
+    <refmeta>
+      <refentrytitle>mail::homedir</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::homedir</refname>
+      <refpurpose>Return the home directory.</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+      &libmail-includemail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>std::string homedir=<function>mail::homedir</function></funcdef>
+          <void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function returns the home directory of the application's process
+ID.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+The home directory, as a text string.</para>
+    </refsect1>
+  </refentry>

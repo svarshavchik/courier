@@ -1,0 +1,84 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-getparentfolder">
+    <refmeta>
+      <refentrytitle>mail::folder::getParentFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::getParentFolder</refname>
+      <refpurpose>Find parent folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      &libmail-mycallbackfolderlist;
+      <literallayout>
+mail::folder *folder;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>getParentFolder</function></funcdef>
+	  <paramdef>myFolderCallback &amp;<parameter>folderCallback</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+A mail account contains folders that are arranged in a tree-like
+hierarchy.
+<function>mail::folder::getParentFolder</function> creates a new
+folder object that refers to
+<parameter>folder</parameter>'s
+parent folder.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+      &libmail-readfolders1;
+
+      <para>
+The
+<function>folderCallback.success</function> method
+receives a vector that contains exactly one pointer to a single
+<structname>mail::folder</structname> object, that
+refers to
+<parameter>folder</parameter>'s parent folder
+The vector will be empty if
+<parameter>folder</parameter>'s parent folder could not be determined.</para>
+
+      &libmail-foldernote;
+
+      &libmail-readfolders2;
+
+      <para>
+<parameter>callback</parameter>'s <function>success</function> method
+is then invoked, after all <structname>mail::folder</structname> objects
+are destroyed.</para>
+    </refsect1>
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="mail-readtoplevel"><citerefentry>
+	    <refentrytitle>mail::account::readTopLevelFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-clone"><citerefentry>
+	    <refentrytitle>mail::folder::clone</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

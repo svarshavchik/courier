@@ -1,0 +1,57 @@
+0.16
+
+2011-04-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Migrated to subversion repo.
+
+2007-07-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* COPYING: GPL 3
+
+2007-04-06  Mr. Sam  <mrsam@lc2440>
+
+	* configure.in: Update documentation to Docbook XML V4.4
+
+0.15
+
+2005-07-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sysconftool.m4.in: Pacify autoconf 2.59.
+
+2005-02-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sysconftool7.sgml: Clarify that sysconftool scans until next ##NAME
+
+0.14
+
+2003-04-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted documentation to docbook SGML.
+
+2003-04-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure.in: Update GNU toolchain.
+
+2001-12-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Makefile.am (install-exec-hook): Fix ln -s failing on reinstall.
+
+2001-12-19  Ken Herron <Kherron@newsguy.com>
+
+	* sysconftoolize.pl.in: Initilize $prefix.
+
+2000-12-09  Mr. Sam  <mrsam@gwl.email-scan.com>
+
+	* Makefile.am: Added standard makefile targets for management.
+
+2000-12-08  Mr. Sam  <mrsam@gwl.email-scan.com>
+
+	* sysconftool.[17].html: Remove explicit (n) -- added by html2man
+	anyway.
+
+	* README: rpm -ta no longer needs --target=noarch
+
+2000-12-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Initial checkin
+

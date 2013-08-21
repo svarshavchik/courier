@@ -1,0 +1,75 @@
+<!-- Copyright 2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <chapter id="cone10certificates">
+    <title>Certificates</title>
+
+    <para>
+&app; can use <acronym>SSL</acronym> certificate authentication, in lieu of a
+userid and a password, for logging into a <acronym>POP3</acronym> or an
+<acronym>IMAP</acronym> mailbox, or for sending mail using authenticated SMTP,
+if this functionality is supported by the server.</para>
+
+    <para>
+A master password must be set up before installing <acronym>SSL</acronym>
+certificates.
+See <xref linkend="cone09masterpassword" />.
+Setting up <acronym>SSL</acronym> certificates
+is a two-step process. First, the <acronym>SSL</acronym>
+certificte must be imported into &app;. Then, the mail account is configured
+to use <acronym>SSL</acronym> certificate authentication.</para>
+
+    <para>
+Pressing <keycap>C</keycap> from the main menu opens the certificate import
+screen. Press <keycap>I</keycap> to import a certificate, then choose the
+filename using the following dialogs.</para>
+
+    <para>
+The file with the <acronym>SSL</acronym> certificate must be a 
+<acronym>PEM</acronym>-formatted certificate file that holds both the
+certificate and the corresponding key. The file should have a
+<quote><literal>BEGIN CERTIFICATE</literal></quote> section followed by a
+<quote><literal>BEGIN RSA PRIVATE KEY</literal></quote> section
+(or a <quote><literal>BEGIN DH PRIVATE KEY</literal></quote> section).
+Passphrase-protected keys are not supported by &app;. If the SSL certificate
+is signed by an intermediate certificate authority, the authority's certificate
+should follow the private key section.</para>
+
+    <para>
+The certificate screen shows a list of all imported certificates.
+A default name is initially given to an imported certificate, based on its
+subject. Press <keycap>R</keycap> to rename a certificate.
+Press <keycap>D</keycap> to delete a certificate.</para>
+
+    <para>
+Importing at least one certificate activates an account option for choosing
+an <acronym>SSL</acronym> certificate. The new button appears on the
+<link linkend="cone06newaccount">New Account</link> (and the Edit Account)
+screen. The button also appears on the main
+<link linkend="cone05setup">Setup</link> screen, below the
+<acronym>SMTP</acronym> server's name.
+Choosing the button pops up a list of imported <acronym>SSL</acronym>
+certificates to choose from.</para>
+
+    <section id="certrenewing">
+      <title>Renewing <acronym>SSL</acronym> certificates</title>
+
+      <para>
+An additional prompt is issued when
+importing a certificate with a name matching the name of one of the
+existing certificates. Confirm the prompt to replace the existing certificate
+with the new one. All accounts that use that certificate for authenticating
+are automatically updated.</para>
+
+      <para>
+To effectively renew a certificate in this manner,
+the new certificate's name must match
+the name of an existing certificate, exactly.</para>
+    </section>
+  </chapter>
+
+<!--
+Local variables:
+sgml-doctype: "book.sgml"
+End:
+-->

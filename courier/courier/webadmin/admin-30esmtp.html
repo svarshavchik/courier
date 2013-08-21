@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <meta name="MSSmartTagsPreventParsing" content="TRUE">
+  <meta name="Author" content="Sam Varshavchik">
+  <title>@PACKAGE@ @VERSION@ - Inbound ESMTP</title>
+  <!--
+
+  [#SAVED=<span style="color: #008000">Saved</span>#]
+  [#DELETE=- delete#]
+  [#INVALID=<span style="color: #800000">ERROR: Invalid hostname or IP address</span>#]
+  [#ISLOCAL=- <font size="-1"><em>local domain, cannot be deleted</em></font>#]
+  [#ISHOSTED=- <font size="-1"><em>locally hosted domain, cannot be deleted</em></font>#]
+  [#ISVIRTUAL=- <font size="-1"><em>virtual domain, cannot be deleted</em></font>#]
+
+  [#NETCIDR=<font size="-1">(You may also specify <code>aaa.bbb.ccc.ddd/prefix</code> or <code>from-to</code>)</font>#]
+
+  [#NONETCIDR=<font size="-1">(Install the <code>Net::CIDR</code> Perl module from <a href="http://www.cpan.org" target="_blank">CPAN</a> in order to be able to enter <code>aaa.bbb.ccc.ddd/prefix</code> and <code>from-to</code>)</font>#]
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<!-- Copyright 2001-2002 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<form method="post" action="30esmtp">
+  <h1><tt>@PACKAGE@ @VERSION@</tt> - Inbound ESMTP</h1>
+  @ERROR@
+
+  <table cellspacing="16" cellpadding="0" border="0">
+    <tbody>
+      <tr>
+        <th colspan="2">Standard ESMTP</th>
+        <td width="1" bgcolor="#000000" rowspan="9"> </td>
+        <th colspan="2">ESMTP over TLS (port 465)</th>
+        <td width="1" bgcolor="#000000" rowspan="9"> </td>
+        <th colspan="2">Message Submission Protocol (port 587)</th>
+      </tr>
+      <tr>
+        <td colspan="2">@ENABLED@ Enabled</td>
+        <td colspan="2">@ENABLED_SSL@ Enabled</td>
+        <td colspan="2">@ENABLED_MSA@ Enabled</td>
+      </tr>
+      <tr>
+        <td colspan="2">@MSGID@ Add default Message-ID: header</td>
+        <td colspan="2">@MSGID_SSL@ Add default Message-ID: header</td>
+        <td colspan="2">@MSGID_MSA@ Add default Message-ID: header</td>
+      </tr>
+      <tr>
+        <td colspan="2">@DATE@ Add default Date: header</td>
+        <td colspan="2">@DATE_SSL@ Add default Date: header</td>
+        <td colspan="2">@DATE_MSA@ Add default Date: header</td>
+      </tr>
+      <tr>
+        <td colspan="2">@CHECKDNS@ Lookup return domain in DNS</td>
+        <td colspan="2">@CHECKDNS_SSL@ Lookup return domain in DNS</td>
+        <td colspan="2">@CHECKDNS_MSA@ Lookup return domain in DNS</td>
+      </tr>
+      <tr>
+        <td colspan="2">@AUTH@ Require authentication</td>
+        <td colspan="2">@AUTH_SSL@ Require authentication</td>
+        <td colspan="2">@AUTH_MSA@ Require authentication</td>
+      </tr>
+      <tr>
+        <td>Max # of connections accepted:</td>
+        <td><input type="text" size="4" text="" name="MAXDAEMONS"
+          value="@MAXDAEMONS@"></td>
+        <td>Max # of connections accepted:</td>
+        <td><input type="text" size="4" text="" name="MAXDAEMONS_SSL"
+          value="@MAXDAEMONS_SSL@"></td>
+        <td>Max # of connections accepted:</td>
+        <td><input type="text" size="4" text="" name="MAXDAEMONS_MSA"
+          value="@MAXDAEMONS_MSA@"></td>
+      </tr>
+      <tr>
+        <td>Max # of connections from one IP address:</td>
+        <td><input type="text" size="4" text="" name="MAXPERIP"
+          value="@MAXPERIP@"></td>
+        <td>Max # of connections from one IP address:</td>
+        <td><input type="text" size="4" text="" name="MAXPERIP_SSL"
+          value="@MAXPERIP_SSL@"></td>
+        <td>Max # of connections from one IP address:</td>
+        <td><input type="text" size="4" text="" name="MAXPERIP_MSA"
+          value="@MAXPERIP_MSA@"></td>
+      </tr>
+      <tr>
+        <td>Max # of connections from one netblock:</td>
+        <td><input type="text" size="4" text="" name="MAXPERC"
+          value="@MAXPERC@"></td>
+        <td>Max # of connections from one netblock:</td>
+        <td><input type="text" size="4" text="" name="MAXPERC_SSL"
+          value="@MAXPERC_SSL@"></td>
+        <td>Max # of connections from one netblock:</td>
+        <td><input type="text" size="4" text="" name="MAXPERC_MSA"
+          value="@MAXPERC_MSA@"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table style="margin-left: 3.5em; margin-top: 1em;">
+    <tbody>
+      <tr>
+	<td colspan="2">Connections from blacklisted IP addresses:</td>
+      </tr>
+      <tr>
+	<td style="padding-left: 3.5em">@DROP@</td>
+	<td>Drop them immediately</td>
+      </tr>
+      <tr>
+	<td style="padding-left: 3.5em">@NOTDROP@</td>
+	<td>Accept them, but reject all mail</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h2>ESMTP Authentication</h2>
+
+  <table cellspacing="16" cellpadding="0" border="0">
+    <tbody>
+      <tr>
+        <th>Allowed non-SSL SASL authentication methods</th>
+        <th>Allowed SSL SASL authentication methods</th>
+      </tr>
+      <tr>
+        <td valign="top">@ESMTPAUTH@</td>
+        <td valign="top">@ESMTPAUTH_TLS@</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+  <input type="submit" value="Save" name="Save"></p>
+</form>
+<hr>
+
+<h2>Domains mail is accepted for via ESMTP</h2>
+
+<div style="margin-left: 3.5em;">
+@ACCEPTMAILFORLIST@</div>
+
+<form method="post" action="30esmtp">
+  <p>Add domain (backup MX): <tt><input type="text" size="20"
+  name="addacceptmailfor"></tt> 
+  <input type="submit" value="Save" name="SaveAcceptMailFor"></p>
+</form>
+<hr>
+
+<h2>Incoming mail filtering/blacklisting</h2>
+
+<div style="margin-left: 3.5em;">
+@BLACKLISTS@</div>
+
+<table cellspacing="16" cellpadding="0" border="0">
+  <tbody>
+    <tr valign="top">
+      <td><h3>Add new DNS lookup blacklist</h3>
+
+        <form method="post" action="30esmtp">
+          <ul>
+            <li><input type="radio" name="AddBl"
+              value="sbl.spamhaus.org/127.0.0.2"> <a
+              href="http://www.spamhaus.org">Spamhaus.org SBL</a><br>
+              <br>
+            </li>
+            <li><input type="radio" name="AddBl"
+              value="xbl.spamhaus.org/127.0.0.2"> <a
+              href="http://www.spamhaus.org">Spamhaus.org XBL</a><br>
+              <br>
+            </li>
+            <li><input type="radio" name="AddBl"
+              value="sbl-xbl.spamhaus.org"> <a
+              href="http://www.spamhaus.org">Spamhaus.org SBL &amp;
+              XBL</a><br>
+              <br>
+            </li>
+            <li><input type="radio" name="AddBl" value="CUSTOM"> Other
+              DNS-based blacklist, provide information below: 
+
+              <table border="0">
+                <tbody>
+                  <tr>
+                    <th valign="top" align="right">DNS Zone:</th>
+                    <td><tt><input type="text" size="20"
+                    name="zone"></tt></td>
+                  </tr>
+                  <tr>
+                    <th valign="top" align="right">DNS 'A' record used:<br>
+                      <font size="-1">(aaa.bbb.ccc.ddd)</font></th>
+                    <td><tt><input type="text" size="20" name="ip"></tt> <br>
+                      (optional)</td>
+                  </tr>
+                  <tr>
+                    <th valign="top" align="right">Custom message:</th>
+                    <td><tt><input type="text" size="20" name="msg"></tt> <br>
+                      (optional)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </li>
+          </ul>
+
+          <input type="submit" value="Save" name="Add"></form>
+      </td>
+      <td width="1" bgcolor="#000000"></td>
+      <td><h3>Manual netblock blacklist/whitelist</h3>
+
+        <form method="post" action="30esmtp">
+
+          <table border="0" cellspacing="8">
+            <tbody>
+              <tr>
+                <td align="right">Netblock:</td>
+                <td><tt><input type="text" size="20" name="netblock"></tt>
+                   (<tt>aaa.bbb.ccc</tt> or <tt>aaa.bbb</tt>)</td>
+              </tr>
+              <tr>
+                <td> </td>
+                <td>@NETCIDRINFO@</td>
+              </tr>
+              <tr>
+                <td align="right" valign="top" rowspan="6">Action:</td>
+                <td><input type="radio" name="value"
+                  value="allow,BLOCK,RELAYCLIENT"> Whitelist, allow relaying</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="value"
+                  value="allow,BLOCK,FAXRELAYCLIENT,RELAYCLIENT"> Whitelist, allow relaying,
+                  accept mail for faxing</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="value"
+                  value="allow,BLOCK"> Whitelist</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="value"
+                  value="deny"> Drop incoming connections</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="value"
+                  value="BOUNCE"> Reject mail with message: <tt><input
+                  type="text" size="20" name="msg"
+                  value="550 Blacklisted"></tt></td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="value" value="allow"> Default
+                  action (+options, below)</td>
+              </tr>
+              <tr>
+                <td colspan="2"><hr>
+                </td>
+              </tr>
+              <tr>
+                <td align="right" valign="top">Options:</td>
+                <td align="center">Corrupted/Invalid MIME-formatted mail:<br>
+
+
+                  <table border="0" align="center">
+                    <tbody>
+                      <tr>
+                        <td align="right"><input type="radio"
+                          name="bofhbadmime" checked="checked" value=""></td>
+                        <td>Reformat as an attachment (default)</td>
+                      </tr>
+                      <tr>
+                        <td align="right"><input type="radio"
+                          name="bofhbadmime" value="reject"></td>
+                        <td>Reject</td>
+                      </tr>
+                      <tr>
+                        <td align="right"><input type="radio"
+                          name="bofhbadmime" value="accept"></td>
+                        <td>Accept</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <input type="submit" value="Save" name="AddAccess"></form>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<hr>
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-deletefolder">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::deleteFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::deleteFolder</refname>
+      <refpurpose>Delete a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+mail::folder *folder;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>deleteFolder</function></funcdef>
+	  <paramdef>const mail::folder *<parameter>folder</parameter></paramdef>
+	  <paramdef>bool <parameter>deleteDirectory</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function deletes an existing folder.
+<parameter>deleteDirectory</parameter> specifies whether the existing
+folder is regular folder, or a folder directory.</para>
+
+      <note>
+	<para>
+This function only removes the actual folder in the mail account.
+The <parameter>folder</parameter> object is not affected,
+the application is still responsible for destroying the object, when it
+is no longer needed.</para>
+      </note>
+   </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+&libmail-account-return;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-getfolderfrompath"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromPath</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderfromstring"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromString</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

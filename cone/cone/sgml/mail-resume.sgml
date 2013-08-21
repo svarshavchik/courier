@@ -1,0 +1,61 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-resume">
+    <refmeta>
+      <refentrytitle>mail::account::resume</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::resume</refname>
+      <refpurpose>Resume after a suspend</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+      &libmail-includemail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>void <function>mail::account::resume</function></funcdef>
+	<void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function should be invoked when the application resumes after it was
+suspended, or after any other lengthy delay in calling
+<function>mail::account::process</function>.
+The application could've been suspended while &libname; was in a middle
+of processing a background event.
+After resuming, the jump in the system clock may result in &libname;
+concluding that the remote mail server timed out without responding, when
+the actual response did come in while the application was suspended, and
+&libname; just hasn't read it yet.</para>
+
+    <para>
+<function>mail::account::process</function> resets &libname;'s internal
+timeouts.
+Note that not much can be done
+if the application remained suspended long enough for the remote mail server
+to shut down the connection itself.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-process"><citerefentry>
+	    <refentrytitle>mail::account::process</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

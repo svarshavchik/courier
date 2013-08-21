@@ -1,0 +1,16 @@
+Exit code: 0
+!john, john@another.example.com
+| /bin/true
+Exit code: 99
+!john@another.example.com
+| /bin/true
+Exit code: 99
+!john, john@another.example.com
+| /bin/true
+Exit code: 0
+!john, john@another.example.com
+| /bin/true
+Exit code: 0
+|/usr/bin/foo
+!john
+Exit code: 99

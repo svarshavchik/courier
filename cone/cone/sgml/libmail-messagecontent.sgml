@@ -1,0 +1,64 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<para>
+<parameter>requestType</parameter> identifies the type of information to
+return from the selected MIME section, and must be set to one of the
+following values:</para>
+
+<variablelist>
+  <varlistentry>
+    <term><literal>mail::readHeadersFolded</literal></term>
+    <listitem>
+      <para>
+Return only the headers of the MIME section.
+Folded headers are unfolded (the newline and the leading space on the next
+line are replaced with a single space character).</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term><literal>mail::readHeaders</literal></term>
+    <listitem>
+      <para>
+Return only the headers of the MIME section.
+The headers are returned as-is, without unfolding them.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term><literal>mail::readContents</literal></term>
+    <listitem>
+      <para>
+Return the content of the MIME section.</para>
+      <note>
+	<para>
+The MIME section is not decoded.
+Check the <literal>Content-Transfer-Encoding</literal> header to know what
+you're getting.</para>
+      </note>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term><literal>mail::readBoth</literal></term>
+    <listitem>
+      <para>
+Return the entire MIME section, as is: its headers, a blank line,
+then the contents.</para>
+    </listitem>
+  </varlistentry>
+<para>
+The callback method may not
+receive the entire requested content at once.
+Typically the method will be invoked multiple times; each time the
+method receives the next portion of the requested content.
+When requesting headers and/or content of multiple messages, they may be
+returned in any order, and the
+<parameter>messageNumber</parameter>
+parameter
+indicates which message's contents are being returned
+(note, however, that the entire contents of a given message are returned
+in their entirety, even when the callback method gets invoked multiple times
+for that message, before content from the next message are returned).</para>
+</variablelist>

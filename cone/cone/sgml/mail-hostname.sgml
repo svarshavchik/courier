@@ -1,0 +1,42 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-hostname">
+    <refmeta>
+      <refentrytitle>mail::hostname</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::hostname</refname>
+      <refpurpose>Return host name</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+      &libmail-includemail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>std::string hostname=<function>mail::hostname</function></funcdef>
+          <void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function return this machine's network name.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+This machine's host name, as a string.</para>
+    </refsect1>
+  </refentry>

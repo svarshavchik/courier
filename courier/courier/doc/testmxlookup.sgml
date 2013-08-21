@@ -1,0 +1,115 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1999 - 2011 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>testmxlookup</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>testmxlookup</refname>
+    <refpurpose>Look up mail relays for a domain</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">testmxlookup</command>
+      <arg choice="opt">@<replaceable>ip-address</replaceable></arg>
+      <arg choice="opt">--dnssec</arg>
+      <arg choice="opt">--udpsize <replaceable>n</replaceable></arg>
+      <arg choice="req"><replaceable>domain</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">testmxlookup</command> lists the names and IP addresses of mail
+relays that receive mail for the <replaceable>domain</replaceable>.
+This is useful in diagnosing mail delivery problems.</para>
+
+    <para>
+<command moreinfo="none">testmxlookup</command> sends a DNS MX query for the specified domain,
+followed by A/AAAA queries, if needed.
+<command moreinfo="none">testmxlookup</command> lists the
+hostname and the IP address of every mail relay, and its MX priority.</para>
+
+    <refsect2>
+      <title>DIAGNOSTICS</title>
+
+      <para>
+The error message "Hard error" indicates that the domain does not exist,
+or does not have any mail relays. The error message "Soft error" indicates a
+temporary error condition (usually a network failure of some sorts, or the
+local DNS server is down).</para>
+    </refsect2>
+
+    <refsect2>
+      <title>OPTIONS</title>
+
+      <variablelist>
+	<varlistentry>
+	  <term><literal>@ip-address</literal></term>
+	  <listitem>
+	    <para>
+	      Specify the DNS server's IP address, where to send the DNS
+	      query to, overriding the default DNS server addresses read from
+	      <filename>/etc/resolv.conf</filename>.
+	    </para>
+
+	    <para>
+	      <quote>ip-address</quote> must be a literal, numeric,
+	      IP address.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>--dnssec</literal></term>
+	  <listitem>
+	    <para>
+	      Enable the <literal>DNSSEC</literal> extension. If the DNS
+	      server has <literal>DNSSEC</literal> enabled, and the
+	      specified domain's DNS records are signed, the list of
+	      IP addresses is suffixed by <quote>(DNSSEC)</quote>, indicating
+	      a signed response.
+	    </para>
+
+	    <para>
+	      This is a diagnostic option. Older DNS servers may respond with
+	      an error, to a DNSSEC query.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>--udpsize</literal> <replaceable>n</replaceable></term>
+	  <listitem>
+	    <para>
+	      Specify that <replaceable>n</replaceable> is the largest
+	      <acronym>UDP</acronym> packet size that the DNS server may
+	      send. This option is only valid together with
+	      <quote>--dnssec</quote>.
+	      If <quote>--dnssec</quote> always returns an error, try
+	      <quote>--udpsize 512</quote> (the default setting is 1280
+	      bytes, which is adequate for Ethernet, but other kinds of
+	      networks may impose lower limits).
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="http://www.rfc-editor.org/rfc/rfc1035.txt">RFC 1035</ulink>.</para>
+  </refsect1>
+</refentry>

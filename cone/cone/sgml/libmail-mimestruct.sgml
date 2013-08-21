@@ -1,0 +1,334 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mimestruct">
+    <refmeta>
+      <refentrytitle>mail::mimestruct</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::mimestruct</refname>
+      <refpurpose>Message MIME structure</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+#include &lt;libmail/structure.H&gt;
+
+mail::mimestruct myMimeStructure;
+</literallayout>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<structname>mail::mimestruct</structname> describes the contents of a
+MIME-formatted message.
+A multipart MIME message has a single
+<structname>mail::mimestruct</structname> object that represents the
+entire message, and series of
+<structname>mail::mimestruct</structname> objects, one object
+for each
+part of the multipart MIME section.
+The additional
+<structname>mail::mimestruct</structname> objects are maintained by their
+parent
+<structname>mail::mimestruct</structname> object, and are automatically
+destroyed when the parent object is destroyed.</para>
+
+      <para>
+A
+<structname>mail::mimestruct</structname> contains the following
+fields:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>std::string mime_id</term>
+	  <listitem>
+	    <para>
+An opaque identifier of this MIME section.
+Applications should handle this field as an opaque text string, which
+is interpreted by &libname;.
+A same message, for example,
+may have different <structfield>mime_id</structfield> fields if it comes from
+an IMAP account, or a POP3 account.</para>
+
+	    <para>
+The only exception to this rule is that the
+<structname>mail::mimestruct</structname> object that represents the entire
+message will have an empty string in <structfield>mime_id</structfield>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string type</term>
+	  <listitem>
+	    <para>
+The major MIME type, in uppercase.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string subtype</term>
+	  <listitem>
+	    <para>
+The minor MIME subtype, in uppercase.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>mail::mimestruct::parameterList type_parameters</term>
+	  <listitem>
+	    <para>
+Additional attributes parsed from the
+<literal>Content-Type:</literal> MIME header.
+See below for more information.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string content_id</term>
+	  <listitem>
+	    <para>
+The contents of the MIME <literal>Content-ID:</literal> header.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string content_description</term>
+	  <listitem>
+	    <para>
+The contents of the MIME <literal>Content-Description:</literal> header.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string content_transfer_encoding</term>
+	  <listitem>
+	    <para>
+The MIME encoding method.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string content_md5</term>
+	  <listitem>
+	    <para>
+The contents of the MIME <literal>Content-MD5:</literal> header.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string content_language</term>
+	  <listitem>
+	    <para>
+The contents of the MIME <literal>Content-Language:</literal> header.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string content_disposition</term>
+	  <listitem>
+	    <para>
+The MIME <literal>Content-Disposition:</literal> header, either
+"<literal>INLINE</literal>", or "<literal>ATTACHMENT</literal>"
+(or blank, if the header is not present).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>size_t content_size</term>
+	  <listitem>
+	    <para>
+The approximate size of the MIME section, in bytes (for non-multipart
+MIME sections only).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>size_t content_lines</term>
+	  <listitem>
+	    <para>
+Approximate number of lines in a <literal>TEXT</literal> MIME section.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>mail::mimestruct::parameterList content_disposition_parameters</term>
+	  <listitem>
+	    <para>
+Additional attributes parsed from the
+<literal>Content-Disposition:</literal> MIME header.
+See below for more information.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <refsect2>
+	<title><structname>mail::mimestruct</structname> methods</title>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>bool flag=messagerfc822();</term>
+	    <listitem>
+	      <para>
+Returns <literal>true</literal> if <structname>type</structname> is
+"<literal>MESSAGE</literal>" and <structname>subtype</structname> is
+"<literal>RFC822</literal>".</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>bool flag=messagerfc822()</term>
+	    <listitem>
+	      <para>
+Returns <literal>true</literal> if <structname>type</structname> is
+"<literal>MESSAGE</literal>" and <structname>subtype</structname> is
+"<literal>RFC822</literal>".</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>mail::envelope &amp;myEnvelope=getEnvelope()</term>
+	    <listitem>
+	      <para>
+Returns a
+<link linkend="envelope"><structname>mail::envelope</structname></link>
+object, if <function>messagerfc822</function> returns true.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>size_t numChildren=getNumChildren()</term>
+	    <listitem>
+	      <para>
+Returns the number of MIME sections in a multipart MIME message.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>mail::mimestruct *child=getChild(size_t childNum)</term>
+	    <listitem>
+	      <para>
+Returns a pointer to a <structname>mail::mimestruct</structname> object that
+represents a single part of a multipart MIME message.
+<parameter>childNum</parameter> must be between zero and one less than
+the number of parts returned by <function>getNumChildren</function>.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>mail::mimestruct *parent=getParent()</term>
+	    <listitem>
+	      <para>
+Returns a pointer to a <structname>mail::mimestruct</structname> object that
+represents the parent of this MIME part, if this
+<structname>mail::mimestruct</structname>
+object represents a single part of a multipart MIME message.
+Returns NULL if this
+<structname>mail::mimestruct</structname>
+object represents the entire MIME message.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+
+	<note>
+	  <para>
+<structname>mail::mimestruct</structname> objects that represent
+<literal>MESSAGE/RFC822</literal>
+content should have
+<function>getNumChildren</function> return <literal>1</literal>,
+and
+<function>getChild</function> with <parameter>childNum</parameter> set to
+<literal>0</literal> should return a pointer to a
+<structname>mail::mimestruct</structname> object that represents the
+<literal>MESSAGE/RFC822</literal>
+message.
+However, <function>getNumChildren</function> may return 0
+if the MIME message is corrupted.</para>
+	</note>
+      </refsect2>
+    </refsect1>
+
+    <refsect1>
+      <title><structname>mail::mimestruct::parameterList</structname></title>
+
+      <para>
+A <structname>mail::mimestruct::parameterList</structname> object holds
+parsed MIME attributes in the
+<literal>Content-Type:</literal> and
+<literal>Content-Disposition:</literal> headers.
+A <structname>mail::mimestruct::parameterList</structname> object has the
+following methods:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>bool flag=exists(std::string name);</term>
+	  <listitem>
+	    <para>
+This method returns true if the attribute <parameter>name</parameter>
+exists.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string str=get(std::string name, std::string charset);</term>
+	  <listitem>
+	    <para>
+Returns the value of attribute <parameter>name</parameter> (uppercase).
+If <parameter>info</parameter> is not NULL, the attribute's value is
+converted to the specified character set (if the attribute uses
+<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>
+to specify its character set and language).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>void set(std::string name, std::string value,
+std::string charset, std::string language);</term>
+	  <listitem>
+	    <para>
+Set the attribute <parameter>name</parameter> to <parameter>value</parameter>.
+If <parameter>charset</parameter> and/or <parameter>language</parameter> are
+not empty strings, <parameter>name</parameter>'s character set and language
+are indicated accordingly, as per
+<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	<term>mail::mimestruct::parameterList::iterator begin(), end();
+mail::mimestruct::parameterList::const_iterator begin() const, end() const;</term>
+	<listitem>
+	  <para>
+The <function>begin</function> and <function>end</function> functions return
+the equivalent iterators over the individual name/value MIME attributes.
+The iterators point to a <structname>std::pair&lt;std::string,
+std::string&gt;</structname>;
+<structfield>first</structfield> is the attribute name (uppercased),
+and
+<structfield>second</structfield> is its value.
+(The underlying structure being iterated is a
+<structname>std::map&lt;std::string,
+std::string&gt;</structname>.)</para>
+
+	</listitem>
+      </varlistentry>
+
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="envelope"><citerefentry>
+	    <refentrytitle>mail::envelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-readmsgattr"><citerefentry>
+	    <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

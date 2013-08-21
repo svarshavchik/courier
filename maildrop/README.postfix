@@ -1,0 +1,208 @@
+Date: Sat, 31 Jan 2004 16:00:00 +1:00 (CET)
+Tonni Earnshaw <postmaster@billy.demon.nl>
+addition for README.postfix in maildrop package
+
+LDAP and maildrop.
+
+maildrop's LDAP support, combined with Courier IMAP's authldap.schema, give 3
+new objectclasses over and above standard object classes, that enable LDAP-
+based quotas, virtual aliases and virtual mailboxes, as well as regular
+$HOME/Maildir based mail directories.
+
+By using the standard combination of master.cf/transport as given below,
+NO standard Postfix LDAP lookups are done before passing the message to the
+Postfix transport, which takes care of immediate delivery. However, it's most
+likely that LDAP lookups have to be done - for example on system and other
+aliases - before enabling delivery to users' mailboxes.
+
+With Postfix 2.1.0 (perhaps before that too, I'm still using
+postfix-2.0.16-20031231) it is possible to circumvent the
+master.cf/transport pair described below by giving maildrop as the
+mailbox_command in main.cf and leaving out the master.cf/transport
+examples given below. For example:
+
+mailbox_command = /usr/local/bin/maildrop -d ${USER} -w 70 (note upper case).
+
+In as much as maildrop 1.6.3 supports LDAP lookups, and the version of deliverquota
+that I was using before (2.2.2) does not, it's thus possible to use Postfix's local
+transport instead of a dedicated maildrop transport.
+
+==============================================================================
+
+Date: Wed, 23 Jan 2002 07:31:26 -0700 (MST)
+From: Charlie Watts <cewatts@frontier.net>
+Subject: addition for README.postfix in maildrop package
+
+README.postfix recommends postfix be configured with:
+
+        maildrop  unix  -       n       n       -       -       pipe
+            flags=R user=vmail argv=/usr/local/bin/maildrop -d ${recipient}
+
+However, since version 20010610 of postfix, you need to add the u flag as
+well so that postfix downcases addresses before handing them to maildrop.
+
+-------------------------------------------------------------------
+Incompatible changes with snapshot-20010610
+===========================================
+
+The Postfix pipe delivery agent no longer automatically case-folds
+the expansion of $user, $extension or $mailbox command-line macros.
+Specify the 'u' flag to get the old behavior.
+-------------------------------------------------------------------
+
+It does not automatically case-fold $recipient either.
+
+I'd recommend this instead:
+        maildrop  unix  -       n       n       -       -       pipe
+            flags=Ru user=vmail argv=/usr/local/bin/maildrop -d ${recipient}
+
+-- 
+Charlie Watts
+cewatts@frontier.net
+Frontier Internet, Inc.
+http://www.frontier.net/
+
+
+Date: Tue, 14 Mar 2000 17:02:04 -0300 (EST)
+From: Bruno L. F. Cabral <bruno@openline.com.br>
+Reply-To: Maildrop mailing list <maildropl@listbot.com>
+To: maildropl@listbot.com
+Subject: Re: [maildropl] maildrop, postfix & userdb
+
+Maildrop mailing list - http://www.flounder.net/~mrsam/maildrop/
+
+Hi there
+
+I tried maildrop 0.99.1 and it is now working like a charm with
+postfix & userdb, thanks Sam ! :)
+
+vmail is my virtual user, which is a trusted maildrop (-d) user
+
+	# id vmail 
+	uid=400(vmail) gid=400(vmail) groups=400(vmail)
+	# install -d /home/vmail -o vmail -g vmail -m 700
+
+on /etc/postfix/master.cf:
+	maildrop  unix	-	n	n	-	-	pipe
+	    flags=R user=vmail argv=/usr/local/bin/maildrop -d ${recipient}
+
+on /etc/postfix/main.cf:
+	fallback_transport = maildrop
+
+on /etc/userdb/default:
+	vmail	uid=400|gid=400|home=/home/vmail|shell=/bin/bash|systempw=*
+	400=	vmail
+
+create one /etc/userdb/domain for each domain, one line for each virtual user
+(the uid & gid MUST be equal to vmail's one -- the quota is 5MB or 200 messages)
+	user@domain	home=/home/vmail|mail=/home/vmail/domain/user|uid=400|gid=400|quota="5000000S,200C"
+
+to commit the changes:
+	# makeuserdb
+
+preparing the virtual mailboxes, the install is for each new domain,
+the maildirmake for each user inside the virtual domain
+	# su - vmail 
+	$ install -d /home/vmail/domain -o vmail -g vmail -m 750
+	$ maildirmake /home/vmail/domain/user
+	$ exit
+
+now, ready to fight with qmail's pop3d :)
+
+!3runo
+
+
+Date: Tue, 21 Mar 2000 12:29:48 -0300 (EST)
+From: Bruno L. F. Cabral <bruno@openline.com.br>
+Reply-To: Maildrop mailing list <maildropl@listbot.com>
+To: maildropl@listbot.com
+Subject: Re: [maildropl] maildrop, postfix & userdb
+
+Maildrop mailing list - http://www.flounder.net/~mrsam/maildrop/
+
+Hi there
+
+this is an add-on to my previous post
+
+> I tried maildrop 0.99.1 and it is now working like a charm with
+> postfix & userdb, thanks Sam ! :)
+
+to postfix handle as local our maildrop's userdb e-mails, you'll have to
+(in adition of my previous instructions)
+
+	/etc/postfix/transport:
+	virtual.domain		maildrop:
+
+if you want to do some domain redirection, use
+	/etc/postfix/virtual:
+	webmaster@virtual.domain	johndoe@virtual.domain
+
+(do not use a line like
+	virtual.domain		whatever
+as stated on postfix' virtual(5) or unlisted users will be rejected
+as 'unknown' -- a small postfix glitch, seems)
+
+	/etc/postfix/main.cf:
+	transport_maps = hash:/etc/postfix/transport
+	virtual_maps = hash:/etc/postfix/virtual
+
+as you may have noticed, no virtual domains listed on mydestination
+
+> now, ready to fight with qmail's pop3d :)
+
+as Sam said before, it is possible to use qmail's qpop3d to read
+maildrop's userdb mailboxes. qmail's pop3d is modular, I only had
+to write a shim that tests the username/password pair (received
+from qmail-popup) against maildrop's userdb files and, on success, 
+change the current directory to the one where the user maildir++ resides.
+qmail-pop3d takes care of the rest.
+
+the line on inetd.conf becomes:
+
+pop-3	stream	tcp	nowait	root	/usr/sbin/tcpd qmail-popup YOUR.FQHN.HERE /usr/sbin/chkpwd-userdb.pl /usr/sbin/qmail-pop3d .
+
+if ppl think the program is interesting, I can post it. it needs
+a small rewrite to get rid of debugging stuff but it is working
+very well with maildrop 0.99 & DB files.
+
+thanks Sam, for the pacience with me and for the great job on maildrop.
+
+Cheers, !3runo
+
+
+From:  Charlie Watts <cewatts@frontier.net>
+To:  Sam Varshavchik <mrsam@courier-mta.com>
+Date:  30 Mar 2001, 06:40:11 AM
+Subject:  Suggested addition maildrop/README.postfix
+
+You may want to add this to maildrop/README.postfix, or postfix folks
+using maildrop as LDA may lose mail.
+
+Postfix, by default, will send messages to multiple recipients at a time.
+
+Maildrop assumes that it will be receiving messages for one recipient at a
+time.
+
+When postfix hands maildrop a message with multiple recipients, only the
+first recipient receives the mail.
+
+
+If maildrop is configured as a transport named "maildrop" in postfix
+(which would be the normal way to do it), adding:
+
+maildrop_destination_recipient_limit = 1
+
+to /etc/postfix/main.cf fixes this behaviour, and causes postfix to hand
+messages one recipient at a time to maildrop.
+
+
+
+
+Thanks for a lovely piece of software.
+
+-- 
+                          "Dorothy, if you're going to Oz again, I'm
+                          going with you", Em barked.  
+Charlie Watts             
+cewatts@frontier.net      
+

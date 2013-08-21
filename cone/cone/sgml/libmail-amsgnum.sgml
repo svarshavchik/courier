@@ -1,0 +1,8 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<parameter>messageNum</parameter> must be between zero and one less than
+the return code from
+<link linkend="account-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.

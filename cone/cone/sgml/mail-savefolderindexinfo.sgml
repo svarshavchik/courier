@@ -1,0 +1,82 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-savefolderindexinfo">
+    <refmeta>
+      <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::saveFolderIndexInfo</refname>
+      <refpurpose>Update message status</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      <literallayout>
+mail::account *account;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>saveFolderIndexInfo</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	  <paramdef>const messageInfo &amp;<parameter>msgInfo</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::saveFolderIndexInfo</function>
+changes the status of a message.
+<parameter>messageNum</parameter> must be between zero and one less than
+the return code from
+<link linkend="mail-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+<parameter>msgInfo</parameter> contains the new status flags for this message.
+See
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for a description of message status flags.</para>
+
+      <note>
+	<para>
+The <structfield>uid</structfield> field in
+<parameter>msgInfo</parameter> is ignored.
+The message is specified by
+<parameter>messageNum</parameter>, and unique IDs of existing messages cannot
+be changed.</para>
+      </note>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-updatestatus;
+      &libmail-concurrency;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-removemessages"><citerefentry>
+	    <refentrytitle>mail::account::removeMessages</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-updatefolderindexflags"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexFlags</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-updatefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

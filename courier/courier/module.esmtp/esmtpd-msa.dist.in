@@ -1,0 +1,145 @@
+##VERSION: $Id:$
+#
+#
+# esmtpd-msa created from esmtpd-msa.dist by sysconftool
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+#  Copyright 2001-2004 Double Precision, Inc.  See COPYING for
+#  distribution information.
+#
+#  This configuration file sets various options for Courier's mail submission
+#  ESMTP server (RFC 2476).  Basically, this is the plain old port 25
+#  ESMTP server, with a couple of difference.
+#
+#  This configuration file is read after esmtpd, therefore it only needs
+#  to override some options that would differ from port 25.  The first
+#  section of this configuration file sets options that are likely to be
+#  different than the esmtpd options.
+
+
+##NAME: BOFHCHECKDNS:0
+#
+#  ESMTP MSA is likely to want to verify return domain addresses.
+
+BOFHCHECKDNS=1
+
+##NAME: NOADDMSGID:0
+#
+#  Add the Message-ID: header, if missing.  The default value for esmtp
+#  is 1, but we want it 0 here:
+
+NOADDMSGID=0
+
+##NAME: NOADDDATE:0
+#
+# Ditto for the Date: header.
+
+NOADDDATE=0
+
+##NAME: NOADDRREWRITE:0
+#
+# Don't rewrite To:, From:, and Cc: headers.  Set to 2 in order to omit
+# rewriting them only if there is a DKIM-Signature.
+
+NOADDRREWRITE=0
+
+##NAME: ESMTP_LOG_DIALOG:0
+#
+#  If set, log the esmtp dialog.
+
+ESMTP_LOG_DIALOG=0
+
+##NAME: AUTH_REQUIRED:0
+#
+# Set AUTH_REQUIRED to 1 in order to force the client to use ESMTP
+# authentication.  You can override AUTH_REQUIRED on a per-IP address basis
+# using smtpaccess.  See makesmtpaccess(8).
+
+AUTH_REQUIRED=0
+
+##NAME: BLACKLISTS: 0
+#
+# You probably want to turn off any blacklist checking, if you have it
+# enabled in esmtpd
+
+BLACKLISTS=""
+
+##NAME: ADDRESS:1
+#
+#  Address to listen on, can be set to a single IP address.
+
+ADDRESS=0
+
+##NAME: PORT:1
+#
+#  PORT specified the port number to listen on.  The standard msa port
+#  is port 587.
+#
+#  Multiple port numbers can be separated by commas.  When multiple port
+#  numbers are used it is possibly to select a specific IP address for a
+#  given port as "ip.port".  For example, "127.0.0.1.900,192.68.0.1.900"
+#  accepts connections on port 900 on IP addresses 127.0.0.1 and 192.68.0.1
+#  The ADDRESS setting, if given, is a default for ports that do not have
+#  a specified IP address.
+
+PORT=587
+
+##NAME: PIDFILE:0
+#
+#  We *MUST* use a different PID file than esmtpd!!!
+#
+
+PIDFILE=@piddir@/esmtpd-msa.pid
+
+##NAME: ACCESSFILE:1
+#
+#  You can use a different access file for esmtp-msa than for esmtp.
+#  To do that, create it yourself, and use makesmtpaccess-msa instead of
+#  makesmtpaccess.
+
+ACCESSFILE=${sysconfdir}/smtpaccess
+
+##NAME: ESMTPDSTART:0
+#
+# ESMTPDSTART is not referenced anywhere in the standard Courier programs
+# or scripts.  Rather, this is a convenient flag to be read by your system
+# startup script in /etc/rc.d, like this:
+#
+#  prefix=@prefix@
+#  exec_prefix=@exec_prefix@
+#  . ${sysconfdir}/esmtpd
+#  . ${sysconfdir}/esmtpd-msa
+#  case x$ESMTPDSTART in
+#  x[yY]*)
+#        @sbindir@/esmtpd-msa start
+#        ;;
+#  esac
+#
+# The default setting is going to be NO, until Courier is shipped by default
+# with enough platforms so that people get annoyed with having to flip it to
+# YES every time.
+
+ESMTPDSTART=NO
+
+##NAME: CUSTOM:1
+#
+# Here, you can stick it any additional esmtpd settings that you want to
+# override.  Some of the ones you are likely to want overriden may include
+# MAXDAEMONS, MAXPERC, MAXPERIP, AUTHMODULES, ESMTPAUTH, and ESMTPAUTH_TLS.
+# If you want to override them, do it here:
+#
+
+##NAME: MAXDAEMONS:1
+
+MAXDAEMONS=40
+
+##NAME: MAXPERC:1
+
+MAXPERC=5
+
+##NAME: MAXPERIP:1
+
+MAXPERIP=5
+

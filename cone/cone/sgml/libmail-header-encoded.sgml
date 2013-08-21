@@ -1,0 +1,80 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="header-encoded">
+  <refmeta>
+    <refentrytitle>mail::Header::encoded</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::Header::encoded</refname>
+    <refpurpose>An unstructured E-mail header.</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;libmail/headers.H&gt;
+
+mail::Header::encoded encoded_header("Subject", subjectStr, "UTF-8", "EN");
+
+std::cout &lt;&lt; encoded_header.toString();
+
+</literallayout>
+    </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+This class creates unstructured E-mail header.
+Three arguments are provided to the constructor: the header's name, its
+content, and the content's character set.
+Non-<literal>US-ASCII</literal> portions of the contents are encoded
+according to
+<ulink url="http://www.rfc-editor.org/rfc/rfc2047.txt">RFC 2047</ulink>.</para>
+
+    <para>
+The fourth argument to the constructor is optional.
+If not an empty string, it identifies the content's language, as described in
+section 5 of
+<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>.</para>
+
+    <para>
+This is not the appropriate class to create structured MIME headers, or
+address list headers.
+Use
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> to create
+headers that contain E-mail addresses.
+Use
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+to create structured MIME headers.</para>
+
+    <para>
+The <function>toString()</function> returns the header as a single text
+string: <quote><replaceable>name</replaceable>:
+<replaceable>value</replaceable></quote>.
+Long headers are folded at the nearest whitespace.</para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-list"><citerefentry>
+	    <refentrytitle>mail::Header::list</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-plain"><citerefentry>
+	    <refentrytitle>mail::Header::plain</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

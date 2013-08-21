@@ -1,0 +1,249 @@
+#! @SHELL@
+#
+#
+# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# Script to create the alias database
+# (usually ${sysconfdir}/aliases.dat)
+#
+# The alias database text is usually
+# ${sysconfdir}/aliases
+#
+# This can be either a file, or a directory.  If it's a directory, all files
+# in the directory are concatenated together, and the database is created
+# as the result.
+#
+# Use -alias=foo to use "foo" instead of
+# ${sysconfdir}/aliases.dat
+#
+# Use -src=bar to use "bar" instead of
+# ${sysconfdir}/aliases
+#
+# Use -dump to print the raw database, without creating anything.
+#
+# A temporary file is used, usually
+# @localstatedir@/tmp/aliases.tmp.
+# It must be on the same filesystem as aliases.dat.  If -alias is used to
+# point to another filesystem, specify -tmp=filename.
+# Since @localstatedir@/tmp is not globally writeable,
+# -tmp must be used if a non-root runs makealiases (with other options,
+# for testing purposes, perhaps).
+#
+# Use -chk AFTER aliases.dat has been created, with the same arguments,
+# to check if the aliases include any bad addresses.
+
+umask 002
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+libexecdir="@libexecdir@"
+localstatedir="@localstatedir@"
+
+aliassrc=""
+aliastmp=""
+aliasdump=""
+aliasalias=""
+module=""
+protocol=""
+xaliasdir=""
+xaliastmpdir=""
+aliasdir="aliasdir"
+
+usage() {
+	echo "Usage: $0 [ options ] module" >&2
+	exit 1
+}
+
+while test $# -gt 0
+do
+	case $1 in
+	-src=*)
+		aliassrc="$1"
+		shift
+		;;
+	-tmp=*)
+		aliastmp="$1"
+		shift
+		;;
+	-dump)
+		aliasdump="$1"
+		shift
+		;;
+	-alias=*)
+		aliasalias="$1"
+		shift
+		;;
+	-xaliasdir=*)
+		aliasdir="$1"
+		shift
+		;;
+	-xaliastmpdir=*)
+		xaliastmpdir="$1"
+		shift
+		;;
+	-protocol=*)
+		protocol="$1"
+		shift
+		;;
+	-chk)
+		dochk=1
+		shift
+		;;
+	-*)
+		usage
+		;;
+	*)
+		module="$1"
+		break
+		;;
+	esac
+done
+
+xaliaspfix="-xaliaspfix=.xalias/"
+
+if test "$protocol" != ""
+then
+	protocol="`echo $protocol | sed 's/^..........//'`"
+
+	if test ! -d "${libexecdir}/courier/modules/$protocol"
+	then
+		echo "$protocol is not a valid protocol."
+		exit 1
+	fi
+
+	if test "$aliastmp" = ""
+	then
+		aliastmp="-tmp=${sysconfdir}/aliases-$protocol.tmp"
+	fi
+
+	if test "$aliassrc" = ""
+	then
+		aliassrc="-src=${sysconfdir}/aliases-$protocol"
+	fi
+
+	if test "$aliasdump$aliasalias" = ""
+	then
+		aliasalias="-alias=${sysconfdir}/aliases-$protocol.dat"
+	fi
+
+	if test "$xaliasdir" = ""
+	then
+		xaliasdir="-xaliasdir=${sysconfdir}/$aliasdir/.courier-:xalias-$protocol"
+	fi
+
+	if test "$xaliastmpdir" = ""
+	then
+		xaliastmpdir="-xaliastmpdir=${sysconfdir}/$aliasdir/courier-:xalias-$protocol.tmp"
+	fi
+	xaliaspfix="-xaliaspfix=.xalias-$protocol/"
+fi
+
+if test "$module" = ""
+then
+	module='local'
+fi
+
+if test "$aliastmp" = ""
+then
+	aliastmp="-tmp=${sysconfdir}/aliases.tmp"
+fi
+
+if test "$aliassrc" = ""
+then
+	aliassrc="-src=${sysconfdir}/aliases"
+fi
+
+if test "$aliasdump$aliasalias" = ""
+then
+	aliasalias="-alias=${sysconfdir}/aliases.dat"
+fi
+
+if test "$xaliasdir" = ""
+then
+	xaliasdir="-xaliasdir=${sysconfdir}/$aliasdir/.courier-:xalias"
+fi
+
+if test "$xaliastmpdir" = ""
+then
+	xaliastmpdir="-xaliastmpdir=${sysconfdir}/$aliasdir/courier-:xalias.tmp"
+fi
+
+get_aliases() {
+
+	aliasdir="$aliassrc"
+	aliasdir="`echo $aliasdir | sed 's/^.....//'`"
+
+	if test -d "$aliasdir"
+	then
+		for f in $aliasdir/*
+		do
+			if test -f $f
+			then
+				echo "##MaKeAlIaSeS##$f"
+					# Hack, hack, hack...
+				cat $f
+			fi
+		done | @libexecdir@/courier/aliasexp $xaliaspfix $xaliastmpdir $module
+	else
+		@libexecdir@/courier/aliasexp $xaliaspfix $xaliastmpdir $aliassrc $module
+	fi
+}
+
+if test "$dochk" = 1
+then
+	rm -f ${localstatedir}/tmp/aliaschk.tmp
+	xaliasdir=""
+	xaliastmpdir=""
+	get_aliases | @libexecdir@/courier/aliascombine | \
+	@libexecdir@/courier/aliascreate \
+		-tmp=${localstatedir}/tmp/aliaschk.tmp -dump=1 | \
+	sed 's/.*: / /' | sort | uniq |
+	while read ADDR
+	do
+		test "$ADDR" = "" && continue
+		ERR=""`@libexecdir@/courier/submit -vrfy="$ADDR" \
+				$module 'unknown; unknown' `
+		if test $? != 0
+		then
+			echo "<$ADDR>: $ERR"
+			>${localstatedir}/tmp/aliaschk.tmp
+		fi
+	done
+	test -f ${localstatedir}/tmp/aliaschk.tmp || exit 0
+	rm -f ${localstatedir}/tmp/aliaschk.tmp
+	exit 1
+else
+	tmpdir="`echo \"$xaliastmpdir\" | sed 's/^..............//'`"
+	dir="`echo \"$xaliasdir\" | sed 's/^...........//'`"
+
+	rm -rf $tmpdir
+
+	get_aliases | @libexecdir@/courier/aliascombine | \
+	@libexecdir@/courier/aliascreate $aliastmp $aliasdump $aliasalias
+	rc=$?
+	if test "$rc" != 0
+	then
+		rm -rf $tmpdir
+		exit $rc
+	fi
+
+	# Now carefully update the extended alias entries
+
+	for f in $dir/*
+	do
+		test -f "$f" || continue
+		f=`basename "$f"`
+		test -f "$tmpdir/$f" || rm -f "$dir/$f" || exit 1
+	done
+
+	for f in $tmpdir/*
+	do
+		test -d "$dir" || mkdir "$dir" || exit 1
+		test ! -f "$f" || mv -f "$f" "$dir" || exit 1
+	done
+	test ! -d "$tmpdir" || rmdir "$tmpdir" || exit 1
+	rmdir $dir 2>/dev/null
+fi
+exit 0

@@ -1,0 +1,83 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="header-list">
+  <refmeta>
+    <refentrytitle>mail::Header::list</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::Header::list</refname>
+    <refpurpose>Create a list of headers.</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;libmail/headers.H&gt;
+
+mail::Header::list headers;
+
+    headers &lt;&lt; mail::Header::encoded("Subject", "Hello", "iso-8859-1")
+            &lt;&lt; mail::header::addresslist("To")
+                                        ("John", "john@example.com")
+                                        ("Tom", "tom@example.com")
+            &lt;&lt; mail::Header::mime("Content-Type", "text/plain")
+                                 ("charset", "iso-8859-1");
+
+std::cout &lt;&lt; (std::string)headers;
+
+</literallayout>
+    </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+This is a helper class for formatting a list of headers.
+Each header is specified, using the <literal>&lt;&lt;</literal> operator,
+which can take any combination of
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-encoded"><citerefentry>
+	    <refentrytitle>mail::Header::encoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>, or
+<link linkend="header-plain"><citerefentry>
+	    <refentrytitle>mail::Header::plain</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+
+    <note>
+      <para>
+The <literal>&lt;&lt;</literal> operator makes an internal copy of the header
+object.
+The original object may be destroyed after the operator returns.</para>
+    </note>
+
+    <para>
+The <function>std::string</function> operator
+formats all headers, and returns the
+set of E-mail headers as a single string.
+Long headers are folded accordingly.</para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-encoded"><citerefentry>
+	    <refentrytitle>mail::Header::encoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-plain"><citerefentry>
+	    <refentrytitle>mail::Header::plain</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

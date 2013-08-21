@@ -1,0 +1,119 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-loginurldecode">
+    <refmeta>
+      <refentrytitle>mail::loginUrlDecode</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::loginUrlDecode</refname>
+      <refpurpose>Decode a mail account URL</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+      &libmail-includemail;
+#include &lt;libmail/logininfo.H&gt;
+
+mail::loginInfo urlInfo;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=<function>mail::account::loginDecode</function></funcdef>
+	  <paramdef>std::string <parameter>url</parameter></paramdef>
+	  <paramdef><parameter>urlInfo</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      <literallayout>
+std::string method=urlInfo.method;
+std::string server=urlInfo.server;
+std::string uid=urlInfo.uid;
+std::string pwd=urlInfo.pwd;
+std::map&lt;std::string, std::string&gt;::iterator
+    optionBegin=urlInfo.options.begin(),
+    optionEnd=urlInfo.options.end();
+</literallayout>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function does the opposite of
+<link linkend="mail-loginurlencode"><citerefentry>
+	    <refentrytitle>mail::loginUrlEncode</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>;
+a mail account URL string is broken down into its components:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><structfield>method</structfield></term>
+	  <listitem>
+	    <para>
+The protocol name.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><structfield>server</structfield></term>
+	  <listitem>
+	    <para>
+The name of the mail account's server</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><structfield>uid</structfield></term>
+	  <listitem>
+	    <para>
+The mail account login ID.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><structfield>pwd</structfield></term>
+	  <listitem>
+	    <para>
+The mail account's password, if specified by the URL.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><structfield>options</structfield></term>
+	  <listitem>
+	    <para>
+This map lists any additional options specified by the URL
+(all
+<quote>/<replaceable>name</replaceable>=<replaceable>value</replaceable></quote>
+options are placed into this map).</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+This function returns <literal>true</literal> if
+<parameter>urlInfo</parameter> (a reference to a
+<structname>mail::loginInfo</structname> object) was initialized from the
+contents of a valid URL, or <literal>false</literal> if the URL was not
+valid.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-loginurlencode"><citerefentry>
+	    <refentrytitle>mail::loginUrlEncode</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

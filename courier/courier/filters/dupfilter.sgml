@@ -1,0 +1,132 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>dupfilter</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>dupfilter</refname>
+    <refpurpose>Sample Courier mail filter</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">filterctl</command>
+      <group choice="opt" rep="norepeat">
+	<arg choice="opt" rep="norepeat">start</arg>
+	<arg choice="opt" rep="norepeat">stop</arg>
+      </group>
+      <arg choice="opt" rep="norepeat">dupfilter</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+This is an example global mail filter written in C. This is a threaded
+filter that tries to block junk E-mail by attempting to detect multiple copies
+of the same message, which are rejected.  This filter is presented mostly for
+educational purposes. It's method for detecting duplicate messages is rather
+simplistic, and, over time, ways of defeating it will certainly
+proliferate.</para>
+
+    <para>
+<command moreinfo="none">dupfilter</command> works by calculating a hash value of the contents
+of
+every message it sees.  Hash values of recent messages are kept in a circular
+FIFO queue. When <command moreinfo="none">dupfilter</command> starts seeing messages with the
+same
+hash value, it will reject them.  The hash value is calculated in such a way
+as to try to detect minor changes to messages' contents that are designed to
+avoid these kinds of filters, but it's still not a very sophisticated
+approach, and it can be easily fooled.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+This is not a very smart mail filter.  The hash function is very simple and
+is not expected to be very useful.</para>
+
+    <para>
+Don't even think of using dupfilter on a machine that either runs a mailing
+list, or contains mailboxes that subscribe to mailing lists.
+dupfilter likes to bounce mailing list traffic.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <para>
+<command moreinfo="none">dupfilter</command> uses the following configuration files. Changes to
+the following files do not take effect until the filter has been stopped and
+restarted.</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/dupfilter-hashsize</filename></term>
+	<listitem>
+	  <para>
+This file contains a single numerical value that sets the size of
+<command moreinfo="none">dupfilter</command>'s circular FIFO queue.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/dupfilter-duplevel</filename></term>
+	<listitem>
+	  <para>
+This file
+contains a single numerical value that sets how many identical messages
+<command moreinfo="none">dupfilter</command> will tolerate before blocking them.  When this many
+identical messages are seen, <command moreinfo="none">dupfilter</command> will start rejecting
+all messages with the same content.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/dupfilter-mode</filename></term>
+	<listitem>
+	  <para>
+If this file exists
+and contains the word "all", <command moreinfo="none">dupfilter</command> will create its
+socket in <filename moreinfo="none">@localstatedir@/allfilters</filename>,
+otherwise the socket will be
+created in <filename moreinfo="none">@localstatedir@/filters</filename>, see
+<ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+for more information.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/dupfilter-nthreads</filename></term>
+	<listitem>
+	  <para>
+This file
+contains a single numerical value that sets the number of threads created
+(each thread is used to calculate a message's hash value). The default
+number of threads is 4.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>

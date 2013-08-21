@@ -1,0 +1,36 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!-- Copyright 2002-2010 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<!ENTITY % libmail-entities SYSTEM "libmail.entities">
+<!ENTITY % cone-entities SYSTEM "cone.entities">
+
+<!ENTITY libmail SYSTEM "libmail.sgml">
+<!ENTITY cone SYSTEM "cone.sgml">
+
+%libmail-entities;
+%cone-entities;
+
+<!ENTITY smap SYSTEM "smap.sgml">
+]>
+<book id="index">
+  <info>
+    <author>
+      <personname>
+	<firstname>Sam</firstname>
+	<surname>Varshavchik</surname>
+      </personname>
+
+      <personblurb>
+	Author
+      </personblurb>
+    </author>
+  </info>
+
+  &cone-index;
+  &cone;
+  &libmail;
+  &smap;
+</book>

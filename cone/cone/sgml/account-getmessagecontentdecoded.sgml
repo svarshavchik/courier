@@ -1,0 +1,74 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getmessagecontentdecoded">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getMessageContentDecoded</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getMessageContentDecoded</refname>
+      <refpurpose>Read message content</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-store;
+      <literallayout>
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getMessageContentDecoded</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	  <paramdef>bool <parameter>peek</parameter></paramdef>
+	  <paramdef>const mail::mimestruct &amp;<parameter>messagePart</parameter></paramdef>
+	  <paramdef><parameter>storeCallback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::ACCOUNT::getMessagesContentDecoded</function>
+is similar to
+<link linkend="account-getmessagecontent"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageContent</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+with one key difference:
+<literal>quoted-printable</literal> and
+<literal>base64</literal> MIME content is automatically decoded.
+<parameter>storeCallback</parameter>'s
+<function>store</function> method receives the decoded binary content.</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-account-return;
+
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-getmessagecontent"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageContent</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getmessageenvelope"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageEnvelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getmessagestructure"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageStructure</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>
+

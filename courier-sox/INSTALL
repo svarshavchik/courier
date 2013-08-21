@@ -1,0 +1,189 @@
+You need to install the following software before building this package
+(if it's not already installed).
+
+GNU make (gmake)
+GNU libtool
+Courier Authentication Library (http://www.courier-mta.org/authlib), version
+0.51, or higher.
+Net::CIDR Perl module from www.cpan.org (required for blacklist support)
+
+This package uses the GNU toolchain, and uses the typical installation
+sequence:
+
+./configure [option]
+make
+make install
+
+GNU libtool must be installed prior to installing this package. Also,
+the libtool's libltdl library must be installed, together with its development
+headers. On some platforms this is a separate package. On Fedora, for example,
+this is the libtool-ltdl-devel package.
+
+Q: Do I need to install the Courier Authentication Library even if I will
+use only anonymous Socks 5 proxy connection, and don't need authentication?
+
+A: Yes.  Courier-sox uses some utilities in the courier-authlib package
+(specifically, courierlogger).  You need courier-authlib installed on any
+machine used to build courier-sox.  You will also need courier-authlib
+installed on a machine that runs server daemon, sockd.  Courier-authlib
+is not required to be installed on a machine that only uses the client-side
+libraries (but courier-authlib still needs to be installed when building
+this package, in all cases).
+
+If you don't need authentication, you still need to have courier-authlib
+installed on a machine that's running the server daemon, sockd.  You don't
+need to actually start the courier-authlib daemon process.
+
+NOTE: courier-authlib version 0.51, or higher, is required.
+
+NOTE: The Courier authentication library communicates authentication requests
+through a filesystem socket that's created in a directory without global
+access rights (the default location is /usr/local/var/spool/authdaemon,
+or /var/spool/authdaemon).  Only the userid that's reserved by courier-authlib
+can access this directory (typically "courier" or "daemon").
+
+The server daemon therefore has to be run as the same userid, in order
+for authentication to work.  Add the "user" statement to the socksrc
+configuration file or directory (see the socksrc man page for more
+information).
+
+The other alternative is to manually change the permissions on the socket
+directory to 755.  Note that the courier-authlib daemon provides access to
+account passwords, and this approach will expose account passwords to anyone
+with a shell account (which is a non-issue if the server does not provide
+generic shell access).
+
+It is the system administrator's responsibility to choose the appropriate
+security policy with using the Courier Authentication Library, and the
+socks server.
+
+Note that this is an issue that's particular to the Socks 5 server component.
+This issue is moot when only the client library of the Courier Socks 5
+package is used.
+
+NOTE: When using the Courier Authentication Library with PAM authentication,
+authentication requests from courier-sox will be sent as the "socks" service.
+Your PAM library needs to be explicitly configured to authenticate the
+"socks" service.  There are different PAM libraries, that use different
+ways to configure PAM services.  In most situations you need to install
+/etc/pam.d/socks.  On modern Linux systems, this file's typical contents would
+be:
+
+#%PAM-1.0
+ 
+auth       required     pam_nologin.so
+auth       required     pam_stack.so service=system-auth
+account    required     pam_stack.so service=system-auth
+session    required     pam_stack.so service=system-auth
+
+Check your PAM library's documentation for more information.
+
+The default options to the configure script will:
+
+* Install the Socks 5 client libraries in /usr/local/lib,
+  called "libsocks.so" and "libsockswrap.so" (actual names vary, depending
+  on your system).
+
+* The socksify and mkbl4 scripts in /usr/local/bin
+
+* A lone header file: /usr/local/include/socks.h
+
+* A couple of manual pages in /usr/local/man
+
+* The configuration directory /usr/local/etc/socksrc will be created
+
+* The server daemon, /usr/local/libexec/sockd, and its startup helper
+script, /usr/sbin/sockd
+
+The usual options may be used to change these filenames (--prefix,
+--exec-prefix, etc...)
+
+If you are not familiar with the GNU toolchain options, run ./configure --help
+for a summary.
+
+Use the following procedure to verify that the Socks library was correctly
+installed.
+
+* Run 'make check' (this doesn't do much, yet, but every little bit helps)
+
+* If you want to test the Socks client library against the Socks server
+itself, create a second installation of the Courier Sox library on the
+firewall, see "The socks server" below for more information.
+
+Otherwise you can configure the client library to talk to some other,
+existing Socks server:
+
+* Set up your Socks 5 client configuration in /usr/local/etc/socksrc according
+to the socksrc man page.
+
+The following test programs will be built in the source code directory, but not
+installed:
+
+* Run 'testconnect HOSTNAME', where HOSTNAME is a well-known web server
+(www.yahoo.com, www.cnn.com, and the like, are good choices).
+
+testconnect tries to connect to the web server at the given address and
+display its robots.txt file.  If all goes well, you should see the robots.txt
+from the web server (or a 404 message if the server does not have a
+robots.txt file).
+
+* Run 'testbind' as root.  testbind attempts to reserve a privileged port on
+the local machine, then open the same port on the Socks server.  If all goes
+well 'testbind' will print the local port number, then the Socks server's IP
+address and the port number it opened on the Socks server:
+
+port 1023
+Real port: 0.0.0.0;1023
+Listening on: 192.168.0.15;47683
+
+Not all Socks servers have the ability to reserve the same privileged port
+that the Socks client reserved locally.  It's possible that the second message
+from 'testbind' will show that its listening on a non-reserved port.
+
+After 'testbind' displays the Socks server's IP address and the port, it
+will wait for an incoming connection.  Use 'telnet' to connect to the
+indicated IP address and port:
+
+telnet 192.168.0.15 47683
+
+(Note: it is possible that the shown IP address may not be reachable via TCP
+from this machine.  This is outside the scope of the test.  The 'telnet'
+connection does not have to originate from the same machine that's running
+testbind.  Use any appropriate machine to connect to the listening port.)
+
+After the connection goes through, anything typed in telnet should be
+printed by testbind (the reverse isn't true, after the connection is
+established testbind enters a simple loop where it prints everything received
+on the socket, until it is closed).
+
+* If the above tests succeed, chances are that everything is working correctly.
+For the final example, pick a well known FTP server, and try to use the
+socksify script with the ftp command:
+
+socksify ftp ftp.example.com
+
+You should be able to establish an FTP connection, and log in.  You should be
+able to use the 'dir' command in both the active and passive FTP modes,
+as well as transfer files.
+
+
+The socks server
+
+The server startup/shutdown script is, by default, installed in
+/usr/local/sbin.  To start the server: /usr/local/sbin/sockd start
+
+To stop the server: /usr/local/sbin/sockd stop
+
+Also: /usr/local/sbin/sockd restart - reread the configuration file.
+The server reads the updated "port", "anonproxy", "authproxy", and "prefork"
+settings from the configuration file (default: /usr/local/etc/socksrc).
+Any other changes in the configuration file only take effect by stopping and
+starting sockd.
+
+See the socksrc(5) and sockd(8) man pages for more information.
+
+Add the start command to your system startup script to have the socks server
+automatically start at system boot time.
+
+Use the courier-sox.sysvinit script (not installed, take it from the source
+directory) as an example of a SysV init script.

@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="author" content="Mr. Sam"/>
+
+  <title>Directory Layout</title>
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h2>Directory Layout</h2>In the following documentation, the
+  variable ${COURIER_HOME}is set to <em>Courier</em>'s installation
+  directory, and ${ARCH} is set to the target platform type, such
+  as "i586-linux-gnu":
+
+  <p><code>${COURIER_HOME}</code> is the main installation
+  directory, everything lives under here.<br />
+  <code>${COURIER_HOME}/ARCH</code> is a soft link to
+  <code>${ARCH}</code><br />
+  <code>${COURIER_HOME}/${ARCH}/bin</code> - binary files<br />
+  <code>${COURIER_HOME}/${ARCH}/lib</code> - library files<br />
+  <code>${COURIER_HOME}/bin</code> - mostly soft links to
+  arch<code>/bin</code><br />
+  <code>${COURIER_HOME}/lib</code> - mostly soft links to
+  arch<code>/lib</code><br />
+  <code>${COURIER_HOME}/man</code> - manual pages<br />
+  <code>${COURIER_HOME}/local/config</code> - local
+  configuration<br />
+  <code>${COURIER_HOME}/local/msgs</code> - mail queue - messages
+  and control files<br />
+  <code>${COURIER_HOME}/local/msgq</code> - mail queue - control
+  files, sorted by next scheduled delivery attempt time<br />
+  <code>${COURIER_HOME}/local/tmp</code> - temporary directory</p>
+
+  <p>All directories can be softlinks, or mount points, EXCEPT that
+  <code>local/msg[sq]</code> and <code>local/tmp</code> must be on
+  the same filesystem.</p>
+
+  <h3>Ownership and permissions.</h3>This documentation assumes
+  that <em>Courier</em> is installed as user 'mail', group 'mail'. Unless
+  otherwise specified below, everything is owned by <em>Courier</em>'s
+  user/group. Global read/execute permissions on everything. Write
+  permissions to user and group.
+
+  <p>In <code>local/msg[sq]</code> the userid of the control and
+  the message file are that of the user who created the
+  message.</p>
+
+  <h2>Programs/Modules</h2><code>courierctl</code> scripts - these
+  scripts start and stop <code>courierd</code>, and performs other
+  administrative functions.
+
+  <blockquote>
+    <code>courierctl.start</code> scripts - these scripts start
+    courierd. They do NOT start any input module daemons, that must
+    be done separately. Note that this command only begins the
+    startup process. courierd may fail to start for some reason,
+    you will need to check your system logs to verify that courierd
+    is properly running.
+
+    <p><code>courierctl.stop</code> - this command stops courierd.
+    courierd is stopped cold, interrupting any pending
+    deliveries.</p>
+
+    <p><code>courierctl.restart</code> - this command restarts
+    courierd by sending it a SIGHUP. courierd will suspend starting
+    any new deliveries, then wait for all current deliveries to
+    finish, then restart itself. This action is necessary after
+    making certain configuration changes.</p>
+  </blockquote><code>courierd</code> - the main scheduling daemon.
+  The heart of <em>Courier</em> is just a raw scheduler that figures out
+  when to attempt to deliver messages that are in the queue. There
+  will actually be two <code>courierd</code> processes running, at
+  the same time. <code>courierd</code> is started and stopped by
+  <code>courierctl</code>.
+
+  <h3>Modules</h3>The <code>courierd</code> scheduling daemon is
+  transport neutral, and external modules are used to submit
+  messages to courierd, and attempt to deliver messages at regular
+  intervals.&nbsp; The term 'input module' refers to an external
+  module that submits messages to courierd, and 'output module'
+  refers to an external module that delivers messages. The term
+  'transport module', or a plain 'module' refers to both an input
+  module and an output module for the same platform, which usually
+  come together. For example, <em>Courier</em> typically receives and sends
+  mail via ESMTP, however, it is possible to adjust the default
+  configuration so that ESMTP is only used to receive mail. For
+  sending, mail gets delivered using some other protocol.
+
+  <p>Output module are started by <code>courierd</code>, and
+  communicate with <code>courierd</code> via pipes. Output module
+  are notified which messages must be delivered, and to which
+  addresses. <em>Courier</em> may send multiple messages to the same output
+  module, without waiting for an acknowledgement that an attempted
+  delivery for previous messages has been made.</p>
+
+  <p>E-mail addresses that appear in the message's headers, and
+  which are listed in the message's delivery envelope, are stored
+  in a "canonical" format. E-mail messages that come from an input
+  module have their addresses rewritten from the transport-specific
+  format to the canonical format. E-mail messages which are sent to
+  be delivered to an output module have their addresses rewritten
+  to the canonical format.</p>
+
+  <p>The canonical format is the format for E-mail addresses that
+  is used by <em>Courier</em>'s system. Therefore, messages that are
+  delivered to local mailboxes do not undergo header or address
+  rewriting.</p>
+
+  <p>Messages are submitted to the <em>Courier</em> server by running the
+  ${COURIER_HOME}/bin/submit, which takes care of rewriting
+  addresses from the transport format to canonical format. When an
+  output module receives a message to deliver from <em>Courier</em>'s queue,
+  the E-mail addresses in the message will be in the canonical
+  format, and the output module is responsible for rewriting
+  addresses in the headers into the transport-specific format. The
+  output module can take advantage of a set of library functions
+  which automate this process.</p>
+
+  <h3>The rewrite library</h3>Each transport module comes with a
+  small library file which provides functions to rewrite addresses
+  between the canonical format and the transport specific format.
+  Also, the library provides a function that examines a canonical
+  E-mail address and indicates if the address can be delivered to
+  by the output module. When attempting to deliver a message,
+  <em>Courier</em> calls each transport module's delivery function, until it
+  finds one that accepts this E-mail address for delivery. Then,
+  <em>Courier</em> notifies the output module to deliver the message to this
+  address.
+
+  <p>On platforms that support dynamically-opened shared libraries,
+  <em>Courier</em> can be compiled to use shared libraries. This allows
+  rewriting functions to be modified, and have the changes take
+  effect without fully shutting down <em>Courier</em>. Otherwise, they can
+  be compiled as regular, statically linked libraries.</p>
+
+  <h3>The <code>submit</code> program</h3><code>submit</code> is
+  used to submit a message into <em>Courier</em>'s scheduling queue.
+  <code>submit</code> is not invoked directly. <code>submit</code>
+  does not have any global read or execute permissions, only user
+  and group permissions, therefore it must be invoked by a process
+  that executes at least as group mail. <code>submit</code>
+  provides the functionality most transports will need in order to
+  submit messages into the queue. Submit accepts several options,
+  and one argument: the name of the input module submitting the
+  message. <code>submit</code> also reads the environment,
+  therefore the environment variables must be scrubbed before
+  invoking <code>submit</code>. <code>submit</code> communicates
+  via standard input and output with the module to read the
+  identify of the sender and the recipients of an E-mail message,
+  and the message contents. <code>submit</code> enforces message
+  size limits and may reject the sender or any recipient. Options
+  are:
+
+  <blockquote>
+    <code>-expn=address</code> - do not accept any message, just
+    attempt to 'expand' this address.
+
+    <p><code>-vrfy=address</code> - do not accept any message, just
+    attempt to 'verify' this address.</p>
+
+    <p><code>-verp</code> - use VERP-encoded envelope sender
+    address.</p>
+  </blockquote><code>submit</code> opens the shared libraries,
+  reads the E-mail addresses of the sender and the recipient, reads
+  the message itself, and rewrites all addresses to the canonical
+  format by running the module's address rewriting function in the
+  shared library. <code>submit</code> may perform other
+  adjustments, such as adding the <code>Date:</code> or the
+  <code>Message-ID:</code> header, or adding MIME headers.
+  <code>submit</code> also checks if any recipient is a
+  system-defined alias, and adds the alias's list of addresses to
+  the recipient list. <code>submit</code> will also try to remove
+  duplicate E-mail addresses from the recipient list, wherever
+  possible.&nbsp; Wherever possible, <code>submit</code> will
+  reject E-mail addresses that it knows are not valid.
+
+  <p><code>mailq</code> - display current mail queue for the
+  running user (or the entire queue, if invoked as root). Since
+  individual control files are owned by the originating user. mailq
+  simply prints out the contents of every control file it can
+  open.</p>
+
+  <blockquote>
+    -s - sort messages by starting time. With many messages, this
+    can eat up memory, and CPU cycles. The list is not sorted, by
+    default.
+  </blockquote><code>reformime</code> - standalone program that can
+  be used by module to implement some header rewriting. I am
+  borrowing the reformime tool from the maildrop package, which
+  contains complete documentation for reformime.
+
+  <p>That's it. Other program modules come as a part of plug-in
+  transport module. For example, the SMTP transport doesn't have to
+  be installed, resulting in <em>Courier</em> being used to just deliver
+  mail on a single system. Or, only the SMTP output module can be
+  installed, so that the machine will be able to send mail via
+  SMTP, but not receive it. Or, only the SMTP input module can be
+  installed, so that the machine can receive mail via SMTP, but not
+  send it (which also means that bounces can't be delivered, so
+  they double-bounce to postmaster).</p>
+
+  <h3>Environment variables used by submit</h3>The
+  <code>submit</code> program also reads the following variables
+  from the environment:
+
+  <p><code>SPAMDATAFILTER=pathname</code> - run this spam filter.
+  After receiving this message, run the indicated program. In
+  addition to the environment variables inherited by submit, submit
+  sets MODULE to the name of the input module, before running the
+  spam filter. Please note that the program is run with the
+  user/group id of the submit process!</p>
+
+  <p><code>MIME=option</code> - sets options for mime rewriting.
+  The options are: none - no mime rewriting whatsoever; 7bit -
+  convert 8bit mime sections to quoted-printable; 8bit - convert
+  quoted-printable to 8bit.</p>
+
+  <p><code>NOADDMSGID</code> - if set, submit will not add a
+  <code>Message-Id:</code> header, if the message does not have
+  it.</p>
+
+  <p><code>NOADDDATE</code> - if set, submit will not add a
+  <code>Date:</code> header, if the message doesn't have it.</p>
+
+  <p><code>NOADDRREWRITE</code> - if set, submit will not rewrite any
+  <code>From:</code>, <code>To:</code>, and <code>Cc:</code> header, or check
+  whether the message has a <code>DKIM-Signature:</code> before doing so.</p>
+
+  <p><code>SIZELIMIT</code> - maximum size of a message in bytes.
+  Larger messages are rejected. If this environment variable is not
+  set, <em>Courier</em> will read the <code>control/sizelimit</code> file.
+  If <code>control/sizelimit</code> does not exist, <em>Courier</em> will
+  use "0". "0" is used to specify that there is no maximum message
+  size limit.</p>
+
+  <h2>Queue</h2>Each message in the queue is represented by two
+  files, the control file, and the message file. The message file
+  contains the actual message, headers and body. The message is
+  stored in the 'local' format, that is, the addresses in the
+  headers are rewritten into the format used by the local system.
+  The control file contains ancillary information about the
+  message: the sender, the recipient, and its current status. The
+  control file is called "Cnnnn" or "Cnnnn.tttttt", and the message
+  file is called "Mnnnn". In both cases, nnnn represents the inode
+  number of the control file, so that the inherent uniqueness of
+  inodes is used to generate unique filenames. 'tttttt' is the time
+  when the the next delivery attempt for the message is due. tttttt
+  is the message's next scheduled attempted delivery date,
+  expressed as number of seconds used by the <b>time()</b> system
+  call. More on that later.
+</body>
+</html>

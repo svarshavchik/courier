@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="author" content="Sam Varshavchik" />
+
+  <title>The Courier mail server - Subversion repository</title>
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <!-- Copyright 2000-2011 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <h1>Subversion repository</h1>
+
+  <p>The following applies for the entire the <em>Courier</em> mail
+  server source code distribution, and sub-modules (the
+  <em>Courier</em> IMAP server, sqwebmail, maildrop).</p>
+
+  <p>In order to build from the Subversion repository, you must
+  have the following additional software installed:</p>
+
+  <ol>
+    <li><a target="_blank" href=
+    "http://www.gnu.org/software/autoconf/autoconf.html"><code>autoconf</code></a>.</li>
+
+    <li><a target="_blank" href=
+    "http://www.gnu.org/software/automake/automake.html"><code>automake</code></a>.</li>
+
+    <li><a target="_blank" href=
+    "http://www.gnu.org/software/libtool/libtool.html"><code>libtool</code></a></li>
+
+    <li><a target="_blank" href=
+    "http://www.gnu.org/software/gettext/gettext.html"><code>gettext</code></a></li>
+
+    <li><a target="_blank" href=
+    "http://www.gnu.org/software/make/make.html"><code>gmake</code></a>,
+    of course.</li>
+
+    <li><a target="_top" href=
+    "http://www.courier-mta.org/sysconftool/">sysconftool</a> -
+    this is an extra autoconf macro used by the <em>Courier</em>
+    mail server's <code>configure.in</code> script (not needed, of
+    course, to build <code>sysconftool</code> itself).</li>
+
+    <li>The following tools that convert Docbook XML to HTML and
+    man page documentation: various Docbook DTDS, the
+    "docbook-utils" tools, the "sgml-common/xml-common" package,
+    which are conveniently aggregated in Red Hat's <a target=
+    "_blank" href=
+    "ftp://sources.redhat.com/pub/docbook-tools/new-trials/SOURCES">
+    docbook-tools</a> directory; <a target="_blank" href=
+    "http://docbook.sourceforge.net/projects/xsl/">Docbook XSL
+    stylesheets</a>; <a target="_blank" href=
+    "http://www.w3.org/TR/xhtml1/">XHTML 1.0 XSL stylesheets</a>;
+    <a target="_blank" href=
+    "http://www.w3.org/TR/1999/REC-html401-19991224/">HTML 4.01
+    stylesheets</a>; the <a target="_blank" href=
+    "http://xmlsoft.org/XSLT/">Gnome XSLT library</a>, and the
+    current version of the <a target="_blank" href=
+    "http://tidy.sourceforge.net/">tidy</a> tool. NOTE: Most
+    systems already include packages for all of these tools. It's
+    rather unfeasible to try to assemble this entire toolkit
+    yourself, find these packages and install them.</li>
+  </ol>
+
+  <p>These additional dependencies are only required if building
+  from Subversion, and not the packaged tarballs.</p>
+
+  <p>Subversion trunks:</p>
+
+  <ul>
+    <li>
+      <p><code>svn checkout
+      svn://svn.code.sf.net/p/courier/code/trunk/courier/</code> -
+      Entire Courier server</p>
+    </li>
+
+    <li>
+      <p><code>svn checkout
+      svn://svn.code.sf.net/p/courier/code/trunk/courier-imap/</code>
+      - The Courier-IMAP server</p>
+    </li>
+
+    <li>
+      <p><code>svn checkout
+      svn://svn.code.sf.net/p/courier/code/trunk/sqwebmail/</code>
+      - The SqWebMail mail server</p>
+    </li>
+
+    <li>
+      <p><code>svn checkout
+      svn://svn.code.sf.net/p/courier/code/trunk/maildrop/</code> -
+      maildrop</p>
+    </li>
+
+    <li>
+      <p><code>svn checkout
+      svn://svn.code.sf.net/p/courier/code/trunk/sox/</code> - The
+      Socks 5 proxy server</p>
+    </li>
+
+    <li>
+      <p><code>svn checkout
+      svn://svn.code.sf.net/p/courier/code/trunk/sysconftool/</code>
+      - Sysconftool</p>
+    </li>
+
+    <li>
+      <p><code>svn checkout
+      svn://svn.code.sf.net/p/courier/code/trunk/cone/</code> -
+      Cone mail client</p>
+    </li>
+  </ul>
+
+  <p>Run "<code>svn checkout</code> <em>URL</em>" to check out each
+  package.</p>
+
+  <p>NOTE: Automatically-generated <code>configure</code> and
+  <code>Makefile</code>, <code>libtool</code>, and
+  <code>sysconftool</code> scripts are NOT stored in the
+  repository, and you must build them yourself. Fortunately, it's
+  very easy to do this. Simply run the following command after
+  checking out any one of these modules:</p>
+  <pre>
+    sh autobloat
+</pre>
+
+  <p>The <code>autobloat</code> script automatically runs
+  <code>automake</code>, <code>autoconf</code>,
+  <code>libtool</code>, <code>sysconftool</code>, from the current
+  directory.</p>
+
+  <p>NOTE: The "courier" module is the entire mail server. The
+  other modules extract selected portions, with a different
+  top-level makefile that builds a standalone package. You only
+  need to obtain the <code>courier</code> module, to get the source
+  code for the <em>Courier</em> mail server. See <a href=
+  "intro.html">Introduction</a> for more information.</p>
+</body>
+</html>

@@ -1,0 +1,16 @@
+#%PAM-1.0
+#
+#
+# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# To use the authpam authentication module for authenticated SMTP, you must
+# configure your PAM library to authenticate the "esmtp" service.
+# See your system documentation for information on how to configure your
+# PAM services. In most cases, all you need to do is to install this file
+# as /etc/pam.d/esmtp, but check your system documentation to make sure.
+
+auth       required	/lib/security/pam_pwdb.so shadow nullok
+account    required	/lib/security/pam_pwdb.so
+session    required     /lib/security/pam_pwdb.so
+

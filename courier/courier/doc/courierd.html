@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="author" content="Sam Varshavchik"/>
+
+  <title>courierd daemon process</title>
+  <!-- Copyright 2000-2009 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h2><code>courierd</code> daemon process</h2>
+
+  <h3>Configuration files</h3>The following files are present in
+  the <code>local/config</code> subdirectory.
+
+  <p>The following configuration files are specific to the main
+  <code>courierd</code> daemon. Module-specific configuration files
+  are defined elsewhere.</p>
+
+  <p><code>me</code> - if present, specifies the hostname of the
+  machine, and used instead of <code>gethostname()</code>. Note
+  that this is also used by submit. If The <em>Courier</em> mail server's
+  installation directory is exported to clusters, you must arrange
+  for a different <code>local/config/me</code> file for each
+  machine in the cluster. One way to do so is to have
+  <code>local/config/me</code> set as a soft link to /etc/HOSTNAME,
+  which on each machine contains its host name.</p>
+
+  <p><code>locals</code> - all the possible domains that are
+  recognized as local. Text file, one domain per line. Defaults to
+  me.&nbsp; This is used by the locals module, and by submit.</p>
+
+  <p><code>queuetime</code> - how long The <em>Courier</em> mail server
+  keeps trying to deliver a message, before returning it as
+  undeliverable.&nbsp; Default is one week.</p>
+
+  <p><code>warntime</code> - if a message is undeliverable for this
+  long, send a warning message to the sender. Set to 0, in order to
+  disable.&nbsp; Default is four hours.</p>
+
+  <p><code>sizelimit</code> - maximum size of a message, in bytes.
+  <code>submit</code> rejects longer messages.</p>
+
+  <p><code>sizecheck</code> - contains three numbers: b i s. submit
+  will return a temporary error indication and reject a submission
+  if there are less than b free blocks, or i free inodes, on the
+  mail filesystem. As submit receives the message, it will check
+  the status of the filesystem every s bytes, and will immediately
+  stop if the available free space falls below the set limits. If
+  not specified, the limits are 500 blocks, 20 inodes, and 128K
+  bytes. Also note that sometimes the actual amount of free disk
+  blocks has to be twice as much, if <code>submit</code> decides to
+  rewrite the message to convert to/from quoted printable encoding,
+  or to add MIME headers.</p>
+
+  <p><code>batchsize</code> - maximum number of recipients per
+  message. submit splits longer recipient lists into separate
+  messages. If absent, defaults to 100.</p>
+
+  <p><code>queuelo</code> - <code>courierd</code> output queue low
+  watermark. If absent, defaults to the sum of <b>MAXDELS</b> of
+  all output modules. This number should be the minimum value for
+  queuelo. The minimum value for <code>queuelo</code> is 20.</p>
+
+  <p><code>queuehi</code> - <code>courierd</code> output queue high
+  watermark. If absent, defaults to <b>queuelo</b> * 2, not to
+  exceed <b>queuelo</b> + 1000. Must greater than
+  <b>queuelo</b>.</p>
+
+  <p><code>respawnlo</code> - do not respawn <code>courierd</code>
+  second process more often than this time interval. The contents
+  of this file is a single number following by 'h' for hours or 'd'
+  for days. If this file does not exist, the <code>respawnlo</code>
+  is set for one hour.</p>
+
+  <p><code>respawnhi</code> - respawn <code>courierd</code> at
+  least this often. Helps to cut down on memory fragmentation. The
+  contents of this file is a single number following by 'h' for
+  hours or 'd' for days. If this file does not exist, the
+  <code>respawnhi</code> is set for seven days.</p>
+
+  <p><code>bouncefrom</code> - what to put in the From: header on
+  bounces</p>
+
+  <h2><code>courierd</code> - process A - startup process</h2>
+
+  <h3><code>courierd</code> startup activity</h3>A) chdirs to
+  ${COURIER_HOME}. Disassociates from controlling terminal. Closes
+  stdin/stdout/stderr, reopens stdin to <code>/dev/null</code>,
+  stdout to <code>/dev/console</code>., and stderror to
+  <code>logger</code>, Resets umask to 007. Forks, parent exits,
+  child continues to run, becomes the first <code>courierd</code>
+  daemon process, process A.
+
+  <p>B) main starts all output modules. A separate pipe to each
+  output module's stdin. Shared pipe from all output modules'
+  stdout.</p>
+
+  <p>C) main setgids and setuids itself to mail.</p>
+
+  <p>D) main creates another pipe, then forks the second
+  <code>courierd</code> daemon process, process B.</p>
+
+  <p>E) main waits for any child process to terminate. If main
+  receives a SIGHUP, main sighups process B.</p>
+
+  <p>F) if process B terminates with a zero exit, main respawns it
+  again, and logs the event to syslog.</p>
+
+  <p>G) All other signals are logged to syslog, resulting in
+  termination.</p>
+
+  <p>H) Non-zero exit codes are logged, process A waits a minute,
+  then respawns process B.</p>
+
+  <p>I) each time main forks process B, main executes tmp directory
+  cleanup (see submit process).</p>
+
+  <h3><code>courierd</code> - process B</h3>A) Receipt of a SIGHUP
+  sets a boolean flag called 'termination_flag'. This is logged.
+
+  <p>B) Allocate queuehi msgq structures.</p>
+
+  <p>C) Open all shared module libraries.</p>
+
+  <p>D) Open <code>queue/trigger</code> for reading.</p>
+
+  <p>E) Remove all empty directories in <code>local/msgq</code> and
+  <code>local/msgs</code>.</p>
+
+  <p>F) <b>Queue scan</b>.</p>
+
+  <blockquote>
+    &nbsp;
+
+    <table border="1" width="100%" bgcolor="#CCCCCC">
+      <tbody>
+        <tr>
+          <td>
+            <div align="center">
+              Queue scan
+            </div>A) Obtain current time
+
+            <p>B) Read all directories in <code>local/msgq</code>,
+            sort it in chronological order.</p>
+
+            <p>C) Read each directory, skip control files which are
+            already in the queue (check using inodes), sort the
+            remaining ones in chronological order.&nbsp; Perform
+            the following steps for each remaining control
+            file.</p>
+
+            <p>D) <b>Add this control file to the queue</b>. Stop
+            queue scan if the control file wasn't added.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table><br />
+    &nbsp;
+
+    <table border="1" width="100%" bgcolor="#CCCCCC">
+      <tbody>
+        <tr>
+          <td>
+            <div align="center">
+              Add control file to the queue
+            </div>A) Read the control file.
+
+            <p>B) Initialize the msgq structure, and all the
+            rcptinfos. If there are no rcptinfos, <b>remove control
+            file from the queue</b>.</p>
+
+            <p>C) If the msgq array is not full, go to step E.</p>
+
+            <p>D) Scan the msgq array, by nextdel, starting with
+            the latest nextdel. Stop at the first msgq whose
+            rcptinfos all have non-null pending pointers. If we
+            don't find one, stop. Use pendingpos to remove the
+            rcptinfo * from pending-&gt;recipient_list. If the
+            resulting recipient_list is NULL: if hostp is not null,
+            set hostp-&gt;pendinglist to NULL; remove this
+            pendelinfo structure from drvp-&gt;pendelinfo_list.
+            Remove this msgq.</p>
+
+            <p>E) Add the msgq structure to the queue list, sorted
+            by nextdel. For each rcptinfo, search delmodule's
+            hdlvrpfirst/last list for this host. If found, go to
+            step F. If not found, check pendelinfo_list. If found
+            there, add this rcptinfo * to pendelinfo's
+            recipient_list (sorted by nextdel). Otherwise, search
+            hdlvrpfirst/last list from the tail end, looking for a
+            host with a 0 dlvrcount and either a null pendinglist
+            pointer, or whose pendelinfo's first recipient has a
+            later timestamp than the new control file. If all hosts
+            have a non-0 dlvrcount, create a new pendelinfo, add it
+            to pendelinfo_list, add this rcptinfo * to pendelinfo's
+            recipient_list (sorted by nextdel). If found one with a
+            0 dlvrcount, set pendelinfo-&gt;hostp to null (if
+            pendelinfo is not null).</p>
+
+            <p>F) If delinfo's delpfreefirst is null, add this
+            rcptinfo * to dlrvrhost's
+            pendelinfo-&gt;recipient_list, otherwise remove the
+            first delinfo from delpfreefirst's list, initialize it,
+            increment dlvrhost's dlvrcount, send the message to the
+            device module.<br />
+            &nbsp;</p>
+          </td>
+        </tr>
+      </tbody>
+    </table><br />
+    &nbsp;
+
+    <table border="1" width="100%" bgcolor="#CCCCCC">
+      <tbody>
+        <tr>
+          <td>
+            <div align="center">
+              Remove control file from the queue
+            </div>A) Read the control file and check if every
+            recipient has a succesfull delivery.
+
+            <p>B) Unless every recipient has a succesful delivery,
+            generate a bounce message.</p>
+
+            <p>C) Remove the message file, and both links to the
+            control file. Deallocate the msgq structure.&nbsp; If
+            the msgq list falls below respawnlo, set the queue scan
+            flag.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </blockquote>
+
+  <h3><code>courierd</code> - process B - main loop</h3>A)
+  <code>courierd</code> scans tmp directory for new messages (see
+  submit process, above). When a new message is found, the message
+  and control files are moved to local/msgs, and the control file
+  is linked to local/msgq, with the current time set as the next
+  scheduled delivery time. If the termination flag is NOT set,
+  <b>add this control file to the queue</b>.
+
+  <p>B) If the termination flag is not set, and there are no
+  pending deliveries, check the process starting time. If the
+  process has been running for at least respawnlo period of time,
+  set the termination flag.</p>
+
+  <p>C) If the process has been running for at least respawnhi
+  period of time, set the termination flag unconditionally.</p>
+
+  <p>D) If the termination flag is not set, and the queue scan flag
+  is set, do a <b>queue scan</b>. If there are any control files in
+  the local/tmp directory, go back to step A.</p>
+
+  <p>E) If the termination flag is set, wait until a <b>delivery
+  completion notice is received</b>. If there are no pending
+  deliveries, terminate the process normally.</p>
+
+  <p>F) Wait until any of the following events: <b>delivery
+  completion notice</b>, new message notification from
+  queue/trigger, if there are delivery attempts scheduled for a
+  future time, wait until the timer expires. Check the time this
+  process was started. If respawnlo interval has not passed, wait
+  until respawnlo interval passes.</p>
+
+  <p>G) End of file indication from process A causes an immediate
+  termination.</p>
+
+  <h3>Delivery completion notice</h3>A) Get delid of the completed
+  delivery.
+
+  <p>B) Decrement delinfo-&gt;rcptlist-&gt;dlvrcount. If it's zero,
+  recycle the msgq, reread the control file. If all recipients have
+  a delivery completion or failure on file, or if the message's
+  expiration time has expired, r<b>emove control file from the
+  queue</b>.</p>
+
+  <p>C) Put the delinfo back on the delpfreefirst list. Move the
+  delinfo's dlvrhost to the top of the MRU list.</p>
+
+  <p>D) As long as the delpfreefirst list is not empty, do this.
+  Scan the MRU list, from top to bottom. If we find a dlvrhost with
+  a pending list, remove the first rcptinfo from the rcptinfo_list
+  (if it's empty, remove the pendelinfo structure), remove the
+  first delinfo from delpfreefirst's list, initialize it, increment
+  dlvrhost's dlvrcount, send the message to the device module. If
+  all dlvrhosts have null pending lists, go through the drvinfo's
+  pendelinfo_list.<br />
+  &nbsp;</p>
+</body>
+</html>

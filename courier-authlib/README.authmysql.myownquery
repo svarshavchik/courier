@@ -1,0 +1,550 @@
+
+
+
+
+	    Developer Notes for courier-imap-myownquery.patch
+
+
+
+
+							document version: 1.03
+							author:	Pawel Wilk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0 What's that?
+
+1 Modifications overview
+
+2 Definitions
+
+3 New data types
+  3.1 struct var_data
+  3.2 typedef size_t (*parsefunc)
+  
+4 New functions
+  4.1 get_variable
+  4.2 parse_core
+  4.3 ParsePlugin_counter
+  4.4 ParsePlugin_builder
+  4.5 parse_string
+  4.6 validate_password
+  4.7 get_localpart
+  4.8 get_domain
+  4.9 parse_select_clause
+  4.10 parse_chpass_clause
+  
+5 Ideas and TODO
+
+6 Thanks
+
+
+
+
+		    *-----------------------
+		     0 What's that?
+		    *-----------------------
+
+Courier-imap-myownquery.patch allows administrator to set own SQL queries
+used by authdaemon to authenticate user (including fetchig credentials) and to
+change user's password. It allows to construct SELECT or UPDATE clause in the
+configuration file (authmysqlrc or authpgsqlrc) by adding two new configuration
+variables: MYSQL_SELECT_CLAUSE or PGSQL_SELECT_CLAUSE and MYSQL_CHPASS_CLAUSE 
+or PGSQL_CHPASS_CLAUSE. It may be useful in the mail environments where there
+is such a need to have different database structure and/or tables scheme than
+expected by authmysql or authpgsql module.
+
+It also implements a small parsing engine for substitution variables which
+may appear in the clauses and are used to put informations like username
+or domain into the right place of a query.
+
+This patch was created using `diff -Nur` on courier-imap-1.3.12 source.
+
+
+
+
+
+		    *-----------------------
+		     1 Modifications overview
+		    *-----------------------
+
+Modified files:	authmysqllib.c authmysqlrc authpgsqllib.c authpgsqlrc
+
+Each modified set of instructions is marked by my e-mail address:
+siefca@pld.org.pl (for MySQL files) or tom@minnesota.com (for PostgreSQL files)
+
+Changes in the current source code are related to:
+
+- sections where the queries are constructed
+  (including memory allocation for the buffers)
+
+	when MYSQL_SELECT_CLAUSE or MYSQL_CHPASS_CLAUSE or 
+        PGSQL_SELECT_CLAUSE or PGSQL_CHPASS_CLAUSE  is
+	used then the query goes through the parsing functions
+	passing over current memory allocation and query construction
+	subroutines
+	  
+- section where the configuration file is read
+
+	i've had to modify read_env() function to allow line breaks
+	- now each sequence of the backslash as a first character and
+	newline as the second is replaced by two whitespaces while
+	putting into the buffer
+
+- sections where the query is constructed
+
+	selection is made, depending on configuration variables which
+	are set or not - if own query is used 
+
+
+
+
+
+		    *-----------------------
+		     2 Definitions
+		    *-----------------------
+
+#define		MAX_SUBSTITUTION_LEN	32
+#define		SV_BEGIN_MARK		"$("
+#define		SV_END_MARK		")"
+#define		SV_BEGIN_LEN		((sizeof(SV_BEGIN_MARK))-1)
+#define		SV_END_LEN		((sizeof(SV_END_MARK))-1)
+
+These definitions allows to change substitution marks in an easy way.
+SV_BEGIN_MARK refers to sequence of characters treated as a prefix of
+each substitution variable and SV_END_MARK refers to string which is
+a closing suffix. If the expected substitution variable is called
+'local_part' (without apostrophes) then '$(local_part)' is a valid
+string representation for SV_BEGIN_MARK set to "$(" and SV_END_MARK to ")".
+MAX_SUBSTITUTION_LEN defines maximal length of a substitution variable's
+identifier (name).
+
+The last two definitions are just for code simplification.
+
+
+
+
+
+
+		    *-----------------------
+		     3 New data types
+		    *-----------------------
+
+This section describes new data type definitions and variables.
+
+3.1 struct var_data
+
+struct var_data {			
+	const char *name;
+	const char *value;
+	const size_t size;
+	size_t value_length;
+	} ;
+
+This structure holds information needed by parsing routines.
+Using var_data array you may specify a set of string substitutions
+which should be done while parsing a query. Last element in array
+should have all fields set to zero (null). 
+
+name field	- should contain substituted variable name
+value 		- should contain string which replaces it
+size		- should contain string size including the last zero byte ('\0')
+value_length	- should be set to zero - it is used as a value size cache
+
+
+explanation: size is used to increase speed of calculation proccess
+	     value_length is used to cache length of a value during the
+	     parsing subroutines - it helps when substitution variable
+	     occures more than once within the query
+ 
+Example:
+
+struct var_data vdt[] =	{
+    {"some",	"replacement",	sizeof("some"),		0},
+    {"anotha",	NULL,		sizeof("anotha"),	0},
+    {NULL,	NULL,		0,			0}
+};
+
+In this example we've declared that $(some) in the query should be
+replaced by 'replacement' text, and replacement for $(anotha) will
+be defined in the code before passing on the array pointer to
+the paring function.
+
+
+3.2 typedef size_t (*parsefunc)
+
+typedef int (*parsefunc)(const char *, size_t, void *);
+
+This type definition refers to the function pointer, which is used
+to pass plugin functions into the core parsing subroutine. This definition
+is included to simplify the declaration of the parse_core() function.
+
+
+
+
+
+		    *-----------------------
+		     4 New functions
+		    *-----------------------
+
+This section describes added functions.
+
+4.1 get_variable
+
+NAME
+
+	get_variable
+
+SYNOPSIS
+
+	static const struct var_data *get_variable (const char *begin,
+						    size_t len,
+  		  	        	  	    struct var_data *vdt);
+
+DESCRIPTION
+
+	This function searches an array pointed by vdt and tries to find
+	the substitution variable, which name is identified with begin
+	pointer and length of len bytes long.
+	
+	This function is also responsible for updating length cache field
+	of vdt elements and validating requested variables.
+	
+	This function repports errors by sending human readable
+	messages to the standard error stream.
+
+RETURN VALUE
+
+	This function returns a pointer to the array element which is
+	structure of var_data type, which contains variable definition
+	of a given name. It returns NULL on error or failure.
+
+
+4.2 parse_core
+
+NAME
+
+	parse_core
+
+SYNOPSIS
+	static int    parse_core (const char *source, struct var_data *vdt,
+				  parsefunc outfn, void *result);
+
+DESCRIPTION
+
+	This is the parsing routine for query strings containing the
+	substitution variables. It reads the string pointed with source
+	and tries to catch a valid substitution variables or parts which
+	are plain text blocks. The main purpose of using this function
+	it to split source string into parts and for each part call
+	outfn() function. Those parts are substrings identified by
+	pointer to some element of the source string and size.
+	Those elements are the result of splitting source string into
+	logical parts: plain text substrings and substitution variables'
+	values. To get the values of any found substitution variables
+	parse_core() uses get_variable() function. To find places
+	where substitution variables occurs it uses strstr() function
+	in conjunction with SV_BEGIN_MARK and SV_END_MARK definitions.
+	It passes vdt structure pointer to get_variable() function is
+	it calls it.
+
+	outfn() function should be passed by its pointer which
+	refers to declaration:
+	
+ 	int (*outfn)    (const char *begin,
+			 size_t string_length,
+			 void *void_pointer);
+	
+	Each time outfn() is called the result argument of parse_core()
+	is passed to the outfn() as a last argument (void_pointer).
+	
+	Example:
+	
+	    Example string "$(local_part) AND $(domain)" will cause the
+	    outfn() to be called 3 times. First time for a value of
+	    $(local_part) substitution variable, second time
+	    for " AND " string, and the last time for $(domain) variable's
+	    value. Variables are passed to outfn() by their (found) values,
+	    plain text blocks are passed as they appear.
+
+	This function repports errors by sending human readable
+	messages to the standard error stream.
+
+RETURN VALUE
+
+	This function returns -1 if an error has occured and 0 if
+	everything went good.
+	
+4.3 ParsePlugin_counter
+
+NAME
+
+	ParsePlugin_counter
+
+SYNOPSIS
+
+	int    ParsePlugin_counter (const char *begin, size_t len,
+			            void *vp);
+
+DESCRIPTION
+
+	This is parsing plugin function. It simply increments the value
+	found in the memory area pointed by vp. It assumes that
+	the memory area is allocated for the variable of size_t
+	type and that area was passed by (size_t *) pointer.
+	The value is incremented by len argument. Begin argument
+	is not used.
+
+	This function repports errors by sending human readable
+	messages to the standard error stream.
+
+RETURN VALUE
+
+	This function returns the variable size or -1 if an error
+	has occured, 0 if everything went good.
+
+4.4 ParsePlugin_builder
+
+NAME
+
+	ParsePlugin_builder
+
+SYNOPSIS
+
+	int    ParsePlugin_builder (const char *begin, size_t len,
+			            void *vp);
+
+DESCRIPTION
+
+	This is parsing plugin function. It simply copies len bytes
+	of a string pointed by begin to the end of memory area pointed by
+	vp. It assumes that the area pointed by vp is passed by (char **)
+	type pointer and refers to the (char *) pointer variable.
+	After each call it shifts the value of pointer variable (char *)
+	incrementing it by len bytes. Be careful when using this function
+	- its changes the given pointer value. Always operate on an
+	additional pointer type variable when passing it as the third
+	argument.
+
+RETURN VALUE
+
+	This function returns the variable size or -1 if an error
+	has occured, 0 if everything went good.
+
+4.5 parse_string
+
+NAME
+	parse_string
+
+SYNOPSIS
+
+	static char *parse_string (const char *source, struct var_data *vdt);
+
+DESCRIPTION
+
+	This function parses the string pointed with source according to the
+	replacement instructions set in var_data array, which is passed with
+	its pointer vdt. It produces changed string located in newly allocated
+	memory area.
+
+	This function calls parse_core() function with various parsing
+	subroutines passed as function pointers.
+	
+	1. It uses parse_core() with ParsePlugin_counter to obtain the
+	   total amount	of memory needed for the output string.
+	
+	2. It allocates the memory.
+	
+	3. It uses parse_core() with ParsePlugin_builder to build the
+	   output string.
+
+	This function repports errors by sending human readable
+	messages to the standard error stream.
+
+RETURN VALUE
+			   
+	Function returns pointer to the result buffer or NULL
+	if an error has occured.
+
+WARNINGS
+
+	This function allocates some amount of memory using standard
+	ANSI C routines. Memory allocated by this function should be
+	freed with free().
+
+
+4.6 validate_password
+
+NAME
+	validate_password
+
+SYNOPSIS
+
+	static const char *validate_password (const char *password);
+
+DESCRIPTION
+
+	This function checks whether password string does contain
+	any dangerous characters, which may be used to pass command
+	strings to the database connection stream. If it founds one
+	it replaces it by the backslash character.
+
+RETURN VALUE
+
+	It returns a pointer to the static buffer which contains
+	validated password string or NULL if an error has occured.
+
+
+4.7 get_localpart
+
+NAME
+	
+	get_localpart
+
+SYNOPSIS
+
+	static const char *get_localpart (const char *username);
+
+DESCRIPTION
+
+	This function detaches local part of an e-mail address
+	from string pointed with username and puts it to the
+	buffer of the fixed length. All necessary cleaning is
+	made on the result string.
+
+RETURN VALUE
+
+	Pointer to the static buffer containing local part or
+	NULL if there was some error.
+
+
+4.8 get_domain
+
+NAME
+
+	get_domain
+
+SYNOPSIS
+
+	static const char *get_domain (const char *username, 
+				       const char *defdomain);
+
+DESCRIPTION
+
+        This function detaches domain part of an e-mail address
+	from string pointed with username and puts it to the
+	buffer of the fixed length. All necessary cleaning is
+	made on the result string. If function cannot find domain
+	part in the string the string pointed by defdomain is
+	used instead.
+
+RETURN VALUE
+
+        Pointer to the static buffer containing domain name or
+	NULL if there was some error.
+
+
+4.9 parse_select_clause
+
+NAME
+
+	parse_select_clause
+
+SYNOPSIS
+
+	static char *parse_select_clause (const char *clause,
+					  const char *username,
+                                  	  const char *defdomain);
+
+DESCRIPTION
+
+	This function is a simple wrapper to the parse_string()
+	function. It parses a query pointed by caluse. username
+	and defdomain strings are used to replace corresponding
+	substitution strings if present in the query: $(local_part)
+	and $(domain).
+	
+
+RETURN VALUE
+
+	Same as parse_string().
+
+
+4.10 parse_chpass_clause
+
+NAME
+
+        parse_chpass_clause
+
+SYNOPSIS
+
+        static char *parse_chpass_clause (const char *clause,
+                                          const char *username,
+                                          const char *defdomain,
+					  const char *newpass,
+					  const char *newpass_crypt);
+								    
+DESCRIPTION
+
+	This function is a simple wrapper to the parse_string()
+	function. It parses a query pointed by caluse. username,
+	defdomain, newpass and newpass_crypt strings are used to
+	replace corresponding substitution strings if present in
+	the query: $(local_part), $(domain), $(newpass),
+	$(newpass_crypt).
+
+RETURN VALUE
+
+	Same as parse_string().
+
+
+
+
+
+		    *------------------------
+		     5 Ideas and TODO
+		    *------------------------
+
+- solve problem with fixed buffer length of local part and the domain part
+  strings after split						(problem?)
+- allow admin to set a group name instead of numerical group id
+- allow admin to set a username instead of numerical user id
+
+- add clauses:
+
+  - MYSQL_PRESELECT_CLAUSE (query which comes before MYSQL_SELECT_CLAUSE)
+  - MYSQL_POSTSELECT_CLAUSE (query which comes after MYSQL_SELECT_CLAUSE)
+  - PGSQL_PRESELECT_CLAUSE (query which comes before PGSQL_SELECT_CLAUSE)
+  - PGSQL_POSTSELECT_CLAUSE (query which comes after PGSQL_SELECT_CLAUSE)
+
+
+
+
+
+		    *------------------------
+		     6 Thanks
+		    *------------------------
+
+At the beginning this patch was messy indeed. :> I would like to thank
+Sam Varshavchik for pointing me a lot how to make it more fast and solid.
+I would also thank Philip Hazel, Chris Lightfoot and Mike Bremford which
+by their software capabilities inspired me to write it.
+
+Thomas T. Thai <tom@minnesota.com> ported author's original MySQL code
+to the PostgreSQL module.
+
+---------------------------------------------------------------------------
+

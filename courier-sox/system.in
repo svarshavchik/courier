@@ -1,0 +1,27 @@
+# Copyright 2004-2009 Double Precision, Inc.
+# See COPYING for distribution information.
+#
+
+# All files in this directory, except for filenames that contain periods,
+# and tildes, and files named "CVS" are concatenated together.
+#
+# See the socksrc(5) man page for more information.
+#
+# Do not modify this file, instead create other files in this directory to
+# define your Socks 5 proxies.  This file will be overwritten after upgrading
+# the courier-sox library.
+#
+# The following setting is required for everyone.  Don't mess with it.
+
+noproxy 127.0.0.0/8
+
+@IPV6_NOPROXY@
+
+# Servers that bind() on the wildcard address shouldn't proxy!
+# This setting is applicable to IPv6 also, since IPv4 addresses are internally
+# translated into IPv6 addresses
+
+noproxy 0.0.0.0
+
+# Put other settings in other files in this directory.
+

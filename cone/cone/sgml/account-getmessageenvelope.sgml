@@ -1,0 +1,120 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getmessageenvelope">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getMessageEnvelope</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getMessageEnvelope</refname>
+      <refpurpose>Return message header envelope</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+#include &lt;libmail/envelope.H&gt;
+
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getMessageEnvelope</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; &amp;<parameter>msgList</parameter></paramdef>
+	  <paramdef>std::vector&lt;mail::xenvelope&gt; &amp;<parameter>envelopes</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      &libmail-accterrmsg;
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::xenvelope myEnvelope=mail-&gt;<function>getMessageEnvelope</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      &libmail-amsglist;
+
+      <para>
+This function reads the message envelope header information of each message
+specified by <parameter>msgList</parameter>.
+This function initializes the
+<parameter>envelopes</parameter>
+array to the same size as <parameter>msgList</parameter>, with each
+array member containing the envelope header information for the corresponding
+message in <parameter>msgList</parameter>.</para>
+
+      <refsect2>
+	<title><structname>mail::xenvelope</structname></title>
+
+	<para>
+The <structname>mail::xenvelope</structname> structure is a subclass of
+<link linkend="envelope"><citerefentry>
+	    <refentrytitle>mail::envelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>, with two
+additional fields:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>time_t arrivalDate</term>
+	    <listitem>
+	      <para>
+When this message was received by the mail server (or <literal>0</literal>
+if the time cannot be determined).</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>unsigned long messageSize</term>
+	    <listitem>
+	      <para>
+The approximate size of the message, in bytes.
+This size should be considered as an estimated only, and the actual size
+may be slightly higher or lower.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect2>
+    </refsect1>
+
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-account-return;
+
+      <para>
+The second version of <function>mail::ACCOUNT::getMessageEnvelope</function>
+returns the envelope information of a single message, ignoring any error
+condition (a failure results in the returned
+<structname>mail::xenvelope</structname> object being completely
+empty).</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="envelope"><citerefentry>
+	    <refentrytitle>mail::envelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="account-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

@@ -1,0 +1,85 @@
+#! @SHELL@
+#
+# Migrate script from pre courier-authlib versions of Courier.
+#
+#
+# Copyright 2004-2009 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+sbindir=@sbindir@
+
+chk_file() {
+
+file="$1"
+dstfile="$2"
+rc=0
+
+for dir in	/etc/courier \
+		/etc/courier/authlib \
+		/etc/courier-imap \
+		/usr/lib/courier/etc \
+		/usr/lib/courier-imap/etc \
+		/usr/local/etc \
+		/usr/local/etc/courier \
+		/usr/local/courier/etc \
+		/usr/local/lib/courier/etc \
+		/usr/local/lib/courier-imap/etc \
+		/usr/local/share/sqwebmail \
+		/usr/local/etc/courier-imap
+do
+	if test -f "$dstfile"
+	then
+		if test -r "$dir/$file"
+		then
+			echo "Obsolete: $dir/$file""(.dist)?"
+		fi
+		continue
+	fi
+
+	if test -d "$dstfile"
+	then	
+		if test -r "$dir/$file"
+		then
+			echo "Obsolete: $dir/$file""(.dist)?"
+		fi
+		continue
+	fi
+
+	if test ! -r $dir/$file
+	then
+		continue
+	fi
+
+	if test -f "$dir/$file"
+	then
+		if test "$file" = "userdb"
+		then
+			:
+		else
+			if test "`sed -n 1p $dir/$file | sed -n '/^##VERSION/p'`" = ""
+			then
+				continue
+			fi
+		fi
+	fi
+
+	echo "$dir/$file => $dstfile"
+	cp -pr "$dir/$file"  "$dstfile"
+	rc=1
+done
+return $rc
+}
+
+chk_file authdaemonrc ${DESTDIR}@authdaemonrc@
+chk_file authmysqlrc ${DESTDIR}@authmysqlrc@
+chk_file authpgsqlrc ${DESTDIR}@authpgsqlrc@
+chk_file authldaprc ${DESTDIR}@authldaprc@
+chk_file userdb ${DESTDIR}@userdb@
+
+if test "$?" = "1"
+then
+	echo "makeuserdb..."
+	$sbindir/makeuserdb
+fi

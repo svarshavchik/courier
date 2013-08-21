@@ -1,0 +1,101 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-findfolder">
+    <refmeta>
+      <refentrytitle>mail::account::findFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::findFolder</refname>
+      <refpurpose>A direct short-cut to a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      &libmail-mycallbackfolderlist;
+      <literallayout>
+mail::account *account;
+
+mail::folder *folder;
+
+std::string folderPath=folder-&gt;getPath();
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::folder *folder=account-&gt;<function>findFolder</function></funcdef>
+	  <paramdef>std::string <parameter>folderPath</parameter></paramdef>
+	  <paramdef>myFolderCallback &amp;<parameter>folderCallback</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function is very similar to
+<link linkend="mail-folderfromstring"><citerefentry>
+	    <refentrytitle>mail::account::folderFromString</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+<function>mail::account::findFolder</function>
+recreates a <structname>mail::folder</structname> object, given its server
+path (which is returned by
+<link linkend="folder-getpath"><citerefentry>
+	    <refentrytitle>mail::folder::getPath</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+The differences between
+<function>mail::account::findFolder</function>
+and
+<function>mail::account::folderFromString</function> are:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+<function>mail::account::folderFromString</function> uses a string created
+by
+<function>mail::account::folder::toString</function>, which includes all
+of the folder's properties (such as
+whether the folder contains messages, subfolders,
+or both, and its canonical name).
+<function>mail::account::findFolder</function> uses only the folder's "path",
+or "address" on the server.</para>
+	</listitem>
+      </itemizedlist>
+
+      &libmail-readfolders1;
+
+      <para>
+The
+<function>folderCallback.success</function> method
+receives a vector with a single pointer
+<structname>mail::folder</structname> object, that's initialized to
+represent the folder referenced by
+<parameter>folderPath</parameter>.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+      &libmail-readfolders2;
+
+      &libmail-foldernote;
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-folderfromstring"><citerefentry>
+	    <refentrytitle>mail::account::folderFromString</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

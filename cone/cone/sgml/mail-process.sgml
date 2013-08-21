@@ -1,0 +1,171 @@
+<!-- Copyright 2002-2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-process">
+    <refmeta>
+      <refentrytitle>mail::account::process</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::process</refname>
+      <refpurpose>Process pending events</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <literallayout>
+#include &lt;sys/time.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+
+mail::account::function( <replaceable>parameter list</replaceable>,
+                         myCallback &amp;<replaceable>callback</replaceable>)
+
+for (;;)
+{
+  std::vector&lt;mail::pollfd&gt; pollfds;
+  int timeout;
+
+  timeout=15 * 60 * 60 * 1000;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef><function>mail::account::process</function></funcdef>
+	<paramdef><parameter>pollfds</parameter></paramdef>
+	<paramdef><parameter>timeout</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      <literallayout>
+
+  if (myCallback.completed())
+      break;
+
+  if (mail::account::poll(pollfds, timeout) &lt; 0 &amp;&amp; errno != EINTR)
+  {
+     error();
+  }
+}
+</literallayout>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function processes all pending events
+for all opened mail accounts.
+Most <structname>mail</structname> requests
+are not immediately processed
+(some are, but most aren't).
+A <structname>mail</structname> request usually includes a
+<structname>mail::callback</structname>-derived object as one of its
+arguments.
+When the mail request completes the
+<function>success</function> or
+<function>fail</function> method (some
+<structname>mail::callback</structname> subclasses use additional or
+alternative methods) is invoked.
+If the mail request cannot be completed immediately, 
+<function><replaceable>mail::account::function</replaceable></function>
+still returns right away.
+<function>mail::account::process</function> handles any pending events for
+all outstanding <structname>mail</structname> requests.
+The
+<function>success</function> or
+<function>fail</function> method will be invoked
+for all completed requests.</para>
+
+    <para>
+The <structname>mail::pollfd</structname> structure is a C++ wrapper for
+the <quote>struct <structname>pollfd</structname></quote> that's used by the
+<citerefentry>
+	    <refentrytitle>poll</refentrytitle>
+	    <manvolnum>2</manvolnum></citerefentry>
+system call.
+<function>mail::account::process</function> receives a reference to a
+vector of <structname>mail::pollfd</structname> objects.
+After
+<function>mail::account::process</function> handles any pending events,
+the function initializes the vector with all open file descriptors on which
+activity is expected before
+<function>mail::account::process</function> expects any more events to
+occur.</para>
+
+    <para>
+Any existing contents of the <structname>mail::pollfd</structname> vector
+will be destroyed.
+On the other hand, <parameter>timeout</parameter> must be initialized
+prior to invoking
+<function>mail::account::process</function>.
+<parameter>timeout</parameter> contains a time interval, in milliseconds,
+before the calling application expects to process any regularly-scheduled
+event.
+If <function>mail::account::process</function> expects any regularly-scheduled
+event to occur earlier, it will replace <parameter>timeout</parameter> with
+the smaller timeout interval.</para>
+
+    <para>
+The expectation is that the application's main loops alternatively invokes
+<function>mail::account::process</function> and
+<citerefentry>
+	    <refentrytitle>poll</refentrytitle>
+	    <manvolnum>2</manvolnum></citerefentry>.
+<citerefentry>
+	    <refentrytitle>poll</refentrytitle>
+	    <manvolnum>2</manvolnum></citerefentry> waits for some I/O occur,
+or a timeout expiring;
+<function>mail::account::process</function> processes any resulting events,
+then the cycle repeats.</para>
+
+    <para>
+The application may add its own file descriptors to the
+<structname>mail::pollfd</structname> vector, before calling
+<citerefentry>
+	    <refentrytitle>poll</refentrytitle>
+	    <manvolnum>2</manvolnum></citerefentry>.
+The application is reponsible for handling any I/O activity from its own
+file descriptors.</para>
+
+  </refsect1>
+  <refsect1>
+    <title>Return Codes</title>
+
+    <para>
+<function>mail::account::process</function>
+always returns succesfully.</para>
+    <note>
+      <para>
+The application should not invoke
+<function>mail::account::process</function>
+again until it either invokes
+<citerefentry><refentrytitle>poll</refentrytitle>
+	  <manvolnum>2</manvolnum></citerefentry>
+(directly or via
+<link linkend="mail-poll"><citerefentry>
+	    <refentrytitle>mail::account::poll</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>),
+or until the application
+calls another &libname; function.</para>
+    </note>
+  </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-poll"><citerefentry>
+	    <refentrytitle>mail::account::poll</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-resume"><citerefentry>
+	    <refentrytitle>mail::account::resume</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

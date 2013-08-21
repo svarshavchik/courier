@@ -1,0 +1,39 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <variablelist>
+	<varlistentry>
+	  <term>messageCount</term>
+	  <listitem>
+	    <para>
+Total number of messages in the folder.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>unreadCount</term>
+	  <listitem>
+	    <para>
+Total number of unread messages in the folder.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>fastInfo</term>
+	  <listitem>
+	    <para>
+This field should be initialized before calling this function.
+If set to <literal>true</literal> the message counts are returned only
+if they can be computed quickly.
+Otherwise
+<parameter>folderInfoCallback</parameter>'s
+<function>success</function> method will not be invoked at all, but
+<parameter>callback</parameter>'s
+<function>success</function> method will still be invoked.</para>
+
+	    <para>
+If this field is set to <literal>false</literal> (the default), the message
+counts are returned in all cases.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>

@@ -1,0 +1,8 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+		<para>
+Do not use the <link linkend="smap1">SMAP</link> if the server claims the
+availability of this experimental mail access protocol, and fall back to
+IMAP compatibility mode (this option is meaningful only with
+<quote><literal>imap://</literal></quote> and
+<quote><literal>imaps://</literal></quote> URLs).</para>

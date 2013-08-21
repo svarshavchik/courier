@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+
+  <title>README</title>
+</head>
+
+<body>
+  <h1>Courier Authentication Library</h1>
+
+  <p>Download: <a target="_blank" href=
+  "http://www.courier-mta.org/download.php#authlib">http://www.courier-mta.org/download.php#authlib</a></p>
+
+  <h2>Overview</h2>
+
+  <p>The Courier authentication library provides authentication
+  services for other Courier applications. In this context, the
+  term "authentication" refers to the following functions:</p>
+
+  <ol>
+    <li>Take a userid or a loginid, and a password. Determine
+    whether the loginid and the password are valid.</li>
+
+    <li>Given a userid, obtain the following information about the
+    userid:
+
+      <ol type="A">
+        <li>The account's home directory.</li>
+
+        <li>The numeric system userid and groupid that owns all
+        files associated with this account.</li>
+
+        <li>The location of the account's maildir.</li>
+
+        <li>Any maildir quota defined for this account. See the
+        Courier documentation for more information on maildir
+        quotas.</li>
+
+        <li>Other miscellaneous account-specific options.</li>
+      </ol>
+    </li>
+
+    <li>Change the password associated with a loginid.</li>
+
+    <li>Obtain a complete list of all login ids.</li>
+  </ol>
+
+  <p>The Courier authentication library provides alternative
+  implementations of these authentication services:</p>
+
+  <ol>
+    <li>Use the traditional system password files:
+    <code>/etc/passwd</code> and <code>/etc/shadow</code>, possibly
+    in conjunction with the PAM library.</li>
+
+    <li>Maintain all this information in a GDBM or a DB database.
+    The GDBM or the DB database is compiled from plain text files.
+    Perl scripts provide a simple interface for creating and
+    editing the authentication information, then a script compiles
+    the plain text files into a database.</li>
+
+    <li>Use an LDAP server for authentication.</li>
+
+    <li>Use a table in a MySQL database for authentication.</li>
+
+    <li>Use a table in a PostgreSQL database for
+    authentication.</li>
+
+    <li>Use a table in an SQLite file for authentication.</li>
+  </ol>
+
+  <p>All Courier components that use this authentication library,
+  therefore, will be able to authenticate E-mail accounts using any
+  of the above methods.</p>
+
+  <p>Additional information can be found in the <a href=
+  "INSTALL.html">INSTALL</a> file.</p>
+
+  <p>The authentication API is <a href=
+  "authlib.html">documented</a>.</p>
+
+  <h2>Further resources</h2>
+
+  <p>Subscribe to the <i><a target="_blank" href=
+  "http://lists.sourceforge.net/mailman/listinfo/courier-users">courier-users</a></i>
+  mailing list. Go to
+  <code>http://lists.sourceforge.net/mailman/listinfo/courier-users</code>
+  to subscribe to <i>courier-users</i>, or send a message to
+  <code>&lt;courier-users-request</code><code>@lists.sourceforge.net&gt;</code>
+  and put "subscribe" in the subject line. Search the list archives
+  at <a target="_blank" href=
+  "http://markmail.org/browse/net.sourceforge.lists.courier-users">http://markmail.org/browse/net.sourceforge.lists.courier-users</a>.</p>
+</body>
+</html>

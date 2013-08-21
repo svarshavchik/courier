@@ -1,0 +1,97 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+This function returns an object with the following fields:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>std::string uid</term>
+	  <listitem>
+	    <para>
+A unique ID that's assigned to each message in a folder.
+Applications should consider this unique ID as a completely opaque string,
+with no particular interpretation.
+The only assumption that applications may make is that no two
+messages will ever have the same uid in the same folder.
+A message copied to another folder will receive a different unique ID
+in the destination folder (the copy in the original folder is not
+affected).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>bool draft</term>
+	  <listitem>
+	    <para>
+This is a draft message.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>bool replied</term>
+	  <listitem>
+	    <para>
+A reply was previously sent to this message.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>bool marked</term>
+	  <listitem>
+	    <para>
+This message is marked for further processing.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>bool deleted</term>
+	  <listitem>
+	    <para>
+This message is marked for deletion.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>bool unread</term>
+	  <listitem>
+	    <para>
+The contents of this message have not been read.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>bool recent</term>
+	  <listitem>
+	    <para>
+This is the first time the folder was opened with this message in the folder.
+</para>
+
+	    <note>
+	      <para>
+This message flag is considered obsolete, and should only be used by IMAP-based
+clients that absolutely need this flag.
+Applications that absolutely require this flag should be evaluated for
+correctness, since the IMAP specification indicates that this flag's
+setting is not defined in situations where the same mail folder is opened
+by multiple applications at the same time.
+Since this is nearly always the case, it seems that this flag's usability
+is rather limited.
+For this reason, the <literal>recent</literal> flag was not reimplemented
+in <link linkend="smap1">SMAP</link>, and will not
+be set for accounts that are accessed via <literal>SMAP</literal>.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <note>
+	<para>
+Not all types of mail accounts support every message status flag.
+Unsupported message status flags will be automatically emulated,
+where possible.
+Specifically, POP3 mail accounts do not have a concept of message
+status flags at all.
+Each time a POP3 mail account is opened, the status of all messages in the
+POP3 account will be reset to the default status (unread message, no other
+flags set).</para>
+      </note>

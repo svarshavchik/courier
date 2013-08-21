@@ -1,0 +1,150 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>esmtpd</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>esmtpd</refname>
+    <refpurpose>The <application moreinfo="none">Courier</application> mail server
+mail server ESMTP daemon</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">esmtpd</command>
+      <arg choice="req" rep="norepeat">start</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">esmtpd</command>
+      <arg choice="req" rep="norepeat">stop</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">esmtpd</command>
+      <arg choice="req" rep="norepeat">restart</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">esmtpd-msa</command>
+      <arg choice="req" rep="norepeat">start</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">esmtpd-msa</command>
+      <arg choice="req" rep="norepeat">stop</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">esmtpd-msa</command>
+      <arg choice="req" rep="norepeat">restart</arg>
+    </cmdsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The command "<command moreinfo="none">esmtpd start</command>" runs
+<command moreinfo="none">couriertcpd</command> in
+the background, listening on the SMTP port.
+ <command moreinfo="none">couriertcpd</command> will run
+<command moreinfo="none">courieresmtpd</command> in response to connection
+requests.</para>
+
+    <para>
+The command "<command moreinfo="none">esmtpd stop</command>" stops the
+<command moreinfo="none">couriertcpd</command>
+daemon, shutting down the ESMTP service.</para>
+
+    <para>
+The command "<command moreinfo="none">esmtpd-msa start</command>" starts the server on the
+message submission port, port 587.
+"<command moreinfo="none">esmtpd-msa stop</command>" stops it.
+The difference between <command moreinfo="none">esmtpd</command> and
+<command moreinfo="none">esmtpd-msa</command> is that
+the latter is set up for additional processing as defined by RFC 2476 (mainly
+that the messages will have the
+<literal moreinfo="none">Message-ID:</literal> and <literal moreinfo="none">Date:</literal> headers added, by
+default).</para>
+
+    <para>
+Normally,
+<ulink url="makesmtpaccess.html">
+<citerefentry>
+	  <refentrytitle>makesmtpaccess</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>
+automatically runs "<command moreinfo="none">esmtpd restart</command>", in order to reread the
+<filename moreinfo="none">@sysconfdir@/smtpaccess.dat</filename>
+access file, so you don't have to do
+it manually, yourself. Similarly,
+<ulink url="makesmtpaccess.html">
+<citerefentry>
+	  <refentrytitle>makesmtpaccess-msa</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>
+automatically runs <command moreinfo="none">esmtpd-msa restart</command></para>
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/esmtpd</filename></term>
+	<listitem>
+	  <para>
+This configuration file initializes
+various settings for <command moreinfo="none">courieresmtpd</command>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/esmtpd-msa</filename></term>
+
+	<listitem>
+	  <para>
+
+This configuration file
+initializes the settings for <command moreinfo="none">courieresmtpd</command> when invoked by
+<command moreinfo="none">esmtpd-msa</command>.  Note that this file is used to override the
+settings <filename moreinfo="none">@sysconfdir@/esmtpd</filename>.
+The command "<command moreinfo="none">esmtpd-msa
+start</command>" first reads <filename moreinfo="none">@sysconfdir@/esmtpd</filename>, then
+afterwards <filename moreinfo="none">@sysconfdir@/esmtpd-msa</filename>. Any settings in
+<filename moreinfo="none">esmtpd-msa</filename> override the corresponding settings in
+<filename moreinfo="none">esmtpd</filename></para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="couriertcpd.html">
+<citerefentry>
+	  <refentrytitle>couriertcpd</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="makesmtpaccess.html">
+<citerefentry>
+	  <refentrytitle>makesmtpaccess</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

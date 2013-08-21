@@ -1,0 +1,265 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="userdb">
+
+  <refmeta>
+    <refentrytitle>userdb</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>userdb</refname>
+    <refpurpose>manipulate @userdb@</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='req'><replaceable>addr</replaceable></arg>
+      <arg choice='plain'>set</arg>
+      <arg choice='req' rep='repeat'><replaceable>field</replaceable>=<replaceable>value</replaceable></arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='req'><replaceable>addr</replaceable></arg>
+      <arg choice='plain'>unset</arg>
+      <arg choice='req' rep='repeat'><replaceable>field</replaceable></arg>
+    </cmdsynopsis>
+    
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='req'><replaceable>addr</replaceable></arg>
+      <arg choice='plain'>del</arg>
+    </cmdsynopsis>
+    
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='req'><replaceable>path/addr</replaceable></arg>
+      <group>
+	<arg choice='plain'>set</arg>
+	<arg choice='plain'>unset</arg>
+	<arg choice='plain'>del</arg>
+      </group>
+      <arg choice='plain'>...</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='plain'>-f</arg>
+      <arg choice='req'><replaceable>file</replaceable></arg>
+      <arg choice='req'><replaceable>adr</replaceable></arg>
+      <group>
+	<arg choice='plain'>set</arg>
+	<arg choice='plain'>unset</arg>
+	<arg choice='plain'>del</arg>
+      </group>
+      <arg choice='plain'>...</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='plain'>-show</arg>
+      <arg choice='req'><replaceable>path</replaceable></arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='plain'>-show</arg>
+      <arg choice='req'><replaceable>path</replaceable></arg>
+      <arg choice='req'><replaceable>addr</replaceable></arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='plain'>-show</arg>
+      <arg choice='plain'>-f</arg>
+      <arg choice='req'><replaceable>file</replaceable></arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis>
+      <command>userdb</command>
+      <arg choice='plain'>-show</arg>
+      <arg choice='plain'>-f</arg>
+      <arg choice='req'><replaceable>file</replaceable></arg>
+      <arg choice='req'><replaceable>addr</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command>userdb</command> is a convenient script to individually manipulate
+entries in <filename>@userdb@</filename>. See
+<ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+for a description of its contents.  <filename>@userdb@</filename> can always
+be edited using any text editor, but <command>userdb</command> is a
+convenient way to modify this file from another script.</para>
+
+    <para>
+<filename>@userdb@</filename> can also be a subdirectory, instead of a file.
+Specify <option><replaceable>foo/bar/addr</replaceable></option> to manipulate
+<option><replaceable>addr</replaceable></option> in the file
+<filename>@userdb@<replaceable>/foo/bar</replaceable></filename>.  You can
+also use the
+<option>-f</option> flag: <option>-f
+<replaceable>@userdb@/foo/bar</replaceable></option> is equivalent.  Use
+whatever form makes the most sense to you.</para>
+
+    <para>
+<filename>@userdb@</filename> must not have any group or world
+permissions. That's
+because its contents may include system passwords (depending upon the
+application which uses this virtual user account database).</para>
+
+    <para>
+Each line in <filename>@userdb@</filename> takes following form:</para>
+
+<blockquote>
+<computeroutput>
+<replaceable>addr</replaceable><token>&lt;TAB&gt;</token><replaceable>field</replaceable>=<replaceable>value</replaceable>|<replaceable>field</replaceable>=<replaceable>value</replaceable>...
+</computeroutput>
+      </blockquote>
+
+    <para>
+<replaceable>addr</replaceable> specifies a unique virtual address. It
+is followed by a single
+tab character, then a list of
+<replaceable>field</replaceable>=<replaceable>value</replaceable> pairs,
+separated by
+vertical slash characters. See
+<ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+for field definitions.</para>
+
+    <para>
+A text editor can be used to add blank lines or comments in
+<filename>@userdb@</filename>.  Any blank lines or comments are ignored by the
+<command>userdb</command> script.</para>
+
+    <para>
+The names of the actual fields, and their contents, are defined entirely by
+applications that use the <filename>@userdb@</filename> database, the
+<command>userdb</command> command just adds or removes arbitrary fields.</para>
+
+
+    <para>
+For example:</para>
+<blockquote>
+	<informalexample>
+	  <literallayout><command>userdb default/info set mail=/home/mail/info</command></literallayout>
+	</informalexample>
+      </blockquote>
+
+    <para>
+This command accesses the address "info" in
+<filename>@userdb@/default</filename>.</para>
+
+    <para>
+If the second argument to <command>userdb</command> is
+"<parameter>set</parameter>", the
+remaining arguments are taken as
+<parameter><replaceable>field</replaceable>=<replaceable>value</replaceable></parameter> pairs, which are
+added to the record for <replaceable>addr</replaceable>. If there is no
+record for <replaceable>addr</replaceable>, a
+new record will be appended to the file. If
+<replaceable>addr</replaceable> exists, any existing
+values of any specified fields are removed. If
+<parameter>=<replaceable>value</replaceable></parameter> is missing,
+<command>userdb</command> stops and prompts for it. This is useful if
+you're setting
+a password field, where you do not want to specify the password on the command
+line, which can be seen by the
+<citerefentry><refentrytitle>ps</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+command. If <command>userdb</command> is being
+executed by a script, the value can be provided on standard input.</para>
+
+    <para>Use "<parameter>unset</parameter>" to delete fields from an existing
+record. Use
+"<parameter>del</parameter>" to delete all fields in the existing record,
+plus the record itself.</para>
+
+
+    <refsect2><title>DISPLAYING <filename>@userdb@</filename></title>
+
+      <para>
+If the first argument to userdb
+is <parameter>-show</parameter>, <command>userdb</command>
+displays the contents of <filename>@userdb@</filename>. If
+<filename>@userdb@</filename> is a
+subdirectory,
+<parameter><replaceable>path</replaceable></parameter> must refer to a
+specific file in <filename>@userdb@</filename>. The
+<parameter>-f</parameter> option can be used instead of
+<parameter><replaceable>path</replaceable></parameter> in order to specify an
+arbitrary file.</para>
+
+      <para>
+If
+<parameter><replaceable>addr</replaceable></parameter> is not specified,
+<command>userdb</command> produces a list, on standard
+output, containing all addresses found in the file, on per line. If
+<parameter><replaceable>addr</replaceable></parameter> is specified,
+<command>userdb</command> produces a list, on standard output, of
+all the fields in <filename>@userdb@</filename> for this
+<parameter><replaceable>addr</replaceable></parameter>.</para>
+
+    </refsect2>
+
+    <refsect2>
+      <title>REBUILDING <filename>@userdb@.dat</filename></title>
+      
+      <para>
+The actual virtual account/address database is
+<filename>@userdb@.dat</filename>.
+This is a binary database file. <command>@userdb@</command> is the plain text
+version. After running <command>userdb</command>, execute the
+<ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> command to rebuild
+<filename>@userdb@.dat</filename> for the changes to take effect.</para>
+    </refsect2>
+
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+<parameter><replaceable>addr</replaceable></parameter> must be unique.
+If <filename>@userdb@</filename> is a subdirectory,
+it's possible to create the same
+<parameter><replaceable>addr</replaceable></parameter>
+in different files in the subdirectory.
+This is an error that is not currently detected by <command>userdb</command>,
+however the subsequent
+<ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> command
+will fail with an error message.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <para>
+<filename> @userdb@</filename> - plain text file, or directory of plain text files</para>
+    <para>
+<filename> .lock.filename</filename> - lock file for <filename>filename</filename></para>
+    <para>
+<filename> .tmp.filename</filename> - temporary file used to create new contents of <filename>filename</filename></para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="userdbpw.html"><citerefentry><refentrytitle>userdbpw</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink></para>
+
+  </refsect1>
+
+</refentry>
+

@@ -1,0 +1,1315 @@
+2012-12-04  Alessandro Vesely <vesely@tana.it>
+
+	* rfc2045/makemime.c (openfile_or_pipe): Do not dup stdin filedesc,
+	sometimes the stdin buffer already gets filled.
+
+2.6.0
+
+2012-09-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildir/maildiraclt.c (maildir_acl_delete): Fix double-free on error
+	path of an ENOMEM.
+
+2012-06-18  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: make a mention of reformail -D's locking in the manual
+	pages.
+
+2012-06-17  Osamu Aoki <osamu@debian.org>
+
+	* maildrop/formatmbox.C (GetLineBuffer): Do not skip whitespaces
+	looking for From: and Subject: headers, to log.
+
+2012-05-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045mkboundary.c (rfc2045_mk_boundary): truncate
+	the hostname portion of the boundary to 30 chars.
+
+2012-04-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* liblock/mail.c (dotlock_exists): Quell a compiler warning.
+
+2012-02-23  Osamu Aoki <osamu@debian.org>
+
+	* Miscellaneous spelling fixes.
+
+2.5.5
+
+2011-11-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045reply.c (mkreply): Fix copying of the contents of the
+	original message.
+
+	* rfc2045/reformime.c (do_print_info): rfc2231_udecodeDisposition()
+	failure is not fatal.
+
+	* rfc2045/reformime.c (get_suitable_filename): Ditto.
+
+2011-09-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/reformime.c (main2): Fixed segfault on some arches from an
+	initial null given to strtok.
+
+2011-08-31  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mailbot: add "feedback" and "replyfeedback" formats, generating
+	RFC 5965-formatted feedback report. -a option attaches the entire
+	original message, instead of only its headers, for "replydsn",
+	"feedback", and "replyfeedback" formats.
+
+2011-08-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/reformime.c (main2): On ia64 and arm, argv is in readonly
+	memory.
+
+2.5.4
+
+2011-05-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045cdecode.c: Tolerate lowercase hexadecimal characters
+	in quoted-printable-encoded content.
+
+2011-05-06  Thomas Jacob <jacob@internet24.de>
+
+	* unicode/unicode.c: Compilation fixes.
+
+2.5.3
+
+2011-03-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045reply.c (mkforward): Handle PGP-signed messages.
+
+	* unicode/unicode.h: Added unicode_isspace().
+
+	* unicode/unicode_wordbreak.c: Implementation of tr29.
+
+	* unicode/unicode.h: unicode_lb_set_opts(), plus derivatives: set
+	artbirary linebreaking options. Two options that tailor the unicode
+	linebreaking algorithm.
+
+2011-03-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045reply.c (mkforward): Rewrite from scratch.
+
+	* rfc2045/rfc2045replyunicode.c: Remove rfc2045_makereply_unicode(),
+	superceded by rfc2045_makereply().
+
+	* maildrop/testsuite.in (LANG): Additional test suites.
+
+	* maildrop/mailbot.c (usage): Some options were missing from the
+	usage message.
+
+2011-03-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/mailbot.c (main): mailbot now generates autoreplies using
+	the flowed text format. Existing autoreplies must be reformatted in
+	flowed-text format.
+
+	* rfc2045/rfc2045reply.c (rfc2045_makereply_do): Rewrite the reply
+	and forwarding logic replacing the rfc2646 parser with the new
+	rfc3676 parser.
+
+	* rfc2045/rfc2045.c (rfc2045_isdelsp): Convenience function
+	for checking for the presence of delsp=yes parameter.
+
+2011-01-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822/rfc2047.c (rfc2047_encode_callback): Rewrite broken logic.
+
+	* unicode/unicode.c (deinit_iconv): Incomplete multibyte character
+	remaining at the end of conversion was falsely being reported as
+	a callback failure, rather than a conversion failure.
+
+2011-01-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Check if -liconv is needed to get iconv.
+
+	* Clean up leftover unicode-related crud in configure scripts.
+
+2011-01-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045reply.c (mkreply): When copying a message's original
+	headers into a DSN-formatted mailbot-generated reply, preserve the case
+	of the original headers' names.
+
+2011-01-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045decodemsgtoutf8.c, rfc2045/rfc2045.h: Replace
+	function arg and passthrough arg to rfc2045_decodemsgtoutf8() with
+	a pointer to a structure that gives callback info. The function that
+	receives the decoded content now takes a character string+count,
+	instead of a single character.
+
+	* rfc2045/reformime.c (doconvtoutf8_stdout): Corresponding changes.
+
+	* maildrop/maildropfilter.sgml: Clarify wording.
+
+	* maildir/maildirsearch.c (maildir_search_start_unicode): Search was
+	broken, how did I miss this?
+
+2011-01-02  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045decodemsgtoutf8.c: Propagate all non-0 exit codes
+	from the callback function, don't force to a negative value.
+
+	* rfc2045/rfc2045decodemimesectionu.c: Add descriptive comments.
+
+	* rfc2045/testsuite (Content-Type): Add additional test for proper
+	iconv-based decoding implementation.
+
+2010-12-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildir/maildirsearch.h: maildir_searchengine uses unicode chars
+	internally. Replace maildir_search_start with
+	maildir_search_start_unicode() and provide a replacement
+	maildir_search_start_str() that widens a narrow char string to unicode
+	char size.
+
+	* rfc2045/rfc2045decodemsgtoutf8.c (rfc2045_decodemsgtoutf8): Add a
+	pass-through opaque pointer, closure.
+
+	* rfc2045/rfc2045decodemimesectionu.c (rfc2045_decodetextmimesection): 
+	Total rewrite that uses iconv, rather the built-in libunicode.
+
+2010-12-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045decodemsgtoutf8.c: new function:
+	 rfc2045_decodemsgtoutf8().
+
+2.5.2
+
+2010-10-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/maildropex.sgml: Fix formatting problem with man page
+	stylesheet.
+
+2.5.1
+
+2010-10-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/makemime.c (createsimplemime): Use charset specified in the
+	MIME autoresponse text.
+
+2010-09-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/mailbot.c: Sanity check on the contents of a MIME-formatted
+	autoreply template: it must specify text/plain content type, and its
+	charset gets used as the charset of the formatted autoreply.
+	Drop the existing C-T-E header, and document the requirement that it
+	cannot be a quoted-printable formatted MIME autoreply.
+
+2010-08-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045reply.c: added donotquote option, to suppress autoreply
+	text.
+
+	* maildrop/mailbot.c (main): Add the -N option to mailbot, to set the
+	donotquote option.
+
+	* maildir/maildirfilter.c: "noquote" autoreply option adds the -N
+	option to the mailbot command line.
+
+2010-06-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822/rfc822.c (rfc822_print_common_nameaddr): Prevent segfault if
+	address decode fails.
+
+	* Fix make check failure when libidn is not available.
+
+2010-05-31  shin2s2 <shin2s2@gmail.com>
+
+	* rfc2045/reformime.c (main2): Allow multiple sections to be specified
+	by the -s option.
+
+2010-05-31  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Implemented elsif, based on a patch by shin2s2@gmail.com.
+
+2010-05-31  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Rebuilt man pages with updated stylesheets.
+
+2.5.0
+
+2010-04-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/mailbot.c (main): Set close-on-exec bit on opened files.
+
+2010-04-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045reply.c (mkreply): Fix sender's name in the
+	reply salutation.
+
+2010-04-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/reformime.sgml: Document the -c option to reformime.
+
+2010-03-18  Hugo Monteiro <hugo.monteiro@fct.unl.pt>
+
+	* Big quota patch (with some changes).
+
+2.4.3
+
+2010-03-15  Brian Candler <B.Candler@pobox.com>
+
+	* configure.in: Fix typo that prevents compiling against bdb
+
+2010-03-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop.spec: Make rpmlint happy.
+
+2.4.2
+
+2010-02-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/mailbot.c (main): Fix memory corruption if the -c option
+	was passed to mailbot.
+
+2.4.1
+
+2010-02-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mailbot, reformime: Default to ISO-8859-1 in case of an unknown
+	default charset (probably we are in the C locale).
+
+2.4
+
+2010-01-14  Josip Rodin <joy@debbugs.entuzijast.net>
+
+	* maildrop/main.C (run): When using system authentication on
+	platforms where the mail directory does not use the sticky bit,
+	use groupid set by the set-group-id bit on the binary executable,
+	if any.
+
+2010-01-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/main.C (run): In delivery mode, preserve LANG, LANGUAGE,
+	and LC_* environment variables from the parent.
+
+2.3
+
+2009-11-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/reformail.C (main): Removed the -r, -p, -P, -t, -k options,
+	replaced by new mailbot options.
+
+	* maildrop/mailbot.c (main): New options that set the corresponding
+	parameters to rfc2045_makereply_unicode(): -e, -T, -F -S
+
+	* rfc2045/rfc2045replyunicode.c (rfc2045_makereply_unicode): Added
+	replytoenvelope setting. Added sophisticated formatting for
+	replysalut.
+
+2009-11-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822/rfc822_getaddr.c: Remove rfc822_prname() and
+	rfc822_prname_orlist(), replaced by rfc822_display_name() with a NULL
+	character set.
+
+	* rfc822/rfc2047u.c (rfc822_display_name): Semantical change --
+	without an explicit name, display the address as the name. If the
+	requested character set is NULL, do not decode RFC2047-encoded content,
+	return it as is.
+
+2009-11-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822/rfc2047u.c (rfc2047_print_unicodeaddr): Fix several formatting
+	issues with deprecated RFC 822 distribution lists: spurious comma
+	adter the last address, pass the space after the ':' as a separator
+	character.
+
+	* rfc822/rfc2047.c (counts2/save): Fix line-wrapping of encoded
+	addresses.
+
+	* rfc822/rfc2047u.c (rfc822_display_addr_tobuf): New function.
+
+	* rfc2045/rfc2045reply.c (mkreply): Fix logic for locating the
+	name used for salutation.
+
+2009-11-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822/rfc822.c (rfc822_print_common): Rewrite.
+
+	* rfc822/rfc2047u.c (rfc822_display_name_int): Fixed various rules for
+	encoding names to be more MIME compliant.
+	(rfc822_display_addr_str): Renamed from rfc822_display_addr(), for a
+	consistent API.
+	(rfc822_display_addr): New function, decode the wire format of a single
+	address. Names are MIME decoded, addresses are IDN-decoded.
+	(rfc2047_print_unicodeaddr): Do not output a dummy name for an
+	address without one.
+	(rfc822_display_addr_str_tobuf): New function, version of
+	rfc822_display_addr_str() that collects the output into a buffer.
+
+	* rfc822/rfc2047.c (rfc822_encode_domain): New function -- IDN-encode
+	a domain, with an optional "user@".
+	(rfc2047_encode_header_addr): Renamed rfc2047_encode_header(), for a
+	consistent API.
+	(rfc2047_encode_header_tobuf): New function, encode a header from
+	displayed format to wire format. Names are encoded using RFC 2047,
+	addresses using IDN.
+
+2009-11-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/maildropfilter.sgml: Typo fix.
+
+2009-11-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822/rfc2047.h: Expose raw RFC 2047 decoding function,
+	rfc2047_decoder().
+
+	* rfc822/rfc822hdr.c (rfc822hdr_is_addr): New function.
+
+	* rfc822/rfc822.c (tokenize): Tweak the logic for collecting RFC 2047
+	atoms.
+
+	* rfc822/rfc2047u.c (rfc822_display_name): New function,
+	replaces rfc2047_print().
+	(rfc822_display_name_tobuf): New function,
+	replaces rfc2047_print().
+	(rfc822_display_namelist): New function,
+	replaces rfc822_namelist().
+	(rfc822_display_addr): New function, replaces rfc2047_print().
+	(rfc2047_print_unicodeaddr): Renamed from rfc2047_print_unicode().
+	(rfc822_display_hdrvalue): New function, replaces rfc2047_decode(),
+	rfc2047_decode_simple(), rfc2047_decode_enhanced().
+	(rfc822_display_hdrvalue_tobuf): New function, ditto.
+
+	* rfc822/rfc2047.c: Removed rfc2047_decode(), rfc2047_decode_simple(),
+	rfc2047_decode_enhanced(), rfc2047_print().
+
+	* rfc822/Makefile.am: Link against GNU IDN library.
+
+	* rfc2045/rfc2045.h: Added "replydsn" option to rfc2045_makereply(),
+	incorporates the MIME bounce format generated by mailbot.
+	Added "subject" -- override subject of the reply.
+	Added "dsnfrom" -- for the replydsn option.
+	Added two callbacks used by the replydsn option.
+	Remove rfc2045_makereply(), leaving just rfc2045_makereply_unicode().
+
+	* rfc2045/reformime.c (do_print_info): MIME-decode the content
+	description.
+	(main2): New -H option.
+
+	* maildrop/mailbot.c (main): Use the default character set from the
+	system locale.
+	(usage): Added the -n option, for debugging purposes.
+	(opensendmail): Pass the autoreply to sendmail in a file descriptor
+	for a temporary file on stdin, instead of piping the resulting
+	message to sendmail, running as a child process.
+	(savemessage): Save the input message in a temporary file, and
+	RFC2045-parse it.
+	(main): Use rfc2045_makereply_unicode() to prepare the autoreply
+	message. Clarify mailbot man page as to the slightly changed
+	requirements for the autoreply text that must be given to mailbot.
+
+2009-11-07  Josip Rodin <joy@entuzijast.net>
+
+	* Fix makefile to install makedat only if gdbm or db is available.
+
+2009-09-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add -W option to deliverquota and maildrop. Remove the
+	--enable-maildirquota configure option -- maildir quotas are now
+	always enabled.
+
+2.2
+
+2009-06-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* all: gcc 4.4 fixes
+
+2.1
+
+2009-05-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Documentation refresh.
+
+2008-07-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/testsuite: Put additional stuff into testsuite
+
+	* maildrop/reformail.C (add_messageid): Make generated Message-ID:
+	field longer.
+
+	* maildrop/deliver.C (delivery): If child process did not fully
+	consume stdin, but terminated with a zero exit status, ignore SIGPIPE.
+
+	* maildrop/reformail.C (extract_headers): If stdin is seekable,
+	don't waste time on discarding stdin's content.
+
+2007-07-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* GPL 3.
+
+2007-07-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Makefile.am (EXTRA_DIST): Drop automake fixups -- can't maintain them
+	any more.
+
+2.0.4
+
+2007-04-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Update man pages and documentation to Docbook XML V4.4
+
+2007-03-31  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Makefile.am (uninstall-maildrop): Include the makedat script
+	in the maildrop package (the man page is already included <shrug>).
+
+2007-02-25  Kurt Roeckx <kurt@roeckx.be>
+
+	* Clean up configure scripts
+
+2.0.3
+
+2006-10-01  Josip Rodin <joy@entuzijast.net>
+
+	* maildrop: configure option to make courier-authlib authentication
+	optional; -a option to maildrop.
+
+2006-09-19  Josip Rodin <joy@entuzijast.net>
+
+	* maildirmake: Clarify some error messages.
+
+	* maildir/maildirmake.sgml: Documentation fixup.
+
+	* maildrop/maildropex.sgml: Documentation fixup.
+
+2006-09-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* liblock/lockmail.c (main): Save the hide of some knucklehead who 
+	changed the ownership and permissions of how lockmail gets installed
+	by my Makefile.  Max Vozeler <max@decl.org> via Debian's maildrop
+	maintainer.
+
+2006-09-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/main.C (run): -f ""? I really mean it.
+
+2006-09-05  Josip Rodin <joy@debian.org>
+
+	* maildrop/dotlock.C (attemptlock): Clean up some error messages.
+
+2006-09-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* deliverquota: messages created by deliverquota will use the umask
+	setting.
+2.0.2
+
+2006-02-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Makefile/configure: upgrade libtool/autoconf/automake toolchain.
+
+2006-01-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc822/rfc2047.c (encodebase64): Fix compiler warning.
+
+	* rfc822/rfc822.c (parseaddr): Ditto.
+
+2005-11-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045rewrite.c: Cleanup.  Remove duplicate quoted-printable
+	implementation, use one in rfc822/encode.c
+
+	* gpglib/gpg.c: Ditto.
+
+	* rfc822/encode.c (quoted_printable): encode spaces that precede a
+	newline.
+
+2.0.1
+
+2005-09-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure.in: Look for pcre/pcre.h if pcre is not installed.
+	maildir: skip parts of make check if libpcre is not installed (used
+	by other courier packages).
+
+2005-09-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/Makefile.am (testmaildirfilter_LDADD): The 2005-09-07 patch
+	was not included in the 2.0.0 build :-(
+
+2.0.0
+
+2005-09-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/Makefile.am (testmaildirfilter_LDADD): Move -lpcre to LDADD,
+	from LDFLAGS.
+
+2005-08-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/search.C: Use PCRE (http://www.pcre.org) for mattern
+	matching.
+	+ Most visible change is a different syntax for subexpression matching,
+	  using (...).  MATCH2 becomes MATCH1, MATCH3 becomes MATCH2, etc...
+	+ "w" account option dropped.
+	+ During a transitional period, setting MAILDROP_OLD_REGEXP
+	reverts to the old pattern matching engine.
+	
+2005-08-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/mailbot.c (check_dsn): Do not autoreply to messages
+	with an Auto-Submitted: header, unless it's contents are "no".
+	(main): Add Auto-Submitted: auto-replied.
+
+2005-06-18  Andres Salomon <dilinger@debian.org>
+
+	* Prefer /var/mail to /var/spool/mail, update docs accordingly.
+
+2005-06-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* COPYING.GPL: Update FSF mailing address.
+
+1.8.1
+
+2005-05-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/main.C (find_in_authlib): Exit with TEMPFAIL if temporary
+	error indication from authlib.
+
+2005-04-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/maildropfilter.sgml: Explicitly document the | character.
+
+2005-02-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop.spec.in (BuildPreReq): Fix SPEC file.
+
+2005-01-27  Andres Salomon <dilinger@voxel.net>
+
+	* maildrop/main.C (tempfail): More descriptive error messages when
+	permissions check fails.
+
+2005-01-27  Andres Salomon <dilinger@voxel.net>
+
+	* rfc2045/reformime.sgml: Fix typo.
+
+1.8.0
+
+2004-11-29  Dmitry Lebkov <dima@sakhalin.ru>
+
+	* maildrop/main.C (find_in_authlib): Fix the "service" parameter in
+	the authentication request, so that the correct attribute is read
+	for the default maildir setting.
+
+2004-11-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop: remove maildrop's mysql and ldap modules, replace with
+	Courier Authentication Library.
+
+2004-09-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* makedat/configure.in: Make build without db/gdbm work again.
+
+1.7.0
+
+2004-07-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Makefile.am: Moved some man pages to more appropriate man sections.
+
+	* configure.in: Default to enabling maildirquota support.
+
+2004-06-07  Jeff Williams <jeffw@globaldial.com>
+
+	* mdmysql.C: Specify multiple mysql servers for fallback purposes via
+	a comma-separated list.
+
+2004-06-07  John Morrissey <jwm@horde.net>
+
+	* main.C: Fixa segfault in maildrop if the LDAP or MySQL backend
+	doesn't return a maildir and the user does not have a quota
+	configured.
+	* mdldap.C, mdmysql.C: Add default_quota directives to the LDAP
+	and MySQL backend configurations, which will apply to any
+	LDAP/MySQL users that don't have an explicit quota defined.
+
+2004-06-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045.h: Clean up and re-factor out MIME header parsing
+	into a new function: rfc2045_parse_mime_header.
+
+2004-05-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/maildirquota.c (do_deliver_warning): Make quota warning
+	message work correctly with NFS.
+	(do_maildir_openquotafile): Make quota calculations 64bit-safe (based
+	on patch from Michael Kefeder <ml@weird-birds.org>).
+
+2004-04-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/recipenode.C (Evaluate): Do not trap the exit statement
+	within an exception {} block. exit will now really exit.
+
+2004-03-13  Flavio Stanchina <flavio@stanchina.net>
+
+	* rfc2045/reformime.c (extract_pipe): Program invoked by reformime -X
+	must exit with zero exit status.  A non-zero exit status terminates
+	reformime.  reformime's exist status will be 20+child process's exit
+	status.
+
+2004-03-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Resync against the Courier tree.
+
+2004-01-31  Tony Earnshaw <tonye@billy.demon.nl>
+
+	* README.postfix: Additional info.
+
+2004-01-14  Courier User <courier@asfast.net>
+
+	* VAR="" does not remove the variable.  New unset command does that.
+
+2004-01-14  Troy Benjegerdes <hozer@hozed.org>
+
+	* maildrop/maildir.C: AFS patch - rename if link fails due to EXDEV
+
+1.6.3
+
+2003-10-15  Filipe Brandenburger <filipe@procergs.rs.gov.br>
+
+	* message.C (Init): If compiled with CRLF_TERM, account for CRs
+	in the message size.
+
+2003-10-10  Dmitry Lebkov <dima@sakhalin.ru>
+
+	* maildrop/mdldapconfig.c (get_ldap_config): Allow comments in
+	ldap config file.
+
+	* maildrop/mdmysqlconfig.c (get_mysql_config):  Allow comments
+	in mysql config file.  Remove redundant mailstatus field.
+
+1.6.2
+
+2003-09-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/mio.C: Cleanup. Drop some dead code.
+
+2003-09-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* bdbobj/bdbobj.c (bdbobj_open): Fix dbf_open call for db 3.x
+
+2003-09-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* userdb/makeuserdb.in: Make sure makeuserdb emits a trailing
+	newline after each processed file.
+
+1.6.1
+
+2003-09-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/main.C (nouser): Really use EX_NOUSER for undefined
+	recipients.
+
+1.6.0
+
+2003-08-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/main.C (nouser): Use EX_NOUSER for undefined virtual
+	recipients.
+
+	* maildrop/maildir.C (MaildirSave): Use KEYWORDS to initialize
+	keywords for a maildir message.
+
+	* CVS Refresh:
+
+	* + Maildir keyword support.
+
+2003-06-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/main.C (find_in_ldap): Fix crash if ldap is enabled but
+	ldapconfig is not installed.
+
+1.5.3
+
+2003-04-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Replace U+0x00A0 in SGML documentation with spaces.
+
+2003-04-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Updated toolchain to automake 1.6.3, autoconf 2.57,
+	libtool 1.4.3, gettext 0.11.4, new Docbook style sheets.
+
+	* bdbobj/bdbobj2.c (bdbobj_nextkey): Eliminate 0-length malloc.
+
+2003-04-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* All beta and releases will now be signed by
+	http://www.courier-mta.org/KEYS.bin
+
+2003-04-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	+ CVS refresh:
+
+	* autoconf 2.57 fixes.
+
+	* rfc2045/rfc2045.c (content_location): Plug a leak.
+
+	* maildir/maildirpurgetmp.c (maildir_purge): Fix maildir_purge(".");
+
+	* rfc2047.c (rfc2047_encode_callback): Fix MIME encoding of "_".
+
+	* maildrop/maildropex.sgml: Fix typo.
+
+	* rfc2045/configure.in: rename config.h to rfc2045_config.h
+
+	* rfc2045/reformime.c (read_message): Use rfc2045_parse_partial() to
+	properly size-up content without trailing newlines.
+
+	* rfc2045/rfc2646create.c (rfc2646create_free): Emit the trailing
+	newline.
+
+	* rfc2045/pcpd.c (start): Use SA_NOCLDWAIT, if blessed by configure.
+
+	* maildir/maildirwatch.c: Fix timeout.
+
+	* rfc2045/rfc2045encode.c: clean up base64/qp encoding.
+
+
+2003-04-09  Jeff Williams <jeffw@globaldial.com>
+
+	* maildrop/main.C (run): Code cleanup.
+
+1.5.2
+
+2003-01-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir(5) man page added.  Finalized new maildir creation code
+	that uses both dev_t and ino_t as part of the filename.
+
+2003-01-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/maildircreateh.c (maildir_tmpcreate_fd): Add openmode to
+	struct maildir_tmpcreate_info
+
+	* maildrop/maildir.C (MaildirOpen): Use new maildir creation code.
+
+1.5.1
+
+2002-12-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* New docbook support scripts/css for docbook-generated man pages.
+
+2002-12-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2047.c (rfc2047_encode_callback): Fix hang on
+	locales where isspace(U+0x00A0) is true.
+
+2002-11-23  John Morrissey <jwm@horde.net>
+
+	* Add -w option to maildrop by moving quota warning code from
+	deliverquota to libmaildir.a, and reusing it.
+
+1.5.0
+
+2002-10-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/maildropfilter.sgml (ADDRLIST): Typo fix.
+
+2002-10-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Major toolchain upgrade - gcc 3.2, automake 1.6, autoconf 2.53,
+	libtool 1.4.
+
+2002-10-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/maildir.C: new configure switch --with-dirsync
+
+2002-09-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* reformime, makemime: implemented RFC 2231-parsing of Content-Type:
+	and Content-Disposition: headers.
+
+	Dropped rfc2045_dispositioninfo.  Access rfc2045.content_disposition
+	directly, and use the rfc2231 functions to access the attributes.
+
+2002-09-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Replace dotlock with lockmail.
+
+2002-08-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/maildir.C (MaildirOpen): Clean up temp file if delivery
+	to maildir goes over quota.
+
+1.4.0
+
+2002-06-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/maildirquota.c (do_maildir_openquotafile): Fix quotas
+	on FreeBSD (fcntl("/dev/null", F_SETFL) doesn't work on FreeBSD)
+
+	* maildrop/configure.in: do not use qmail-inject for SENDMAIL_DEF
+	(problems with the -t flag used by sqwebmail's mail filter).
+
+2002-06-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* numlib/strofft.c: off_t may be negative.
+
+	* +++ maildirquota API update +++
+
+	   + allows documented way to change the set quota on a maildir
+
+	   + major internal cleanup, established a sane API library
+
+	External changes:
+
+	   + quota no longer set by deliverquota or MAILDIRQUOTA, new -q
+	     option to maildirmake.  Both deliverquota, maildrop, and
+	     Courier now read the maildirsize no matter what, and observe
+	     the quota
+
+	   + maildirmake and deliverquota now installed by the Courier-IMAP,
+	     maildrop, and sqwebmail standalone builds.
+
+	   + updated README.maildirquota, and man pages to reflect all these
+	     changes.
+
+2002-06-09  Christian Kratzer <ck@cksoft.de>
+	
+	* maildrop/mdldap.c: Check ldap_get_values() exit code.
+
+2002-05-16  Mr. Sam  <sam@email-scan.com>
+
+	* maildrop/rematchmsg.C (SetCurrentPos): Fix an obscure bug that
+	can sometimes result in an invalid seek error.
+
+1.3.9
+
+2002-04-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/filter.C (xfilter): Set O_NDELAY on file descriptors for
+	xfilter() since select() only works correctly on non-blocking fds.
+
+2002-04-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/formatmbox.C (GetFromLine): Do not write a newline before
+	every From_ line...
+	
+	* maildrop/deliver.C (delivery): ... only for 2nd and subsequent msgs.
+
+
+2002-03-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2047.c (rfc2047_encode_callback): Fix MIME-encoding of spaces.
+
+2002-03-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc822.c (rfc822_prname_orlist): Dequote quoted-strings.
+
+1.3.8
+	
+2002-03-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/reformime: Fix handling of unencoded nulls in text/plain
+	content.
+
+2002-02-27  Josip Rodin <jrodin@public.srce.hr>
+
+	* Makefile.am cleanup.
+
+2002-03-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure/makefile script update for autoconf 2.52/automake 1.5
+
+2002-02-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/reformime.sgml: Documented the -m and -D options.
+
+2002-02-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Update README.postfix
+
+2002-01-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* userdb/configure.in: Fix typo.
+
+2002-01-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045.c (doline): Fix incorrect calculation of the
+	end of a multipart MIME section that's inside another multipart
+	MIME section.
+
+2002-01-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/maildirfiltertypelist.h: Fix typo.
+
+1.3.7
+
+2001-12-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted makemime, rfc2045, rfc822, makedat man pages to Docbook.
+
+2001-12-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted dotlock, mailbot, reformail, reformime man pages to
+	Docbook.
+
+2001-12-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted maildrop, maildropfilter, maildropgdbm, maildropex man
+	pages to Docbook.
+
+2001-12-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Convert maildir documentation to SGML docbook.
+
+2001-12-04  "Bjoern A. Zeeb" <bzeeb-lists+maildrop@zabbadoz.net>
+
+	* Fix mysql support.
+
+1.3.6
+
+2001-11-25  Bjoern A. Zeeb <bzeeb-lists+maildrop@zabbadoz.net>
+
+	* Updates to mysql support.  Note - patch did not apply cleanly,
+	there were some whitespace differences, so take care.
+
+2001-11-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* reformime: Loosen up the parsing of the content-type header.  Strict
+	parsing allowed viruses to slip through using malformed content-type
+	headers which still got picked up by Microsoft's crapware which
+	does not strictly parse the MIME headers.
+
+2001-11-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Convert userdb documentation to SGML docbook (more to follow).
+
+2001-11-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc822/rfc2047.c - case insensitive charset comparison
+
+	* userdb: initialize PATH variable
+
+1.3.5
+
+2001-09-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Drop install setuid.
+
+	* Add UMASK variable, that sets the permissions on new mailboxes
+	or messages.  Hence, drop MAILBOX_MODE from configure script.
+
+	* Resync with the Courier tree.  Changes: maildir/maildirmake.c (add):
+	Explicitly fseek() to start of file, for system where fopen("a+")
+	initially positions to EOF.
+	Problem noted by Vojtech Karny <karny@datalite.cz>
+
+	authlib/authuserdbpwd.c (auth_userdb_passwd): Fix trashed pointer
+	dereference.  Problem noted by James Knight <jknight@fuhm.net>
+
+	Updated configure.in/Makefile.am to automake 1.4p5 and autoconf 2.13
+	
+2001-08-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Resync with the Courier tree.  Changes: Net::CIDR support in makedat
+	(N/A for maildrop); fixes for maildirfilter filter recipe generation
+	(N/A for maildrop); fix a division by zero due to the quota being
+	set to 0; removed incorrect documentation from maildirfilter man
+	page.
+
+1.3.4
+
+2001-06-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Disable MSIE smart tags in all html files
+
+2001-06-24  Dmitry Lebkov <dima@sakhalin.ru>
+
+	* Added experimental MySQL support.
+
+2001-06-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* userdb: Adjusted makeuserdb imported from Courier build, to support
+	Courier 0.35
+
+	* maildrop/recipenode.C (Evaluate): Allow exception { } to pass
+	through regular mail delivery terminations.
+
+1.3.3
+
+2001-06-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* liblock/lockdaemon.c: fix several improper tests for failed fopen(). 
+
+2001-05-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* reformime: strip leading/trailing spaces from attachment filename.
+
+2001-05-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Created mailbot(1).
+
+2001-04-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* --- Merge from Courier tree ---
+
+	* rfc2045/reformime.c (main): Allow both -i and -x at the same time.
+
+	* maildrop/main.C (run): Disable pw lookup for delivery mode in the
+	Courier build -- we'll import it from the environment
+	--- This is an FYI - this should not affect the maildrop build.
+
+	* Global search and replace of certain C++ include files, for
+	compatibility with ISO C++:
+
+	<iosfwd.h> -> <iosfwd>
+	<iostream.h> -> <iostream>
+	<ios.h> -> <ios>
+	<streambuf.h> -> <streambuf>
+	<istream.h> -> <istream>
+	<fstream.h> -> <fstream>
+	<ostream.h> -> <ostream>
+	<iomanip.h> -> <iomanip>
+	<sstream.h> -> <sstream>
+	<strstream.h> -> <strstream>
+	
+	* rfc822.c (rfc822t_alloc): Explicitly cast arg to (void *).
+
+	* Cosmetic fixes.  Replace // with /* */ comments in some .c files
+	and replace return of void datatype with an explicit return.
+	Other misc stuff too.
+
+	* rfc2045/rfc2045.c (rfc2045_mimepos): Fix a long-time glitch where
+	a garbled message with no body will have its headers logically placed
+	in the body section, and the supposed headers will be NULL -- this was
+	a benign artifact of the parsing logic.
+
+	* rfc2045/reformime.c, submit.C: Reject ambigous nested MIME
+	boundary delimiters (suggestion by leonid@latte.harvard.edu).
+
+	* Added /usr/local/bin to AC_PATH macros in all configure.in scripts.
+
+	
+	* maildrop/main.C (run): Disable pw lookup for delivery mode in the
+	Courier build -- we'll import it from the environment.  Import
+	MAILDROPDEFAULT from environment as DEFAULT.  This should not affect
+	the standalone maildrop build.
+
+2001-04-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/configure.in (LIBLDAP): Try to probe whether -lsocket and
+	-lnsl is required to link with libldap.
+
+	* README.postfix (maildrop_destination_recipient_limit): Added
+	a note about a potential misconfiguration.
+
+	* rfc2045/reformime.c: Added -V option to reformime which validates
+	MIME message formatting, and reports several common errors.
+
+	* Added /usr/local/bin to AC_PATH macros in all configure.in scripts.
+
+2001-03-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* reformime:  add the hostname to the manufactured MIME boundary
+	delimiter, in order to generate more noise;  skip over
+	multipart/signed content; prefer appending Content-Transfer-Encoding:
+	to the individual content sections, instead of multipart sections.
+
+	tweak arg to putc, in order to prevent a fake EOF indication?
+
+1.3.1
+	
+2001-03-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/configure.in: Changed mailing list address.
+
+1.3.0
+	
+2001-01-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Applied LDAP patch (Terry Katz)
+
+2001-01-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/re.C (parsechar): Actually made octal notation work.
+
+2000-12-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Added setlocale() to eliminate some unexpected surprises in glibc.
+
+2000-11-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Replaced rfc822t_alloc() with rfc822t_alloc_new().
+
+* V1.2.2 - Adjust truncation in reformiem to truncate to the last 32
+        characters in a long filename (to preserve any filename extension).
+
+* V1.2.1 - A small patch to reformime that truncates long MIME filenames
+	to 32 characters.
+
+* V1.2 - Switched installation layout to GNU layout.  Packaged development
+         libraries.  reformime -x option now MIME decodes 8-bit filenames
+         (then promptly strips 8bit characters :-) ).  Change permissions
+         that files in the maildir are created to 0644 from 0600, in order
+         to support delivery to shared folders.  Since maildirmake, by
+         default, uses mode 0700 for creating standard, non-shared, maildirs,
+         there is no issue with private folders.  The maildrop package
+	 also now includes installation of "development" libraries.
+
+* V1.1 - Added makemime utility.  Made --disable-tempdir option to be the
+         default.
+
+* V1.0 - Berkeley DB 3.0 support.  Patches reformime to avoid clobbering of
+         existing files.
+
+* V0.99.2 - added README.postfix.  Removed default permissions of g+rw
+            for mbox files created on systems with spool directory that
+	    does not have a sticky bit set -- potential exploit.
+
+* V0.99.1 - additional fixes to the makefile and configuration scripts.
+RPM spec file upgraded to RPM 3.0.  Some additional sanity checks when
+delivering to maildirs (checks for rogue soft links -- needed to support
+delivery to sharable maildirs).  maildirmake update - creates sharable
+maildirs.  Added hooks for integrating maildrop into Courier.  Added -m
+to reformime (make MIME digests).  Added trusted groups, to complement
+"trusted users" concept.
+
+* V0.76 - minor compilation warning fix that was accidentally left
+out of 0.75.  Part of the cleanup: legacy code in
+maildirmake removed.  maildirmake should NO LONGER be installed
+with any suid/gid bits set.  Added vchkpw2userdb script.  Arg to -M
+will convert all periods and slashes to :s, instead of complaining.
+Moved setprocgroup call.
+
+* V0.75 - new installation layout - will install into
+/usr/local/lib/maildrop/minor fixes to configuration scripts.
+Minor typos in userdb. Bug fix: exception statement will now trap
+maildir quota errors. AIX fixes.
+
+* V0.74- fix compilation errors for SuSE 6.0. Qmail bug fix. userdb
+update.
+
+* V0.73 - bug fix in getaddr()/hasaddr() functions, and reformail -r
+option.
+
+* V0.72 - reformime enhancement/update. Maildir support update.
+
+* V0.71 - a maintenance release. Patches for AIX and AFS support.
+Updates to documentation. Internal cleanup of the source code
+directory layout, which will allow me to include maildrop as parts
+of other projects. Fixed a bug in the reformime utility.
+
+* V0.70 - option to enable soft enforcement of maildir quotas, see
+README.maildirquota in the maildir subdirectory. Virtual account
+support. Renamed makegdbm to makedat. Removed installation option
+to gzip manual pages -- too messy. Let target platform
+packagers/porters worry about it. to and cc commands that pipe the
+message to an external process will now set the EXITCODE variable
+to the exit code of the external process. External processes that
+terminate with a non-zero exit code will NOT automatically cause
+maildrop to terminate with the exit code of 75. The exit code will
+be saved in the EXITCODE variable. If the delivery command was to,
+maildrop simply terminates with the same exit code. If the
+delivery command was cc, maildrop continues after initializing
+EXITCODE.
+
+* V0.65 - option to compile Berkeley DB library, instead of GDBM.
+Added the import keyword. Some cleanup of HTML documentation.
+
+* V0.64 - reformime fix - handle systems with broken pipe fseeks
+semantics. rfc822 library sync. Standardized names of some legacy
+.h files. Red Hat RPMs changed to install a tiny sh/bash/csh login
+script (from maildroptips) to purge $HOME/.tmp. makegdbm can now
+read from standard input. Some obscure fixes to rfc822 functions.
+Moved reformime to rfc2045 subpackage - it belongs there, and can
+be shared by other projects.
+
+* V0.63 - maintenance. Minor enhancements and bug fixes to the
+reformime utility. reformime can now convert 8-bit messages to or
+from quoted-printable encoding. reformime can now also add missing
+MIME headers to a message.
+
+* V0.62 - array out of bounds bug fix in rfc822.c. Some additional
+options to configure to specify various directories. Option to
+configure to use /usr/local/etc instead of /etc.
+
+* V0.61(prerelease) - rfc822 library sync. Added reformime
+standalone utility. Added support for GDBM database files. Because
+GDBM support adds significant amount of code to maildrop, GDBM
+support can be optionally disabled during installation. Added the
+time function. Changed how maildrop automatically converts results
+of floating point mathematical operation back into text - should
+not affect any existing filters.
+
+* V0.60 - no changes to the main maildrop code from version 0.55c,
+except for cosmetic changes to some shared modules in order to
+accomodate the new reformime utility. The main maildrop code
+appears to be stable. Edited the documentation, and changed the
+flags that the RPM is built with. NEW: Experimental set of MIME
+functions, which are implemented as a separate program for now.
+The reformime program can be used to decode the MIME structure of
+a message, and extract different parts of it. At some point later,
+this functionality will be added as native functions in the
+maildrop filtering language. See reformime.html for more
+information.
+
+* V0.55c - BUG FIX: maildrop would botch the situation where it had
+problems creating or writing to a temporary file. Fixed error
+handling so this condition correctly results in deferred mail.
+Added some sendmail-related notes to INSTALL. Added additional
+punctuation characters recognized by the escape() function. The
+chance that this would break existing scripts is very remote, but
+possible, however the additional escaped punctuation would allow
+the function to be used to hack-proof shell commands.
+
+* V0.55b - enhancement: an optional parameter to configure,
+--enable-syslog, which will enable logging of fatal errors to
+syslog. sendmail discards standard error, making diagnosis of
+maildrop problems difficult. An optional switch to configure will
+have maildrop log all fatal error to syslog. Fixed core dump if
+reformail is given an invalid switch: '-f'.
+
+* V0.55a - fixed some miscellaneous glitches in the configuration
+script. Fixed potential security problem on some platform with
+reformail incorrectly being installed with setuid privileges. Only
+cosmetic changes to the main maildrop program: made some error
+messages more descriptive; maildrop will now attempt to create a
+process group upon startup and upon termination maildrop will send
+a SIGHUP signal to its process group, hopefully terminating any
+child processes. No bug fixes are known, or have been reported.
+
+* V0.55 - added HOSTNAME and FROM environment variables. Added -f
+option. Added support for /etc/maildroprcs - see maildrop(1).
+Fixed obscure bug that can trash a file descriptor.
+
+* V0.54b - Changed auto-configuration logic for enabling dotlocks.
+If the configure script detects that the system mailbox directly
+does NOT have the sticky bit set, dot-locks are disabled by
+default. --enable-use-dotlock option to configure can override
+that. Added --enable-keep-fromline option to preserve the original
+From_ line address of messages. Note that the default value of
+this option may change maildrop's behavior from previous versions.
+See INSTALL for additional information. Documented some additional
+options to configure that were actually implemented in a previous
+version. Fixed error in select() logic that may cause the backtick
+command to fail in some situations.
+
+* V0.54a - miscellaneous fixes. Changed the hasaddr() function to
+look at Resent-To: and Resent-Cc: headers. Default SHELL to
+/bin/sh if the shell is not specified in /etc/passwd. FreeBSD does
+not support lockf() on /dev/null - lockf() will no longer cause a
+fatal error if it fails on a character or a block special file.
+Fixed bug in configure script regarding failed initialization of
+--enable-restrict-trusted flag.
+
+* V0.54 - edited the documentation. Added support for VPATH builds
+using automake - suggested by Harlan Stenn
+<Harlan.Stenn@pfcs.com>. Major rework of the configuration code.
+Changed all #define-s in config.h to use the configure script.
+
+* V0.51c - Fixed the subtraction operator bug. Added sendmail
+documentation.
+
+* V0.51b - Fixed compilation error for BSD. Fixed spurious "invalid
+directory permission" error if $HOME/.mailfilters does not exist
+in special embedded mode - maildrop will simply indicate quiet
+acceptance.
+
+* V0.51 - ported to RedHat 5.1, added /etc/maildroprc global filter
+file.
+
+* V0.50 - first public release.

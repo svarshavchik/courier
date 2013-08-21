@@ -1,0 +1,178 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="envelope">
+    <refmeta>
+      <refentrytitle>mail::envelope</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::envelope</refname>
+      <refpurpose>Message envelope information</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+#include &lt;libmail/envelope.H&gt;
+
+mail::envelope myEnvelope;
+</literallayout>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<structname>mail::envelope</structname> describes the message's
+"envelope", and contains the following fields:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>time_t date</term>
+	  <listitem>
+	    <para>
+The contents of the message's <literal>Date:</literal> header, or
+<literal>0</literal> if the message does not have the <literal>Date:</literal>
+header.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string subject</term>
+	  <listitem>
+	    <para>
+The contents of the message's <literal>Subject:</literal> header.
+This is set to an empty string if the header is not present.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string inreplyto</term>
+	  <listitem>
+	    <para>
+The contents of the message's <literal>In-Reply-To:</literal> header.
+This is set to an empty string if the header is not present.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::string messageid</term>
+	  <listitem>
+	    <para>
+The contents of the message's <literal>Message-ID:</literal> header.
+This is set to an empty string if the header is not present.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::vector &lt;std::string&gt; references</term>
+	  <listitem>
+	    <para>
+An array (possibly empty) of message IDs taken from the
+<literal>References:</literal> header.
+<structfield>references</structfield>
+is guaranteed to be filled in only for an
+<structname>envelope</structname> representing the whole message.
+<structfield>references</structfield> of <literal>message/rfc822</literal>
+attachments may or may not be filled in.</para>
+
+	  <para>
+<structfield>references</structfield> is initialized by either
+the
+<function>messageEnvelopeCallback</function> or the
+<function>messageReferencesCallback</function> method (depending on the
+underlying account type) of
+<structname>mail::callback::message</structname>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::vector&lt;<link linkend="address">mail::address</link>&gt; from</term>
+	  <listitem>
+	    <para>
+An array that lists the addresses in the message's <literal>From:</literal>
+header.
+This array is empty if the header is not present.
+If a message has more than one <literal>From:</literal> header, this
+array will list the addresses from all headers, combined.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::vector&lt;<link linkend="address">mail::address</link>&gt; sender</term>
+	  <listitem>
+	    <para>
+An array that lists the addresses in the message's <literal>Sender:</literal>
+header.
+This array is empty if the header is not present.
+If a message has more than one <literal>Sender:</literal> header, this
+array will list the addresses from all headers, combined.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::vector&lt;<link linkend="address">mail::address</link>&gt; replyto</term>
+	  <listitem>
+	    <para>
+An array that lists the addresses in the message's <literal>Reply-To:</literal>
+header.
+This array is empty if the header is not present.
+If a message has more than one <literal>Reply-To:</literal> header, this
+array will list the addresses from all headers, combined.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::vector&lt;<link linkend="address">mail::address</link>&gt; to</term>
+	  <listitem>
+	    <para>
+An array that lists the addresses in the message's <literal>To:</literal>
+header.
+This array is empty if the header is not present.
+If a message has more than one <literal>To:</literal> header, this
+array will list the addresses from all headers, combined.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::vector&lt;<link linkend="address">mail::address</link>&gt; cc</term>
+	  <listitem>
+	    <para>
+An array that lists the addresses in the message's <literal>Cc:</literal>
+header.
+This array is empty if the header is not present.
+If a message has more than one <literal>Cc:</literal> header, this
+array will list the addresses from all headers, combined.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>std::vector&lt;<link linkend="address">mail::address</link>&gt; bcc</term>
+	  <listitem>
+	    <para>
+An array that lists the addresses in the message's <literal>Bcc:</literal>
+header.
+This array is empty if the header is not present.
+If a message has more than one <literal>Bcc:</literal> header, this
+array will list the addresses from all headers, combined.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="address"><citerefentry>
+	    <refentrytitle>mail::address</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mimestruct"><citerefentry>
+	    <refentrytitle>mail::mimestruct</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

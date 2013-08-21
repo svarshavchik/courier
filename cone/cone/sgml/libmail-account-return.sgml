@@ -1,0 +1,8 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+      <para>
+This method returns <literal>true</literal> if it succeeds, or
+<literal>false</literal> if it fails.
+If the method fails, use
+<structfield>mail::ACCOUNT::getErrmsg()</structfield> to read a brief
+description of the error.</para>

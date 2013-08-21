@@ -1,0 +1,359 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="socks">
+
+  <docinfo>
+    <title>socks</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+
+  </docinfo>
+  <refmeta>
+    <refentrytitle>socks</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>socks</refname>
+    <refpurpose>Socks 5 proxy client API</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <programlisting>
+#include &lt;socks.h&gt;
+</programlisting>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>Rconnect</function></funcdef>
+	<paramdef><parameter>fd</parameter></paramdef>
+	<paramdef><parameter>addr</parameter></paramdef>
+	<paramdef><parameter>addrlen</parameter></paramdef>
+      </funcprototype>
+      <funcprototype>
+	<funcdef>int rc=<function>Rbind</function></funcdef>
+	<paramdef><parameter>fd</parameter></paramdef>
+	<paramdef><parameter>addr</parameter></paramdef>
+	<paramdef><parameter>addrlen</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+    <cmdsynopsis>
+      <command>cc</command>
+      <arg choice='req'>-o <replaceable>binary</replaceable></arg>
+      <arg rep='repeat'>argument</arg>
+      <arg choice='req'>-lsocks</arg>
+    </cmdsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+This is the Courier Socks 5 client proxy library.
+It is used by the Courier mail server, starting with version 0.46, to send
+outgoing E-mail through a Socks 5 proxy server.
+This is a generic proxy API.
+This library may be used with other
+applications to establish network connections using a Socks 5 proxy.</para>
+
+    <refsect2>
+      <title>Explicit usage</title>
+      <para>
+There are several ways to use this API library.  The preferred way is to
+include the header file <filename>socks.h</filename> which declares the
+Socks-aware equivalents of the socket API functions:
+<function>Rconnect</function> is the Socks-aware version of
+<citerefentry>
+	  <refentrytitle>connect</refentrytitle>
+	  <manvolnum>2</manvolnum>
+	</citerefentry>,
+<function>Rbind</function> is the Socks-aware version of
+<citerefentry>
+	  <refentrytitle>bind</refentrytitle>
+	  <manvolnum>2</manvolnum>
+	</citerefentry>, and so on.
+Use the Socks-aware
+functions just like their regular counterparts.
+They will transparently
+use a Socks 5 proxy to establish and use the network connections,
+as specified by the
+<ulink url="socksrc.html">
+<citerefentry>
+	    <refentrytitle>socksrc</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink> configuration file.</para>
+
+      <para>
+See <quote>CAPABILITIES</quote>, below, for differences in behavior
+between the regular network functions and their Socks-aware
+counterparts.</para>
+
+      <para>
+Finally, link the application against the <filename>socks</filename> library,
+by adding <literal>-lsocks</literal> to the link command.</para>
+
+      <note>
+	<para>
+Some platforms do not provide the socket functions in the standard C library.
+Applications that use socket functions normally have to explicitly link with a
+separate library, such as <literal>-lsocket</literal> or
+<literal>-lnsl_s</literal>.</para>
+
+	<para>
+Try to avoid linking with a separate socket library when using
+<literal>-lsocks</literal>.
+In most cases, linking with those separate libraries is not required any more.
+Continue to link with them only if it is still necessary to do
+so (try not to link with them, and see what happens).</para>
+      </note>
+
+      <para>
+<filename>socks.h</filename> declares the following functions:</para>
+
+      <simplelist type='vert'>
+
+	<member><function>Raccept</function></member>
+	<member><function>Rbind</function></member>
+	<member><function>Rclose</function></member>
+	<member><function>Rconnect</function></member>
+	<member><function>Rdup</function></member>
+	<member><function>Rdup2</function></member>
+	<member><function>Rfclose</function></member>
+	<member><function>Rgetpeername</function></member>
+	<member><function>Rgetsockname</function></member>
+	<member><function>Rgetsockopt</function></member>
+	<member><function>Rlisten</function></member>
+	<member><function>Rpoll</function></member>
+	<member><function>Rread</function></member>
+	<member><function>Rreadv</function></member>
+	<member><function>Rrecv</function></member>
+	<member><function>Rrecvfrom</function></member>
+	<member><function>Rrecvmsg</function></member>
+	<member><function>Rselect</function></member>
+	<member><function>Rsend</function></member>
+	<member><function>Rsendmsg</function></member>
+	<member><function>Rsendto</function></member>
+	<member><function>Rwrite</function></member>
+	<member><function>Rwritev</function></member>
+      </simplelist>
+
+      <note>
+	<para>
+Only some of the above functions are really defined.
+The rest are mapped, using
+<quote>#define</quote>-s, to their <quote>R</quote>-less counterparts,
+but applications should use the <quote>R</quote> functions in order
+to remain upward-compatible with future versions of this library.</para>
+      </note>
+      <refsect3>
+	<title>CAPABILITIES</title>
+
+	<para>This Socks 5 proxy library supports the following
+functionality:</para>
+
+	<orderedlist>
+	  <listitem>
+	    <para>
+Establishing blocking or non-blocking <literal>SOCK_STREAM</literal>
+client connections.</para></listitem>
+
+	  <listitem>
+	    <para>
+Accepting a single incoming <literal>SOCK_STREAM</literal> connection using
+<function>Rbind</function>,
+<function>Rlisten</function>, and
+<function>Raccept</function>.</para>
+	  </listitem>
+	</orderedlist>
+
+	<note>
+	  <para>
+This Socks 5 proxy library does not support using
+<function>Rbind</function> to bind a socket to a specific port,
+then using <function>Rconnect</function> to establish an outgoing connection
+originating from the specific port.
+The
+<function>Rbind</function> function can only be used for a
+listening socket, and is expected to be followed by
+<function>Rlisten</function>.</para>
+
+	  <para>
+This is a limitation of the Socks 5 protocol.</para>
+	</note>
+
+	<note>
+	  <para>
+Only one connection may be received by a bound, listening socket.
+After the first connection is established, that's it.
+The Socks 5 protocol no longer
+listens for more connections on the listening socket.
+This implementation of
+<function>Rbind</function>,
+<function>Rlisten</function>, and
+<function>Raccept</function> mimics the usual semantics of the non-proxying
+versions of these functions.
+As far as the application is concerned, only one incoming connection will
+ever be received on the listening socket
+Continuing to listen on the
+socket will never produce any more incoming connections.</para>
+
+	  <para>
+This is a limitation of the Socks 5 protocol.</para>
+	</note>
+      </refsect3>
+    </refsect2>
+
+    <refsect2>
+      <title>Implicit usage</title>
+      <informalexample>
+	<programlisting>
+#define SOCKS_REMAP
+#include &lt;socks.h&gt;
+</programlisting>
+	<cmdsynopsis>
+	  <command>cc</command>
+	  <arg choice='req'>-o <replaceable>binary</replaceable></arg>
+	  <arg rep='repeat'>argument</arg>
+	  <arg choice='req'>-lsocks</arg>
+	</cmdsynopsis>
+      </informalexample>
+
+      <para>
+The alternative way to use this Socks 5 API is to define
+<literal>SOCKS_REMAP</literal> before including
+<filename>socks.h</filename>, and then using the usual socket functions, like
+<function>connect</function>, <function>bind</function>, and the rest.</para>
+
+      <para>
+It's rather obvious that <literal>SOCKS_REMAP</literal> runs
+a bunch of C preprocessor definitions, such as:</para>
+      <informalexample>
+	<programlisting>
+#define connect Rconnect
+#define bind Rbind
+
+/* More of the same */
+</programlisting>
+      </informalexample>
+      <para>
+This is going to work because this Socks 5 API library automatically
+ignores file descriptors
+that are not TCP sockets.
+A <literal>PF_UNIX</literal> file descriptor passed to
+<function>Rbind</function> is automatically shunted off to the real
+<function>bind</function> function, and the application will not know any
+better.
+Other Socks 5 API functions work in the same way.</para>
+
+      <para>
+The preferred, explicit usage of the <quote>R</quote> functions permits
+fine-grained control over proxying.
+The application has complete control of which network connections will use
+a Socks 5 proxy server
+(by using the <quote>R</quote> functions with that file descriptor),
+and which network connections won't (by using normal network socket
+functions).
+Implicit usage, via
+<literal>SOCKS_REMAP</literal>, loses the control over this process.
+All TCP network connections will use Socks 5 proxies, if so indicated by
+the
+<ulink url="socksrc.html">
+<citerefentry>
+	    <refentrytitle>socksrc</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink> configuration file.</para>
+    </refsect2>
+
+    <refsect2>
+      <title>Library wrapper</title>
+      <informalexample>
+	<cmdsynopsis>
+	  <command>cc</command>
+	  <arg choice='req'>-o <replaceable>binary</replaceable></arg>
+	  <arg rep='repeat'>argument</arg>
+	  <arg choice='req'>-lsockswrap</arg>
+	</cmdsynopsis>
+      </informalexample>
+
+      <para>
+The third alternative mechanism of using this Socks 5 API involves no changes
+to the source code.
+The only change is to the link command.
+The final application executable is linked to the
+<filename>sockswrap</filename>
+library instead of the <filename>socks</filename> library.</para>
+
+      <para>
+This mechanism may not be available on all platforms, or may not work reliably
+with all applications.
+The <filename>sockswrap</filename> library provides fake definitions of the
+normal socket functions, just as <function>connect</function>,
+<function>bind</function>, and all the others.
+These function calls are intercepted, and redirected to their <quote>R</quote>
+equivalents.</para>
+
+      <note>
+	<para>
+Some platforms require explicit linkage with the
+<filename>socks</filename> library
+in addition to the <filename>sockwrap</filename> library:</para>
+
+	<informalexample>
+	  <cmdsynopsis>
+	    <command>cc</command>
+	    <arg choice='req'>-o <replaceable>binary</replaceable></arg>
+	    <arg rep='repeat'>argument</arg>
+	    <arg choice='req'>-lsockswrap</arg>
+	    <arg choice='req'>-lsocks</arg>
+	  </cmdsynopsis>
+	</informalexample>
+
+	<para>
+In any case, if possible,
+do not link against any extra libraries, even if your
+platform otherwise requires linking against extra libraries,
+such as <literal>-lsocket</literal> or <literal>-lnsl_s</literal>.</para>
+      </note>
+
+      <para>
+This mechanism is equivalent to running the
+<ulink url="socksify.html">
+<citerefentry>
+	    <refentrytitle>socksify</refentrytitle>
+	    <manvolnum>1</manvolnum>
+	  </citerefentry>
+</ulink> wrapper with an already-linked executable.
+This approach <emphasis>may</emphasis> succeed in adding Socks 5 proxying
+abilities to an existing object code library, or module,
+if its source code is not
+available.</para>
+
+    </refsect2>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="socksify.html">
+<citerefentry>
+	  <refentrytitle>socksify</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="socksrc.html">
+<citerefentry>
+	  <refentrytitle>socksrc</refentrytitle>
+	  <manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

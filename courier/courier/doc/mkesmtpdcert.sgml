@@ -1,0 +1,52 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>mkesmtpdcert</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mkesmtpdcert</refname>
+    <refpurpose>Create a secure SMTP test certificate</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">@sbindir@/mkesmtpdcert</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+Secure ESMTP requires a valid, signed, X.509 certificate.  The default
+location for the certificate file is <filename moreinfo="none">@datadir@/esmtpd.pem</filename>.
+The <command moreinfo="none">mkesmtpdcert</command> generates a self-signed X.509 certificate,
+mainly for testing. For production use the X.509 certificate must be signed by
+a recognized certificate authority, in order for mail clients to accept the
+certificate.</para>
+
+    <para>
+<filename moreinfo="none">@datadir@/esmtpd.pem</filename> must be owned by the @mailuser@ user
+and have no group or world permissions.  The <command moreinfo="none">mkesmtpdcert</command>
+command will enforce this.  To prevent an unfortunate accident,
+<command moreinfo="none">mkesmtpdcert</command> will not work if
+<filename moreinfo="none">@datadir@/esmtpd.pem</filename> already exists.</para>
+
+    <para>
+<command moreinfo="none">mkesmtpdcert</command> requires OpenSSL to be installed.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

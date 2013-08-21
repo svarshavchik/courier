@@ -1,0 +1,263 @@
+#! @PERL@
+#
+# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+use Fcntl ':flock';
+
+$prefix="@prefix@";
+$exec_prefix="@exec_prefix@";
+$userdb="@userdb@";
+
+eval {
+	die "SYMLINK\n" if -l $userdb;
+};
+
+die "ERROR: Wrong userdb command.\n       ($userdb is a symbolic link)\n"
+	if $@ eq "SYMLINK\n";
+
+sub usage {
+	print "Usage: $0 [path/.../ | -f file ]name set field=value field=value...\n";
+	print "       $0 [path/.../ | -f file ]name unset field field...\n";
+	print "       $0 [path/.../ | -f file ]name del\n";
+	print "       $0 -show [path/... | -f file ] [name]\n";
+	exit 1;
+}
+
+$name=shift @ARGV;
+$doshow=0;
+
+if ($name eq "-show")
+{
+	$doshow=1;
+	$name=shift @ARGV;
+}
+
+if ($name eq "-f")
+{
+	$userdb=shift @ARGV;
+	$name=shift @ARGV;
+}
+elsif ( $name =~ /^(.*)\/([^\/]*)$/ )
+{
+	$userdb="$userdb/$1";
+	$name=$2;
+}
+
+
+if ($doshow)
+{
+	&usage unless $userdb =~ /./;
+}
+else
+{
+	$verb=shift @ARGV;
+
+	&usage unless $verb =~ /./ && $name =~ /./ && $userdb =~ /./;
+}
+
+while (defined ($link= &safe_readlink($userdb)))
+{
+	$userdb .= "/";
+	$userdb = "" if $link =~ /^\//;
+	$userdb .= $link;
+}
+
+$tmpuserdb= $userdb =~ /^(.*)\/([^\/]*)$/ ? "$1/.tmp.$2":".tmp.$userdb";
+$lockuserdb= $userdb =~ /^(.*)\/([^\/]*)$/ ? "$1/.lock.$2":".lock.$userdb";
+
+if ( $doshow && ! defined $name)
+{
+}
+else
+{
+	die "Invalid name: $name\n"
+		unless $name =~ /^[\@a-zA-Z0-9\.\-\_\:\+]+$/;
+}
+
+grep( (/[\|\n]/ && die "Invalid field or value.\n"), @ARGV);
+
+umask(066);
+
+open(LOCK, ">$lockuserdb") or die "Can't open $lockuserdb: $!";
+flock(LOCK,LOCK_EX) || die "Can't lock $lockuserdb: $!";
+
+if ( $doshow )
+{
+	if (open (OLDFILE, $userdb))
+	{
+		stat(OLDFILE);
+		die "$userdb: not a file.\n" unless -f _;
+
+		while ( defined($_=<OLDFILE>) )
+		{
+			chop if /\n$/;
+			next if /^#/;
+			next unless /^([^\t]+)(\t(.*))?$/;
+			($addr,$vals)=($1,$3);
+			if (defined $name)
+			{
+				if ($name eq $addr)
+				{
+					$vals =~ s/\|/\n/g;
+					print "$vals\n";
+					last;
+				}
+			}
+			else
+			{
+				print "$addr\n";
+			}
+		}
+	}
+	close (OLDFILE);
+}
+elsif ( $verb eq "set" )
+{
+	$isatty=1;
+
+	eval {
+		$isatty=0 unless -t STDIN;
+	} ;
+
+	&doadd;
+	$mode= (stat $userdb)[2];
+	chmod ($mode & 0777,$tmpuserdb ) if defined $mode;
+	rename $tmpuserdb,$userdb;
+}
+elsif ( $verb eq "unset" )
+{
+	if ($#ARGV >= 0 && &dodel)
+	{
+		$mode= (stat $userdb)[2];
+		chmod ($mode & 0777 ,$tmpuserdb) if defined $mode;
+		rename ($tmpuserdb,$userdb)
+	}
+}
+elsif ( $verb eq "del" )
+{
+	&usage unless $#ARGV < 0;
+	if (&dodel)
+	{
+		$mode= (stat $userdb)[2];
+		chmod ($mode & 0777 ,$tmpuserdb) if defined $mode;
+		rename ($tmpuserdb,$userdb)
+	}
+}
+else
+{
+	&usage;
+}
+exit 0;
+
+sub doadd {
+my (%FIELDS);
+my ($key, $in);
+
+	foreach $key (@ARGV)
+	{
+		next if $key =~ /=/;
+		print "$name.$key: " if $isatty;
+		exit 1 unless defined ($in=<STDIN>);
+		chop $in if $in =~ /\n$/;
+		die "Invalid value.\n" if $in =~ /[\|\n]/;
+		$key = "$key=$in";
+	}
+
+	open (NEWFILE, ">$tmpuserdb") || die "$!\n";
+	if (open (OLDFILE, $userdb))
+	{
+		stat(OLDFILE);
+		die "$userdb: not a file.\n" unless -f _;
+		while ( defined($_=<OLDFILE>) )
+		{
+			chop if /\n$/;
+			if ( /^([^\t]+)(\t(.*))?$/ && ($1 eq $name))
+			{
+				grep( (/^([^=]*)(=.*)?$/,
+					$FIELDS{$1}="$2"), split(/\|/, $3));
+				while ( defined ($key=shift @ARGV))
+				{
+					$key =~ /^([^=]*)(=.*)?$/;
+					$FIELDS{$1}="$2";
+				}
+				$name="$name\t";
+				grep ( $name="$name$_$FIELDS{$_}|",
+					keys %FIELDS);
+				chop $name;
+				print NEWFILE "$name\n" || die "$!\n";
+				while (<OLDFILE>)
+				{
+					print NEWFILE || die "$!\n";
+				}
+				close (OLDFILE);
+				close (NEWFILE) || die "$!\n";
+				return;
+			}
+			print NEWFILE "$_\n" || die "$!\n";
+		}
+		close (OLDFILE);
+	}
+
+	$name="$name\t";
+	grep ( $name="$name$_|", @ARGV );
+	chop $name;
+	print NEWFILE "$name\n" || die "$!\n";
+	close (NEWFILE) || die "$!\n";
+}
+
+sub dodel {
+my (%FIELDS);
+
+	open (NEWFILE, ">$tmpuserdb") || die "$!\n";
+	if (open (OLDFILE, $userdb))
+	{
+		stat(OLDFILE);
+		die "$userdb: not a file.\n" unless -f _;
+		while ( defined($_=<OLDFILE>) )
+		{
+			chop if /\n$/;
+			if ( /^([^\t]+)(\t(.*))?$/ && ($1 eq $name))
+			{
+				if ($#ARGV >= 0)
+				{
+					grep( (/^([^=]*)(=.*)?$/,
+						$FIELDS{$1}=$2),
+							split(/\|/, $3));
+					grep( delete $FIELDS{$_}, @ARGV);
+
+					$name="$name\t";
+					grep ( $name="$name$_$FIELDS{$_}|",
+						keys %FIELDS);
+					chop $name;
+					$name="$name\n";
+					print NEWFILE "$name" || die "$!\n";
+				}
+				while (<OLDFILE>)
+				{
+					print NEWFILE || die "$!\n";
+				}
+				close (OLDFILE);
+				close (NEWFILE) || die "$!\n";
+				return (1);
+			}
+			print NEWFILE "$_\n" || die "$!\n";
+		}
+		close (OLDFILE);
+	}
+	unlink "$tmpuserdb";
+	return (0);
+}
+
+sub safe_readlink {
+my ($l)=@_;
+my ($err,$link);
+
+	eval {
+
+		$link=readlink($l);
+	} ;
+
+	$link=undef if $@;
+	return $link;
+}

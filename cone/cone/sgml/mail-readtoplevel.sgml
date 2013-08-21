@@ -1,0 +1,105 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-readtoplevel">
+    <refmeta>
+      <refentrytitle>mail::account::readTopLevelFolders</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::readTopLevelFolders</refname>
+      <refpurpose>Enumerate top-level folders</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      &libmail-mycallbackfolderlist;
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>readTopLevelFolders</function></funcdef>
+	  <paramdef>myFolderCallback &amp;<parameter>folderCallback</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+A mail account contains folders that are arranged in a tree-like
+hierarchy.
+<function>mail::account::readTopLevelFolders</function> enumerates the
+folders at the top level of the mail account's hierarchy.
+The rest of the folders may be enumerated by recursively invoking
+the
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+method.</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+      &libmail-readfolders1;
+
+      <para>
+The
+<function>folderCallback.success</function> method
+receives a vector of pointers to
+<structname>mail::folder</structname> objects, that
+enumerates the folders at the
+top level of the mail account's folder hierarchy.</para>
+
+      &libmail-foldernote;
+
+      &libmail-readfolders2;
+
+      <para>
+<parameter>callback</parameter>'s <function>success</function> method
+is then invoked, after all <structname>mail::folder</structname> objects
+are destroyed.</para>
+
+      <para>
+The list of top-level folders depends on the mail account's type.
+Local mail accounts have a single folder object representing the
+locally-configured mail folder directory.
+<literal>inbox</literal> and
+<literal>maildir</literal> accounts also have a single folder named
+<literal>INBOX</literal>.
+<literal>INBOX</literal> represents the system mail folder where incoming
+mail is delivered.
+<literal>pop3</literal> accounts have a single,
+lonely, <literal>INBOX</literal> folder.
+<literal>imap</literal> accounts have a
+<literal>INBOX</literal> folder
+in addition to top level folders identified by the
+IMAP server (using the IMAP <literal>NAMESPACE</literal> extension).
+IMAP servers that do not explicitly
+identify folder collections will have a
+single <structname>mail::folder</structname> object, representing the root
+of the IMAP server's namespace.</para>
+    </refsect1>
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-clone"><citerefentry>
+	    <refentrytitle>mail::folder::clone</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>..</para>
+    </refsect1>
+
+  </refentry>

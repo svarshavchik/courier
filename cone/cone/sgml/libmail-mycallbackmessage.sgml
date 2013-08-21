@@ -1,0 +1,36 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<literallayout>
+#include &lt;libmail/mail.H&gt;
+#include &lt;libmail/envelope.H&gt;
+#include &lt;libmail/structure.H&gt;
+
+class myCallbackMessage : public mail::callback::message {
+public:
+    void success(std::string msg);
+    void fail(std::string msg);
+
+    void messageEnvelopeCallback(size_t messageNumber,
+                                 const <link linkend="envelope">mail::envelope</link> &amp;envelopeArg);
+
+    void messageReferencesCallback(size_t messageNumber,
+                                   const std::vector&lt;std::string&gt; &amp;referencesArg);
+
+    void messageArrivalDateCallback(size_t messageNumber,
+                                    time_t datetime);
+
+    void messageSizeCallback(size_t messageNumber,
+                             unsigned long size);
+
+    void messageStructureCallback(size_t messageNumber,
+                                  const <link linkend="mimestruct">mail::mimestruct</link> &amp;messageStructure);
+    void messageTextCallback(size_t messageNumber, std::string text);
+};
+
+std::cout &lt;&lt; (float)myMessageCallback.messageTextCompleted /
+             (float)myMessageCallback.messageTextEstimatedSize * 100
+          &lt;&lt; "% completed." &lt;&lt; endl;
+
+</literallayout>
+

@@ -1,0 +1,151 @@
+#!/bin/sh
+
+rm -f .courier*
+
+echo "./Mailbox" >.courier
+
+cat >testsuite.msg1 <<EOF
+From: postmaster@example.com
+To: postmaster@example.com
+Subject: testmsg1
+
+testmsg1
+EOF
+
+cat >testsuite.msg2 <<EOF
+From: postmaster@example.com
+To: postmaster@example.com
+Subject: testmsg2
+
+testmsg2
+EOF
+
+
+echo "Test1:"
+echo "| env | sort " >.courier-foo-default
+>Mailbox
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "foo-bar-foobar" "receipient-foo-bar@example.com" "sender-env@example.com" "" "" "." >testsuite.stdout 2>testsuite.stderr <testsuite.msg1
+echo "RC=$?"
+echo ".stdout:"
+cat testsuite.stdout
+echo ".stderr:"
+sed -n '
+/^DEFAULT=/p
+/^DTLINE=/p
+/^EXT2=/p
+/^EXT3=/p
+/^EXT4=/p
+/^EXT=/p
+/^HOST=/p
+/^LOCAL=/p
+/^PATH=/p
+/^RECIPIENT=/p
+/^RPLINE=/p
+/^SENDER=/p' <testsuite.stderr
+echo ".Mailbox:"
+sed '1d' <Mailbox
+rm -f .courier-foo-default
+
+echo "Test2:"
+echo "./Mailbox2" >.courier-default
+>Mailbox
+>Mailbox2
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "" "receipient@example.com" "sender@example.com" "" "" ".">testsuite.stdout 2>testsuite.stderr <testsuite.msg1
+echo "RC=$?"
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "foo" "receipient@example.com" "sender@example.com" "" "" "." >>testsuite.stdout 2>>testsuite.stderr <testsuite.msg2
+echo "RC=$?"
+echo ".stdout:"
+cat testsuite.stdout
+echo ".stderr:"
+cat testsuite.stderr
+echo ".Mailbox:"
+sed '1d' <Mailbox
+echo ".Mailbox2:"
+sed '1d' <Mailbox2
+
+echo "Test3:"
+echo "| echo 'Foo'" >.courier
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "" "receipient@example.com" "sender@example.com" "" "" "." >testsuite.stdout 2>testsuite.stderr <testsuite.msg1
+echo "RC=$?"
+echo ".stdout:"
+cat testsuite.stdout
+echo ".stderr:"
+cat testsuite.stderr
+
+echo "Test4:"
+echo "| FOO='Foo \\" >.courier
+echo " baz' ; echo 'Ok - Foo'" >>.courier
+echo "| exit 10" >>.courier
+echo "| echo 'Bar'" >>.courier
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "" "receipient@example.com" "sender@example.com" "" "" "." >testsuite.stdout 2>testsuite.stderr <testsuite.msg1
+echo "RC=$?"
+echo ".stdout:"
+cat testsuite.stdout
+echo ".stderr:"
+cat testsuite.stderr
+
+echo "Test5:"
+echo "| echo 'Foo'" >.courier
+echo "&foo, bar" >>.courier
+echo "!foobar" >>.courier
+echo "barfoo bazfoo" >>.courier
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "" "receipient@example.com" "sender@example.com" "" "" "." >testsuite.stdout 2>testsuite.stderr <testsuite.msg1
+echo "RC=$?"
+echo ".stdout:"
+cat testsuite.stdout
+echo ".stderr:"
+cat testsuite.stderr
+
+echo "Test6:"
+UFLINE='From foo@bar Fri Jun  4 08:14:18 EDT 1999'
+DTLINE='Delivered-To: test6@testsuite'
+RPLINE='Return-Path: bugs@courier'
+export UFLINE
+export DTLINE
+export RPLINE
+./preline cat <testsuite.msg1
+./preline echo "Foo" <testsuite.msg1
+
+echo "Test7:"
+rm -f Mailbox Mailbox2 Mailbox3 Mailbox4
+echo "|| echo './Mailbox'" >.courier
+echo "./Mailbox2" >>.courier
+echo "|| echo './Mailbox3' ; exit 99" >>.courier
+echo "./Mailbox4" >>.courier
+cat >testsuite.msg1 <<EOF
+From: nobody@example.com
+To: nobody@example.com
+Subject: test of dynamic delivery instructions.
+
+test
+EOF
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "" "receipient@example.com" "sender@example.com" "" "" "." >testsuite.stdout 2>testsuite.stderr <testsuite.msg1
+echo "stdout:"
+cat testsuite.stdout 2>&1
+echo "stderr:"
+cat testsuite.stderr 2>&1
+echo "Mailbox"
+sed '1d' < ./Mailbox 2>&1
+echo "Mailbox2"
+sed '1d' < ./Mailbox2 2>&1
+echo "Mailbox3"
+sed '1d' < ./Mailbox3 2>&1
+echo "Mailbox4"
+cat ./Mailbox4 2>/dev/null || echo "Not found."
+echo "Test8:"
+echo "|| ./testloop.sh" >.courier
+echo "| echo 'I suck.'" >>.courier
+cat >testloop.sh <<EOF
+#!/bin/sh
+echo '|| ./testloop.sh'
+exit 0
+EOF
+chmod +x testloop.sh
+env - PATH=/bin:/usr/bin:/usr/local/bin ./courierdeliver me `pwd` "" "receipient@example.com" "sender@example.com" "" "" "." >testsuite.stdout 2>testsuite.stderr <testsuite.msg1
+echo "Exit Status: $?"
+echo "stdout:"
+cat testsuite.stdout
+echo "stderr:"
+cat testsuite.stderr
+
+rm -f .courier* testsuite.msg* testsuite.std* Mailbox* testloop.sh

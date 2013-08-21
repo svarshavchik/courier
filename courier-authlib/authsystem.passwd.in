@@ -1,0 +1,70 @@
+#! @EXPECT@ -f
+#
+#
+# Copyright 2001-2005 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# This script attempts to change a system account password in an automated
+# fashion.  This implemention is an "expect" script for the passwd command.
+#
+# This script reads two lines of text from stdin: old password, new password
+# then runs the passwd command to change the password, and we attempt to parse
+# the output of passwd.
+#
+# This implementation is for the basic "passwd" command.  If it doesn't work
+# for you, sorry: you're on your own.  Some common pitfalls:
+#
+# * Enhanced passwd implementations that reject passwords based on dictionary
+# words, etc..  This can result in unexpected output from the passwd command
+# that this script may not be able to handle.  We attempt to catch the most
+# common error messages, below.  Finally, we use a 30 second timeout.
+#
+# * I dunno - there must be other problems with this.
+#
+
+set timeout 30
+
+expect {
+	-re "(.*)\n(.*)\n" { set oldpass "$expect_out(1,string)" ; set newpass "$expect_out(2,string)" }
+	eof { exit 1 }
+	timeout { exit 1 }
+}
+
+set env(LC_ALL) "en_US"
+spawn "@PASSWD@"
+
+expect {
+	-re "word:" { sleep 2; send "$oldpass\n" }
+	eof { exit 1 }
+	timeout { exit 1 }
+}
+
+expect {
+	-re "nvalid" { exit 1 }
+	-re "word:" { sleep 2; send "$newpass\n" }
+	eof { exit 1 }
+	timeout { exit 1 }
+}
+
+expect {
+	-re "nvalid" { exit 1 }
+	-re "NVALID" { exit 1 }
+	-re "bad pass" { exit 1 }
+	-re "BAD PASS" { exit 1 }
+	-re "dictionary" { exit 1 }
+	-re "common" { exit 1 }
+	-re "short" { exit 1 }
+	-re "word:" { sleep 2; send "$newpass\n" }
+	eof { exit 1 }
+	timeout { exit 1 }
+}
+
+expect {
+	-re "nvalid" { exit 1 }
+	-re "nchange" { exit 1 }
+	-re "same" { exit 1 }
+	eof { exit 0 }
+	timeout { exit 1 }
+}
+
+exit 1

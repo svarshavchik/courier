@@ -1,0 +1,393 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone05setup">
+  <title>Setup Screen</title>
+
+  <para>
+This screen is used to enter various configuration settings.
+After making any changes on this screen, highlight <quote>SAVE</quote>
+and press <keycap>ENTER</keycap>.</para>
+
+  <section>
+    <title>Setup Screen</title>
+
+    <programlisting>
+::B::
+ SETUP                                CONE
+
+        Your E-mail addresses: _____________________________________
+                               [ sam@example.com ]
+
+                               [ Minimum rich text de-moronization ]
+
+  Your mailing list addresses: _____________________________________
+                               [ announcements@domain.com ]
+                               [ sysadmin@domain.com ]
+                               [ everyone@domain.com ]
+                               [ testers-list@domain.com ]
+                               [ users@domain.com ]
+                               [ reports@domain.com ]
+                               [ webmail@domain.com ]
+
+     Custom sent mail folders:
+                               [ Outbox ]
+
+          Spelling dictionary: _____________________________________
+
+::B::
+
+ ^C Cancel
+DEL Delete address/folder
+</programlisting>
+
+    <para>
+Use this screen to configure the following settings:</para>
+    <variablelist>
+      <varlistentry>
+	<term>Your E-mail addresses</term>
+	<listitem>
+	  <para>
+This is a list of E-mail addresses that are recognized as the user's
+E-mail addresses.
+New replies are formatted accordingly.
+Add an E-mail address by typing it into a field, then pressing
+<keycap>ENTER</keycap>.
+Highlight an existing address with a cursor, and use <keycap>DEL</keycap>
+to remove it.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Your mailing list addresses</term>
+	<listitem>
+	  <para>
+This is a list of E-mail addresses that are recognized as mailing list
+addresses.
+New replies are formatted accordingly.
+Add an E-mail address by typing it into a field, then pressing
+<keycap>ENTER</keycap>.
+Highlight an existing address with a cursor, and use <keycap>DEL</keycap>
+to remove it.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Spelling dictionary</term>
+	<listitem>
+	  <para>
+Name of the dictionary used for spell checking.
+A blank setting uses the default configured system dictionary.
+Names of available dictionaries is system specific.
+Different systems will have different dictionaries installed.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Custom sent mail folders</term>
+	<listitem>
+	  <para>
+This is a list of currently-configured folders where copies of sent messages
+are automatically saved.
+Highlight an existing folder with a cursor, and use <keycap>DEL</keycap>
+to remove it.
+Add new folders from the Folder Listing screen.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>New custom header</term>
+	<listitem>
+	  <para>
+This advanced option
+adds a new, editable, vanity or custom header to all new messages.
+The new header is displayed alongside the standard headers
+(<literal>From</literal>, <literal>To</literal>, <literal>Subject</literal>,
+and the rest).
+Names of vanity headers may only include English letters, digits, and
+<quote>-</quote>.
+After entering the header name choose whether the vanity header is
+always displayed on the <quote>Write Messages</quote> screen, or if it is
+hidden by default, and only shown with the full set of headers.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Outgoing SMTP server</term>
+	<listitem>
+	  <para>
+This setting specifies the name of the SMTP server used for sending mail.
+If not specified, &app; uses the local <command>sendmail</command>
+command.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term>SMTP SSL certificate (optional)</term>
+	  <listitem>
+	  <para>
+This setting enables SMTP authentication using
+an <acronym>SSL</acronym> certificate. This setting appears with a
+button that reads <quote>Use certificate</quote>. The setting and the
+button appears only if at least one <acronym>SSL</acronym> certificate
+is already imported (see <xref linkend="cone10certificates" />).
+Choosing this button pops up a dialog with a list of available certificates.
+Selecting a certificate from the list changes this button to read
+<quote>Remove certificate</quote>, and selecting it again removes the
+certificate selection. When using certificates, the SMTP userid, below,
+may be left blank. If provided, and the server does not support
+authentication using <acronym>SSL</acronym> certificates, the traditional
+userid/password authentication is an automatic fallback.</para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term>SMTP userid</term>
+	<listitem>
+	  <para>
+If this setting is provided, &app; will use authenticate via ESMTP with the
+specified SMTP server.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>Do not send SMTP password in clear text</term>
+	<listitem>
+	  <para>
+If this setting is enabled, &app; will only authenticate via ESMTP if
+encrypted authentication is available.
+&app; will not authenticate if the SMTP server supports authentication, but
+only by sending the password in clear text.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>Send mail via main acct (if available)</term>
+	<listitem>
+	  <para>
+This setting is only available if the primary mail account -- the first
+mail account listed on the folder listing screen -- uses the experimental
+SMAP protocol.
+If enabled, &app; lets the SMAP server take care of sending the message
+(which saves time since the message doesn't need to be transmitted a second
+time, using SMTP, after it is saved in the sent mail folder).</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>NetNews posting command</term>
+	<listitem>
+	  <para>
+This optional setting specifies a command for posting NetNews messages.
+If this setting is left empty,
+NetNews messages are sent directly to the server.
+This setting allows NetNews messages to be posted via some other mechanism;
+perhaps a <literal>mail2news</literal> gateway.
+&app; runs the command and provides the text of the NetNews message on
+standard input.
+Example: <quote><command>sendmail mail2news@example.com</command></quote>
+- runs <command>sendmail</command> to mail the message to
+&lt;mail2news@example.com&gt;.</para>
+
+	  <note>
+	    <para>
+If set, all NetNews messages are posted by running this command.</para>
+	  </note>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>CTRL-Z command</term>
+	<listitem>
+	  <para>
+Specifies the program to run when <keycap>CTRL</keycap>-<keycap>Z</keycap>
+(the suspend key) is pressed.
+If this setting is not empty, pressing <keycap>CTRL</keycap>-<keycap>Z</keycap>
+will run the indicated command instead of suspending &app; and going back
+to the shell prompt.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term>External Editor (^U)</term>
+	  <listitem>
+	    <para>
+Specifies the program to run when <keycap>CTRL</keycap>-<keycap>U</keycap>
+is pressed while editing the message.  The program receives the name of the
+temporary file with the message's contents.  When the program terminates,
+the contents of the file are re-read.</para>
+
+	    <para>
+This setting allows any plain text editor to be used for editing messages,
+instead of &app;'s builtin editor.</para>
+          </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>"Smart" keyboard shortcuts</term>
+	  <listitem>
+	    <para>
+If this option is enabled, &app;'s built-in editor will automatically
+replace certain combination of characters with a single character from
+an extended character set.
+For example, typing <quote>1/2 </quote> verbatim (note the trailing space
+character), inserts the
+&frac12;
+character, instead.
+Same goes for <quote>1/4 </quote>, and <quote>3/4 </quote>.</para>
+
+	    <para>
+Other available shortcuts (depending on the display terminal's capabilities)
+are:</para>
+	    <itemizedlist>
+	      <listitem>
+		<para>
+Two apostrophes, or two backticks, are replaced by <quote>smart
+quotes</quote>.</para>
+	      </listitem>
+	      <listitem>
+		<para>
+(C), (R), and [tm].</para>
+	      </listitem>
+	      <listitem>
+		<para>
++/-, &lt;-, -&gt;, and &lt;-&gt; (replaced by the mathematical +/- character,
+and various horizontal arrows, respectively).</para>
+	      </listitem>
+	      <listitem>
+		<para>
+The three character sequence <literal>[space]*[space]</literal> is
+replaced by the
+&bull;
+symbol (a black bullet).</para>
+	      </listitem>
+	      <listitem>
+		<para>
+Three consecutive periods are replaced by a single
+<quote>&hellip;</quote>
+character.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Two consecutive typed hyphens
+are replaced by a single <quote>&ndash;</quote> (<literal>EN DASH</literal>)
+character, and three consecutive hyphens are replaced by a single
+<quote>&mdash;</quote> (<literal>EM DASH</literal>)
+character, when there's a space before and after the dashes.
+&app; manually displays
+<literal>EN DASH</literal> as a double-dash, and an
+<literal>EM DASH</literal> as a triple-dash, even though the terminal
+console font uses a single-width horizontal line for both.
+Also, &app; uses a modified
+Unicode linebreaking algorithm that disallows linebreaks before and after
+EN or EM dashes. &app; expects EN and EM dashes preceded and followed by
+spaces, and justifies typed text accordingly.
+		</para>
+	      </listitem>
+            </itemizedlist>
+          </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>'Q' quits without prompting</term>
+	  <listitem>
+	    <para>
+If this option is enabled, pressing <keycap>Q</keycap> terminates &app;
+without a confirmation request.</para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term>Autosave (minutes)</term>
+	<listitem>
+	  <para>
+Specifies the frequency, in minutes, of automatic backups when writing a
+new message.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term>Extra GnuPG encrypt/sign options</term>
+	  <listitem>
+	    <para>
+Extra options passed to <application>GnuPG</application> when signing or
+encrypting a message.
+See <quote>Encryption And Signatures</quote>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Extra GnuPG decrypt/verify options</term>
+	  <listitem>
+	    <para>
+Extra options passed to <application>GnuPG</application> when decrypting
+or checking a message's signature.
+See <quote>Encryption And Signatures</quote>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Tag names</term>
+	  <listitem>
+	    <para>
+Specifies names of custom tags that may be used to label messages.
+These are arbitrary labels that are shown as different background colors
+on the folder index screen.
+Press <keycap>ENTER</keycap> to cycle through the list of available colors
+(only applicable with color-capable terminal displays).
+See <quote>Folder Index</quote> for more information.</para>
+
+	    <note>
+	      <para>
+The default names of the first five tags will be the same as the message
+labels used by Mozilla's mail client.
+With most IMAP servers, Mozilla and &app; will see messages tagged/labeled
+by each other (although &app; may not actually use the same colors as Mozilla,
+since they depend on the display terminal's colors).</para>
+</note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Colors</term>
+	  <listitem>
+	    <para>
+The next group of fields set the shown colors for other display elements.
+</para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term>Turn off remote configuration</term>
+	<listitem>
+	  <para>
+Disables remote configuration.
+See
+<link linkend="cone07remoteconfig"><quote>Remote Configuration</quote></link>
+for more information on remote configuration.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Currently defined macros</term>
+	<listitem>
+	  <para>
+This is a list of all currently defined macros.
+See
+<link linkend="cone04writemessage"><quote>Write Message Screen</quote></link>
+for more information.
+To remove a macro, highlight it with the cursor and press <keycap>DEL</keycap>.
+New macros are defined on the Write Message Screen.
+To re-define an existing macro just follow the same procedure as for
+defining a new macro, and enter the same macro name (or a function key).</para>
+	</listitem>
+      </varlistentry>
+
+    </variablelist>
+  </section>
+</chapter>
+
+<!--
+Local variables:
+sgml-doctype: "book.sgml"
+End:
+-->

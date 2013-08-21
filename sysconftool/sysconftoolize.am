@@ -1,0 +1,38 @@
+
+
+# Copyright 2000 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+# Need to add sysconftoolize to package:
+
+EXTRA_DIST += sysconftool
+
+# NOTE: when using a complex directory hierarchy it is only necessary to
+# include sysconftool in the top level directory, and it is not necessary
+# to add sysconftool to EXTRA_DIST in subdirectories.
+
+SYSCONFFILES=$(sysconf_DATA)
+
+# SYSCONFFILES should be all of your .dist files, this is a default.
+# You can also change install-configure-local target below, instead.
+
+# If -- in a complex directory hierarchy -- a certain subdirectory does not
+# need install-configure, leave it defined as an empty rule to prevent
+# sysconftoolize from appending another form template to this Makefile.am
+
+install-configure:
+	@list='$(SUBDIRS)'; for subdir in $$list; do \
+		( case "$$subdir" in .) continue;; \
+			*) target=install-configure;; esac ; \
+		cd $$subdir ; $(MAKE) -$(MAKEFLAGS) install-configure DESTDIR=$(DESTDIR) 2>/dev/null) \
+			; done ; exit 0
+	$(MAKE) -$(MAKEFLAGS) install-configure-local DESTDIR=$(DESTDIR)
+
+# Modify the following target as appropriate:
+
+install-configure-local:
+	@list='$(SYSCONFFILES)'; for file in $$list; do \
+		file="$(DESTDIR)$(sysconfdir)/$$file" ; \
+		case "$$file" in *.dist) \
+			@SYSCONFTOOL@ $$file;; esac ; done
+

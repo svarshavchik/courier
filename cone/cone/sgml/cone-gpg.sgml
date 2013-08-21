@@ -1,0 +1,183 @@
+<!-- Copyright 2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <chapter id="cone08gpg">
+    <title>Encryption And Signatures</title>
+
+    <para>
+&app; includes supports for encryption and digital signatures.
+<application>GnuPG</application> (http://www.gnupg.org) must be installed
+in order to use encryption
+and digital signatures.</para>
+
+    <note>
+      <para>
+&app; uses a newer MIME-based format for encrypted and signed messages.
+&app; does not recognize or use the older
+<quote>inline-formatted</quote> messages
+(this is where the text messages contain keywords like
+<quote>BEGIN PGP SIGNED MESSAGE</quote>).</para>
+    </note>
+
+    <section>
+      <title>MIME encryption and digital signatures</title>
+
+      <para>
+At this time &app; provides basic encryption, decryption, signature creation,
+and signature verification functionality.
+Key management (like creating and signing keys) must still be done with
+<application>GnuPG</application>.</para>
+
+      <section>
+	<title>Signing and encrypting messages</title>
+	<para>
+When <application>GnuPG</application> is installed,
+two additional options become available after
+pressing <keycap>CTRL</keycap>-<keycap>X</keycap> to send a message:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>Sign</term>
+	    <listitem>
+	      <para>
+Pressing <keycap>S</keycap> displays a list of all available secret keys.
+Highlight the key and press <keycap>Enter</keycap> to select a key for
+signing the message.
+The list of keys is shown at the bottom of the screen.
+The top of the screen shows additional information about the currently
+highlighted key.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>Encrypt</term>
+	    <listitem>
+	      <para>
+Pressing <keycap>E</keycap> displays a list of all known public keys.
+More than one public key may be selected.
+All public keys whose addresses match any recipient address,
+or the sender's address, are selected by default.
+The message is encrypted by all chosen public keys.
+Highlight each key and press <keycap>SPACE</keycap> to select a public key
+encryption.  Press <keycap>Enter</keycap> after selecting all public
+keys.
+A checkmark (or an asterisk, depending on the console display) is placed
+next to each selected key.
+Press <keycap>SPACE</keycap> again in order to un-select a selected key.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+
+	<para>
+The original prompt is updated accordingly, after selecting either of these
+two options (the original <quote>Send message?</quote> prompt changes to a
+<quote>Sign, then send message?</quote>, or some other appropriate
+variant).
+The key used for signing a message is memorized like any other custom
+message header, and is automatically selected by default when sending the
+next message.
+Choose <quote><keycap>S</keycap>ign</quote> again to un-select the key.
+A separate default signing key exists for every account &app; is logged on to,
+and a default signing key is memorized for every open folder.
+It is possible to memorize a different key for signing
+replies to messages in different folders.
+However that may prove to be a bit cumbersome.
+Each time a message in a different folder is replied to, &app; will prompt
+whether to set that folder's key (or any other custom header) as the default
+for the entire mail account.
+This feature is probably convenient when most replies are to messages from
+the same folder, and messages from other folders are accessed
+infrequently.</para>
+
+	<note>
+	  <para>
+The <quote>Sign</quote> and/or the <quote>Encrypt</quote> option must be
+used before selecting <quote>Delivery notifications</quote>.
+After selecting <quote>Delivery notifications</quote>, the only remaining
+options shown are the various delivery notifications options, and
+<keycap>Y</keycap>, which sends the message.</para>
+	</note>
+
+	<note>
+	  <para>
+Copies of encrypted sent messages are saved in their encrypted form.
+Unless the sender's public key is also selected for encryption, the sender
+will not be able to read a copy of the sender's own message!</para>
+	</note>
+
+      </section>
+
+      <section>
+	<title>Passphrases</title>
+
+	<para>
+&app; supports passphrase-protected keys.
+&app; prompts for a passphrase before it signs a message.
+Press <keycap>Enter</keycap> without entering anything if the key does not
+have a passphrase.</para>
+
+	<para>
+&app; remembers the passphrase, and will not ask for it again.
+When a master single-signon password is installed
+(see <quote>Master Passwords</quote>), passphrase passwords are also
+saved together with all other account passwords.
+&app; does not automatically know when, and if,
+the key's passphrase is changed.
+When message signing fails, &app; automatically removes the saved passphrase.
+Simply try again to sign the same message, and &app; will prompt for the
+new passphrase.</para>
+      </section>
+
+      <section>
+	<title>Decrypting messages, and verifying signatures</title>
+
+	<para>
+Pressing <keycap>Y</keycap> (as in <quote>decr<keycap>Y</keycap>t</quote>)
+attempts to decrypt or verify the signature of a currently opened message.
+The message must be opened before it can be decrypted.
+A signed message must also be opened, before its signature can be
+verified.</para>
+
+	<para>
+An encrypted message will initially be empty, naturally, except for a single
+attachment that contains the encrypted content.
+The contents of a signed message are displayed normally.
+The presence of an additional attachment, that contains the message's
+signature, indicates that the message is signed.
+After a message is succesfully decrypted, or its signature is verified,
+the message's contents are shown together with the diagnostic messages from
+<application>GnuPG</application> which contain additional information on
+the message's encryption status.</para>
+
+	<para>
+Forwarding or replying to a message always ends up forwarding or replying
+whatever's currently shown on the screen.
+If the message is decrypted, the decrypted contents are forwarded.
+If the message is not decrypted, its original encrypted version is
+forwarded.</para>
+      </section>
+
+      <section>
+	<title>Decrypting messages with a passphrase-protected key</title>
+
+	<para>
+Before decrypting a message, &app; prompts for a passphrase.
+The passphrase is memorized just like passphrases are memorized after
+a message is signed, and &app; will not ask for a passphrase again.
+Just like when signing, when a master single-signon password is installed,
+the passphrase is saved together with all other account passwords.</para>
+
+	<para>
+At this time, &app; is not smart enough to known which private key was
+used for encrypting a message.  Therefore if multiple private keys are present,
+they all should have the same passphrase.
+Otherwise, each time an attempt is made to decrypt a message that's encrypted
+by different key, the attempt will fail because the wrong passphrase was
+memorized.
+Each time an attempt to decrypt a message fails, &app; automatically forgets
+the saved passphrase, so that the attempt to decrypt the message can be
+tried again, this time entering the correct passphrase (which will now be
+memorized and used as a default decrypting passphrase from now on).</para>
+      </section>
+    </section>
+  </chapter>

@@ -1,0 +1,60 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-hascapability">
+    <refmeta>
+      <refentrytitle>mail::account::hasCapability</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::hasCapability</refname>
+      <refpurpose>Mail account's properties</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool flag=account-&gt;<function>hasCapability</function></funcdef>
+	  <paramdef>std::string <parameter>capability</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function checks this
+<structname>mail::account</structname>'s properties.
+The list of potential properties, or capabilities, depends on the account.
+The currently defined list of properties are:
+<variablelist>
+	  <varlistentry><term><literal>LIBMAIL_SINGLEFOLDER</literal></term>
+	    <listitem>
+	      <para>
+Whether this account contains a single incoming mail folder
+(currently only <literal>pop3</literal> accounts
+have this capability defined).</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+<para>
+The
+<function>hasCapability</function> method returns true if the account
+supports the indicated capability.</para>
+    </refsect1>
+  </refentry>

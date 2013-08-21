@@ -1,0 +1,384 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+<structfield>mySearchParams.criteria</structfield> specifies the search type.
+<structfield>mySearchParams.searchNot</structfield> is a bool; setting it to
+<literal>true</literal> logically negates the search type.
+For example, if <structfield>mySearchParams.criteria</structfield> is
+<literal>mail::searchParams::on</literal> then setting
+<structfield>mySearchParams.searchNot</structfield> to <literal>true</literal>
+will search for messages NOT sent on the specified date.</para>
+
+      <para>
+<structfield>mySearchParams.param1</structfield> and
+<structfield>mySearchParams.param2</structfield> specify
+additional parameters used by
+some search criterias.
+<structfield>mySearchParams.charset</structfield> specifies 
+<structfield>mySearchParams.param2</structfield>'s character set.
+<structfield>mySearchParams.param1</structfield>'s character set is always
+<literal>ISO-8859-1</literal>.</para>
+
+      <para>
+<structfield>mySearchParams.scope</structfield> specifies the scope of the
+search, and must be set to one of the following:</para>
+
+<variablelist>
+  <varlistentry>
+    <term>search_all</term>
+    <listitem>
+      <para>
+Search all messages in the folder.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>search_marked</term>
+    <listitem>
+      <para>
+Search only messages that have
+<structfield>mail::messageInfo::marked</structfield>
+set to <literal>true</literal>.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>search_unmarked</term>
+    <listitem>
+      <para>
+Search only messages that have
+<structfield>mail::messageInfo::marked</structfield>
+set to <literal>false</literal>.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>search_ranges</term>
+    <listitem>
+      <para>
+Search only message #<structfield>rangeLo</structfield>
+through message #<structfield>rangeHi</structfield>-1.</para>
+    </listitem>
+  </varlistentry>
+
+      <para>
+Complex search criteria may be performed as follows:</para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+Clear <structfield>mail::messageInfo::marked</structfield> status flags on
+all messages (use
+<link linkend="mail-updatefolderindexflags"><citerefentry>
+		<refentrytitle>mail::account::updateFolderIndexFlags</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>
+or
+<link linkend="account-updatefolderindexflags"><citerefentry>
+		<refentrytitle>mail::ACCOUNT::updateFolderIndexFlags</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Execute a search with
+<structfield>mySearchParams.scope</structfield> set to
+<literal>search_unmarked</literal>.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Use
+<link linkend="mail-updatefolderindexflags"><citerefentry>
+		<refentrytitle>mail::account::updateFolderIndexFlags</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>
+or
+<link linkend="account-updatefolderindexflags"><citerefentry>
+		<refentrytitle>mail::ACCOUNT::updateFolderIndexFlags</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>
+to set the
+<structfield>mail::messageInfo::marked</structfield> flag on messages found
+by the first search.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Run additional searches, with
+<structfield>mySearchParams.scope</structfield> set accordingly; and
+use
+<link linkend="mail-updatefolderindexflags"><citerefentry>
+		<refentrytitle>mail::account::updateFolderIndexFlags</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>
+or
+<link linkend="account-updatefolderindexflags"><citerefentry>
+		<refentrytitle>mail::ACCOUNT::updateFolderIndexFlags</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>
+to set or reset the
+<structfield>mail::messageInfo::marked</structfield> flag on messages found
+by the search.</para>
+	</listitem>
+      </itemizedlist>
+
+      <note>
+	<para>
+The <structfield>mail::messageInfo::marked</structfield> status flag's usage
+is not limited to searches.
+<structfield>mail::messageInfo::marked</structfield> is a generic flag that
+applications may use for their own purposes.
+Searching is one such particular
+application for this flag.</para>
+
+	<para>
+Some IMAP servers do not implemented the
+<structfield>mail::messageInfo::marked</structfield> status flag, and
+there's no such thing as a status flag in the POP3 protocol.
+When
+<structfield>mail::messageInfo::marked</structfield> status flag is not
+implemented by the server,
+<structname>mail::account</structname> will synthesize a suitable replacement
+that will work just like the real thing (except that the status flags of
+messages will not be saved when the folder is closed).</para>
+      </note>
+
+  <refsect2>
+	<title>Search Criteria</title>
+
+	<para>
+<structfield>mySearchParams.criteria</structfield> must be set to one of the
+following constants:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>mail::searchParams::replied</term>
+	    <listitem>
+	      <para>
+Search for messages with the
+<structfield>mail::messageInfo::replied</structfield> status flag set.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::deleted</term>
+	    <listitem>
+	      <para>
+Search for messages with the
+<structfield>mail::messageInfo::deleted</structfield> status flag set.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::draft</term>
+	    <listitem>
+	      <para>
+Search for messages with the
+<structfield>mail::messageInfo::draft</structfield> status flag set.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::unread</term>
+	    <listitem>
+	      <para>
+Search for messages with the
+<structfield>mail::messageInfo::unread</structfield> status flag set.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::from</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in their
+<literal>From:</literal>
+header.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::to</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in their
+<literal>To:</literal>
+header.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::cc</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in their
+<literal>Cc:</literal>
+header.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::bcc</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in their
+<literal>Bcc:</literal>
+header.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::subject</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in their
+<literal>Subject:</literal>
+header.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::header</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in a header
+whose name is
+<structfield>mail::searchParams.param1</structfield>.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::body</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in the
+message's contents.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::text</term>
+	    <listitem>
+	      <para>
+Search for messages where
+<structfield>mail::searchParams.param2</structfield> occurs in the
+message's contents or headers.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::before</term>
+	    <listitem>
+	      <para>
+Search for messages received before the date specified by
+<structfield>mail::searchParams.param2</structfield>.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::on</term>
+	    <listitem>
+	      <para>
+Search for messages received on the date specified by
+<structfield>mail::searchParams.param2</structfield>.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::since</term>
+	    <listitem>
+	      <para>
+Search for messages received on or after the date specified by
+<structfield>mail::searchParams.param2</structfield>.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::sentbefore</term>
+	    <listitem>
+	      <para>
+Search for messages whose <literal>Date:</literal> header contains a date
+before the date specified by
+<structfield>mail::searchParams.param2</structfield>.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::senton</term>
+	    <listitem>
+	      <para>
+Search for messages whose <literal>Date:</literal> header contains a date
+specified by
+<structfield>mail::searchParams.param2</structfield>.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::sentsince</term>
+	    <listitem>
+	      <para>
+Search for messages whose <literal>Date:</literal> header contains a date
+specified by
+<structfield>mail::searchParams.param2</structfield>, or later.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::larger</term>
+	    <listitem>
+	      <para>
+Search for messages whose approximate size is at least as the number of bytes
+specified by
+<structfield>mail::searchParams.param2</structfield>.
+</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>mail::searchParams::smaller</term>
+	    <listitem>
+	      <para>
+Search for messages whose approximate size is less than the number of bytes
+specified by
+<structfield>mail::searchParams.param2</structfield>.
+</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+
+	<note>
+<para>
+<structfield>mail::searchParams.param2</structfield>
+contains a text string of the form "mm-ddd-yyyy"
+for date-related search criteria (example:
+<literal>"12-Oct-2001"</literal>).</para>
+	</note>
+
+    <note>
+      <para>
+Usenet servers offer very limited searching facilities.
+Consequently, searching NetNews folders will be slow, and inefficient.
+Searching on status flags is reasonably fast, since &libname;
+maintains status flags of NetNews folders internally.
+
+The following search parameters use the <literal>NNTP XPAT</literal> command,
+provides that the search string uses only the
+<literal>US-ASCII</literal> alphabet,
+and will also be reasonably fast:
+<literal>mail::searchParams::from</literal>,
+<literal>mail::searchParams::to</literal>,
+<literal>mail::searchParams::cc</literal>,
+<literal>mail::searchParams::bcc</literal>,
+<literal>mail::searchParams::subject</literal>, and
+<literal>mail::searchParams::header</literal>.</para>
+
+      <para>
+For all other searches, or
+if the search string uses characters outside of the <literal>US-ASCII</literal>
+character set, &libname; will download each message individually, in order
+to search it.
+That's going to be very, very slow.</para>
+
+      <para>
+Additionally, most Usenet servers's <literal>NNTP XPAT</literal> is case
+sensitive.
+All other searches are case insensitive.</para>
+    </note>
+    &libmail-search2;
+  </refsect2>
+</variablelist>

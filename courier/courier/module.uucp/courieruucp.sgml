@@ -1,0 +1,264 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>courieruucp</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>courieruucp</refname>
+    <refpurpose>Sample Courier mail filter</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">makeuucpneighbors</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The Courier mail server is capable of sending and receiving mail via UUCP.
+Courier does not implement UUCP directly, but instead uses third-party UUCP
+software, which you must install separately. Courier's UUCP support is
+provided automatically by the <literal moreinfo="none">courieruucp</literal> module, which is compiled
+and installed by default.</para>
+
+    <para>
+Courier sends mail via UUCP by issuing a request via <command moreinfo="none">uux</command> to
+execute the <command moreinfo="none">rmail</command> command on the remote UUCP node.  Courier passes
+the message envelope sender to <command moreinfo="none">rmail</command> via the
+<option>-f</option> flag, and
+lists the message envelope recipients as the remaining arguments. Message
+envelope addresses and E-mail addresses in the headers of the message will be
+appropriately rewritten.</para>
+
+    <para>
+Courier will only send mail via UUCP if it knows about the recipient's UUCP
+node.  The configuration file <filename moreinfo="none">@sysconfdir@/uucpneighbors</filename> is a plain
+text configuration file.  The <command moreinfo="none">makeuucpneighbors</command> script compiles this
+configuration file into a binary database that is read by Courier.  Changes to
+<filename moreinfo="none">@sysconfdir@/uucpneighbors</filename> do not take effect until
+<command moreinfo="none">makeuucpneighbors</command> is executed, and Courier is restarted.</para>
+
+    <para>
+<filename moreinfo="none">@sysconfdir@/uucpneighbors</filename> may also be a subdirectory instead of a
+plain text file, in which case the contents of all text files in this
+subdirectory is automatically concatenated by the <command moreinfo="none">makeuucpneighbors</command>
+script.</para>
+
+    <refsect2>
+      <title>Contents of <filename moreinfo="none">@sysconfdir@/uucpme</filename></title>
+
+      <para>
+This configuration file must be initialized to contain the UUCP node name
+that this machine is known to its neighbors. If <filename moreinfo="none">@sysconfdir@/uucpme</filename>
+does not exist, Courier uses the first node name of the hostname specified by
+the <filename moreinfo="none">@sysconfdir@/me</filename> configuration file.</para>
+    </refsect2>
+
+    <refsect2>
+      <title>Contents of <filename moreinfo="none">@sysconfdir@/uucpneighbors</filename></title>
+
+      <para>
+Note that in addition to creating this configuration file you must also
+configure your UUCP software to appropriately route UUCP mail to the specified
+nodes, which is a completely separate task. Blank lines in this file are
+ignored.  Lines that start with the <token>#</token>
+character are comments, and are
+also ignored. The remaining lines are in the following format:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+node&lt;TAB&gt;flags
+</programlisting>
+      </informalexample>
+
+      <para>
+<replaceable>node</replaceable> is a UUCP node, such as
+"<literal moreinfo="none">apple</literal>" or "<literal moreinfo="none">food!fruits!apple</literal>".
+&lt;TAB&gt; is a single tab character, and <replaceable>flags</replaceable> is zero or more of single
+character flags described below.  The tab character can be ommited if there
+are no <replaceable>flags</replaceable>.</para>
+
+      <para>
+If there is an entry for <replaceable>node</replaceable> in <filename moreinfo="none">@sysconfdir@/uucpneighbors</filename>
+then Courier will accept mail for any address of the form
+"<literal moreinfo="none">node!user</literal>", but not "<literal moreinfo="none">node!nodule!user</literal>". In order
+to accept mail for "<literal moreinfo="none">node!nodule!user</literal>" you must enter both
+"<literal moreinfo="none">node</literal>" and "<literal moreinfo="none">node!nodule</literal>", unless you use the
+<option>F</option> or the <option>G</option> flag.</para>
+
+      <para>
+The flags are as follows:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>F</term>
+	  <listitem>
+	    <para>
+Unrestricted forwarding.  This flag will accept any UUCP
+path that starts with the specified node.  Example:</para>
+	    <informalexample>
+	      <programlisting format="linespecific">
+food&lt;TAB&gt;F
+</programlisting>
+	    </informalexample>
+
+	    <para>
+This will accept "<literal moreinfo="none">food!fruits!apple</literal>",
+"<literal moreinfo="none">food!fruits!banana</literal>",
+"<literal moreinfo="none">food!drinks!orangejuice</literal>", and so on. You may simply list
+all your immediate UUCP neighbors using the F flag, and accept mail to any
+address that's reachable via any neighbor.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>G</term>
+	  <listitem>
+	    <para>
+This is a gateway.  This flag is identical to the F flag, except that
+<command moreinfo="none">rmail</command> is executed on the specified node.  Normally, Courier will
+issue a <command moreinfo="none">uux</command> request to run <command moreinfo="none">rmail</command> on the last node, for
+example "<command moreinfo="none">uux food!fruits!rmail apple</command>".
+Using G instead of F will
+run <command moreinfo="none">rmail</command> on the listed node, for example "<command moreinfo="none">uux food!rmail
+fruits!apple</command>".</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>R</term>
+	  <listitem>
+	    <para>
+This is a relay.  This flag is used where neither F or G flags are
+appropriate, but you want to run <command moreinfo="none">rmail</command> on this node. For
+example:</para>
+
+	    <informalexample>
+	      <programlisting format="linespecific">
+food!fruits
+food&lt;TAB&gt;R
+</programlisting>
+	    </informalexample>
+
+	    <para>
+In this example mail to "food!fruits!apple" is sent by executing "<command moreinfo="none">uux
+food!rmail fruits!apple</command>".  If the R flag is not specified, then Courier
+will request "<command moreinfo="none">uux food!fruits!rmail apple</command>".</para>
+	  </listitem>
+	</varlistentry>
+
+      </variablelist>
+    </refsect2>
+
+    <refsect2>
+      <title>Contents of <filename moreinfo="none">@sysconfdir@/module.uucp</filename></title>
+
+      <para>
+This is the standard Courier module configuration file.</para>
+      <variablelist>
+	<varlistentry>
+	  <term>MAXDELS</term>
+	  <listitem>
+	    <para>
+Maximum simultaneous UUCP deliveries.  This setting
+is a bit misleading.  From Courier's viewpoint, a delivery consists only
+of running <command moreinfo="none">uux</command> to queue up the message via UUCP. Once
+<command moreinfo="none">uux</command> returns, the message is delivered, as far as Courier is
+concerned.  UUCP is responsible for getting the message the rest of the
+way. Therefore, UUCP deliveries tend to be fairly quick, and it is not
+necessary to configure a large number of concurrent <command moreinfo="none">courieruucp</command>
+processes, since each one will terminate quickly. Once <command moreinfo="none">uux</command>
+terminates, the UUCP software is responsible for queueing and sending the
+message.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>MAXHOST</term>
+	  <listitem>
+	    <para>
+Maximum simultaneous UUCP deliveries to the same UUCP
+node.  Since UUCP deliveries tend to be fairly quick, it is not usually
+necessary to use <envar>MAXHOST</envar> to limit concurrent deliveries to the
+same UUCP node, so <envar>MAXHOST</envar> should generally be set to the same
+value as <envar>MAXDELS</envar>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>MAXRCPT</term>
+	  <listitem>
+	    <para>
+Maximum recipients per message.  When the same
+message is sent to multiple recipients on the same UUCP node, Courier is
+capable of asking to run <command moreinfo="none">rmail</command> only one, and listing all the
+recipients together. <envar>MAXRCPT</envar> specifies the upper limit on the
+number of recipients that are batched together. You want to set a limit
+based on any limitations on the length of command lines that's imposed by
+the operating system. Sending the same message to different UUCP nodes is
+always handled as separate deliveries.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>HEADER AND ADDRESS REWRITING</title>
+
+    <para>
+Courier is certainly capable of relaying mail between the Internet - via
+ESMTP - and UUCP-land, rewriting headers and addresses appropriately. The
+address rewriting rules are  fixed, but they are expected to work in nearly
+every case. If you find yourself in some oddball situation, you'll just have
+to invest the time to add custom header rewriting code.</para>
+
+    <para>
+If you are <literal moreinfo="none">example.com</literal>, and your UUCP node is <literal moreinfo="none">example</literal>,
+then <literal moreinfo="none">&lt;user@example.com&gt;</literal> gets rewritten as
+<literal moreinfo="none">example!user</literal>.</para>
+
+    <para>
+Internet mail may be sent via ESMTP to your UUCP neighbor
+<literal moreinfo="none">apple!john</literal> by sending it to <literal moreinfo="none">&lt;apple!john@example.com&gt;</literal>.
+When that's forwarded via UUCP the return address of
+<literal moreinfo="none">&lt;someone@domain.com&gt;</literal> will be rewritten as
+<literal moreinfo="none">example!domain.com!someone</literal>.</para>
+
+    <para>
+<literal moreinfo="none">apple!john</literal> will get the mail with this return address, which
+should be repliable back to the sender. Courier's UUCP module will receive the
+UUCP address <literal moreinfo="none">domain.com!someone</literal>, and translate it back as
+<literal moreinfo="none">&lt;someone@domain.com&gt;</literal>.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+Courier does not support defining multiple UUCP node names in
+<filename moreinfo="none">@sysconfdir@/uucpme</filename>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>

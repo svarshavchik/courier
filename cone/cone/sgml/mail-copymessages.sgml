@@ -1,0 +1,65 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-copymessagesto">
+    <refmeta>
+      <refentrytitle>mail::account::copyMessagesTo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::copyMessagesTo</refname>
+      <refpurpose>Copy messages to another folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>copyMessagesTo</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; &amp;<parameter>msgList</parameter></paramdef>
+	  <paramdef>mail::folder *<parameter>copyTo</parameter></paramdef>
+
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::copyMessagesTo</function> copies messages in the
+currently-open folder to another folder. &libmail-msglist;</para>
+
+      <para>
+<parameter>copyTo</parameter> is a pointer to a
+<structname>mail::folder</structname> object, representing the folder where
+messages are copied to.
+If <varname>account</varname> is an IMAP account and
+<parameter>copyTo</parameter> is another folder in the same account, then
+the messages are quickly copied by the IMAP server.
+Otherwise each message is individually downloaded and copied to the
+<parameter>copyTo</parameter> folder.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-concurrency;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-movemessagesto"><citerefentry>
+	    <refentrytitle>mail::account::moveMessagesTo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

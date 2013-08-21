@@ -1,0 +1,51 @@
+   Link: Courier-IMAP (start)
+   Link: Commercial software that works with Courier-IMAP (next)
+   IFrame
+
+
+   --------------------------------------------------------------------------
+
+   Copyright 1999-2008, Double Precision, Inc. This software is distributed
+   under the terms of the GNU General Public License. See COPYING for
+   additional information.
+
+   Courier-IMAP is a fast, scalable, enterprise IMAP server that uses
+   Maildirs. Many E-mail service providers use Courier-IMAP to easy handle
+   hundreds of thousands of mail accounts. With its built-in IMAP and POP3
+   aggregation proxy, Courier-IMAP has practically infinite horizontal
+   scalability. In a proxy configuration, a pool of Courier servers service
+   initial IMAP and POP3 connections from clients. They wait to receive the
+   client's log in request, look up the server that actually holds this mail
+   account's mailbox, and establish a proxy connection to the server, all in
+   a single, seamless process. Mail accounts can be moved between different
+   servers, to achieve optimum resource usage.
+
+   The only practical limitation on Courier-IMAP is available network and I/O
+   bandwidth. If you are new to Courier-IMAP, this may sound a bit
+   intimidating. But you do not need to tackle everything at once. Start by
+   taking small, easy steps. Your first step will be to set up a small
+   Courier-IMAP server, using it like any other traditional IMAP service, on
+   a single server. After you gain experience and become comfortable with
+   Courier, you can then begin exploring its advanced features.
+
+   This is the same IMAP server that's included in the Courier mail server,
+   but configured as a standalone IMAP server that can be used with other
+   mail servers - such as Qmail, Exim, or Postfix - that deliver to maildirs.
+   If you already have Courier installed, you do not need to download this
+   version. If you install this version, you must remove it if you later
+   install the entire Courier server.
+
+   The following pages provide additional background and supporting
+   documentation. You can jump anytime to the download page using the top
+   menu bar.
+
+     o Commercial software that works with Courier-IMAP
+     o How Courier-IMAP stores its mail, and works with your mail server
+     o Courier-IMAP - Feature Summary
+
+   --------------------------------------------------------------------------
+
+                                                                         Next
+                             Commercial software that works with Courier-IMAP
+
+   IFrame

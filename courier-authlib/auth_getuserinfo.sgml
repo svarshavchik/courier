@@ -1,0 +1,89 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+[
+
+<!ENTITY authcallback SYSTEM "authcallback.sgml">
+<!ENTITY optionlist SYSTEM "optionlist.sgml">
+
+]>
+
+  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-getuserinfo">
+
+  <refmeta>
+    <refentrytitle>auth_getuserinfo</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_getuserinfo</refname>
+    <refpurpose>Obtain account information</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_getuserinfo</function></funcdef>
+	<paramdef>const char *<parameter>userid</parameter></paramdef>
+
+	<paramdef>int <parameter>(*callback_func)</parameter><funcparams>struct authinfo *, void *</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+If <parameter>userid</parameter> is a valid account name,
+retrieve the account particulars and invoke
+<parameter>callback_func</parameter>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURNS</title>
+
+    <para>
+<function>callback_func</function> will be invoked if
+<replaceable>userid</replaceable> exists,
+and <function>callback_func</function>'s return value becomes
+the return value from <function>auth_getuserinfo</function>
+(which should be 0, by convention).
+<function>callback_func</function> will not be invoked if an error occurs,
+which is reported by a non-zero return value from
+<function>auth_getuserinfo</function>.
+By convention, a positive return value indicates an internal, temporary
+failure, such as the authentication daemon process not running; a negative
+return value indicates that this request was processed, but it failed
+(probably because <replaceable>userid</replaceable> does not exist.</para>
+
+    &authcallback;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_passwd.html"><citerefentry><refentrytitle>auth_passwd</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getoption.html"><citerefentry><refentrytitle>auth_getoption</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
+

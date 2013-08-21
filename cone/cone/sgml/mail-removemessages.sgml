@@ -1,0 +1,130 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-removemessages">
+    <refmeta>
+      <refentrytitle>mail::account::removeMessages</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::removeMessages</refname>
+      <refpurpose>Remove messages from the folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      <literallayout>
+mail::account *account;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>removeMessages</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function removes messages from the currently open folder.
+<parameter>msgList</parameter>
+is a list of messages to be removed.</para>
+
+      <para>
+This request invokes methods in the currently opened folder's
+<structname>mail::callback::folder</structname> object, as follows:</para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+<function>mail::account::messagesRemoved</function> is invoked for all
+messages removed from the folder.
+Obviously, this method will be invoked, one at a time, for each
+message identified in <parameter>msgList</parameter>.</para>
+
+	  <note>
+	    <para>
+Messages are removed one at a time.
+Each call to
+<function>mail::account::messagesRemoved</function> renumbers the remaining
+messages in the folder, and depending on the account type,
+<function>mail::account::messagesRemoved</function> may not
+necessarily receive an exact copy of <parameter>msgList</parameter>.
+For example, with an IMAP account
+if <parameter>msgList</parameter> contains
+<literal>1</literal>,
+<literal>2</literal>, and
+<literal>3</literal>, the
+<function>mail::account::messagesRemoved</function> function will probably
+be called three times.
+Each time it will receive a single range of removed messages,
+set to messages <literal>1-1</literal>, all three times.
+This is because IMAP servers remove messages one message at a time.
+The first invocation of
+<function>mail::account::messagesRemoved</function> indicates that message
+#1 was removed, with the remaining messages renumbered; and old messages
+#2 and #3 becoming messages #1 and #2.
+The second invocation of
+<function>mail::account::messagesRemoved</function>'s
+<parameter>messageNumber</parameter> parameter of <literal>1</literal>
+refers to the old message #2, which is now message #1.
+Ditto for the third invocation of
+<function>mail::account::messagesRemoved</function>.</para>
+
+	    <para>
+On the other hand, with an IMAP account the
+<function>mail::account::messagesRemoved</function> method will be invoked
+once, giving a single range of removed messages, <literal>1-3</literal>.
+Application must be prepared to handle either situation.</para>
+	  </note>
+	</listitem>
+
+	<listitem>
+	  <para>
+The <function>mail::account::messagesChanged</function> method may
+be invoked for
+any other messages in the folder with changed status flags.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+<function>mail::account::newMessages</function>
+may also be invoked if any messages
+were added to this folder.
+The application should use
+<link linkend="mail-getfolderindexsize"><citerefentry>
+		<refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>,
+and compare it to the previously-known folder size, in order to determine
+how many messages were added to the folder (new messages are always added to
+the end of the message list).</para>
+	</listitem>
+      </itemizedlist>
+
+      &libmail-removemessages;
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-updatenotify"><citerefentry>
+	    <refentrytitle>mail::account::updateNotify</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

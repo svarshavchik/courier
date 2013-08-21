@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="Bluefish 1.0.7"/>
+  <link rel="stylesheet" type="text/css" href=
+  "[@LISTURL@]/style.css" />
+
+  <title>Courier Mailing List Manager</title>
+</head>
+
+<body>
+  <h1>[@LISTNAME@] - Moderation</h1>[@.ERRMSG@]
+
+  <form action="[@LISTURL@]/admin/mod" method="post">
+    <table nowrap="nowrap">
+      <tbody>
+        <tr>
+          <td><input type="radio" name="modaction" checked=
+          'checked' value="accept" />Accept the following
+          message</td>
+        </tr>
+
+        <tr>
+          <td>
+            <input type="radio" name="modaction" value=
+            "reject" />Reject this message
+
+            <blockquote>
+              <input type="checkbox" name="returntosender" checked=
+              'checked' value="1" />Return the message to sender,
+              with the following explanation (optional):<br />
+              <textarea name="rejectmsg" cols="60" rows="8">
+</textarea>
+            </blockquote>
+          </td>
+        </tr>
+
+        <tr>
+          <td><input type="radio" name="modaction" value=
+          "skip" />Skip message</td>
+        </tr>
+
+        <tr>
+          <td><input type="submit" name="domoderate" value=
+          "Submit" /></td>
+        </tr>
+      </tbody>
+    </table>
+    <hr />
+    [@MODMSG@]
+  </form>
+  <hr />
+  <a href="[@LISTURL@]/admin">Back to list administration
+  screen</a>
+</body>
+</html>

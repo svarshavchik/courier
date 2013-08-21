@@ -1,0 +1,62 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-getfolderindexsize">
+    <refmeta>
+      <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::getFolderIndexSize</refname>
+      <refpurpose>Return number of messages in the current folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+
+mail::account *account;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>size_t count=account-&gt;<function>getFolderIndexSize</function></funcdef>
+	  <void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::getFolderIndexSize</function>
+returns the number of messages in the currently open folder.
+Messages in the folder are numbered starting with zero, and ending with
+one less than the number returned by this function.</para>
+
+      <para>
+For example, if <function>mail::account::getFolderIndexSize</function>
+returns 5 it means that there are five messages in the folder, numbered
+0 through 4.</para>
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+This function always succeeds, returning the message count.</para>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-readmsgattr"><citerefentry>
+	    <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

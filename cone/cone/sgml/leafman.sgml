@@ -1,0 +1,155 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="leaf">
+    <refmeta>
+      <refentrytitle>leaf</refentrytitle>
+      <manvolnum>1</manvolnum>
+
+      <refmiscinfo class='software'>
+	<productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>leaf</refname>
+      <refpurpose>Lightweight Editor of Ascii(and more) Files</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <cmdsynopsis>
+	<command>leaf</command>
+	<arg choice='f'>-f</arg>
+	<arg choice='opt'>-d <replaceable>dictionary</replaceable></arg>
+	<arg choice='opt'>+<replaceable>n</replaceable></arg>
+	<arg choice='opt'><replaceable>filename</replaceable></arg>
+    </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<command>leaf</command> is a simple console text file editor, with
+paragraph word-wrapping and spell checking.
+<command>leaf</command> is based on the text editor in the &app;
+mail reader and composer.
+<command>leaf</command> opens <replaceable>filename</replaceable>, positioning
+the cursor on the first line, or line #<replaceable>n</replaceable>,
+if specified.</para>
+
+      <para>
+This is not really the best editor for program sources.
+<command>leaf</command> is meant to be used as a quick editor for writing
+short notes and memos.
+As text is typed, words will automatically flow to wrap within a typical
+80-character terminal display, even on larger display (due to
+<command>leaf</command>'s heritage as an editor for E-mail messages, which
+are traditionally formatted to fit an 80-character display).
+Word wrapping is "lazy": only long text lines are wrapped.
+Short text lines are not folded together.
+Individual paragraphs are separated by blank lines of text.
+Press <keycap>CTRL</keycap>-<keycap>J</keycap> to optimally
+rejustify the paragraph under the cursor.
+The bottom two lines on the screen list which keys to press for other
+functions.</para>
+
+      <refsect2>
+	<title>Flowed text</title>
+	<para>
+	  The <option>-f</option> option enables <quote>flowed text</quote>
+	  formatting convention. Plain text files have no explicit means for
+	  joining multiple lines into logical paragraph. Each line of text
+	  is an individual line, and a blank line marks the end of a paragraph.
+	</para>
+
+	<para>
+	  In a <quote>flowed text</quote> formatted file, each line in a
+	  paragraph except the last one ends with a space character. This makes
+	  no visual difference, it's just a marker that this line should be
+	  merged with the next line. The last line in the paragraph does not
+	  end in a space character.
+	</para>
+
+	<para>
+	  The trailing space character is logically removed from each flowed
+	  line, and all flowed lines are merged into a logical paragraph
+	  that can be adjusted to any display width. It's important to note
+	  that text written in non-ideographic languages, where individual
+	  words are separated by spaces, will have two space characters at
+	  the end of every line: the space character that separates the last
+	  word on the line from the first word on the next line, and the
+	  a second space character that marks the line as a flowed line.
+	</para>
+
+	<para>
+	  Because the trailing space marking a flowed line is logically removed,
+	  without the second space character there will not be a logical
+	  space between the two words, and if the paragraph's width is adjusted
+	  for display the two words may get combined together.
+	</para>
+
+	<para>
+	  The <option>-f</option> option puts
+	  <command>leaf</command> into flowed text mode, removing spaces
+	  from each flowed line of text in an opened file.
+	  A flowed line is marked on the screen with a "&lt;" character in the
+	  right margin (or a small "next line" character on a UTF-8
+	  display). When saving a file <command>leaf</command> automatically
+	  adds a trailing space to each line that's marked as flowed.
+	</para>
+
+	<para>
+	  The flowed text mode stays in effect for each file opened in
+	  <command>leaf</command>. When opening another file, press
+	  <keycap>CTRL</keycap>-<keycap>F</keycap> to turn flowed mode on or
+	  off for the next file. This change stays in effect until it gets
+	  toggled again.
+	</para>
+
+	<para>
+	  Pressing <keycap>CTRL</keycap>-<keycap>J</keycap> optimally
+	  rejustifies the text in flowed text mode.
+	  <command>leaf</command> heuristically determines the start and the
+	  end of the paragraph, readjusts the width of the paragraph, and
+	  marks each line as flowed, except the last paragraph line.
+	  <command>leaf</command> uses a unicode-based algorithm for determining
+	  whether the last character line needs a space character, in addition
+	  to the flowed space marker.
+	</para>
+
+	<note>
+	  <para>
+	    <command>leaf</command> is frequently used to edit plain text
+	    email message content. Because email messages assign some
+	    semantical meaning to lines of text that start with spaces or
+	    "&gt;" characters, <keycap>CTRL</keycap>-<keycap>J</keycap>
+	    will not rejustify lines of text that begin with a "&gt;" or a
+	    space. These lines will be considered paragraph boundaries, in
+	    addition to blank lines.
+	  </para>
+	</note>
+      </refsect2>
+
+      <refsect2>
+	<title>Spell checking</title>
+
+    <para>
+The <option>-d</option> option sets the name of the dictionary used for spell
+checking (overriding the default spell checking dictionary set by the
+<envar>DICTIONARY</envar> environment variable).
+<option>+<replaceable>n</replaceable></option> sets the initial cursor
+position to line #<replaceable>n</replaceable>.</para>
+      </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<citerefentry><refentrytitle>emacs</refentrytitle>
+	<manvolnum>1</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>vi</refentrytitle>
+	<manvolnum>1</manvolnum></citerefentry></para>
+  </refsect1>
+  </refentry>

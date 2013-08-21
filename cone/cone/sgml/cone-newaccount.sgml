@@ -1,0 +1,308 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone06newaccount">
+  <title>New Account</title>
+
+  <para>
+The <quote>New Account</quote> option off the Main Menu adds a new account
+to the Folder Listing screen.
+Selecting this option results in a prompt to select the mail account
+type:</para>
+
+  <variablelist>
+    <varlistentry>
+      <term><keycap>I</keycap></term>
+      <listitem>
+	<para>
+Adds an IMAP, or an SMAP account.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>P</keycap></term>
+      <listitem>
+	<para>
+Adds a POP3 account.</para>
+      </listitem>
+    </varlistentry>
+
+      <varlistentry>
+	<term><keycap>M</keycap></term>
+	<listitem>
+	  <para>
+Adds a <quote>POP3 maildrop</quote> account.
+With the regular POP3 account, the messages in the POP3 mailbox remain
+on the server, and &app; reads the contents of the messages on as-needed
+basis.
+With a POP3 maildrop account, all messages from the POP3 mailbox are
+immediately downloaded, then removed from the POP3 mailbox.
+Each time new mail is found, the new messages
+are downloaded, then removed from the server.</para>
+
+	  <para>
+Some very old POP3 servers may only work in POP3 maildrop mode with
+&app;; they do not implement the <quote>UIDL</quote> POP3 protocol command
+which is necessary in order to keep the messages stored on the POP3 server.
+If an attempt to create a regular POP3 account fails because the server
+does not implement the <quote>UIDL</quote> command, create a POP3 maildrop
+account instead.</para>
+	</listitem>
+      </varlistentry>
+
+    <varlistentry>
+      <term><keycap>N</keycap></term>
+      <listitem>
+	<para>
+Adds a NetNews (Usenet) newsgroup account.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>S</keycap></term>
+      <listitem>
+	<para>
+Creates a local mail account that includes the default system mailbox.
+On system that use maildirs, this option sets up a mail account for
+<filename>$HOME/Maildir</filename>, the maildir where incoming mail is
+delivered by default.</para>
+
+	<para>
+On systems that do not use maildirs, this option finds the local mailbox
+file in <filename>/var/spool/mail</filename>, or the location specified
+by the <envar>MAIL</envar> environment variable.
+&app; also prompts for the name of a directory where mail folders should
+be created, relative to the home directory.</para>
+
+	<para>
+In all cases, &app; also asks for the account's name, which goes on the
+Folder Listing screen.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>O</keycap></term>
+      <listitem>
+	<para>
+Creates an extra mail account for local mail that's not tied to the
+default system maildirs.
+&app; prompts for the name of a directory where mail folders should be
+stored, then the account's name, which goes on the
+Folder Listing screen.</para>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+
+  <para>
+Selecting the option to create a new IMAP, POP3,
+or NetNews account displays the
+following screen.
+This screen also comes up after choosing to edit an existing IMAP/POP3/News
+account, from the Folder Listing screen:</para>
+
+  <section>
+    <title>New/Edit Account Screen</title>
+
+    <programlisting>
+::B::
+ ADD ACCOUNT                          CONE
+
+
+
+
+                                Add IMAP Account
+
+                Account name: ______________________________________
+                      Server: ______________________________________
+                       Login: ______________________________________
+                    Password: ______________________________________
+
+                              [ ] Do not send password in clear text
+
+                              [ ] Use an encrypted connection
+
+                              [ Use certificate ]
+
+                              [ LOGIN ]
+
+                              [ CANCEL ]
+
+
+::B::
+
+
+
+</programlisting>
+    <para>
+When editing an existing account, the following fields will be initialized
+to contain the current account setting.
+When adding a new account, the following fields will be blank:</para>
+    <variablelist>
+      <varlistentry>
+	<term>Account name</term>
+	<listitem>
+	  <para>
+The name of the account, as shown on the Folder Listing screen.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Server</term>
+	<listitem>
+	  <para>
+The name of the mail server.
+Optionally, add a colon, <quote>:</quote>, and a decimal port number to
+specify a non-default port.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Login</term>
+	<listitem>
+	  <para>
+The account's login ID.
+Leave this field blank for
+NetNews servers that do not require passwords.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Password</term>
+	<listitem>
+	  <para>
+The login password.
+Leave this field blank for
+NetNews servers that do not require passwords.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Do not send password in clear text</term>
+	<listitem>
+	  <para>
+If enabled, this setting prevents the password from being sent in the clear
+over the network.
+The mail server must be able to support secure password authentication,
+where the password is transmitted in an encrypted or scrambled form.</para>
+
+          <para>
+This field is not yet implemented for NetNews accounts.</para>
+
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Use an encrypted connection</term>
+	<listitem>
+	  <para>
+Select this option to enable encryption.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Use certificate</term>
+	<listitem>
+	  <para>
+This button enables authentication using an <acronym>SSL</acronym> certificate.
+This button appears only if at least one <acronym>SSL</acronym> certificate
+is already imported (see <xref linkend="cone10certificates" />).
+Choosing this button pops up a dialog with a list of available certificates.
+Selecting a certificate from the list changes this button to read
+<quote>Remove certificate</quote>, and selecting it again removes the
+certificate selection. When using certificates, the login and the password
+fields may be left blank. If provided, and the server does not support
+authentication using <acronym>SSL</acronym> certificates, the traditional
+userid/password authentication is an automatic fallback.</para>
+
+	    <note>
+	      <para>
+<acronym>SSL</acronym> certificate authentication is implemented with IMAP
+and POP3 accounts only. It is not implemented for News accounts.</para>
+	    </note>
+
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>[ LOGIN ]</term>
+	<listitem>
+	  <para>
+Highlight this button, and press <keycap>ENTER</keycap> to open the mail
+account.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>[ CANCEL ]</term>
+	<listitem>
+	  <para>
+Close this screen without adding or changing the account.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <section>
+      <title>Options</title>
+
+      <para>
+The server's name may be followed by one or more options of the
+following options, each one preceded with a slash:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><literal>/imap</literal></term>
+	  <listitem>
+	    <para>
+Use IMAP only, do not use SMAP.
+SMAP is an experimental protocol, currently implemented in the
+<ulink url="http://www.courier-mta.org">Courier mail server</ulink> that
+offers some additional bells and whistles over IMAP.
+A mail account on Courier is set up as a normal IMAP account; after connecting
+&app; would normally select and use SMAP automatically.
+This option disables SMAP, and falls back to the IMAP protocol.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>/nossl</literal></term>
+	  <listitem>
+	    <para>
+Disable encryption.
+Many mail servers have the ability to upgrade a plain text login to an
+encrypted connection.
+Even if <quote>Use an encrypted connection</quote> is not selected,
+&app; will upgrade an unencrypted connection to an encrypted connection,
+if the mail server supports this capability.
+This option disables the upgrade, and is mostly useful for debugging.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>/novalidate-cert</literal></term>
+	  <listitem>
+	    &libmail-novalidatecert;
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>/debugio</literal></term>
+	  <listitem>
+	    <para>
+This debugging option logs network traffic for this account to the standard
+error stream.  Used for debugging only, when standard error is redirected to
+a file.</para>
+	  </listitem>
+        </varlistentry>
+	&libmail-timeouts;
+      </variablelist>
+    </section>
+  </section>
+</chapter>
+
+<!--
+Local variables:
+sgml-doctype: "book.sgml"
+End:
+-->

@@ -1,0 +1,89 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="header-addresslist">
+  <refmeta>
+    <refentrytitle>mail::Header::addresslist</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::Header::addresslist</refname>
+    <refpurpose>An E-mail header that contains addresses.</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;libmail/headers.H&gt;
+
+std::vector&lt;mail::emailAddress&gt; address_list;
+mail::emailAddress addr;
+
+mail::Header::addresslist tohdr("To", address_list);
+
+mail::Header::addresslist cchdr("Cc")("John", "john@example.com")
+                                     ("Tom", "tom@example.com")
+                                     (addr);
+
+std::cout &lt;&lt; tohdr.toString();
+
+</literallayout>
+    </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+This class creates a header that contains addresses, such as the
+<quote>To:</quote> or the <quote>Cc:</quote> header.
+Two arguments are provided to the constructor: the header's name, and
+a vector containing the addresses.</para>
+
+    <para>
+This is not the appropriate class to create structured MIME headers.
+Use
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+to create structured MIME headers.</para>
+
+    <para>
+The <function>toString()</function> returns the header as a single text
+string: <quote><replaceable>name</replaceable>:
+<replaceable>value</replaceable></quote>.
+Long headers are folded accordingly.</para>
+
+    <refsect2>
+      <title>Dynamic address list generation</title>
+
+      <para>
+This class has an alternative constructor that receives a single parameter:
+the header's name, which initializes an empty address list.
+The address list is populated by repeatedly calling the <quote>()</quote>
+operator.</para>
+
+      <para>
+One version of the <quote>()</quote> operator receives the explicit name and
+address components of an E-mail address.
+Alternatively, a <structname>mail::emailAddress</structname> object may be
+provided.</para>
+    </refsect2>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<link linkend="header-encoded"><citerefentry>
+	    <refentrytitle>mail::Header::encoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-list"><citerefentry>
+	    <refentrytitle>mail::Header::list</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-plain"><citerefentry>
+	    <refentrytitle>mail::Header::plain</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

@@ -1,0 +1,98 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-hasmessages">
+    <refmeta>
+      <refentrytitle>mail::folder::hasMessages</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::hasMessages</refname>
+      <refpurpose>Determine if the folder is capable of storing messages</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+mail::folder *folder;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool flag=folder-&gt;<function>hasMessages</function></funcdef>
+          <void />
+	</funcprototype>
+      </funcsynopsis>
+
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+Some folders contain messages.
+Other folders contain other folder (subfolders).
+Some IMAP servers are capable of creating dual-purpose folders that contain
+both messages and other subfolders.
+The
+<function>hasMessages</function> method indicates whether
+<parameter>folder</parameter> is capable of storing messages.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+A <literal>true</literal> result indicates that
+<parameter>folder</parameter> is capable of storing messages.
+It may not necessarily mean that
+<parameter>folder</parameter> actually contains any messages, it might
+very well be an empty folder.</para>
+
+      <note>
+        <para>
+<literal>POP3</literal> folders return a <literal>true</literal>,
+even though application cannot directly add messages to
+<literal>POP3</literal> folders.
+Applications should interpret a <literal>true</literal> result to mean
+that:</para>
+        <itemizedlist>
+          <listitem>
+            <para>
+<link linkend="folder-open"><citerefentry>
+	    <refentrytitle>mail::folder::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> may be used
+to open this folder.</para>
+          </listitem>
+
+          <listitem>
+            <para>
+This folder's
+<link linkend="folder-addmessage"><citerefentry>
+	    <refentrytitle>mail::folder::addmessage</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> method, and
+using this folder as a parameter to
+<link linkend="mail-copymessagesto"><citerefentry>
+	    <refentrytitle>mail::folder::copyMessagesTo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+will probably work.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>
+Applications should interpret a <literal>false</literal> result as a
+guarantee that neither of the above procedures will work.</para>
+      </note>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="folder-hassubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::hasSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

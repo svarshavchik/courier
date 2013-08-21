@@ -1,0 +1,22 @@
+#! @PERL@
+#
+# Copyright 2000 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+#
+# "Convert" .qmail to .courier
+#
+# I don't really do anything here, I just print the mv commands to stdout.
+#
+
+while (($name,$passwd,$uid,$gid,
+                      $quota,$comment,$gcos,$dir,$shell,$expire) = getpwent)
+{
+	opendir(DIR, "$dir") || next;
+	while (defined ($name=readdir(DIR)))
+	{
+		next unless $name =~ /^\.qmail(.*)/;
+		print "mv -f $dir/.qmail$1 $dir/.courier$1\n";
+	}
+	closedir(DIR);
+}

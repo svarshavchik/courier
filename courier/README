@@ -1,0 +1,42 @@
+Read INSTALL for installation instructions.
+
+Better yet, read courier/doc/install.html, which is the same thing, but in
+a much more readable HTML.
+
+If you got this from CVS, you don't have an INSTALL, because it is created
+from install.html during make dist.  You will need to read
+README.CVS, then courier/doc/install.html.
+
+configure --help will not show anything useful.  You must read INSTALL to
+know what options to use.
+
+If you are packaging or porting Courier, the install-perms Makefile target
+might be very useful.  It creates permissions.dat, listing the location of
+everything that make install or make install-strip would install, including
+permission and ownership of each file, as well as an indicator if it's a
+manual page, configuration file, or a documentation file.   It's used by
+courier.spec, which is generated in the top level directory.  It's an
+RPM spec script.  Browse through it for a feel of how to use permissions.dat.
+
+If you are packaging or porting Courier, examine install.html thoroughly.
+In almost every case you will need to specify several non-default options.
+Be prepared to have to rebuild at least a couple of times.
+
+After installation, you should arrange for /usr/lib/courier/bin (or wherever
+it's installed) to be added to everyone's path, and /usr/lib/courier/man added
+to everyone's MANPATH.
+
+Starting with version 0.30, the installation script has a new target:
+"make install-configure" that installs the new configuration files,
+preserving the previous configuration.
+
+If you're creating a package, do not run 'make install-configure'.  Instead,
+package everything after running 'make install'.  Run 'make install-perms'
+to create permissions.dat, and extract the names of all *.dist files in
+permissions.dat that are also marked 'config'.  After your package is
+installed, have the installation script run the 'sysconftool' script and
+provide the list of files as the arguments to 'sysconftool'.
+
+Basically, see the 'install-configure' target in Makefile.am, and have that
+done after installation, instead of during packaging.
+

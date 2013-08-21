@@ -1,0 +1,62 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-readfolderinfo">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::readFolderInfo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::readFolderInfo</refname>
+      <refpurpose>Get folder status</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>openFolder</function></funcdef>
+	  <paramdef>const mail::folder *<parameter>folder</parameter></paramdef>
+	  <paramdef>mail::ACCOUNT::FolderInfo &amp;<parameter>info</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function reads the current status of <parameter>folder</parameter>, which
+may refer to any folder in the mail account (not necessarily the currently
+open folder).</para>
+
+      <para>
+The following fields in <parameter>info</parameter> will be initialized by
+this function:</para>
+
+      &libmail-folderstatus;
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-account-return;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-openfolder"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::openFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

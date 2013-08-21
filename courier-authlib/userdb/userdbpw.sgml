@@ -1,0 +1,129 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="userdbpw">
+
+  <refmeta>
+    <refentrytitle>userdbpw</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>userdbpw</refname>
+    <refpurpose>create an encrypted password</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>userdbpw</command>
+      <group>
+	<arg choice='opt'>-md5</arg>
+	<arg choice='opt'>-hmac-md5</arg>
+	<arg choice='opt'>-hmac-sha1</arg>
+      </group>
+      <arg choice='plain'>|</arg>
+      <command>userdb</command>
+      <arg choice='req'><replaceable>name</replaceable></arg>
+      <arg choice='plain'>set</arg>
+      <arg choice='req'><replaceable>field</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para><command>userdbpw</command> enables secure entry of encrypted
+passwords into <filename>@userdb@</filename>.</para>
+
+    <para><command>userdbpw</command> reads a single line of text on
+standard input, encrypts it, and prints the encrypted result to standard
+output.</para>
+
+    <para>If standard input is attached to a terminal device,
+<command>userdbpw</command> explicitly issues a "Password: " prompt on
+standard error, and turns off echo while the password is entered.</para>
+
+    <para>The <option>-md5</option> option is available on systems that use
+MD5-hashed passwords (such as systems that use the current version of the
+PAM library for authenticating, with MD5 passwords enabled).
+This option creates an MD5 password hash, instead of using the
+traditional <function>crypt()</function> function.</para>
+
+    <para><option>-hmac-md5</option> and <option>-hmac-sha1</option> options
+are available only if the userdb library is installed by an application
+that uses a challenge/response authentication mechanism.
+<option>-hmac-md5</option> creates an intermediate HMAC context using the
+MD5 hash function. <option>-hmac-sha1</option> uses the SHA1 hash function
+instead. Whether either HMAC function is actually available depends on the
+actual application that installs the <option>userdb</option> library.</para>
+
+    <para>Note that even though the result of HMAC hashing looks like an encrypted
+password, it's really not.  HMAC-based challenge/response authentication
+mechanisms require the cleartext password to be available as cleartext.
+Computing an intermediate HMAC context does scramble the cleartext password,
+however if its compromised, it WILL be possible for an attacker to succesfully
+authenticate.  Therefore, applications that use challenge/response
+authentication will store intermediate HMAC contexts in the "pw" fields in the
+userdb database, which will be compiled into the
+<filename>userdbshadow.dat</filename>
+database, which has group and world permissions turned off. The
+userdb library also requires that the cleartext userdb source for the
+<filename>userdb.dat</filename> and
+<filename>userdbshadow.dat</filename> databases is also stored with the
+group and world permissions turned off.</para>
+
+    <para><command>userdbpw</command> is usually used together in a pipe with
+<command>userdb</command>, which reads from standard input. For example:</para>
+
+    <blockquote>
+	<informalexample>
+	  <programlisting><command>userdbpw -md5 | userdb users/john set systempw</command></programlisting>
+	</informalexample>
+      </blockquote>
+
+    <para>or:</para>
+
+<blockquote>
+	<informalexample>
+	  <programlisting><command>userdbpw -hmac-md5 | userdb users/john set hmac-md5pw</command></programlisting>
+	</informalexample>
+      </blockquote>
+
+    <para>These commands set the <option>systempw</option> field in the record for
+the user <option>john</option> in <filename>@userdb@/users</filename> file, and the
+<option>hmac-md5pw</option> field. Don't forget to run
+<command>makeuserdb</command> for the change to take effect.</para>
+
+    <para>The following command does the same thing:</para>
+
+    <blockquote>
+      <informalexample>
+	<programlisting><command>userdb users/john set systempw=<option>SECRETPASSWORD</option></command></programlisting>
+      </informalexample>
+    </blockquote>
+
+    <para>However, this command passes the secret password as an argument to the
+<command>userdb</command> command, which can be viewed by anyone who happens
+to run
+<citerefentry><refentrytitle>ps</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+at the same time. Using <command>userdbpw</command> allows the secret password
+to be specified in a way that cannot be easily viewed by
+<citerefentry><refentrytitle>ps</refentrytitle><manvolnum>1</manvolnum></citerefentry>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="userdb.html"><citerefentry><refentrytitle>userdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink></para>
+
+  </refsect1>
+
+</refentry>
+

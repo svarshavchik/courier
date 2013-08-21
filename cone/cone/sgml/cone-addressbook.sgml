@@ -1,0 +1,101 @@
+<!-- Copyright 2005-2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <chapter id="cone13addressbook">
+    <title>Address Book</title>
+
+    <para>
+When writing a new message, &app; looks up addresses in the defined
+address books automatically.
+The <quote>Address Book</quote> option off the Main Menu accesses
+various address book-related maintenance functions.</para>
+
+    <para>
+The <quote>Address Book</quote> option first lists all defined address books.
+Normally there's only one: <quote>Local Address Book</quote> - a simple,
+private, address book maintained by &app;.</para>
+
+    <para>
+&app; can use a folder on a remote IMAP or SMAP server as an address book,
+permitting the address book to be shared between multiple account.
+When compiled with LDAP support, &app; can also use an LDAP server-based
+address book.</para>
+
+    <para>
+All known address book are listed on this screen.
+Press <keycap>A</keycap> to add a new LDAP server-based address book
+(IMAP and SMAP server-based address books are added directly from the
+<quote>Folder Listing</quote> screen, by highlighting the IMAP or SMAP
+folder, then pressing <keycap>U</keycap>se <keycap>A</keycap>addressbook).
+
+Highlighting the name of the address book, and hitting
+<keycap>Enter</keycap> displays all the entries in the address book
+(except for LDAP address books, which cannot be browsed or modified).</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><keycap>A</keycap></term>
+	<listitem>
+	  <para>
+Manually add an entry to the address book.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>D</keycap></term>
+	<listitem>
+	  <para>
+Delete the address book entry.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>E</keycap></term>
+	<listitem>
+	  <para>
+Export the contents of the address book to a file.
+See below for more information.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>I</keycap></term>
+	<listitem>
+	  <para>
+Import the contents of the address book from a file.
+See below for more information.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>Enter</keycap></term>
+	<listitem>
+	  <para>
+Press <keycap>Enter</keycap> to edit the contents of an address book
+entry.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>R</keycap></term>
+	<listitem>
+	  <para>
+Rename the address book entry (change the entry's nickname).</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <section>
+      <title>Import/Export address book</title>
+
+      <para>
+The contents of the address book can be imported or exported to a file.
+The address book is exported one address book entry per line:</para>
+
+      <informalexample>
+	<literallayout>
+nickname: "Name" &lt;user@domain&gt;
+</literallayout>
+      </informalexample>
+     </section>
+  </chapter>

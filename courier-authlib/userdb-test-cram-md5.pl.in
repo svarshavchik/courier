@@ -1,0 +1,64 @@
+#! @PERL@ -w
+use MIME::Base64;
+use Digest::MD5 qw(md5 md5_hex);
+
+# Test CRAM-MD5 (RFC 2195) authentication. See also RFC 1734 for POP3 AUTH.
+
+# To duplicate the example in RFC 2195:
+#   $ perl testcrammd5.pl 
+#   Username? tim
+#   Password? tanstaaftanstaaf
+#   Challenge? PDE4OTYuNjk3MTcwOTUyQHBvc3RvZmZpY2UucmVzdG9uLm1jaS5uZXQ+
+#   Response:
+#   dGltIGI5MTNhNjAyYzdlZGE3YTQ5NWI0ZTZlNzMzNGQzODkw
+
+# To use with courier-imap:
+#    telnet localhost 110
+#    capa
+#      << check for SASL CRAM-MD5 in response
+#    auth cram-md5
+#      << note the challenge, paste it into this program
+#      << paste back the response
+#
+# or:
+#    telnet localhost 143
+#      << check for [CAPABILITY ... AUTH=CRAM-MD5 ...] in response
+#    a authenticate cram-md5
+#      << note the challenge, paste it into this program
+#      << paste back the response
+
+# Remember: to get CRAM-MD5 authentication working in Courier-IMAP you
+# need to set several things:
+#  - settings POP3AUTH in pop3d and/or IMAP_CAPABILITY in imapd
+#  - in userdb set attribute hmac-md5pw (or pop3-hmac-md5pw etc)
+#       userdbpw -hmac-md5 | userdb fred@flintstone.org set hmac-md5pw
+#       Password: 
+#       Reenter password: 
+#       makeuserdb
+#  - in mysql/pgsql/ldap set cleartext password
+
+print "Username? ";
+$username = <STDIN>;
+chomp($username);
+print "Password? ";
+$password = <STDIN>;
+chomp($password);
+
+print "Send: AUTH CRAM-MD5 (or for imap, A AUTHENTICATE CRAM-MD5)\n";
+print "Paste the challenge here:\n+ ";
+$challenge = <STDIN>;
+chomp($challenge);
+$challenge =~ s/^\+?\ *//;
+$challenge = decode_base64($challenge);
+
+if (length($password) > 64) {
+  $password = md5($password);
+}
+while (length($password) < 64) {
+  $password = $password . "\0";
+}
+
+$digest = md5_hex(($password ^ "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\") .
+                  md5(($password ^ "6666666666666666666666666666666666666666666666666666666666666666") . $challenge));
+$resp = encode_base64("$username $digest");
+print "Send this response:\n$resp\n";

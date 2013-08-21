@@ -1,0 +1,41 @@
+#! perl
+#
+# TITLE: Local mail delivery setup
+#
+#
+# Copyright 2001 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+if ($cgi->param("Submit"))
+{
+    my $type=$cgi->param("defaultdeliverytype");
+
+    my $dotforward=
+	$cgi->param("dotforward") ? "|| $bindir/dotforward\n":"";
+
+    my $cmd=
+	$type eq "maildir" ? "${dotforward}./Maildir":
+	    $type eq "procmail" ? "${dotforward}| $bindir/preline @PROCMAIL@":
+		$type eq "maildrop" ? "${dotforward}| $bindir/maildrop":
+		    $cgi->param("defaultdeliverytxt");
+
+    $cmd =~ s/\r//g;
+
+    ReplaceEnvVarConfigFile("courierd", "DEFAULTDELIVERY", $cmd);
+    changed("courier stop", "courier start");
+}
+
+my $vars=ReadEnvVarConfigFile("courierd");
+
+my $cmd=$$vars{'DEFAULTDELIVERY'};
+
+display_form("admin-05local.html",
+	     {
+		 "DEFAULTDELIVERY" =>
+		     (
+		      "<tt><textarea cols=\"75\" rows=\"4\" name=\"defaultdeliverytxt\">"
+		      . htmlescape($cmd)
+		      . "</textarea></tt>"
+		      )
+		     }
+	     );

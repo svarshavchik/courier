@@ -1,0 +1,6 @@
+* Tue Apr  6 02:23:18 EDT 1999
+
+   libafx.a now has a ChangeLog.
+   Minor Solaris warnings fixed.
+   Removed embarassing clutter from .h-s.
+   configure.in changed to add -Wall for gcc.

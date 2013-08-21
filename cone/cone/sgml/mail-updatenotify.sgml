@@ -1,0 +1,168 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-updatenotify">
+    <refmeta>
+      <refentrytitle>mail::account::updateNotify</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::updateNotify</refname>
+      <refpurpose>Request notification of folder updates</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>updateNotify</function></funcdef>
+	  <paramdef>bool <parameter>enableDisable</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+If supported by the mail server, this function requests that the application
+be notified immediately if another application makes any changes to the
+currently open folder.
+This includes:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+New mail delivered to the folder.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Existing messages removed from the folder.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Changes to the messages' flags.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>
+These events are normally reported by invoking the
+<function>newMessages</function>,
+<function>messagesRemoved</function>, and
+<function>messageChanged</function> method of the
+<structname>mail::callback::folder</structname> object that was
+passed to
+<link linkend="folder-open"><citerefentry>
+	    <refentrytitle>mail::folder::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+
+      <para>
+These callback function normally are not generated immediately after
+the corresponding events occur.
+Changes to the folder's contents are usually checked only when the next
+request is processed;
+additionally many mail servers do not even do that, and only check for
+changes when the mail clients explicitly asks the server to check for new
+mail (<link linkend="mail-checknewmail"><citerefentry>
+	    <refentrytitle>mail::account::checkNewMail</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>) or
+to update the permanent message status
+(
+<link linkend="mail-removemessages"><citerefentry>
+	    <refentrytitle>mail::account::removeMessages</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> or
+
+<link linkend="mail-updatefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>).</para>
+
+      <para>
+This method requests the server to notify the application immediately when
+another application changes the folder (the
+<parameter>enableDisable</parameter> parameter is <literal>true</literal>),
+or to stop notifying the application
+(<parameter>enableDisable</parameter> is false).</para>
+
+      <note>
+	<para>
+This method only works with IMAP mail accounts on IMAP servers that support
+the IMAP IDLE extension, as described by
+<ulink url="http://www.rfc-editor.org/rfc/rfc2177.txt">RFC
+2177</ulink>.
+This method has no effect with IMAP servers that do not implement the IDLE
+extension, or other mail accounts.</para>
+
+	<para>
+This method is also implemented for local mail in maildirs, on systems
+running
+the SGI
+<ulink url="http://oss.sgi.com/projects/fam/">File Access Monitor</ulink>.
+This method has no effect on mbox mail folders, or on systems without the
+FAM daemon.</para>
+      </note>
+
+      <para>
+The immediate update notification mode is enabled until it is explicitly
+disabled.
+When the immediate update notification mode is in effect with an IMAP
+IDLE-capable server, any other request silently terminates the IDLE mode,
+performs the request, and reenters IDLE mode.</para>
+
+      <para>
+This method is a no-op if the account does not support the update
+notification mode, and
+<parameter>callback</parameter>'s
+<function>success</function> method is quietly invoked, without any
+further processing.
+When <parameter>enableDisable</parameter> is true, the
+<function>success</function> method is invoked when the IMAP server
+acknowledges that it entered the IDLE mode, or
+when monitoring begins on the currently open maildir folder.
+When <parameter>enableDisable</parameter> is false, the
+<function>success</function> method is invoked when the IMAP server
+acknowledges the completion of the IDLE command, and immediate update
+notification mode stops (or after maildor folder monitoring stops).</para>
+
+      <note>
+	<para>
+When <parameter>enableDisable</parameter> is set to false, it is still
+possible that some
+<structname>mail::callback::folder</structname> callback methods will be
+invoked before <function>success</function>.
+This occurs when the server was in the process of reporting folder changes
+just before the client requested the termination of immediate update
+notification.</para>
+      </note>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-checknewmail"><citerefentry>
+	    <refentrytitle>mail::account::checkNewMail</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-removemessages"><citerefentry>
+	    <refentrytitle>mail::account::removeMessages</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-updatefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<ulink url="http://www.rfc-editor.org/rfc/rfc2177.txt">RFC
+2177</ulink>.</para>
+    </refsect1> 
+  </refentry>

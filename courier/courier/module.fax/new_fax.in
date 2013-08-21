@@ -1,0 +1,125 @@
+#!/bin/sh
+#
+# Install this script as mgetty+sendfax's new_fax script (usually in
+# /usr/local/lib/etc/mgetty+sendfax, or /etc/mgetty+sendfax), to automatically
+# convert incoming faxes to PNG attachments, and mailing them
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+bindir="@bindir@"
+sysconfdir="@sysconfdir@"
+
+. $sysconfdir/faxnotifyrc
+
+if test "$3" -lt 1
+then
+	exit 0
+fi
+
+makemessage() {
+
+STATUS="$1"
+shift
+FAXID="$1"
+shift
+PAGES="$1"
+shift
+
+echo "To: $TOHDR"
+echo "From: $FROMHDR"
+echo "Subject: $SUBJECTHDR"
+echo "Mime-Version: 1.0"
+echo "Content-Type: multipart/mixed; boundary=courierfax"
+echo ""
+echo "This is a MIME formatted message"
+echo ""
+echo "--courierfax"
+
+
+FILE="$1"
+BASENAME="`echo $1 | @SED@ 's:.*/::'`"
+RES="`echo $BASENAME | @CUT@ -c2`"
+TTY="`echo $BASENAME | @SED@ 's/-.*//;s/.*\(..\)$/\1/'`"
+FAXID="`echo $BASENAME | @SED@ 's/^[^-]*-//;s/\.[0-9][0-9]*$//'`"
+
+if test "$RES" = "f"
+then
+	RES="Fine"
+else
+	RES="Low"
+fi
+
+(
+
+if test "$STATUS" = 0
+then
+	:
+else
+	echo "PARTIAL FAX - TRANSMISSION INTERRUPTED AFTER $PAGES PAGES"
+fi
+
+echo ""
+echo "Pages:           $PAGES"
+echo "Resolution:      $RES"
+echo "Modem line:      tty$TTY"
+
+if test "$FAXID" = ""
+then
+	:
+else
+	echo "Sender's FAX ID: $FAXID"
+fi
+echo ""
+) | @bindir@/makemime -c "text/plain" -e "quoted-printable" -
+
+PAGENUM=1
+
+while test $PAGENUM -le $PAGES
+do
+	echo ""
+	echo "--courierfax"
+
+	FILE="$1"
+	BASENAME="`echo $1 | @SED@ 's:.*/::'`"
+	RES="`echo $BASENAME | @CUT@ -c2`"
+
+	if test -f "$FILE"
+	then
+		if test "$RES" = "f"
+		then
+			RES=""
+		else
+			RES="-s"
+		fi
+
+		@G3TOPBM@ $RES $FILE | @PNMTOPNG@ | \
+			@bindir@/makemime -c "image/png" -e "base64" \
+				 -N "Page $PAGENUM" \
+				 -a "Content-Disposition: attachment; filename=\"page$PAGENUM.png\"" -
+	else
+		echo "ERROR: $FILE - not found" | makemime -c "text/plain" -e "quoted-printable" -
+	fi
+
+	PAGENUM=`expr $PAGENUM + 1`
+	shift
+done
+
+echo ""
+echo "--courierfax--"
+}
+
+makemessage "$@" | $bindir/sendmail -f "$MAILFROM" "$RCPTTO"
+
+if test $? = 0
+then
+	if test "$DODELETE" = 1
+	then
+		shift 3
+		while test $# -gt 0
+		do
+			rm -f "$1"
+			shift
+		done
+	fi
+fi
+

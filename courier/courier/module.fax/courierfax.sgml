@@ -1,0 +1,276 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 2002-2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>courierfax</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>courierfax</refname>
+    <refpurpose>Send faxes via E-mail</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">sendmail</command>
+      <arg choice="opt" rep="norepeat"><replaceable>5558888</replaceable>@fax</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">sendmail</command>
+      <arg choice="opt" rep="norepeat"><replaceable>5558888</replaceable>@fax-lowres</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">sendmail</command>
+      <arg choice="opt" rep="norepeat"><replaceable>5558888</replaceable>@fax-ignore</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">sendmail</command>
+      <arg choice="opt" rep="norepeat"><replaceable>5558888</replaceable>@fax-cover</arg>
+    </cmdsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The <literal moreinfo="none">courierfax</literal> module (if enabled by the system
+administrator) sends E-mail messages by fax.
+Addressing an E-mail message to the address <literal moreinfo="none">5558888@fax</literal>
+faxes a printed copy of the message to the specified phone
+number.</para>
+
+    <para>
+The ability to send faxes may be restricted, or not available.
+The E-mail message
+may be a MIME-formatted message.  All attachments are concatenated and
+sent together in a single fax transmission.
+<literal moreinfo="none">courierfax</literal> only knows how to handle certain kinds of
+attached.  Obviously, trying to fax a voice <literal moreinfo="none">.mp3</literal>
+attaching is not going to work.
+<literal moreinfo="none">courierfax</literal> knows how to handle plain text, Postscript,
+and PDF MIME attachments.
+<literal moreinfo="none">courierfax</literal> might also know what to do with other
+kinds of attachment,
+depending on some optional software installed by the
+system administrator.
+<literal moreinfo="none">courierfax</literal> may also be able to read <literal moreinfo="none">GIF</literal>,
+<literal moreinfo="none">PNG</literal>, and <literal moreinfo="none">JPEG</literal> images.</para>
+
+    <note>
+      <para>
+Color images are converted to black-and-white.</para>
+    </note>
+    <para>
+Images are faxed with one image per fax page
+(limiting image sizes to about 1600x2200).</para>
+
+    <para>
+The message will be returned as undeliverable
+if <literal moreinfo="none">courierfax</literal> doesn't know how to handle a
+MIME attachment.
+If the first MIME section in the E-mail message is plain text, the text
+appears on the fax cover page.  The sender/recipient information for the
+cover page is taken from the message's headers.</para>
+
+    <para>
+The default <literal moreinfo="none">courierfax</literal> configuration tries to resend
+the fax for up to eight hours, after which the message is returned as
+undeliverable.
+The message will also be returned as undeliverable if the fax
+transmission is interrupted.  The return bounce will state how many pages
+were successfully transmitted.</para>
+
+    <para>
+"<literal moreinfo="none">@fax</literal>" may also be followed by additional keywords that
+specify extra options:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>-lowres</term>
+	<listitem>
+	  <para>
+Send a low-resolution fax.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-ignore</term>
+	<listitem>
+	  <para>
+Ignore any attachment types that <literal moreinfo="none">courierfax</literal> doesn't
+understand.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-cover</term>
+	<listitem>
+	  <para>
+Send a cover page only.
+This is useful in limited situations, with something like this
+in a
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+file:</para>
+
+	  <informalexample>
+	    <programlisting format="linespecific">
+ ./Maildir
+ ! 5552222@fax-cover
+</programlisting>
+	  </informalexample>
+
+	  <para>
+This <filename moreinfo="none">.courier</filename> file faxes the contents of a message,
+sans any attachments, immediately upon receipt in addition to saving the
+message in the mailbox.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+   </refsect1>
+
+  <refsect1>
+    <title>FAX TRANSMISSION RECEIPT</title>
+
+    <para>
+The sender will receive
+a fax transmission receipt if the sender requests an ESMTP
+delivery status notification.
+This is the <option>-N</option> option to
+<ulink url="sendmail.html"><citerefentry><refentrytitle>sendmail</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>:</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+sendmail -Nsuccess 5556666@fax &lt;messagefile
+</programlisting>
+    </informalexample>
+
+    <para>
+When using other mail software, consult the mail software's documentation
+for instructions on requesting ESMTP delivery status notifications.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>ADDITIONAL DIALING OPTIONS</title>
+
+    <para>
+<literal moreinfo="none">courierfax</literal> configurations that are generated by the
+<command moreinfo="none">webadmin</command> tool for North American environments
+usually restrict phone numbers to a standardized ten-digit telephone number,
+so that the fax address is always
+&lt;<replaceable>aaabbbcccc</replaceable><literal moreinfo="none">@fax</literal>&gt;,
+and <literal moreinfo="none">courierfax</literal> silently performs any needed conversion
+to dial the number (such as adding <quote>1</quote> or dropping the local
+areacode).</para>
+
+    <para>
+It is also possible to reconfigure <literal moreinfo="none">courierfax</literal> so that it
+accepts any telephone string and dials it without any preprocessing.
+If so, the address may contain any combination of digits, letters
+<quote><literal moreinfo="none">A</literal></quote>,
+<quote><literal moreinfo="none">B</literal></quote>,
+<quote><literal moreinfo="none">C</literal></quote>, and
+<quote><literal moreinfo="none">D</literal></quote>, representing the four extra
+dialing tones
+not normally accessible from most telephone keypads,
+the symbols
+<quote><literal moreinfo="none">*</literal></quote> and
+<quote><literal moreinfo="none">#</literal></quote>, or the following
+characters:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><keycap moreinfo="none">W</keycap></term>
+	<listitem>
+	  <para>
+Most faxmodems pause and wait for a secondary dialtone, before dialing
+the rest of the number.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap moreinfo="none">-</keycap></term>
+	<listitem>
+	  <para>
+The dash is replaced by a comma in the dialing string.
+A comma results in most faxmodems pausing for two or three seconds
+before dialing the rest of the number.
+It is not possible to enter a comma directly, because commas are used
+to separate multiple E-mail addresses.
+Use dashes instead of commas in the dialing string.
+<literal moreinfo="none">courierfax</literal> replaces all dashes with commas before
+dialing the faxmodem.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap moreinfo="none">+</keycap></term>
+	<listitem>
+	  <para>
+Similarly, <literal moreinfo="none">courierfax</literal> replaces all pluses with
+<quote>@</quote> characters before dialing.
+An <quote>@</quote>
+characters results in most faxmodems waiting for the line to be silent for
+five seconds before dialing the rest of the number.
+It is not possible to enter a <quote>@</quote> directly as part of the
+telephone number itself, for the obvious reasons.
+Use pluses  instead of <quote>@</quote>s in the dialing string.
+<literal moreinfo="none">courierfax</literal> replaces all pluses with <quote>@</quote> before
+dialing the faxmodem.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>CONFIGURATION</title>
+
+    <para>
+The slightly arcane configuration file,
+<filename moreinfo="none">@sysconfdir@/faxrc</filename>, sets up which dialing strings are
+valid.
+The default configuration file contains judicious comments that explain
+all the parameters, and what they do.
+The default configuration file disables <literal moreinfo="none">courierfax</literal> by
+rejecting all telephone numbers.
+The file must be edited in accordance with the embedded instructions, in order
+to enable faxing.</para>
+
+    <para>
+Using <command moreinfo="none">webadmin</command> is highly recommended.
+Upon demand, <command moreinfo="none">webadmin</command> will install a suitable configuration
+file for the North American numbering plan, that receives all telephone numbers
+as ten-digit numbers, and adds any required long distance prefix, or removes
+the local area code, as appropriate.
+Or, <command moreinfo="none">webadmin</command> will install a bare-bones configuration file
+that dials any requested phone number, without any editing or
+transformation.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+There is no good way to sleep until a modem lock is released, so we poll
+every minute.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>

@@ -1,0 +1,99 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>cancelmsg</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>cancelmsg</refname>
+    <refpurpose>Cancel an E-mail message</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">cancelmsg</command>
+      
+      <arg choice="req" rep="norepeat"><replaceable>msgid</replaceable></arg>
+      <arg choice="opt" rep="norepeat">"<replaceable>reason</replaceable>"</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">cancelmsg</command> removes a message from the mail queue.
+There will be no more
+attempts to deliver this message, and a standard delivery failure notice is
+sent to the return address listed on the message. You can only cancel your own
+messages. The superuser can cancel any message.
+An attempt to cancel a message will fail
+if the message has already been sent (of course), or if a delivery attempt is
+currently in progress. Because a delivery attempt is usually started as soon
+as an E-mail message is added to the mail queue,
+a cancellation attempt is only effective if the message
+cannot be immediately delivered for some reason, or if the system
+is very busy and is working on a mail backlog.
+<command moreinfo="none">cancelmsg</command> works by marking all pending recipients as
+undeliverable. A non-delivery report is then generated and sent in the normal
+fashion.</para>
+
+    <para>
+<replaceable>msgid</replaceable> is the message queue id that can be obtained
+from the
+<ulink url="mailq.html">
+<citerefentry>
+	  <refentrytitle>mailq</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry>
+</ulink>,
+command. A <replaceable>reason</replaceable> is optional. The message
+does not disappear into a black void.  The message will be returned as
+undeliverable, citing <replaceable>reason</replaceable>. A generic error
+message will be used if
+<replaceable>reason</replaceable> is not specified.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+A non-delivery report may not be sent immediately, but delayed until the
+message's turn comes up in the scheduling queue.</para>
+
+    <para>
+There is no immediate indication if the message cancellation worked. A
+subsequent non-delivery report is the only indication of a successful cancel.
+If it doesn't come, it means the message wasn't cancelled in time.</para>
+
+    <para>
+A non-delivery report will not be sent for recipients whose delivery status
+notification does not include the <literal moreinfo="none">FAIL</literal> notice.</para>
+
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="mailq.html">
+<citerefentry>
+	  <refentrytitle>mailq</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="courier.html">
+<citerefentry>
+	  <refentrytitle>courier</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

@@ -1,0 +1,17 @@
+Courier is written by:
+
+Sam Varshavchik <mrsam@courier-mta.com>
+Double Precision, Inc.
+402 Main Street
+Suite 100-241
+Metuchen, NJ 08840
+
+authldap based upon work by Luc Saillard <luc.saillard@alcove.fr>
+
+MySQL support based on a patch by:
+Laszlo KAISER <titanic@telnet.hu>
+
+The HTML layout of the webmail server based on on a design by cniconsulting.com
+
+PostgreSQL support based on a patch by:
+Vittorio Ballestra <vittorio.ballestra@infogestnet.it>

@@ -1,0 +1,772 @@
+<!-- Copyright 2002-2010 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone02folderindex">
+  <title>Folder Index</title>
+  <para>
+Highlighting a folder on the folder listing screen and pressing <keycap>ENTER</keycap>
+shows an index of messages in the folder.
+&app; shows the following information for each message:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para>
+The message number, starting from 1 and counting upwards.
+New messages (unread messages), are prefixed with by
+<quote><literal>N</literal></quote>.
+Messages marked for deletion are prefixed by
+<quote><literal>D</literal></quote>.
+On some terminals, new messages are prefixed by a little diamond symbol,
+and messages are marked for deletion by a crosscheck symbol.
+Messages that have been replied to are prefixed by
+ <quote><literal>R</literal></quote>.</para>
+	<para>
+&app; can process groups of messages at once (for example: deleting or moving a group
+of messages to another folder).
+This is done by
+<quote>flagging</quote> each message, individually, then executing the command.
+Each flagged message is marked with an asterisk,
+<quote><literal>*</literal></quote>.
+On some displays, flagged messages are identified by a checkmark symbol,
+instead of the asterisk.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+The date or time when the message was sent or received.  Only the date is shown for
+messages sent or received over a week ago.
+More recent messages have their day and time shown.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+The sender's or recipient's name.
+Messages sent to multiple people have only the first recipient shown.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+The approximate size of the message.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+The message's subject.
+There's not a lot of room to show the message's subject; &app; shows as
+much of a subject as possible.</para>
+
+	<para>
+Messages that belong to a watched thread, or a subthread, have
+the
+<quote><literal>&equiv;</literal></quote>
+<quote><literal>&bull;</literal></quote>
+character shown, in reverse colors,
+in front of the message's subject.
+Terminals that cannot display these symbols will use the
+<quote>o</quote> and <quote>*</quote> characters instead.
+See <link linkend="watch"><quote>Watching Threads</quote></link>, below, for
+more information.</para>
+    </listitem>
+  </itemizedlist>
+
+  <section>
+    <title>Folder Index Screen</title>
+
+    <programlisting>
+::B::
+ New Mail: 7 messages                 CONE
+  1  29-Jul-2002 Jack Jones              (2 Kb) IMAP server bug
+  2  08-Aug-2002 Support                 (3 Kb) New security features
+  3  25-Feb-2003 Sam Smith               (3 Kb) news.pl
+  4  05-Mar-2003 Bill Black              (4 Kb) Re: IMAP server bug
+  5  27-Mar-2003 Bill@example.com        (3 Kb) Suggested changes to README
+N 6 Mon 06:39 PM Joseph_Brown@computer  (54 Kb) Re: your request for a copy 
+N 7 Wed 10:55 AM Dr. Gary Green          (2 Kb) Spec file for release 1.7.1,
+
+
+
+
+
+
+
+
+
+
+
+
+::B::
+  New Mail: 7 messages
+ ; Search            A wAtch/Unwatch     C Copy              E Extern cmd
+ $ Sort folder       B Blind Fwd         D Delete           ^O mOre
+</programlisting>
+
+    <para>
+The highlighted message on this screen marks the current message.
+Move the cursor using
+the cursor up/down keys, <keycap>PgUp</keycap>, and <keycap>PgDn</keycap>.
+The cursor left/right keys move the cursor to the previous/next
+flagged message.
+After running a search with the <keycap>;</keycap> command (see below),
+use the cursor left/right keys to locate the messages found by
+the search.</para>
+<para>
+<keycap>L</keycap> or the <keycap>&lt;</keycap> returns to the folder listing
+screen, or use the following keys:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><keycap>ENTER</keycap></term>
+	<listitem>
+	  <para>
+Display the current message.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>;</keycap></term>
+	<listitem>
+	  <para>
+Search messages, flag them, then do something to all flagged messages, at once.
+Additional options will be shown to enter the search criteria,
+described below.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>$</keycap></term>
+	<listitem>
+	  <para>
+Change the order the messages are shown on this screen.
+Initially, the messages are shown in the order they were added to the folder.
+Use this option to set the available sorting order:
+<keycap>A</keycap> - in the order they were added to the folder (default);
+<keycap>D</keycap> - order by each message's sent date;
+<keycap>N</keycap> - order messages by sender's (or the recipient's) name;
+<keycap>S</keycap> - order messages by their subject;
+<keycap>T</keycap> - order messages by threads.</para>
+
+	    <para>
+The threaded view works best on UTF-8 consoles. It is also not very well suited
+for machines with limited resources.
+Computing a threaded view is expensive, and the threaded view needs to
+be recomputed whenever messages are added or
+removed from the folder.
+Machines with limited resources should use a subject-based sort, which
+is much faster, and gives similar results.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term><keycap>A</keycap></term>
+	  <listitem>
+	    <para>
+Watch replies to this message, or stop watching replies to this message.
+See <link linkend="watch"><quote>Watching Threads</quote></link>, below, for
+more information.</para>
+	  </listitem>
+	</varlistentry>
+      <varlistentry>
+	<term><keycap>B</keycap></term>
+	<listitem>
+	  &cone-blindfwd;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>C</keycap></term>
+	<listitem>
+	  <para>
+Copy the current message to another folder.
+&app; temporarily goes back to the folder listing screen.
+Highlight the destination folder with the cursor and press
+<keycap>ENTER</keycap>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>D</keycap></term>
+	<listitem>
+	  <para>
+Mark the current message for deletion.
+The message is not actually deleted.
+It is marked for deletion by the <quote>expunge</quote> command.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>E</keycap></term>
+
+	<listitem>
+	  <para>
+	    Assign an external command to a function key, or remove an existing
+	    external command function key assignment.
+	    See
+	    <link linkend="coneextcmd"><quote>External commands</quote></link>,
+	    below.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>F<replaceable>n</replaceable></keycap></term>
+
+	<listitem>
+	  <para>
+	    Run the external command assigned to the given function key.
+	    The external command receives a copy of the current message on
+	    its standard input.
+	    See
+	    <link linkend="coneextcmd"><quote>External commands</quote></link>,
+	    below.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>F</keycap></term>
+	<listitem>
+	  &cone-fwd;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>J</keycap></term>
+	<listitem>
+	  <para>
+Jump elsewhere in this folder.
+Scrolling through a large folder may be a tedious process.
+This option prompts for a message number, and moves the cursor to that message,
+scrolling the display, if necessary.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>L</keycap>, or <keycap>&lt;</keycap></term>
+	<listitem>
+	  &cone-list;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>M</keycap></term>
+	<listitem>
+	  &cone-mainmenu;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>O</keycap></term>
+	<listitem>
+	  <para>
+Move the current message to another folder.
+This is similar to the <quote>Copy</quote> command, except that the message
+is removed
+from the current folder after it's succesfully copied to the destination
+folder.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>R</keycap></term>
+	<listitem>
+	  &cone-reply;
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term><keycap>S</keycap></term>
+	  <listitem>
+	    <para>
+Many mailing lists have <quote>[subject]</quote> automatically inserted into
+the subject line of all mailing list messages.
+Press <quote>S</quote> to hide/show the so-called <quote>blobs</quote> from
+the subject line of messages shown on the folder index screen.
+The subject line has limited display real estate, and removing the
+[blob] allows more of the meaningful subject to be viewed on this
+screen.</para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term><keycap>SPACE</keycap></term>
+	<listitem>
+	  <para>
+The space bar is an alternative way to flag
+or flag individual messages without
+using the <keycap>;</keycap> command.
+<keycap>SPACE</keycap> flags or unflags the current message.
+It is still necessary to use <keycap>;</keycap> in order to actually do
+something to all flagged messages.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>T</keycap></term>
+	<listitem>
+	    <para>
+<keycap>T</keycap> opens a submenu where a message may be
+<quote>tagged</quote>.
+Tagged messages are shown with a different background color.
+This is merely a visual aid for highlighting selected messages, and
+nothing more.
+A color-capable display is necessary for showing tagged messages.</para>
+
+	    <para>
+The submenu lists nine available tags, selected by pressing a digit
+<keycap>1</keycap> through <keycap>9</keycap>.
+<keycap>0</keycap> removes the existing tag on the current message.
+The colors for the tags are selected from those available on the current
+display.
+Some tags will share the same color if the current display has less than
+nine available colors, in addition to the default text color.</para>
+
+	    <para>
+The names of each tag may be set by choosing the <quote>Setup</quote>
+selection from &app;'s main menu.
+The default names of the first five tags are the same as message labels
+used by the Mozilla mail client.
+With most IMAP servers &app; and Mozilla will see each other's tagged/labeled
+messages (however &app;'s colors are determined by the console's color
+palette, and may not necessary match the ones Mozilla
+uses for the same label).
+This requires additional IMAP server functionality that may not be implemented
+by some IMAP servers.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>U</keycap></term>
+	<listitem>
+	  <para>
+The opposite of the <keycap>D</keycap> command - removes the deleted mark from
+the current message.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>V</keycap></term>
+	<listitem>
+	  &cone-viewatt;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>W</keycap></term>
+	<listitem>
+	  &cone-write;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>X</keycap></term>
+	<listitem>
+	  <para>
+This is the <quote>Expunge</quote> command.  All messages marked for deletion
+are permanently removed from the folder.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <section id="coneextcmd">
+      <title>External commands</title>
+
+      <para>
+	An external command is any arbitrary command that &app; runs as a child
+	process. The external command reads a copy of an email message
+	on its standard input. The external command may take any arbitrary
+	action with this email message, &app; doesn't care. This is a mechanism
+	for integrating &app; with some custom mail processing code.
+	&app; takes care of downloading an email message from a mailbox, and
+	delivers it to an external command.
+      </para>
+
+      <note>
+	<para>
+	  The external command must consume and read the email message from
+	  its standard input. If &app; detects that
+	  the external command did not read the entire message before it
+	  terminates, &app; assumes that the external command crashed, and
+	  reports an error. Note that the message is sent via a pipe, and &app;
+	  may not reliably detect a premature external command termination when
+	  the email message is small and fits into the internal pipe buffer.
+	</para>
+      </note>
+
+      <para>
+	An external command may be assigned to any available keyboard function
+	key.
+	Different commands may be assigned to different function keys.
+	Press <keycap>E</keycap> then a function key. If the function key
+	is already assigned to an external command, &app; asks for a
+	confirmation to remove the existing assignment.
+	Otherwise, &app; asks for a short 1-2 word command name. This is
+	a descriptive label that gets shown at the bottom of the screen, next
+	to the function key name, together with all other
+	<quote>hotkeys</quote>. Press <keycap>Enter</keycap> after typing in
+	the label, then type out the external command. &app; passes the entered
+	command, verbatim, to the system shell to execute.
+      </para>
+
+      <note>
+	<para>
+	  Some environments and desktops may reserve certain function keys for
+	  their own use. The <application>Gnome</application> desktop, for
+	  example, uses <keycap>F1</keycap> as an application help function.
+	  Reserved function keys are not available to &app;, however there's
+	  no way for &app; to know whether or not a given function key is
+	  available for its use. When &app; may be used in multiple environments
+	  or desktops, care should be taken to assign external commands to
+	  function keys that are available in all environments.
+	</para>
+      </note>
+
+      <para>
+	&app; expects the external command to read its email message from
+	standard input, finish up whatever it does with this message, and
+	promptly terminate. &app; stops and waits for the external command to
+	terminate, before it proceeds. &app; stops responding to any
+	user input until the external command terminates.
+	However, &app; still remains in control of the display.
+	The external command should have its standard output and standard
+	error redirected, otherwise its output will corrupt the terminal
+	display.
+      </para>
+    </section>
+
+      <section>
+	<title>Searching messages</title>
+
+	<para>
+Pressing <keycap>;</keycap> on the folder index screen brings up an extensive
+sequence of options to enter a criteria that's used to search messages.
+After the search criteria is specified, messages that meet the search
+criteria are shown as flagged (highlighted, and preceded by
+a
+<quote><literal>*</literal></quote> or a checkmark).
+Messages that meet the search criteria can be quickly located by
+pressing the cursor left/right keys,
+which move the cursor to the previous or the
+next flagged message.</para>
+
+	<para>
+Requesting a search when some messages are already flagged shows an additional
+prompt:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term><keycap>B</keycap> - Broaden search</term>
+
+	    <listitem>
+	      <para>
+Searches the remaining messages that are not already flagged.
+Any messages that meet the search criteria are also flagged.
+Existing messages that are already flagged remain flagged.
+The final result is that messages which meet both the new search criteria
+and the previous search criteria(s) are flagged.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><keycap>N</keycap> - Narrow search</term>
+
+	    <listitem>
+	      <para>
+Searches only messages that are already flagged.
+Flagged messages that meet the search criteria remain flagged.
+Messages that don't are unflagged.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><keycap>F<replaceable>n</replaceable></keycap></term>
+	    <listitem>
+	      <para>
+		Run an external command assigned to the given function key.
+		See <quote>External commands</quote> for more information.
+		The external command gets invoked once for each flagged
+		message, so if ten messages are flagged, the external command
+		gets invoked ten times in a row, once for each flagged
+		message.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><keycap>C</keycap> - Copy flagged</term>
+	    <listitem>
+	      <para>
+Copy flagged messages to another folder.
+&app; temporarily goes back to the folder listing screen.
+Highlight the destination folder with the cursor and press
+<keycap>ENTER</keycap>.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><keycap>D</keycap> - Delete selected</term>
+
+	    <listitem>
+	      <para>
+No more searching is done.  All flagged messages are marked as deleted
+(but not actually removed, use the e<keycap>X</keycap> command to do
+that).</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><keycap>O</keycap> - Move flagged</term>
+	    <listitem>
+	      <para>
+Moves flagged messages to another folder.
+This is similar to the <quote>Copy</quote> command, except that the messages
+are removed
+from the current folder after they're succesfully copied to the destination
+folder.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><keycap>R</keycap> - Reset selected</term>
+
+	    <listitem>
+	      <para>
+No more searching is done.  All flagged messages are unflagged.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><keycap>U</keycap> - Undelete selected</term>
+
+	    <listitem>
+	      <para>
+No more searching is done.  All flagged messages that are marked as deleted
+have the deleted mark removed.</para>
+	    </listitem>
+	  </varlistentry>
+
+	</variablelist>
+
+	&cone-search;
+      </section>
+
+      <section id="watch">
+	<title>Watching Threads</title>
+
+	<para>
+Pressing <keycap>A</keycap> displays the following prompt:
+<quote>Watch thread up to <replaceable>A</replaceable> days,
+<replaceable>B</replaceable>-deep replies? (Y/N).</quote>
+The initial values for <replaceable>A</replaceable> and
+<replaceable>B</replaceable> are taken from the setup screen.
+Press <keycap>D</keycap> or <keycap>R</keycap> to adjust the defaults, if
+desired.</para>
+
+	<para>
+Answering the prompt with <keycap>Y</keycap> will <quote>watch</quote> the
+currently highlighted message, and any new replies to it.
+The highlighted message's subject will be shown with a highly-visible
+<quote><literal>&equiv;</literal></quote>
+character (or the <quote>o</quote> character on some terminals).
+New replies to the watched message will also be automatically marked in the
+same fashion.</para>
+
+	<note>
+	  <para>
+Any existing replies to the watched message are not automatically marked.
+Only future replies to the message will be automatically marked for
+watching.</para>
+	</note>
+
+	<para>
+Thread-watching is mostly useful with large NetNews newsgroups.
+A single, watched,
+conversation thread can be easily identified even in a very
+active newsgroup; however thread-watching can also be used with regular
+mail folders (with some limitations as noted below).</para>
+
+	<para>
+NetNews threads are famous for quickly diverging off-topic, so &app;'s
+thread-watching future quietly turns itself off, after a while.
+There's very little uses in continuing to monitor a thread that began
+talking about the merits of organic food, but then ended up becoming a heated
+discussion about psychological problems of the Hollywood elite.</para>
+
+	<para>
+The initial default settings will
+watch for replies for up to fourteen days, or five levels
+of follow-ups, whichever comes first.
+That meaning that a reply to a reply to a reply to a reply to a reply
+of a watched
+message will still be shown as part of a watched thread, but its own reply
+will not be.
+There is no limit on the number of watched replies to the initial message,
+or to any of the five subsequent
+levels of follow-ups, as long as they arrive within
+the time-enforced limit.</para>
+
+	<note>
+	  <para>
+After coming back from a 15-day vacation, and opening a folder which used to
+have watched threads, none of the new messages will be marked for watching,
+even though they arrived before the 14-days were up.
+Well, you just had a nice 15-day vacation, why do you care about some stale
+flame war that started more than two weeks ago?</para>
+</note>
+
+	<para>
+The last level of watched followups will be marked with a different
+character, a
+<quote><literal>&bull;</literal></quote>
+(or <quote><literal>*</literal></quote> as shown by some terminals), instead
+of the
+<quote><literal>&equiv;</literal></quote>
+character.
+This is a visual cue to evaluate whether this subthread is still worth
+following.
+If so, the message can be manually re-watched.
+Highlighting the message and choosing this option will <quote>renew</quote>
+the interest in this thread for another round of followups
+(however other branches of the original thread will still expire as usual,
+unless they are also renewed).</para>
+
+	<para>
+Selecting this option again on a message that's already being watched will
+prompt to turn off watching for more replies.
+The message will no longer appear watched, and any future replies
+to the message will not be watched.</para>
+
+	<note>
+	  <para>
+Any existing replies that are watched will continue to be watched, even
+though the original message is no longer being watched.</para>
+	</note>
+
+	<section>
+	  <title>Watching E-mail threads</title>
+
+	  <para>
+Thread watching is designed primarily to be used with NetNews newsgroups.
+The mechanism by which replies are selected for watching is quick, and simple.
+NetNews messages typically carry robust threading metadata,
+and even if there's a NetNews hiccup, and messages come in out of order,
+all eligible replies should
+still be correctly selected for watching.
+There is a very small chance that a very severe NetNews
+disruption will result in a failure to catch watched
+replies.
+However, messages would probably come in so wildly out of sequence that the
+thread is not likely to remain readable even if all watched replies were
+properly tagged, whenever they arrive.</para>
+
+	  <para>
+Thread watching is not limited to NetNews newsgroups.
+E-mail threads may also be selected for watching.
+However, E-mail messages tend to have far less threading metadata than their
+NetNews counterparts.
+A disruption in incoming E-mail is more likely to result in missed replies,
+than a NetNews disruption.
+However, E-mail disruptions, on average, tend to occur far less often than
+NetNews disruptions, so everything tends to come out even.</para>
+
+	  <para>
+Additionally, many modern E-mail clients now include the same
+full threading metadata as NetNews clients (&app; always includes complete
+threading metadata with every outgoing message, NetNews or E-mail).
+This issue continues to be less and less relevant,
+as time goes on.</para>
+	</section>
+
+      </section>
+
+    <section>
+      <title>Checking for new mail</title>
+
+      <para>
+The semantics of checking for new mail varies slightly, depending on the
+mail account.
+With SMAP-based mail account, and with most IMAP mail accounts, new mail in
+the current folder is shown immediately.
+If messages in the folder are shown in the order they were added to the folder,
+new mail will naturally appear at the end of folder.
+If messages are shown in a different sorting order, new messages will be
+shown wherever they should appear in accordance with the current sort
+order.
+Most IMAP mail accounts show new mail as soon as it is received.
+Some IMAP mail accounts do not report new mail immediately after it is
+delivered to the mail folder (this depends on the IMAP server software).
+&app; checks for new mail at regular intervals, and new received messages
+will show up after the next check for new mail.</para>
+
+      <para>
+New mail delivered to a local mbox folder will usually be shown when
+&app; checks for new mail, at regularly-scheduled intervals.
+New mail delivered to a local maildir will also usually appear only after
+&app; checks for new mail.
+On most Linux and SGI systems, and on any other system that has the File
+Access Monitor daemon running, new mail will be reported immediately.</para>
+
+      <para>
+In all cases, move to the last message in the folder, and use the
+cursor down key to have &app; explicitly checks for new mail.
+New mail in a POP3 folder will only be shown after an explicit
+new mail check (&app; does not check for new mail in POP3 folders by
+itself).</para>
+
+      <blockquote>
+	<note>
+	  <para>
+	    There's a bug in <application>INN 2.5</application>, which should
+	    be fixed in 2.5.3. The affected versions of
+	    <application>INN</application> are 2.5.0 through 2.5.2. Any
+	    new messages in NetNews newsgroups will come up with a blank
+	    sender and subject.
+	  </para>
+
+	  <para>
+	    Do not use the cursor down key to check for new messages in
+	    NetNews newsgroups, if the server is running the affected version
+	    of <application>INN</application>
+	  </para>
+	</note>
+      </blockquote>
+
+      <para>
+In all cases, new mail will not be immediately shown after the folder
+index screen is closed.
+When the folder index
+screen is closed, the mail folder still remains <quote>opened</quote>
+until &app; opens another folder in the same mail account.
+&app; still regularly checks for new mail when the folder index screen
+is not being shown (except for POP3 accounts).
+New mail will be reported only when &app; checks for new mail, or when
+the folder index screen is reopened.</para>
+    </section>
+
+    <section>
+      <title>Concurrent changes to the current folder's contents</title>
+
+      <para>
+Most mail accounts allow the same folder to be opened by multiple
+applications.
+When &app; has a folder opened, another application might also have the
+same folder opened, and another application may be making changes to the
+folder, at the same time.</para>
+
+      <para>
+Generally speaking, new mail delivered to the folder, while it's opened by
+&app;, is one example of concurrent changes to the contents of the folder
+while it is opened.  Other applications may make other kinds of
+changes to the folder's contents: changing a message's status
+(whether the message is unread, deleted, replied, tagged, and/or flagged);
+or removing a message from the folder.
+In general, changes by other applications are reported in the
+same manner that &app; reports new mail.
+If &app; reports new mail as soon as it is received, &app; will also
+report other kinds of changes to the folder's contents as soon as they occur.
+Otherwise, changes to the folder's contents are reported the next time
+&app; checks for new mail.
+An attempt to access a message that was removed by another application,
+but not yet reported, usually results in an error.</para>
+    </section>
+  </section>
+</chapter>

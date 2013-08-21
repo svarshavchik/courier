@@ -1,0 +1,61 @@
+<!-- Copyright 2002-2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+This function converts a human-readable representation of a folder's path
+to the internal folder path in the mail account.
+For example, IMAP server mailboxes use names encoded in a modified
+version of the
+<literal>UTF-7</literal> character set, and this method converts a folder
+path from the application's character set to the modified
+<literal>UTF-7</literal> character set.
+Specifically:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><ulink url="http://www.rfc-editor.org/rfc/rfc3501.txt">IMAP</ulink></term>
+	  <listitem>
+	    <para>
+<parameter>folderPath</parameter> is converted from application's
+character set to the modified <literal>UTF-7</literal> character
+set.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><link linkend="smap1">SMAP</link></term>
+	  <listitem>
+	    <para>
+<parameter>folderPath</parameter> is converted from application's
+character set to <literal>UTF-8</literal>.
+The forward slash character, <quote><literal>/</literal></quote> separates
+names of individual folders in the <literal>SMAP</literal> hierarchy.
+Unicode/ISO-10646 characters that cannot be represented in the application's
+character set may be specified as
+<quote><literal>%</literal><replaceable>n</replaceable><literal>;</literal></quote>,
+where <replaceable>n</replaceable> is a decimal Unicode value.
+Use <quote><literal>\/</literal></quote> to specify a forward slash character
+in the folder name, <quote><literal>\\</literal></quote> to specify
+a backslash character, and <quote><literal>\%</literal></quote> to specify
+the <quote>%</quote> character.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>mbox mail folders, and maildirs</term>
+	  <listitem>
+	    <para>
+<parameter>folderPath</parameter> is converted from application's
+character set to modified <literal>UTF-7</literal> encoding.
+The forward slash character, <quote><literal>/</literal></quote> separates
+names of individual folders in the local mail folder hierarchy.
+Unicode/ISO-10646 characters that cannot be represented in the application's
+character set may be specified as
+<quote><literal>%</literal><replaceable>n</replaceable><literal>;</literal></quote>,
+where <replaceable>n</replaceable> is a decimal Unicode value.
+Use <quote><literal>\\</literal></quote> to specify
+a backslash character, and <quote><literal>\%</literal></quote> to specify
+the <quote>%</quote> character.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>

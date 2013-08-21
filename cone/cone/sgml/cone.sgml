@@ -1,0 +1,184 @@
+<!-- Copyright 2002-2010 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<part id="cone00index">
+  <title>&app; mail client</title>
+  <partintro>
+    <title>Introduction</title>
+    <para>
+&app; is a screen-oriented E-mail/News reader and writer.
+If you are reading this documentation from within &app;, you are actually
+reading the simplified HTML version of &app;'s documentation that's formatted
+as a folder of E-mail messages.
+Each online tutorial chapter appears as a separate message.
+Use <keycap>PgUp</keycap> and
+<keycap>PgDn</keycap> to read each chapter.
+Press <keycap>N</keycap> and
+<keycap>P</keycap> to move to the next/previous chapter.</para>
+    &cone-stop;
+    <para>
+It might be more convenient to
+browse the full HTML documentation using your favorite web browser,
+at
+<ulink url="http://www.courier-mta.org/cone/cone00index.html">http://www.courier-mta.org/cone/cone00index.html</ulink>.
+When &app; starts for the first time, it automatically creates a fake
+mail account called <quote>Online Tutorial</quote>.
+This fake mail account contains a stripped-down HTML version of
+the online documentation, which you are reading now.
+The terminal display must be at least 80 characters wide in order
+to be able to read <quote>Online Tutorial</quote>.</para>
+
+    <para>
+The <quote>Online Tutorial</quote> mail account can always be removed, but
+it might be convenient to keep it around for a quick consultation, from time
+to time, even though the full HTML version is a bit easier on the eyes.</para>
+
+    <section>
+      <title>Overview</title>
+
+      <para>
+&app; is a powerful, yet simple, text-based mail reader.
+&app; seamlessly handles multiple mail accounts simultaneously.
+&app; is capable of using the following kinds of mail accounts:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+Local mail folders, or maildirs.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Remote POP3 and IMAP mail server accounts.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+A simple newsgroup reader.
+&app; doesn't have sophisticated features found in dedicated newsreaders,
+and may be a bit slow and memory hungry when reading large Usenet newsgroups.
+However, &app; will prove to be an excellent, fast, reader of internal
+local newsgroups, accessible via a remote login.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Experimental SMAP mail server accounts.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>
+&app; contains an experimental implementation of a new remote mail access
+protocol, <quote>SMAP</quote>.
+At this time, SMAP is implemented by the
+<ulink url="http://www.courier-mta.org">Courier-IMAP</ulink> server.
+SMAP offers several improvements over traditional IMAP-based mail accounts,
+namely:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+Names of SMAP folders may use the full UTF-8 character set.
+Most IMAP servers restrict certain characters from appearing in names of
+folders, due to their special meaning in the IMAP folder hierarchy.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Faster downloading of binary attachments.
+SMAP requires approximately 25% less bandwidth to download binary
+attachments.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Consolidated mail transmission.
+IMAP clients usually need to transmit a message twice, when mailing it.
+An IMAP client must first save the message in the IMAP server's
+<quote>Sent Mail</quote> folder.
+Afterwards, the IMAP client needs to send a second copy of the message,
+using SMTP, in order to deliver it to the listed recipients.
+When using SMAP, &app; transmits the message only one time; the server
+saves it to the <quote>Sent Mail</quote> folder, then mails it to its
+designated recipients.</para>
+
+	  <para>
+Of course, &app; is fully capable of using traditional SMTP, or running the
+local <command>sendmail</command> command.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>
+Other features of &app;:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+Full SSL/TLS support with IMAP, POP3, NNTP, SMTP, and SMAP.
+SASL CRAM-MD5/CRAM-SHA1 authentication (except for NNTP).</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Built-in editor for creating messages.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Full UTF-8 support (requires the wide-character version of the
+<application>Curses</application> library).</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Spell checker.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Local and remote (IMAP or SMAP-based) addressbooks.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Remote configuration (share a common configuration between different
+instances of &app;).</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+&app; tries to automatically customize itself to user's preferences, without
+requiring explicit configuration.
+&app; remembers the sorting order of each opened folder's index.
+When a folder is reopened, &app; sorts the folder using the same sort order
+used when the folder was opened last.
+Similarly, &app; memorizes user-configured mail headers.
+<literal>From:</literal>, and several other, mail headers are freely editable,
+and default to their contents the last time a new message was sent by
+replying to a message in the folder, or which was created while that folder
+was opened.
+A <quote>power user</quote> can easily use multiple mail accounts with
+&app;, and &app; will select the appropriate mail headers when replying
+to messages from each mail account.</para>
+	</listitem>
+      </itemizedlist>
+    </section>
+  </partintro>
+  &cone-folderlist;
+  &cone-folderindex;
+  &cone-messageview;
+  &cone-writemessage;
+  &cone-setup;
+  &cone-newaccount;
+  &cone-remoteconfig;
+  &cone-gpg;
+  &cone-masterpassword;
+  &cone-certificates;
+  &cone-encryption;
+  &cone-filters;
+  &cone-addressbook;
+  &cone-ldapaddressbook;
+  &coneman;
+  &leafman;
+  &mailtoolman;
+</part>

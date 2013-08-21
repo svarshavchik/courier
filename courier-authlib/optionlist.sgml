@@ -1,0 +1,100 @@
+
+    <note>
+      <para>
+The following list of account options is a combined list of implemented
+options supported by Courier, Courier-IMAP, and
+SqWebMail packages. Some of the following information is obviously
+not applicable for a particular package.
+The inapplicable bits should be obvious.</para>
+    </note>
+
+  <para>
+The following options are recognized by the various Courier
+packages:</para>
+
+  <variablelist>
+    <varlistentry>
+      <term><literal>disableimap=</literal><replaceable>n</replaceable></term>
+      <listitem>
+	<para>
+If "n" is 1, IMAP access to this account should be disabled.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term><literal>disablepop3=</literal><replaceable>n</replaceable></term>
+      <listitem>
+	<para>
+If "n" is 1, POP3 access to this account should be disabled.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term><literal>disableinsecureimap=</literal><replaceable>n</replaceable></term>
+      <listitem>
+	<para>
+If "n" is 1, unencrypted IMAP access to this account should be disabled.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term><literal>disableinsecurepop3=</literal><replaceable>n</replaceable></term>
+      <listitem>
+	<para>
+If "n" is 1, unencrypted POP3 access to this account should be disabled.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term><literal>disablewebmail=</literal><replaceable>n</replaceable></term>
+      <listitem>
+	<para>
+If "n" is 1, webmail access to this account should be disabled.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term><literal>disableshared=</literal><replaceable>n</replaceable></term>
+      <listitem>
+	<para>
+If "n" is 1, this account should not have access to shared folders or be able
+to share its own folders with other people.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><literal>group=</literal><replaceable>name</replaceable></term>
+      <listitem>
+	<para>
+This option is used by Courier-IMAP in calculating access control lists.
+This option places the account as a member of access group
+<replaceable>name</replaceable>.
+Instead of granting access rights on individual mail folders to individual
+accounts, the access rights can be granted to an access group
+<quote>name</quote>, and all members of this group get the specified access
+rights.</para>
+
+	<para>
+The access group name <quote>administrators</quote> is a reserved group.
+All accounts in the <literal>administrators</literal> group automatically
+receive all rights to all accessible folders.</para>
+
+	<note>
+	  <para>
+This option may be specified multiple times to specify that the account
+belongs to multiple account groups.</para>
+	</note>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><literal>sharedgroup=</literal><replaceable>name</replaceable></term>
+      <listitem>
+	<para>
+Another option used by Courier-IMAP.
+Append "name" to the name of the top level virtual shared folder
+index file. This setting restricts which virtual shared folders this
+account could possibly access (and that's on top of whatever else the
+access control lists say). See the virtual shared folder documentation
+for more information.</para>
+	<para>
+For technical reasons, group names may not include comma, tab, "/" or "|"
+characters.</para>
+      </listitem>
+    </varlistentry>
+  </variablelist>

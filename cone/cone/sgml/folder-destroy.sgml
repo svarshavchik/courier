@@ -1,0 +1,74 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-destroy">
+    <refmeta>
+      <refentrytitle>mail::folder::destroy</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::destroy</refname>
+      <refpurpose>Destroy an existing folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>create</function></funcdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	  <paramdef>bool <parameter>destroyDir</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function destroys the folder referenced by this
+<structname>mail::folder</structname> object.
+The
+<structname>mail::folder</structname> object itself is not destroyed
+(the usual C++ delete operator does the trick there), only the actual
+folder is destroyed.</para>
+
+      <para>
+Folders contain either messages, or other sub-folders (so-called "folder
+directories").
+Some mail accounts may contain dual-purpose folders that contain both
+messages and sub-folders (see
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::account::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for more information).
+With some account types, only completely empty folders may be deleted
+(the operation will fail if the folder still contains messages or other
+sub-folders).</para>
+
+      <para>
+<parameter>destroyDir</parameter> must be set to
+<literal>true</literal> when destroying a
+folder directory, and to <literal>false</literal> when destroying a regular
+folder.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::account::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

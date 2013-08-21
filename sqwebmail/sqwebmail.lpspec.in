@@ -1,0 +1,237 @@
+#
+# Copyright 2005-2010 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+
+%define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
+
+%{expand:%%define apachedir %(if test -d /home/httpd ; then echo /home/httpd ; else echo /var/www ; fi)}
+
+%define	cgibindir		%{apachedir}/cgi-bin
+%define imagedir		%{apachedir}/html/webmail
+%define	imageurl		/webmail
+
+%define	cacheowner		bin
+%define cachedir		%{_localstatedir}/webmail-logincache
+
+%{expand:%%define initdir %(if test -d /etc/init.d/. ; then echo /etc/init.d ; else echo /etc/rc.d/init.d ; fi)}
+
+Name: @PACKAGE@
+Version: @VERSION@
+Release: 1
+Source: http://download.sourceforge.net/courier/@PACKAGE@-@VERSION@.tar.bz2
+BuildRequires: rpm >= 4.0.2 fileutils grep perl
+BuildRequires: %(which gpg 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
+BuildRequires: courier-authlib-devel >= 0.55
+BuildRequires: openldap-devel /etc/mime.types
+BuildRequires: libidn-devel
+
+%{?repository: Repository(pgpkeys.txt): http://download.lpmtool.com/@REPOSITORY@/sqwebmail}
+
+%package
+Summary: SqWebMail webmail server
+Requires: /bin/systemctl /etc/cron.hourly expect
+Requires: %(which gpg 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
+
+%if %is_not_mandrake
+Requires: %{cgibindir}
+%endif
+
+SqWebMail is a Webmail CGI for Maildir mailboxes.
+
+%package ldap
+Requires: %{__name} = %{__version}-%{__release}
+
+This package installes the SqWebMail LDAP address book lookup module.
+
+%define _prefix /usr/lib/sqwebmail
+%define _sysconfdir %{_prefix}/etc
+%define _mandir %{_prefix}/man
+
+%define scriptdir %{_datadir}/sqwebmail
+%define htmldir %{_datadir}/sqwebmail/html
+
+%begin
+%setup
+%configure \
+	--enable-cgibindir=%{cgibindir} \
+	--enable-imagedir=%{imagedir} \
+	--enable-imageurl=%{imageurl} \
+	--with-cachedir=%{cachedir} \
+	--with-cacheowner=%{cacheowner} \
+	%{?xflags: %{xflags}}
+
+%begin build
+%{__make} %{_smp_mflags}
+%{__make} check
+%begin install
+%{__make} install DESTDIR=$__installdir
+%{__mkdir} -p $__installdir/etc/pam.d
+%{__install} -m 0444 libs/sqwebmail/webmail.authpam $__installdir/etc/pam.d/webmail
+%{__install} -m 0444 libs/sqwebmail/webmail.authpam $__installdir/etc/pam.d/calendar
+
+%{__rm} $__installdir%{htmldir}/en || exit 1
+# Drop the soft link -> en_us, this is taken care of by post script.
+
+%{__mkdir} -p $__installdir/etc/cron.hourly
+%{__cat} >$__installdir/etc/cron.hourly/sqwebmail-cron-cleancache <<EOF
+#!/bin/sh
+
+su - %{cacheowner} -s /bin/sh -c %{scriptdir}/cleancache.pl
+EOF
+
+#
+# Red Hat /etc/profile.d scripts
+#
+
+%{__mkdir} -p $__installdir/etc/profile.d
+%{__cat} >$__installdir/etc/profile.d/sqwebmail.sh <<EOF
+if echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
+then
+	:
+else
+	MANPATH="%{_mandir}:\$MANPATH"
+	export MANPATH
+
+	if test -w /etc
+	then
+		PATH="%{_sbindir}:\$PATH"
+	fi
+	export PATH
+fi
+EOF
+
+%{__cat} >$__installdir/etc/profile.d/sqwebmail.csh <<EOF
+
+if ( \$?MANPATH ) then
+	true
+else
+	setenv MANPATH ""
+endif
+
+echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
+
+if ( \$? ) then
+	true
+else
+	setenv MANPATH "%{_mandir}:\$MANPATH"
+	test -w /etc
+	if ( \$? ) then
+		true
+        else
+		setenv PATH "%{_sbindir}:\$PATH"
+	endif
+endif
+EOF
+
+#
+# Red Hat init.d file
+#
+
+%{__mkdir} -p $__installdir/lib/systemd/system
+
+%{__cat} >$__installdir/lib/systemd/system/sqwebmail.service <<EOF
+[Unit]
+Description=SqWebMail
+Wants=network.target
+Wants=courier-authlib.service
+Wants=mail-transfer-agent.target
+After=network.target
+After=courier-authlib.service
+After=mail-transfer-agent.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=forking
+RemainAfterExit=true
+ExecStart=%{_libexecdir}/sqwebmaild.rc start
+ExecStop=%{_libexecdir}/sqwebmaild.rc stop
+EOF
+
+%{__cp} sysconftool $__installdir%{scriptdir}/sysconftool
+
+%{__cp} libs/pcp/README.html pcp_README.html
+
+. libs/pcp/uids
+echo '%attr(-, ' "$localcacheowner, $mailgroup) $calendardir" >filelist
+
+(
+courierauthconfig --configfiles >configtmp || exit 1
+. ./configtmp
+echo '%attr(-, '"$mailuser, $mailgroup" ') %{_libexecdir}' >>filelist
+) || exit 1
+
+ls $RPM_BUILD_ROOT%{scriptdir} | grep -v ldapsearch | sed 's:^:%attr(555, root, root) %{scriptdir}/:' >>filelist
+%post
+
+test -d %{htmldir}/en || ln -fs en-us %{htmldir}/en
+
+if test -f %{initdir}/sqwebmail
+then
+	/sbin/chkconfig --del sqwebmail
+	/bin/systemctl stop sqwebmail.service
+fi
+
+%{scriptdir}/sysconftool %{_sysconfdir}/*.dist >/dev/null
+
+/bin/systemctl daemon-reload || :
+/bin/systemctl enable sqwebmail.service &> /dev/null || :
+
+%{scriptdir}/sysconftool %{_sysconfdir}/*.dist >/dev/null
+
+/bin/systemctl daemon-reload || :
+/bin/systemctl enable sqwebmail.service &> /dev/null || :
+
+%preun
+
+if test "$1" = 0
+then
+	/bin/systemctl stop sqwebmail.service
+	/bin/systemctl disable sqwebmail.service
+
+fi
+
+%postun
+test -d %{htmldir}/en || %{__rm} -f %{htmldir}/en
+
+if test "$1" != 0
+then
+	/bin/systemctl try-restart sqwebmail.service || :
+fi
+
+%files -f filelist
+%defattr(-, root, bin)
+%dir %{_prefix}
+
+%if %{expand: %%{=_prefix: %{_exec_prefix}}}
+
+%else
+%dir %{_exec_prefix}
+%endif
+
+%attr(555, root, root) %dir %{scriptdir}
+%dir %{_sysconfdir}
+%{_sysconfdir}/*.dist
+
+%{cgibindir}/*
+%{imagedir}
+%{_sbindir}
+%{_mandir}
+
+%attr(644, root, root) /lib/systemd/system/*
+
+%attr(700, %{cacheowner}, bin) %{cachedir}
+%attr(644, root, root) %config(noreplace) /etc/pam.d/*
+
+%attr(755, bin, bin) /etc/cron.hourly/sqwebmail-cron-cleancache
+%attr(755, bin, bin) /etc/profile.d/sqwebmail.sh
+%attr(755, bin, bin) /etc/profile.d/sqwebmail.csh
+
+%attr(-, bin, bin) %doc AUTHORS libs/sqwebmail/BUGS COPYING INSTALL NEWS README libs/sqwebmail/SECURITY libs/sqwebmail/TODO libs/gpglib/README.html
+%attr(-, bin, bin) %doc libs/sqwebmail/BUGS.html INSTALL.html NEWS README.html libs/sqwebmail/SECURITY.html libs/sqwebmail/TODO.html libs/sqwebmail/ChangeLog pcp_README.html
+%attr(-, bin, bin) %doc libs/maildir/README*.html
+
+%files ldap
+%attr(755, root, root) %{scriptdir}/ldapsearch

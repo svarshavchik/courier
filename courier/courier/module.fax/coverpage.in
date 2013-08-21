@@ -1,0 +1,51 @@
+#! @SHELL@
+#
+# Copyright 2002 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+
+. @filterbindir@/init
+
+@PERL@ -e '
+foreach ("FROM", "TO", "SUBJECT", "DATE")
+{
+    $ENV{$_} =~ s/\\/\\\\/g;
+    $ENV{$_} =~ s/\s/ /g;
+}
+open(F, "@sysconfdir@/faxcoverpage.tr") || die "@sysconfdir@/coverpage.tr: $!\n";
+
+$blank=1;
+
+while (defined($_=<F>))
+{
+    next if /^#/;
+    next if /^\n/ && $blank;
+    $blank=0;
+    s/%FROM%/$ENV{"FROM"}/ge;
+    s/%TO%/$ENV{"TO"}/ge;
+    s/%SUBJECT%/$ENV{"SUBJECT"}/ge;
+    s/%DATE%/$ENV{"DATE"}/ge;
+    s/%PAGES%/$ENV{"PAGES"}/ge;
+    print;
+}
+close(F);
+
+print ".nf\n";
+while (defined($_=<STDIN>))
+{
+    chomp;
+    s/\\/\\\\/g;
+    s/^/\\\&/g;
+    print "\\f(CW$_\\fP\n";
+}
+print ".fi"
+
+' > $OUTDIR/.tr
+
+$TBL <$OUTDIR/.tr >$OUTDIR/.tbl
+rm -f $OUTDIR/.tr
+$TROFF -mm <$OUTDIR/.tbl >$OUTDIR/.troff
+rm -f $OUTDIR/.tbl
+$DPOST <$OUTDIR/.troff >$OUTDIR/.dpost
+rm -f $OUTDIR/.troff
+$GS -sDEVICE=faxg3 $FAXRES -dBATCH -sOutputFile=$OUTDIR/f%04d -dNOPAUSE -q -dSAFER - <$OUTDIR/.dpost

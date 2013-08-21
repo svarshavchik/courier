@@ -1,0 +1,193 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>makehosteddomains</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>makehosteddomains</refname>
+    <refpurpose>Build a database of hosted domains</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">makehosteddomains</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">makehosteddomains</command> rebuilds the contents of the
+<filename moreinfo="none">@sysconfdir@/hosteddomains.dat</filename> database from the
+contents of <filename moreinfo="none">@sysconfdir@/hosteddomains</filename>.
+This can be either a file or a
+directory.  If it's a directory, the contents of all the files in this
+directory are simply concatenated.
+The <command moreinfo="none">makehosteddomains</command> script
+must be run in order for any changes to
+<filename moreinfo="none">@sysconfdir@/hosteddomains</filename> to take effect.</para>
+
+    <para>
+The function of <filename moreinfo="none">@sysconfdir@/hosteddomains</filename> is very
+similar to the one of <filename moreinfo="none">@sysconfdir@/locals</filename>.
+Both configuration files specify
+a list of domains that are considered to be local domains - domains whose
+mailboxes are stored locally.</para>
+
+    <para>
+The difference is that domains listed in <filename moreinfo="none">@sysconfdir@/locals</filename>
+are removed from addresses before their mailbox is looked up. For example, if
+the domain "<literal moreinfo="none">example.com</literal>" is listed in <filename moreinfo="none">@sysconfdir@/locals</filename>,
+then the address <filename moreinfo="none">&lt;user@example.com&gt;</filename> is delivered to a local
+mailbox named "<literal moreinfo="none">user</literal>".  If this domain is listed, instead, in
+<filename moreinfo="none">@sysconfdir@/hosteddomains</filename>, then the address
+<literal moreinfo="none">&lt;user@example.com&gt;</literal> is delivered to a local mailbox named
+"<literal moreinfo="none">user@example.com</literal>". Usually you would use
+<filename moreinfo="none">@sysconfdir@/locals</filename> to specify domains that correspond to your
+local system accounts, that are looked up in your system's password database.
+The <filename moreinfo="none">@sysconfdir@/hosteddomains</filename> file is usually used when you have
+database-based virtual domains, that are maintained via an LDAP or a MySQL
+server.
+The <application moreinfo="none">Courier</application> mail server's LDAP and MySQL
+authentication modules will use the full
+E-mail address to query the LDAP or MySQL server for the location of the local
+mailbox that correspond to the E-mail address.
+The <application moreinfo="none">Courier</application> mail server's
+<literal moreinfo="none">authuserdb</literal> authentication module can also use full E-mail
+addresses.</para>
+
+    <refsect2>
+      <title>Contents of <filename moreinfo="none">hosteddomains</filename></title>
+
+      <para>
+The file <filename moreinfo="none">@sysconfdir@/hosteddomains</filename>
+simply contains a list of domains, one per line, for example:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+domain.com
+example.org
+</programlisting>
+      </informalexample>
+
+      <para>
+Each domain can optionally be followed by a single tab character, in order
+to specify an alias for a domain, for example:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+domain.com
+mail.domain.com&lt;TAB&gt;domain.com
+example.com&lt;TAB&gt;domain.com
+</programlisting>
+      </informalexample>
+
+      <para>
+First, we list the domain "<literal moreinfo="none">domain.com</literal>" as a hosted domain.
+Then, we also list the domain "<literal moreinfo="none">mail.domain.com</literal>", which is
+an alias for
+<literal moreinfo="none">domain.com</literal>.
+The <application moreinfo="none">Courier</application> mail server will take any
+address of the form
+<literal moreinfo="none">&lt;address@mail.domain.com&gt;</literal>, rewrite it as
+<literal moreinfo="none">&lt;address@domain.com&gt;</literal>, and attempt to deliver the
+mail to a local mailbox for that name.
+The third entry does the same for "<literal moreinfo="none">example.com</literal>"; mail
+addressed to
+<literal moreinfo="none">&lt;address@example.com&gt;</literal> is delivered to the local
+mailbox <literal moreinfo="none">&lt;address@domain.com&gt;</literal>.</para>
+    </refsect2>
+
+    <refsect2>
+      <title><literal moreinfo="none">alias@hosteddomain</literal></title>
+
+      <para>
+This is a special local mail delivery rule for
+<filename moreinfo="none">hosteddomain</filename>-listed
+domains. This rule allows the <application moreinfo="none">Courier</application>
+mail server accept mail to any
+<literal moreinfo="none">address@hosteddomain</literal>, where "hosteddomain" is a domain listed in the
+<literal moreinfo="none">hosteddomains</literal> file, but there is no corresponding account for
+<literal moreinfo="none">address@hosteddomain</literal>. To provide delivery instructions for any
+non-existing address in a <filename moreinfo="none">hosteddomain</filename>-listed
+domain:</para>
+
+      <para>
+1) Create the local address <literal moreinfo="none">alias@hosteddomain</literal>.  For example, if the
+<filename moreinfo="none">hosteddomains</filename> file contains "example.com", create the local
+account <literal moreinfo="none">alias@example.com</literal>.  This should be a normal account, with its
+own home directory, userid and groupid.</para>
+
+      <para>
+2) Create <filename moreinfo="none">$HOME/.courier-default</filename> file in this account,
+containing the delivery instructions. See the
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+manual page for available delivery instructions.</para>
+
+      <para>
+NOTE that <literal moreinfo="none">alias@example.com</literal> must be a real account, not a mail
+alias. If you want to forward <literal moreinfo="none">alias@example.com</literal> to another address, put
+forwarding instructions in the <filename moreinfo="none">.courier-default</filename> file. However,
+<literal moreinfo="none">alias@example.com</literal> can be a clone of another account (with the same home
+directory, userid, and groupid).</para>
+
+    </refsect2>
+
+    <refsect2>
+      <title><quote>WILDCARD DNS</quote></title>
+
+      <para>
+Wildcard DNS is supported for hosteddomains by placing a single period
+character before the domain name. For example, the hosted domain entry
+<quote>.domain.com</quote>
+will cause the <application moreinfo="none">Courier</application>
+mail server to accept mail for
+<quote>anything.domain.com</quote>.</para>
+
+      <para>
+The <application moreinfo="none">Courier</application> mail server will accept
+mail for
+&lt;<replaceable>address@any.thing.domain.com</replaceable>&gt;
+and attempt
+to deliver it to the local mailbox
+&lt;<replaceable>address@any.thing.domain.com</replaceable>&gt;,
+and if that fails then attempt to deliver the mail to the local
+mailbox
+&lt;<replaceable>address@.thing.domain.com</replaceable>&gt;,
+then finally
+&lt;<replaceable>address@.domain.com</replaceable>&gt;</para>
+
+      <note>
+	<para>
+There is a period after the '@' character. If you want all mail
+for
+<quote>any.thing.domain.com</quote>
+to be delivered as though it were sent to
+<quote>domain.com</quote>,
+you should define an alias for the domain, for example:
+</para>
+
+	<informalexample>
+	  <programlisting format="linespecific">
+domain.com
+.domain.com&lt;TAB&gt;domain.com
+</programlisting>
+      </informalexample>
+      </note>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

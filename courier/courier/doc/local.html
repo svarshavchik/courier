@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="author" content="Mr. Sam"/>
+
+  <title>The local module</title>
+  <!-- Copyright 2000-2002 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h2>The <code>local</code> module</h2>- support for delivering
+  and originating messages on the local machine.
+
+  <h3>Configuration files</h3><code>defaulthost</code> - default
+  hostname after the @. Defaults to me.
+
+  <p><code>virtualdomains</code> - virtual domains. Each line is of
+  the form domain.tld&lt;tab&gt;user</p>
+
+  <p><code>mailbox</code> - default user mailbox. If no .courier
+  file, the message is delivered to this file or maildir, relative
+  to the recipient's home directory.&nbsp; local will also append
+  the dash-extension (if any) to the name of the directory or file
+  (trailing / should NOT be specified!). mailbox may also start
+  with a |, to specify a program to pipe the message to.</p>
+
+  <h3>The default default</h3>As the last resort, local will
+  attempt to deliver messages to:
+
+  <p>A) maildrop, if maildrop is detected during compilation<br />
+  B) procmail, if procmail is detected during compilation<br />
+  C) <code>$HOME/Mailbox</code></p>
+
+  <p>The following comments apply only when either procmail or
+  maildrop are invoked under these condition. The following does
+  not apply if procmail or maildrop are invoked from a .courier
+  file, or from the <code>mailbox</code> configuration file.</p>
+
+  <p>procmail will be invoked with the -f flag. procmail will
+  receive one argument: COURIER=x, where x is the dash-extension.
+  If the local address is user-foo-bar, procmail will be run with
+  COURIER=foo.&nbsp; If there is no dash extension, procmail will
+  be run with COURIER=-</p>
+
+  <p>maildrop ...<br />
+  &nbsp;</p>
+
+  <h2>Shared library</h2><code>rewritedel</code> - if domain is
+  listed in locals or virtualdomains, will accept delivery. If
+  domain is in virtualdomains, prepends 'user-' to the local part
+  of the address, then works with the local part from then on. If
+  the local part is a valid userid, accepts delivery, otherwise if
+  the local part is user-foo, strips off the foo, and tries again
+  to check for the valid userid. If a valid userid is found, after
+  stripping one or more portions, takes what was removed, "-foo",
+  or maybe even "-foo-bar", prepends ".courier", and checks if the
+  file exists in user's home. If not, error, mailbox not found.
+  Otherwise the 'host' parameter is the userid, and the 'address'
+  parameter is the extension of the courier file, or just a "-" for
+  <code>$HOME/.courier</code>.
+
+  <p>Rewrite function:</p>
+
+  <p><code>local</code> - calls local.defaulthost, unless address
+  contains exclamation marks.<br />
+  <code>local.defaulthost</code> - appends @defaulthost, if domain
+  name is missing.</p>
+
+  <h2>Output module</h2>setuids to the user indicated in the host
+  parameter.
+
+  <p>If <code>$HOME</code> has the sticky bit set, defers the
+  mail.</p>
+
+  <p>attempts to open and read delivery instructions from .courier
+  file specified by the address parameter. If can't open the file,
+  or if it's empty, message is delivered to the default mailbox.
+  Delivery instructions are read, a line at a time. Lines ending
+  with \ are concatenated with the next one. A delivery instruction
+  may specify a mailbox, a forwarding address !user@host, or a
+  program delivery |</p>
+
+  <p>The output module appends a Delivered-To:
+  userid-ext@defaulthost header. If the header already exists, the
+  message is bounced as a mailing loop.</p>
+
+  <h2>Input module</h2>A soft link is installed from
+  <code>bin/sendmail</code> (ho-ho) to
+  <code>lib/local/sendmail</code>. sendmail is setgid-ed to mail,
+  and is a wrapper for <code>bin/submit</code>. If called with the
+  -bs flag, an attempt to run <code>bin/smtpd</code> is made.<br />
+  &nbsp;
+</body>
+</html>

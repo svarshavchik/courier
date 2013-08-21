@@ -1,0 +1,68 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-setappcharset">
+    <refmeta>
+      <refentrytitle>mail::setAppCharset</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::setAppCharset</refname>
+      <refpurpose>Set application character set</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+#include &lt;libmail/misc.H&gt;
+#include &lt;langinfo.h&gt;
+
+const char *myCharset=nl_langinfo(CODESET);
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::<function>setAppCharset</function></funcdef>
+	  <paramdef>const char *<parameter>myCharset</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function should be used to specify the application's character set.
+&libname; automatically translates names of
+folders between the application's character set, and the mail server's
+character set.
+</para>
+
+      <note>
+	<para>
+&libname; supports a limited number of character
+sets.  The full &libname; configuration supports
+the <literal>ISO-8859</literal> character set family, most
+<literal>windows</literal> character sets, and <literal>KOI8-R</literal>.
+Some East Asian character sets (Japanese,
+traditional and simplified Chinese) are experimental, and have not been
+fully tested.</para>
+</note>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+This function returns <literal>true</literal> if the character set was
+succesfully installed; <literal>false</literal> if the character set is not
+supported.</para>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

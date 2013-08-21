@@ -1,0 +1,68 @@
+#! @SHELL@
+#
+#
+#  Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for
+#  distribution information.
+#
+#  This is a simple script to start/stop the smtp port daemon, courieresmtpd.
+#
+#  Argument "start" starts the daemon.
+#  Argument "stop" stops the daemon (just the listening daemon).
+#  Argument "restart" rereads the smtpaccess.dat file.
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+sbindir="@sbindir@"
+libexecdir="@libexecdir@"
+
+. ${sysconfdir}/esmtpd
+. ${sysconfdir}/esmtpd-ssl
+
+export PATH
+export SHELL
+
+case $1 in
+start)
+	;;
+stop)
+	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
+	exit 0
+	;;
+restart)
+	${sbindir}/couriertcpd -pid=$SSLPIDFILE -restart
+	exit 0
+	;;
+*)
+	exit 0
+	;;
+esac
+
+cd ${prefix}
+
+if test "$ACCESSFILE" != ""
+then
+	if test ! -f "${ACCESSFILE}.dat"
+	then
+		ACCESSFILE=""
+	else
+		ACCESSFILE="-access=${ACCESSFILE}.dat"
+	fi
+fi
+
+@MKDIR_P@ `dirname $SSLPIDFILE`
+ulimit -d "$ULIMIT"
+@SETENV@ -i @SHELL@ -c " set -a ; . ${sysconfdir}/esmtpd ; \
+			. ${sysconfdir}/esmtpd-ssl ; \
+	ESMTP_TLS=1; export ESMTP_TLS; \
+	${sbindir}/couriertcpd \
+		-stderrlogger=@courierlogger@ \
+		-stderrloggername=esmtpd-ssl \
+		-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
+		-maxperc=$MAXPERC \
+		-pid=$SSLPIDFILE $TCPDOPTS \
+		-user=$MAILUSER -group=$MAILGROUP \
+		$BLACKLISTS $DROP $ACCESSFILE \
+		-address=$SSLADDRESS $SSLPORT \
+		$COURIERTLS -server -tcpd \
+			${sbindir}/courieresmtpd"

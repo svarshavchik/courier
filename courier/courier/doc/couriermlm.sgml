@@ -1,0 +1,1667 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>couriermlm</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>couriermlm</refname>
+    <refpurpose>The <application moreinfo="none">Courier</application>
+mailing list manager</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">couriermlm</command>
+      <arg choice="req" rep="norepeat"><replaceable>command</replaceable></arg>
+      <arg choice="req" rep="norepeat"><replaceable>directory</replaceable></arg>
+      <arg rep="repeat" choice="opt"><replaceable>arg</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">couriermlm</command> is the
+<application moreinfo="none">Courier</application> mail server's
+mailing list manager.
+This command sets up, maintains, and manages mailing lists.
+<command moreinfo="none">couriermlm</command> automatically handles
+requests to subscribe and unsubscribe list members, detects
+undeliverable addresses and removes them from the subscription rolls.
+Mailing lists managed by <command moreinfo="none">couriermlm</command> require zero human
+administrative oversight.
+<command moreinfo="none">couriermlm</command> supports digests, write-only posting aliases,
+and moderated mailing lists.</para>
+
+    <refsect2>
+      <title>CREATING A MAILING LIST</title>
+
+      <para>
+Anyone can use <command moreinfo="none">couriermlm</command>,
+not just the system administrator.
+The <application moreinfo="none">Courier</application> mail server mail server
+translates
+an address <literal moreinfo="none">list-name@domain</literal>
+as a local address with a corresponding
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+file.
+Anyone that can install a
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+file, and can schedule
+<citerefentry>
+	  <refentrytitle>cron</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+jobs, can run a <command moreinfo="none">couriermlm</command> mailing list.</para>
+
+      <para>
+Note that the system administrator can optionally remove the
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+support from the the <application moreinfo="none">Courier</application> mail server.
+<command moreinfo="none">couriermlm</command> will not work in that case.</para>
+
+      <para>Setting up a mailing list consists of the following steps:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>Run <command moreinfo="none">couriermlm create</command></term>
+	  <listitem>
+	    <para>
+Use this command to create a directory where <command moreinfo="none">couriermlm</command>
+keeps all mailing list related files.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Configure the mailing list</term>
+	  <listitem>
+	    <para>
+The <command moreinfo="none">couriermlm create</command> command
+initializes the mailing list subdirectory with some default template
+responses.  It is necessary to customize them for your mailing list, and it
+may be necessary to issue some additional commands in order to configure
+appropriate mailing list options -- such as enabling unrestricted posting
+privileges, and enabling moderation.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Create <ulink url="dot-courier.html"><citerefentry>
+		<refentrytitle>dot-courier</refentrytitle>
+		<manvolnum>5</manvolnum>
+	      </citerefentry>
+</ulink>
+files</term>
+	  <listitem>
+	    <para>
+Set up to run
+<command moreinfo="none">couriermlm</command> to distribute mailing list messages, and process
+requests.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Set up
+<citerefentry>
+	      <refentrytitle>cron</refentrytitle>
+	      <manvolnum>8</manvolnum>
+	    </citerefentry>
+</term>
+	  <listitem>
+	    <para>
+You need to set up
+<citerefentry>
+		<refentrytitle>cron</refentrytitle>
+		<manvolnum>8</manvolnum>
+	      </citerefentry>
+jobs to run the <command moreinfo="none">couriermlm hourly</command> and
+<command moreinfo="none">couriermlm daily</command>
+commands, which perform regular mailing list maintenance.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Back up subscription lists</term>
+	  <listitem>
+	    <para>
+As part of your daily job you should also
+run the <command moreinfo="none">export</command> command, in order to back up the mailing list
+subscriber information. In the event that the mailing list database gets
+corrupted or lost, you can restore it from this backup file. See the
+<command moreinfo="none">export</command> command for more information.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <note>
+	<para>
+Setting up a digest for the mailing list requires additional steps.
+See "<ulink url="#digest">Setting up a mailing list digest</ulink>" below for
+more information.</para>
+      </note>
+
+      <para>
+The first step is to run the following command:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm create <replaceable>directory</replaceable> ADDRESS=<replaceable>list@domain</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+<replaceable>directory</replaceable> is the mailing list directory that will
+be managed by <command moreinfo="none">couriermlm</command>.
+This directory should not be created in advance,
+this command creates this directory, and initializes it.</para>
+
+      <para>
+<replaceable>list@domain</replaceable> is the mailing list's address, the
+address that sends messages to the mailing list.</para>
+
+      <para>
+An additional setting, <literal moreinfo="none">URL</literal> may also be specified:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm create <replaceable>directory</replaceable> ADDRESS=<replaceable>list@domain</replaceable> URL=<replaceable>url</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+<quote>url</quote> would be the <acronym>URL</acronym> of the
+<application moreinfo="none">WebMLM</application> web page for this mailing list.
+See
+<ulink url="webmlmd.html"><citerefentry><refentrytitle>webmlmd</refentrytitle><manvolnum>1</manvolnum>
+	  </citerefentry>
+</ulink>
+for more information.</para>
+
+      <para>
+The directory created
+by <command moreinfo="none">couriermlm create</command> is initialized to contain
+a number of text files that <command moreinfo="none">couriermlm</command> sends back as
+replies to administrative commands. It is necessary to edit these template
+files and adjust the text in those files for this mailing list.
+All template filenames end with <literal moreinfo="none">.tmpl</literal>, and their contents
+are self explanatory.  Some important template files are:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>help.tmpl</term>
+	  <listitem>
+	    <para>
+This text is returned in response to the help
+command. This text must be modified depending upon whether this mailing
+list is a moderated mailing list, has a digest version, or if any other
+non-default configuration options are set for the mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>sub.tmpl</term>
+	  <listitem>
+	    <para>
+This is the reply that's sent back in response to a
+subscription request.  Less important is <filename moreinfo="none">unsub.tmpl</filename>,
+which is the response to a request to unsubscribe.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>sub2.tmpl</term>
+	  <listitem>
+	    <para>
+This is the successful subscription confirmation.  A
+brief overview of the mailing list might be appropriate here.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+<command moreinfo="none">couriermlm</command> has rudimentary support for non-English
+templates.
+The <command moreinfo="none">couriermlm create</command> command has a single, optional
+parameter, <option>--lang=<replaceable>suffix</replaceable></option>
+The option must be specified after the mailing list directory's name:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm create <replaceable>directory</replaceable> --lang=es ADDRESS=<replaceable>list@domain</replaceable> URL=<replaceable>url</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+The templates for the stock text files come from
+<filename moreinfo="none">@datadir@/couriermlm</filename>.
+This directory contains all the <filename moreinfo="none">*.tmpl</filename> and
+<filename moreinfo="none">*.html</filename> template files that
+<command moreinfo="none">couriermlm create</command> installs in the new mailing list
+<replaceable>directory</replaceable>.</para>
+
+      <para>
+Translated versions of template files are installed in the same directory,
+<filename moreinfo="none">@datadir@/couriermlm</filename>.
+The translated version of <filename moreinfo="none"><replaceable>file</replaceable></filename>
+must be installed
+as <filename moreinfo="none"><replaceable>file</replaceable>.<replaceable>suffix</replaceable></filename>,
+for example: <filename moreinfo="none">help.tmpl.es</filename> is the translated version
+of <filename moreinfo="none">help.tmpl</filename>, with the <quote>es</quote> suffix.</para>
+
+      <para>
+The <option>--lang=<replaceable>suffix</replaceable></option> option
+installs the the <filename moreinfo="none">.suffix</filename> version of each text template
+file, if available.
+If not, the stock English template file gets copied, as usual.</para>
+
+      <note>
+        <para>
+Do not remove the English template files, even if you never use them.
+They must be left in place, in <filename moreinfo="none">@datadir@/couriermlm</filename>,
+for <command moreinfo="none">couriermlm create</command> to work correctly.</para>
+      </note>
+
+      <para>Example:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm create /home/lists/users-list --lang=es ...
+</programlisting>
+      </informalexample>
+
+      <para>
+This example installs the <filename moreinfo="none">*.es</filename> versions of mailing list
+template files.
+Only the stock, English template files come with the
+<application moreinfo="none">Courier</application> mail server.
+This mechanism only provides an easy integration ability with template
+files from other sources.</para>
+
+      <para>
+There are some additional configuration files that can be modified to suit
+your taste:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>headeradd</term>
+	  <listitem>
+	    <para>
+This file can be initialized to contain any
+mail headers that will be automatically added to every mailing list
+message.  The contents of this file are simply prepended to
+every message that goes out.  Blank lines are not allowed.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>headerdel</term>
+	  <listitem>
+	    <para>
+This file lists any headers that will be
+automatically removed from every mailing list message
+before it's sent. List
+each header one per line, including the : character.  For example, to
+remove all <replaceable>Received:</replaceable> and
+<replaceable>Date:</replaceable> headers from every message,
+initialize this file to contain the following two lines:</para>
+	    <informalexample>
+	      <programlisting format="linespecific">
+Received:
+Date:
+</programlisting>
+	    </informalexample>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+Both the <filename moreinfo="none">headeradd</filename> and <filename moreinfo="none">headerdel</filename>
+files can be
+used to implement a popular feature of setting the replies to every message to
+go to the mailing list.  Having
+"<literal moreinfo="none">Reply-To:</literal>" in
+<filename moreinfo="none">headerdel</filename>, removes any existing
+<replaceable>Reply-To:</replaceable> header,
+and then having
+"<literal moreinfo="none">Reply-To: <replaceable>list@domain</replaceable></literal>"
+in <filename moreinfo="none">headeradd</filename> appends
+a fixed <replaceable>Reply-To:</replaceable> header to every message.</para>
+
+      <para>
+The <replaceable>create</replaceable> command also creates the following
+subdirectories in the mailing list directory:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>sublist</term>
+	  <listitem>
+	    <para>
+This subdirectory has the database files that
+contain the mailing list's subscription list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>unsublist</term>
+	  <listitem>
+	    <para>
+This subdirectory stores files that contain
+information about addresses that have been unsubscribed from the mailing
+list.  This information might be of some use when tracking down an old
+subscription.  The contents of this directory are not automatically
+purged, you must set up your own purging mechanism for this directory.
+</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>commands, commands.dat</term>
+	  <listitem>
+	    <para>
+These directories store temporary files that
+contain pending (unconfirmed) commands for the mailing list manager. The
+<command moreinfo="none">couriermlm</command> commands <replaceable>hourly</replaceable> and
+<replaceable>daily</replaceable> must be executed
+regularly in order to periodically purge stale entries.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>modqueue</term>
+	  <listitem>
+	    <para>
+Messages awaiting moderator approval (for moderated lists).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>archive</term>
+	  <listitem>
+	    <para>
+Messages received by this mailing list will be
+stored here, in addition to being forwarded to subscribers.
+<command moreinfo="none">couriermlm</command> does not automatically do any purging on this
+subdirectory, you must set up your own archiving mechanism that cleans out
+this subdirectory.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+The last step involves installing a couple of
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+files that run <command moreinfo="none">couriermlm</command> to receive mailing list messages
+and administrative commands. The mailing list address,
+<replaceable>list@domain</replaceable>,
+corresponds to some
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+file. For example, if your
+system account is <replaceable>john</replaceable>, and your mail domain is
+<replaceable>example.com</replaceable>,
+then the
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+file for the mailing list
+<replaceable>&lt;john-list@example.com&gt;</replaceable> is
+<filename moreinfo="none">$HOME/.courier-list</filename>.</para>
+
+      <para>
+Let's say that the
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+file is
+<filename moreinfo="none">$HOME/.courier-list</filename>. To properly support the mailing list, the
+following
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+files will have to be initialized as
+follows:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>$HOME/.courier-list</term>
+	  <listitem>
+	    <para>
+This file should be initialized to
+contain the following delivery instruction:</para>
+	    <informalexample>
+	      <programlisting format="linespecific">
+| @bindir@/couriermlm msg <replaceable>directory</replaceable>
+</programlisting>
+	    </informalexample>
+	    <para>
+<replaceable>directory</replaceable> is the created mailing list
+directory.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>$HOME/.courier-list-owner</term>
+	  <listitem>
+	    <para>
+This file should contain the
+appropriate delivery instructions for forwarding all mail
+addressed to <filename moreinfo="none">&lt;list-owner@domain&gt;</filename> to the address of
+the
+owner of the mailing list. This can be another E-mail address, or a
+mailbox specification.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>$HOME/.courier-list-default</term>
+	  <listitem>
+	    <para>
+This file should be
+initialized to contain the following delivery instruction:</para>
+	    <informalexample>
+	      <programlisting format="linespecific">
+| @bindir@/couriermlm ctlmsg <replaceable>directory</replaceable>
+</programlisting>
+	    </informalexample>
+	    <para>
+<replaceable>directory</replaceable> is the created mailing list directory.
+This
+<ulink url="dot-courier.html"><citerefentry>
+		  <refentrytitle>dot-courier</refentrytitle>
+		  <manvolnum>5</manvolnum>
+		</citerefentry>
+</ulink>
+file provides support for all other addresses of the form
+<filename moreinfo="none">&lt;list-<replaceable>command</replaceable>@domain&gt;</filename>,
+where <replaceable>command</replaceable> is a mailing list administrative
+command. Commands are sent
+to this mailing list manager by sending a message to one of several
+special addresses, described more fully in "<ulink url="#command">Mailing
+list commands</ulink>", below.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2>
+      <title>MANUAL COMMANDS</title>
+
+      <para>
+<command moreinfo="none">couriermlm</command> may also be run manually from the command
+line as follows:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+@bindir@/couriermlm <replaceable>command</replaceable> <replaceable>directory</replaceable> [ options... ]
+</programlisting>
+      </informalexample>
+
+      <para>
+<replaceable>command</replaceable> is a command from the following list.
+<replaceable>directory</replaceable> is
+the mailing list directory. The commands are:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>create</term>
+	  <listitem>
+	    <para>
+Create a mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>update</term>
+	  <listitem>
+	    <para>
+Update/restore mailing list templates.
+The original, default, mailing list message template files
+(<filename moreinfo="none">*.tmpl</filename> and <filename moreinfo="none">*.tmpl.html</filename>)
+are reinstalled into the mailing list directory.
+This command must be processed for every mailing list directory after
+upgrading to the
+<application moreinfo="none">Courier</application> server version 0.55, or later,
+from earlier versions (but see below).
+<command moreinfo="none">couriermlm</command> in
+version 0.55 of the <application moreinfo="none">Courier</application> mail server
+uses updated templates files, which must be installed in every mailing list
+directory.
+Although the names of many template files have not changed, the embedded
+markup codes in the template files work differently.</para>
+
+	    <orderedlist inheritnum="ignore" continuation="restarts">
+	      <listitem>
+		<para>
+Begin by making a backup copy of all <filename moreinfo="none">*.tmpl</filename> files
+in the existing <command moreinfo="none">couriermlm</command> mailing list directory.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Run the <quote>update</quote> command on the list directory.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Review the backed up template files, identify your customized changes,
+then retype them into new template files installed by the <quote>update</quote>
+command.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Proceed to the next mailing list directory.</para>
+	      </listitem>
+	    </orderedlist>
+
+	    <para>
+Yes, this is going to be a pain.
+This is the first overhaul of <command moreinfo="none">couriermlm</command>'s infrastructure
+in many years.
+Once a decade, some elbow grease must be sacrificed in the name of
+progress.
+It's not the end of the world.</para>
+
+	    <para>
+In an extreme emergency, preserve the <command moreinfo="none">couriermlm</command> from
+the previous version of the
+<application moreinfo="none">Courier</application> mail server.
+Mass-update all existing lists'
+<filename moreinfo="none">.courier-<replaceable>list</replaceable></filename> and
+<filename moreinfo="none">.courier-<replaceable>list</replaceable>-default</filename>
+files to run the old <command moreinfo="none">couriermlm</command>.
+Then, migrate each mailing list on a predetermined schedule.  After migrating
+each list, put the default path back into the list's
+ <filename moreinfo="none">.courier</filename> files.</para>
+
+	    <para>
+Keep in mind the following issues, while migrating the lists:</para>
+
+	    <itemizedlist>
+	      <listitem>
+		<para>
+The <filename moreinfo="none">help.tmpl</filename> template file is usually the one that
+gets customized the most.  In most cases, large bits and pieces of this
+file, that document certain list options that do not apply to this list,
+must be removed.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+There are several new template files, including a number of
+<filename moreinfo="none">*.html</filename> files that refer to new
+<acronym>HTML</acronym>-formatted
+responses from <command moreinfo="none">couriermlm</command>, and the
+<application moreinfo="none">WebMLM</application> interface.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Be aware of updated mail headers declared in several template files.
+The <acronym>MIME</acronym> character set is now given as
+<literal moreinfo="none">utf-8</literal>.  Some templates no longer contain the
+<literal moreinfo="none">Mime-Version</literal> and <literal moreinfo="none">Subject</literal> headers.
+The <literal moreinfo="none">Subject</literal> headers are moved to separate template files.
+Many existing template files now contain both a plain text and an
+<acronym>HTML</acronym>-formatted version of the <command moreinfo="none">couriermlm</command>
+response.  Always scroll to the end of each template file, to reveal
+any appended <acronym>HTML</acronym> portion of template's text.</para>
+	      </listitem>
+	    </itemizedlist>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>set</term>
+	  <listitem>
+	    <para>
+Set mailing list options.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>sub</term>
+	  <listitem>
+	    <para>
+Manually subscribe an address to the mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>unsub</term>
+	  <listitem>
+	    <para>
+Manually unsubscribe an address from the mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>lsub</term>
+	  <listitem>
+	    <para>
+List all the subscribers to this mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>laliases</term>
+	  <listitem>
+	    <para>
+List write-only aliases for this mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>export</term>
+	  <listitem>
+	    <para>
+Export mailing list subscriber information.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>import</term>
+	  <listitem>
+	    <para>
+Import mailing list subscriber information.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>ctlmsg</term>
+	  <listitem>
+	    <para>
+Receive and interpret a control message.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>info</term>
+	  <listitem>
+	    <para>
+Display a subscription record.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>msg</term>
+	  <listitem>
+	    <para>
+Post a message to the mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>hourly</term>
+	  <listitem>
+	    <para>
+Perform hourly maintenance.  It is necessary to set up a
+<citerefentry>
+		<refentrytitle>cron</refentrytitle>
+		<manvolnum>8</manvolnum>
+	      </citerefentry>
+job to execute the <replaceable>hourly</replaceable> command once an
+hour.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>daily</term>
+	  <listitem>
+	    <para>
+Perform daily maintenance.  It is necessary to set up a
+<citerefentry>
+		<refentrytitle>cron</refentrytitle>
+		<manvolnum>8</manvolnum>
+	      </citerefentry>
+job to execute the <replaceable>daily</replaceable> command once a
+day.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>digest</term>
+	  <listitem>
+	    <para>
+Create a digest.  See "<ulink url="#digest">Setting up
+ a mailing list digest</ulink>" below for more information.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2>
+      <title>MANUAL SUBSCRIPTION MANAGEMENT</title>
+
+      <para>
+The <literal moreinfo="none">sub</literal>, <literal moreinfo="none">unsub</literal>, <literal moreinfo="none">lsub</literal>,
+<literal moreinfo="none">laliases</literal>, <literal moreinfo="none">export</literal>, and
+<literal moreinfo="none">import</literal> commands
+allow manual subscription list management. Normally, subscription-related
+commands are done by sending an appropriate mailing list command, see
+"<ulink url="#command">Mailing List Commands</ulink>", below.</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm sub <replaceable>directory</replaceable> <replaceable>user@domain</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+This command adds the address <filename moreinfo="none">&lt;user@domain&gt;</filename> to the
+subscription list.
+<command moreinfo="none">couriermlm</command> will now read a free-form comment
+or a note from standard input, terminated by an end-of-file (usually CTRL-D).
+The free-form comment is stored in the subscription database, together with
+the address, and is shown by the "info" command.</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm unsub <replaceable>directory</replaceable> <replaceable>user@domain</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+This command remove the address <filename moreinfo="none">&lt;user@domain&gt;</filename> from the
+subscription rolls.  <command moreinfo="none">couriermlm</command> will also read a free-form
+comment, which is added to the subscription record.  After removing this
+address from the subscription rolls, its subscription record is archived in
+the <replaceable>directory/unsublist</replaceable> directory.</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm lsub <replaceable>directory</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+This command lists all the addresses subscribed to the list, on standard
+output, one per line.</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm laliases <replaceable>directory</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+This command lists all write-only aliases that have been subscribed to the
+list, together with the subscriber address that added each alias. See
+"<ulink url="#wonly">Write-Only Aliases</ulink>" for more information.</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm export <replaceable>directory</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+The <replaceable>export</replaceable> command lists the contents of the
+subscription database
+on standard output.  The export command produces the following output
+format:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+<replaceable>address</replaceable>
+<replaceable>subscription information</replaceable>
+ ...
+<replaceable>address</replaceable>
+<replaceable>subscription information</replaceable>
+ ...
+</programlisting>
+      </informalexample>
+
+      <para>
+"<replaceable>address</replaceable>", is an address subscribed to the
+mailing list. This is
+followed by its corresponding subscription information, usually a copy of the
+subscription request that was used to add the address to the mailing list. The
+subscription information is terminated by a line containing a single period.
+Any lines in the subscription information that begin with a period have an
+extra period prepended to them.</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm import <replaceable>directory</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+The <replaceable>import</replaceable> command reads on standard input a
+previously exported
+mailing list subscription database, and adds those addresses to the indicated
+mailing list.</para>
+
+      <para>
+It is highly recommended to make a regular backup of subscriber information
+using the <replaceable>export</replaceable> command, in the event that the subscription database
+gets corrupted.  In which case the <replaceable>import</replaceable> command
+can be used to
+rebuild the subscription database, in absence of any direct backups of the
+database files.</para>
+
+    </refsect2>
+
+    <refsect2>
+
+      <title>SETTING MAILING LIST OPTIONS</title>
+
+      <anchor id="options"/>
+
+      <para>
+The <replaceable>set</replaceable> command sets various list options:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm set <replaceable>directory</replaceable> <replaceable>option=value</replaceable> <replaceable>option=value...</replaceable>
+</programlisting>
+      </informalexample>
+
+      <note>
+	<para>
+Setting the <literal moreinfo="none">ADDRESS</literal> or the <literal moreinfo="none">URL</literal>
+options, described below, automatically updates the contents of the
+<filename moreinfo="none">headeradd</filename> configuration file.
+Its existing <quote>List-</quote> headers are removed and replaced by
+updated <quote>List-</quote> headers that reflect the revised list address
+or <acronym>URL</acronym>.</para>
+      </note>
+
+      <para>
+One or more options can be set with the same command. The available options
+are:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>ADDRESS=<replaceable>address</replaceable></term>
+	  <listitem>
+	    <para>
+The base E-mail address for this mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>URL=<replaceable>address</replaceable></term>
+	  <listitem>
+	    <para>
+The <acronym>URL</acronym> of <application moreinfo="none">WebMLM</application> web page
+for this mailing list.</para>
+
+	    <note>
+	      <para>
+<application moreinfo="none">WebMLM</application> determines its own
+<acronym>URL</acronym> automatically, by reading its <acronym>HTTP</acronym>
+headers.
+This setting is used by <command moreinfo="none">couriermlm</command>, which has no
+knowledge of the web server's configuration, and needs to know the correct
+<acronym>URL</acronym> to insert into generated messages.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>CASESENSITIVE=<replaceable>flag</replaceable></term>
+
+	  <listitem>
+	    <para>
+If flag is "1", the userid portion of E-mail addresses are case-sensitive.
+The domain address portion is always case-insensitive.
+The default setting is "0" making both userid and domain address portions
+of E-mail addresses case-insensitive.</para>
+
+	    <note>
+	      <para>
+Be careful when changing this setting on an active list.
+Changing this option to <quote>CASESENSITIVE=1</quote>, forces all
+existing subscribers to make sure their addresses are lowercase-only,
+otherwise they will no longer be recognized as subscribers.
+Changing this option to <quote>CASESENSITIVE=0</quote> blocks
+all subscribed addresses that have uppercase characters in the userid portion
+of their E-mail address.
+They will continue to receive mailing list traffic, but unable to post
+messages to the list, or unsubscribe from it.
+It will not be possible to unsubscribe those addresses even by running
+the <command moreinfo="none">couriermlm</command> command manually.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>DIGEST=<replaceable>directory</replaceable></term>
+	  <listitem>
+	    <para>
+Enable digests. <replaceable>directory</replaceable>
+is the pathname to the previously-createddigest list directory.
+See "<ulink url="#digest">Setting up a mailing list digest</ulink>"
+below for more information.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>KEYWORD=<replaceable>keyword</replaceable></term>
+	  <listitem>
+	    <para>
+Set the subject line keyword for
+mailing list messages.
+If set, <command moreinfo="none">couriermlm</command> inserts "[keyword]" into
+the subject of every mailing list message, to aid sorting by the
+recipients.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>MAXBOUNCES=<replaceable>n</replaceable></term>
+	  <listitem>
+	    <para>
+Maximum number of bounce notifications sent by the
+<replaceable>hourly</replaceable> command, in order to prevent the
+mail system from being overloaded. The default is 20 bounce notifications.
+Any unsent notifications will be carried over to the next hourly job.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>MAXMODNOTICES=<replaceable>n</replaceable></term>
+	  <listitem>
+	    <para>
+Maximum number of moderation
+reminders sent by the <replaceable>hourly</replaceable> command, in order to
+prevent the mail
+system from being overloaded. The default is 20 moderation reminders. Any
+unsent reminders will be carried over to the next hourly job.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>MAXFETCHSIZE=<replaceable>K</replaceable></term>
+	  <listitem>
+	    <para>
+Maximum size, in kilobytes, of a response to the
+<replaceable>fetch</replaceable> command.  The default is 100Kb. This option
+is used to minimize the impact of abusive requests for the entire archive,
+with a forged return address.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>NAME=<replaceable>name</replaceable></term>
+	  <listitem>
+	    <para>
+The name that's listed on the return
+address of administrative messages. Note that if
+<replaceable>name</replaceable> contains
+spaces, you should quote this argument in the shell. The default value is
+"Courier Mailing List Manager".</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>NOBOZOS=<replaceable>flag</replaceable></term>
+	  <listitem>
+	    <para>
+If flag is "0" <command moreinfo="none">couriermlm</command> will
+not attempt to block misdirected subscribes and unsubscribes that are sent
+to the mailing list's posting address. If flag is "1" (the default), those
+kinds of messages will be bounced appropriately.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>NODSN=<replaceable>flag</replaceable></term>
+	  <listitem>
+	    <para>
+If flag is "1" <command moreinfo="none">couriermlm</command> will
+use a Delivery Status Notification setting of "never"
+when it sends confirmation requests and help messages:
+this should reduce the amount of useless failure notifications generated
+when <command moreinfo="none">couriermlm</command> dutifully replies to spam received by the mailing
+list administrative addresses, i.e. -(un)subscribe and -help.
+If flag is "0" (the default), a DSN setting of "fail" will be used.
+Please see <citerefentry>
+		<refentrytitle>sendmail</refentrytitle>
+		<manvolnum>1</manvolnum>
+	      </citerefentry>'s -n option for more details on the DSN setting.
+</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>POST=<replaceable>option</replaceable></term>
+	  <listitem>
+	    <para>
+Set posting options. <replaceable>option</replaceable> is
+one of three values: "<literal moreinfo="none">subscribers</literal>" - only subscribers may
+post messages to
+this mailing list (this is the default); "<literal moreinfo="none">all</literal>" - anyone
+can post messages
+to this mailing list; "<literal moreinfo="none">mod</literal>" - only subscribers may post,
+and messages are sent to the list owner for approval (moderation).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>POSTARCHIVE=<replaceable>option</replaceable></term>
+	  <listitem>
+	    <para>
+Set access to archived messages.
+<replaceable>option</replaceable> is either:
+"<literal moreinfo="none">all</literal>" -
+Anyone can access the mailing
+list archive; or "<literal moreinfo="none">subscribers</literal>" - only subscribers can
+access the archive.
+The default is "<literal moreinfo="none">all</literal>".</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>PURGEARCHIVE=<replaceable>d</replaceable></term>
+	  <listitem>
+	    <para>
+Purge archived mailing list
+messages after <replaceable>d</replaceable> days.  The default is 0
+days - messages are never removed from the archive subdirectory.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>PURGEBOUNCE=<replaceable>d</replaceable></term>
+	  <listitem>
+	    <para>
+Wait <replaceable>d</replaceable> days for the probe
+message, that automatically unsubscribes undeliverable addresses, to
+bounce (default: 14 days).  Probe messages are sent three days (default)
+after the first message to an address bounces.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>PURGECMD=<replaceable>h</replaceable></term>
+	  <listitem>
+	    <para>
+Purge unconfirmed subscribe/unsubscribe
+requests after <replaceable>h</replaceable> hours (default: 48 hours).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>REMODERATE=<replaceable>h</replaceable></term>
+	  <listitem>
+	    <para>
+Resend a moderation reminder after
+<replaceable>h</replaceable> hours (default: 12 hours).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>REPORTADDR=<replaceable>address</replaceable></term>
+	  <listitem>
+	    <para>
+Mail daily reports of new and
+removed subscribers to this address.  Must be set in order to receive
+reports. Provide an empty address to stop reporting.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>SIMPLECONFIRM=<replaceable>n</replaceable></term>
+	  <listitem>
+	    <para>
+If <replaceable>n</replaceable> is <literal moreinfo="none">1</literal>, confirmation
+requests may be acknowledged without adding <quote>yes</quote> to the
+subject line.</para>
+
+	    <note>
+	      <para>
+The text in <filename moreinfo="none">sub.tmpl</filename>, <filename moreinfo="none">unsub.tmpl</filename>,
+and <filename moreinfo="none">help.tmpl</filename> may need adjusting.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>SUBSCRIBE=<replaceable>option</replaceable></term>
+	  <listitem>
+	    <para>
+Set subscription options.
+<replaceable>option</replaceable> is either "all", meaning that anyone can
+subscribe, or
+"mod", meaning moderated subscription requests, where all subscription
+requests are sent to the mailing list owner for approval. The default is
+"all".</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>STARTPROBE=<replaceable>n</replaceable></term>
+	  <listitem>
+	    <para>
+Send a probe to a bouncing address
+<replaceable>n</replaceable> days after receiving the first bounce.
+Basically this means that
+an address must bounce for at least <replaceable>n</replaceable> days before
+it gets a probe message. The default is 3 days.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+Option names and settings are case sensitive.</para>
+
+      <note>
+	<para>
+If you set up a digest list, you MUST set identical
+<literal moreinfo="none">POSTARCHIVE</literal> option for both the main list and the digest
+list.</para>
+      </note>
+    </refsect2>
+
+    <refsect2>
+      <title>DISPLAYING A SUBSCRIPTION RECORD</title>
+
+      <para>
+The <literal moreinfo="none">info</literal> command displays the subscription record for
+the requested address:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+couriermlm info <replaceable>directory</replaceable> <replaceable>user@domain</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+This displays the subscription record for
+"<replaceable>user@domain</replaceable>", which
+typically consists of a copy of the initial subscription request, and
+confirmation.</para>
+    </refsect2>
+
+    <refsect2>
+
+      <title>SENDING MESSAGES TO THE MAILING LIST</title>
+
+      <para>
+The <replaceable>msg</replaceable> commands reads an E-mail message on
+standard input, and
+mails the contents of the message to the mailing list's subscribers.</para>
+
+      <para>
+If the <literal moreinfo="none">POST</literal> option is set to
+"<literal moreinfo="none">subscribers</literal>", the message is
+rejected unless the address in its From: header is a subscriber to this
+mailing list.</para>
+
+      <para>
+Control files <filename moreinfo="none">headeradd</filename> and
+<filename moreinfo="none">headerdel</filename> are read,
+and are applied to the message, as described previously.</para>
+
+    </refsect2>
+
+    <refsect2>
+      <title>MAILING LIST COMMANDS</title>
+
+      <anchor id="command"/>
+
+      <para>
+Mailing list commands can be sent via E-mail to
+<command moreinfo="none">couriermlm</command> by
+sending a message to
+<literal moreinfo="none">&lt;list-<replaceable>command</replaceable>@domain&gt;</literal>. The
+"<literal moreinfo="none">default</literal>"
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+file runs
+<command moreinfo="none">couriermlm</command> to receive mail for all addresses of this
+form.</para>
+
+      <para>
+<command moreinfo="none">couriermlm</command> reads the <envar>DEFAULT</envar> environment
+variable,
+which is set by the <application moreinfo="none">Courier</application> mail server,
+that indicates the specific command.  The available
+commands are:</para>
+      <variablelist>
+	<varlistentry>
+	  <term>help</term>
+	  <listitem>
+	    <para>
+A simple autoresponder.  <command moreinfo="none">couriermlm</command>
+mails the sender the contents of the <filename moreinfo="none">help.tmpl</filename>
+file.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>subscribe</term>
+	  <listitem>
+	    <para>
+A request to subscribe to this mailing list.
+<command moreinfo="none">couriermlm</command> reads the sender's address in order to
+determine what
+address to subscribe.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>subscribe-<replaceable>name=domain</replaceable></term>
+	  <listitem>
+	    <para>
+Explicitly specify the
+address to subscribe to the mailing list, instead of using a return
+address. In the previous example, sending a message addressed to
+<literal moreinfo="none">&lt;my-widgets-subscribe-john=domain.com@example.com&gt;</literal> would
+result in a subscription request for <literal moreinfo="none">&lt;john=domain.com&gt;</literal>.
+Any unusual punctuation characters in the address must be replaced by a
+plus sign, followed by two hexadecimal digits that represent the
+punctuation character's ASCII code.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>unsubscribe</term>
+	  <listitem>
+	    <para>
+A request to unsubscribe to this mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>unsubscribe-<replaceable>name=domain</replaceable></term>
+	  <listitem>
+	    <para>
+Explicitly specify the address to unsubscribe from the mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>alias-subscribe</term>
+	  <listitem>
+	    <para>
+Set up a write-only alias (see below).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>alias-subscribe-<replaceable>name=domain</replaceable></term>
+	  <listitem>
+	    <para>
+Explicitly specify
+the subscriber address for which a write-only alias needs to be set up.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+There are other commands that are used internally for maintaining the
+mailing list.</para>
+
+    </refsect2>
+
+    <refsect2>
+
+      <title>WRITE-ONLY ALIASES</title>
+
+      <anchor id="wonly"/>
+
+      <para>
+Write-only E-mail aliases can send messages to the mailing list, but they
+do not receive any mailing list messages themselves. A write-only alias can be
+set up by any subscriber.  Only one write-only alias is allowed per subscribed
+E-mail address. Write-only aliases are not needed for mailing list that has
+the <literal moreinfo="none">POST=all</literal> option set.</para>
+
+      <para>
+To set up a write-only alias, the subscriber sends a
+<command moreinfo="none">couriermlm</command> <literal moreinfo="none">alias-subscribe</literal> command.
+The subscriber's E-mail address can be
+explicitly specified in a similar manner as the <literal moreinfo="none">subscribe</literal>
+command.</para>
+
+      <para>
+The subject line of the E-mail message must contain the E-mail write-only
+alias to be set up, and nothing else.
+<command moreinfo="none">couriermlm</command> responds with a
+confirmation request, just like when subscribing to the list. This request
+must be acknowledged in the same way.</para>
+
+      <para>
+A subscriber's write-only alias can be changed at any time by repeating
+this procedure.  The new alias replaces the previous one. To prevent abuse,
+there's a limit of at most one <literal moreinfo="none">alias-subscribe</literal> command
+every 30 minutes.</para>
+
+      <para>
+Leave the subject of the E-mail message blank in order to remove an
+existing write-only alias,</para>
+
+    </refsect2>
+
+    <refsect2>
+      <title>SETTING UP A MAILING LIST DIGEST</title>
+
+      <anchor id="digest"/>
+
+      <para>
+<command moreinfo="none">couriermlm</command> supports mailing list digests.
+Mailing list digests are
+created as a second, separate, mailing list.
+The <replaceable>create</replaceable> command
+initializes a second mailing list directory, and then additional configuration
+takes place which links the main mailing list to the digest list.</para>
+
+      <para>
+If the mailing list address is <literal moreinfo="none">list-address@example.com</literal>, the
+address of the digest version of the mailing list is usually
+<literal moreinfo="none">list-address-digest@example.com</literal>,
+but it doesn't have to be this
+address. The only requirement is that the directory for the digest version of
+the mailing list must reside on the same file system as the directory for the
+mailing list itself, and both must be owned by the same userid.</para>
+
+      <para>
+To set up a mailing list digest, first proceed with the steps to create the
+mailing list itself. After the mailing list is created and configured, proceed
+as follows:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>Create the digest list directory</term>
+	  <listitem>
+	    <para>
+Execute the <replaceable>create</replaceable> command to
+create the digest version of the list:</para>
+
+	    <informalexample>
+	      <programlisting format="linespecific">
+@bindir@/couriermlm create \
+   <replaceable>/path/to/digest/list/directory</replaceable> \
+   ADDRESS=<replaceable>list-address-digest@example.com</replaceable>
+</programlisting>
+	    </informalexample>
+	    <para>
+Use the full pathname to the mailing list directory, and the address of
+the digest version of the mailing list.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Configure the digest list</term>
+	  <listitem>
+	    <para>
+Execute the <replaceable>set</replaceable> command to set any
+appropriate options for the digest list.  There one important differences
+to note: messages are not posted to the digest list directly, so there is
+no moderation option, however the digest version of the list can have
+moderated subscription requests.</para>
+</listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Link the two lists</term>
+	  <listitem>
+	    <para>
+Set the <literal moreinfo="none">DIGEST</literal> option for the main
+mailing list, specifying the directory of the digest list. This keyword
+lets <command moreinfo="none">couriermlm</command> know that a digest version is
+available.</para>
+
+	    <note>
+	      <para>
+You MUST set identical
+<literal moreinfo="none">POSTARCHIVE</literal> option for both the main list, and the digest
+list.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Create
+<ulink url="dot-courier.html"><citerefentry>
+		<refentrytitle>dot-courier</refentrytitle>
+		<manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>
+files</term>
+	  <listitem>
+	    <para>
+It is necessary to create
+<ulink url="dot-courier.html"><citerefentry>
+		  <refentrytitle>dot-courier</refentrytitle>
+		  <manvolnum>5</manvolnum>
+		</citerefentry>
+</ulink>
+files for the digest list just like the main
+list, except for some important differences, which are noted below.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Create
+<citerefentry>
+	  <refentrytitle>cron</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+jobs</term>
+	  <listitem>
+	    <para>
+It is also necessary to create cron
+jobs for the digest list exactly like the main list, to run the
+<replaceable>hourly</replaceable> and <replaceable>daily</replaceable>
+cleanup.  It's possible to set up one set
+of cron jobs to run <replaceable>hourly</replaceable> and
+<replaceable>daily</replaceable> cleanups consecutively for both lists.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Create a <replaceable>digest</replaceable>
+<citerefentry>
+	      <refentrytitle>cron</refentrytitle>
+	      <manvolnum>8</manvolnum>
+	    </citerefentry>
+job</term>
+	  <listitem>
+	    <para>
+The <replaceable>digest</replaceable>
+creates and distributes the digest version of the list.
+It can be executed by a
+<citerefentry>
+		<refentrytitle>cron</refentrytitle>
+		<manvolnum>8</manvolnum>
+	      </citerefentry>
+job, or the command can be executed manually.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+The main mailing list is supported by three
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+files, as previously described: the posting address, the owner forwarding
+address, and the default address that handles administrative control messages.
+In the following example, the names <filename moreinfo="none">$HOME/.courier-list</filename>,
+<filename moreinfo="none">$HOME/.courier-list-owner</filename>, and
+<filename moreinfo="none">$HOME/.courier-list-default</filename> are used to represent each
+one of
+these files, and the following names are used to represent the
+<ulink url="dot-courier.html"><citerefentry>
+	    <refentrytitle>dot-courier</refentrytitle>
+	    <manvolnum>5</manvolnum>
+	  </citerefentry>
+</ulink>
+files that correspond to the digest version of the
+mailing list: <filename moreinfo="none">$HOME/.courier-list-digest</filename>,
+<filename moreinfo="none">$HOME/.courier-list-digest-owner</filename>, and
+<filename moreinfo="none">$HOME/.courier-list-digest-default</filename>. Note, however, that
+the
+digest version of the mailing list can have any name, not necessary the name
+of the list, followed by "<literal moreinfo="none">digest</literal>".</para>
+
+      <para>
+The contents of both <filename moreinfo="none">$HOME/.courier-list</filename>
+<filename moreinfo="none">$HOME/.courier-list-digest</filename> must be the same.
+Sending a message
+to the digest address should really end up sending a message to the main
+mailing
+list. Do not put the address of the digest mailing list directory in
+<filename moreinfo="none">$HOME/.courier-list-digest</filename>,
+instead specify the address of the
+main mailing list directory.
+Just copy <filename moreinfo="none">$HOME/.courier-list</filename> to
+<filename moreinfo="none">$HOME/.courier-list-digest</filename>.</para>
+
+      <para>
+However, the contents of
+<filename moreinfo="none">$HOME/.courier-list-digest-default</filename>
+must specify the directory of the digest version of the mailing list. The
+digest list is managed separately from the main list, it has its own
+subscriber list that is separate from the list of subscribers to the main
+list.  <filename moreinfo="none">$HOME/.courier-list-default</filename> can simply be copied to
+<filename moreinfo="none">$HOME/.courier-list-digest-default</filename>, then the directory
+can be changed in the latter.</para>
+
+<para>
+<filename moreinfo="none">$HOME/.courier-list-owner</filename> may use the same mailing list
+owner
+address as <filename moreinfo="none">$HOME/.courier-list-digest-owner</filename>, or it can
+specify a
+different address. The both the digest and the main mailing list can have the
+same mailing list owner/moderator, or have a different owner/moderator.</para>
+
+      <para>
+The following command must be executed in order to link the two lists
+together:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+@bindir@/couriermlm set \
+    <replaceable>/path/to/main/list/directory</replaceable> \
+    DIGEST=<replaceable>/path/to/digest/list/directory</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+Setting the <literal moreinfo="none">DIGEST</literal> option on the main list lets
+<command moreinfo="none">couriermlm</command> know that a digest version is available. The
+<literal moreinfo="none">DIGEST</literal> option must either use an absolute pathname, or a
+pathname
+that's relative to the main list directory (NOT the current directory).</para>
+
+      <para>
+When the <literal moreinfo="none">DIGEST</literal> option is set, messages are simultaneously
+distributed to the mailing list's subscribers, saved in the
+<filename moreinfo="none">archive</filename> subdirectory of the main list, then placed in the
+<filename moreinfo="none">modqueue</filename> subdirectory of the digest list.
+Digest list do not
+employ moderation -- any moderation must take place on the main list -- so the
+<filename moreinfo="none">modqueue</filename> subdirectory is recycled to compile individual
+messages
+for the digest.</para>
+
+      <para>
+Finally, something needs to be done in order to actually distribute the
+digest to the digest list's subscribers.  This is done by running the
+following command:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+@bindir@/couriermlm digest <replaceable>/path/to/digest/directory</replaceable> <replaceable>N</replaceable> <replaceable>H</replaceable>
+</programlisting>
+      </informalexample>
+
+      <para>
+This command creates a digest, and sends it out.
+The <replaceable>N</replaceable> and <replaceable>H</replaceable>
+arguments are optional. The digest is created only if there's at least
+<replaceable>N</replaceable> messages that are waiting to be sent in the
+digest list, or if the
+oldest message is at least <replaceable>H</replaceable> hours old.
+Both options default to 0, so the default behavior is to send a digest
+with all unsent messages.</para>
+
+      <para>
+Note that when the digest is created, ALL unsent messages are packaged into
+the digest, even if some messages are more recent than the time interval
+specified by the <replaceable>H</replaceable> option. A
+<citerefentry>
+	  <refentrytitle>cron</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+job can be set up to
+run the <replaceable>digest</replaceable> command, or run it manually.</para>
+
+      <para>
+<command moreinfo="none">couriermlm</command> automatically provides
+the <literal moreinfo="none">From:</literal>,
+<literal moreinfo="none">To:</literal> headers on a message digest. Additional headers may be
+specified by the <filename moreinfo="none">headeradd</filename> file in the digest list
+directory. The
+<filename moreinfo="none">headerdel</filename> file has no effect. Note that the individual
+messages
+in the digest are copies of the messages from the main mailing list, and thus
+have the <filename moreinfo="none">headeradd</filename> and <filename moreinfo="none">headerdel</filename>
+headers processed
+from the main mailing list directory.</para>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+<command moreinfo="none">couriermlm</command> will not work if the
+<application moreinfo="none">Courier</application> mail server's support for
+<ulink url="dot-courier.html"><citerefentry>
+	  <refentrytitle>dot-courier</refentrytitle>
+	  <manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>
+extensions is disabled.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="courier.html"><citerefentry>
+	  <refentrytitle>courier</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="dot-courier.html"><citerefentry>
+	  <refentrytitle>dot-courier</refentrytitle>
+	  <manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="webmlmd.html"><citerefentry>
+	  <refentrytitle>webmlmd</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

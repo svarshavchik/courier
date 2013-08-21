@@ -1,0 +1,165 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>courierldapaliasd</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>courierldapaliasd</refname>
+    <refpurpose>LDAP-based mail aliasing</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">courierldapaliasd</command>
+      <arg choice="req" rep="norepeat">start</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">courierldapaliasd</command>
+      <arg choice="req" rep="norepeat">stop</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">courierldapaliasd</command>
+      <arg choice="req" rep="norepeat">restart</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">courierldapaliasd</command>
+      <arg choice="req" rep="norepeat">query</arg>
+      <arg choice="req" rep="norepeat"><replaceable>source</replaceable></arg>
+      <arg choice="req" rep="norepeat"><replaceable>address</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">courierldapaliasd</command> supports mail address aliasing, as
+implemented by
+<ulink url="makealiases.html">
+<citerefentry>
+	  <refentrytitle>makealiases</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>
+but using an
+LDAP directory instead of a GDBM or a DB database. The term "aliasing"
+refers to substituting one or more addresses for another address. A one-to-one
+substitution results in the <application moreinfo="none">Courier</application> mail server accepting mail for one address, and delivering
+the mail to another address. A one-to-many substitution results in the <application moreinfo="none">Courier</application> mail server
+accepting mail for one address, and delivering a separate copy of the message
+to every address defined by the alias.</para>
+
+    <para>
+<ulink url="makealiases.html">
+<citerefentry>
+	  <refentrytitle>makealiases</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>
+uses a GDBM or a DB
+database to perform the aliasing function.
+<command moreinfo="none">courierldapaliasd</command> uses
+an LDAP directory instead.</para>
+
+<para>"<command moreinfo="none">courierldapaliasd start</command>" runs the
+<command moreinfo="none">courierldapaliasd</command> process in the background,
+and
+should be executed at system startup.
+"<command moreinfo="none">courierldapaliasd stop</command>"
+stops the background process.
+"<command moreinfo="none">courierldapaliasd restart</command>" restarts the
+process, and rereads the <filename moreinfo="none">ldapaliasrc</filename>
+configuration file to pick up any changes.
+<command moreinfo="none">courierldapaliasd restart</command> must be executed in order
+for any changes to <filename moreinfo="none">ldapaliasrc</filename> to take place.</para>
+
+    <para>
+<command moreinfo="none">courierldapaliasd</command> runs in the background and opens a
+persistent connection to the LDAP directory, and checks every recipient
+address using the persistent connection. <command moreinfo="none">courierldapaliasd</command>
+automatically starts an adjustable number of multiple processes. With
+persistent connections being used, this allows alias checking to be as
+efficient and quick as possible.</para>
+
+    <para>
+"<command moreinfo="none">courierldapaliasd query <replaceable>source</replaceable> <replaceable>address</replaceable></command>"
+is a diagnostic tool.  It requires that
+<command moreinfo="none">courierldapaliasd</command> must already
+be running in the background; it sends a query for
+<replaceable>address</replaceable> to the background process, and prints
+the result. Like
+<ulink url="makealiases.html">
+<citerefentry>
+	  <refentrytitle>makealiases</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>,
+it is possible
+to create aliases that are accessible only to certain sources of mail, like
+"<literal moreinfo="none">esmtp</literal>" or "<literal moreinfo="none">local</literal>".
+The "<replaceable>source</replaceable>" argument
+specifies the source of the
+address, such as "<literal moreinfo="none">local</literal>", "<literal moreinfo="none">esmtp</literal>",
+or "<literal moreinfo="none">uucp</literal>".</para>
+  </refsect1>
+
+  <refsect1>
+<title>CONFIGURATION</title>
+
+    <para>
+<command moreinfo="none">courierldapaliasd</command> requires OpenLDAP client libraries, and is
+installed automatically if OpenLDAP client libraries are available at
+installation time. The default <filename moreinfo="none">ldapaliasrc</filename>
+ configuration file
+contains additional instructions for configuring LDAP-based aliasing.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <para><filename moreinfo="none">@sbindir@/courierldapaliasd</filename></para>
+
+    <para><filename moreinfo="none">@sysconfdir@/ldapaliasrc</filename></para>
+
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="dot-courier.html">
+<citerefentry>
+	  <refentrytitle>dot-courier</refentrytitle>
+	  <manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="courier.html">
+<citerefentry>
+	  <refentrytitle>courier</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="makealiases.html">
+<citerefentry>
+	  <refentrytitle>makealiases</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="makeuserdb.html">
+<citerefentry>
+	  <refentrytitle>makeuserdb</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <title>@PACKAGE@ @VERSION@ - local mail delivery</title>
+  <!--
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<h1><tt>@PACKAGE@ @VERSION@</tt> - Local mail delivery</h1>
+
+<p style="color: #800000">NOTE: Changing this option results in a cold server
+restart</p>
+
+<form method="post" action="05local">
+  <h2>Deliver local mail to/via:</h2>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td><input type="radio" name="defaultdeliverytype"
+        value="maildir" /></td>
+        <td><tt>$HOME/Maildir</tt></td>
+      </tr>
+      <tr>
+        <td><input type="radio" name="defaultdeliverytype"
+        value="maildrop" /></td>
+        <td><tt>maildrop</tt></td>
+      </tr>
+      <tr>
+        <td><input type="radio" name="defaultdeliverytype"
+        value="procmail" /></td>
+        <td><tt>procmail</tt></td>
+      </tr>
+      <tr>
+        <td> </td>
+        <td><input type="checkbox" name="dotforward" />Read
+          <code>.forward</code> files</td>
+      </tr>
+      <tr>
+        <td colspan="2"><hr />
+        </td>
+      </tr>
+      <tr valign="top">
+        <td><input type="radio" name="defaultdeliverytype" checked="checked"
+          value="custom" /></td>
+        <td>Use custom delivery instructions:<br />
+          @DEFAULTDELIVERY@</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+  <input type="submit" value="Save" name="Submit" /></p>
+</form>
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

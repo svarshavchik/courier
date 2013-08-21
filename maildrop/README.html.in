@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>maildrop - mail delivery agent with filtering abilities</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+</head>
+
+<body>
+<!-- Copyright 1998 - 2005 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<h1>maildrop - mail delivery agent with filtering abilities</h1>
+
+<p>Copyright 1998-2005, Double Precision Inc.</p>
+
+<p>This program is distributed under the terms of the GNU General Public
+License. See <code>COPYING</code> for additional information.</p>
+
+<p><a
+href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a></p>
+
+<h2>Building RPMs</h2>
+
+<p>Starting with version 0.99, it is possible to build binary RPMs directly
+from the source tarball, so there's no longer a need to provide a separate
+set of source and binary RPMs. You will need RPM 3.0 or higher in order to
+build a binary RPM. Execute the following command:</p>
+<pre>   rpm -ta maildrop-@VERSION@.tar.bz2</pre>
+
+<p>The binary RPM will be built with a customized configuration (userdb,
+GDBM, and quota enhancements enabled). Afterwards, simply execute <code>rpm
+-i</code> to install it. That's it.</p>
+
+<p>With RPM 4.1 (Red Hat 8.0) use the 'rpmbuild' command instead of rpm:
+<tt>rpmbuild -ta maildrop-@VERSION@.tar.bz2</tt></p>
+
+<p>If you would like to change the RPM build options, move
+<code>maildrop-@VERSION@.tar.gz</code> to your <code>SOURCES</code>
+directory, extract the file <code>maildrop.spec</code>, move it to your
+<code>SPECS</code> directory, customize it if necessary, then build from the
+spec file.</p>
+
+<p><i>maildrop</i> includes documentation in HTML, as well as traditional man
+pages. The HTML versions may also be found at <code><a
+href="maildrop.html">http://www.courier-mta.org/maildrop/maildrop.html</a>.</code>
+<br />
+ </p>
+
+<h2>Installation</h2>
+See <code><a href="INSTALL.html">INSTALL</a></code> for installation
+information. If you are using an RPM-based Linux distribution, you can
+install build a binary RPM directly from the source code.
+
+<h2>Using maildrop with sendmail</h2>
+Maildrop can be easily used as sendmail's local delivery agent, instead of
+procmail. Here is the suggested entry for sendmail.cf, courtesy of Eric J.
+Schwertfeger &lt;ejs<code>@</code>bfd.com&gt;:
+<pre> 
+Mlocal,         P=/usr/local/bin/maildrop, F=lsAw5:/|@SPfhn, S=10/30, R=20/40,
+                T=DNS/RFC822/X-Unix,
+                A=maildrop -d $u</pre>
+You may also consider including the D, F, and M flags as well.</body>
+</html>

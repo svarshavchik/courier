@@ -1,0 +1,10 @@
+body { margin-top: 0px; margin-bottom: 0px; background-image: url(bg.gif); font-family: times new roman,serif; color: #000000;}
+
+a { color: #0000FF; }
+a:visited { color: #880000; }
+a:hover { color: #000000 }
+
+h1 { font-family: arial,helvetica,sans serif; font-size: 200% }
+h2 { font-family: arial,helvetica,sans serif; font-size: 150% }
+
+ul li { padding-top: 5px; }

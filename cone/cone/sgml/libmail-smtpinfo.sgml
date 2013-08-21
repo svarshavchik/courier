@@ -1,0 +1,162 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <refsect2>
+	<title><parameter>saveFolder</parameter></title>
+
+	<para>
+<parameter>saveFolder</parameter>, if not <literal>NULL</literal>,
+specifies that a copy of the message should also be saved in this folder.
+If this mail account uses the experimental
+<link linkend="smap1">SMAP</link> protocol, a single copy of the message
+will be transmitted to the <literal>SMAP</literal> server, which will file
+the message in the folder, and send it to the designated recipients.
+Otherwise the message is manually saved to this folder using
+<link linkend="folder-addmessage"><citerefentry>
+	      <refentrytitle>mail::folder::addMessage</refentrytitle>
+	      <manvolnum>3x</manvolnum></citerefentry></link>,
+or
+<link linkend="account-libmail-addmessage"><citerefentry>
+	      <refentrytitle>mail::ACCOUNT::addMessage</refentrytitle>
+	      <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+      </refsect2>
+      <refsect2>
+	<title>The <structname>mail::smtpInfo</structname> object</title>
+
+	<para>
+<parameter>info</parameter> specifies the following parameters
+which are used to deliver the message:
+
+<programlisting>
+class mail::smtpInfo {
+public:
+	std::string sender;
+
+	std::vector&lt;std::string&gt; recipients;
+
+	std::map&lt;std::string, std::string&gt; options;
+} ;
+</programlisting>
+</para>
+
+	<para>
+<structfield>sender</structfield> specifies the sender's E-mail address,
+in the form of
+"<replaceable>user</replaceable>@<replaceable>domain</replaceable>".
+<structfield>recipients</structfield> is a list of recipients' E-mail
+addresses.
+At least one recipient must be specified.</para>
+
+	<para>
+<structfield>options</structfield> specifies additional parameters for
+sending E-mail, initialized as follows:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>options.insert(make_pair("novalidate-cert", "1"))</term>
+	    <listitem>
+		<para>
+See
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+		      <manvolnum>3x</manvolnum></citerefentry></link>)
+for a description of this option.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>options.insert(make_pair("cram", "1"))</term>
+	    <listitem>
+	      <para>
+See
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>)
+for a description of this option.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>options.insert(make_pair("DSN", "<replaceable>list</replaceable>"))</term>
+	    <listitem>
+	      <para>
+Request a delivery status notification.
+<replaceable>list</replaceable> is a comma-separated
+list of the following keywords:
+"<literal>never</literal>" - do not request any receipts, not even
+non-delivery notices;
+"<literal>success</literal>" - request a delivery confirmation receipt;
+"<literal>fail</literal>" - request a non-delivery notice;
+"<literal>delay</literal>" - request a delayed delivery notice.
+</para>
+	      <note>
+		<para>
+An error will be reported if the mail server does not implement
+delivery status notifications.</para>
+	      </note>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>options.insert(make_pair("RET", "hdrs"))</term>
+	    <listitem>
+	      <para>
+Request that the delivery status notification should not include the entire
+original message, only its headers.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>options.insert(make_pair("RET", "full"))</term>
+	    <listitem>
+	      <para>
+Request that the delivery status notifications should include the entire
+original message.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>options.insert(make_pair("NOPIPELINING", "1"))</term>
+	    <listitem>
+	      <para>
+Do not use the <literal>PIPELINING</literal> <literal>SMTP</literal>
+extension even if the mail server claims to support it
+(workaround for buggy firewalls).</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>options.insert(make_pair("VERP", "1"))</term>
+	    <listitem>
+	      <para>
+Use the <literal>VERP</literal> mailing list extension.
+If the <structfield>sender</structfield> address is
+"<replaceable>sender</replaceable>@<replaceable>senddomain</replaceable>",
+then a delivery status notification for
+"<replaceable>recipient</replaceable>@<replaceable>recipientdomain</replaceable>"
+will be sent to "<replaceable>sender</replaceable>-<replaceable>recipient</replaceable>=<replaceable>recipientdomain</replaceable>@<replaceable>senddomain</replaceable>" (with certain additional details).
+This option is currently implemented only by the
+<ulink url="http://www.courier-mta.org">Courier
+mail server</ulink>.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>options.insert(make_pair("SECURITY", "STARTTLS"))</term>
+	    <listitem>
+	      <para>
+The message must be sent via TLS, and the recipient's server must present
+a certificate signed by a trusted, private, certificate authority.
+This option is currently implemented only by the
+<ulink url="http://www.courier-mta.org">Courier
+mail server</ulink>.</para>
+	      <note>
+		<para>
+This is not the standard <literal>STARTTLS</literal> <literal>ESMTP</literal>
+extension.
+<literal>STARTTLS</literal> is always used automatically, if
+it's supported by the mail server.</para>
+	      </note>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect2>

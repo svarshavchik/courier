@@ -1,0 +1,82 @@
+/*
+** Copyright 2004 Double Precision, Inc.
+** See COPYING for distribution information.
+*/
+
+#ifndef courier_socks_h
+#define courier_socks_h
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#if @sys_select_h@
+#include <sys/select.h>
+#endif
+#if @sys_poll_h@
+#include <sys/poll.h>
+#endif
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <stdio.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
+/* __BEGIN__ */
+
+int Rconnect(int fd, const struct sockaddr *addr, @socklen_t@ addrlen);
+int Rbind(int fd, const struct sockaddr *addr, @socklen_t@ addrlen);
+int Rclose(int fd);
+int Rfclose(FILE *fp);
+int Rselect(int n, fd_set *r, fd_set *w, fd_set *e,
+	    struct timeval *tv);
+int Rpoll(struct pollfd *ufds, @nfds_t@ nfds, int timeout);
+int Rlisten(int s, int backlog);
+int Rdup(int fd);
+int Rdup2(int fd, int fdNew);
+int Raccept(int s, struct sockaddr *addr, @socklen_t@ *addrlen);
+int Rgetsockopt(int  s, int level, int optname, void *optval,
+		@socklen_t@ *optlen);
+int Rgetsockname(int s, struct sockaddr *name, @socklen_t@ *namelen);
+int Rgetpeername(int s, struct sockaddr *name, @socklen_t@ *namelen);
+
+/* __END__ */
+
+#ifdef	__cplusplus
+} ;
+#endif
+
+/* Not yet: */
+
+#define Rread read
+#define Rwrite write
+#define Rreadv readv
+#define Rwritev writev
+#define Rsend send
+#define Rsendto sendto
+#define Rsendmsg sendmsg
+#define Rrecv recv
+#define Rrecvfrom recvfrom
+#define Rrecvmsg recvmsg
+
+
+#ifdef SOCKS_REMAP
+#define connect Rconnect
+#define bind Rbind
+#define close Rclose
+#define fclose Rfclose
+#define select Rselect
+#define poll Rpoll
+#define listen Rlisten
+#define dup Rdup
+#define dup2 Rdup2
+#define accept Raccept
+#define getsockopt Rgetsockopt
+#define getsockname Rgetsockname
+#define getpeername Rgetpeername
+#endif
+
+#endif

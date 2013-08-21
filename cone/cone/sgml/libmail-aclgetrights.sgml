@@ -1,0 +1,12 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+    <para>
+This function
+obtains <parameter>folder</parameter>'s entire access control list.
+If this function succeeds (this function may fail if the requesting
+client does not have the required access to the folder),
+<parameter>rights</parameter> will be initialized to an array of
+<replaceable>identifier</replaceable>/<replaceable>accessrights</replaceable>
+tuples.</para>
+

@@ -1,0 +1,83 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" >
+
+  <!-- Copyright 2004-2012 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="authlib">
+
+  <refmeta>
+    <refentrytitle>authlib</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>authlib</refname>
+    <refpurpose>Courier Authentication Library</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>courierauthconfig</command>
+      <group>
+	<arg>--ldflags</arg>
+	<arg>--cppflags</arg>
+      </group>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id="authlib_descr">
+    <title>DESCRIPTION</title>
+
+    <para>
+The Courier authentication library consists of two libraries:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><literal>-lcourierauth</literal></term>
+	<listitem>
+	  <para>
+Authentication functions.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>-lcourierauthsasl</literal></term>
+	<listitem>
+	  <para>
+SASL authentication functions.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+<command>courierauthconfig --cppflags</command> produces on standard output
+any necessary compiler flags that are needed to access
+the <filename>courierauth.h</filename> and
+the <filename>courierauthsasl.h</filename> header files.
+<command>courierauthconfig --ldflags</command> produces on standard output
+any necessary compiler flags that are needed to link against
+the <filename>courierauth</filename> or <filename>courierauthsasl</filename>
+libraries.</para>
+  </refsect1>
+
+  <refsect1 id="authlib_seealso">
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_passwd.html"><citerefentry><refentrytitle>auth_passwd</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_sasl.html"><citerefentry><refentrytitle>auth_sasl</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+
+</refentry>
+

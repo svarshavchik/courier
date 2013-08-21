@@ -1,0 +1,99 @@
+# $Id: testsuite,v 1.2 2003/04/23 01:32:20 mrsam Exp $
+# Copyright 2000 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+PERL="$1"
+
+
+rm -rf .test
+mkdir .test
+
+cat >.test/test1.dist <<EOF
+
+##VERSION: 1
+#
+#
+##NAME: one:1
+
+ONE=one
+
+##NAME: two:1
+#
+# TWO=two
+
+
+##NAME: three:1
+
+THREE=three
+EOF
+
+$PERL ./sysconftool .test/test1.dist
+cat .test/test1
+
+cat >.test/test1 <<EOF
+
+##VERSION: 1
+#
+#
+##NAME: one:1
+
+ONE=one
+
+##NAME: two:1
+#
+# TWO=two
+
+TWO=0
+
+##NAME: three:1
+
+THREE=three
+EOF
+
+$PERL ./sysconftool -f .test/test1.dist
+$PERL ./sysconftool .test/test1.dist
+cat .test/test1
+
+cat >.test/test1.dist <<EOF
+
+##VERSION: 2
+#
+#
+##NAME: one:1
+
+ONE=one
+
+##NAME: two:1
+#
+# TWO=two
+
+
+##NAME: three:1
+
+THREE=three
+EOF
+
+$PERL ./sysconftool .test/test1.dist
+cat .test/test1
+
+cat >.test/test1.dist <<EOF
+
+##VERSION: 3
+#
+#
+##NAME: one:2
+
+ONE=two
+
+##NAME: two:1
+#
+# TWO=three
+
+
+##NAME: three:1
+
+THREE=three
+EOF
+$PERL ./sysconftool .test/test1.dist
+cat .test/test1
+rm -rf .test

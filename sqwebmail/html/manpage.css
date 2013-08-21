@@ -1,0 +1,12 @@
+
+.LITERALLAYOUT, .STRUCTNAME, dt { font-family: courier new }
+.NOTE { background-color: #dddddd }
+
+.TOC dl dt { font-family: sans serif }
+.TOC dl dt a { font-family: courier new }
+
+.VARIABLELIST dl dt { background-color: #ddddff }
+
+.APPLICATION { font-family: serif; font-style: italic }
+
+.CALSTABLE { background-color: #ffffff }

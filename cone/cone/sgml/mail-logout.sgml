@@ -1,0 +1,60 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-logout">
+    <refmeta>
+      <refentrytitle>mail::account::logout</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::logout</refname>
+      <refpurpose>Disconnect from the server</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>logout</function></funcdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+Close the mail account.  The application should wait until
+either <function>callback.success</function>
+or <function>callback.fail</function> is called (not much
+of a difference, really, in both cases the
+<structname>mail::account</structname> object disconnects from the server).
+The
+<function>disconnected</function> method of the
+<structname>mail::callback::disconnect</structname> object, originally passed
+to <function>mail::account::open</function>, is also invoked.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+
+      <para>
+In this case, however, there is no substantial difference between
+<function>success</function> and
+<function>fail</function>.
+<function>mail::account::logout</function> does not destroy the
+<structname>mail::account</structname> object,
+the object may be destroyed after either callback function is invoked.</para>
+
+    </refsect1>
+  </refentry>

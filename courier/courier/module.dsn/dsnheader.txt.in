@@ -1,0 +1,8 @@
+Content-Type: text/plain; charset=us-ascii
+
+
+This is a delivery status notification from [#ME#],
+running the Courier mail server, version @version@.
+
+The original message was received on [#FROMTIME#]
+from [#FROMMTA#]

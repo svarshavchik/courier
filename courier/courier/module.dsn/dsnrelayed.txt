@@ -1,0 +1,12 @@
+
+---------------------------------------------------------------------------
+
+                   MESSAGE DELIVERED TO A MAIL GATEWAY
+
+You requested a delivery acknowledgement (a return receipt) for the
+following recipients of your E-mail message.  Unfortunately, your message
+has been transferred to an intermediate mail gateway that is not capable
+of generating delivery acknowledgements.
+
+Unless your message is eventually returned as undeliverable, you may not
+receive any further delivery notices for the following addresses:

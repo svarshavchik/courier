@@ -1,0 +1,130 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="emailaddress">
+    <refmeta>
+      <refentrytitle>mail::emailAddress</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::emailAddress</refname>
+      <refpurpose>An E-mail address</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+#include &lt;libmail/rfcaddr.H&gt;
+
+mail::emailAddress address;
+
+bool errflag;
+
+address.setDisplayName("J&oacute;se Smith", "iso-8859-1");
+address.setDisplayAddr("josesmith@example.com", "utf-8");
+
+std::string addr=address.getDisplayAddr("utf-8");
+std::string addr=address.getDisplayAddr("utf-8", errflag);
+std::string name=address.getDisplayName("utf-8");
+std::string name=address.getDisplayName("utf-8", errflag);
+
+address.setAddr(addr);
+address.setDisplayName(name, "utf-8");
+
+</literallayout>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<structname>mail::emailAddress</structname> is a subclass of
+<structname>mail::address</structname> that defines four new methods:
+<function>getDisplayName()</function>,
+<function>setDisplayName()</function>,
+<function>getDisplayAddr()</function> and
+<function>setDisplayAddr()</function>,
+which retrieve or set
+the name and the address components of an E-mail address specified in a
+native character set.
+<structname>mail::emailAddress</structname> can be constructed from an
+existing <structname>mail::address</structname>; or, the default constructor
+initializes an empty address, then use
+<function>setDisplayName()</function> and
+<function>setDisplayAddr()</function> to set the address structure.
+<function>setDisplayName()</function> and
+<function>setDisplayAddr()</function> return an empty string if the
+display name or address was succesfully mapped from the native character,
+or an error message.</para>
+
+      <para>
+	The overloaded methods that take a boolean flag will initialize it
+	to indicate if the address contains characters that do not exist
+	in the specified character set.
+      </para>
+
+      <para>
+Non-Latin characters in the name component use MIME encoding. Passing
+the name component to <function>setDisplayName()</function> MIME-encodes it
+using RFC 2047 and stores the encoded name in the
+<structname>mail::address</structname> superclass.
+<function>setDisplayAddr()</function> encoded non-Latin characters in the
+domain portion of the address using IDNA encoding.
+<function>getDisplayName()</function> and
+<function>getDisplayAddr()</function> retrieve the name or the address portion
+from the <structname>mail::address</structname> superclass, and decode it
+into the native character set, accordingly.</para>
+
+      <para>
+For most purposes, using
+<structname>mail::emailAddress</structname> is preferrable to using
+<structname>mail::address</structname>.
+<structname>mail::address</structname>'s
+<function>getName()</function>,
+<function>setName()</function>,
+<function>getAddr()</function> and
+<function>setAddr()</function>
+methods deal with the raw, MIME-encoded
+format of E-mail addresses.
+This structure lets the application deal with human-readable representation
+of the email address.</para>
+
+    <para>
+Convert a native name to its MIME-encoded format by using
+<function>setDisplayName()</function> followed by
+<function>getName()</function>.
+Similarly, decode a MIME-encoded name by using
+<function>setName()</function> followed by
+<function>getDisplayName()</function>.</para>
+
+    <para>
+Convert an email address to its IDNA-encoded format by using
+<function>setDisplayAddr()</function> followed by
+<function>getAddr()</function>.
+Similarly, decode an IDNA-encoded name by using
+<function>setAddr()</function> followed by
+<function>getDisplayAddr()</function>.</para>
+
+    <para>
+The <function>toString</function>
+and <function>fromString</function>
+methods are templates, and may be used with a vector of
+<structname>mail::emailAddress</structname> or
+<structname>mail::address</structname> objects.
+The two classes are completely interchangable.
+A <structname>mail::emailAddress</structname> object may be assigned or
+converted to a
+<structname>mail::address</structname>, and vice-versa.</para>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="address"><citerefentry>
+	    <refentrytitle>mail::address</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-setappcharset"><citerefentry>
+	    <refentrytitle>mail::setappcharset</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

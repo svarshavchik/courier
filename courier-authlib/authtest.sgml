@@ -1,0 +1,67 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="authtest">
+
+  <refmeta>
+    <refentrytitle>authtest</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>authtest</refname>
+    <refpurpose>Test the Courier Authentication Library</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>authtest</command>
+      <arg choice='req'>loginid</arg>
+      <arg choice='opt'>password</arg>
+      <arg choice='opt'>newpassword</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command>authtest</command> is a command-line diagnostic utility for the
+Courier Authentication Library.
+<command>authtest</command> requires at least one argument:
+<replaceable>loginid</replaceable>.
+<command>authtest</command> sends the authentication request to the
+Courier Authentication Library, then displays the results.
+Only root may use
+<command>authtest</command> utility, and the
+Courier Authentication Library daemon
+(<command>authdaemond</command>) must already be started.</para>
+
+    <para>
+If only one argument is provided, the authentication request displays the
+account information for <replaceable>loginid</replaceable>, if found.</para>
+
+    <para>
+If two arguments are provided, 
+<replaceable>password</replaceable> must match
+<replaceable>loginid</replaceable>'s
+existing password.</para>
+
+    <para>
+If three arguments are provided,
+<replaceable>loginid</replaceable>'s password is changed to
+<replaceable>newpassword</replaceable>, but only if
+<replaceable>password</replaceable> matches the existing psasword.</para>
+
+    <para>
+These three basic authentication requests can be used to troubleshoot
+the authentication library's configuration.</para>
+
+  </refsect1>
+
+</refentry>
+

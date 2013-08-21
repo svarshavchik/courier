@@ -1,0 +1,76 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="socksify">
+
+  <docinfo>
+    <title>socksify</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+
+  </docinfo>
+  <refmeta>
+    <refentrytitle>socksify</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>socksify</refname>
+    <refpurpose>Run an application using a Socks 5 proxy</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>socksify</command>
+      <arg>program</arg>
+      <arg rep='repeat'>argument</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The
+<command>socksify</command> script tries to fool programs that were not
+written to work with Socks 5 proxy to use a Socks5 proxy nevertheless.
+<command>program</command>'s network connections are
+covertly redirected to a
+Socks 5 proxy, using tricks with shared libraries.</para>
+
+    <para>
+<command>socksify</command> tries to intercept
+certain system function calls from
+<command>program</command> that create network connections, which are then
+redirected through the Socks 5 proxy server.
+<command>socksify</command> should work with most programs, but may
+occasionally fail with applications that use sophisticated methods of
+using network connections.</para>
+
+    <para>
+<command>socksify</command> is not available on all systems.
+It is available only on systems that use the Solaris/Linux/BSD-style
+shared libraries.</para>
+
+    <para>
+The Socks 5 server is specified in
+@sysconfdir@/socksrc.</para>
+
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="socksrc.html">
+<citerefentry>
+	  <refentrytitle>socksrc</refentrytitle>
+	  <manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

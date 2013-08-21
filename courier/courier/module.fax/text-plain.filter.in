@@ -1,0 +1,29 @@
+#! @SHELL@
+#
+# Copyright 2002 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+
+. @filterbindir@/init
+
+(
+echo ".de HD"
+echo ".sp 4"
+echo ".in -1i"
+echo ".ll 7.5i"
+echo ".."
+echo ".de FT"
+echo ".bp"
+echo ".."
+echo ".wh 0 HD"
+echo ".wh -1i FT"
+echo ".ft CW"
+echo ".nf"
+sed 's/\\/\\\\/g;s/^/\\\&/'
+echo ".fi"
+) >$OUTDIR/.troff
+$TROFF <$OUTDIR/.troff >$OUTDIR/.dpost
+rm -f $OUTDIR/.troff
+$DPOST <$OUTDIR/.dpost >$OUTDIR/.ps
+rm -f $OUTDIR/.dpost
+$GS -sDEVICE=faxg3 $FAXRES -dBATCH -sOutputFile=$OUTDIR/f%04d -dNOPAUSE -q -dSAFER - <$OUTDIR/.ps

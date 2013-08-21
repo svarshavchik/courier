@@ -1,0 +1,84 @@
+<!-- Copyright 2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-updatekeywords">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::updateKeywords</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::updateKeywords</refname>
+      <refpurpose>Update message keywords</refpurpose>
+    </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>bool ok=mail-&gt;<function>updateKeywords</function></funcdef>
+	<paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	<paramdef>const std::set&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	<paramdef>bool <parameter>setOrChange</parameter></paramdef>
+	<paramdef>bool <parameter>changeTo</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>bool ok=mail-&gt;<function>updateKeywords</function></funcdef>
+	<paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	<paramdef>const std::list&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	<paramdef>bool <parameter>setOrChange</parameter></paramdef>
+	<paramdef>bool <parameter>changeTo</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>bool ok=mail-&gt;<function>updateKeywords</function></funcdef>
+	<paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	<paramdef>const std::vector&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	<paramdef>bool <parameter>setOrChange</parameter></paramdef>
+	<paramdef>bool <parameter>changeTo</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function updates the set of keywords of one or more messages.
+<parameter>keywords</parameter> may also be specified as a list, or a vector
+(and duplicate occurences of a keyword are automatically removed).</para>
+&libmail-amsglist;
+
+&libmail-updatekeywords;
+    </refsect1>
+  <refsect1>
+    <title>Return Codes</title>
+
+    &libmail-account-return;
+
+  </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="account-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderkeywordinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderKeywordInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

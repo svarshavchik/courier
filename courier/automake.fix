@@ -1,0 +1,25 @@
+#
+# Get rid of all the automake-generated crap on stdout
+#
+
+set -x
+"$@"
+sed '
+s/if $(COMPILE)/@echo Compiling $< ; if $(COMPILE)/
+s/if $(CXXCOMPILE)/@echo Compiling $< ; if $(CXXCOMPILE)/
+s/	$(COMPILE)/	@echo Compiling $<; $(COMPILE)/
+s/	$(CXXCOMPILE)/	@echo Compiling $<; $(CXXCOMPILE)/
+s/	$(LTCOMPILE)/	@echo Compiling $<; $(LTCOMPILE)/
+s/	$(LTCXXCOMPILE)/	@echo Compiling $<; $(LTCXXCOMPILE)/
+s/	\($([a-z_0-9\.]*_LINK)\)/	@echo Linking $@; \1/
+s/@	mv/@	@mv/
+
+s/--mode=link/--quiet --mode=link/
+s/--mode=compile/--quiet --mode=compile/
+s/^	$(LINK)/	@echo Linking $@; $(LINK)/
+s/^	$(CXXLINK)/	@echo Linking $@; $(CXXLINK)/
+s/if $(LTCOMPILE)/@echo Compiling $< ; if $(LTCOMPILE)/
+' <${srcdir}/Makefile.in >${srcdir}/Makefile.in.fixed
+cmp -s ${srcdir}/Makefile.in.fixed ${srcdir}/Makefile.in ||
+	mv ${srcdir}/Makefile.in.fixed ${srcdir}/Makefile.in
+rm -f ${srcdir}/Makefile.in.fixed

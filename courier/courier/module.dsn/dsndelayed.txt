@@ -1,0 +1,19 @@
+
+---------------------------------------------------------------------------
+
+                     DELAYS IN DELIVERING YOUR MESSAGE
+
+The delivery of the following E-mail message has been delayed.  This is an
+advisory notice only; it is sent only to notify you about a temporary delay
+in delivering your message.  You DO NOT need to do anything at this time.
+Additional attempts to deliver your message will be made.  Some possible
+reasons for this delay:
+
+   * Network congestion or failure.
+
+   * The destination mail server is temporarily off-line.
+
+Diagnostic information is provided below for each recipient.  If copies of
+this message were sent to additional recipients, deliveries to those
+addresses are not included in this notice.  This is an advisory notice for
+the following addresses only:

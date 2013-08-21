@@ -1,0 +1,96 @@
+<!-- Copyright 2003-2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone11encryption">
+  <title>Encryption Menu</title>
+
+    <para>
+Choosing <quote>Encryption Menu</quote> from &app;'s main menu
+(which is available if <application>GnuPG</application> is installed)
+opens a menu with the following selections:</para>
+
+    <variablelist> 
+      <varlistentry>
+	<term>New encryption key</term>
+	<listitem>
+	  <para>
+This selection creates a pair of public and private keys,
+which may be used for signing and encryption.
+Fill in the fields on the next screen with the appropriate information:
+the name, the E-mail address, and the comment associated with the keypair;
+how big the encryption keys should be (a different length may be chosen
+for creating signed content, and for creating encrypted content); whether
+the keys have an expiration date; and the passphrase, or a password, for the
+private key.  The passphrase must be entered twice, in both fields, and both
+fields must match.  Leave both passphrase fields empty to create a private key
+without a passphrase.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Delete key</term>
+	<listitem>
+	  <para>
+This selection deletes an existing key.
+Public and private keys are deleted separately.
+All installed keys are displayed in a vertical list.
+Highlight a key with the cursor, and press <keycap>ENTER</keycap> to delete
+it.</para>
+
+	  <para>
+The top half of the screen shows detailed information about the current key
+that's highlighted by the cursor.  Due to limited amount of available space,
+keys with more than one signatures may not have all signatures shown.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Sign key</term>
+	<listitem>
+	  <para>
+This selection signs an existing public key with one of the private keys.
+The public key, and the private key are selected one at a time.
+All installed keys are displayed in a vertical list.
+Highlight a key with the cursor, and press <keycap>ENTER</keycap> to select
+it.</para>
+
+	  <para>
+The top half of the screen shows detailed information about the current key
+that's highlighted by the cursor.  Due to limited amount of available space,
+keys with more than one signatures may not have all signatures shown.</para>
+
+	  <para>
+After selecting the public key, and then the private key, the last prompt
+asks for the signature's trust level, which is used by
+<application>GnuPG</application> to calculate the key's trustworthiness.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Edit key</term>
+	<listitem>
+	  <para>
+This last selection provides a convenient means for accessing advanced
+key management features through the <application>GnuPG</application>
+application which are not directly implemented in &app;.
+Selecting <quote>Edit key</quote> shows a list of all available keys.
+Highlight an available key with the cursor, and press <keycap>ENTER</keycap>.
+&app; then runs <application>GnuPG</application> and opens
+<application>GnuPG</application> key management menu that provides access
+to additional key management features, such as advanced signature and
+passphrase management.
+After <application>GnuPG</application> exits &app; resumes running
+automatically.</para>
+
+	  <note>
+	    <para>
+&app; does not run while <application>GnuPG</application> is running, and
+it waits for <application>GnuPG</application> to finish before resuming.
+If <application>GnuPG</application> runs for an extended period of time,
+&app;'s connections to remote mail server may be terminated due to
+inactivity.</para>
+	  </note>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+</chapter>

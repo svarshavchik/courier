@@ -1,0 +1,69 @@
+#! @SHELL@
+#
+#
+#
+# Copyright 2003, Double Precision Inc.
+#
+# See COPYING for distribution information.
+#
+# Sample Cone external handler.
+#
+# Cone filters are used to handle non-textual attachment.
+# This sample filter handles image/ MIME types, and runs the eog Gnome image
+# viewer.
+#
+
+# Filters are invoked in two phases.
+#
+
+PHASE="$1"
+MIMETYPE="$2"     # If you need it
+
+if test "$PHASE" = "check"
+then
+	# Filter should terminate with a non-0 exit code if the filter can
+	# handle this attachment.  This is used to disable a filter if it
+	# doesn't want to run for some reason.  In this case, we will decline
+	# to handle this attachment unless we're running in X
+
+    if test "$DISPLAY" = ""
+	then
+	exit 1
+    fi
+
+    if test -x @IMAGEVIEWER1@
+	then
+	exit 0
+    fi
+    if test -x @IMAGEVIEWER2@
+	then
+	exit 0
+    fi
+    exit 1
+fi
+
+if test "$PHASE" = "filter"
+    then
+	#
+	# Do the actual filtering.  The MIME attachment will be read from
+	# standard input.
+	#
+	# This filter should output simple HTML code, which Cone will display
+	# instead of this attachment.
+	#
+
+	FILENAME="$3"
+
+	if test -x @IMAGEVIEWER1@
+	then
+		( @IMAGEVIEWER1@ "$FILENAME" & ) >/dev/null 2>&1
+		exit 0
+	fi
+	if test -x @IMAGEVIEWER2@
+	then
+		( @IMAGEVIEWER2@ "$FILENAME" & ) >/dev/null 2>&1
+		exit 0
+	fi
+
+	exit 0
+fi

@@ -1,0 +1,199 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-readmsgattr">
+    <refmeta>
+      <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::readMessageAttributes</refname>
+      <refpurpose>Return message metadata</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallbackmessage;
+
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>readMessageAttributes</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	  <paramdef>mail::account::MessageAttributes <parameter>attributes</parameter></paramdef>
+	  <paramdef>myCallbackMessage &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::readMessageAttributes</function>
+requests metadata of messages in the currently open folder.
+&libmail-msglist;
+<parameter>attributes</parameter> is a logical-or of the following
+constants:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>mail::account::ARRIVALDATE</term>
+	  <listitem>
+	    <para>
+When the message was added to the folder
+(<function>myCallback.messageArrivalDateCallback</function>).</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>mail::account::MESSAGESIZE</term>
+	  <listitem>
+	    <para>
+Estimated message size, in bytes
+(<function>myCallback.messageSizeCallback</function>).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>mail::account::ENVELOPE</term>
+	  <listitem>
+	    <para>
+Message's envelope headers
+(<function>myCallback.messageEnvelopeCallback</function>, and possibly
+<function>myCallback.messageReferencesCallback</function>).
+<function>messageEnvelopeCallback</function>
+receives a
+<link linkend="envelope"><structname>mail::envelope</structname></link>
+object that describes the "envelope", or a message summary (sender,
+recipients, subject, etc...).
+In some instances the
+<function>messageReferencesCallback</function>
+callback will also be invoked, with an
+an array of message IDs taken from the <literal>References</literal> header.
+In other instances the
+<structname>mail::envelope</structname> will already have the
+<structfield>references</structfield> populated with the same
+information.</para>
+
+	  <para>
+<function>messageReferencesCallback</function>
+may be invoked before or after the
+<function>messageEnvelopeCallback</function>
+function, if at all.
+The application should be prepared to merge the information returned by
+these two callbacks.
+As noted below, multiple callback methods may be invoked in any order, and
+the application should not make any assumption as to the relative order in
+which these two methods will be invoked.</para>
+
+	  <para>
+For example, it is perfectly feasible to have a request for envelopes of two
+messages result in two
+<function>messageEnvelopeCallback</function> callbacks, then two
+<function>messageReferencesCallback</function> callbacks; or two instances
+of
+<function>messageEnvelopeCallback</function> followed by a
+<function>messageReferencesCallback</function> that refers to the same
+message.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>mail::account::MIMESTRUCTURE</term>
+	  <listitem>
+	    <para>
+Returns a <link linkend="mimestruct"><structname>mail::mimestruct</structname></link> object that enumerates
+the message's MIME content
+(<function>myCallback.messageStructureCallback</function>).
+<function>myCallback.messageStructureCallback</function> receives a
+reference to a
+<link linkend="mimestruct"><structname>mail::mimestruct</structname></link>
+object that refers
+to the entire message.
+If the message contains attachments, the
+<function>mail::mimestruct::getChild</function> method returns
+pointers to
+<link linkend="mimestruct"><structname>mail::mimestruct</structname></link>
+objects which
+refer to the individual MIME attachments.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+Metadata information requested by each one of these constants is returned
+by invoking the corresponding callback method in
+<parameter>callback</parameter>.
+When requesting two or more items at once the callback functions may be
+invoked in any order.
+When requesting metadata from more than one message the callback functions
+are invoked one for each requested message.
+Each callback function receives the requested metadata item together with
+<parameter>messageNumber</parameter> - which message this metadata item
+relates to.
+The callback functions may be invoked in any message order.</para>
+
+      <para>
+For example, when requesting both
+<literal>ENVELOPE</literal> and
+<literal>MIMESTRUCTURE</literal>, the possibilities are:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+<literal>ENVELOPE</literal>s for all messages first, then all
+<literal>MIMESTRUCTURE</literal>s.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+The <literal>ENVELOPE</literal> and the
+<literal>MIMESTRUCTURE</literal> for the first message, then
+the <literal>ENVELOPE</literal> and the
+<literal>MIMESTRUCTURE</literal> for the next message, and so on.</para>
+	</listitem>
+      </itemizedlist>
+
+      <note>
+	<para>
+The <structname>mail::envelope</structname> and
+<link linkend="mimestruct"><structname>mail::mimestruct</structname></link>
+objects are destroyed immediately
+after their corresponding callback method terminates.
+The application should copy any objects it intends to use later.</para>
+      </note>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-concurrency;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-readmsgcontent"><citerefentry>
+	    <refentrytitle>mail::account::readMessageContent</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-readmsgcontentdecoded"><citerefentry>
+	    <refentrytitle>mail::account::readMessageContentDecoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="envelope"><citerefentry>
+	    <refentrytitle>mail::envelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mimestruct"><citerefentry>
+	    <refentrytitle>mail::mimestruct</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

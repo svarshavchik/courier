@@ -1,0 +1,41 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+		<para>
+Do not validate the server's SSL certificate when using an encrypted
+connection.
+Normally the mail server's SSL certificate must be validate when using an
+encrypted connection.
+The certificate's name must match the server's name, and the certificate
+must be signed by a trusted certificate authority.</para>
+
+		<para>
+The encrypted connection normally
+fails if the certificate cannot be validate.
+Validation requires that a list of trusted certificate
+authorities must be known and configured.
+It's simply impossible to know
+which certificate authorities are valid without an explicit list of valid,
+known,
+trusted, certificate authorities.  If a trusted authority
+list is not configured, no certificate can be validated.  If the server's
+certificate is a self-signed certificate (this is often used for testing
+purposes), or if it's not signed by a known authority, the encrypted connection
+fails.</para>
+
+		<para>
+This <literal>/novalidate-cert</literal> option disables certificate
+validation.
+The encrypted connection will be established even if the server's certificate
+would otherwise be rejected.</para>
+
+		<note>
+		  <para>
+This option is applicable even when an encrypted IMAP or POP3 connection
+is not explicitly requested.
+Many mail servers are capable of automatically upgrading unencrypted
+connections to a fully-encrypted connection.
+If a mail server claims to be able to use encryption, then there's no reason
+not to use it.  The result is that all encryption certification requirements
+still apply even when encryption is not explicitly requested.</para>
+		</note>

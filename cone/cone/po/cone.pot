@@ -1,0 +1,4471 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Double Precision, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: cone 0.90\n"
+"Report-Msgid-Bugs-To: courier-cone@lists.sourceforge.net\n"
+"POT-Creation-Date: 2013-08-24 20:07-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: addressbook.C:250
+msgid "Local Address Book"
+msgstr ""
+
+#: addressbook.C:622
+msgid "Add Entry"
+msgstr ""
+
+#: addressbook.C:624
+msgid "Nickname: "
+msgstr ""
+
+#: addressbook.C:625 mainmenu.C:409
+msgid "Name: "
+msgstr ""
+
+#: addressbook.C:626
+msgid "Address: "
+msgstr ""
+
+#: addressbook.C:632 addressbook.C:1387 configscreen.C:230
+msgid "SAVE"
+msgstr ""
+
+#: addressbook.C:633 addressbook.C:1388 cone.C:134 configscreen.C:231
+msgid "CANCEL"
+msgstr ""
+
+#: addressbook.C:646
+msgid "ADD ENTRY"
+msgstr ""
+
+#: addressbook.C:913
+msgid "Delete address book entry for '%1%'? (Y/N) "
+msgstr ""
+
+#: addressbook.C:931
+msgid "New nickname (CTRL-C - cancel: "
+msgstr ""
+
+#: addressbook.C:965
+msgid "ADDRESS BOOK INDEX"
+msgstr ""
+
+#: addressbook.C:1117
+msgid "Importing..."
+msgstr ""
+
+#: addressbook.C:1133
+msgid "Syntax error on line %1%"
+msgstr ""
+
+#: addressbook.C:1274
+msgid "ADDADDRESSBOOK_K:A"
+msgstr ""
+
+#: addressbook.C:1275 curseshierarchy.C:2150
+msgid "Add"
+msgstr ""
+
+#: addressbook.C:1276
+msgid "DELADDRESSBOOKENTRY_K:D"
+msgstr ""
+
+#: addressbook.C:1277 addressbook.C:1753 curseshierarchy.C:2152
+#: cursesindexdisplay.C:2073 cursesmessagedisplay.C:1084
+#: filtereditscreen.C:448
+msgid "Delete"
+msgstr ""
+
+#: addressbook.C:1278
+msgid "RENAMEADDRESSBOOKENTRY_K:R"
+msgstr ""
+
+#: addressbook.C:1279 curseshierarchy.C:2160
+msgid "Rename"
+msgstr ""
+
+#: addressbook.C:1280
+msgid "IMPORTADDRESSBOOKENTRY_K:I"
+msgstr ""
+
+#: addressbook.C:1281
+msgid "Import"
+msgstr ""
+
+#: addressbook.C:1282
+msgid "EXPORTADDRESSBOOKENTRY_K:E"
+msgstr ""
+
+#: addressbook.C:1283
+msgid "Export"
+msgstr ""
+
+#: addressbook.C:1373
+msgid "Add LDAP directory"
+msgstr ""
+
+#: addressbook.C:1375
+msgid "Directory name: "
+msgstr ""
+
+#: addressbook.C:1376
+msgid "LDAP server hostname: "
+msgstr ""
+
+#: addressbook.C:1377
+msgid "LDAP userid (optional): "
+msgstr ""
+
+#: addressbook.C:1378
+msgid "LDAP password (optional): "
+msgstr ""
+
+#: addressbook.C:1379
+msgid "LDAP suffix/root: "
+msgstr ""
+
+#: addressbook.C:1399
+msgid "LDAP ADDRESSBOOK ADD"
+msgstr ""
+
+#: addressbook.C:1496 curseshierarchy.C:1964
+msgid "Address Book created."
+msgstr ""
+
+#: addressbook.C:1503
+msgid "Connection to %1% failed: %2"
+msgstr ""
+
+#: addressbook.C:1638
+msgid "Address Book List"
+msgstr ""
+
+#: addressbook.C:1647
+msgid "ADDRESS BOOKS"
+msgstr ""
+
+#: addressbook.C:1752
+msgid "DELETEADDRESSBOOK:D"
+msgstr ""
+
+#: addressbook.C:1754 curseshierarchy.C:2153 filtereditscreen.C:451
+msgid "MOVEUP:^U"
+msgstr ""
+
+#: addressbook.C:1755 curseshierarchy.C:2154 filtereditscreen.C:452
+msgid "Move up"
+msgstr ""
+
+#: addressbook.C:1756 curseshierarchy.C:2155 filtereditscreen.C:453
+msgid "MOVEDN:^D"
+msgstr ""
+
+#: addressbook.C:1757 curseshierarchy.C:2156 filtereditscreen.C:454
+msgid "Move down"
+msgstr ""
+
+#: addressbook.C:1758
+msgid "ADDLDAP:A"
+msgstr ""
+
+#: addressbook.C:1759
+msgid "Add LDAP server"
+msgstr ""
+
+#: addressbook.C:1787
+msgid "Delete address book \"%1%\"? (Y/N) "
+msgstr ""
+
+#: addressbook.C:1908
+msgid "TAKE ADDRESS"
+msgstr ""
+
+#: addressbook.C:2066
+msgid "No addresses found."
+msgstr ""
+
+#: colors_inc.h:1
+msgid "Account Name: "
+msgstr ""
+
+#: colors_inc.h:2 mainmenu.C:305
+msgid "Account Type: "
+msgstr ""
+
+#: colors_inc.h:3
+msgid "Folder Name: "
+msgstr ""
+
+#: colors_inc.h:4
+msgid "Directory Name: "
+msgstr ""
+
+#: colors_inc.h:5
+msgid "Message Count: "
+msgstr ""
+
+#: colors_inc.h:6
+msgid "Quote Level 1: "
+msgstr ""
+
+#: colors_inc.h:7
+msgid "Quote Level 2: "
+msgstr ""
+
+#: colors_inc.h:8
+msgid "Quote Level 3: "
+msgstr ""
+
+#: colors_inc.h:9
+msgid "Quote Level 4: "
+msgstr ""
+
+#: colors_inc.h:10 colors_inc.h:13
+msgid "Header Name: "
+msgstr ""
+
+#: colors_inc.h:11
+msgid "Header Contents: "
+msgstr ""
+
+#: colors_inc.h:12
+msgid "Format warnings: "
+msgstr ""
+
+#: colors_inc.h:14
+msgid "User Permissions: "
+msgstr ""
+
+#: colors_inc.h:15
+msgid "Group Permissions: "
+msgstr ""
+
+#: colors_inc.h:16
+msgid "Owner Permissions: "
+msgstr ""
+
+#: colors_inc.h:17
+msgid "Administrator Permissions: "
+msgstr ""
+
+#: colors_inc.h:18
+msgid "Other Permissions: "
+msgstr ""
+
+#: colors_inc.h:19
+msgid "Edit Individual Permissions: "
+msgstr ""
+
+#: colors_inc.h:20
+msgid "Prompt: "
+msgstr ""
+
+#: colors_inc.h:21
+msgid "Prompt Field: "
+msgstr ""
+
+#: colors_inc.h:22
+msgid "Action Button: "
+msgstr ""
+
+#: colors_inc.h:23
+msgid "Menu Title: "
+msgstr ""
+
+#: colors_inc.h:24
+msgid "Menu Option: "
+msgstr ""
+
+#: colors_inc.h:25
+msgid "Title Line: "
+msgstr ""
+
+#: colors_inc.h:26
+msgid "Status Line: "
+msgstr ""
+
+#: colors_inc.h:27
+msgid "Hot Key: "
+msgstr ""
+
+#: colors_inc.h:28
+msgid "Hot Key Description: "
+msgstr ""
+
+#: colors_inc.h:74
+msgid "Folder Listing Screen Colors: "
+msgstr ""
+
+#: colors_inc.h:75
+msgid "Message Display Colors: "
+msgstr ""
+
+#: colors_inc.h:76
+msgid "Write Message Colors: "
+msgstr ""
+
+#: colors_inc.h:77
+msgid "Folder Permissions Screen Colors: "
+msgstr ""
+
+#: colors_inc.h:78
+msgid "Miscellaneous Colors: "
+msgstr ""
+
+#: cone.C:175
+msgid "Pick a different account name. This one's already used."
+msgstr ""
+
+#: cone.C:317
+msgid "Add %1% Account"
+msgstr ""
+
+#: cone.C:325 cone.C:515
+msgid "Account name: "
+msgstr ""
+
+#: cone.C:326 cone.C:516
+msgid "Server: "
+msgstr ""
+
+#: cone.C:327 cone.C:517
+msgid "Login: "
+msgstr ""
+
+#: cone.C:328
+msgid "Password: "
+msgstr ""
+
+#: cone.C:334 cone.C:518
+msgid "Do not send password in clear text"
+msgstr ""
+
+#: cone.C:336 cone.C:524
+msgid "Use an encrypted connection"
+msgstr ""
+
+#: cone.C:340
+msgid "LOGIN"
+msgstr ""
+
+#: cone.C:366
+msgid "ADD ACCOUNT"
+msgstr ""
+
+#: cone.C:433
+msgid "FOLDERS"
+msgstr ""
+
+#: cone.C:508
+msgid "Edit Account"
+msgstr ""
+
+#: cone.C:528
+msgid "UPDATE"
+msgstr ""
+
+#: cone.C:546
+msgid "EDIT ACCOUNT"
+msgstr ""
+
+#: cone.C:732
+msgid "Select the folder to copy %1% message(s) to."
+msgstr ""
+
+#: cone.C:734
+msgid "Select the folder to move %1% message(s) to."
+msgstr ""
+
+#: cone.C:747
+msgid "Copy/Move cancelled."
+msgstr ""
+
+#: cone.C:770
+msgid "Clearing flags..."
+msgstr ""
+
+#: cone.C:795
+msgid "Copying/Moving messages..."
+msgstr ""
+
+#: cone.C:827
+msgid "Resetting flags..."
+msgstr ""
+
+#: cone.C:1000 mainmenu.C:410
+msgid "My E-mail"
+msgstr ""
+
+#: cone.C:1002
+msgid "Online Tutorial"
+msgstr ""
+
+#: cone.C:1039 ctrlchandler.C:34 ctrlchandler.C:50
+msgid "Have a nice day."
+msgstr ""
+
+#: cone.C:1075
+msgid "Recover configuration from %1%? (Y/N) "
+msgstr ""
+
+#: cone.C:1081
+msgid "Recovery aborted."
+msgstr ""
+
+#: cone.C:1096
+msgid "No more configuration files."
+msgstr ""
+
+#: cone.C:1097
+msgid "No configuration files found."
+msgstr ""
+
+#: cone.C:1255
+msgid "D"
+msgstr ""
+
+#: cone.C:1264
+msgid "N"
+msgstr ""
+
+#: cone.C:1322 curseshierarchy.C:1895
+msgid "Drafts"
+msgstr ""
+
+#: cone.C:1324
+msgid "Outbox"
+msgstr ""
+
+#: cone.C:1327
+msgid ""
+"Unable to initialize an encrypted connection because root authority "
+"certificates are not installed.\n"
+"\n"
+"If you would like to proceed without verifying the the server's encryption "
+"certificate, append \"/novalidate-cert\" to the server's name and try again."
+msgstr ""
+
+#: cone.C:1346
+msgid "Another copy of CONE is already running."
+msgstr ""
+
+#: cone.C:1363
+msgid "CONE"
+msgstr ""
+
+#: cone.C:1394
+msgid "Loading GnuPG encryption keys..."
+msgstr ""
+
+#: cone.C:1449
+msgid "Welcome to Cone %1% (%2%)"
+msgstr ""
+
+#: configscreen.C:113
+msgid "[ CHANGE ]"
+msgstr ""
+
+#: configscreen.C:165
+msgid "Your E-mail addresses: "
+msgstr ""
+
+#: configscreen.C:170
+msgid "Cc on NetNews follow-ups: "
+msgstr ""
+
+#: configscreen.C:173
+msgid "Your mailing list addresses: "
+msgstr ""
+
+#: configscreen.C:177
+msgid "New custom header: "
+msgstr ""
+
+#: configscreen.C:180
+msgid "Custom sent mail folders: "
+msgstr ""
+
+#: configscreen.C:182
+msgid "Spelling dictionary: "
+msgstr ""
+
+#: configscreen.C:185
+msgid "Outgoing SMTP Server: "
+msgstr ""
+
+#: configscreen.C:188
+msgid "SMTP SSL certificate (optional): "
+msgstr ""
+
+#: configscreen.C:191
+msgid "SMTP userid (optional): "
+msgstr ""
+
+#: configscreen.C:194
+msgid "Don't send SMTP password in clear text"
+msgstr ""
+
+#: configscreen.C:196
+msgid "Send mail via main acct (if available)"
+msgstr ""
+
+#: configscreen.C:198
+msgid "Use SMTP tunneled over SSL"
+msgstr ""
+
+#: configscreen.C:200
+msgid "NetNews posting command: "
+msgstr ""
+
+#: configscreen.C:203
+msgid "CTRL-Z command: "
+msgstr ""
+
+#: configscreen.C:206
+msgid "External Editor (^U): "
+msgstr ""
+
+#: configscreen.C:209
+msgid "\"Smart\" keyboard shortcuts"
+msgstr ""
+
+#: configscreen.C:210
+msgid "'Q' quits without prompting"
+msgstr ""
+
+#: configscreen.C:212
+msgid "Autosave (minutes): "
+msgstr ""
+
+#: configscreen.C:215
+msgid "Watch threads for # of days: "
+msgstr ""
+
+#: configscreen.C:218
+msgid "Watch threads until # of followups: "
+msgstr ""
+
+#: configscreen.C:221
+msgid "Extra GnuPG encrypt/sign options: "
+msgstr ""
+
+#: configscreen.C:224
+msgid "Extra GnuPG decrypt/verify options: "
+msgstr ""
+
+#: configscreen.C:227
+msgid "Turn off remote configuration"
+msgstr ""
+
+#: configscreen.C:228
+msgid "Currently defined macros: "
+msgstr ""
+
+#: configscreen.C:265
+msgid "Disable rich text de-moronization"
+msgstr ""
+
+#: configscreen.C:266
+msgid "Minimum rich text de-moronization"
+msgstr ""
+
+#: configscreen.C:267
+msgid "Maximum rich text de-moronization"
+msgstr ""
+
+#: configscreen.C:277
+msgid "Ask"
+msgstr ""
+
+#: configscreen.C:278
+msgid "Yes"
+msgstr ""
+
+#: configscreen.C:279
+msgid "No"
+msgstr ""
+
+#: configscreen.C:336
+msgid "Tag %1% name: "
+msgstr ""
+
+#: configscreen.C:451
+msgid "FUNCTION KEY: F%1%"
+msgstr ""
+
+#: configscreen.C:465
+msgid "[macro]"
+msgstr ""
+
+#: configscreen.C:920
+msgid "Cannot add this custom header."
+msgstr ""
+
+#: configscreen.C:935
+msgid "Invalid character in header's name"
+msgstr ""
+
+#: configscreen.C:944
+msgid "Hide this header by default? (Y/N) "
+msgstr ""
+
+#: configscreen.C:1135 cursesindexdisplay.C:1351 filtereditscreen.C:449
+#: gpg.C:836
+msgid "ABORT:^C"
+msgstr ""
+
+#: configscreen.C:1136 curseshierarchy.C:2139 cursesindexdisplay.C:1352
+#: encryptionmenu.C:483 filtereditscreen.C:450
+msgid "Cancel"
+msgstr ""
+
+#: configscreen.C:1137
+msgid "DELADDRESS:DEL"
+msgstr ""
+
+#: configscreen.C:1138
+msgid "Delete address/folder/macro"
+msgstr ""
+
+#: configscreen.C:1448
+msgid "Remote configuration already off"
+msgstr ""
+
+#: configscreen.C:1453
+msgid "Are you sure? (Y/N) "
+msgstr ""
+
+#: configscreen.C:1468
+msgid "Remote configuration turned off"
+msgstr ""
+
+#: configscreen.C:1479
+msgid "SETUP"
+msgstr ""
+
+#: configscreen.C:1502
+msgid "Remove certificate"
+msgstr ""
+
+#: configscreen.C:1503
+msgid "Use certificate"
+msgstr ""
+
+#: cursesaddresslist.C:162
+msgid "Syntax error"
+msgstr ""
+
+#: cursesedit.C:252
+msgid "Attachments: "
+msgstr ""
+
+#: cursesedit.C:257 searchprompt.C:290
+msgid "Subject: "
+msgstr ""
+
+#: cursesedit.C:719 cursesedit.C:1593
+msgid "Newsgroups: "
+msgstr ""
+
+#: cursesedit.C:721 cursesedit.C:1595
+msgid "Followup-To: "
+msgstr ""
+
+#: cursesedit.C:739 cursesedit.C:1587 myfolder.C:2054 searchprompt.C:275
+msgid "To: "
+msgstr ""
+
+#: cursesedit.C:740 cursesedit.C:1588 myfolder.C:2082 searchprompt.C:280
+msgid "Cc: "
+msgstr ""
+
+#: cursesedit.C:1072
+msgid "Description (optional): "
+msgstr ""
+
+#: cursesedit.C:1080
+msgid "Inline attachment? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:1117
+msgid "%1% (%2% of %3%)"
+msgstr ""
+
+#: cursesedit.C:1186
+msgid "Creating MIME attachment..."
+msgstr ""
+
+#: cursesedit.C:1599 searchprompt.C:270
+msgid "From: "
+msgstr ""
+
+#: cursesedit.C:1601 searchprompt.C:285
+msgid "Bcc: "
+msgstr ""
+
+#: cursesedit.C:1603
+msgid "Reply-To: "
+msgstr ""
+
+#: cursesedit.C:1612
+msgid "Fcc: "
+msgstr ""
+
+#: cursesedit.C:1630
+msgid "(none)"
+msgstr ""
+
+#: cursesedit.C:1684
+msgid "Attach public key? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:1687 encryptionmenu.C:159
+msgid "PRIVATEKEY_K:P"
+msgstr ""
+
+#: cursesedit.C:1688
+msgid "Attach private key"
+msgstr ""
+
+#: cursesedit.C:1706
+msgid "ATTACH KEY"
+msgstr ""
+
+#: cursesedit.C:1707
+msgid "Select key to export and attach, then press ENTER"
+msgstr ""
+
+#: cursesedit.C:1708
+msgid "Attach key"
+msgstr ""
+
+#: cursesedit.C:1708
+msgid "Cancel, do not attach."
+msgstr ""
+
+#: cursesedit.C:1765
+msgid "Discard this message? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2056
+msgid "NetNews server not found. Please log on to a server first."
+msgstr ""
+
+#: cursesedit.C:2097
+msgid "Post message%1%? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2100
+msgid " (sign and encrypt)"
+msgstr ""
+
+#: cursesedit.C:2100
+msgid " (sign)"
+msgstr ""
+
+#: cursesedit.C:2102
+msgid " (encrypt)"
+msgstr ""
+
+#: cursesedit.C:2109 cursesmessage.C:3295
+msgid "SIGN_K:S"
+msgstr ""
+
+#: cursesedit.C:2110 cursesmessage.C:3296
+msgid "Sign"
+msgstr ""
+
+#: cursesedit.C:2112 cursesmessage.C:3298
+msgid "ENCRYPT_K:E"
+msgstr ""
+
+#: cursesedit.C:2113 cursesmessage.C:3299
+msgid "Encrypt"
+msgstr ""
+
+#: cursesedit.C:2150
+msgid "Post message? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2192
+msgid "Send message? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2193
+msgid "send message? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2207
+msgid "Mail copies to listed recipients? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2208
+msgid "mail copies to listed recipients? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2287
+msgid "Rename last month's selected sent mail folder? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:2501
+msgid "Message post aborted"
+msgstr ""
+
+#: cursesedit.C:2503
+msgid "Message send aborted"
+msgstr ""
+
+#: cursesedit.C:2505
+msgid "Message save aborted"
+msgstr ""
+
+#: cursesedit.C:2739
+msgid "No recipients specified."
+msgstr ""
+
+#: cursesedit.C:2747
+msgid "From: header cannot be empty."
+msgstr ""
+
+#: cursesedit.C:2822
+msgid "Assembling MIME message..."
+msgstr ""
+
+#: cursesedit.C:2847
+msgid "Encrypting/signing..."
+msgstr ""
+
+#: cursesedit.C:2879
+msgid "Saving message in %1%..."
+msgstr ""
+
+#: cursesedit.C:2902
+msgid "Sending message..."
+msgstr ""
+
+#: cursesedit.C:2913
+msgid ""
+"The mail server rejected the message with the following error:\n"
+"\n"
+"    %1%\n"
+"F.Y.I: A copy of the unsent message was also saved in the sent-mail folder."
+msgstr ""
+
+#: cursesedit.C:2949
+msgid "Posting message..."
+msgstr ""
+
+#: cursesedit.C:2960
+msgid ""
+"The NetNews server rejected the message with the following error:\n"
+"\n"
+"    %1%%2%%3%"
+msgstr ""
+
+#: cursesedit.C:2962
+msgid ""
+"\n"
+"However, a copy of the message was already mailed to its listed recipients.\n"
+"Remove the recipient list from the message before attempting to repost it, "
+"in order to prevent sending a duplicate copy to the original recipients."
+msgstr ""
+
+#: cursesedit.C:3202
+msgid "FULLHDRS_K:^F"
+msgstr ""
+
+#: cursesedit.C:3203 cursesmessagedisplay.C:1075
+msgid "Full Hdrs"
+msgstr ""
+
+#: cursesedit.C:3204
+msgid "SEND_K:^X"
+msgstr ""
+
+#: cursesedit.C:3205
+msgid "Send"
+msgstr ""
+
+#: cursesedit.C:3206
+msgid "POSTPONE_K:^P"
+msgstr ""
+
+#: cursesedit.C:3207
+msgid "Postpone"
+msgstr ""
+
+#: cursesedit.C:3208
+msgid "ATTACHMENT_K:^T"
+msgstr ""
+
+#: cursesedit.C:3209
+msgid "Attach"
+msgstr ""
+
+#: cursesedit.C:3212
+msgid "ATTACHKEY_K:^E"
+msgstr ""
+
+#: cursesedit.C:3213
+msgid "Attach Key"
+msgstr ""
+
+#: cursesedit.C:3297
+msgid "Autosaving..."
+msgstr ""
+
+#: cursesedit.C:3925
+msgid "Memorize new headers in this message? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:3975
+msgid "Memorize headers in this message as account defaults? (Y/N) "
+msgstr ""
+
+#: cursesedit.C:4028
+msgid "EDIT MESSAGE"
+msgstr ""
+
+#: curseseditmessage.C:561
+msgid "Binary file? You must be joking."
+msgstr ""
+
+#: curseseditmessage.C:1065
+msgid "^J: undo justification"
+msgstr ""
+
+#: curseseditmessage.C:1084
+msgid "Mark set"
+msgstr ""
+
+#: curseseditmessage.C:1096 cursesmessagedisplay.C:877
+msgid "Search: "
+msgstr ""
+
+#: curseseditmessage.C:1153
+msgid "Replace: "
+msgstr ""
+
+#: curseseditmessage.C:1209
+msgid "Replace? (Y/N) "
+msgstr ""
+
+#: curseseditmessage.C:1213 searchprompt.C:118
+msgid "ALL_K:A"
+msgstr ""
+
+#: curseseditmessage.C:1215
+msgid "Replace All"
+msgstr ""
+
+#: curseseditmessage.C:1268
+msgid "Replaced %1% occurences."
+msgstr ""
+
+#: curseseditmessage.C:1356
+msgid "Spell checking..."
+msgstr ""
+
+#: curseseditmessage.C:1488
+msgid "Spell checking completed."
+msgstr ""
+
+#: curseseditmessage.C:1499
+msgid "Starting editor..."
+msgstr ""
+
+#: curseseditmessage.C:1566
+msgid ""
+"The external editor command failed.  Check that the configured external "
+"editor, \"%1%\", exists."
+msgstr ""
+
+#: curseseditmessage.C:1605
+msgid "Define macro shortcut: "
+msgstr ""
+
+#: curseseditmessage.C:1607
+msgid "Undefine macro shortcut: "
+msgstr ""
+
+#: curseseditmessage.C:1611 gpg.C:839
+msgid "ENTER:Enter"
+msgstr ""
+
+#: curseseditmessage.C:1613
+msgid "Define shortcut"
+msgstr ""
+
+#: curseseditmessage.C:1615
+msgid "Clear shortcut"
+msgstr ""
+
+#: curseseditmessage.C:1618 cursesindexdisplay.C:1346
+msgid "FKEY:Fn"
+msgstr ""
+
+#: curseseditmessage.C:1620
+msgid "Assign shortcut to function key"
+msgstr ""
+
+#: curseseditmessage.C:1623
+msgid "Undefine function key shortcut"
+msgstr ""
+
+#: curseseditmessage.C:1658
+msgid "Macro name may not contain spaces."
+msgstr ""
+
+#: curseseditmessage.C:1684
+msgid "Macro undefined."
+msgstr ""
+
+#: curseseditmessage.C:1728
+msgid "Macro defined."
+msgstr ""
+
+#: curseseditmessage.C:1854
+msgid "Replace misspelled word with:"
+msgstr ""
+
+#: curseseditmessage.C:1894
+msgid "Replace with: "
+msgstr ""
+
+#: curseseditmessage.C:1926 gettext.C:134
+msgid "REPLACE0:0"
+msgstr ""
+
+#: curseseditmessage.C:1927 gettext.C:135
+msgid "REPLACE1:1"
+msgstr ""
+
+#: curseseditmessage.C:1928 gettext.C:136
+msgid "REPLACE2:2"
+msgstr ""
+
+#: curseseditmessage.C:1929 gettext.C:137
+msgid "REPLACE3:3"
+msgstr ""
+
+#: curseseditmessage.C:1930 gettext.C:138
+msgid "REPLACE4:4"
+msgstr ""
+
+#: curseseditmessage.C:1931 gettext.C:139
+msgid "REPLACE5:5"
+msgstr ""
+
+#: curseseditmessage.C:1932 gettext.C:140
+msgid "REPLACE6:6"
+msgstr ""
+
+#: curseseditmessage.C:1933 gettext.C:141
+msgid "REPLACE7:7"
+msgstr ""
+
+#: curseseditmessage.C:1934 gettext.C:142
+msgid "REPLACE8:8"
+msgstr ""
+
+#: curseseditmessage.C:1935 gettext.C:143
+msgid "REPLACE9:9"
+msgstr ""
+
+#: curseseditmessage.C:1952
+msgid "REPLACE:R"
+msgstr ""
+
+#: curseseditmessage.C:1953
+msgid "Replace"
+msgstr ""
+
+#: curseseditmessage.C:1954
+msgid "IGNORE:I"
+msgstr ""
+
+#: curseseditmessage.C:1955
+msgid "Ignore"
+msgstr ""
+
+#: curseseditmessage.C:1956
+msgid "IGNOREALL:A"
+msgstr ""
+
+#: curseseditmessage.C:1957
+msgid "Ignore All"
+msgstr ""
+
+#: curseseditmessage.C:2250
+msgid "Not found"
+msgstr ""
+
+#: curseseditmessage.C:2266
+msgid "Wrapped around from the beginning"
+msgstr ""
+
+#: curseseditmessage.C:3088
+msgid "MARK_K:^ "
+msgstr ""
+
+#: curseseditmessage.C:3089 filter.C:232
+msgid "Mark"
+msgstr ""
+
+#: curseseditmessage.C:3090
+msgid "JUSTIFY_K:^J"
+msgstr ""
+
+#: curseseditmessage.C:3091
+msgid "Justify"
+msgstr ""
+
+#: curseseditmessage.C:3092
+msgid "CLREOL_K:^K"
+msgstr ""
+
+#: curseseditmessage.C:3093
+msgid "Line Clear"
+msgstr ""
+
+#: curseseditmessage.C:3094
+msgid "SEARCH_K:^S"
+msgstr ""
+
+#: curseseditmessage.C:3095 cursesindexdisplay.C:2055
+#: cursesmessagedisplay.C:1105
+msgid "Search"
+msgstr ""
+
+#: curseseditmessage.C:3096
+msgid "REPLACE_K:^R"
+msgstr ""
+
+#: curseseditmessage.C:3097
+msgid "Srch/Rplce"
+msgstr ""
+
+#: curseseditmessage.C:3098
+msgid "CUT_K:^W"
+msgstr ""
+
+#: curseseditmessage.C:3099
+msgid "Cut"
+msgstr ""
+
+#: curseseditmessage.C:3100
+msgid "YANK_K:^Y"
+msgstr ""
+
+#: curseseditmessage.C:3101
+msgid "Paste"
+msgstr ""
+
+#: curseseditmessage.C:3102
+msgid "INSERT_K:^G"
+msgstr ""
+
+#: curseseditmessage.C:3103
+msgid "Insert File"
+msgstr ""
+
+#: curseseditmessage.C:3104
+msgid "DICTSPELL_K:^D"
+msgstr ""
+
+#: curseseditmessage.C:3105
+msgid "Dict Spell"
+msgstr ""
+
+#: curseseditmessage.C:3106
+msgid "CANCEL_K:^C"
+msgstr ""
+
+#: curseseditmessage.C:3107
+msgid "Cancel/Exit"
+msgstr ""
+
+#: curseseditmessage.C:3111
+msgid "MACRO_K:^N"
+msgstr ""
+
+#: curseseditmessage.C:3112
+msgid "New/Del Macro"
+msgstr ""
+
+#: curseseditmessage.C:3117
+msgid "EDITOR_K:^U"
+msgstr ""
+
+#: curseseditmessage.C:3118
+msgid "Ext Editor"
+msgstr ""
+
+#: curseshierarchy.C:173
+msgid "%1% messages, %2% unread"
+msgstr ""
+
+#: curseshierarchy.C:174 cursesindexdisplay.C:161
+msgid "%1% messages"
+msgstr ""
+
+#: curseshierarchy.C:178
+msgid "*** empty ***"
+msgstr ""
+
+#: curseshierarchy.C:181
+msgid "Folder: "
+msgstr ""
+
+#: curseshierarchy.C:210
+msgid "(%1% messages, %2% unread)"
+msgstr ""
+
+#: curseshierarchy.C:211
+msgid "(%1% messages)"
+msgstr ""
+
+#: curseshierarchy.C:561 myserver.C:953
+msgid "Opening %1%..."
+msgstr ""
+
+#: curseshierarchy.C:928
+msgid "ADDDIRECTORY:^D"
+msgstr ""
+
+#: curseshierarchy.C:929
+msgid "Add Folder Directory"
+msgstr ""
+
+#: curseshierarchy.C:1022
+msgid "Add folder/directory in %1%: "
+msgstr ""
+
+#: curseshierarchy.C:1042
+#, c-format
+msgid "Invalid folder name: %s"
+msgstr ""
+
+#: curseshierarchy.C:1060
+msgid "Folder not found."
+msgstr ""
+
+#: curseshierarchy.C:1071
+msgid "Add %1% as a folder directory? (Y/N) "
+msgstr ""
+
+#: curseshierarchy.C:1129
+msgid "Create new folder in %1%: "
+msgstr ""
+
+#: curseshierarchy.C:1144
+msgid "Create new folder directory in %1%: "
+msgstr ""
+
+#: curseshierarchy.C:1269
+msgid "New name: "
+msgstr ""
+
+#: curseshierarchy.C:1329
+msgid "Permissions: (V/E) "
+msgstr ""
+
+#: curseshierarchy.C:1332
+msgid "V"
+msgstr ""
+
+#: curseshierarchy.C:1333
+msgid "View permissions"
+msgstr ""
+
+#: curseshierarchy.C:1335
+msgid "E"
+msgstr ""
+
+#: curseshierarchy.C:1336
+msgid "Edit permissions"
+msgstr ""
+
+#: curseshierarchy.C:1362
+msgid "Checking folder permissions..."
+msgstr ""
+
+#: curseshierarchy.C:1384
+msgid "No permissions"
+msgstr ""
+
+#: curseshierarchy.C:1387
+msgid ""
+"You have the following permissions on this folder:\n"
+"\n"
+"%1%."
+msgstr ""
+
+#: curseshierarchy.C:1417
+msgid "This folder does not contain messages."
+msgstr ""
+
+#: curseshierarchy.C:1424
+msgid "Reset memorized headers for %1%? (Y/N) "
+msgstr ""
+
+#: curseshierarchy.C:1446
+msgid "Memorized headers cleared."
+msgstr ""
+
+#: curseshierarchy.C:1469
+msgid "Cannot remove the only mail account."
+msgstr ""
+
+#: curseshierarchy.C:1477
+msgid "Remove account %1%? (Y/N) "
+msgstr ""
+
+#: curseshierarchy.C:1594
+msgid "Remove %1% from %2%? (Y/N) "
+msgstr ""
+
+#: curseshierarchy.C:1622
+msgid "Delete folder directory %1%? (Y/N) "
+msgstr ""
+
+#: curseshierarchy.C:1647
+msgid "Delete folder %1%? (Y/N) "
+msgstr ""
+
+#: curseshierarchy.C:1693
+msgid "Only a folder may be filtered."
+msgstr ""
+
+#: curseshierarchy.C:1746 curseshierarchy.C:1813
+msgid "Only top level folders or servers may be rearranged."
+msgstr ""
+
+#: curseshierarchy.C:1831
+msgid "Current selection not an account."
+msgstr ""
+
+#: curseshierarchy.C:1858
+msgid ""
+"This is a local mail account. Create another local account from the main "
+"menu."
+msgstr ""
+
+#: curseshierarchy.C:1872
+msgid "Current selection not a folder."
+msgstr ""
+
+#: curseshierarchy.C:1889
+msgid "Use folder as: "
+msgstr ""
+
+#: curseshierarchy.C:1891 mainmenu.C:99
+msgid "ADDRESSBOOK_K:A"
+msgstr ""
+
+#: curseshierarchy.C:1892 mainmenu.C:100
+msgid "Address Book"
+msgstr ""
+
+#: curseshierarchy.C:1894
+msgid "DRAFTS_K:D"
+msgstr ""
+
+#: curseshierarchy.C:1897
+msgid "SENT_K:S"
+msgstr ""
+
+#: curseshierarchy.C:1898
+msgid "Sent mail"
+msgstr ""
+
+#: curseshierarchy.C:1900
+msgid "TOP_K:T"
+msgstr ""
+
+#: curseshierarchy.C:1901
+msgid "Top level folder"
+msgstr ""
+
+#: curseshierarchy.C:1903
+msgid "REMOTE_K:R"
+msgstr ""
+
+#: curseshierarchy.C:1904
+msgid "Remote configuration"
+msgstr ""
+
+#: curseshierarchy.C:1928
+msgid "Name of this address book: "
+msgstr ""
+
+#: curseshierarchy.C:1929
+msgid "%1% on %2%"
+msgstr ""
+
+#: curseshierarchy.C:1980
+msgid "This folder cannot store messages, only subfolders."
+msgstr ""
+
+#: curseshierarchy.C:1998
+msgid "Nickname for this sent mail folder: "
+msgstr ""
+
+#: curseshierarchy.C:1999
+msgid "%1% in %2%"
+msgstr ""
+
+#: curseshierarchy.C:2020
+msgid "This nickname already exists."
+msgstr ""
+
+#: curseshierarchy.C:2033
+msgid "Import remote configuration (requires restart)? (Y/N): "
+msgstr ""
+
+#: curseshierarchy.C:2131
+msgid "HIER_K:+/-"
+msgstr ""
+
+#: curseshierarchy.C:2132
+msgid "Subfolders"
+msgstr ""
+
+#: curseshierarchy.C:2136
+msgid "ENTER_K:ENTER"
+msgstr ""
+
+#: curseshierarchy.C:2137
+msgid "Select folder"
+msgstr ""
+
+#: curseshierarchy.C:2138
+msgid "ABORT_K:^C"
+msgstr ""
+
+#: curseshierarchy.C:2145
+msgid "EDIT_K:E"
+msgstr ""
+
+#: curseshierarchy.C:2146
+msgid "Edit Acct"
+msgstr ""
+
+#: curseshierarchy.C:2147
+msgid "FILTER_K:F"
+msgstr ""
+
+#: curseshierarchy.C:2148
+msgid "Filter"
+msgstr ""
+
+#: curseshierarchy.C:2149
+msgid "ADDFOLDER_K:A"
+msgstr ""
+
+#: curseshierarchy.C:2151
+msgid "DELFOLDER_K:D"
+msgstr ""
+
+#: curseshierarchy.C:2157
+msgid "SPECIAL:U"
+msgstr ""
+
+#: curseshierarchy.C:2158
+msgid "Use special"
+msgstr ""
+
+#: curseshierarchy.C:2159
+msgid "RENAME:R"
+msgstr ""
+
+#: curseshierarchy.C:2161
+msgid "RESET:^R"
+msgstr ""
+
+#: curseshierarchy.C:2162
+msgid "Reset hdrs"
+msgstr ""
+
+#: curseshierarchy.C:2163
+msgid "PERMS:P"
+msgstr ""
+
+#: curseshierarchy.C:2164
+msgid "Permissions"
+msgstr ""
+
+#: cursesindexdisplay.C:249
+msgid "R"
+msgstr ""
+
+#: cursesindexdisplay.C:250
+msgid " "
+msgstr ""
+
+#: cursesindexdisplay.C:619
+msgid "Unable to write to the filter pipe"
+msgstr ""
+
+#: cursesindexdisplay.C:648
+msgid "Unable to obtain child process's exit status"
+msgstr ""
+
+#: cursesindexdisplay.C:655
+msgid "External command terminated with a non-0 exit status"
+msgstr ""
+
+#: cursesindexdisplay.C:686
+msgid "Cannot convert the filter command to the display character set"
+msgstr ""
+
+#: cursesindexdisplay.C:786 cursesmessagedisplay.C:575
+msgid "Blind-forward message to %1% address(es)? (Y/N) "
+msgstr ""
+
+#: cursesindexdisplay.C:922
+msgid "Stop watching this thread? (Y/N) "
+msgstr ""
+
+#: cursesindexdisplay.C:994 filtereditscreen.C:311
+msgid "Tag: "
+msgstr ""
+
+#: cursesindexdisplay.C:1267 cursesmessagedisplay.C:904
+msgid "Searching..."
+msgstr ""
+
+#: cursesindexdisplay.C:1306
+msgid "Jump to message #: "
+msgstr ""
+
+#: cursesindexdisplay.C:1342
+msgid "Function key to assign/unassign: "
+msgstr ""
+
+#: cursesindexdisplay.C:1347
+msgid "Assign or an unassign an external command to this function key"
+msgstr ""
+
+#: cursesindexdisplay.C:1380
+msgid "Cannot convert the filter name to the display character set"
+msgstr ""
+
+#: cursesindexdisplay.C:1386
+msgid "Undefine filter %1%? (Y/N) "
+msgstr ""
+
+#: cursesindexdisplay.C:1416
+msgid "Brief filter name (1-2 words): "
+msgstr ""
+
+#: cursesindexdisplay.C:1513
+msgid "KEY_0:0"
+msgstr ""
+
+#: cursesindexdisplay.C:1515
+msgid "KEY_1:1"
+msgstr ""
+
+#: cursesindexdisplay.C:1517
+msgid "KEY_2:2"
+msgstr ""
+
+#: cursesindexdisplay.C:1519
+msgid "KEY_3:3"
+msgstr ""
+
+#: cursesindexdisplay.C:1521
+msgid "KEY_4:4"
+msgstr ""
+
+#: cursesindexdisplay.C:1523
+msgid "KEY_5:5"
+msgstr ""
+
+#: cursesindexdisplay.C:1525
+msgid "KEY_6:6"
+msgstr ""
+
+#: cursesindexdisplay.C:1527
+msgid "KEY_7:7"
+msgstr ""
+
+#: cursesindexdisplay.C:1529
+msgid "KEY_8:8"
+msgstr ""
+
+#: cursesindexdisplay.C:1531
+msgid "KEY_9:9"
+msgstr ""
+
+#: cursesindexdisplay.C:1559
+msgid "Modify: "
+msgstr ""
+
+#: cursesindexdisplay.C:1562
+msgid "BROADEN_K:B"
+msgstr ""
+
+#: cursesindexdisplay.C:1563
+msgid "Broaden search"
+msgstr ""
+
+#: cursesindexdisplay.C:1565
+msgid "NARROW_K:N"
+msgstr ""
+
+#: cursesindexdisplay.C:1566
+msgid "Narrow search"
+msgstr ""
+
+#: cursesindexdisplay.C:1569
+msgid "CLEAR_K:R"
+msgstr ""
+
+#: cursesindexdisplay.C:1570
+msgid "cleaR tagged"
+msgstr ""
+
+#: cursesindexdisplay.C:1573 cursesindexdisplay.C:2066 filtereditscreen.C:244
+msgid "COPY_K:C"
+msgstr ""
+
+#: cursesindexdisplay.C:1574 cursesindexdisplay.C:2067 filtereditscreen.C:245
+msgid "Copy"
+msgstr ""
+
+#: cursesindexdisplay.C:1577 cursesindexdisplay.C:2069
+msgid "MOVE_K:O"
+msgstr ""
+
+#: cursesindexdisplay.C:1578 cursesindexdisplay.C:2070
+msgid "mOve"
+msgstr ""
+
+#: cursesindexdisplay.C:1581
+msgid "TOGGLE_K:G"
+msgstr ""
+
+#: cursesindexdisplay.C:1582
+msgid "toGgle"
+msgstr ""
+
+#: cursesindexdisplay.C:1585 cursesindexdisplay.C:2072
+#: cursesmessagedisplay.C:1083 filtereditscreen.C:223
+msgid "DELETE_K:D"
+msgstr ""
+
+#: cursesindexdisplay.C:1586
+msgid "Delete selected"
+msgstr ""
+
+#: cursesindexdisplay.C:1589 cursesindexdisplay.C:2099 filtereditscreen.C:250
+msgid "TAG_K:T"
+msgstr ""
+
+#: cursesindexdisplay.C:1590
+msgid "Tag selected"
+msgstr ""
+
+#: cursesindexdisplay.C:1593 cursesindexdisplay.C:2093
+#: cursesmessagedisplay.C:1086 filtereditscreen.C:226
+msgid "UNDELETE_K:U"
+msgstr ""
+
+#: cursesindexdisplay.C:1594
+msgid "Undelete selected"
+msgstr ""
+
+#: cursesindexdisplay.C:1597
+msgid "UNREAD_K:E"
+msgstr ""
+
+#: cursesindexdisplay.C:1598
+msgid "unrEad selected"
+msgstr ""
+
+#: cursesindexdisplay.C:1761
+msgid "Tag %1% messages as: "
+msgstr ""
+
+#: cursesindexdisplay.C:1812
+msgid "Watch thread up to %1% days, %2%-deep replies? (Y/N) "
+msgstr ""
+
+#: cursesindexdisplay.C:1817
+msgid "WATCHDAYS_K:D"
+msgstr ""
+
+#: cursesindexdisplay.C:1818
+msgid "Days"
+msgstr ""
+
+#: cursesindexdisplay.C:1820
+msgid "WATCHDEPTH_K:R"
+msgstr ""
+
+#: cursesindexdisplay.C:1821
+msgid "Replies"
+msgstr ""
+
+#: cursesindexdisplay.C:1843
+msgid "Days: "
+msgstr ""
+
+#: cursesindexdisplay.C:1868
+msgid "Replies: "
+msgstr ""
+
+#: cursesindexdisplay.C:1918
+msgid "Sort folder by: (DESC) "
+msgstr ""
+
+#: cursesindexdisplay.C:1919
+msgid "Sort folder by: "
+msgstr ""
+
+#: cursesindexdisplay.C:1922
+msgid "SORTFOLDER_ARRIVAL_K:A"
+msgstr ""
+
+#: cursesindexdisplay.C:1923
+msgid "by recv date"
+msgstr ""
+
+#: cursesindexdisplay.C:1926
+msgid "SORTFOLDER_DATE_K:D"
+msgstr ""
+
+#: cursesindexdisplay.C:1927
+msgid "by sent date"
+msgstr ""
+
+#: cursesindexdisplay.C:1930
+msgid "SORTFOLDER_NAME_K:N"
+msgstr ""
+
+#: cursesindexdisplay.C:1931
+msgid "by name"
+msgstr ""
+
+#: cursesindexdisplay.C:1934
+msgid "SORTFOLDER_SUBJECT_K:S"
+msgstr ""
+
+#: cursesindexdisplay.C:1935
+msgid "by subject"
+msgstr ""
+
+#: cursesindexdisplay.C:1938
+msgid "SORTFOLDER_THREAD_K:T"
+msgstr ""
+
+#: cursesindexdisplay.C:1939
+msgid "by thread"
+msgstr ""
+
+#: cursesindexdisplay.C:1942
+msgid "SORTNOT_K:!"
+msgstr ""
+
+#: cursesindexdisplay.C:1943
+msgid "Asc/Desc"
+msgstr ""
+
+#: cursesindexdisplay.C:2035
+msgid "[filter]"
+msgstr ""
+
+#: cursesindexdisplay.C:2038
+msgid "NUMFUNC_K:F%1%"
+msgstr ""
+
+#: cursesindexdisplay.C:2048 cursesmessagedisplay.C:1077
+msgid "NEXT_K:N"
+msgstr ""
+
+#: cursesindexdisplay.C:2049 cursesmessagedisplay.C:1078
+msgid "Next"
+msgstr ""
+
+#: cursesindexdisplay.C:2051 cursesmessagedisplay.C:1080
+msgid "PREV_K:P"
+msgstr ""
+
+#: cursesindexdisplay.C:2052 cursesmessagedisplay.C:1081
+msgid "Prev"
+msgstr ""
+
+#: cursesindexdisplay.C:2054
+msgid "SEARCH_K:;"
+msgstr ""
+
+#: cursesindexdisplay.C:2057
+msgid "SORTFOLDER_K:$"
+msgstr ""
+
+#: cursesindexdisplay.C:2058
+msgid "Sort folder"
+msgstr ""
+
+#: cursesindexdisplay.C:2060
+msgid "WATCH_K:A"
+msgstr ""
+
+#: cursesindexdisplay.C:2061
+msgid "wAtch/Unwatch"
+msgstr ""
+
+#: cursesindexdisplay.C:2063 cursesmessagedisplay.C:1068
+msgid "BOUNCE_K:B"
+msgstr ""
+
+#: cursesindexdisplay.C:2064 cursesmessagedisplay.C:1069
+msgid "Blind Fwd"
+msgstr ""
+
+#: cursesindexdisplay.C:2075
+msgid "EXTERNFILTER_K:E"
+msgstr ""
+
+#: cursesindexdisplay.C:2076
+msgid "Extern cmd"
+msgstr ""
+
+#: cursesindexdisplay.C:2078 cursesmessagedisplay.C:1071
+msgid "FWD_K:F"
+msgstr ""
+
+#: cursesindexdisplay.C:2079 cursesmessagedisplay.C:1072
+msgid "Fwd"
+msgstr ""
+
+#: cursesindexdisplay.C:2081
+msgid "JUMP_K:J"
+msgstr ""
+
+#: cursesindexdisplay.C:2082
+msgid "Jump To"
+msgstr ""
+
+#: cursesindexdisplay.C:2084 cursesmessagedisplay.C:1089
+msgid "REPLY_K:R"
+msgstr ""
+
+#: cursesindexdisplay.C:2085 cursesmessagedisplay.C:1090
+msgid "Reply"
+msgstr ""
+
+#: cursesindexdisplay.C:2087
+msgid "TOGGLEMARK_K:SP"
+msgstr ""
+
+#: cursesindexdisplay.C:2088
+msgid "Tag/Untag"
+msgstr ""
+
+#: cursesindexdisplay.C:2090 cursesmessagedisplay.C:1098
+msgid "VIEWATT_K:V"
+msgstr ""
+
+#: cursesindexdisplay.C:2091 cursesmessagedisplay.C:1099
+msgid "View Attchs"
+msgstr ""
+
+#: cursesindexdisplay.C:2094
+msgid "Undelete/Unread"
+msgstr ""
+
+#: cursesindexdisplay.C:2096 filtereditscreen.C:229
+msgid "EXPUNGE_K:X"
+msgstr ""
+
+#: cursesindexdisplay.C:2097
+msgid "Expunge deleted"
+msgstr ""
+
+#: cursesindexdisplay.C:2100 filtereditscreen.C:251
+msgid "Tag"
+msgstr ""
+
+#: cursesindexdisplay.C:2101
+msgid "BLOBS_K:S"
+msgstr ""
+
+#: cursesindexdisplay.C:2102
+msgid "Show blobs"
+msgstr ""
+
+#: cursesmessage.C:577
+msgid ""
+"<br><center>* Inline attachment shown *</center><center><b>%1%</b></"
+"center><br>\n"
+msgstr ""
+
+#: cursesmessage.C:829
+msgid "End of signed/encrypted content"
+msgstr ""
+
+#: cursesmessage.C:852
+msgid "Attachment: "
+msgstr ""
+
+#: cursesmessage.C:897
+msgid "Signed/encrypted (%1%) content follows"
+msgstr ""
+
+#: cursesmessage.C:901
+msgid "succesfully verified"
+msgstr ""
+
+#: cursesmessage.C:903
+msgid "<i>VERIFICATION FAILED</i>"
+msgstr ""
+
+#: cursesmessage.C:982
+msgid "       Date: "
+msgstr ""
+
+#: cursesmessage.C:984
+msgid "       From: "
+msgstr ""
+
+#: cursesmessage.C:988
+msgid "     Sender: "
+msgstr ""
+
+#: cursesmessage.C:992
+msgid "   Reply-To: "
+msgstr ""
+
+#: cursesmessage.C:997
+msgid "In-Reply-To: "
+msgstr ""
+
+#: cursesmessage.C:1001
+msgid "         To: "
+msgstr ""
+
+#: cursesmessage.C:1005
+msgid "         Cc: "
+msgstr ""
+
+#: cursesmessage.C:1009
+msgid "        Bcc: "
+msgstr ""
+
+#: cursesmessage.C:1012
+msgid "    Subject: "
+msgstr ""
+
+#: cursesmessage.C:1016
+msgid " Message-ID: "
+msgstr ""
+
+#: cursesmessage.C:1083
+msgid ""
+"The previous text contained some characters that could not be converted from "
+"the \"%1%\" character set to your display's \"%2%\" character set."
+msgstr ""
+
+#: cursesmessage.C:1091
+msgid ""
+"The previous text contained some characters that were not valid characters "
+"in the \"%1%\" character set."
+msgstr ""
+
+#: cursesmessage.C:1274 cursesmessage.C:1285
+msgid "%1%; %2%"
+msgstr ""
+
+#: cursesmessage.C:1315
+msgid ""
+"Error: this message is written in a character set that cannot be displayed"
+msgstr ""
+
+#: cursesmessage.C:2242
+msgid "Follow up to: %1%? (Y/N) "
+msgstr ""
+
+#: cursesmessage.C:2468
+msgid "Cc original author? (Y/N) "
+msgstr ""
+
+#: cursesmessage.C:2495
+msgid "Reply to mailing list? (Y/N) "
+msgstr ""
+
+#: cursesmessage.C:2513
+msgid "Reply to all? (Y/N) "
+msgstr ""
+
+#: cursesmessage.C:2584
+msgid "%1% writes:"
+msgstr ""
+
+#: cursesmessage.C:2684
+msgid "Fwd entire message as an attachment? (Y/N) "
+msgstr ""
+
+#: cursesmessage.C:2719
+msgid "Downloading message..."
+msgstr ""
+
+#: cursesmessage.C:2800
+msgid "---------- Forwarded message ----------"
+msgstr ""
+
+#: cursesmessage.C:2963
+msgid "Blind forward to: "
+msgstr ""
+
+#: cursesmessage.C:2979
+msgid "Error - invalid mail list format"
+msgstr ""
+
+#: cursesmessage.C:3121
+msgid "mail server on %1%"
+msgstr ""
+
+#: cursesmessage.C:3127 myserver.C:444
+msgid "Connecting to %1%..."
+msgstr ""
+
+#: cursesmessage.C:3217 cursesmessagedisplay.C:813
+msgid "Passphrase (if required): "
+msgstr ""
+
+#: cursesmessage.C:3277
+msgid "Sign, encrypt, then %1%"
+msgstr ""
+
+#: cursesmessage.C:3278
+msgid "Sign, then %1%"
+msgstr ""
+
+#: cursesmessage.C:3279
+msgid "Encrypt, then %1%"
+msgstr ""
+
+#: cursesmessage.C:3289
+msgid "SELECTDSN_K:D"
+msgstr ""
+
+#: cursesmessage.C:3290
+msgid "Delivery notifications"
+msgstr ""
+
+#: cursesmessage.C:3402
+msgid "success"
+msgstr ""
+
+#: cursesmessage.C:3408
+msgid "delay"
+msgstr ""
+
+#: cursesmessage.C:3414
+msgid "fail"
+msgstr ""
+
+#: cursesmessage.C:3420
+msgid "never"
+msgstr ""
+
+#: cursesmessage.C:3424
+msgid "Send message (NOTIFY=%1%)? (Y) "
+msgstr ""
+
+#: cursesmessage.C:3428
+msgid "DSNNEVER_K:N"
+msgstr ""
+
+#: cursesmessage.C:3429
+msgid "Never"
+msgstr ""
+
+#: cursesmessage.C:3432
+msgid "DSNSUCCESS_K:S"
+msgstr ""
+
+#: cursesmessage.C:3433
+msgid "Success"
+msgstr ""
+
+#: cursesmessage.C:3436
+msgid "DSNDELAY_K:D"
+msgstr ""
+
+#: cursesmessage.C:3437
+msgid "Delay"
+msgstr ""
+
+#: cursesmessage.C:3440
+msgid "DSNFAIL_K:F"
+msgstr ""
+
+#: cursesmessage.C:3441
+msgid "Fail"
+msgstr ""
+
+#: cursesmessage.C:3512 encryptionmenu.C:251
+msgid "SELECT PRIVATE KEY"
+msgstr ""
+
+#: cursesmessage.C:3513
+msgid "Select key to sign this message with, and press ENTER"
+msgstr ""
+
+#: cursesmessage.C:3514
+msgid "Sign with this key"
+msgstr ""
+
+#: cursesmessage.C:3515
+msgid "Cancel, do not sign message"
+msgstr ""
+
+#: cursesmessage.C:3525
+msgid "SELECT PUBLIC KEYS"
+msgstr ""
+
+#: cursesmessage.C:3526
+msgid "Select recipients' encryption keys, then press ENTER"
+msgstr ""
+
+#: cursesmessage.C:3527
+msgid "Encrypt to selected keys"
+msgstr ""
+
+#: cursesmessage.C:3528
+msgid "Cancel, do not encrypt"
+msgstr ""
+
+#: cursesmessage.C:3707 myfolder.C:1832
+msgid "Reading message..."
+msgstr ""
+
+#: cursesmessage.C:3731
+msgid "Decrypting/verifying message..."
+msgstr ""
+
+#: cursesmessagedisplay.C:145
+msgid "%1%: %2% of %3% %4%"
+msgstr ""
+
+#: cursesmessagedisplay.C:151
+msgid " (NEW)"
+msgstr ""
+
+#: cursesmessagedisplay.C:153
+msgid " (DELETED)"
+msgstr ""
+
+#: cursesmessagedisplay.C:295
+msgid "Cannot find handler for %1%"
+msgstr ""
+
+#: cursesmessagedisplay.C:336
+msgid "Started external handler."
+msgstr ""
+
+#: cursesmessagedisplay.C:341
+msgid "External handler terminated with a non-zero exit code."
+msgstr ""
+
+#: cursesmessagedisplay.C:469
+msgid "No more unread mail in %1%"
+msgstr ""
+
+#: cursesmessagedisplay.C:540
+msgid "Cannot forward only an attachment, just the whole message."
+msgstr ""
+
+#: cursesmessagedisplay.C:679
+msgid "Print to: "
+msgstr ""
+
+#: cursesmessagedisplay.C:864
+msgid "ERROR: Decryption failed, passphrase forgotten."
+msgstr ""
+
+#: cursesmessagedisplay.C:972
+msgid "Text located, displayed on line #%1%"
+msgstr ""
+
+#: cursesmessagedisplay.C:982
+msgid "Not found."
+msgstr ""
+
+#: cursesmessagedisplay.C:1059
+msgid "SAVE_K:S"
+msgstr ""
+
+#: cursesmessagedisplay.C:1060 leaf.C:395
+msgid "Save"
+msgstr ""
+
+#: cursesmessagedisplay.C:1062
+msgid "TAKEADDR_K:T"
+msgstr ""
+
+#: cursesmessagedisplay.C:1063
+msgid "Take Addr"
+msgstr ""
+
+#: cursesmessagedisplay.C:1065
+msgid "FOLDERINDEX_K:I"
+msgstr ""
+
+#: cursesmessagedisplay.C:1066
+msgid "Index"
+msgstr ""
+
+#: cursesmessagedisplay.C:1074
+msgid "HEADERS_K:H"
+msgstr ""
+
+#: cursesmessagedisplay.C:1087
+msgid "Undel/Unrd"
+msgstr ""
+
+#: cursesmessagedisplay.C:1092
+msgid "ROT13_K:^R"
+msgstr ""
+
+#: cursesmessagedisplay.C:1093
+msgid "Rot 13"
+msgstr ""
+
+#: cursesmessagedisplay.C:1095
+msgid "PRINT_K:|"
+msgstr ""
+
+#: cursesmessagedisplay.C:1096
+msgid "Print"
+msgstr ""
+
+#: cursesmessagedisplay.C:1101
+msgid "SPACE_K:SP"
+msgstr ""
+
+#: cursesmessagedisplay.C:1102
+msgid "Next Unread"
+msgstr ""
+
+#: cursesmessagedisplay.C:1104
+msgid "SEARCH_K:/"
+msgstr ""
+
+#: cursesmessagedisplay.C:1114
+msgid "UNENCRYPT_K:Y"
+msgstr ""
+
+#: cursesmessagedisplay.C:1115
+msgid "decrYpt/Vfy"
+msgstr ""
+
+#: cursesmessagehtmlparser.C:52
+msgid "<b>&laquo; HTML content follows &raquo;</b><br>"
+msgstr ""
+
+#: encryptionmenu.C:47
+msgid "ENCRYPTION"
+msgstr ""
+
+#: encryptionmenu.C:57
+msgid "M - MAIN MENU         "
+msgstr ""
+
+#: encryptionmenu.C:59
+msgid "N - NEW ENCRYPTION KEY"
+msgstr ""
+
+#: encryptionmenu.C:61
+msgid "D - DELETE KEY        "
+msgstr ""
+
+#: encryptionmenu.C:63
+msgid "S - SIGN KEY          "
+msgstr ""
+
+#: encryptionmenu.C:65
+msgid "E - EDIT KEY          "
+msgstr ""
+
+#: encryptionmenu.C:70
+msgid "NEWKEY_K:N"
+msgstr ""
+
+#: encryptionmenu.C:71 encryptionmenu.C:460
+msgid "New Encryption Key"
+msgstr ""
+
+#: encryptionmenu.C:75
+msgid "DELKEY_K:D"
+msgstr ""
+
+#: encryptionmenu.C:76
+msgid "Delete Key"
+msgstr ""
+
+#: encryptionmenu.C:80
+msgid "SIGNKEY_K:S"
+msgstr ""
+
+#: encryptionmenu.C:81
+msgid "Sign Key"
+msgstr ""
+
+#: encryptionmenu.C:85
+msgid "EDITKEY_K:E"
+msgstr ""
+
+#: encryptionmenu.C:86
+msgid "Edit Key"
+msgstr ""
+
+#: encryptionmenu.C:156
+msgid "Delete public key? (Y/N) "
+msgstr ""
+
+#: encryptionmenu.C:160
+msgid "Delete private key"
+msgstr ""
+
+#: encryptionmenu.C:183
+msgid "DELETE KEY"
+msgstr ""
+
+#: encryptionmenu.C:184
+msgid "Select key to delete, then press ENTER"
+msgstr ""
+
+#: encryptionmenu.C:185
+msgid "Delete key"
+msgstr ""
+
+#: encryptionmenu.C:185 encryptionmenu.C:206
+msgid "Cancel, do not delete"
+msgstr ""
+
+#: encryptionmenu.C:198
+msgid "You are about to delete this PRIVATE key:"
+msgstr ""
+
+#: encryptionmenu.C:200
+msgid "You are about to delete this public key:"
+msgstr ""
+
+#: encryptionmenu.C:204
+msgid "Delete this PRIVATE key"
+msgstr ""
+
+#: encryptionmenu.C:205
+msgid "Delete this public key"
+msgstr ""
+
+#: encryptionmenu.C:221
+msgid ""
+"An attempt to delete this key has failed:\n"
+"\n"
+msgstr ""
+
+#: encryptionmenu.C:228
+msgid "Key deleted."
+msgstr ""
+
+#: encryptionmenu.C:237
+msgid "SELECT PUBLIC KEY"
+msgstr ""
+
+#: encryptionmenu.C:238
+msgid "Select key to sign, then press ENTER"
+msgstr ""
+
+#: encryptionmenu.C:240
+msgid "Sign this key"
+msgstr ""
+
+#: encryptionmenu.C:241 encryptionmenu.C:256 encryptionmenu.C:270
+msgid "Cancel, do not sign"
+msgstr ""
+
+#: encryptionmenu.C:252
+msgid "Select private key to sign the public key with"
+msgstr ""
+
+#: encryptionmenu.C:255
+msgid "Use this key"
+msgstr ""
+
+#: encryptionmenu.C:265
+msgid "You are going to sign this public key, with the following private key:"
+msgstr ""
+
+#: encryptionmenu.C:269
+msgid "Sign the public key with the private key"
+msgstr ""
+
+#: encryptionmenu.C:279
+msgid "How carefully did you check the private key's identity? "
+msgstr ""
+
+#: encryptionmenu.C:281
+msgid "GPG_NOANSWER_K:0"
+msgstr ""
+
+#: encryptionmenu.C:282
+msgid "No answer"
+msgstr ""
+
+#: encryptionmenu.C:284
+msgid "GPG_NOCHECKING_K:1"
+msgstr ""
+
+#: encryptionmenu.C:285
+msgid "No checking at all"
+msgstr ""
+
+#: encryptionmenu.C:287
+msgid "GPG_CASUALCHECK_K:2"
+msgstr ""
+
+#: encryptionmenu.C:288
+msgid "Casual checking"
+msgstr ""
+
+#: encryptionmenu.C:290
+msgid "GPG_CAREFULCHECK_K:3"
+msgstr ""
+
+#: encryptionmenu.C:291
+msgid "Very careful checking"
+msgstr ""
+
+#: encryptionmenu.C:308
+msgid "Private key's passphrase  (if required): "
+msgstr ""
+
+#: encryptionmenu.C:352
+msgid ""
+"An attempt to sign this key has failed:\n"
+"\n"
+msgstr ""
+
+#: encryptionmenu.C:359
+msgid "Key signed."
+msgstr ""
+
+#: encryptionmenu.C:377 encryptionmenu.C:404
+msgid "Press ENTER to continue: "
+msgstr ""
+
+#: encryptionmenu.C:385
+msgid "SELECT KEY TO EDIT"
+msgstr ""
+
+#: encryptionmenu.C:386
+msgid "Select key to edit, then press ENTER"
+msgstr ""
+
+#: encryptionmenu.C:388
+msgid "Edit this key"
+msgstr ""
+
+#: encryptionmenu.C:389
+msgid "Cancel, do not edit"
+msgstr ""
+
+#: encryptionmenu.C:413
+msgid "ENCRYPTION MENU"
+msgstr ""
+
+#: encryptionmenu.C:482
+msgid "Create key"
+msgstr ""
+
+#: encryptionmenu.C:521 encryptionmenu.C:531
+msgid " 512 bits"
+msgstr ""
+
+#: encryptionmenu.C:522 encryptionmenu.C:532
+msgid " 768 bits"
+msgstr ""
+
+#: encryptionmenu.C:523 encryptionmenu.C:533
+msgid "1024 bits"
+msgstr ""
+
+#: encryptionmenu.C:534
+msgid "2048 bits"
+msgstr ""
+
+#: encryptionmenu.C:542
+msgid "-- no expiration --"
+msgstr ""
+
+#: encryptionmenu.C:543
+msgid "days"
+msgstr ""
+
+#: encryptionmenu.C:544
+msgid "weeks"
+msgstr ""
+
+#: encryptionmenu.C:545
+msgid "months"
+msgstr ""
+
+#: encryptionmenu.C:546
+msgid "years"
+msgstr ""
+
+#: encryptionmenu.C:570
+msgid "E-mail address is required."
+msgstr ""
+
+#: encryptionmenu.C:581
+msgid ""
+"Enter the same passphrase twice.  Both times it must be identical (it "
+"wasn't)."
+msgstr ""
+
+#: encryptionmenu.C:622
+msgid ""
+"Creating new encryption key, please ignore any messages below:\n"
+"\n"
+msgstr ""
+
+#: encryptionmenu.C:669
+msgid "NEW ENCRYPTION KEY"
+msgstr ""
+
+#: filter.C:117 filter.C:123
+msgid "REPLIED"
+msgstr ""
+
+#: filter.C:120
+msgid "DELETED"
+msgstr ""
+
+#: filter.C:126
+msgid "UNREAD"
+msgstr ""
+
+#: filter.C:129 searchprompt.C:228
+msgid "From:"
+msgstr ""
+
+#: filter.C:132 searchprompt.C:232
+msgid "To:"
+msgstr ""
+
+#: filter.C:135 searchprompt.C:236
+msgid "Cc:"
+msgstr ""
+
+#: filter.C:138 searchprompt.C:240
+msgid "Bcc:"
+msgstr ""
+
+#: filter.C:141 searchprompt.C:244
+msgid "Subject:"
+msgstr ""
+
+#: filter.C:145
+msgid "Header \"%1%\""
+msgstr ""
+
+#: filter.C:148
+msgid "Body"
+msgstr ""
+
+#: filter.C:151
+msgid "Header and body"
+msgstr ""
+
+#: filter.C:157 searchprompt.C:371
+msgid "Received before: %1% "
+msgstr ""
+
+#: filter.C:161 searchprompt.C:376
+msgid "Received on: %1% "
+msgstr ""
+
+#: filter.C:165 searchprompt.C:381
+msgid "Received since: %1% "
+msgstr ""
+
+#: filter.C:172 searchprompt.C:356
+msgid "Sent before: %1% "
+msgstr ""
+
+#: filter.C:176 searchprompt.C:361
+msgid "Sent on: %1% "
+msgstr ""
+
+#: filter.C:179 searchprompt.C:366
+msgid "Sent since: %1% "
+msgstr ""
+
+#: filter.C:184
+msgid "Larger than %1% bytes"
+msgstr ""
+
+#: filter.C:188
+msgid "Smaller than %1% bytes"
+msgstr ""
+
+#: filter.C:193
+msgid "Search NOT %1%"
+msgstr ""
+
+#: filter.C:194
+msgid "Search %1%"
+msgstr ""
+
+#: filter.C:217
+msgid "%1% contains %2%"
+msgstr ""
+
+#: filter.C:226
+msgid "Mark deleted"
+msgstr ""
+
+#: filter.C:228
+msgid "Unmark deleted"
+msgstr ""
+
+#: filter.C:230
+msgid "Delete and expunge"
+msgstr ""
+
+#: filter.C:234
+msgid "Unmark"
+msgstr ""
+
+#: filter.C:237
+msgid "Copy to %1%"
+msgstr ""
+
+#: filter.C:246
+msgid "Tag as %1%"
+msgstr ""
+
+#: filter.C:248
+msgid "(unknown)"
+msgstr ""
+
+#: filter.C:251
+msgid "Move to %1%"
+msgstr ""
+
+#: filter.C:254 filtereditscreen.C:239
+msgid "Watch"
+msgstr ""
+
+#: filter.C:256
+msgid "Unwatch"
+msgstr ""
+
+#: filter.C:258
+msgid "Select all"
+msgstr ""
+
+#: filtereditscreen.C:100
+msgid "Current Filters:"
+msgstr ""
+
+#: filtereditscreen.C:101
+msgid "Save Filters"
+msgstr ""
+
+#: filtereditscreen.C:142
+msgid "Add new filter"
+msgstr ""
+
+#: filtereditscreen.C:218
+msgid "Add filter: "
+msgstr ""
+
+#: filtereditscreen.C:220
+msgid "SELECT_K:S"
+msgstr ""
+
+#: filtereditscreen.C:221
+msgid "Select"
+msgstr ""
+
+#: filtereditscreen.C:224
+msgid "mark Del"
+msgstr ""
+
+#: filtereditscreen.C:227
+msgid "Unmark del"
+msgstr ""
+
+#: filtereditscreen.C:230
+msgid "Del & eXpunge"
+msgstr ""
+
+#: filtereditscreen.C:232
+msgid "MARK_K:R"
+msgstr ""
+
+#: filtereditscreen.C:233
+msgid "maRk"
+msgstr ""
+
+#: filtereditscreen.C:235
+msgid "UNMARK_K:K"
+msgstr ""
+
+#: filtereditscreen.C:236
+msgid "unmarK"
+msgstr ""
+
+#: filtereditscreen.C:238
+msgid "WATCH_K:W"
+msgstr ""
+
+#: filtereditscreen.C:241
+msgid "UNWATCH_K:A"
+msgstr ""
+
+#: filtereditscreen.C:242
+msgid "unwAtch"
+msgstr ""
+
+#: filtereditscreen.C:247
+msgid "MOVE_K:M"
+msgstr ""
+
+#: filtereditscreen.C:248
+msgid "Move"
+msgstr ""
+
+#: filtereditscreen.C:447
+msgid "DELFILTER:DEL"
+msgstr ""
+
+#: filtereditscreen.C:472
+msgid "%1% - FILTERS"
+msgstr ""
+
+#: filtereditscreen.C:513
+msgid "Select destination folder."
+msgstr ""
+
+#: filtereditscreen.C:536
+msgid ""
+"ERROR: This folder is from another mail account.  Messages may only be moved "
+"or copied to another folder in the same account."
+msgstr ""
+
+#: gettext.C:21
+msgid "ABORT_K:"
+msgstr ""
+
+#: gettext.C:22
+msgid "ADDADDRESSBOOK:Aa"
+msgstr ""
+
+#: gettext.C:23
+msgid "ADDDIRECTORY:\\\\D"
+msgstr ""
+
+#: gettext.C:24
+msgid "ADDFOLDER:Aa"
+msgstr ""
+
+#: gettext.C:25
+msgid "ADDLDAP_K:Aa"
+msgstr ""
+
+#: gettext.C:26
+msgid "ADDREMOVE:-"
+msgstr ""
+
+#: gettext.C:27
+msgid "ADDRESSBOOK:Aa"
+msgstr ""
+
+#: gettext.C:28
+msgid "ADDRIGHTS:Aa"
+msgstr ""
+
+#: gettext.C:29
+msgid "ADDRIGHTSADMINS:Aa"
+msgstr ""
+
+#: gettext.C:30
+msgid "ADDRIGHTSANON:2"
+msgstr ""
+
+#: gettext.C:31
+msgid "ADDRIGHTSANYONE:1"
+msgstr ""
+
+#: gettext.C:32
+msgid "ADDRIGHTSAUTHUSER:3"
+msgstr ""
+
+#: gettext.C:33
+msgid "ADDRIGHTSGROUP:Gg"
+msgstr ""
+
+#: gettext.C:34
+msgid "ADDRIGHTSOWNER:Oo"
+msgstr ""
+
+#: gettext.C:35
+msgid "ADDRIGHTSUSER:Uu"
+msgstr ""
+
+#: gettext.C:36
+msgid "ALL:Aa"
+msgstr ""
+
+#: gettext.C:37
+msgid "ATTACHFILE:"
+msgstr ""
+
+#: gettext.C:38
+msgid "ATTACHKEY:"
+msgstr ""
+
+#: gettext.C:39
+msgid "BLOBS:Ss"
+msgstr ""
+
+#: gettext.C:40
+msgid "BOUNCE:Bb"
+msgstr ""
+
+#: gettext.C:41
+msgid "CERTIFICATES:Cc"
+msgstr ""
+
+#: gettext.C:42
+msgid "CLEAR:Rr"
+msgstr ""
+
+#: gettext.C:43
+msgid "MORE:\v"
+msgstr ""
+
+#: gettext.C:44
+msgid "COPY:Cc"
+msgstr ""
+
+#: gettext.C:45
+msgid "CUT:"
+msgstr ""
+
+#: gettext.C:46
+msgid "DATEACCEPT: "
+msgstr ""
+
+#: gettext.C:47
+msgid "DATE:Dd"
+msgstr ""
+
+#: gettext.C:48
+msgid "DAYDEC1:-_"
+msgstr ""
+
+#: gettext.C:49
+msgid "DAYINC1:+="
+msgstr ""
+
+#: gettext.C:50
+msgid "DELADDRESSBOOKENTRY:Dd"
+msgstr ""
+
+#: gettext.C:51
+msgid "DELETEADDRESSBOOK:Dd"
+msgstr ""
+
+#: gettext.C:52
+msgid "DELETECERTIFICATE:Dd"
+msgstr ""
+
+#: gettext.C:53
+msgid "DELETED:Dd"
+msgstr ""
+
+#: gettext.C:54
+msgid "DELETE:Dd"
+msgstr ""
+
+#: gettext.C:55
+msgid "DELFOLDER:Dd"
+msgstr ""
+
+#: gettext.C:56
+msgid "DELRIGHTS:Dd"
+msgstr ""
+
+#: gettext.C:57
+msgid "DICTSPELL:\\\\D"
+msgstr ""
+
+#: gettext.C:58
+msgid "MOVEDOWN:\\\\D"
+msgstr ""
+
+#: gettext.C:59
+msgid "DRAFTS:Dd"
+msgstr ""
+
+#: gettext.C:60
+msgid "DSNDELAY:Dd"
+msgstr ""
+
+#: gettext.C:61
+msgid "DSNFAIL:Ff"
+msgstr ""
+
+#: gettext.C:62
+msgid "DSNNEVER:Nn"
+msgstr ""
+
+#: gettext.C:63
+msgid "DSNSUCCESS:Ss"
+msgstr ""
+
+#: gettext.C:64
+msgid "EDIT:Ee"
+msgstr ""
+
+#: gettext.C:65
+msgid "EDITREPLACE:"
+msgstr ""
+
+#: gettext.C:66
+msgid "EDITSEARCH:"
+msgstr ""
+
+#: gettext.C:67
+msgid "Export:Ee"
+msgstr ""
+
+#: gettext.C:68
+msgid "EXTEDITOR:"
+msgstr ""
+
+#: gettext.C:69
+msgid "EXTFILTER:Ee"
+msgstr ""
+
+#: gettext.C:70
+msgid "ENCRYPTIONMENU:Ee"
+msgstr ""
+
+#: gettext.C:71
+msgid "ENCRYPT:Ee"
+msgstr ""
+
+#: gettext.C:72
+msgid "EXPUNGE:Xx"
+msgstr ""
+
+#: gettext.C:73
+msgid "FILTER:Ff"
+msgstr ""
+
+#: gettext.C:74
+msgid "FOLDERINDEX:Ii"
+msgstr ""
+
+#: gettext.C:75
+msgid "FULLHEADERS:"
+msgstr ""
+
+#: gettext.C:76
+msgid "FWD:Ff"
+msgstr ""
+
+#: gettext.C:77
+msgid "GETFILE:\a"
+msgstr ""
+
+#: gettext.C:78
+msgid "GPG_CAREFULCHECK:3"
+msgstr ""
+
+#: gettext.C:79
+msgid "GPG_CASUALCHECK:2"
+msgstr ""
+
+#: gettext.C:80
+msgid "GPGDELKEY:Dd"
+msgstr ""
+
+#: gettext.C:81
+msgid "GPGEDITKEY:Ee"
+msgstr ""
+
+#: gettext.C:82
+msgid "GPGNEWKEY:Nn"
+msgstr ""
+
+#: gettext.C:83
+msgid "GPG_NOANSWER:0"
+msgstr ""
+
+#: gettext.C:84
+msgid "GPG_NOCHECKING:1"
+msgstr ""
+
+#: gettext.C:85
+msgid "GPGSIGNKEY:Ss"
+msgstr ""
+
+#: gettext.C:86
+msgid "HEADERS:Hh"
+msgstr ""
+
+#: gettext.C:87
+msgid "IGNOREALL_K:Aa"
+msgstr ""
+
+#: gettext.C:88
+msgid "IGNORE_K:Ii"
+msgstr ""
+
+#: gettext.C:89
+msgid "IMAPACCOUNT:Ii"
+msgstr ""
+
+#: gettext.C:90
+msgid "IMPORTADDRESSBOOK:Ii"
+msgstr ""
+
+#: gettext.C:91
+msgid "IMPORTCERTIFICATE:Ii"
+msgstr ""
+
+#: gettext.C:92
+msgid "INBOXMBOX:Ss"
+msgstr ""
+
+#: gettext.C:93
+msgid "JUMP:Jj"
+msgstr ""
+
+#: gettext.C:94
+msgid "JUSTIFY:\n"
+msgstr ""
+
+#: gettext.C:95
+msgid "LARGER:Ll"
+msgstr ""
+
+#: gettext.C:96
+msgid "LESSTHAN:<"
+msgstr ""
+
+#: gettext.C:97
+msgid "LISTFOLDERS:Ll"
+msgstr ""
+
+#: gettext.C:98
+msgid "MACRO:"
+msgstr ""
+
+#: gettext.C:99
+msgid "MAINMENU:Mm"
+msgstr ""
+
+#: gettext.C:100
+msgid "MARK:Rr"
+msgstr ""
+
+#: gettext.C:101
+msgid "MARKUNMARK: "
+msgstr ""
+
+#: gettext.C:102
+msgid "MASTERPASSWORD:Pp"
+msgstr ""
+
+#: gettext.C:103
+msgid "MONDEC1:[{"
+msgstr ""
+
+#: gettext.C:104
+msgid "MONINC1:]}"
+msgstr ""
+
+#: gettext.C:105
+msgid "MORE:"
+msgstr ""
+
+#: gettext.C:106
+msgid "MOVE:Mm"
+msgstr ""
+
+#: gettext.C:107
+msgid "MOVEMESSAGE:Oo"
+msgstr ""
+
+#: gettext.C:108
+msgid "MSGSEARCH:/"
+msgstr ""
+
+#: gettext.C:109
+msgid "NEWACCOUNT:Nn"
+msgstr ""
+
+#: gettext.C:110
+msgid "NEXTMESSAGE:Nn"
+msgstr ""
+
+#: gettext.C:111
+msgid "NEXTUNREAD:]"
+msgstr ""
+
+#: gettext.C:112
+msgid "NNTPACCOUNT:Nn"
+msgstr ""
+
+#: gettext.C:113
+msgid "NOT1:!!"
+msgstr ""
+
+#: gettext.C:114
+msgid "OPENFILE:"
+msgstr ""
+
+#: gettext.C:115
+msgid "OTHERMBOX:Oo"
+msgstr ""
+
+#: gettext.C:116
+msgid "PERMISSIONS:Pp"
+msgstr ""
+
+#: gettext.C:117
+msgid "EDITPERMISSIONS:Ee"
+msgstr ""
+
+#: gettext.C:118
+msgid "VIEWPERMISSIONS:Vv"
+msgstr ""
+
+#: gettext.C:119
+msgid "POP3ACCOUNT:Pp"
+msgstr ""
+
+#: gettext.C:120
+msgid "POP3MAILDROPACCOUNT:Mm"
+msgstr ""
+
+#: gettext.C:121
+msgid "POSTPONE:"
+msgstr ""
+
+#: gettext.C:122
+msgid "PRINT:|"
+msgstr ""
+
+#: gettext.C:123
+msgid "PREVMESSAGE:Pp"
+msgstr ""
+
+#: gettext.C:124
+msgid "PREVUNREAD:["
+msgstr ""
+
+#: gettext.C:125
+msgid "PRIVATEKEY:Pp"
+msgstr ""
+
+#: gettext.C:126
+msgid "QUIT:Qq"
+msgstr ""
+
+#: gettext.C:127
+msgid "RECVBEFORE1:44"
+msgstr ""
+
+#: gettext.C:128
+msgid "RECVON1:55"
+msgstr ""
+
+#: gettext.C:129
+msgid "RECVSINCE1:66"
+msgstr ""
+
+#: gettext.C:130
+msgid "REMOTE:Rr"
+msgstr ""
+
+#: gettext.C:131 gettext.C:133
+msgid "RENAME:Rr"
+msgstr ""
+
+#: gettext.C:132
+msgid "RENAMEADDRESSBOOKENTRY:Rr"
+msgstr ""
+
+#: gettext.C:144
+msgid "REPLACE_K:Rr"
+msgstr ""
+
+#: gettext.C:145
+msgid "ROT13:"
+msgstr ""
+
+#: gettext.C:146
+msgid "REPLIED:Rr"
+msgstr ""
+
+#: gettext.C:147
+msgid "REPLY:Rr"
+msgstr ""
+
+#: gettext.C:148
+msgid "RESET:"
+msgstr ""
+
+#: gettext.C:149
+msgid "SAVEAS:"
+msgstr ""
+
+#: gettext.C:150
+msgid "SAVE:"
+msgstr ""
+
+#: gettext.C:151
+msgid "SAVE:Ss"
+msgstr ""
+
+#: gettext.C:152
+msgid "ANYWHEREKEY:Aa"
+msgstr ""
+
+#: gettext.C:153
+msgid "SEARCHBCC:Bb"
+msgstr ""
+
+#: gettext.C:154
+msgid "SEARCHBROADEN:Bb"
+msgstr ""
+
+#: gettext.C:155
+msgid "SEARCHCC:Cc"
+msgstr ""
+
+#: gettext.C:156
+msgid "CONTENTSKEY:Oo"
+msgstr ""
+
+#: gettext.C:157
+msgid "SEARCHFROM:Ff"
+msgstr ""
+
+#: gettext.C:158
+msgid "HEADERKEY:Hh"
+msgstr ""
+
+#: gettext.C:159
+msgid "SEARCHNARROW:Nn"
+msgstr ""
+
+#: gettext.C:160
+msgid "SEARCH:;"
+msgstr ""
+
+#: gettext.C:161
+msgid "SEARCHSUBJECT:Ss"
+msgstr ""
+
+#: gettext.C:162
+msgid "SEARCHTO:Tt"
+msgstr ""
+
+#: gettext.C:163
+msgid "SELECTDSN:Dd"
+msgstr ""
+
+#: gettext.C:164
+msgid "SELECT:Ss"
+msgstr ""
+
+#: gettext.C:165
+msgid "SEND:"
+msgstr ""
+
+#: gettext.C:166
+msgid "SENTBEFORE1:11"
+msgstr ""
+
+#: gettext.C:167
+msgid "SENT:Ss"
+msgstr ""
+
+#: gettext.C:168
+msgid "SENTON1:22"
+msgstr ""
+
+#: gettext.C:169
+msgid "SENTSINCE1:33"
+msgstr ""
+
+#: gettext.C:170
+msgid "SETUPSCREEN:Ss"
+msgstr ""
+
+#: gettext.C:171
+msgid "SIGN:Ss"
+msgstr ""
+
+#: gettext.C:172
+msgid "SIZE:Zz"
+msgstr ""
+
+#: gettext.C:173
+msgid "SMALLER:Ss"
+msgstr ""
+
+#: gettext.C:174
+msgid "SORTFOLDER_ARRIVAL:Aa"
+msgstr ""
+
+#: gettext.C:175
+msgid "SORTFOLDER_DATE:Dd"
+msgstr ""
+
+#: gettext.C:176
+msgid "SORTFOLDER_NAME:Nn"
+msgstr ""
+
+#: gettext.C:177
+msgid "SORTFOLDER:$"
+msgstr ""
+
+#: gettext.C:178
+msgid "SORTFOLDER_SUBJECT:Ss"
+msgstr ""
+
+#: gettext.C:179
+msgid "SORTFOLDER_THREAD:Tt"
+msgstr ""
+
+#: gettext.C:180
+msgid "SORTNOT:!"
+msgstr ""
+
+#: gettext.C:181
+msgid "SPECIAL:Uu"
+msgstr ""
+
+#: gettext.C:182
+msgid "STATUS:Ss"
+msgstr ""
+
+#: gettext.C:183
+msgid "TAG0:0"
+msgstr ""
+
+#: gettext.C:184
+msgid "TAG1:1"
+msgstr ""
+
+#: gettext.C:185
+msgid "TAG2:2"
+msgstr ""
+
+#: gettext.C:186
+msgid "TAG3:3"
+msgstr ""
+
+#: gettext.C:187
+msgid "TAG4:4"
+msgstr ""
+
+#: gettext.C:188
+msgid "TAG5:5"
+msgstr ""
+
+#: gettext.C:189
+msgid "TAG6:6"
+msgstr ""
+
+#: gettext.C:190
+msgid "TAG7:7"
+msgstr ""
+
+#: gettext.C:191
+msgid "TAG8:8"
+msgstr ""
+
+#: gettext.C:192
+msgid "TAG9:9"
+msgstr ""
+
+#: gettext.C:193
+msgid "TAG:Tt"
+msgstr ""
+
+#: gettext.C:194
+msgid "TAKEADDR:Tt"
+msgstr ""
+
+#: gettext.C:195
+msgid "TEXT:Tt"
+msgstr ""
+
+#: gettext.C:196
+msgid "TODIRECTORY:"
+msgstr ""
+
+#: gettext.C:197
+msgid "TOGGLE:Gg"
+msgstr ""
+
+#: gettext.C:198
+msgid "TOGGLE_K: "
+msgstr ""
+
+#: gettext.C:199
+msgid "FLOWED_K:"
+msgstr ""
+
+#: gettext.C:200
+msgid "TOP:Tt"
+msgstr ""
+
+#: gettext.C:201
+msgid "UNDELETE:Uu"
+msgstr ""
+
+#: gettext.C:202
+msgid "UNREAD:Ee"
+msgstr ""
+
+#: gettext.C:203
+msgid "UNENCRYPT:Yy"
+msgstr ""
+
+#: gettext.C:204
+msgid "UNMARK:Kk"
+msgstr ""
+
+#: gettext.C:205
+msgid "UNREAD:Uu"
+msgstr ""
+
+#: gettext.C:206
+msgid "UNWATCH:Aa"
+msgstr ""
+
+#: gettext.C:207
+msgid "MOVEUP:"
+msgstr ""
+
+#: gettext.C:208
+msgid "VIEWATT:Vv"
+msgstr ""
+
+#: gettext.C:209
+msgid "WATCH:Ww"
+msgstr ""
+
+#: gettext.C:210
+msgid "WATCHDAYS:Dd"
+msgstr ""
+
+#: gettext.C:211
+msgid "WATCHDEPTH:Rr"
+msgstr ""
+
+#: gettext.C:212
+msgid "WATCH:Aa"
+msgstr ""
+
+#: gettext.C:213
+msgid "WRITE:Ww"
+msgstr ""
+
+#: gettext.C:214
+msgid "YANK:"
+msgstr ""
+
+#: gettext.C:215
+msgid "YEARDEC1:<,"
+msgstr ""
+
+#: gettext.C:216
+msgid "YEARINC1:>."
+msgstr ""
+
+#: globalkeys.C:44
+msgid "LISTFOLDERS_K:L"
+msgstr ""
+
+#: globalkeys.C:45
+msgid "Folder List"
+msgstr ""
+
+#: globalkeys.C:52
+msgid "MAINMENU_K:M"
+msgstr ""
+
+#: globalkeys.C:53
+msgid "Main Menu"
+msgstr ""
+
+#: globalkeys.C:60
+msgid "WRITE_K:W"
+msgstr ""
+
+#: globalkeys.C:61
+msgid "Write Msg"
+msgstr ""
+
+#: globalkeys.C:68
+msgid "QUIT_K:Q"
+msgstr ""
+
+#: globalkeys.C:69
+msgid "Quit"
+msgstr ""
+
+#: globalkeys.C:160
+msgid "Really quit? (Y/N) "
+msgstr ""
+
+#: gpg.C:107
+msgid "Key Type        "
+msgstr ""
+
+#: gpg.C:108
+msgid "Created   "
+msgstr ""
+
+#: gpg.C:109
+msgid "Expires   "
+msgstr ""
+
+#: gpg.C:110
+msgid "Description"
+msgstr ""
+
+#: gpg.C:256 gpg.C:258
+msgid " (disabled)"
+msgstr ""
+
+#: gpg.C:257
+msgid " (removed)"
+msgstr ""
+
+#: gpg.C:259
+msgid "Group: @"
+msgstr ""
+
+#: gpg.C:843
+msgid "SPACE:Space"
+msgstr ""
+
+#: gpg.C:844
+msgid "Select/Unselect"
+msgstr ""
+
+#: gpg.C:899 gpg.C:940
+msgid "No keys are installed."
+msgstr ""
+
+#: hierarchy.C:702
+msgid "You have new mail"
+msgstr ""
+
+#: init.C:60
+msgid " (Dir)"
+msgstr ""
+
+#: init.C:62
+msgid " (%1%)"
+msgstr ""
+
+#: init.C:68
+msgid "Out of memory."
+msgstr ""
+
+#: init.C:112
+msgid ""
+"ERROR: Your display appears to be set to the %1% character set.\n"
+"This application cannot display this character set.  If this application "
+"did\n"
+"not read the display character set name correctly, the name of the "
+"display's\n"
+"character set name can be manually specified using the CHARSET environment\n"
+"variable.  Otherwise reconfigure your display to use a supported character\n"
+"set and try again.\n"
+msgstr ""
+
+#: init.C:155
+msgid "Press SPACE to continue."
+msgstr ""
+
+#: init.C:156
+msgid "^O"
+msgstr ""
+
+#: init.C:157
+msgid "mOre"
+msgstr ""
+
+#: init.C:164
+msgid "yY"
+msgstr ""
+
+#: init.C:166
+msgid "nN"
+msgstr ""
+
+#: leaf.C:133
+msgid "%1% (*)"
+msgstr ""
+
+#: leaf.C:135
+msgid "%1%/%2%"
+msgstr ""
+
+#: leaf.C:147
+msgid "Modified file is not saved, lose all changes made? (Y/N) "
+msgstr ""
+
+#: leaf.C:176
+msgid "Loading %1%..."
+msgstr ""
+
+#: leaf.C:183
+msgid "Saving %1%..."
+msgstr ""
+
+#: leaf.C:190
+msgid "Saved %1%"
+msgstr ""
+
+#: leaf.C:389
+msgid "SAVEAS_K:^A"
+msgstr ""
+
+#: leaf.C:390
+msgid "save As"
+msgstr ""
+
+#: leaf.C:392
+msgid "OPENFILE_K:^F"
+msgstr ""
+
+#: leaf.C:393
+msgid "open File"
+msgstr ""
+
+#: leaf.C:394
+msgid "SAVE_K:^X"
+msgstr ""
+
+#: leaf.C:436
+msgid "TODIRECTORY_K:^T"
+msgstr ""
+
+#: leaf.C:437
+msgid "Directory Listing"
+msgstr ""
+
+#: leaf.C:479
+msgid "FLOWED_K:^F"
+msgstr ""
+
+#: leaf.C:480
+msgid "Toggle flowed mode format"
+msgstr ""
+
+#: leaf.C:508
+msgid "Load (flowed text): "
+msgstr ""
+
+#: leaf.C:509
+msgid "Load (plain text): "
+msgstr ""
+
+#: leaf.C:646
+msgid "LEAF"
+msgstr ""
+
+#: leaf.C:689
+msgid "Welcome to LEAF (%1%)"
+msgstr ""
+
+#: leaf.C:824
+msgid "Save: "
+msgstr ""
+
+#: mainmenu.C:60 mainmenu.C:430
+msgid "MAIN MENU"
+msgstr ""
+
+#: mainmenu.C:72
+msgid "L - LIST FOLDERS   "
+msgstr ""
+
+#: mainmenu.C:74
+msgid "W - WRITE MESSAGE  "
+msgstr ""
+
+#: mainmenu.C:76
+msgid "N - NEW ACCOUNT    "
+msgstr ""
+
+#: mainmenu.C:78
+msgid "A - ADDRESS BOOK   "
+msgstr ""
+
+#: mainmenu.C:80
+msgid "C - CERTIFICATES   "
+msgstr ""
+
+#: mainmenu.C:82
+msgid "S - SETUP          "
+msgstr ""
+
+#: mainmenu.C:84
+msgid "P - MASTER PASSWORD"
+msgstr ""
+
+#: mainmenu.C:89
+msgid "E - ENCRYPTION MENU"
+msgstr ""
+
+#: mainmenu.C:94
+msgid "ADDACCOUNT_K:N"
+msgstr ""
+
+#: mainmenu.C:95
+msgid "New Account"
+msgstr ""
+
+#: mainmenu.C:104
+msgid "CERTIFICATES_K:C"
+msgstr ""
+
+#: mainmenu.C:105
+msgid "Certificates"
+msgstr ""
+
+#: mainmenu.C:109
+msgid "SETUPSCREEN_K:S"
+msgstr ""
+
+#: mainmenu.C:110
+msgid "Setup"
+msgstr ""
+
+#: mainmenu.C:115
+msgid "MASTERPASSWORD_K:P"
+msgstr ""
+
+#: mainmenu.C:116
+msgid "Master Password"
+msgstr ""
+
+#: mainmenu.C:123
+msgid "ENCRYPTION_K:E"
+msgstr ""
+
+#: mainmenu.C:124
+msgid "Encryption"
+msgstr ""
+
+#: mainmenu.C:182
+msgid "Please set up a master password, first"
+msgstr ""
+
+#: mainmenu.C:196
+msgid "Not implemented (OpenSSL 0.9.7 required)"
+msgstr ""
+
+#: mainmenu.C:204
+msgid "Remove master password? (Y/N) "
+msgstr ""
+
+#: mainmenu.C:220
+msgid "Please uninstall all certificates before removing the master password"
+msgstr ""
+
+#: mainmenu.C:230
+msgid "New master password: "
+msgstr ""
+
+#: mainmenu.C:238 mainmenu.C:252
+msgid "Master password NOT set."
+msgstr ""
+
+#: mainmenu.C:244
+msgid "Enter the password again: "
+msgstr ""
+
+#: mainmenu.C:260
+msgid "Passwords don't match!"
+msgstr ""
+
+#: mainmenu.C:270
+msgid "IMAP"
+msgstr ""
+
+#: mainmenu.C:273
+msgid "POP3"
+msgstr ""
+
+#: mainmenu.C:276
+msgid "POP3 maildrop"
+msgstr ""
+
+#: mainmenu.C:279
+msgid "Netnews"
+msgstr ""
+
+#: mainmenu.C:307
+msgid "IMAP_K:I"
+msgstr ""
+
+#: mainmenu.C:308
+msgid "IMAP account"
+msgstr ""
+
+#: mainmenu.C:310
+msgid "POP3_K:P"
+msgstr ""
+
+#: mainmenu.C:311
+msgid "POP3 account"
+msgstr ""
+
+#: mainmenu.C:313
+msgid "POP3MAILDROP_K:M"
+msgstr ""
+
+#: mainmenu.C:315
+msgid "POP3 Maildrop"
+msgstr ""
+
+#: mainmenu.C:317
+msgid "NNTP_K:N"
+msgstr ""
+
+#: mainmenu.C:318
+msgid "NetNews account"
+msgstr ""
+
+#: mainmenu.C:320
+msgid "INBOX:S"
+msgstr ""
+
+#: mainmenu.C:321
+msgid "System mailbox"
+msgstr ""
+
+#: mainmenu.C:323
+msgid "OTHER:O"
+msgstr ""
+
+#: mainmenu.C:324
+msgid "Other mailbox"
+msgstr ""
+
+#: mainmenu.C:394
+msgid "Location: "
+msgstr ""
+
+#: messagesize.C:20
+#, c-format
+msgid "%.1f Mb"
+msgstr ""
+
+#: messagesize.C:22
+#, c-format
+msgid "%lu Kb"
+msgstr ""
+
+#: messagesize.C:24
+#, c-format
+msgid "%lu bytes"
+msgstr ""
+
+#: myfolder.C:168 myfolder.C:187 myfolder.C:202
+msgid "%1%: unable to read snapshot."
+msgstr ""
+
+#: myfolder.C:354
+msgid "Closing folder..."
+msgstr ""
+
+#: myfolder.C:578
+msgid "%1% new message(s) in %2%"
+msgstr ""
+
+#: myfolder.C:634
+msgid "Currently opened message deleted on the server."
+msgstr ""
+
+#: myfolder.C:837
+msgid "Deleting message..."
+msgstr ""
+
+#: myfolder.C:838
+msgid "Undeleting message..."
+msgstr ""
+
+#: myfolder.C:896
+msgid "Updating watch list..."
+msgstr ""
+
+#: myfolder.C:900
+msgid "... done"
+msgstr ""
+
+#: myfolder.C:921
+msgid "Marking message..."
+msgstr ""
+
+#: myfolder.C:922
+msgid "Unmarking message..."
+msgstr ""
+
+#: myfolder.C:959
+msgid "%1% message(s) deleted in %2%"
+msgstr ""
+
+#: myfolder.C:1059
+msgid "%1%: %2%"
+msgstr ""
+
+#: myfolder.C:1083
+msgid "Reading headers..."
+msgstr ""
+
+#: myfolder.C:1148
+msgid "%1%: %2% messages"
+msgstr ""
+
+#: myfolder.C:1178
+msgid "Filtering messages..."
+msgstr ""
+
+#: myfolder.C:1455
+msgid "Downloading message from %1%..."
+msgstr ""
+
+#: myfolder.C:1488
+msgid "Extracting MIME attachments..."
+msgstr ""
+
+#: myfolder.C:2004
+msgid "ERROR: "
+msgstr ""
+
+#: myfolderfilter.C:69 myfolderfilter.C:116 myfolderfilter.C:308
+msgid "Ok."
+msgstr ""
+
+#: myfolderfilter.C:95 myfolderfilter.C:190 myfolderfilter.C:406
+msgid "Filtering aborted."
+msgstr ""
+
+#: myfolderfilter.C:132
+msgid "Destination mail account is not open."
+msgstr ""
+
+#: myfolderfilter.C:173
+msgid "Destination folder does not exist."
+msgstr ""
+
+#: myfolderfilter.C:208 myfolderfilter.C:382 nntpcommand.C:309
+msgid "Ok"
+msgstr ""
+
+#: mymessage.C:474
+msgid "You have %1% message(s) in %2%, open? (Y/N) "
+msgstr ""
+
+#: mymessage.C:506
+msgid "An interrupted message was preserved, resume? (Y/N) "
+msgstr ""
+
+#: myserver.C:130
+msgid "%1% - DISCONNECTED: %2%"
+msgstr ""
+
+#: myserver.C:147
+msgid "%1% - ALERT: %2%"
+msgstr ""
+
+#: myserver.C:932
+msgid "Purging %1%..."
+msgstr ""
+
+#: myservercallback.C:84 myservercallback.C:101
+msgid "%1% of %2%"
+msgstr ""
+
+#: myservercallback.C:105 myservercallback.C:110
+msgid " (%1% done)"
+msgstr ""
+
+#: myservercallback.C:109
+msgid " (%1%; %2% done)"
+msgstr ""
+
+#: myserverlogincallback.C:48
+msgid "Password for %1% (CTRL-C - cancel): "
+msgstr ""
+
+#: myserverlogincallback.C:49
+msgid "Login for %1% (CTRL-C - cancel): "
+msgstr ""
+
+#: myserverremoteconfig.C:121
+msgid "Opening remote configuration..."
+msgstr ""
+
+#: myserverremoteconfig.C:127
+msgid "remote configuration"
+msgstr ""
+
+#: myserverremoteconfig.C:243 myserverremoteconfig.C:469
+msgid "Unable to open the remote configuration folder."
+msgstr ""
+
+#: myserverremoteconfig.C:493
+msgid ""
+"Unable to find remotely-saved configuration file. Remotely-saved "
+"configuration was probably deleted."
+msgstr ""
+
+#: nntpcommand.C:322
+msgid "Posting command failed"
+msgstr ""
+
+#: outputdialog.C:14
+msgid "Press ENTER to continue"
+msgstr ""
+
+#: passwordlist.C:31
+msgid "Master Password (CTRL-C: cancel): "
+msgstr ""
+
+#: passwordlist.C:55
+msgid "Invalid password, try again (CTRL-C: cancel): "
+msgstr ""
+
+#: savedialog.C:22
+msgid "Save As: "
+msgstr ""
+
+#: savedialog.C:23
+msgid "Directory: "
+msgstr ""
+
+#: savedialog.C:43
+msgid "Ambiguous filename pattern (more than one file matches)"
+msgstr ""
+
+#: savedialog.C:54
+msgid "Overwrite existing file? (Y/N) "
+msgstr ""
+
+#: searchcallback.C:38
+msgid "Found %1% messages."
+msgstr ""
+
+#: searchprompt.C:109
+msgid "Search by (NOT): "
+msgstr ""
+
+#: searchprompt.C:110
+msgid "Search by: "
+msgstr ""
+
+#: searchprompt.C:114
+msgid "NOT_K:!"
+msgstr ""
+
+#: searchprompt.C:115
+msgid "NOT"
+msgstr ""
+
+#: searchprompt.C:119
+msgid "select All"
+msgstr ""
+
+#: searchprompt.C:122
+msgid "DATE_K:D"
+msgstr ""
+
+#: searchprompt.C:123
+msgid "Date"
+msgstr ""
+
+#: searchprompt.C:126
+msgid "SIZE_K:Z"
+msgstr ""
+
+#: searchprompt.C:127
+msgid "siZe"
+msgstr ""
+
+#: searchprompt.C:130
+msgid "TEXT_K:T"
+msgstr ""
+
+#: searchprompt.C:131
+msgid "Text"
+msgstr ""
+
+#: searchprompt.C:134
+msgid "STATUS_K:S"
+msgstr ""
+
+#: searchprompt.C:135
+msgid "Status"
+msgstr ""
+
+#: searchprompt.C:176
+msgid "Status: "
+msgstr ""
+
+#: searchprompt.C:178
+msgid "REPLIED_K:R"
+msgstr ""
+
+#: searchprompt.C:179
+msgid "Replied"
+msgstr ""
+
+#: searchprompt.C:182
+msgid "DELETED_K:D"
+msgstr ""
+
+#: searchprompt.C:183
+msgid "Deleted"
+msgstr ""
+
+#: searchprompt.C:186
+msgid "UNREAD_K:U"
+msgstr ""
+
+#: searchprompt.C:187
+msgid "Unread"
+msgstr ""
+
+#: searchprompt.C:224
+msgid "Text search in: "
+msgstr ""
+
+#: searchprompt.C:227
+msgid "SEARCHFROM_K:F"
+msgstr ""
+
+#: searchprompt.C:231
+msgid "SEARCH_TO_K:T"
+msgstr ""
+
+#: searchprompt.C:235
+msgid "SEARCH_CC_K:C"
+msgstr ""
+
+#: searchprompt.C:239
+msgid "SEARCH_BCC_K:B"
+msgstr ""
+
+#: searchprompt.C:243
+msgid "SEARCH_SUBJECT_K:S"
+msgstr ""
+
+#: searchprompt.C:246
+msgid "HEADERKEY_K:H"
+msgstr ""
+
+#: searchprompt.C:247
+msgid "Header"
+msgstr ""
+
+#: searchprompt.C:249
+msgid "CONTENTSKEY_K:O"
+msgstr ""
+
+#: searchprompt.C:250
+msgid "cOntents"
+msgstr ""
+
+#: searchprompt.C:253
+msgid "ANYWHEREKEY_K:A"
+msgstr ""
+
+#: searchprompt.C:254
+msgid "All text"
+msgstr ""
+
+#: searchprompt.C:295
+msgid "Header name: "
+msgstr ""
+
+#: searchprompt.C:300 searchprompt.C:305
+msgid "Contents: "
+msgstr ""
+
+#: searchprompt.C:318
+msgid "Search date: "
+msgstr ""
+
+#: searchprompt.C:320
+msgid "SENTBEFORE_K:1"
+msgstr ""
+
+#: searchprompt.C:321
+msgid "Sent before"
+msgstr ""
+
+#: searchprompt.C:324
+msgid "SENTON_K:2"
+msgstr ""
+
+#: searchprompt.C:325
+msgid "Sent on"
+msgstr ""
+
+#: searchprompt.C:328
+msgid "SENTSINCE_K:3"
+msgstr ""
+
+#: searchprompt.C:329
+msgid "Sent since"
+msgstr ""
+
+#: searchprompt.C:332
+msgid "RECVBEFORE_K:4"
+msgstr ""
+
+#: searchprompt.C:333
+msgid "Recv before"
+msgstr ""
+
+#: searchprompt.C:336
+msgid "RECVON_K:5"
+msgstr ""
+
+#: searchprompt.C:337
+msgid "Recv on"
+msgstr ""
+
+#: searchprompt.C:340
+msgid "RECVSINCE_K:6"
+msgstr ""
+
+#: searchprompt.C:341
+msgid "Recv since"
+msgstr ""
+
+#: searchprompt.C:411
+msgid "Jan"
+msgstr ""
+
+#: searchprompt.C:412
+msgid "Feb"
+msgstr ""
+
+#: searchprompt.C:413
+msgid "Mar"
+msgstr ""
+
+#: searchprompt.C:414
+msgid "Apr"
+msgstr ""
+
+#: searchprompt.C:415
+msgid "May"
+msgstr ""
+
+#: searchprompt.C:416
+msgid "Jun"
+msgstr ""
+
+#: searchprompt.C:417
+msgid "Jul"
+msgstr ""
+
+#: searchprompt.C:418
+msgid "Aug"
+msgstr ""
+
+#: searchprompt.C:419
+msgid "Sep"
+msgstr ""
+
+#: searchprompt.C:420
+msgid "Oct"
+msgstr ""
+
+#: searchprompt.C:421
+msgid "Nov"
+msgstr ""
+
+#: searchprompt.C:422
+msgid "Dec"
+msgstr ""
+
+#: searchprompt.C:449
+msgid "DATEACCEPT_K:SP"
+msgstr ""
+
+#: searchprompt.C:450
+msgid "Accept"
+msgstr ""
+
+#: searchprompt.C:452
+msgid "DAYDEC_K:-"
+msgstr ""
+
+#: searchprompt.C:453
+msgid "Prev day"
+msgstr ""
+
+#: searchprompt.C:456
+msgid "DAYINC_K:+"
+msgstr ""
+
+#: searchprompt.C:457
+msgid "Next day"
+msgstr ""
+
+#: searchprompt.C:460
+msgid "MONDEC_K:["
+msgstr ""
+
+#: searchprompt.C:461
+msgid "Prev month"
+msgstr ""
+
+#: searchprompt.C:464
+msgid "MONINC_K:]"
+msgstr ""
+
+#: searchprompt.C:465
+msgid "Next month"
+msgstr ""
+
+#: searchprompt.C:468
+msgid "YEARDEC_K:<"
+msgstr ""
+
+#: searchprompt.C:469
+msgid "Prev year"
+msgstr ""
+
+#: searchprompt.C:472
+msgid "YEARINC_K:>"
+msgstr ""
+
+#: searchprompt.C:473
+msgid "Next year"
+msgstr ""
+
+#: searchprompt.C:614
+msgid "Size: "
+msgstr ""
+
+#: searchprompt.C:616
+msgid "LARGER_K:L"
+msgstr ""
+
+#: searchprompt.C:617
+msgid "Larger than"
+msgstr ""
+
+#: searchprompt.C:620
+msgid "SMALLER_K:S"
+msgstr ""
+
+#: searchprompt.C:621
+msgid "Smaller than"
+msgstr ""
+
+#: searchprompt.C:633
+msgid "Smaller than: "
+msgstr ""
+
+#: searchprompt.C:640
+msgid "Larger than: "
+msgstr ""
+
+#: specialfolder.C:115
+msgid "OK"
+msgstr ""
+
+#: specialfolder.C:169
+msgid "No servers available for special folders"
+msgstr ""
+
+#: specialfolder.C:207
+msgid "%1% does not have a hierarchy for special folders."
+msgstr ""
+
+#: spellcheckerNone.C:15
+msgid "Spell checking disabled"
+msgstr ""
+
+#: tags.C:17
+msgid "Normal"
+msgstr ""
+
+#: tags.C:18
+msgid "Important"
+msgstr ""
+
+#: tags.C:19
+msgid "Work"
+msgstr ""
+
+#: tags.C:20
+msgid "Personal"
+msgstr ""
+
+#: tags.C:21
+msgid "To Do"
+msgstr ""
+
+#: tags.C:22
+msgid "Later"
+msgstr ""
+
+#: tags.C:23
+msgid "Custom1"
+msgstr ""
+
+#: tags.C:24
+msgid "Custom2"
+msgstr ""
+
+#: tags.C:25
+msgid "Custom3"
+msgstr ""
+
+#: tags.C:26
+msgid "Custom4"
+msgstr ""

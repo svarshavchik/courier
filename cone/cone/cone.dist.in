@@ -1,0 +1,207 @@
+##VERSION: $Id:$
+#
+# cone configuration file created from cone.dist by sysconftool
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+#  Copyright 2003-2008 Double Precision, Inc.  See COPYING for
+#  distribution information.
+#
+#  This configuration file sets various options for CONE.  Most of these
+#  options are SSL-related.  This file is typically installed as
+#  @sysconfdir@/cone, if $HOME/.conerc exists it will override
+#  the settings in this file.
+#
+#  This is basically a shell script, that initializes environment variables.
+#  Local changes to the specific environment variables may be made directly
+#  below.  Additional environment variable initialization or scripting may
+#  be placed in the LOCAL section at the end of this file.
+#
+#
+#########################################################################
+
+##NAME: CONE_AUTOLDAP:0
+#
+# Define this variable to automatically set up an LDAP-based address book,
+# by default.
+#
+# CONE_AUTOLDAP="name=hostname/suffix"
+#
+# name - the nickname for the address book, company name, etc...
+# hostname - ldap server hostname
+# suffix - ldap search root
+
+##NAME: CONE_UNDERLINEHACK:0
+#
+# Set UNDERLINE_HACK=1 to use U+0x00A0 in place of spaces when showing
+# underlined whitespace. Recent versions of gnome terminal have a bug
+# where whitespace is not underlined
+
+UNDERLINE_HACK=0
+
+##NAME: TLS_PROTOCOL:0
+# 
+# TLS_PROTOCOL sets the protocol version.  The possible versions are:
+#
+# OpenSSL:
+#
+# SSL3 - SSLv3
+# SSL23 - either SSLv2 or SSLv3 (also TLS1, it seems)
+# TLS1 - TLS1
+#
+# GnuTLS:
+#
+# SSL3 - SSLv3
+# TLS1 - TLS 1.0
+# TLS1_1 TLS 1.1
+#
+# When compiled against GnuTLS, multiple protocols can be selected as follows:
+#
+# TLS_PROTOCOL="TLS1_1:TLS1:SSL3"
+
+##NAME: TLS_STARTTLS_PROTOCOL:0
+ 
+# TLS_STARTTLS_PROTOCOL is used instead of TLS_PROTOCOL for the IMAP STARTTLS
+# extension, as opposed to IMAP over SSL on port 993.
+#
+# It takes the same values for OpenSSL/GnuTLS as TLS_PROTOCOL
+
+TLS_STARTTLS_PROTOCOL=TLS1
+
+##NAME: TLS_CIPHER_LIST:0
+#
+# TLS_CIPHER_LIST optionally sets the list of ciphers to be used by the
+# OpenSSL library.  In most situations you can leave TLS_CIPHER_LIST
+# undefined
+#
+# OpenSSL:
+#
+# TLS_CIPHER_LIST="SSLv3:TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
+#
+# GnuTLS:
+#
+# TLS_CIPHER_LIST="HIGH:MEDIUM"
+#
+# The actual list of available ciphers depend on the options GnuTLS was
+# compiled against. The possible ciphers are:
+#
+# AES256, 3DES, AES128, ARC128, ARC40, RC2, DES, NULL
+#
+# Also, the following aliases:
+#
+# HIGH -- all ciphers that use more than a 128 bit key size
+# MEDIUM -- all ciphers that use a 128 bit key size
+# LOW -- all ciphers that use fewer than a 128 bit key size, the NULL cipher
+#        is not included
+# ALL -- all ciphers except the NULL cipher
+
+##NAME: TLS_MIN_DH_BITS:0
+#
+# TLS_MIN_DH_BITS=n
+#
+# GnuTLS only:
+#
+# Set the minimum number of acceptable bits for a DH key exchange.
+#
+# GnuTLS's compiled-in default is 727 bits (as of GnuTLS 1.6.3). Some server
+# have been encountered that offer 512 bit keys. You may have to set
+# TLS_MIN_DH_BITS=512 here, if necessary.
+
+##NAME: TLS_KX_LIST:0
+#
+# GnuTLS only:
+#
+# Allowed key exchange protocols. The default of "ALL" should be sufficient.
+# The list of supported key exchange protocols depends on the options GnuTLS
+# was compiled against, but may include the following:
+#
+# DHERSA, DHEDSS, RSA, SRP, SRPRSA, SRPDSS, PSK, DHEPSK, ANONDH, RSAEXPORT
+
+TLS_KX_LIST=ALL
+
+##NAME: TLS_COMPRESSION:0
+#
+# GnuTLS only:
+#
+# Optional compression. "ALL" selects all available compression methods.
+#
+# Available compression methods: DEFLATE, LZO, NULL
+
+TLS_COMPRESSION=ALL
+
+##NAME: TLS_CERTS:0
+#
+# GnuTLS only:
+#
+# Supported certificate types are X509 and OPENPGP.
+#
+# OPENPGP has not been tested
+
+TLS_CERTS=X509
+
+##NAME: TLS_TIMEOUT:0
+# TLS_TIMEOUT is currently not implemented, and reserved for future use.
+# This is supposed to be an inactivity timeout, but its not yet implemented.
+#
+
+##NAME: TLS_DHCERTFILE:0
+#
+# TLS_DHCERTFILE - PEM file that stores a Diffie-Hellman -based certificate.
+# When OpenSSL is compiled to use Diffie-Hellman ciphers instead of RSA
+# you must generate a DH pair that will be used.  In most situations the
+# DH pair is to be treated as confidential, and the file specified by
+# TLS_DHCERTFILE must not be world-readable.
+#
+# TLS_DHCERTFILE=
+
+##NAME: TLS_CERTFILE:0
+#
+# TLS_CERTFILE - certificate to use.
+#
+# For diagnostic purposes only.
+#
+# Use the "CERTIFICATES" option in the main menu to load client certificates
+# into Cone, then choose one of the loaded certificates for each account.
+
+##NAME: TLS_TRUSTCERTS:1
+#
+# TLS_TRUSTCERTS=pathname - load trusted certificates from pathname.
+# Use this setting to define SSL certificate authorities
+
+TLS_TRUSTCERTS=@cacerts@
+
+##NAME: TLS_VERIFYPEER:0
+#
+# TLS_VERIFYPEER - how to verify client certificates.  The possible values of
+# this setting are:
+#
+# NONE - do not verify anything
+#
+# PEER - verify the client certificate, if one's presented
+#
+# REQUIREPEER - require a client certificate, fail if one's not presented
+#
+# (NOTE: PEER and REQUIREPEER require that TLS_TRUSTCERTS must be set)
+#
+TLS_VERIFYPEER=NONE
+
+##NAME: TLS_CACHE:0
+#
+# A TLS/SSL session cache may slightly improve response with multiple
+# encrypted sessions to the same server.  TLS_CACHEFILE will be
+# automatically created, TLS_CACHESIZE bytes long, and used as a cache
+# buffer.
+#
+# This is an experimental feature and should be disabled if it causes
+# problems with SSL servers.  Disable SSL caching by commenting out the
+# following settings:
+
+TLS_CACHEFILE=$HOME/.cone/sslcache
+TLS_CACHESIZE=524288
+
+##NAME: LOCAL:0
+#
+# Additional site-specific initialization code may be placed below
+#
+

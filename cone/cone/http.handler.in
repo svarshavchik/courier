@@ -1,0 +1,36 @@
+#! @SHELL@
+#
+#
+# Copyright 2005, Double Precision Inc.
+#
+# See COPYING for distribution information.
+#
+# Sample Cone URL handler.
+#
+# Searches for "firefox", then "mozilla", and runs whatever it finds.
+
+prog="`which firefox 2>/dev/null`"
+
+if test "$prog" = ""
+then
+	prog="`which mozilla 2>/dev/null`"
+fi
+
+# Debian?
+
+for f in /etc/alternatives/x-www-browser /etc/alternatives/www-browser
+do
+	if test -x $f
+	then
+		prog=$f
+	fi
+done
+
+if test "$prog" = ""
+then
+	exit 1
+fi
+
+$prog "$1" &
+exit 0
+

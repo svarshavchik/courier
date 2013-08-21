@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <title>@PACKAGE@ @VERSION@ - Outbound ESMTP</title>
+  <!--
+
+  [#SAVED=<span style="color: #008000">Saved</span>#]
+  [#BADDOMAIN=<span style="color: #ffff00">Error: invalid domain/IP address</span>#]
+  [#DELETE=- delete#]
+
+  [#SECONDS=seconds#]
+  [#MINUTES=minutes#]
+  [#HOURS=hours#]
+
+  [#SECURE=<span style="color: #808000">(secure connection)</span>#]
+  [#UNSECURE=<em>do not use STARTTLS</em>#]
+  [#UP=Up#]
+  [#DOWN=Down#]
+  [#DEFAULTSMARTHOST=<em>default smarthost</em>#]
+  [#DEFAULTMX=<em>use MX records</em>#]
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<h1><tt>@PACKAGE@ @VERSION@</tt> - Outbound ESMTP</h1>
+@ERROR@
+
+<form method="post" action="31esmtp">
+
+  <table cellspacing="16" cellpadding="0" border="0">
+    <tbody>
+      <tr>
+        <td>Retry delay for unreachable domains:</td>
+        <td>@ESMTPDELAY@ (default: 5 mins)</td>
+      </tr>
+      <tr>
+        <td>Connection timeout:</td>
+        <td>@ESMTPTIMEOUTCONNECT@ (default: 1 min)</td>
+      </tr>
+      <tr>
+        <td>EHLO/HELO timeout:</td>
+        <td>@ESMTPTIMEOUTHELO@ (default: 5 mins)</td>
+      </tr>
+      <tr>
+        <td>HELO identification:</td>
+        <td><input type="text" size="20" name="ESMTPHELO"
+        value="@ESMTPHELO@" /></td>
+      </tr>
+      <tr>
+        <td>Keep session alive after message the is sent:</td>
+        <td>@ESMTPTIMEOUTKEEPALIVE@ (default: 1 min)</td>
+      </tr>
+      <tr>
+        <td>Keep session busy by sending RSETs every:</td>
+        <td>@ESMTPTIMEOUTKEEPALIVEPING@ (default: 0-disable)</td>
+      </tr>
+      <tr>
+        <td>Timeout for the QUIT command:</td>
+        <td>@ESMTPTIMEOUTQUIT@ (default: 5 seconds)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="Save" /></form>
+
+<h2>Smarthosting/routing</h2>
+
+<div style="margin-left: 3.5em;">
+  @ESMTPROUTES@</div>
+
+<form method="post" action="31esmtp">
+
+  <table>
+    <tbody>
+      <tr>
+        <th valign="middle">Add:</th>
+        <td valign="middle"><input type="radio" name="AddRoute"
+          value="EXPLICIT" /> To:<input type="text" size="20" name="domain" /><br />
+          <input type="radio" name="AddRoute" value="DEFAULT" /> Default
+          smarthost</td>
+        <td valign="middle">Route via:</td>
+        <td valign="middle">
+          <table border="0" cellpadding="0" cellspacing="0">
+            <tbody>
+              <tr>
+                <td valign="middle">Domain: </td>
+                <td> </td>
+                <td valign="middle"><input type="text" size="20"
+                  name="routedomain" /></td>
+                <td> </td>
+              </tr>
+              <tr>
+                <td colspan="4"> </td>
+              </tr>
+              <tr>
+                <td valign="middle">IP: </td>
+                <td valign="middle">[</td>
+                <td valign="middle" width="1"><input type="text" size="20"
+                  name="routeip" /></td>
+                <td valign="middle">]</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+        <td valign="middle">Port: <input type="text" size="3"
+        name="port" /></td>
+        <td valign="middle"><input type="checkbox"
+          name="SECURITYSTARTTLS" /> Use a <a target="_blank"
+          href="http://www.courier-mta.org/install.html#esmtpsecurity">secure
+          connection</a>. <br />
+          <input type="checkbox" name="SECURITYNONE" /> Do not use STARTTLS for
+          this destination.</td>
+      </tr>
+      <tr>
+        <td colspan="3"> </td>
+        <td align="right">(default: use MX records)</td>
+        <td colspan="2"> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="Save" /></form>
+<hr />
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone04writemessage">
+  <title>Write Message Screen</title>
+
+  &cone-write;
+
+  <section>
+    <title>Write Message Screen</title>
+
+    <programlisting>
+::B::
+ EDIT MESSAGE                         CONE
+             To: John Smith &lt;jsmith@domain.com&gt;
+             Cc:
+        Subject: Re: Patch for filtering module
+    Attachments:
+----------------------------------------------------------------------------
+Jeff Williams writes:
+
+&gt; This patch puts the user lookups into their own functions. Means that
+&gt; the config files are only read if the user is not found be an earlier
+&gt; lookup. It would also make it easier to add support to control the
+&gt; type/order of lookups at runtime, rather than always looking for the
+&gt; search modules in their built-in order.
+&gt;
+&gt; --
+&gt; Regards,
+&gt;
+&gt; John Smith
+
+
+
+::B::
+
+^  Mark         ^F Full Hdrs    ^J Justify      ^P Postpone     ^S Search
+^D Dict Spell   ^G Insert File  ^K Line Clear   ^R Srch/Rplce   ^O mOre
+</programlisting>
+
+    <para>
+The following keys are available from this screen:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>SPACE</keycap>,
+<keycap>CTRL</keycap>-<keycap>W</keycap>,
+<keycap>CTRL</keycap>-<keycap>Y</keycap></term>
+	<listitem>
+	  <para>
+<keycap>CTRL</keycap>-<keycap>SPACE</keycap>
+marks the starting position of a range of text.
+To delete a block of text: move the cursor
+to the beginning of the block of text,
+press <keycap>CTRL</keycap>-<keycap>SPACE</keycap>,
+move the cursor to the end of text, press
+<keycap>CTRL</keycap>-<keycap>W</keycap>.
+To re-insert this text someplace else, move the cursor to the insertion point
+and press
+<keycap>CTRL</keycap>-<keycap>Y</keycap> (yank).</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>C</keycap></term>
+	<listitem>
+	  <para>
+Cancel composition of the current message.
+Everything is thrown away, and this screen is closed.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>D</keycap></term>
+	<listitem>
+	  <para>
+Starts the spell checker (dictionary lookup).
+Text starting with the cursor position, and until the end of the message,
+is spell-checked.
+Words that are not found in the dictionary are highlighted, and the status
+line lists up to ten suggested replacement words.
+To replace the highlighted word with one of the suggestions, press the number
+corresponding to the suggested replacement, or:
+press <keycap>I</keycap> to ignore this occurence of the misspelled word;
+press <keycap>A</keycap> to ignore all occurencer of the misspelled word,
+press <keycap>R</keycap> to replace the misspelled word with a manually-entered
+replacement.</para>
+
+	  <para>
+Note: quoted text
+in replies (lines that begin with the <quote>&gt;</quote> character),
+are not spell-checked.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>F</keycap></term>
+	<listitem>
+	  <para>
+Turn display of full headers on/off.
+Initially, only the <quote>To:</quote>, <quote>Cc:</quote>, and
+<quote>Subject:</quote> headers are shown.
+<keycap>CTRL</keycap>-<keycap>F</keycap> shows additional headers:
+<quote>From:</quote>, <quote>Reply-To:</quote>, <quote>Bcc:</quote>,
+and <quote>Fcc:</quote>.</para>
+
+	  <para>
+The <quote>Fcc:</quote> header specifies the folder where a copy of the
+message is saved, after it's sent.
+One of the defined <quote>Sent Mail</quote> special folders is listed in
+this header.  Highlight this header with the cursor, and press
+<keycap>ENTER</keycap> to cycle through the list of available
+<quote>Sent Mail</quote> special folders.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>G</keycap></term>
+	<listitem>
+	  <para>
+This key (<quote>get</quote>) inserts a file into the current text document,
+at the current cursor position.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>J</keycap></term>
+	<listitem>
+	  <para>
+Re-justifies the current paragraph.
+&app; uses <quote>lazy</quote> word-wrapping.
+&app; word-wraps long lines when new text is being added; however when
+deleting text short lines are not re-wrapped.
+Pressing this key re-formats the current paragraph to the optimal line length,
+taking into account all previous editing.</para>
+
+	  <para>
+&app; will not re-justify quoted text in replies.
+Remove the leading quote characters, <quote>&gt;</quote>, justify, then
+re-insert the quote characters, if necessary.</para>
+
+	  <para>
+Technical note: messages composed in &app; are marked as
+<quote>flowed-text</quote>
+MIME plain text.
+This format uses invisible trailing whitespace to tag paragraph breaks.
+Mail readers that support <quote>flowed-text</quote> format (of which
+&app; is one), are capable of automatically reformatting flowed text into
+a variable-width display.
+When composing new text, &app; automatically inserts the appropriate
+invisible whitespace characters, as needed.
+Extensive editing may inadvertently delete the flowed-text
+<quote>watermarks</quote>, resulting in a line, or two, not wrapping properly
+on the expected margin break.
+<keycap>CTRL</keycap>-<keycap>J</keycap> reformats the current paragraph,
+and makes sure that everything is in proper order, automatically restoring
+any deleted flowed-text trailing whitespace.</para>
+
+	  <para>
+Liberal use of <keycap>CTRL</keycap>-<keycap>J</keycap> during editing is
+highly encouraged.
+Not only does this make written text look good, it makes new text look
+extra-good, in modern mail clients that know how to read flowed-text formatted
+messages.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>K</keycap></term>
+	<listitem>
+	  <para>
+Delete text between the current cursor position, and the end of the
+line.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>S</keycap>,
+<keycap>CTRL</keycap>-<keycap>R</keycap></term>
+	<listitem>
+	  <para>
+Search for a text string starting at the current cursor position,
+or search and replace text.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>N</keycap></term>
+	  <listitem>
+	    <para>
+Define a new macro.
+First, define a text range using
+<keycap>CTRL</keycap>-<keycap>SPACE</keycap> and cursor keys.
+With the text range highlighted, press
+<keycap>CTRL</keycap>-<keycap>N</keycap>, type in a short abbreviation,
+then press <keycap>ENTER</keycap>.</para>
+
+	    <para>
+The text range will be memorized, and from this point on, typing the
+abbreviation will automatically insert the memorized range.</para>
+
+	    <note>
+	      <para>
+The abbreviation cannot contain spaces or tabs (the text range itself
+may contain anything, only the abbreviation cannot have spaces).</para>
+
+	      <para>
+The memorized text range is inserted verbatim, without reformatting.
+If memorized text is inserted in a middle of a
+line, it may be necessary to use <keycap>CTRL</keycap>-<keycap>J</keycap>
+to re-justify the text.</para>
+	    </note>
+
+	    <para>
+If the keyboard has function keys, it is possible to press a
+function key instead of entering an abbreviation; and use the
+same function key
+to insert the memorized text.</para>
+
+	    <note>
+	      <para>
+Not all function keys may be available in every situation.
+<application>gnome-terminal</application>, for example, appropriates
+<keycap>F1</keycap> for its own online help pages; so
+<keycap>F1</keycap> is not available to applications running in a
+<application>gnome-terminal</application> window.</para>
+	    </note>
+
+	    <para>
+To re-define a macro, highlight another text range, press
+<keycap>CTRL</keycap>-<keycap>N</keycap>, then enter the same abbreviation,
+or press the same function key.</para>
+
+	    <para>
+Macros can be deleted from the main setup screen in &app;.</para>
+	  </listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>T</keycap></term>
+	<listitem>
+	  <para>
+Highlight the <quote>Attachments:</quote> header and press
+<keycap>CTRL</keycap>-<keycap>T</keycap> to create an attachment by picking
+a file from an interactive dialog that shows all files in the current
+directory.
+Move the cursor to highlight a subdirectory, or the parent directory, and
+press <keycap>ENTER</keycap> to switch to a different directory.
+Highlight a file to read the file and attach it to the current message.</para>
+
+	  <para>
+The attachment filename may also be typed directly into the file selection
+dialog.
+The attachment filename, relative to the home directory,
+may also be typed directly into the <quote>Attachments:</quote> header,
+instead of pressing <keycap>CTRL</keycap>-<keycap>T</keycap>.</para>
+
+	    <para>
+On most systems it is possible to attach multiple files at the same time
+by entering a filename pattern, such as <quote>*.txt</quote> - which selects
+all files that end in <quote>.txt</quote>.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term><keycap>CTRL</keycap>-<keycap>U</keycap></term>
+	  <listitem>
+	    <para>
+Runs an external editor application, to edit the contents of this message.
+An external editor must be previously configured by choosing the
+<quote>Setup</quote> selection from &app;'s main menu.</para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term><keycap>CTRL</keycap>-<keycap>X</keycap></term>
+	<listitem>
+	  <para>
+When all is said and done, <keycap>CTRL</keycap>-<keycap>X</keycap> sends
+the message.
+One, final chance, is offered to cancel, and change one's mind.
+If the mail server supports
+<ulink url="http://www.rfc-editor.org/rfc/rfc1891.txt">Delivery
+Status Notifications</ulink>, press <keycap>D</keycap> to select
+delivery notifications options.
+Where available, press <keycap>E</keycap> to encrypt the message, and/or
+press <keycap>S</keycap> to sign the message, using
+<application>GnuPG</application>.</para>
+
+	    <para>
+Encryption/signing options, if available, must be selected before setting
+any delivery status notification options.</para>
+
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+</chapter>

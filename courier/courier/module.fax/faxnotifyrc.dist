@@ -1,0 +1,59 @@
+##VERSION: $Id:$
+#
+# faxnotifyrc created from faxnotifyrc.dist by sysconftool
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+#  Copyright 2002 Double Precision, Inc.  See COPYING for
+#  distribution information.
+#
+#
+# This configuration file sets up options for Courier's new_fax script.
+# This is an optional script that can be installed as mgetty's new_fax
+# script to automatically convert incoming faxes to PNG files, and mail
+# them to the selected recipient.
+#
+# Consult mgetty's documentation for instructions how to install a new_fax
+# notification script.  The default mgetty configuration installs the new_fax
+# script either in /etc/mgetty+sendfax/new_fax or
+# /usr/local/lib/etc/mgetty+sendfax/new_fax.
+#
+#
+
+##NAME: DODELETE:0
+#
+# Set DODELETE to 1 to remove fax files from mgetty's incoming spool directory,
+# after the notification mail is sent
+#
+DODELETE=1
+
+##NAME: FROM:0
+#
+# The envelope return address on the notification mail
+#
+MAILFROM=""
+
+##NAME: TO:0
+#
+# The recipient address
+#
+RCPTTO="postmaster"
+
+##NAME: FROMHDR:0
+#
+# The From: header on the notification mail
+
+FROMHDR="\"Fax Administrator\" <postmaster>"
+
+##NAME: TOHDR:0
+#
+# The To: header on the notification mail
+
+TOHDR="\"Fax Administrator\" <postmaster>"
+
+##NAME: SUBJECTHDR:0
+#
+# The Subject: header on the notification mail
+
+SUBJECTHDR="New fax received"

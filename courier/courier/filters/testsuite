@@ -1,0 +1,44 @@
+rm -f testsuite.msg1 testsuite.msg2
+cat >testsuite.msg1 <<EOF
+From: nobody@example.com
+To: nobody@example.com
+Subject: test
+
+testa
+EOF
+
+cat >testsuite.msg2 <<EOF
+From: nobody@example.com
+To: nobody@example.com
+Subject: test
+
+testb
+EOF
+
+echo "M1" >testsuite.msgid1
+echo "M2" >testsuite.msgid2
+echo "M3" >testsuite.msgid3
+echo "M4" >testsuite.msgid4
+echo "M5" >testsuite.msgid5
+echo "M6" >testsuite.msgid6
+
+./dupfilter test <<EOF
+./testsuite.msg1
+testsuite.msgid1
+testsuite.msgid2
+
+./testsuite.msg1
+testsuite.msgid3
+
+./testsuite.msg1
+testsuite.msgid4
+
+./testsuite.msg2
+testsuite.msgid5
+
+./testsuite.msg1
+testsuite.msgid6
+
+EOF
+rm -f testsuite.msgid*
+rm -f testsuite.msg[12]

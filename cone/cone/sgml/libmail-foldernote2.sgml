@@ -1,0 +1,9 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <note>
+	<para>
+Folders may only be recreated by <structname>mail::account</structname>
+objects that reference the same mail account referenced by the
+original <structname>mail::folder</structname> object.</para>
+      </note>

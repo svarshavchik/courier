@@ -1,0 +1,359 @@
+#
+# Copyright 1998 - 2012 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+#  Need to version-upgrade RH builds due to different directory locations.
+#
+
+%define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
+# check if SuSE is installed. If not, set a dummy suse_version to null, else use the given value from SuSE.
+%if ! %([ -e /etc/SuSE-release ] && echo 1 || echo 0)
+%define suse_version 0
+%endif
+
+%if %suse_version
+%define courier_release .suse%{suse_version}
+%else
+%if %is_not_mandrake
+%define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
+%else
+%define courier_release mdk
+%endif
+%endif
+
+%define using_systemd %(test -d /etc/systemd && echo 1 || echo 0)
+
+%define _missing_doc_files_terminate_build 1
+%define _unpackaged_files_terminate_build 1
+
+Summary: Courier-IMAP @VERSION@ IMAP server
+Name: @PACKAGE@
+Version: @VERSION@
+Release: 1%{courier_release}
+License: GPL
+Group: Applications/Mail
+Source: %{name}-@VERSION@.tar.bz2
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Requires: fileutils textutils sh-utils sed
+%if %suse_version
+Requires(post): /sbin/chkconfig
+Requires(preun): /sbin/chkconfig
+Requires(postun): /sbin/chkconfig
+%else
+%if %using_systemd
+Requires: /bin/systemctl
+%endif
+%endif
+Requires: courier-authlib >= 0.60.6.20080629
+BuildRequires: textutils fileutils perl
+BuildRequires: courier-authlib-devel >= 0.60.6.20080629
+BuildRequires: libidn-devel
+
+%define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
+
+%if %use_openssl
+BuildRequires:      openssl
+BuildRequires:      openssl-devel
+%else
+BuildRequires:      gnutls-devel /usr/bin/certtool
+Requires:	  /usr/bin/certtool
+%endif
+
+Obsoletes: %{name}-ldap
+Obsoletes: %{name}-mysql
+Obsoletes: %{name}-pgsql
+
+%if %suse_version
+BuildRequires: rpm >= 3.0.5 /usr/bin/sed %([ %{suse_version} -gt 819 ] && echo /usr/include/fam.h)
+%else
+BuildRequires: rpm >= 4.0.2 sed /usr/include/fam.h
+%endif
+
+#  RH 7.0 resets sysconfdir & mandir, put them back where they belong
+
+%define _sysconfdir %{_prefix}/etc
+%define	_mandir %{_prefix}/man
+
+%define	_prefix	/usr/lib/courier-imap
+
+%define _localstatedir /var/run
+
+%define initdir %(if test -d /etc/init.d/. ; then echo /etc/init.d ; else echo /etc/rc.d/init.d ; fi)
+
+%define pamconfdir	/etc/pam.d
+#
+# SuSE specific settings
+%if %suse_version
+# some templates for SuSE distribs.
+%define templdir	${RPM_BUILD_DIR}/%{name}-@VERSION@/packaging/suse
+%define _sysconfdir	/etc/courier-imap
+%define	_mandir		/usr/share/man
+%define initlndir	/usr/sbin
+%endif
+
+%description
+Courier-IMAP is an IMAP server for Maildir mailboxes.  This package contains
+the standalone version of the IMAP server that's included in the Courier
+mail server package.  This package is a standalone version for use with
+other mail servers.  Do not install this package if you intend to install the
+full Courier mail server.  Install the Courier package instead.
+
+%prep
+
+%setup -q
+
+%if %(test '%{xflags}' = '%%{xflags}' && echo 1 || echo 0)
+%define xflags %{nil}
+%endif
+
+PATH=/usr/bin:$PATH %configure \
+	--with-redhat \
+	%{?xflags: %{xflags}}
+
+%build
+%{__make} %{_smp_mflags}
+%{__make} check
+
+%install
+
+%{__rm} -rf $RPM_BUILD_ROOT
+%{__mkdir_p} $RPM_BUILD_ROOT%{pamconfdir}
+%{__mkdir_p} $RPM_BUILD_ROOT%{initdir}
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
+
+%if %using_systemd
+%{__mkdir_p} $RPM_BUILD_ROOT%{_datadir}
+%{__mkdir_p} $RPM_BUILD_ROOT/lib/systemd/system
+%endif
+
+#
+# Red Hat or SuSE like init.d file.
+%if %suse_version
+# Create SuSE courier-imap start script and a link in /usr/sbin
+%{__mkdir_p} ${RPM_BUILD_ROOT}%{initlndir}
+install -Dm 744 %{templdir}/courier-imap.init ${RPM_BUILD_ROOT}/%{initdir}/courier-imap && \
+ln -sf %{initdir}/courier-imap ${RPM_BUILD_ROOT}%{initlndir}/rccourier-imap \
+#
+# Fix for SuSE like pam file look.
+install -Dm 644 %{templdir}/pop3.pam $RPM_BUILD_ROOT%{pamconfdir}/pop3
+install -Dm 644 %{templdir}/imap.pam $RPM_BUILD_ROOT%{pamconfdir}/imap
+%else
+# Copy standard sysvinit file
+%if %using_systemd
+install -Dm 755 packaging/systemd/courier-imap.sysvinit $RPM_BUILD_ROOT/%{_datadir}
+install -Dm 644 packaging/systemd/courier-imap.service $RPM_BUILD_ROOT/lib/systemd/system
+%else
+install -Dm 744 packaging/systemd/courier-imap.sysvinit $RPM_BUILD_ROOT/%{initdir}/courier-imap
+%endif
+%endif
+
+#
+# Fix imapd.dist
+#
+
+%{__sed} 's/^IMAPDSTART=.*/IMAPDSTART=YES/' \
+	<$RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist \
+	>$RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist.tmp
+
+%{__mv} $RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist.tmp \
+	$RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist
+
+%{__sed} 's/^IMAPDSSLSTART=.*/IMAPDSSLSTART=YES/' \
+	<$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist \
+	>$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist.tmp
+
+%{__mv} $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist.tmp \
+	$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
+
+%{__chmod} 600 $RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist
+%{__chmod} 600 $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
+
+%{__sed} 's/^POP3DSTART=.*/POP3DSTART=YES/' \
+	<$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist \
+	>$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist.tmp
+
+%{__mv} $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist.tmp \
+	$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist
+
+%{__sed} 's/^POP3DSSLSTART=.*/POP3DSSLSTART=YES/' \
+	<$RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist \
+	>$RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist.tmp
+
+%{__mv} $RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist.tmp \
+	$RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist
+
+%{__chmod} 600 $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist
+%{__chmod} 600 $RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist
+
+#
+# Red Hat /etc/profile.d scripts
+#
+
+%{__mkdir_p} $RPM_BUILD_ROOT/etc/profile.d
+%{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier-imap.sh <<EOF
+if echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
+then
+	:
+else
+	MANPATH="%{_mandir}:\$MANPATH"
+	export MANPATH
+	PATH="%{_bindir}:\$PATH"
+	if test -w /etc
+	then
+		PATH="%{_sbindir}:\$PATH"
+	fi
+	export PATH
+fi
+EOF
+
+%{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier-imap.csh <<EOF
+
+if ( \$?MANPATH ) then
+	true
+else
+	setenv MANPATH ""
+endif
+
+echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
+
+if ( \$? ) then
+	true
+else
+	setenv MANPATH "%{_mandir}:\$MANPATH"
+	setenv PATH "%{_bindir}:\$PATH"
+	test -w /etc
+	if ( \$? ) then
+		true
+	else
+		setenv PATH "%{_sbindir}:\$PATH"
+	endif
+endif
+EOF
+
+%{__cp} libs/imap/README README.imap
+%{__cp} libs/imap/README.proxy* .
+%{__cp} libs/maildir/README.maildirquota.txt README.maildirquota
+%{__cp} libs/maildir/README.sharedfolders.txt README.sharedfolders
+
+####
+## Create config files for sysconftool-rpmupgrade (see below)
+
+mkdir -p $RPM_BUILD_ROOT%{_datadir}
+%{__cp} -f sysconftool $RPM_BUILD_ROOT%{_datadir}/sysconftool
+%{__chmod} 555 $RPM_BUILD_ROOT%{_datadir}/sysconftool
+%{__cat} >$RPM_BUILD_ROOT%{_datadir}/configlist <<EOF
+%{_sysconfdir}/imapd.dist
+%{_sysconfdir}/imapd-ssl.dist
+%{_sysconfdir}/pop3d.dist
+%{_sysconfdir}/pop3d-ssl.dist
+EOF
+
+%{__chmod} 644 $RPM_BUILD_ROOT%{_datadir}/configlist*
+
+%{__mkdir_p} $RPM_BUILD_ROOT%{_localstatedir}
+touch $RPM_BUILD_ROOT%{_localstatedir}/imapd.pid
+touch $RPM_BUILD_ROOT%{_localstatedir}/imapd-ssl.pid
+touch $RPM_BUILD_ROOT%{_localstatedir}/imapd.pid.lock
+touch $RPM_BUILD_ROOT%{_localstatedir}/imapd-ssl.pid.lock
+
+touch $RPM_BUILD_ROOT%{_localstatedir}/pop3d.pid
+touch $RPM_BUILD_ROOT%{_localstatedir}/pop3d-ssl.pid
+touch $RPM_BUILD_ROOT%{_localstatedir}/pop3d.pid.lock
+touch $RPM_BUILD_ROOT%{_localstatedir}/pop3d-ssl.pid.lock
+
+%post
+%if %using_systemd
+if test -f %{initdir}/courier-imap
+then
+# Update to systemd
+
+	/sbin/chkconfig --del courier-imap || :
+	/bin/systemctl stop courier-imap.service || :
+fi
+%{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist` >/dev/null
+/bin/systemctl daemon-reload &> /dev/null || :
+/bin/systemctl enable courier-imap.service &> /dev/null || :
+%else
+/sbin/chkconfig --del courier-imap
+/sbin/chkconfig --add courier-imap
+%{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist` >/dev/null
+%endif	
+%preun
+%if %using_systemd
+if test "$1" = "0"
+then
+	rm -f %{_localstatedir}/couriersslcache
+	/bin/systemctl stop courier-imap.service
+	/bin/systemctl disable courier-imap.service
+fi
+%else
+if test "$1" = "0"
+then
+	rm -f %{_localstatedir}/couriersslcache
+	/sbin/chkconfig --del courier-imap
+fi
+
+%{_libexecdir}/imapd.rc stop
+%{_libexecdir}/imapd-ssl.rc stop
+%{_libexecdir}/pop3d.rc stop
+%{_libexecdir}/pop3d-ssl.rc stop
+%endif
+%postun
+%if %using_systemd
+/bin/systemctl daemon-reload &> /dev/null || :
+if test "$1" != "0"
+then
+   /bin/systemctl try-restart courier-imap.service
+fi
+%endif
+
+%files
+%defattr(-, bin, bin)
+%attr(644, root, root) %config(noreplace) %{pamconfdir}/imap
+%attr(644, root, root) %config(noreplace) %{pamconfdir}/pop3
+
+%attr(755, bin, bin) %config /etc/profile.d/courier-imap.csh
+%attr(755, bin, bin) %config /etc/profile.d/courier-imap.sh
+%if %using_systemd
+%attr(-, root, root) /lib/systemd/system/*
+%else
+%attr(755, bin, bin) %{initdir}/courier-imap
+%if %{suse_version}
+%attr(740,root,root) %{initlndir}/rccourier-imap
+%endif
+%endif
+%dir %{_prefix}
+
+%if "%{_prefix}" != "%{_exec_prefix}"
+%dir %{_exec_prefix}
+%endif
+
+%{_libexecdir}
+%dir %{_sysconfdir}
+%dir %{_sysconfdir}/shared
+%dir %{_sysconfdir}/shared.tmp
+
+%config %{_sysconfdir}/imap*
+%config %{_sysconfdir}/pop3*
+%config %{_sysconfdir}/quotawarnmsg.example
+%{_bindir}
+%{_sbindir}
+%{_mandir}
+%{_datadir}
+
+%doc NEWS AUTHORS COPYING libs/imap/BUGS README README.imap README.maildirquota
+%doc README.sharedfolders
+%doc README.proxy*
+
+%ghost %attr(600, root, root) %{_localstatedir}/imapd.pid
+%ghost %attr(600, root, root) %{_localstatedir}/imapd-ssl.pid
+%ghost %attr(600, root, root) %{_localstatedir}/imapd.pid.lock
+%ghost %attr(600, root, root) %{_localstatedir}/imapd-ssl.pid.lock
+
+%ghost %attr(600, root, root) %{_localstatedir}/pop3d.pid
+%ghost %attr(600, root, root) %{_localstatedir}/pop3d-ssl.pid
+%ghost %attr(600, root, root) %{_localstatedir}/pop3d.pid.lock
+%ghost %attr(600, root, root) %{_localstatedir}/pop3d-ssl.pid.lock
+
+%clean
+rm -rf $RPM_BUILD_ROOT

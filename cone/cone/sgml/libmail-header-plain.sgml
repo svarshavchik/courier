@@ -1,0 +1,62 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="header-plain">
+  <refmeta>
+    <refentrytitle>mail::Header::plain</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::Header::plain</refname>
+    <refpurpose>An unstructured, <literal>US-ASCII</literal>-only, E-mail header.</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;libmail/headers.H&gt;
+
+mail::Header::plain plain_header("Content-Type", "text/plain");
+
+std::cout &lt;&lt; plain_header.toString();
+
+</literallayout>
+    </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+This class creates an unstructured E-mail header.
+Two arguments are provided to the constructor: the header's name, and its
+contents.
+The header contents must contain only <literal>US-ASCII</literal>
+characters. Use the <link linkend="header-encoded"><citerefentry>
+	  <refentrytitle>mail::Header::encoded</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link> object
+to create a header containing non-<literal>US-ASCII</literal> content.</para>
+
+    <para>
+The <function>toString()</function> returns the header as a single text
+string: <quote><replaceable>name</replaceable>:
+<replaceable>value</replaceable></quote>.
+Long headers are folded at the nearest whitespace.</para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-encoded"><citerefentry>
+	    <refentrytitle>mail::Header::encoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-list"><citerefentry>
+	    <refentrytitle>mail::Header::list</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

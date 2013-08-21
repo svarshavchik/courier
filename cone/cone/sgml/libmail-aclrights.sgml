@@ -1,0 +1,124 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<para>
+At this time, the following access rights are supported:</para>
+
+<variablelist>
+  <varlistentry>
+    <term><quote><literal>a</literal></quote></term>
+    <listitem>
+      <para>
+Administrator access: view and change folder access control lists.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>c</literal></quote></term>
+    <listitem>
+      <para>
+Create subfolders.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>e</literal></quote></term>
+    <listitem>
+      <para>
+Expunge deleted messages from the folder.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>i</literal></quote></term>
+    <listitem>
+      <para>
+Insert, or add messages to the folder.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>l</literal></quote></term>
+    <listitem>
+      <para>
+List, or view the folder's existence.
+If a folder does not have the <quote><literal>l</literal></quote>
+access right, the server will not include this folder when it's asked to list
+all folders in the folder directory.
+However, if the <quote><literal>r</literal></quote>
+access right is present, the folder may be opened if the folder's name
+is known.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>r</literal></quote></term>
+    <listitem>
+      <para>
+Read, or open the folder.
+An attempt to open the folder will fail without the
+<quote><literal>r</literal></quote> access right, even if the folder's name
+is known.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>p</literal></quote></term>
+    <listitem>
+      <para>
+<quote>Post messages</quote> to the folder.
+This access right is currently listed in the ACL specification; however its
+intention is not clear, and
+most servers do not do anything useful with this access right.
+It is listed here for information purposes only.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>s</literal></quote></term>
+    <listitem>
+      <para>
+Allow changing the read/unread status of messages in the folder.
+The server will not automatically clear
+the <structfield>unread</structfield> message status flag on messages after
+they are read, or let this status flag be explicitly changed,
+without the <quote><literal>s</literal></quote>
+access right.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>t</literal></quote></term>
+    <listitem>
+      <para>
+Allow tagging of messages as deleted or undeleted.
+The server will prohibit changing the messages'
+<structfield>deleted</structfield> message status flag
+without the <quote><literal>t</literal></quote> access right.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>w</literal></quote></term>
+    <listitem>
+      <para>
+Allow changing the
+<structfield>draft</structfield>,
+<structfield>replied</structfield>, and
+<structfield>marked</structfield> message status flags.
+The server will not allow changes to these flags
+without the <quote><literal>w</literal></quote> access right.
+</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><quote><literal>x</literal></quote></term>
+    <listitem>
+      <para>
+Allow this folder to be removed.
+The server will not this folder to be deleted
+without the <quote><literal>x</literal></quote> access right.
+</para>
+    </listitem>
+  </varlistentry>
+</variablelist>

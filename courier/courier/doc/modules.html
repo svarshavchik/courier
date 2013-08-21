@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <!-- Copyright 2000-2009 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <title>Transport Modules</title>
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h2>Transport Modules</h2>The directory
+  <code>${COURIER_HOME}/lib/modules</code> contains shared
+  libraries and programs which provide input and output modules to
+  <em>Courier</em>. The actual module itself can actually be installed and
+  invoked anywhere else, the SMTP module, in fact, is installed in
+  bin. The shared library in lib, however, may include functions
+  which rewrite addresses for messages submitted from the input
+  module. All files for module named MODULE are stored in the
+  directory <code>${COURIER_HOME}/lib/modules/MODULE</code>.
+
+  <h3>The <code>modules.ctl</code> file</h3>The file
+  <code>${COURIER_HOME}/lib/modules/modules.ctl</code> contains a
+  list of all the modules that <em>Courier</em> loads.
+  <code>modules.ctl</code> is only used if <em>Courier</em> is compiled with
+  shared library support. If <em>Courier</em> is compiled with static
+  linkage only (by choice, or by necessity), all the module
+  libraries are statically linked into <em>Courier</em>, and
+  <code>modules.ctl</code> is not used. Each line in modules.ctl is
+  in the following form:
+  <em>priority</em>&lt;SP&gt;<i>name</i>&lt;SP&gt;<i>filename</i>,
+  where <code>&lt;SP&gt;</code> designates the space character. The
+  lines are sorted in increasing priority order! "priority" is
+  taken from the module's config file, and <em>filename</em> is the
+  filename of the shared library.
+
+  <h3>Contents of <code>${COURIER_HOME}/lib/modules/name</code>
+  directory</h3>The following files will be found in a module
+  subdirectory under lib. The name of the subdirectory is the name
+  field from the <code>modules.ctl</code> file.
+
+  <h4>config</h4>This is the module configuration file. Blank lines
+  in the config file are ignored, also lines that start with the #
+  character, which can be used for comments. The module
+  configuration is specified using the <code>NAME=VALUE</code>
+  notation, where <code>NAME</code> is the name of the
+  configuration parameter, and <code>VALUE</code> is its value.
+
+  <h4>librewrite</h4>This is the shared library that's loaded by
+  <code>submit</code> and <code>courierd</code>. The shared library
+  provides code to rewrite addresses to and from the canonical
+  format for messages to or from this module. If <em>Courier</em> is
+  compiled with static linkage, this file does not exist - the
+  library is statically linked.
+
+  <p>The actual name of the library may vary, and is specified in
+  the <code>config</code> file.</p>
+
+  <p>If this shared library does not exist, an attempt is made to
+  load <code>librewrite-old</code>. This allows an updated version
+  of the shared library to be installed in a live, running, system
+  by renaming the current one to <code>librewrite-old</code>, then
+  renaming the new one to <code>librewrite</code>.</p>
+
+  <p>Although submit will pick up new rewriting rules immediately,
+  <code>courierd</code> must be SIGHUPed in order to reload the new
+  shared library.</p>
+
+  <h4>Parameters in config</h4><code>NAME=name</code> - specifies
+  the name of this module. Should be the same as the directory
+  name.
+
+  <p><code>LIBRARY=filename</code> - specifies the name of the
+  shared library to load. Not used if <em>Courier</em> was compiled with
+  static libraries.</p>
+
+  <p><code>VERSION=version</code> - version of the module
+  interface. Not the actual version of the module, but version of
+  the interface between the module, and <em>Courier</em>. The current
+  version is version 0.</p>
+
+  <p><code>PRIORITY=n</code> - priority of the output module.
+  <em>Courier</em> calls all the modules' <code>rewritedel</code> functions
+  in the increasing priority order until it finds one which accepts
+  messages addressed to the recipient's address.</p>
+
+  <p><code>PROG=pathname</code> - pathname to the output module
+  program. Must be a full path, unless the module itself is in the
+  <code>lib/MODULE</code> directory.&nbsp; If the <code>PROG</code>
+  parameter is missing, this module is an input only module. If the
+  attempt to execute <code>PROG</code> fails, <em>Courier</em> will attempt
+  to execute <code>PROG-old</code>, which allows an updated output
+  module to be inserted into a live system by renaming the current
+  one <code>PROG-old</code>, then renaming the new output module as
+  <code>PROG</code>.</p>
+
+  <p><code>MAXDELS=n</code> - maximum concurrent deliveries for
+  this module. No more than these many instances of
+  <code>PROG</code> will be started at any given time.</p>
+
+  <p><code>MAXHOST=n</code> - maximum instances of
+  <code>PROG</code> that will be started with the same
+  <code>HOST</code> parameter.</p>
+
+  <p><code>MAXRCPT=n</code> - maximum number of addresses that will
+  be given to any single instance of <code>PROG</code>.</p>
+
+  <p>Please note that although these parameters are reread by
+  <code>courierd</code> when it restarts, the individual output
+  module may impose its own restrictions on the valid limits for
+  these parameters.</p>
+
+  <h3>Module library functions</h3>The module library contains the
+  following functions. In each case, <code>XXXX</code> is used to
+  represent the name of the function in the library for module
+  <code>XXXX</code>. For example, in the "local" module, the
+  <code>rw_install</code> function is called
+  <code>local_rw_install</code>.
+
+  <p><code>struct rw_list *XXXX_rw_install(const struct
+  rw_install_info *info);</code></p>
+
+  <p>The <code>rw_install()</code> function is called after the
+  shared library is open. It receives a pointer to the following
+  structure:</p>
+  <pre>
+struct rw_install_info {
+        int rw_verlo;
+        int rw_verhi;
+        const char *courier_home;
+        } ;
+</pre><code>rw_verlo/rw_verhi</code> - reserved for future
+expansion. Currently set to 0. <code>rw_install</code> function of
+modules compatible with this <em>Courier</em> interface must check that
+<code>rw_verlo</code> is set to 0, and ignore
+<code>rw_verhi</code>.
+
+  <p><code>courier_home</code> - <em>Courier</em>'s home directory, the
+  shared library can use this to find its files.</p>
+
+  <h3>The <code>rw_search</code> function</h3>
+  <pre>
+struct rw_list *rw_search(const char *);
+</pre>The <code>rw_search</code> function can be called by a
+library function in order to return the rw_list (see below)
+structure of a function in another library. <code>rw_search</code>
+may NOT be called form <code>XXXX_rw_install</code>, because the
+library containing this function may not've been installed yet.
+<code>rw_search</code> may be called from the
+<code>XXXX_rw_init</code> function.
+
+  <p><code>const char *XXXX_rw_init()</code></p>
+
+  <p>After all modules are installed, each module's
+  <code>rw_init()</code> function is called, which can complete any
+  additional setup. <code>rw_init</code> should return a null
+  pointer. Otherwise, <code>rw_init</code> should return the error
+  message text. <em>Courier</em> will refuse to start if
+  <code>rw_init</code> does not return a null pointer.</p>
+
+  <p>The library's <code>rw_install</code> function must return a
+  pointer to the following structure. If <code>rw_install</code>
+  returns a NULL pointer, <em>Courier</em> will refuse to start.</p>
+  <pre>
+struct rw_list {
+        int rw_version;
+        void (*rewrite)(struct rw_info *info, void (*func)(struct rw_info *));
+        void (*rewrite_del)(struct rw_info *info, void (*func)(struct rw_info *),
+                    void (*delfunc)(struct rw_info *info, const struct rfc822token *host,
+                                const struct rfc822 *addr));
+        int  (*filter_msg)(const char *,
+                        int,
+                        const char *,
+                        const char *,
+                        const char *,
+
+                        char *,
+                        unsigned);
+} ;
+</pre><code>rw_version</code> - shared libraries compatible with
+this module interface must set rw_version to zero.
+
+  <p><code>rewrite</code> - this function is called to rewrite a
+  single address. The first argument points to the following
+  structure:<br />
+  &nbsp;</p>
+  <pre>
+<code>struct rw_info {
+    int mode;
+    struct rfc822token *ptr;
+    void (*err_func)(int, const char *, struct rw_info *);
+    const struct rfc822token *sender;
+    const char *smodule;
+    void *udata;
+} ;</code>
+</pre><code>mode</code> contains the following values, ORed into a
+bitmask: <code>RW_ENVSENDER</code> - rewrite envelope sender,
+<code>RW_ENVRECIPIENT</code> - rewrite envelope recipient,
+<code>RW_HEADER</code> - rewrite header. When calling
+<code>rewrite()</code>, one of these three bits will be set.
+Additional bits that may be set: <code>RW_OUTPUT</code> -
+<code>rewrite</code>() should convert canonical format to the
+transport format. If this bit is not set, rewrite should convert
+from the transport format to the canonical format. In fact, the
+main <code>courierd</code> does not call rewrite with the
+<code>RW_OUTPUT</code> bit set, because that function is performed
+by the dedicated output module, which may handle rewriting on its
+own. Also, the <code>RW_SUBMIT</code> can be set together with
+<code>RW_ENVSENDER</code> or <code>RW_ENVRECIPIENT</code>,
+indicating that this call is as a result of a message being
+submitted for delivery (as opposed to address verification for
+<code>EXPN/VRFY</code> functionality).
+
+  <p>It is possible that none of those bits are set, when invoked
+  by another rewrite function.</p>
+
+  <p><code>ptr</code> is the address to rewrite, as rfc822
+  tokens.</p>
+
+  <p><code>udata</code> contains an arbitrary pointer, for usage by
+  rewrite's caller.</p>
+
+  <p>When mode has <code>RW_ENVRECIPIENT</code> set,
+  <code>sender</code> points to the envelope sender format in the
+  canonical format (previous result of <code>RW_ENVSENDER</code>),
+  otherwise this field is unused. If <code>sender</code> is NULL,
+  this should be interpreted as an empty envelope sender (or if
+  <code>rewrite</code> is being called in test mode.</p>
+
+  <p><code>smodule</code> is initialized when mode has the
+  <code>RW_SUBMIT</code> bit set. It will point to the name of the
+  module argument to submit - the module sending the message.</p>
+
+  <p><code>err_func</code> is the function to call in case of an
+  error.</p>
+
+  <p><code>rewrite</code> is expected to call either
+  <code>func</code>, (it's second argument), or
+  <code>err_func</code>, before returning. If rewriting succeeds,
+  <code>func</code> is called. If rewriting failed,
+  <code>rewrite</code> must call the <code>err_func</code> is
+  function. <code>errcode</code> will be the RFC822-style error
+  number, <code>errmsg</code> is the error message, which may be
+  multiline (includes newlines). The text in <code>errmsg</code> is
+  NOT prefixed by the error number.</p>
+
+  <p>After calling <code>func</code>, or <code>err_func</code>,
+  <code>rewrite</code> is expected to immediately terminate.
+  <code>rewrite</code> may alter the 'ptr' link list in any form or
+  fashion it wants, except that it may NOT malloc or free any node,
+  or a part thereof. However, it can relink portions of the link
+  list, or modify the link pointers to include tokens created by
+  <code>rewrite</code> internally.</p>
+
+  <p>After <code>func</code> or <code>err_func</code> terminates,
+  <code>rewrite</code> may deallocate everything it allocated, then
+  terminate itself.</p>
+
+  <p>This interface allows rewrite to execute very quickly, without
+  allocating or deallocating any memory. If new RFC822 tokens are
+  required, they can be allocated on the stack, and linked into the
+  original list.</p>
+
+  <p>The <code>rewrite_del</code> function is called to determine
+  if the module can accept delivery of a message to this address.
+  The <code>rewrite_del</code> of all installed libraries are
+  called until one of them calls the <code>delfunc</code> function.
+  If <code>rewrite_del</code> cannot accept delivery of a message,
+  it should call <code>func</code>. The <code>rewrite_del</code>
+  function should call the <code>delfunc</code> function to
+  indicate that this module can accept mail addressed to the
+  address specified by <code>info-&gt;ptr</code>.
+  <code>rewrite_del</code> receives the pointer to the rw_info
+  structure, then the <code>host</code> and the
+  <code>address</code> information for the output module, as
+  rfc822token lists. If the mode field has the
+  <code>RW_SUBMIT</code> bit set, rewrite_del can find the
+  message's envelope sender address in canonical format) in
+  <code>info-&gt;sender</code>.</p>
+
+  <p>Like <code>rewrite</code>, <code>rewrite_del</code> may make
+  arbitrary changes to <code>info-&gt;ptr</code>, except that it
+  may not deallocate memory used for the existing list.
+  <code>rewrite_del</code> may modify the link list, and allocate
+  memory for new rfc822 tokens. After calling either
+  <code>func</code> or <code>delfunc</code>,
+  <code>rewrite_del</code> should terminate immediately, and
+  deallocate any allocated memory. <code>rewrite_del</code> must
+  keep track of any allocated memory separate, and cannot assume
+  that <code>info-&gt;ptr</code> hasn't changed.</p>
+
+  <p>When <code>RW_SUBMIT</code> bit is set,
+  <code>rewrite_del</code> can be used to perform additional
+  recipient-specific code, which may be too expensive to run every
+  time courier goes through the queue. The <code>udata</code> field
+  contains a pointer to caller-specific data. The
+  <code>sender</code> field contains a pointer to the envelope
+  sender, in canonical format. Like <code>rewrite</code>,
+  <code>rewrite_del</code> may muck around with the
+  <code>rfc822token</code> list in <code>ptr</code>.
+  <code>rewrite_del</code> functions are called in order according
+  to the configured module priority. By setting a higher priority,
+  it is possible to have <code>rewrite_del</code> rewrite the
+  address so that it would be accepted by another module's
+  <code>rewrite_del</code>, down the chain.<br /></p>
+
+  <p>The last function, <code>rw_filter_msg</code>, is called to
+  run an arbitrary spam filter which can be used to selectively
+  reject messages. <code>rw_filter_msg</code> will be called after
+  <code>rewrite_del</code> accepted the message for delivery. The
+  arguments are as follows:</p>
+
+  <ul>
+    <li>The name of the module that is submitting this message for
+    delivery.</li>
+
+    <li>Either a read-only file descriptor, containing the copy of
+    the message, or -1.</li>
+
+    <li>The 'host' return value from <code>rewrite_del</code>, as a
+    text string.</li>
+
+    <li>The 'addr' return value from <code>rewrite_del</code>, as a
+    text string.</li>
+
+    <li>The message envelope return address.</li>
+
+    <li>A pointer to a buffer where the error message can be
+    saved.</li>
+
+    <li>How large the buffer is, in bytes.</li>
+  </ul>This function is called twice: once when submit receives the
+  recipient address (file descriptor is -1), and the second time
+  after the message is received, but before it is accepted.
+  Therefore, this function should execute quickly. Also note that
+  ESMTP does not have a well-defined way to selectively reject
+  messages to individual recipients once the contents of the
+  message are received. If a message is addressed to multiple
+  recipients, and at at least one recipient's filter rejects the
+  message, <em>Courier</em> replies with a rejection code, and the sending
+  mail server will assume that the message to all recipients has
+  failed.
+
+  <p><code>rw_filter_msg</code> should return 0 if the message is
+  acceptable, a negative value to permanently reject the message to
+  this recipient, and a positive value for a temporary
+  rejection.<br />
+  &nbsp;</p>
+
+  <h4>Running <code>PROG</code></h4><code>PROG</code> is the output
+  module that will be started by <em>Courier</em> when it comes up. PROG can
+  be a shell command, it is executed via "<code>$SHELL -c</code>".
+  It will be started under userid mail, group mail, in
+  <code>${COURIER_HOME}/lib/modules/NAME</code>. <em>Courier</em> will
+  communicate with <code>PROG</code> on standard input and output.
+
+  <p>If <code>PROG</code> succesfully initializes, it should fork,
+  and the parent should exit with status of 0. <em>Courier</em> waits until
+  <code>PROG</code> exits. If it exits with a non-0 exit code,
+  <em>Courier</em> will fail starting up. The child process will then
+  continue to read and write from standard output.</p>
+
+  <p><code>COURIER_HOME</code>, <code>MAXDELS</code>,
+  <code>MAXHOST</code>, and <code>MAXRCPTS</code> will be placed in
+  the environment, prior to executing <code>PROG</code>.</p>
+
+  <p>Tip: if the environment variables are not set,
+  <code>PROG</code> can presume that it's being run in test mode,
+  from the command line, and forego the fork.</p>
+
+  <p>If <code>PROG</code> terminates, <em>Courier</em> will consider it a
+  fatal error (<em>Courier</em> detects the input channel being closed).</p>
+
+  <p>If <code>PROG</code> gets an end-of-file indication, it can
+  assume that <em>Courier</em> is being shut down, so it should promptly
+  cease all activities, without waiting for pending messages to be
+  delivered.</p>
+
+  <p>To start delivery for a particular message, <code>PROG</code>
+  will receive a newline-terminated command, specifying the
+  message, and the recipients, and the delivery ID. Once
+  <code>PROG</code> finishes delivering messages, <code>PROG</code>
+  should write the results of the delivery into the message's
+  control file, then print the delivery ID on its standard output,
+  terminated by newline.&nbsp; If the module's config file
+  specifies that the module can handle multiple deliveries at the
+  same time, <code>PROG</code> may receive additional deliveries
+  before it finishes delivering the first message.</p>
+
+  <p>The command that prog receives is a newline-terminated line
+  that looks like this:</p>
+
+  <p>
+  msgnum&lt;tab&gt;sender&lt;tab&gt;delid&lt;tab&gt;host&lt;tab&gt;num1&lt;tab&gt;addr1&lt;tab&gt;num2&lt;tab&gt;addr2...</p>
+
+  <p>&lt;tab&gt; represents the ASCII tab character. This is
+  basically a list of tab-separated fields. The first field is the
+  message id number (the inode number).</p>
+
+  <p>sender is the message envelope sender, after it's rewritten to
+  the module format, by the module shared library.</p>
+
+  <p>delid is the "delivery ID", which is a small integer,
+  representing this delivery. After <code>PROG</code> finishes
+  delivering the message, it should print the message's delivery ID
+  on standard output after saving the delivery status of each
+  recipient in the control file.</p>
+
+  <p>The host field specifies the host where the message should be
+  delivered to, as determined by the module's output rewrite rule.
+  Following the host, there will be one or more num/address pairs.
+  address is the recipient's address as determined by the output
+  rewrite rule, and num is the recipient's number in the message's
+  list of recipients (this is used to save the delivery status in
+  the control file). Note that the address can be an empty string,
+  so there will be two consecutive tabs there.<br />
+  &nbsp;</p>
+</body>
+</html>

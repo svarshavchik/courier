@@ -1,0 +1,227 @@
+<section>
+  <title>Search criteria</title>
+
+  <variablelist>
+    <varlistentry>
+      <term><keycap>A</keycap> - select all</term>
+
+      <listitem>
+	<para>
+Press <keycap>A</keycap> to select all available messages.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>!</keycap> - not</term>
+
+      <listitem>
+	<para>
+Press <keycap>!</keycap> to logically reverse the following search
+criteria.
+Thus, if the entered search criteria was <quote>Search the
+<literal>From</literal> header for <literal>troll@example.com</literal></quote>
+the actual search will find messages where the <literal>From</literal>
+header does <emphasis>NOT</emphasis> contain this text.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>D</keycap> - search by date</term>
+
+      <listitem>
+	<para>
+A date-related search.
+Additional prompts follow, described below.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>S</keycap> - search by status</term>
+
+      <listitem>
+	<para>
+A status-related search.
+Each message has several status flags that define whether the message is a
+new message, a deleted message, a replied message, and so on.
+Selecting a status search shows three options: <quote>Deleted</quote>,
+<quote>Unread</quote>, and <quote>Replied</quote>, to search for all
+deleted, unread, or replied messages, respectively.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>T</keycap> - search by text</term>
+
+      <listitem>
+	<para>
+A text-based search, search for messages that contain (or don't contain)
+a given text string.
+Additional prompts follow, that further refine what kind of text to
+search for.</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><keycap>Z</keycap> - search by size</term>
+
+      <listitem>
+	<para>
+Search for messages that are bigger or smaller than a certain size.
+Select <quote>Larger than</quote> or <quote>Smaller than</quote>
+at the next prompt, then enter the target message size, in bytes, and
+press <keycap>ENTER</keycap> to search.</para>
+
+      </listitem>
+    </varlistentry>
+  </variablelist>
+
+  <section>
+    <title>Date-based searches</title>
+
+    <para>
+A date-based search brings up additional prompts that specify the nature
+of the search.  There are two dates that are associated with every message:
+the <quote>sent</quote> date, when the message was sent; and the
+<quote>received</quote> date, when the message was received.</para>
+
+    <para>
+The sent date is obtained from the message's <literal>Date:</literal> header.
+The received date is obtained from the mail server (or from the timestamp on
+the local mailbox).</para>
+
+    <para>
+The first prompt enters which date is searched for:</para>
+
+    <orderedlist>
+      <listitem>
+	<para>
+Messages that were sent before the given date.</para></listitem>
+      <listitem>
+	<para>
+Messages that were the sent on the given date.</para></listitem>
+      <listitem>
+	<para>
+Messages that were the sent since (on, or after)
+the given date.</para></listitem>
+      <listitem>
+	<para>
+Messages that were received before the given date.</para></listitem>
+      <listitem>
+	<para>
+Messages that were the received on the given date.</para></listitem>
+      <listitem>
+	<para>
+Messages that were the received since (on, or after)
+the given date.</para></listitem>
+    </orderedlist>
+
+    <para>
+The actual date is entered interactively.
+It starts with today's date.
+Press
+<keycap>+</keycap> or <keycap>-</keycap> to advance the shown date to the
+next or the following date.
+Press
+<keycap>[</keycap> or <keycap>]</keycap> to advance the shown date by a
+month.
+Press
+<keycap>&lt;</keycap> or <keycap>&gt;</keycap> to advance the shown date by a
+month.
+Press the space bar to accept the shown date, and search for messages.</para>
+
+    <note>
+      <para>
+Date-based searches are not currently implemented for NetNews
+newsgroups.</para>
+    </note>
+
+  </section>
+
+
+  <section>
+    <title>Text-based searches</title>
+
+    <para>
+Selecting a text-based search shows a wealth of options:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><keycap>S</keycap> - subject</term>
+
+	<listitem>
+	  <para>
+Search the contents of the <literal>Subject:</literal> header.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><keycap>F</keycap> - from</term>
+
+	<listitem>
+	  <para>
+Search the contents of the <literal>From:</literal> header.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>T</keycap> - to</term>
+
+	<listitem>
+	  <para>
+Search the contents of the <literal>To:</literal> header.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><keycap>C</keycap> - cc</term>
+
+	<listitem>
+	  <para>
+Search the contents of the <literal>Cc:</literal> header.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>B</keycap> - bcc</term>
+
+	<listitem>
+	  <para>
+Search the contents of the <literal>Bcc:</literal> header.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>H</keycap> - specific header</term>
+
+	<listitem>
+	  <para>
+Searches for the given text in some other header.
+The next prompt asks for the header's name.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>O</keycap> - contents</term>
+
+	<listitem>
+	  <para>
+Search the contents of the message for the given text.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>A</keycap> - anywhere</term>
+
+	<listitem>
+	  <para>
+Search the given text anywhere - headers or contents.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+Enter the text to search for after selecting one of these options, and
+press <keycap>ENTER</keycap> to perform the search.</para>
+
+    &libmail-search2;
+
+  </section>
+</section>

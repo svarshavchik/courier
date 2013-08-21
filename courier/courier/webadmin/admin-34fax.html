@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <title>@PACKAGE@ @VERSION@ - Inbound FAX</title>
+  <!--
+
+  [#SAVED=<span style="color: #008000">Saved</span>#]
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<!-- Copyright 2002 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<form method="post" action="34fax">
+  <h1><tt>@PACKAGE@ @VERSION@</tt> - Inbound FAX</h1>
+  @ERROR@
+
+  <p><font size="-1">NOTE: See INSTALL for instructions on configuring
+  <tt>mgetty+sendfax</tt> to use Courier for new fax notifications</font></p>
+
+  <p>@DODELETE@ Delete fax files from mgetty's incoming spool directory after
+  attaching them to the new fax notification E-mail.</p>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td>New fax notification recipient address:</td>
+        <td><input type="text" size="20" name="RCPTTO" value="@RCPTTO@" /></td>
+      </tr>
+      <tr>
+        <td>Bounce address for new fax notifications:</td>
+        <td><input type="text" size="20" name="MAILFROM"
+        value="@MAILFROM@" /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Headers on the notification E-mail</h2>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td align="right">From:</td>
+        <td><input type="text" name="FROMHDR"
+        value="@FROMHDR@" size="60" /></td>
+      </tr>
+      <tr>
+        <td align="right">To:</td>
+        <td><input type="text" name="TOHDR" value="@TOHDR@" size="60" /></td>
+      </tr>
+      <tr>
+        <td align="right">Subject:</td>
+        <td><input type="text" name="SUBJECTHDR"
+          value="@SUBJECTHDR@" size="60" /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="Save" /></form>
+<hr />
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <title>Reading local mail with &app;</title>
+
+  <para>
+&app; reads local mail from either maildirs (the preferred format) or
+mailbox files (or "mboxes").
+When mboxes are used,
+&app; does not read the system mailbox file directly (usually
+<filename>/var/spool/<replaceable>something</replaceable></filename>).
+All messages in the system mailbox are automatically moved to
+<filename>$HOME/Inbox</filename>, which is then accessed as if it was the
+system mailbox.
+Starting &app; for the first time on an mbox-based system automatically
+copies all existing mail from the system mailbox file
+to <filename>$HOME/Inbox</filename>.</para>
+
+  <para>
+This is an intentional design choice.  Normal user application cannot
+create new files in <filename>/var/spool</filename>; all they can do is
+read the mailbox file from <filename>/var/spool</filename>.
+Therefore, the only way to update the mailbox file is by
+rewriting it from scratch (more or less).
+While the mailbox file is in the process of being rewritten, if the &app;
+process is interrupted, or killed, the resulted in a corrupted
+system mailbox.
+There are way to minimize this vulnerability, but it cannot be eliminated
+completely.
+Some Linux kernels use an <quote>OOM killer</quote>
+that may terminate any process when
+the system memory is low.
+There is no way to completely prevent corrupted system
+mailbox files on those
+kernels.</para>
+
+  <para>
+&app; uses an alternative way of updating mboxes.
+&app; updates mboxes by creating a new mbox file separately,
+then replacing the original mbox file with the new version.
+Unfortunately this cannot be done with the system mailbox file, because of
+the restricted access rights on the system spool directory.
+To solve this problem &app; automatically copies the system mailbox file
+to <filename>$HOME/Inbox</filename>, each time the system mailbox file is
+opened and whenever new mail is available.</para>

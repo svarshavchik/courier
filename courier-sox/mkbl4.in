@@ -1,0 +1,110 @@
+#! @PERL@
+#
+#
+# Copyright 2006 Double Precision, Inc.
+# See COPYING for distribution information.
+#
+# Parse common IPv4 blacklist format file into a GDBM lookup file, usable by 
+# the socks server.
+
+use Net::CIDR;
+use GDBM_File;
+use strict;
+use warnings;
+
+my $txtfilename=shift @ARGV;
+my $datfilename=shift @ARGV;
+
+die "Usage: $0 txtfilename datfilename\n" unless $datfilename;
+
+unlink("$datfilename.tmp");
+
+open(F, "<$txtfilename") || die "$txtfilename: $!\n";
+open(T, "+>$datfilename.tmp") || die "$datfilename.tmp: $!\n";
+
+my $cnt=0;
+
+while (defined($_=<F>))
+{
+    chomp;
+    next unless /(.*):(\d+)\.(\d+)\.(\d+)\.(\d+)-(\d+)\.(\d+)\.(\d+)\.(\d+)/;
+
+    print T pack("CCCCCCCC", $2, $3, $4, $5, $6, $7, $8, $9);
+    ++$cnt;
+
+    print STDERR "Pass 1: Processed $cnt netranges...\n"
+	if ($cnt % 1000) == 0;
+
+}
+close(F);
+
+print STDERR "Sorting $cnt netranges...\n";
+
+my $emit_cnt=0;
+
+unlink("$datfilename.tmp2");
+
+my %gdbm_hash;
+tie %gdbm_hash, 'GDBM_File', "$datfilename.tmp2", &GDBM_WRCREAT | &GDBM_NEWDB,
+    0644
+    or die "$datfilename.tmp2: $!\n";
+
+my @cidr=();
+
+sub cidr_emit {
+
+    my $cidr=shift @_;
+
+    die "Unexpected CIDR format: $cidr\n"
+	unless $cidr =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)\/(\d+)$/;
+
+    $gdbm_hash{pack("CC", $1, $2)} .=
+	pack("CCC", $3, $4, $5);
+
+    ++$emit_cnt;
+
+    print STDERR "Processed $emit_cnt CIDR ranges...\n" if ($emit_cnt % 1000) == 0;
+}
+
+foreach (sort {
+    my $ra;
+    my $rb;
+
+    seek(T, $a * 8, 0) || die "seek($datfilename.tmp): $!\n";
+    read(T, $ra, 4) == 4 || die "$datfilename.tmp: unexpected end of file";
+
+    seek(T, $b * 8, 0) || die "seek($datfilename.tmp): $!\n";
+    read(T, $rb, 4) == 4 || die "$datfilename.tmp: unexpected end of file";
+
+    return unpack("N", $ra) <=> unpack("N", $rb);
+} (0..$cnt-1))
+{
+    my $r;
+
+    seek(T, $_ * 8, 0) || die "seek($datfilename.tmp): $!\n";
+    read(T, $r, 8) == 8 || die "$datfilename.tmp: unexpected end of file";
+
+    my @o=unpack("CCCCCCCC", $r);
+
+    @cidr=Net::CIDR::cidradd(@cidr,
+			     Net::CIDR::range2cidr("$o[0].$o[1].$o[2].$o[3]-$o[4].$o[5].$o[6].$o[7]"));
+
+    while ($#cidr > 0)
+    {
+	cidr_emit(shift @cidr);
+    }
+}
+
+while ($#cidr >= 0)
+{
+    cidr_emit(shift @cidr);
+}
+
+
+print STDERR "$emit_cnt ranges total.\n";
+
+untie %gdbm_hash;
+
+rename("$datfilename.tmp2", $datfilename) ||
+    die "rename($datfilename.tmp2, $datfilename): $!\n";
+unlink("$datfilename.tmp");

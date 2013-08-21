@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+
+  <title>Internal Structures</title>
+  <!-- Copyright 2000-2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h2>Internal Structures</h2>The following structures are used
+  internally by courierd.
+
+  <h4>drvinfo</h4>This is an array of modules configured into
+  <em>Courier</em>. This array is actually allocated by process A, upon
+  startup (but the initialization is completed in process B, so
+  changes to <b>maxdels</b>, <b>maxhost</b>, and other parameters,
+  can affect a live system).
+  <pre>
+class drvinfo {
+    struct rw_transport *module;   // Points to the rw_transport structure libcourier.a has
+                                   // allocated for the module.
+    CArray&lt;delinfo&gt; delinfo_list;  // Current delivery attempts.  Array allocated at startup,
+                                   // and never deallocated.  Size of the array is specified
+                                   // by <b>maxdels</b> from the module config file
+    CArray&lt;dlvrhosts&gt; hosts_list;   // Hosts where current delivery attempts are going to.
+                                   // Array allocated at startup.  Size of the array is specified
+                                   // by <b>maxdels</b> from the module config file
+    unsigned maxhost, maxrcpt;     // From the config file
+
+    struct delinfo *delpfreefirst; // Link list of unused delinfos in delinfo_list,
+                                   // linked by freenext.
+
+    struct dlvrhost *hdlvrpfree;   // Link list of unused drvhosts in hosts_list, linked by next.
+
+    struct dlvrhost *hdlvrpfirst, *hdlvrplast; // MRU list of drvhosts in hosts_list, linked by
+                                               // next and prevfo
+    CList&lt;pendelinfo&gt; pendelinfo_list;  // List of pending deliveries that haven't been scheduled
+                                        // because max # of deliveries have been reached
+} ;
+</pre>
+
+  <h4>dlvrhost</h4>This array is allocated for each module, and is
+  used to keep count of how many deliveries are pending for the
+  same host.
+  <pre>
+class dlvrhost {
+    struct dlvrhost *next, *prev; /* next used on hdlvrpfree list, else
+                                 this is the first/last list, in MRU order */
+    CString hostname;            /* Name of this host */
+    unsigned dlvrcount;        /* How many deliveries to this host are in progress */
+    pendelinfo *pending_list;  // List of recipients NOT being delivered
+} ;
+</pre>
+
+  <h4>delinfo</h4>
+  <pre>
+class delinfo {
+    struct delinfo *freenext; // List of unused delinfo in the same module.
+    unsigned delid;           // My index in delinfo_list array
+    dlvrhost *dlvrphost;      // Host we're delivering to
+    rcptinfo *rcptlist;       // List of recipients being delivered
+} ;
+</pre>
+
+  <h4>msgq</h4>This structure represents a message that is either
+  being delivered to, or which has a delivery attempt coming up. An
+  array of msgq structures is allocated when process B starts, and
+  its individual members are sorted based on the nextdel field.
+  <pre>
+class msgq {
+    struct msgq *next, *prev; // Sorted by nextdel
+    struct msgq *nexthash, *prevhash; // Same hash bucket
+    ino_t        msgnum;      // Queue message number
+    time_t       nextdel;     // Next delivery attempt (used to find the filename in msgq)
+    CArray&lt;rcptinfo&gt; rcptinfo_list;  // The recipients
+    unsigned     rcptcount;   // # of deliveries pending or in progress
+} ;
+</pre>
+
+  <h4>rcptinfo</h4>An array of rcptinfos is allocated to list all
+  recipients for a given message.
+  <pre>
+class rcptinfo {
+    msgq     *msg;     // Message we belong to
+
+    drvinfo       *delmodule;    // Use this module
+    pendelinfo    *pending;      // Not NULL if we're not delivering this recipient list yet.
+    POSITION       pendingpos;   // The position of the pointer in pending-&gt;recipient_list
+    CString        envsender;    // Envelope sender rewritten to the transport format
+    CString        delhost; // Deliver to this host
+    CStringArray   addresses;     // Deliver to these addresses
+    CUIntArray     addressesidx;  // Indexes of addresses in control file
+} ;
+</pre>
+
+  <h4>pendelinfo</h4>A list of all hosts for which we have
+  rcptinfos that have not been allocated a delinfo yet.
+  <pre>
+class pendelinfo {
+    POSITION pos;        // My position in drvp-&gt;pendelinfo_list
+    drvinfo *drvp;       // My module
+    CString hostname;
+    CList&lt;rcptinfo *&gt; receipient_list;
+    dlvrhost *hostp;     //  
+} ;
+</pre>&nbsp;
+</body>
+</html>

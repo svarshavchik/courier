@@ -1,0 +1,1453 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+
+  <title>The Courier mail server FAQ</title>
+  <!-- Copyright 2000-2008 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h1>The <em>Courier</em> mail server FAQ</h1>
+
+  <p>This is a beginning of a modest FAQ. Contributors:</p>
+
+  <ul>
+    <li><code>[PP]</code> - Patrick Price
+    <code>&lt;sysadmin</code><code>@moment.net&gt;</code></li>
+
+    <li><code>[RS]</code> - Roland Schneider
+    <code>&lt;list-courier</code><code>@serv.ch&gt;</code></li>
+  </ul>
+
+  <p>Table of contents:</p>
+
+  <ul>
+    <li>Configuration issues
+
+      <ul>
+        <li><a href="#configloop">The <code>configure</code> script
+        is stuck in an infinite loop</a></li>
+
+        <li><a href="#authlib">What's the deal with authentication
+        modules? Why can't I get OpenLDAP/MySQL/PAM/whatever
+        working?</a></li>
+
+        <li><a href="#gdbmdb">Configuration script reports the
+        following error, and stops: "Cannot find either the gdbm or
+        the db library", or it fails in the <code>gdbmobj</code> or
+        <code>bdbobj</code> subdirectory</a>.</li>
+
+        <li><a href="#solarisbug">Compilation fails on Solaris in
+        the waitlib subdirectory</a></li>
+
+        <li><a href="#osx">Compiling the <em>Courier</em> mail
+        server-IMAP on OS/X</a></li>
+
+        <li><a href="#makefail"><code>make install-strip</code> or
+        <code>make check</code> fails</a></li>
+
+        <li><a href="#tru64"><code>gmake check</code> fails on
+        Compaq Tru64 UNIX</a></li>
+
+        <li><a href="#rpm">Building RPM packages on Fedora</a></li>
+      </ul>
+    </li>
+
+    <li>ESMTP
+
+      <ul>
+        <li><a href="#esmtptimeout">Why are my e-mails taking so
+        long to send?</a></li>
+
+        <li><a href="#esmtperr">The <em>Courier</em> mail server
+        delivers ESMTP mail with a strange error message</a></li>
+
+        <li><a href="#450">Server is not accepting any mail,
+        returns a <code>450 Service unavailable</code> error every
+        time.</a></li>
+
+        <li><a href="#relay">How do I enable relaying for an IP
+        address range?</a></li>
+
+        <li><a href="#virtual">How do I implement virtual domain
+        hosting?</a></li>
+
+        <li><a href="#linkerr">The <em>Courier</em> mail server
+        keeps restarting every minute, and there are weird syslog
+        messages about "unsafe" hard links</a></li>
+
+        <li><a href="#backupmx">How to configure the
+        <em>Courier</em> mail server to be a backup MX for a
+        domain</a></li>
+
+        <li><a href="#maxrcpts">Messages with more than 20
+        recipients are rejected</a></li>
+      </ul>
+    </li>
+
+    <li>IMAP
+
+      <ul>
+        <li><a href="#imapbugs">My IMAP client doesn't
+        work</a></li>
+
+        <li><a href="#namespace">Can't create IMAP folders, only
+        subfolders of INBOX</a></li>
+
+        <li><a href="#imaplogin">Can't login via IMAP</a></li>
+
+        <li><a href="#fam">Repeated messages in syslog: "Failed to
+        create cache file: maildirwatch (user) Error: Input/output
+        error Check for proper operation and configuration of the
+        File Access Monitor daemon (famd)." How can I solve
+        it?</a></li>
+
+        <li><a href="#imapfud">Q: I heard that the <em>Courier</em>
+        mail server does not implement IMAP properly</a></li>
+      </ul>
+    </li>
+
+    <li>POP3
+
+      <ul>
+        <li><a href="#pop3run">The POP3 server doesn't run at
+        bootup</a></li>
+
+        <li><a href="#pop3login">Can't login via POP3</a></li>
+      </ul>
+    </li>
+
+    <li>Webmail
+
+      <ul>
+        <li><a href="#webmailcreate">How do I create new system
+        accounts via the webmail server?</a></li>
+      </ul>
+    </li>
+
+    <li>Miscellaneous
+
+      <ul>
+        <li><a href="#help">Asking for help on the courier-users
+        mailing list</a></li>
+
+        <li><a href="#vdomains">Using virtual domains</a></li>
+
+        <li><a href="#fetchmail">Using
+        <code>fetchmail</code></a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>Configuration and installation</h2>
+
+  <h3><a name="configloop" id="configloop">Q: The
+  <code>configure</code> script is stuck in an infinite
+  loop</a></h3>
+
+  <p>A: It's not. The <em>Courier</em> mail server is made up of
+  over thirty modular pieces, and each one has its own
+  <code>configure</code> script. All <code>configure</code> scripts
+  are recursively executed. <code>configure</code> scripts are
+  generated off a template, and share a lot of common code, so when
+  <code>configure</code> runs, it seems like the same script is
+  being executed over and over again.</p>
+
+  <h3><a name="authlib" id="authlib">Q: What's the deal with
+  authentication modules? Why can't I get
+  OpenLDAP/MySQL/PAM/whatever working?</a></h3>
+
+  <p>A: The authentication library used by the <em>Courier</em>
+  mail server (and the <em>Courier</em> mail server-IMAP, and
+  SqWebMail) is probably the most thorniest part of the package.
+  Some people just breeze through authentication module
+  configuration, others just have one problem after another. There
+  is no single point at which people get stuck. Any one of a set of
+  problems can materialize and brings things to a halt. This FAQ
+  entries explains the authentication modules in greater detail.
+  The information given here should be sufficient to get everything
+  in working order.</p>
+
+  <p>The authentication modules serve three purposes:</p>
+
+  <ol>
+    <li>Determine if a given E-mail or a login name is valid, or
+    not.</li>
+
+    <li>Determine if the password that is used to access the mail
+    account is valid.</li>
+
+    <li>Determine where the mailbox for this mail account lives on
+    the system.</li>
+  </ol>
+
+  <p>The authentication modules are generally used in one of two
+  ways:</p>
+
+  <blockquote>
+    <p>A. When delivering an E-mail message, The <em>Courier</em>
+    mail server uses functions #1 and #3 to figure out where the
+    mail needs to go.</p>
+
+    <p>B. When the owner of the mail account logs in to read the
+    mail, functions #1, #2, and #3 are used to open the mail
+    account (this is all provided that maildirs are used, since the
+    <em>Courier</em> mail server's IMAP, POP3, and webmail servers
+    talk to maildirs only).</p>
+  </blockquote>
+
+  <p>The authentication library therefore provides an
+  authentication layer that cleanly separates the vague notion of
+  an "E-mail address" and the actual files and directories where
+  mail for this account goes. The <em>Courier</em> mail server
+  provides several authentication modules. Not every authentication
+  module will be compiled and installed on every system. Some
+  authentication modules require external libraries to be present.
+  The <code>configure</code> script inventories the system
+  configuration, and tries to figure out which authentication
+  modules are needed.</p>
+
+  <p>Usually, this is an automatic process. Occasionally, some
+  manual intervention will be necessary.</p>
+
+  <h4><code>authpwd</code>, <code>authshadow</code>, and
+  <code>authpam</code></h4>
+
+  <p>These three authentication modules are used in the most simple
+  environment - authentication based on the system password file.
+  They use the traditional <code>pwd.h</code> and
+  <code>group.h</code> library functions. Mail to
+  <code>&lt;user@domain&gt;</code> is delivered to the system
+  account <code>user</code>, in the default mailbox location
+  specified in the <code>courierd</code> configuration file. The
+  IMAP, POP3, and webmail servers assume that default mailbox is
+  <code>$HOME/Maildir</code>. The only difference between these
+  three authentication modules is that <code>authpwd</code> reads
+  the account password from the <code>/etc/passwd</code> file,
+  <code>authshadow</code> reads the <code>/etc/shadow</code> file,
+  and <code>authpam</code> uses the PAM library to authenticate
+  passwords. This actually allows account passwords to be read from
+  sources other than the <code>passwd</code> or <code>shadow</code>
+  files. For example, if the <code>pam_smb</code> PAM module is
+  used, it may be possible to authenticate passwords against an NT
+  domain controller, but this is really outside the scope of this
+  document.</p>
+
+  <p>If the <code>configure</code> finds that the system uses
+  <code>PAM</code> for authentication, <code>authpam</code> will be
+  automatically installed, and <code>authpwd</code> and
+  <code>authshadow</code> will NOT be installed. This is because
+  reading the <code>passwd</code> and <code>shadow</code> files is
+  not recommended when PAM is used for authentication, since the
+  <code>passwd</code> and <code>shadow</code> files may be (as an
+  example) simply a text dump of the real account database, which
+  is stored elsewhere.</p>
+
+  <p>NOTE: PAM is only used for authenticating password. The
+  <code>authpam</code> module still uses the <code>pwd.h</code> and
+  <code>group.h</code> library to find the account's home directory
+  and mailbox.</p>
+
+  <h4><code>authuserdb/authcram</code></h4>
+
+  <p>This is a poor man's virtual mail account implementation. The
+  <code>authuserdb</code> module is accompanied by a set of Perl
+  scripts that are used to map arbitrary E-mail addresses to
+  arbitrary make-believe "home directories" and mailboxes. The
+  <code>authuserdb</code> module is a convenient way to implement a
+  comparatively small number of mail accounts without bothering to
+  create real system accounts, or using a more complicated LDAP or
+  MySQL-based account database.</p>
+
+  <p>The E-mail addresses, the location of the corresponding
+  mailboxes, and other miscellaneous information is kept in a set
+  of plain text files. A couple of Perl scripts are provided to
+  conveniently enter and edit the contents of the
+  <code>userdb</code> text files, and compile them into a binary
+  database format that's used directly to deliver to/read the
+  mailbox for the corresponding E-mail address.</p>
+
+  <p><code>userdb</code> is loosely based on the traditional
+  passwd/shadow files. There are two binary database files, one
+  world readable, the other not (that one contains just the
+  passwords). Each "mail account" has the usual properties defined
+  in the <code>userdb</code> database: name, "home directory", uid,
+  gid, and password. This is basically an equivalent to the
+  traditional <code>passwd</code> file, except that an efficient
+  binary database format is used to search it.</p>
+
+  <p>All the traditional account properties - the uid and the gid -
+  are present, that doesn't mean that every <code>userdb</code>
+  account has to have unique properties. The most typical
+  environment allocates a single uid/gid for all mail accounts, and
+  creates all mail accounts with the same uid/gid, but different
+  pseudo-homedirs and mailboxes.</p>
+
+  <p>The <code>userdb</code> database contains a couple of other
+  fields that are not found in the traditional <code>passwd</code>
+  file. The <code>mail</code> field specifies a non-default
+  location of the mailbox for the account, and overrides the
+  assumed default of $HOME/Maildir. The <code>quota</code> field is
+  used for "Maildir quotas", a loosely-implemented cap on the
+  maximum size of the given maildir. The usage of maildir quotas is
+  described in the INSTALL file.</p>
+
+  <p><code>userdb</code> records may include other arbitrary fields
+  too. The <em>Courier</em> mail server will simply ignore them.
+  They can be used to conveniently store system-specific custom
+  information.</p>
+
+  <p>The <code>authuserdb</code> module is designed to handle up to
+  a couple of thousand mail accounts. Beyond that, more
+  "heavyweight" modules should be used, such as
+  <code>authldap</code> and <code>authmysql</code>. Although the
+  binary <code>userdb</code> database is rather quick, creating the
+  binary database from the original plain text files is a
+  comparatively slow process, and it must be done every time any
+  changes are made to the <code>userdb</code> files. The conversion
+  from text to binary is done by a couple of Perl scripts. Perl is
+  an interpreted language, and is comparatively slow.
+  <code>userdb</code> is not meant to handle huge lists of
+  accounts, so no attempt has been made to optimize the whole
+  process.</p>
+
+  <h4><code>authldap</code>, and <code>authmysql</code></h4>
+
+  <p>These two modules are used to store all account information in
+  an LDAP directory or a MySQL server. Except for the actual
+  back-end, these two modules have similar functionality. Both of
+  them have a corresponding configuration file which defines where
+  the server is, and the name of the fields where the requisite
+  information can be found. The <code>configure</code> script will
+  automatically add these modules if it finds the requisite
+  development libraries: OpenLDAP development libraries or MySQL
+  development libraries.</p>
+
+  <p>Note that it is not sufficient to have just the runtime
+  support libraries available, in order to compile
+  <code>authldap</code> or <code>authmysql</code>. Some operating
+  system distributions provide separate "runtime" and "development"
+  packages for OpenLDAP and MySQL. The "development" package will
+  contain the necessary files to compile <code>authldap</code> and
+  <code>authmysql</code>. Once compiled, the modules can be
+  installed on any server that contains only the runtime support
+  files.</p>
+
+  <p>Normally, if the <code>configure</code> scripts detects that
+  the development libraries is installed, the appropriate module
+  will be automatically compiled and installed. However, for an
+  external library to be detected, it must be installed wherever
+  the C or the C++ compiler looks for libraries.</p>
+
+  <p>The <em>Courier</em> mail server relies on the C or the C++
+  compiler to detect the availability of a particular library.
+  Example: if OpenSSL is installed in the directory
+  <code>/usr/local/ssl</code> chances are that the C or the C++
+  compiler does not usually search this directory for libraries or
+  include files. Most C and C++ compilers search only the
+  directories <code>/lib</code>, <code>/usr/lib</code>, and
+  <code>/usr/include</code> (for include files).</p>
+
+  <p>All C and C++ compilers allow you to specify any additional
+  directories to search, beside the default ones. The configuration
+  script uses the environment variables <code>CPPFLAGS</code>,
+  <code>CFLAGS</code>, and <code>LDFLAGS</code> to pass extra
+  options to the compiler's preprocessor, the compiler itself, and
+  the linker.</p>
+
+  <p>For example, if OpenSSL's include files are installed in the
+  directory <code>/usr/local/ssl/include</code>, and OpenSSL
+  libraries are installed in <code>/usr/local/ssl/lib</code>, the
+  <code>gcc</code> compiler needs to have the
+  <code>-I/usr/local/ssl/include</code> option for the
+  preprocessor, and the <code>-L/usr/local/ssl/lib</code> option
+  for the linker. So, to have the configuration script detect
+  OpenSSL, use the following commands:</p>
+  <pre>
+CPPFLAGS="-I/usr/local/ssl/include"
+LDFLAGS="-L/usr/local/ssl/lib"
+export CPPFLAGS
+export LDFLAGS
+./configure [ options ]
+</pre>
+
+  <p>The same applies for OpenLDAP, MySQL, and any other library.
+  The configuration script does not maintain a list of all the
+  non-standard locations where various libraries get installed by
+  default, because that's subject to change at any time. The
+  configuration script expects that the compiler can find the
+  development files by itself.</p>
+
+  <h4><code>authcustom</code></h4>
+
+  <p>This is a dummy authentication modules, it doesn't do
+  anything. It is a placeholder to insert custom authentication
+  code.</p>
+
+  <h4><code>authdaemon</code></h4>
+
+  <p><code>authdaemon</code> is a "metamodule". It is not a real
+  authentication modules, but acts like one. When
+  <code>authdaemon</code> is selected, the <code>authlib</code>
+  authentication library compiles all the other authentication
+  modules into a separate program, <code>authdaemond</code>, that
+  runs as the background process. The <code>authdaemon</code>
+  module receives all authentication requets, and forwards them to
+  the <code>authdaemond</code>.</p>
+
+  <p>This approach is used to optimize database-driven modules such
+  as <code>authldap</code> or <code>authmysql</code>. When invoked
+  separately, <code>authldap</code> must log in to the server,
+  process the authentication requests, then disconnect. Lather,
+  rinse, repeat.</p>
+
+  <p>As part of the permanent <code>authdaemond</code> background
+  process, these modules log in to the database server, and
+  maintain a persistent long-running process, which is used to
+  process a stream of authentication requests. The configuration
+  file for the <code>authdaemond</code> process specifies the
+  number of <code>authdaemond</code> processes that will be
+  started. This allows the <em>Courier</em> mail server to handle
+  heavy volumes of authentication requests.</p>
+
+  <h4>Authentication module configuration</h4>
+
+  <p>It is possible to have more than one authentication module
+  configured. For example, using <code>authpam</code> to
+  authenticate system accounts, and <code>authuserdb</code> to
+  authenticate virtual mail accounts. The <code>configure</code>
+  script inventories the system configuration and will often pick
+  several authentication modules that can be used with the existing
+  system configuration.</p>
+
+  <p>There are two ways to disable unwanted authentication modules.
+  The <code>configure</code> option
+  <code>--without-<em>name</em></code> disables module
+  <em>name</em>. Another way is to simply disable the
+  authentication module at runtime. The configuration file for the
+  main the <em>Courier</em> mail server, the IMAP, POP3, and
+  webmail servers specifies which authentication modules the
+  servers use. When <code>authdaemon</code> is installed, the
+  <code>authdaemond</code> configuration file lists the active
+  authentication modules. Removing the name of the authentication
+  module from the list will effectively disable it.</p>
+
+  <h3><a name="gdbmdb" id="gdbmdb">Q: Configuration script reports
+  the following error, and stops: "Cannot find either the gdbm or
+  the db library"</a></h3>
+
+  <p>A: The <em>Courier</em> mail server requires either the GDBM
+  library or the Berkeley DB library to be installed. If you have
+  the library installed, it is possible that it is installed in a
+  non-standard location. See "Q: I have OpenLDAP, or OpenSSL, or
+  MySQL installed" for how to resolve this situation.</p>
+
+  <h3>Q: Configuration script fails in the <code>gdbmobj</code> or
+  <code>bdbobj</code> subdirectory.</h3>
+
+  <p>A: There are two possible causes of this error:</p>
+
+  <ul>
+    <li>A C++ compiler is not installed.</li>
+
+    <li>The corresponding library is installed in a non-standard
+    location.</li>
+  </ul>
+
+  <p>Another possible reason for this error is that the GDBM or the
+  Berkeley DB library is not installed in a directory that is
+  searched by the C and C++ compilers, by default. See "Q: I have
+  OpenLDAP, or OpenSSL, or MySQL installed" for how to resolve this
+  situation.</p>
+
+  <h3>Q: Cannot find the GDBM library during compilation</h3>
+
+  <p>A: If you have <code>libgdbm.so</code> installed in
+  <code>/usr/local/lib</code> and <code>gdbm.h</code> installed in
+  <code>/usr/local/include</code>, it's possible that your compiler
+  doesn't search those directories. Reconfigure your compiler to
+  search those directories by default. Try setting
+  <code>CPPFLAGS</code> and <code>LDFLAGS</code> when running
+  configure:</p>
+  <pre>
+CPPFLAGS="-I /usr/local/include" \
+   LDFLAGS="-L /usr/local/lib" ./configure [options]
+</pre>
+
+  <p>It is also possible that <code>libgdbm.so</code> is not found
+  at runtime because your dynamic linker doesn't search
+  <code>/usr/local/lib</code> either. You will have to reconfigure
+  your dynamic linker.</p>
+
+  <p>An alternative solution is to install soft links in
+  <code>/usr/lib</code> and <code>/usr/include</code> to point to
+  the GDBM library.</p>
+
+  <h3><a name="solarisbug" id="solarisbug">Q: Compilation fails on
+  Solaris in the waitlib subdirectory</a></h3>
+
+  <p>A: Use <code>--with-waitfunc=wait3</code> option to configure.
+  A better solution is to pester Sun to fix their kernel. Using
+  this option is just a bandaid solution, and you might still
+  experience runtime problems with zombie processes not being
+  reaped, etc... One person reported that installing the fix for
+  bug <code>"4220394 wait3 library function fails after 248
+  days"</code> fixes this problem, someone else claimed that this
+  continues to happen even after installing this patch.</p>
+
+  <h2><a name="osx" id="osx">Compiling the <em>Courier</em> mail
+  server-IMAP on OS/X</a></h2>
+
+  <p>Set the RANLIB environment variable before running the
+  <code>configure</code> script, as follows:</p>
+
+  <blockquote>
+    <pre>
+RANLIB="ranlib -c"
+export RANLIB
+./configure [ options ]
+</pre>
+  </blockquote>
+
+  <h3><a name="makefail" id="makefail">Q: <code>make
+  install-strip</code> fails</a></h3>
+
+  <p>Use <code>make install</code> instead.</p>
+
+  <h3>Q: <code>make check</code> fails</h3>
+
+  <p>Use the GNU make.</p>
+
+  <p><em>make check</em> will fail if
+  <code>--enable-workarounds-for-imap-client-bugs</code> option is
+  selected. It's not a bug, it's a feature.</p>
+
+  <h3><a name="tru64" id="tru64">Q: <code>gmake check</code> fails
+  on Compaq Tru64 UNIX</a></h3>
+
+  <p>A: A patchkit for Tru64 5.x that fixes this problem is
+  scheduled to be released by Compaq in early spring 2002. Tru64
+  4.x is not affected by this problem.</p>
+
+  <h3><a name="rpm" id="rpm">Q: Building RPM packages on
+  Fedora</a></h3>
+
+  <p>A: On current vesions of Fedora, building installable RPM
+  packages is as simple as executing::</p>
+  <pre>
+    rpmbuild -ta courier-<i>version</i>.tar.bz2
+</pre>
+
+  <p>This will eventually create source and binary RPM packages.
+  This works for all Courier packages. You may need to install some
+  development packages first, before building RPMs. If you don't
+  have the required packages installed, RPM will tell you what
+  you're missing. Install the required packages, and try again.</p>
+
+  <h3>Q: I want to change the options that the RPMs are built
+  with</h3>
+
+  <p>Building the RPMs directly from the source tarball uses the
+  default options programmed into the tarball. Sometimes you may
+  want to use different options. For example, you might want to
+  enable fixes for certain bugs in some IMAP clients. Use the
+  following procedure to build the RPMs with different options:</p>
+
+  <ul>
+    <li>First, build the RPM packages using the default
+    options.</li>
+
+    <li>In addition to binary RPM packages, <code>rpmbuild</code>
+    will create a source RPM package (<i>filename</i>.src.rpm)</li>
+
+    <li>Install the source RPM package: <code>rpm -i
+    courier-<i>version</i>.src.rpm</code>.</li>
+
+    <li>The contents of the source RPM package get installed into
+    your rpm build directory, which is usually
+    <code>$HOME/rpm/<i>package</i></code>.</li>
+
+    <li>Edit the <i>.spec</i> file, modifying the default
+    configuration. You will need to have some understanding of how
+    RPM spec files work, then use the modified spec file to build
+    your custom package: <code>rpmbuild -ba
+    <i>filename</i>.spec</code></li>
+  </ul>
+
+  <h2>ESMTP</h2>
+
+  <h3><a name="esmtptimeout" id="esmtptimeout">Why are my e-mails
+  taking so long to send?</a></h3>
+
+  <p>Several things happen when the <em>Courier</em> mail server
+  receives a connection on the SMTP port 25. Sometimes those things
+  take an excessively long time to complete, and it seems that the
+  <em>Courier</em> mail server answers port 25 connections after a
+  long delay.</p>
+
+  <p>This usually happens for all connections to port 25, but it's
+  usually noticed when trying to send mail using a mail client
+  that's set up to use a the <em>Courier</em> mail server server as
+  a mail relay. Connections from other mail servers may experience
+  similar delays, but they are less likely to be noticed. It's hard
+  to ignore a mail client that does nothing, when it's commanded to
+  send a message.</p>
+
+  <p>When a new connection is received on port 25, with the default
+  configuration the <em>Courier</em> mail server performs the
+  following checks:</p>
+
+  <ol>
+    <li>The connecting IP address is looked up in DNS.</li>
+
+    <li>If the connecting IP address is resolved to a hostname, the
+    hostname is looked up in DNS again, to see if it resolves to
+    the connecting IP address.</li>
+
+    <li>The connecting IP address is queried using the <a target=
+    "_blank" href="http://www.rfc-editor.org/rfc/rfc1413.txt">IDENT
+    protocol</a>.</li>
+  </ol>
+
+  <p>The results obtained from these queries will be recorded in
+  the <code>Received:</code> header of any message received from
+  the connecting IP address.</p>
+
+  <p>A non-responding DNS server may result in lengthy connection
+  delays, as the DNS query times out (which may take several
+  minutes). A non-responding server for the connecting IP address's
+  netblock will probably not be a major problem, since the
+  intermediate DNS resolvers should quickly failover to any
+  functioning backup authoritative servers for the connecting IP
+  address, or its hostname. A bigger problem is when the local DNS
+  resolver, listed in /etc/resolv.conf goes down. This will result
+  in a certain percentage of all incoming connections experiencing
+  major delays.</p>
+
+  <p>A local, or an intermediate firewall may also drop IDENT
+  packets. IDENT is a fairly old protocol whose original purpose is
+  to identify individual users of a shared network server. Some
+  proxies may also use IDENT to identify the original source of a
+  proxied connection. However, since IDENT is an old, and not a
+  very well known protocol, some poorly-written firewalls may not
+  recognize the protocol, and bit-bucket IDENT connection requests.
+  An IDENT request times out after 30 seconds.</p>
+
+  <p>When investigating connection delays:</p>
+
+  <ol>
+    <li>Check each server listed in <code>/etc/resolv.conf</code>.
+    <strong>NOTE:</strong> The <em>Courier</em> mail server does
+    not read the <code>hosts</code> file. It needs a DNS server
+    (although it is possible to have a working the <em>Courier</em>
+    mail server configuration in a completely DNS-free environment,
+    this excersize requires changing many configuration files, and
+    perhaps will be its own FAQ entry some day).</li>
+
+    <li>Try to resolve the connecting IP address in DNS, backwards
+    and forwards.</li>
+
+    <li>Conduct a search for any misbehaving firewall between the
+    server, and the connecting IP address.</li>
+  </ol>
+
+  <p>As a last resort, both of these lookups can be turned off. Add
+  the <code>-nodnslookup</code> and <code>-noidentlookup</code>
+  options to TCPDOPTS, in the esmtpd configuration file (usually
+  <code>/usr/lib/courier/etc/esmtpd</code>). Example:</p>
+
+  <blockquote>
+    <p><code>TCPDOPTS="-nodnslookup -noidentlookup"</code></p>
+  </blockquote>
+
+  <p>There'll probably be an existing TCPDOPTS setting in there.
+  Add the whitespace-delimited options to anything that's already
+  in there.</p>
+
+  <blockquote>
+    <p><strong>NOTE:</strong> This should only be done as a last
+    resort, if there are no options left. The information gathered
+    by the queries may prove to be essential in investigating
+    high-level mail delivery-related issues. If a realization hits
+    that the DNS or IDENT information is needed to track down a
+    particular piece of mail, it'll be already too late. It
+    should've been there right from the start.</p>
+  </blockquote>
+
+  <h3><a name="esmtperr" id="esmtperr">Q: The <em>Courier</em> mail
+  server rejects mail with the following error:</a></h3>
+
+  <blockquote>
+    <code>MX records for $domain violate section 3.3.9 of RFC
+    1035</code>
+
+    <p>or</p>
+
+    <p><code>This domain's DNS violates RFC 1035.</code></p>
+  </blockquote>
+
+  <p><code>[PP]</code> Cause: Invalid DNS MX Records for that
+  domain</p>
+
+  <p>Solution: Contact sysadmin for that domain and advise to fix
+  their DNS.</p>
+
+  <p>A common problem appears to be that an MX record will point to
+  an IP address rather than a domain name (FQDN) as follows:</p>
+
+  <p>INCORRECT MX RECORD:</p>
+  <pre>
+domain.com    preference = 20, mail exchanger = 192.68.0.10
+</pre>
+
+  <p>CORRECT MX RECORD:</p>
+  <pre>
+domain.com    preference = 20, mail exchanger = mail.domain.com
+</pre>
+
+  <p>Temporary Solution: Put the offending domain into the
+  <code>esmtproutes</code> file and point it to that domain's mail
+  exchanger host. Doing so bypasses checking the domains MX or A
+  records and mail is sent directly to the relay specified in
+  esmtproutes. Reference: man <a href=
+  "courier.html">courier(8)</a>.</p>
+
+  <h3>Q: The <em>Courier</em> mail server rejects mail with the
+  following error:</h3>
+
+  <blockquote>
+    <code>517 Syntax error - your mail software violates RFC
+    821.</code>
+  </blockquote>
+
+  <p><code>[PP]</code> Cause: Most often generated by WinCE gizmos.
+  Several reasons, most common missing required &lt;&gt;
+  surrounding the MAIL FROM: or RCPT TO: verbs</p>
+
+  <p><code>[SV]</code> This problem is apparently present in the
+  Microsoft Outlook client too. See item #7 in <a target="_blank"
+  href=
+  "http://support.microsoft.com/support/kb/articles/Q180/4/84.ASP"><code>
+  http://support.microsoft.com/support/kb/articles/Q180/4/84.ASP</code></a>.
+  Note: contrary to the information in that article, this address
+  specification format is REQUIRED by <a target="_blank" href=
+  "http://www.rfc-editor.org/rfc/rfc821.txt">RFC 821</a>, and
+  Microsoft is simply ignoring another Internet standard, here.</p>
+
+  <p><code>[PP]</code> Solution: The usual solution for a 517 is to
+  tell people to explicitly put &lt;&gt; around all E-mail
+  addresses. That is, program their WinCE gizmo to believe that
+  their return address is "&lt;user@domain.com&gt;" instead of
+  "user@domain.com", and have them enter each recipient's address
+  in a similar way.</p>
+
+  <h3>Q: The <em>Courier</em> mail server delivers ESMTP mail with
+  a strange error message:</h3>
+
+  <p>Mail received by the received is replaced by the following
+  text, with the original message attached.</p>
+
+  <blockquote>
+    <p><code>I received the following message for delivery to your
+    address. Unfortunately, the sender's mail software did not
+    properly format the following message properly, in accordance
+    with Internet mail formatting protocols, and I can only deliver
+    mail which has been properly formatted according to Internet
+    standards. Instead of returning the following message as
+    undeliverable, it is saved, in its original form, in the
+    following attachment, which you can open with any editor or
+    word processor.</code></p>
+  </blockquote>
+
+  <p><code>[PP] [Sam]</code> Cause: Various bugs in poorly written
+  software that generates invalid MIME-formatted messages. Previous
+  versions of the <em>Courier</em> mail server used to
+  automatically return mis-formatted mail as undeliverable.
+  Starting with version 0.36.1, mis-formatted mail is replaced by
+  this canned message text, and the original message is attached as
+  plain text.</p>
+
+  <p>Solution: for now, manually edit
+  <code>SubmitFile::MessageEnd()</code> in
+  <code>courier/submit2.C</code>, and remove the code that reports
+  both 8-bit related errors, <code>RFC2045_ERR8BITHEADER</code> and
+  <code>RFC2045_ERR8BITCONTENT</code> (the first and the third
+  error message).</p>
+
+  <p>This will suppress the error and accept the garbage mail, but
+  expect random mail access problems. Certain versions of Outlook
+  have known bugs handling misformatted mail, so you're on your
+  own.</p>
+
+  <p>NOTE: Do not remove the code that reports RFC2045_ERR2COMPLEX,
+  this error indicates a denial-of-service attack.</p>
+
+  <p>NOTE: Removing the check for RFC2045_ERRBADBOUNDARY suppresses
+  the second error message, however think long and hard before you
+  do this. You are virtually guaranteed to end up with corrupted
+  MIME mail if this check is removed!</p>
+
+  <h3><a name="450" id="450">Q: Server is not accepting any mail,
+  returns a <code>450 Service unavailable</code> error every
+  time.</a></h3>
+
+  <ul>
+    <li>You are using a database-based back-end, such as LDAP or
+    MySQL, and the back-end server is down.</li>
+
+    <li>You are using <code>authdaemon</code>, and the
+    <code>authdaemond</code> process is not running.</li>
+  </ul>
+
+  <h3><a name="relay" id="relay">Q: How do I enable relaying for an
+  IP address range?</a></h3>Put the IP address range in any file in
+  the <code>smtpaccess</code> configuration subdirectory, then run
+  <code>makesmtpaccess</code>. See <a href=
+  "makesmtpaccess.html">makesmtpaccess(8)</a> and <a href=
+  "couriertcpd.html">couriertcpd(8)</a>. For example, to enable
+  relaying for IP address 10.192.64.0 - 10.192.64.255, put the
+  following into <code>smtpaccess</code>:
+  <pre>
+10.192.64&lt;TAB&gt;allow,RELAYCLIENT
+</pre>"<code>&lt;TAB&gt;</code>" is a single TAB character.
+
+  <h3><a name="virtual" id="virtual">Q: How do I implement virtual
+  domain hosting?</a></h3>
+
+  <p>There are literally a dozen different ways to do it. If you
+  are comfortable with how virtual domains are implemented by
+  Qmail, you can do something similar with the <em>Courier</em>
+  mail server. If you are used to implementing virtual domains with
+  sendmail, you'll be able to do something similar too.
+  Additionally, you can use LDAP directories or MySQL databases to
+  store your mail account configuration. Or, you can simply enter
+  virtual account information in text files, and run a script to
+  convert the text file database to a binary GDBM or DB database
+  that the <em>Courier</em> mail server can use to map arbitrary
+  mail addresses to home directories and mailboxes. In all cases,
+  the same configuration is automatically shared by ESMTP, IMAP,
+  POP3, and webmail components. They all use the same
+  authentication back-end.</p>
+
+  <p><strong>NOTE:</strong> in all cases you are still responsible
+  for creating the home directories and/or mailboxes for each
+  account, with the appropriate ownership and permissions. You will
+  still need to do that in all cases.</p>
+
+  <h4>Using USERDB</h4>
+
+  <p>The <code>authuserdb</code> authentication module is included
+  by default. To use it, create a file or a subdirectory named
+  <code>userdb</code> in the configuration directory (the default
+  location is <code>/usr/lib/courier/etc</code>, but that may vary
+  on your platform). If <code>userdb</code> is a subdirectory, the
+  contents of files in that subdirectory are simply concatenated.
+  Use the following commands to create a virtual account:</p>
+  <pre>
+userdb john@example.com set home=/home/virtual/example.com/john \
+             uid=999 gid=999
+          
+userdbpw | userdb john@example.com set systempw
+</pre>
+
+  <p>If <code>userdb</code> is a subdirectory instead of a file,
+  replace "john@example.com" with
+  "<em>filename</em>/john@example.com".</p>
+
+  <p>On systems that use MD5 password hashes, instead of crypt-ed
+  passwords, specify the <code>-md5</code> option to
+  <code>userdbpw</code>.</p>
+
+  <p>The home directory of this virtual account must now be
+  created, as well as its default system mailbox (usually
+  <code>$HOME/Maildir</code>).</p>
+
+  <p>When a virtual account does not really have a home directory,
+  just the system mailbox, set both the <code>home</code> and
+  <code>mail</code> fields to the same pathname:</p>
+  <pre>
+userdb john@example.com set home=/home/virtual/example.com/john \
+             mail=/home/virtual/example.com/john \
+             uid=999 gid=999
+          
+</pre>
+
+  <p>In this case <code>/home/virtual/example.com/john</code> is
+  the system mailbox.</p>
+
+  <p>Run the <code>makeuserdb</code> command to rebuild the
+  <code>userdb</code> database.</p>
+
+  <p>Finally, <code>example.com</code> must be configured as a
+  virtual domain. Edit the <code>hosteddomains</code> configuration
+  file, add <code>example.com</code> to the file, then run
+  <code>makehosteddomains</code>. See <a href=
+  "courier.html">courier(8)</a> for more information.</p>
+
+  <p><code>userdb</code> can completely replace the functionality
+  of the traditional <code>/etc/passwd</code> file. With a large
+  passwd file, converting the flat text file to a fast database
+  file can greatly improve performance. The <code>pw2userdb</code>
+  script convert <code>/etc/passwd</code> to <code>userdb</code>
+  format.</p>
+
+  <h4>Qmail-style virtual domains</h4>
+
+  <p>Append the following to the <code>aliases</code> configuration
+  file:</p>
+  <pre>
+@example.com: john
+</pre>
+
+  <p>If <code>aliases</code> is a subdirectory, append this to any
+  file in the subdirectory (or create a new one). In all cases, run
+  <code>makealiases</code> for the change to take effect.</p>
+
+  <p>Mail to <code>anything@example.com</code> gets delivered to
+  local address <code>john-anything</code>. The local
+  <code>john</code> account may install <a href=
+  "dot-courier.html">dot-courier(5)</a> delivery instructions for
+  any particular <code>anything</code> address.</p>
+
+  <h4>Sendmail-style virtual domains</h4>
+
+  <p>Append the following to the <code>aliases</code> configuration
+  file:</p>
+  <pre>
+john@example.com: john1
+</pre>
+
+  <p>If <code>aliases</code> is a subdirectory, append this to any
+  file in the subdirectory (or create a new one). In all cases, run
+  <code>makealiases</code> for the change to take effect.</p>
+
+  <p>Mail to <code>john@example.com</code> will be delivered to the
+  local account <code>john1</code>.</p>
+
+  <h4>Using <code>LDAP</code> or <code>MySQL</code> back-ends</h4>
+
+  <p>Virtual domains can also be supported by storing the account
+  information in an LDAP directory or a MySQL database. This is
+  implemented by installing the <code>authldap</code> and
+  <code>authmysql</code> authentication module.</p>
+
+  <p>It will be necessary to initialize <code>hosteddomains</code>,
+  and run <code>makehosteddomains</code> in order to configure the
+  <em>Courier</em> mail server to pass virtual domains to the local
+  mail module. Additionally, <code>authldap</code> and
+  <code>authmysql</code> come with their corresponding
+  configuration files, <code>authldaprc</code> and
+  <code>authmysqlrc</code>, that specify the gory details such as
+  the location of the back-end server, and the name of the tables
+  or records involved. Consult that configuration file for more
+  information.</p>
+
+  <h3><a name="linkerr" id="linkerr">Q: The <em>Courier</em> mail
+  server keeps restarting every minute, and there are weird syslog
+  messages about "unsafe" hard links</a></h3>
+
+  <p>You are running an operating system kernel that's been altered
+  with one of several nonstandard modifications that aim to improve
+  system security by rejecting certain kinds of operating system
+  calls. You will need to disable these non-standard patches. They
+  completely modify the traditional file permission semantics, in
+  the name of security. This breaks the <em>Courier</em> mail
+  server, whose security model is based on traditional filesystem
+  permissions.</p>
+
+  <h3><a name="backupmx" id="backupmx">How to configure the
+  <em>Courier</em> mail server to be a backup MX for a
+  domain</a></h3>
+
+  <p>To configure a the <em>Courier</em> mail server server as a
+  backup MX, meaning that the <em>Courier</em> mail server receives
+  mail for <code>@domain.com</code>, and forwards it to the primary
+  MX server for domain.com when it becomes available (presumably
+  the primary MX server is not available at this moment):</p>
+
+  <ol>
+    <li>Put <code>domain.com</code> into the
+    <code>esmtpacceptmailfor</code> configuration file (or the
+    <code>esmtpacceptmailfor.dir</code> directory, then run
+    <code>makeacceptmailfor</code>).</li>
+
+    <li>Insert a DNS MX record. The MX record must have a higher
+    priority than <code>domain.com</code>'s primary MX.
+    Furthermore, the hostname in the MX record must be one of the
+    hostnames in the <code>locals</code> configuration file. For
+    example:
+      <pre>
+domain.com      MX 10  primary.domain.com
+domain.com      MX 20  backupmx.domain.com
+primary.domain.com  A 192.168.0.4
+backupmx.domain.com A 192.168.0.5        # IP address of the backup MX server
+
+locals:
+backupmx.domain.com
+
+esmtpacceptmailfor:
+domain.com
+</pre>
+    </li>
+
+    <li>It is also possible to have backupmx.domain.com listed at
+    the same MX priority as the primary MX. If so, it will also be
+    necessary to explicitly initialize the esmtproutes
+    configuration file:
+      <pre>
+domain.com: [192.168.0.4]
+</pre>
+    </li>
+  </ol>
+
+  <h3><a name="maxrcpts" id="maxrcpts">Q: Messages with more than
+  20 recipients are rejected</a></h3>
+
+  <p>A: You can set the maximum number of recipients for a single
+  email by adding the line:</p>
+
+  <p><code>maxrcpts <em>number</em></code></p>
+
+  <p>to <em>etc/bofh</em>.</p>
+
+  <h2>IMAP</h2>
+
+  <h3><a name="imapbugs" id="imapbugs">Q: StarOffice's IMAP client
+  doesn't work, Messenger's IMAP client reports command errors when
+  new messages arrive</a></h3>
+
+  <p>A: Both IMAP clients do not correctly implement certain parts
+  of IMAP4rev1. Rerun configure, and use
+  <code>--enable-workarounds-for-imap-client-bugs</code> option.
+  Note that make check will fail when this option is used.</p>
+
+  <h3><a name="namespace" id="namespace">Q: Can't create folders,
+  only subfolders of INBOX</a></h3>
+
+  <p>This is a configuration issue with your mail client. IMAP
+  servers are free to use any folder namespace arrangement that's
+  technically convenient for them. The <em>Courier</em> mail server
+  uses "INBOX." as the namespace for private folders, and "shared."
+  as the namespace for public, shared, folders. The IMAP NAMESPACE
+  extension (see <a target="_blank" href=
+  "http://www.rfc-editor.org/rfc/rfc2342.txt"><code>http://www.rfc-editor.org/rfc/rfc2342.txt</code></a>)
+  allows IMAP clients to automatically discover where the server
+  creates folders, and your IMAP client should implement it.</p>
+
+  <p>This should be completely transparent to you, if your IMAP
+  client properly uses the <code>NAMESPACE</code> extension. If
+  your IMAP client were to automatically take advantage of
+  self-configuration features offered by RFC 2060 and RFC 2342, it
+  would automatically discover, without any additional
+  configuration from the user, that:</p>
+
+  <ol>
+    <li>The folder namespace hierarchy separator is the .
+    character</li>
+
+    <li>Private folders are stored underneath the
+    "<code>INBOX.</code>" hierarchy</li>
+
+    <li>Public folders are stored underneath the
+    "<code>shared.</code>" hierarchy</li>
+  </ol>
+
+  <p>If you have to explicitly create folders that are subfolders
+  of INBOX, or if you explicitly have to name that
+  "<code>INBOX.foldername</code>", this is due to your IMAP client
+  not being able to configure itself accordingly.</p>
+
+  <p>A: Correct. IMAP servers are free to define any root of the
+  folder namespace tree that's convenient for them. The
+  <em>Courier</em> mail server's IMAP server uses INBOX as the
+  folder namespace root, rather than the root hierarchy itself. The
+  <em>Courier</em> mail server supports the <code>NAMESPACE</code>
+  IMAP extension which allows compliant IMAP clients to
+  automatically configure themselves so that the folder namespace
+  root is transparent. Submit an enhancement request to have your
+  IMAP client gracefully handle the folder namespace root.</p>
+
+  <h3>Q: The IMAP server doesn't run at bootup</h3>
+
+  <p>A: Check the following:</p>
+
+  <ul>
+    <li>The entry for the IMAP port is not in
+    <code>/etc/inetd.conf</code>.<br /></li>
+
+    <li>If you're using the example system V init script,
+    IMAPDSTART is set to YES in the <code>imapd</code>
+    configuration file (usually
+    <code>/usr/lib/courier/etc/imapd</code>).</li>
+  </ul>
+
+  <h3><a name="imaplogin" id="imaplogin">Q: Can't log in</a></h3>
+
+  <p>A: Check the following</p>
+
+  <ul>
+    <li><code>AUTHMODULES</code> in the <code>imapd</code>
+    configuration file is correct.</li>
+
+    <li>If the <code>authdaemon</code> authentication proxy is
+    used, check the <code>authdaemonrc</code> configuration file.
+    Check that <code>authdaemond</code> is running.</li>
+
+    <li>Your authentication modules are properly configured. Some
+    authentication modules have additional configuration files
+    (<code>authldap</code> and <code>authmysql</code>). If you're
+    using <code>authpam</code>, you need to configure your PAM
+    library to authenticate the "<em>imap</em>" service. This is a
+    separate task, and is specific to your PAM library and
+    operating system.</li>
+
+    <li>You are using a database-based back-end, such as LDAP or
+    MySQL, and the back-end server is down.</li>
+
+    <li>You're using maildirs. The <em>Courier</em> mail server's
+    IMAP server only supports maildirs
+    (<code>$HOME/Maildir</code>), it doesn't support mailbox
+    files.</li>
+  </ul>
+
+  <h3><a name="fam" id="fam">Q: Repeated messages in syslog:
+  "Failed to create cache file: maildirwatch (user) Error:
+  Input/output error Check for proper operation and configuration
+  of the File Access Monitor daemon (famd)." How can I solve
+  it?</a></h3>
+
+  <p>This means that the <em>Courier</em> mail server was compiled
+  with File Alteration Monitor (FAM), but FAM is not running, or is
+  not configured. If you have FAM installed you can add it to a
+  runlevel and start it. Some FAM configuration use portmapper, so
+  you will need to have portmap running also. You can also see "man
+  8 imapd" for more information.</p>
+
+  <h3><a name="imapfud" id="imapfud">Q: I heard that the
+  <em>Courier</em> mail server does not implement IMAP
+  properly</a></h3>
+
+  <p>A: This topic deserves its own web page. See <a target=
+  "_blank" href=
+  "http://www.courier-mta.org/fud/">http://www.courier-mta.org/fud/</a>
+  for more information.</p>
+
+  <h2>POP3</h2>
+
+  <h3><a name="pop3run" id="pop3run">Q: The POP3 server doesn't run
+  at bootup</a></h3>
+
+  <p>A: Check the following:</p>
+
+  <ul>
+    <li>The entry for the pop3 port is not in
+    <code>/etc/inetd.conf</code>.<br /></li>
+
+    <li>If you're using the example system V init script,
+    POP3DSTART is set to YES in the <code>pop3d</code>
+    configuration file (usually
+    <code>/usr/lib/courier/etc/pop3d</code>).</li>
+  </ul>
+
+  <h3><a name="pop3login" id="pop3login">Q: Can't log in</a></h3>
+
+  <p>A: Check the following</p>
+
+  <ul>
+    <li><code>AUTHMODULES</code> in the <code>pop3d</code>
+    configuration file is correct.</li>
+
+    <li>If the <code>authdaemon</code> authentication proxy is
+    used, check the <code>authdaemonrc</code> configuration file.
+    Check that <code>authdaemond</code> is running.</li>
+
+    <li>Your authentication modules are properly configured. Some
+    authentication</li>
+
+    <li>Your authentication modules are properly configured. Some
+    authentication modules have additional configuration files
+    (<code>authldap</code> and <code>authmysql</code>). If you're
+    using <code>authpam</code>, you need to configure your PAM
+    library to authenticate the "<em>pop3</em>" service. This is a
+    separate task, and is specific to your PAM library and
+    operating system.</li>
+
+    <li>You are using a database-based back-end, such as LDAP or
+    MySQL, and the back-end server is down.</li>
+
+    <li>You're using maildirs. The <em>Courier</em> mail server's
+    POP3 server only supports maildirs
+    (<code>$HOME/Maildir</code>), it doesn't support mailbox
+    files.</li>
+  </ul>
+
+  <h2>Webmail</h2>
+
+  <h3><a name="webmailcreate" id="webmailcreate">Q: How do I create
+  new system accounts via the webmail server?</a></h3>
+
+  <p>A: Write your own CGI script for this. Not everyone wants this
+  ability, plus with all the different authentication module there
+  are literally dozens of different ways accounts can be set up,
+  and there's no way to provide a uniform interface for this
+  purpose.</p>
+
+  <h3>Q: I changed the system password for an account, but the
+  webmail password hasn't changed?</h3>
+
+  <p>A: Mainly for the same reason, there's no uniform way to
+  change system passwords, so the webmail server maintains its own
+  passwords, which are initialized from the system password. You
+  can reconfigure the <em>Courier</em> mail server with the
+  <code>--enable-webpass=no</code> flag (see INSTALL), and lose the
+  ability to change passwords in the webmail interface, so all
+  password changes must now be done on the system level.</p>
+
+  <h2>Miscellaneous</h2>
+
+  <h3><a name="help" id="help">Q: Asking for help on the
+  courier-users and courier-imap mailing lists</a></h3>
+
+  <p>A: The <a target="_blank" href=
+  "http://lists.sourceforge.net/lists/listinfo/courier-users">courier-users</a>
+  (<a target="_blank" href=
+  "http://markmail.org/browse/net.sourceforge.lists.courier-users">list
+  archive</a>) or the <a target="_blank" href=
+  "http://lists.sourceforge.net/lists/listinfo/courier-imap">courier-imap</a>
+  (<a target="_blank" href=
+  "http://markmail.org/browse/net.sourceforge.lists.courier-imap">list
+  archive</a>) mailing list should be the first place to look for
+  assistance with resolving any issues. You only need to observe a
+  few simple rules in order to increase your chances of getting a
+  quick and helpful response:</p>
+
+  <ol>
+    <li>Try searching the archives of the <a target="_blank" href=
+    "http://markmail.org/browse/net.sourceforge.lists.courier-users">
+    courier-users</a> or the <a target="_blank" href=
+    "http://markmail.org/browse/net.sourceforge.lists.courier-imap">
+    courier-imap</a> list, first.</li>
+
+    <li>Subscribe to the <a target="_blank" href=
+    "http://lists.sourceforge.net/lists/listinfo/courier-users">courier-users</a>
+    or the <a target="_blank" href=
+    "http://lists.sourceforge.net/lists/listinfo/courier-imap">courier-imap</a>
+    mailing list before you ask any questions. These mailing lists
+    do not accept messages from non-subscribers. The courier-imap
+    list is a dedicated list for IMAP-related issues.</li>
+
+    <li>Very important: Read <a target="_blank" href=
+    "http://www.catb.org/~esr/faqs/smart-questions.html#intro">http://www.catb.org/~esr/faqs/smart-questions.html#intro</a>
+    before sending your first question.</li>
+
+    <li>Do not send HTML E-mail messages, unless you want many
+    people to automatically delete them, unread. If you are using
+    MS-Outlook, turn off HTML formatting before sending mail to the
+    list.</li>
+
+    <li>Before sending a question, check it to make sure that your
+    message does not contain the words "doesn't work." Saying only
+    that something doesn't work is not very useful in trying to
+    analyze the problem. If something isn't working correctly,
+    merely stating it will not make much progress. Be sure to
+    always include in your messages:
+
+      <ul>
+        <li>The contents of any related configuration files.</li>
+
+        <li>What happens, <em>exactly</em>, that makes you think
+        that something isn't working right.</li>
+
+        <li>The contents of your system log file (syslog, or
+        <code>/var/log/messages</code>).</li>
+
+        <li>Be sure to describe any non-standard modifications to
+        the operating system you're using, such as a kernel hacked
+        with one of several varieties of the OpenWall patch, or
+        filesystema mounted with a no-suid option. Many problems
+        turn out to be unintentional conflicts with various
+        unexpected side-effects of these custom modifications (but
+        not after wasting a great deal of time chasing
+        ghosts).</li>
+      </ul>
+    </li>
+
+    <li>Do not send large attachments (over 10K bytes is a rule of
+    thumb), to the list. Put it somewhere - on the web or on a FTP
+    server - and include a link in your message instead.</li>
+
+    <li>Always mention what you've already tried to do in order to
+    fix the problem. People are more likely to help you if they
+    know that you've made some effort to figure it out by yourself,
+    and you are only asking for help after running into a dead
+    end.</li>
+
+    <li>If you do not get an answer in one hour, don't resend your
+    message. If people open their mailbox and see five copies of
+    the same message, they'll be ignored. Have patience. Either
+    wait some more, or accept it as a fact of life. Try again to
+    figure out the answer on your own. You can certainly ask again
+    after you've tried to figure it out once more, and still didn't
+    get anywhere. Don't just write again, and simply say that it
+    still doesn't work. Provide some additional information,
+    showing what else you've tried to do, to no avail.</li>
+  </ol>
+
+  <h3><a name="vdomains" id="vdomains">Q: Using virtual
+  domains</a></h3>
+
+  <p>There are several ways to implement virtual mailboxes, to
+  address different situations and environments. The simplest case
+  involved simply redirecting certain mail addresses to a local
+  mailbox:</p>
+  <pre>
+user@domain.com: localuser
+</pre>
+
+  <p>This entry in the <code>aliases</code> configuration file (run
+  the <code>makealiases</code> script after editing
+  <code>aliases</code>) causes mail for &lt;user@domain.com&gt; to
+  be delivered to <code>localuser</code>, which must be an existing
+  system account. If IMAP/POP3/Webmail access has been configured,
+  it is necessary to log in as <code>localuser</code> to pick up
+  this mail.</p>
+
+  <p>A slightly different syntax in <code>aliases</code> results in
+  mail for an entire mail domain to be controlled by a local system
+  account:</p>
+  <pre>
+@domain.com: localuser
+</pre>
+
+  <p>Here, any mail address &lt;foo@domain.com&gt; will be
+  redirected to the local address &lt;localuser-foo&gt;. Note, the
+  address is &lt;localuser-foo&gt;, not &lt;localuser&gt;. This
+  means that the account owner &lt;localuser&gt; gets to control
+  the mailboxes in this domain. In this case, the file
+  <code>$HOME/.courier-foo</code> will control disposition of mail
+  addressed to <code>foo@domain.com</code>. See the <a href=
+  "dot-courier.html">dot-courier(5)</a> man page for more
+  information. In this case, there is no default way to access mail
+  to various mailboxes via IMAP/POP3/Webmail. If
+  <code>$HOME/.courier-default</code> is used to deliver all mail
+  for this domain to the default mailbox for the
+  <code>localuser</code> account, mail can be read via
+  IMAP/POP3/Webmail by loggin in as <code>localuser</code>.</p>
+
+  <p>The other way to implement virtual domains is by using a
+  custom authentication back-end, such as LDAP, MySQL, and
+  PostgreSQL, to explicitly administer virtual domains. The first
+  step is to add <code>domain.com</code> to the
+  <code>hosteddomains</code> configuration file, and run the
+  <code>makehosteddomains</code> script. This tells the
+  <em>Courier</em> mail server to deliver mail for this domain
+  locally. The next step is to appropriately configure the
+  authentication library, and define the valid mailboxes in this
+  domain. See the <a href="authlib/authlib.html">authlib(8)</a> man page
+  for information on setting up the various authentication
+  back-ends. The authentication back-ends that can support virtual
+  domains are LDAP, MySQL, PostgreSQL, and userdb (also vchkpw, but
+  that requires some external configuration).</p>
+
+  <p>Note that the <em>Courier</em> mail server does not
+  automatically create the maildirs for virtual mail accounts.
+  After setting up a virtual mail account it is still necessary to
+  create and initialize the virtual home directory, and the virtual
+  maildir directory, with the correct permission and ownership.</p>
+
+  <p>Most authentication modules require their own specific
+  configuration files to be initialized. Most authentication
+  modules also require that they be compiled into the
+  <code>authdaemon</code> authentication proxy. This means that it
+  will be necessary to arrange to have <code>authdaemond</code>
+  started at system startup. See the <a href=
+  "authlib/authlib.html">authlib(8)</a> man page for more information.</p>
+
+  <h3><a name="fetchmail" id="fetchmail">Q: Using
+  <code>fetchmail</code></a></h3>
+
+  <p>Since the <em>Courier</em> mail server provides both IMAP and
+  POP3 services, nothing unusual is required to download mail from
+  a the <em>Courier</em> mail server-hosted mailbox, using either
+  protocol. Here is a suggested <code>fetchmail.rc</code>
+  configuration file to download mail from an external mail account
+  into a local mailbox. For readability, some long lines below have
+  been split across multiple lines, and they should be manually
+  combined. Insert your account information in the appropriate
+  place, and run <code>fetchmail</code> from the account's
+  crontab:</p>
+
+  <blockquote>
+    <pre>
+### [RS]
+        
+### global options
+# set logfile /relay/home/var/log/fetchmail
+set syslog
+# set idfile /root/.fetchids
+set postmaster postmaster@hostname.dom
+set no bouncemail
+set no spambounce
+set no showdots
+# set invisible
+
+defaults
+        ### server options (qmail-style headers)
+        via pop.provider.dom protocol POP3 auth cram-md5 timeout 15
+        no dns no checkalias no uidl
+        envelope Delivered-To qvirtual mydomain.dom.ch-
+        localdomains mydomain.dom
+        # tracepolls
+        ### user options (courierpop3d)
+        fetchlimit 32 batchlimit 16 limit 6000000 warnings 3600 antispam -1
+        no rewrite no idle pass8bits fetchall
+        # mda "/relay/bin/sendmail -N delay,fail -R full -f %F %T"
+        # postconnect "exec /bin/sleep 5"
+        smtphost 127.0.0.1 smtpaddress hostname.dom
+        is * here
+        # keep
+
+poll username interval 4 user "username@mydomain.dom" pass "whatever"
+mda "/relay/bin/env USER=relay HOME=/relay/home/username \
+   DEFAULT=./ SENDER=%F RECIPIENT=%T \
+   /usr/lib/courier/bin/maildrop -V 1 -f '%F' /home/username/.mailfilter"
+</pre>
+  </blockquote>
+
+  <p>This example is for a basic system that uses traditional
+  system accounts, and with an existing
+  <code>$HOME/.mailfilter</code> (which can be generated via the
+  webmail server). This can be used with virtual accounts, provided
+  that additional steps are added to run maildrop under the correct
+  system uid/gid, and the explicit pathname to the virtual
+  account's <code>.mailfilter</code> is provided, and that the
+  virtual account's <code>MAILDIR/mailfilterfilterconfig</code> is
+  manually initialized to contain absolute pathnames (so that the
+  generated <code>.mailfilter</code> file itself uses absolute
+  paths).</p>
+
+  <p>This is a simple example that downloads one external mailbox
+  to a local mailbox. Some external mail providers offer a service
+  to deliver all mail for an entire domain into a single mailbox.
+  This example will also work for downloading all such mail into a
+  single local mailbox. This approach cannot be reliable modified
+  to distribute domain mail to multiple local mailboxes, no matter
+  what anyone else tells you, even though <code>fetchmail</code>
+  contains facilities for doing so. If that's what you want to do,
+  have your mail delivered by ESMTP or UUCP. Delivering mail to a
+  mailbox automatically discards all the required recipient
+  information, and by redistributing mail locally you're going to
+  attempt to reconstruct this information from mail headers. This
+  is never going to be a 100% reliable process, and unless you
+  fully understand all these issues, you're likely to end up with
+  occasional mail loops and bounces, which will annoy many people.
+  You've been warned.</p>
+</body>
+</html>

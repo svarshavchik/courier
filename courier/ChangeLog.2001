@@ -1,0 +1,1849 @@
+0.37
+
+2001-12-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/rfcerrheader.txt.in (Comment): Minor adjustments.
+
+	* pcp/pcpnet.c (bookevent): Fix memory corruption.
+
+2001-12-28  Iustin Pop <iusty@intensit.de>
+
+	* authldap: if LDAP_TLS and LDAP_AUTHBIND were enabled, use TLS for
+	the authenticated bind also.
+
+2001-12-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Properly decode 8-bit characters for the quick addressbook
+	add link.
+
+2001-12-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/status.html: updated build dependencies.
+
+	* courier/webadmin/admin-30esmtp.html (alink): Removed all predefined
+	configurations for relays.osirusoft.com due to abuse.
+
+	* Converted testmxlookup, dotforward, mimegpg, courieruucp,
+	courierfilter, courierperlfilter, dupfilter to Docbook.
+
+2001-12-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted courierldapaliasd, esmtpd, localmailfilter,
+	makeacceptmailfor, makealiases, makehosteddomains, submit,
+	preline, pop3d, mkesmtpdcert, makesmtpaccess, makepercentrelay,
+	sendmail man pages to Docbook.
+
+2001-12-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted couriermlm, dot-courier man pages to Docbook.
+
+2001-12-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted courier, mailq, cancelmsg man page to Docbook.  Converted
+	courierpop3login/courierpop3d man page to Docbook - moved the man page
+	to the imap subdir, the primary man page is now courierpop3d, with
+	courierpop3login soft-linked to it (the opposite way now).
+
+	* Calendar: attempting to delete an event placed on a calendar by
+	proxy results in a warning message.
+
+2001-12-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Converted couriertls and couriertcpd man pages to Docbook.
+
+	* maildrop: Converted makemime, rfc2045, rfc822, makedat man pages to
+	Docbook.
+
+2001-12-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* authpam: Fix failover to the next auth module if userid not found.
+
+	* maildrop: Converted reformime, reformail, dotlock, mailbot man
+	pages to Docbook.
+
+2001-12-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop: Converted maildropfilter, maildropex, maildropgdbm man
+	pages to Docbook.
+
+2001-12-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/maildrop.sgml: Converted maildrop man page to Docbook.
+
+	* courier/doc/makedat.html: Updated makedat's man page.
+
+2001-12-15  Gordon Messmer <yinyang@eburg.com>
+
+	* courier/submit2.C (get_msgid_for_filtering): Send control file's
+	pathname to the courierfilter process, instead of the message queue
+	ID.
+
+2001-12-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/filters/dupfilter.c (checkclient): dupfilter now receives
+	the control file pathname, instead of the message queue ID.
+
+2001-12-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/rfcerrheader.txt.in (Comment): Adjusted some verbiage.
+	Revised the FAQ to reflect that.  Removed the S/MIME entry in the
+	FAQ - no longer applicable for some time.
+
+	* Calendar: mail notices to event participants when the event is
+	updated.
+
+2001-12-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Rewrite timeout-connect code to better report errors.
+
+	* webadmin: set up groupware calendaring via webadmin.
+
+	* courier/submit.C (checkdns): Check the freemail list only if the
+	message comes in via esmtp, and RELAYCLIENT is not set.
+
+	* Converted maildir documentation to Docbook SGML
+
+2001-12-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Added groupware calendaring.
+
+0.36.1
+
+2001-12-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap/mailboxlist.c (do_mailbox_list): Get rid of an illegal free()
+	triggered by LIST #allfolders.
+
+2001-12-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap: convert imapd documentation to Docbook SGML
+
+	* courier/submit.C (getrcpts): HELO, and other user-supplied
+	stuff that goes into mail headers may contain 8 bit data, so
+	MIME-encode them, in that case.
+
+2001-11-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/libs/comqueuename.c (qmsgqname): Size of the static buffer
+	used to construct the queue file name might be too small if Courier
+	is installed under a long directory name.
+
+	* courier/cdmsgq.C (tmpscan): Change the order in which the message
+	files are moved into the message queue,
+	(queuescan3): Fix check for left over queue file, that got broken
+	by the ARCHIVEDIR change.
+
+	* courier/submit2.C (copy_orig_headers): When replicating selected
+	headers from original message into the headers of the LARTogram,
+	strip the 8th bit (which is the trigger for the LARTogram in the
+	first place).
+
+2001-11-28  Bill Shupp <hostmaster@shupp.org>
+
+	* imaplogin.c (do_imap_command): Added AUTHSERVICE configuration
+	setting.
+
+2001-11-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Add pcp/README.html to the RPM.
+
+	* courier/submit2.C (encapsulate): Instead of bouncing corrupted
+	MIME mail, wrap it inside a MIME attachment, and prepend a suitable
+	LART.
+
+2001-11-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/filters/perlfilter/perlfilter-example.pl: Fixed a bug in
+	the sample perlfilter.
+
+	* authlib/authmod.c (authmod_success): Adjust error reporting after
+	a failed exec().
+
+2001-11-25  John Morrissey <jwm@horde.net>
+
+	* authlib/authldaplib.c: make user uid/gid optional, default to global
+	uid/gid.
+
+2001-11-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/Makefile.am: add pcp/README.html to the documentation
+	set.
+
+	* Begin conversion of man/html documentation to Docbook SGML.
+	Created a docbook directory in CVS, and added it to all modules.
+	This directory won't get packaged into tarballs, the tarballs will
+	have just the compiled man and html documentation, and the docbook
+	directory (module name 'docbook-scripts') will contain only the
+	scripts to convert SGML to HTML and MAN.
+
+	* Converted authlib and userdb man/html pages to sgml.
+
+2001-11-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/libs/comqueuename2.c (qmsgunlink): Add ARCHIVEDIR option
+	in courierd config file to archive all mail passing through the
+	system.
+
+	* msgenvelope.c (read_header): Suppress \r-s from ENVELOPE
+	reply, because of Outlook.
+
+2001-11-23  Brian Candler <B.Candler@pobox.com>
+
+	* pop3dserver.c: Reply with -ERR if maildir does not exist.
+
+2001-11-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/webadmin/admin-50bofh.pl: Fix freemail, add support for
+	enhanced freemail and maxrcpts BOFH keywords.
+
+2001-11-22  Alessandro Vesely <vesely@tana.it>
+
+	* tcpd/tcpd.c (docheckblocklist): Incorrect env var check prevents
+	whitelisting from working as intended.
+
+2001-11-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* authlib/authldaplib.c (auth_ldap_do): Fix incorrect soft/hard
+	error indication for a failure in ldap_search_st().
+
+2001-11-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure.in (all): use a different test for -lnsl and -lsocket
+	that works on BSD/I.
+
+2001-11-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Add maxrcpts to bofh.
+
+	* webmail: Do not change the quota counter when moving a message
+	between the folders.
+
+2001-11-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* pcp: Rename getpw() to do_getpw(), Solaris has something like that.
+
+	* Add additional aliases to bofh freemail filter (mail from example.com
+	accepted from both example.com and domain.com hosts).
+
+2001-11-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap: Use maildir flag D for the \Draft flag.
+
+2001-11-13  "Oliver Blasnik" <oliver.blasnik@nextra.de>
+
+	* imap: Partial support of the IMAP QUOTA extension.
+
+2001-11-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* html: Move the navigation bar into a separate file (three, actually)
+	and add an 'include'-type directive that inserts the navigation bar
+	into the other template files.  This should prove to be useful later.
+
+2001-11-12  Charlie Watts <cewatts@frontier.net>
+
+	* html: optimizations - remove redundant tables.
+
+0.36
+
+2001-11-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: html filter - adjust handling of invalid markup tags.
+
+2001-11-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* pcp: Add additional localization information to pcp/README.html
+
+	* pcp: Add -Iintl to cpp flags - required on systems that use
+	builtin gettext.
+
+2001-11-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Fix newevent.html
+
+	* webmail: Fix bugs with display of recurring events.
+
+2001-11-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Fix spellchk.html
+
+	* webmail: added monthly/weekly recurring events, added a
+	preferences setting for a Saturday start of the calendar week.
+
+	* webmail: Added a webadmin screen for most webmail settings.
+
+2001-11-03  Jeff King <peff@peff.net>
+
+	* imap: STATUS won't clear the \Recent flag.
+
+2001-11-03  "Papo Napolitano" <papo@dosalcubo.com>
+
+	* ESMTP: add /SECURITY=NONE option to suppress STARTTLS requests even
+	if remote relay advertizes STARTTLS.
+
+2001-11-03  Abhijit Menon-Sen <ams@wiw.org>
+
+	* rfc2045/rfc2045.c (rfc2045_free): Plug a memory leak.
+
+2001-11-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* misc: clean up rfc1035, md5, sha1, libhmac, configure scripts.
+
+	* webmail:  Add a preferences setting for start of calendar week:
+	sunday/monday.
+
+	* webmail: fix - do not save date_s in cache file,
+	instead build it when the cache file is read, from date_n.
+
+	* webmail: Add link to new event form on all calendar view pages.
+
+2001-10-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* provide TITLE tags for images - used instead of ALT by newer
+	browser to provide popups when pointer is over the image.
+
+	* webmail:  Create a link from the weekly calendar
+	view to the monthly calendar view.
+
+	* webmail:  Workaround for broken linkage in
+	multipart/related content from certain MS mailers.
+
+2001-10-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: add alternative timezone dropdown to the login web page
+
+2001-10-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Check in initial implementation of the personal
+	calendaring protocol interface.
+
+2001-10-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.local/local.c: Block mail delivery to root.
+
+2001-10-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webadmin: Add a webadmin screen for the bofh configuration file.
+
+2001-10-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* esmtp: Create the bofh configuration file - a replacement for
+	BOFHBANBROKENSERVERS, plus more.
+
+	* esmtp: get rid of BOFHBANBROKENSERVERS.  It was too cumbersome to
+	maintain, and there are bigger and better things down the road.
+
+	* courier.spec: stub out call to libtoolize in configure.in -
+	messes up RH 7.1 builds
+
+2001-10-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap/msgenvelope.c: If we find illegal 8-bit header content,
+	re-encode it using MIME encoding that specifies x-unknown charset.
+
+2001-10-06  Vittorio Ballestra <vittorio.ballestra@infogestnet.it>
+
+	* Added experimental PostgreSQL authentication module.
+
+2001-10-01  Alessandro Vesely <vesely@tana.it>
+
+	* gpglib/testgpg.c: fix missing return code from poll_wait()
+
+2001-10-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Drop many useless BGCOLOR attribute tags from most HTML.
+
+	* imap: parser: allow [ and ] characters in search strings.
+
+	* soxwrap/configure.in: Revert and temporarily disable support for
+	Dante -- non-blocking sockets do not work in Dante.
+
+2001-09-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop: add UMASK environment variable, default to 077, and
+	drop the corresponding code from the configure script.
+
+2001-09-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Import of cniconsulting.com's HTML templates.
+
+2001-09-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc1035: move the source for the testmxlookup utility from
+	rfc1035 module to the main courier module.  This allows testmxlookup
+	to be linked against libcourier and display "[LOCAL]" next to domains
+	that are configured as local domains.
+
+2001-09-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* storeinfo,c: return UID in FETCH response to a UID STORE.  Problem
+	noted by Nic Ferrier <nferrier@tf1.tapsellferrier.co.uk>
+
+2001-09-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* soxwrap: add support for the Dante Socks5 proxy.
+
+2001-09-20  racke@linuxia.de (Stefan Hornburg (Racke))
+
+	* courier/filters/{Makefile,configure}:  create courierfilter's pid
+	file in piddir instead of localstatedir
+
+2001-09-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Updated configure.in/Makefile.am to automake 1.4p5
+	and autoconf 2.13
+
+2001-09-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc1035/rfc1035mxlist.c (domxlistcreate): Do not abort on a soft
+	error on an A request if other A requests succeeded.
+
+2001-09-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/webadmin/configure.in (INSTALL_SCRIPT): Once again,
+	INSTALL_SCRIPT must be forced to INSTALL (also webadmin/configure.in)
+
+0.35.1
+
+2001-09-10  HIROSHI OOTA <oota@LSi.nec.co.jp>
+
+	* imapscanclient.c (fnamcmp): Explicitly sort maildir filenames
+	by timestamp value first.
+
+2001-09-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/webadmin/admin-30esmtp.html: mail-abuse.org blacklists
+	need a query for A records.
+
+2001-09-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap/testsuitefix.pl: Sort expected LSUB output, in addition to
+	LIST.
+
+	* courier/module.esmtp/courieresmtpd.c (main): Automatically
+	whitelist the sender if the sender succesfully authenticated
+	(set BLOCK environment variable to an empty string).
+
+2001-09-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/configure.in (SPOOLDIR): Fallback to ./Maildir if
+	configure cannot detect an existing mail spool directory.
+
+2001-08-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* authlib/authuserdbpwd.c (auth_userdb_passwd): Fix trashed pointer
+	dereference.  Problem noted by James Knight <jknight@fuhm.net>
+
+2001-08-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Added unicode mappings for windows-874/tis-620.  Partial refresh to
+	Unicode 3.1.1
+
+2001-08-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webadmin/login.html: allow login by either pressing enter, or
+	clicking "login".
+
+2001-08-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/courier.c (main): Ok, go to /dev/null instead of console,
+	racke@linuxia.de, russell@coker.com.au, and others.
+
+2001-08-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: GnuPG passphrase support.
+
+	* webmail: Fix - if new message is sent without previewing, if signing
+	or encrypting fails, the error message screen will not return to the
+	composition window.
+
+	* webmail: fix error message not showing up if failed to sign a
+	message.
+
+2001-08-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: login cache is now required.  Move logincache.c into
+	libmaildir.a, make it a nice module.
+
+2001-08-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/courieresmtpd.c (main): Change QUIT reply code
+	to 221.
+
+	* courier/module.esmtp/Makefile.am (EXTRA_DIST): esmtpd.dist and
+	esmtpd-msa.dist should not be packaged.  Replaced esmtpd.cnf with
+	esmtpd.cnf.in
+
+	* courier/module.esmtp/esmtpd.cnf.in - use full path to RANDFILE
+
+	* webmail: Added wrapper for list_folder()
+	that subs reserved folder names with parametrized names.
+
+	* webmail: Option to specify whether the filter matching
+	pattern is plain text string or a regular expression
+
+	* webmail: Fixed bug where invalid filter input that results
+	in an error message forgets the active filter number, so when the
+	filter input error is corrected, the filter rule is saved as a new
+	rule, instead of updating the former rule.
+
+2001-08-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* authlib/authldaplib.c (ldapopen): LDAP_OPT_DEREF is not available
+	in openldap 1.0
+
+2001-08-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/tcpd.c (run): Add perror() after a failed exec.
+
+2001-08-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Makefile.am: Fix install-check-umask target. 
+
+	* Fix --with-random configure.in option.  Problem noted by William
+	Hue <williamhue@telus.net>
+
+2001-08-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/maildirshared.c (maildir_shared_subscribe): Fix a bug in
+	shared folder subscribe logic.
+	Problem noted by Vojtech Karny <karny@datalite.cz>
+
+	* maildir/maildirmake.c (add): Explicitly fseek() to start of file,
+	for system where fopen("a+") initially positions to EOF.
+	Problem noted by Vojtech Karny <karny@datalite.cz>
+
+2001-08-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* esmtpd, esmtpd.dist: Use set -a to initialize environment
+	and set the ulimit.
+
+	* courier/courierctl.start.in: Replace environment initialization
+	cruft with set -a.
+
+	* authlib/configure.in: Make the "expect not found" warning more
+	prominent.
+
+2001-08-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* couriermlm, submit, makealiases: Added new classes to replace broken
+	ISO C++ ?fstream classes in gcc 3.0
+
+	* rfc1035/rfc1035qptr.c: Disable ip6.int lookups for IPv4 addresses.
+
+2001-08-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/maildropfilter.html.in: remove incorrect information
+	for lookup().
+
+2001-08-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* authlib/authmysql.h: Drop mysql/ prefix from paths to mysql header
+	files (should be included in mysql_config).
+
+2001-07-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imapd.rc.in, pop3d.in: - source the non-ssl config file after the
+	ssl config file.
+
+2001-07-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Mail filter - prepend a backslash to a body search string
+	that begins with a space (avoid a parsing error in maildrop).
+
+2001-07-28  inter7.com
+
+	* Updated authvchkpw module.
+
+2001-07-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* threadlib/nopthread.c: Get rid of #include pthread.h
+
+	* courier/module.local/deliver.c (docommand): Call lseek to
+	rewind the file descriptor, since NetBSD's fseek's apparently doesn't
+	do that.
+
+2001-07-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imaplogin.c (do_imap_command): Generate an error message after
+	a SASL authentication failure.
+
+2001-07-24  Christophe Sollet <csollet@coleebris.com>
+
+	* authlib/authldaplib.c (authldap_read_config):  Add LDAP_DEREF option
+	to authldaprc that sets the LDAP_OPT_DEREF option.
+
+2001-07-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/maildirquota.c (qcalc): Prevent a division by 0 if
+	someone specified a quota of 0.
+
+0.35.0
+
+2001-07-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Fix to allow extra arguments in the Content-Type: header
+	on http POSTs.  Problem noted by Marcin Owsiany <porridge@expro.pl>
+
+2001-07-16  Alessandro Vesely <vesely@tana.it>
+
+	* courier/module.local/dotcourier.c (local_dotcourier): Memory leak
+	fixed.
+
+2001-07-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Rename HAVE_UNICODE to HAVE_SQWEBMAIL_UNICODE to fix the
+	link error caused by --disable-utf7-folder-encoding.
+
+2001-07-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imapd.dist.in (AUTHMODULES_ORIG): Fixed typo noted by
+	kherron@newsguy.com
+
+	* webadmin: Allow CIDR or start-end netblock notation in Inbound
+	ESMTP screen.
+
+2001-07-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* makesmtpaccess: Allow CIDR or start-end netblock notation if the
+	Net::CIDR Perl module is available.
+
+2001-07-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webadmin: added outbound SMTP.  Mission accomplished.
+
+2001-07-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webadmin: tested LDAP, MySQL, authdaemond code.  Added
+	esmtpacceptmailfor code to the esmtp screen.  Automatically update
+	esmtpacceptmailfor after any changes to local-type domains.
+
+	* courier/ldapaliasd.c: reread ldapaliasrc after receiving SIGHUP 
+
+	* authlib/authdaemond.c (start): close stdin/stdout/stderr after
+	becoming a background process.
+
+	* courier.spec: Install /etc/openldap/schema/courier.schema in the
+	RPM build script.
+
+	* courier.spec: Install /etc/skel/Maildir in the RPM build script
+
+2001-07-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/install.html: Note that gcc 3.0 cannot be used to
+	compile Courier, at this time.
+
+2001-07-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webadmin: completed esmtp, pop3, and imap screens.  Minor
+	documentation update.
+
+2001-07-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap, pop3, webmail, ldap, mysql: minor changes to the default
+	settings in associated configuration files, to accomodate webadmin.
+	Be sure to verify your system configuration after doing make
+	install-configure
+
+2001-07-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* authlib/authldap.schema: Added - a sample LDAP schema.
+
+2001-06-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* esmtpd(-msa).dist.in: minor changes for webadmin.
+
+	* webadmin: added MySQL configuration screen.
+
+2001-06-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webadmin: added LDAP configuration screen.
+
+2001-06-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webadmin: added a simple aliases screen.
+
+2001-06-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/makemime.c (parseargs): Fix a core dump due to invalid
+	arguments.
+
+2001-06-26  Mark Anthony Lisher <markal@iname.com>
+	
+	* courier/libs/comsubmitclient.c: Fix file descriptor leak in courieresmtpd
+
+2001-06-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Disable MSIE 6.0 smart tags in all html files
+
+2001-06-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/tcpd.c (doit): Fix initialization of socklen_t.
+
+	* Commit first cut at the webadmin tool: local domains and local
+	delivery options.
+
+2001-06-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imapd.c (do_imap_command): Add TRYCREATE response to APPEND
+	(modified version of Olivier Girondel <ogirondel@isdnet.net>'s
+	patch).
+
+2001-06-22  Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+
+	* pop3login.c (main): Do not abort after a SASL failure.
+
+2001-06-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure.in: SCO needs -lsocket for inet_addr().
+
+2001-06-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Update the FAQ and INSTALL files.
+
+	* authlib: implement password changing in the authldap module.
+	Switch the default setting of LDAP_CLEARPW and LDAP_CRYPTPW in
+	order to better match the LDAP schema.  Add password change code
+	to authtest.
+
+	* authlib: implement password changing in the authmysql module.
+	Added optional MYSQL_NAME_FIELD.
+
+2001-06-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045decodemimesectionu.c(txtflush): fix a null ptr
+	deref caused by a message with an empty body.
+
+2001-06-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* First phase of a major rewrite of the authentication layer that
+	will allow passwords to be updated back on the original authentication
+	database by the webmail server.  Eventually sqwebmail-pass is going
+	to go away (not just yet), so after upgrading to 0.35, mail account
+	passwords will have to be reset.  Since we've already thrown out a
+	bunch of stuff, also clean up lots of cruft in the configure script
+	and Makefile.
+
+2001-06-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rootcerts/Makefile.am (uninstall-local): Fix this target.
+
+2001-06-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/FAQ.html (authlib): Revise the section on libraries
+	and authentication modules.
+
+0.34.1
+
+2001-06-13  "Sergei V. Rozinov" <rvs@monster.icc.ru>
+
+	* tcpd/tcpd.c (doit): Fix uninitialized arg to accept().
+
+2001-06-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/courier.c (main): If syslog.h is not present, do not close
+	stderr.
+
+2001-06-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Bless GnuPG 1.0.6
+
+2001-06-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail/autoresponse.c (read_headers): Fix a crash caused by an
+	autoresponse to a message with an unknown charset.  Problem noted
+	by porridge@mail1.expro.pl.
+	
+2001-06-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imapd.c (emptytrash): The IMAP_EMPTYTRASH setting can now
+	be set to automatically purge multiple folders.  Loosely based
+	on a suggestion by John Morrissey <jwm@horde.net>.
+
+	* liblock/lockdaemon.c: fix several improper tests for failed fopen().
+
+2001-05-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Fix --imageurl to not require a trailing slash.
+
+	* rootcerts/configure.in: Additional verbosity in the "c_rehash not
+	found" error message.
+
+	* Show size of the MIME attachment (reformatted attachment indicator).
+
+2001-05-25  Mark Anthony Lisher <markal@iname.com>
+
+	* courier/ldapaliasd.c (ldapopen): Allow searches without BASEDN.
+
+2001-05-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc1035/rfc1035.c (rfc1035_mkquery): Fix the initialization
+	of the DNS packet query header.  Not a real issue, since the
+	header fields in questions are always NULL anyway.  This is one of
+	those semantic things.  Spotted by Rubio Vaughan <rubio@passim.net>.
+
+2001-05-20  Ken Pizzini <kenp@go2net.com>
+
+	* webmail: Add the 'env' keyword to template files that inserts
+	environment variables.
+
+2001-05-20  "John A. Barbuto" <jbarbuto@bizland-inc.com>
+
+	* Add quota support to authmysql.
+
+2001-05-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: use makemime to MIME-ify uploaded attachments.  Benefits:
+	better MIME encoding, consistency.
+
+	* Fix random failures in mimegpg from unexpected child process
+	termination.
+
+	* webmail:Bless GnuPG 1.0.5.  If we detect 1.0.5, default to
+	including utf-8 charset in the unicode map.
+	
+2001-05-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Added autoreply capability.
+
+	* rfc2045/makereply.c - manually handle copy of message for
+	forwardatt(), it got broke by the 4/8 change to rfc2045_mimepos.
+
+2001-05-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2646create.c (rfc2646create_alloc): Fix incorrect
+	flowed wrapping of first paragraph.
+
+2001-05-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* html/en-us: Added style sheet codes to mailfilter.html, created
+	autoresponder.html
+
+2001-05-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* *.dist.in: Document ability to listen on multiple ports.  Bump
+	the version tag of the PORT/SSLPORT setting, since it's not
+	backwards/forwards compatible (and let sysconftool do its job).
+
+	* authlib/authlib.html.in: authldap and authmysql are now battle-
+	tested, and are no longer marked "experimental".
+
+2001-05-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/install.html (and several others):  Replace "Linux"
+	with "GNU/Linux", in a couple of places.
+
+0.34
+
+2001-05-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045: change default MIME charset from us-ascii to iso-8859-1
+
+2001-05-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Added mailbot(1).
+
+2001-05-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/submit.C (cppmain): Reset SHELL environment variable.
+	maildrop environment init was changed to import SHELL,
+	when built as part of Courier.  Therefore, we need to make sure
+	that SHELL is initialized here.
+
+2001-05-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail/folder.c (folder_list): block attempt to delete INBOX (which
+	ends up blowing away preferences).  Problem noted by gourgen@acc.am.
+
+	* courier/module.esmtp/configure.in (version): Remove link to both
+	-ldb and -lgdbm if both of them are present.
+
+	* courier/module.uucp/configure.in (version): Ditto.
+
+2001-04-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/aliascombine.C (cppmain): Fix mode arg to dbobj.Open
+	(it was broken, but worked with libgdbm, the breakage showed up
+	under libdb).
+
+	* courier/pop3d.in: Replace @libexecdir@/couriertcpd with
+	@sbindir@/couriertcpd.  Problem noted by roland@serv.ch
+
+2001-04-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* afx/configure.in: probe for strings.h
+
+2001-04-24  "Roland Hänel" <rh@ginko.net>  
+
+	* authlib/authmysql: applied patch to replace the remaining
+	hardcoded mysql table field names with configurable values from
+	authmysqlrc.
+
+2001-04-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* FAQ: updates to the FAQ.
+
+	* rfc2045/reformime.c (main): Allow both -i and -x at the same time.
+
+2001-04-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop/main.C (run): Disable pw lookup for delivery mode in the
+	Courier build -- we'll import it from the environment.  Import
+	MAILDROPDEFAULT from environment as DEFAULT.
+
+	* courierd.dist Create a MAILDROPDEFAULT setting.
+
+	* deliver: initialize MAILDROPDEFAULT and SHELL in the environment
+	for delivery processes.
+
+2001-04-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Global search and replace of certain C++ include files, for
+	compatibility with ISO C++:
+
+	<iosfwd.h> -> <iosfwd>
+	<iostream.h> -> <iostream>
+	<ios.h> -> <ios>
+	<streambuf.h> -> <streambuf>
+	<istream.h> -> <istream>
+	<fstream.h> -> <fstream>
+	<ostream.h> -> <ostream>
+	<iomanip.h> -> <iomanip>
+	<sstream.h> -> <sstream>
+	<strstream.h> -> <strstream>
+
+2001-04-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imapd.c (get_flagname): Fix spelling of the experimental \Draft
+	flag.
+
+	* msgenvelope.c (doenva): Fix garbage ENVELOPE reply for certain
+	corrupted mail headers.
+
+2001-04-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: added sha1 cipher, configured CRAM-SHA1 authentication.
+
+	* imapd-ssl.dist.in (TLS_STARTTLS_PROTOCOL): Created this setting
+	that'll be used instead of TLS_PROTOCOL for the IMAP STARTTLS
+	command.  Ditto for POP3
+
+	* courier/libs/comsubmitclient.c (submit_fork): set the close-on-exec
+	bit on pipes to the submit process.  This is needed now due to
+	module.esmtp/courieresmtpd.c forking off couriertls in an external
+	wrapper now, making it no longer possible to manually close the
+	file descriptors after forking.  This is the right thing to do
+	anyway.
+
+2001-04-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/starttls.c (create_tls): Log an error if
+	PEM_read_bio_DHparams() call fails.
+
+	* rfc822.c (rfc822t_alloc): Explicitly cast arg to (void *).
+
+	* authlib/configure.in (AUTHLDAP): Test for -lresolv before -lber.
+
+2001-04-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* esmtp: first cut at implementing the SECURITY extension.  Revised
+	installation notes and man pages.
+
+2001-04-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/submit.html.in: Revise the submit manual page.
+
+	* courier/module.esmtp/esmtpd.dist.in (BLACKLISTS): Replace
+	maps.vix.com with blackholes.mail-abuse.org
+
+	* authlib/authldap: minor fixes for OpenLDAP 2.0.7.  Suppress a
+	spurious ldap_get_values msg.  Fail authentication completely if LDAP
+	server is unreachable (installing of falling over to the next
+	authentication mode).  IMPORTANT: some people might be relying on
+	this behavior to fail over to another authentication module.  Make
+	sure to note this in release notes.
+ 
+2001-04-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/setperms.sh.in: Replace meat of the script with a perl
+	script.  chmod in fileutils 4.0 croaks on a soft link, and test -L
+	does not work everywhere, so the cleanest solution is to redo
+	everything as a soft link.
+
+	* couriertls: reformat information returned by -printx509.  Break
+	down X.509 subjects by field, also provide information on the
+	negotiated cipher.
+
+	* SSL simplification project: Replace TLS_PEERCERTDIR and TLS_OURCACERT
+	with a single TLS_PEERCERTS setting.
+
+2001-04-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Cosmetic fixes.  Replace // with /* */ comments in some .c files
+	and replace return of void datatype with an explicit return.
+	Other misc stuff too.
+
+2001-04-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* userdb/makeuserdb.html.in: Fix some documentation typos.
+
+	* imapd.c (imapidle): Renamed idle() to imapidle(), to avoid clashing
+	with libc5.
+
+	* authlib/authldaplib.c: refuse to authenticate if we end up running
+	as uid 0 or gid 0, this indicates a config file problem.
+
+	* authlib/authmysqllib.c (auth_mysql_getuserinfo): Better error
+	recovery when the mysql server goes down (from
+	oliver.blasnik@nextra.de).
+
+2001-04-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/FAQ.html (linkerr): Added description of the hard
+	link problem.
+
+2001-04-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/starttls.c (ssl_verify_callback): Completely redo peer
+	certificate checking code.  Instead of trying to parse the output
+	of X509_get_subject_name(), manually scan the individual X509
+	entries until we find commonName, then grab its value, and then
+	compare it against the commonName we're looking for.  Also, when
+	verifying domains, abort checking this certificate.
+
+	* authlib/authmysqllib.c (auth_mysql_getuserinfo): Better error
+	recovery when the mysql server goes down (from
+	oliver.blasnik@nextra.de).
+
+	* courier.spec.in: Fix up the spec file.  Mark it to require
+	RPM >= 4.0.2.
+
+2001-04-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* esmtpclient/couriertls - new options in couriertls to faciliate
+	better handling of certificate validation failures. -statusfd option
+	specifies file descriptor where validation error message is written
+	to. -verifyfailmsg specified a custom error message.  Corresponding
+	changes in esmtpclient to use those options.  Additional changes
+	to courieresmtp to improve error handling in several situations.
+
+	* rfc2045/rfc2045.c (rfc2045_mimepos): Fix a long-time glitch where
+	a garbled message with no body will have its headers logically placed
+	in the body section, and the supposed headers will be NULL -- this was
+	a benign artifact of the parsing logic.
+
+	* rfc2045/reformime.c, submit.C: Reject ambigous nested MIME
+	boundary delimiters (suggestion by leonid@latte.harvard.edu).
+
+	* courier/doc/status.html: update debian contact address.
+
+	* gpglib/mimegpg.c (isgpg): Drop the check for micalg=pgp-sha1
+
+	* Properly implement SSL/TLS certificate checking.  Created new
+	subdirectory, rootcerts, which installs root CA certs (swiped from
+	Mozilla CVS).  We can now properly validate SSL certificates.  The
+	new couriertls option -verifyfailmsg specifies an error message that
+	couriertls dumps to stdout if certificate check fails.  courieresmtp
+	primes it with a dummy SMTP error message, so that SSL/TLS cert
+	failure will manifest itself as a routine SMTP rejection.
+
+	Dropped TLS_ALLOWSELFSIGNEDCERTS option -- it was redundant. -verify
+	will verify the peer certificate, otherwise we won't, and that's the
+	end of the story.  Revise the comments in the configuration files
+	to reflect all these changes.
+
+	* Added /usr/local/bin to AC_PATH macros in all configure.in scripts.
+
+2001-04-06  Mr. Sam  <mrsam@courier-mta.com>
+
+        * webmail/maildir.c (do_msgmove): Fix trashed free() on a failure to
+        remove the message from a shared folder.
+
+        * maildir/maildirshared.c (maildir_unlinksharedmsg): Check if we
+        failed to remove a message from a shared folder because we do not
+        have the permission to do so.  If so, do not remove our private
+        link, and instead drop the T flag from link's name (if it had one).
+
+0.33.0
+
+2001-04-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/ldapaliasd.c (loop): Solaris chokes on sigpause(0).  Replace
+	with sigpause(SIGUSR1).
+
+2001-04-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier.spec.in: Fix packaging of courierldapalias
+
+	* courier/doc/queue.html: Major additions, documented the structure
+	of the mail queue.
+
+	* courier/courier-config.c: Added courier-config, for future use.
+	
+2001-04-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap: (imapd.c/get_message_flags): Fix potential NULL ptr deref.
+
+2001-03-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* misc: miscellaneous style sheet patches from einar@bordewich.net
+
+	* authlib/preauthvchkpw.c: add configure script probe for the
+	existence of vlogauth()
+
+2001-03-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/filters/perlfilter/Makefile.am (install-data-hook): Fix
+	permissions on the installed sample perl scripts.
+
+	* Major merges:
+	
+	* webmail: Added option to delete folder contents,
+	before deleting the folder.
+
+	* webmail: Change the names of archived
+	sent folders to Sent.YYYY.mm-name, so that they sort correctly.
+
+	* webmail: Detect https links in text/plain.
+
+	* rfc2045/configure.in: --disable-unicode overrides libunicode.a
+	autodetect
+
+	* authvchkpw update.
+
+	* webmail: rewrites all html templates to use style sheets
+
+	* webmail: add support for encryption and digital signatures
+
+	* rfc1035: drop include of netinet6/in6.h
+
+	* imap: Bugfix: make search 1:* work correctly
+
+	* SSL: Fix RANDFILE in imapd.cnf and pop3d.cn
+
+2001-03-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* authlib: Minor header file adjustments for glibc 2.2.2
+
+2001-03-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/esmtpclient.c (sendesmtp): When we're a
+	backup MX for a domain, ignore MXs with same or higher priority
+	than us.
+
+	Ditto: fix a bug that prevented us from trying other IP addresses
+	for the same host.
+
+2001-03-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/perms.sh.in (PERMS): Add missing couriermlm tmpl files,
+	which ended up getting installed with wrong perms.
+
+2001-03-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/configure.in (haveldap): Disable courierldapaliasd unless
+	authldap gets compiled.
+
+2001-03-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* mysqllib.c: Applied a modified versio of a patch by John
+	Callaghan <jpc@msu.edu> that periodically checks for a dead MySQL
+	connection, and resets it.
+
+	* pop3: Fix POP3 LOGOUT message going out to syslog as an error,
+	instead of a notice.
+
+	* webmail: Added GnuPG support (1.0.4) ** major **
+
+	* webmail: Minor bug fixes and enhancements (forward as attachment
+	sometimes crashes -- bug introduced somewhere in 0.31.x-0.32;
+	additional error checking to trap botched permissions on maildirs;
+	new setting to choose whether individual messages get archived in
+	Sent).
+
+	* webmail: Detect and highlight https links in text/plain.
+
+	* webmail: Change the names of archived sent folders to
+	Sent.YYYY.mm-name, so that they sort correctly.
+
+	* courier/doc/status.html.in: Added Debian maintainer address. 
+
+2001-03-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/submit.C (getrcpts): Adjust the verbiage on the "header
+	too large" bounce.
+
+2001-03-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier.spec.in (RPM): drop manual gzipping of man pages, let
+	brp-compress handle it by itself.
+
+	* configure.in: fix version number stamped by rfc2045/reformime by
+	forcing --with-version
+
+	* Several changes to MIME rewriting:  add the hostname to the
+	manufactured MIME boundary delimiter, in order to generate more
+	noise;  skip over multipart/signed content;  prefer appending
+	Content-Transfer-Encoding: to the individual content sections,
+	instead of multipart sections.
+
+2001-02-28  Mark Anthony Lisher <markal@iname.com>
+
+	* tcpd/starttls.c (dossl): read CERTFILE.ipaddress if it exists, to
+	allow multiple certs for multihomed SSL servers.
+
+2001-02-28  Tommi Virtanen <tv-nospam-42b34d@hq.yok.utu.fi>
+
+	* imaptoken.c (do_readtoken): abort if client imap token was truncated
+	due to excessive size.
+
+0.32.0
+
+2001-02-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/filters/perlfilter/configure.in: workaround for the
+	make install-strip automake bug.
+
+2001-02-26  Tomas Fasth <tomas@euronetics.se>
+
+	* imap/mainloop.c (mainloop): cut off clients that keep sending
+	junk, non-stop.
+
+2001-02-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/esmtpiov.c (iovflush): Fix incorrect handling
+	of partially-written out iovec array.
+
+2001-02-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/aliascombine.C (cppmain): use the new mktmpfilename()
+	function.
+
+	* courier/aliascreate.C (makealiases): use the new mktmpfilename()
+	function.
+
+	* courier/libs/comtmpfile2.c (mktmpfilename): completely rewritten
+	function that safely creates a file in /tmp/
+
+	* courier/cdmsgq.C, courier/courierdb.C: modify queueing slightly.
+	If we discovered more than 100 messages to be queued up, stop after
+	100, then check for delivered messages, then resume queueing up.
+	tmpscan() stops after it queues up the 100 messages.  The main loop
+	checks the exit code from tmpscan, and instead of calling it again,
+	if it found any messages, it sets a flag and calls it on the next
+	main loop iteration.  For now, the queue cutover is set at 100
+	messages, it may be necessary to make it a tuneable parameter,
+	later on.
+
+	* courier/perms.sh.in (PERMS): Change install groupid on maildrop
+	to @mailgroup@, and drop the setgid bit.
+
+	* courier/cdmsgq.C (queuescan3): plug a file descriptor leak.
+	null out hostp pointer in any pendel structure if its hostp
+	structure is recycled.  Both of these fix deadlocks + errors under
+	high load.
+
+2001-02-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: modified-UTF7 support in webmail broke shared folders.
+
+	* cdmsgq3.C: return instead of a break was causing a deadlock under
+	highload.
+
+2001-02-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imapd.c (idle): Applied IDLE patch (Tomas Fasth), with some
+	modifications.
+
+	* fetch.c (rfc822): Additional FETCH attributes need to be included
+	in transfer totals
+
+0.31.1
+
+2001-02-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/deliverquota.c: replace snprintf with sprintf, for better
+	compatibility.
+
+2001-02-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* unicode/utf8.c (unicode_utf8_tou): Fixed memory corruption in UTF8
+	code.
+
+	* sqwebmail.c (output_form): Complain to syslog if we can't exec gzip.
+
+2001-02-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/starttls.c (create_tls): Fix test for CA certificate location.
+
+	* maildir/deliverquota.c (deliver): fix deliverquota warning message
+	overwrite.
+
+	* imap/pop3: log number of bytes transferred from headers and body
+	(in LOGOUT, DISCONNECTED, and TIMEOUT messages).
+
+2001-02-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Patch: tobi@tobi.nu - replace --with-dyn-mysql with --with-mysql-libs
+	and --with-mysql-includes
+
+2001-02-08  Chris Seawood <cls@radiate.com>
+
+	* authlib: Added check for open_smtp_relay in -lvpopmail
+
+2001-02-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Create special alias@hosteddomain logic to handle nonexistent
+	addresses in a hosteddomain-domain.
+
+2001-02-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Remove -MAKEFLAGS from all Makefile.am's.
+
+2001-02-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/libs/comsizelimit.c (config_sizelimit): new default
+	for sizelimit is ten megabytes, instead of unlimited.
+
+	* courier/submit.C (getrcpts): Periodically reset timeout timer,
+	as long as we are receiving the message.
+
+2001-02-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/filters/courierfilter.c (start): Get rid of manual locking
+	cruft.  Replace with liblock.a functions.  Add restart option.  Update
+	man page.
+
+	* courier/module.local/local.c (rw_del_local): Include dot-courier
+	search logic for domain-qualified addresses.  Basically, strip off
+	@domain, then reappend it at each dot-courier loop iteration,
+	before calling an authentication module to look up the account.
+
+2001-02-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail/folder.c (showunknown): Fix misorder of TD & TR tags.
+
+	* authlib/authpam.c: update for Linux-PAM 0.74 (get rid of
+	pam_set_item PAM_AUTHTOK).
+
+	* imap/configure.in: probe for existence of /etc/pam.d/system-auth,
+	and use that instead of pam_pwdb.so
+
+	* courier/module.esmtp -- similar PAM updates for ESMTP
+	authentication.
+
+	* webmail: similar PAM updates for webmail authentication.
+
+0.31
+	
+2001-01-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Add option not to archive sent mail.
+
+	* webmail: Add a preferences option to suppress flowed text format
+	display.
+
+	* rfc2045/rfc2045acchk.c (rfc2045_ac_check): Recognize legacy uuencode
+	transfer encoding.
+
+2001-01-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Fix big5/gb2312 conversion bug.
+
+	* Added a hook for passing some additional flags to the
+	RPM spec script, using --define 'xflags [flags]' option.
+
+	* courier/module.esmtp - added support for message submission
+	protocol.  This mostly involves adding an extra set of startup
+	scripts and configuration files.  New script: esmtpd-msa start/stop,
+	also makesmtpaccess-msa, but the default is to share smtpaccess.dat
+	with port 25.  Updated sysvinit script and spec file.
+
+	* courier/module.esmtp/courieresmtpd.c (main): Use numeric code 554
+	for mail from/rcpt to syntax rejections, per RFC 2476.
+
+	* webmail: Fixed bug in automatic http/https selection (it doesn't
+	work for HTTP redirects).
+
+	* all: Fixed bug in charset conversion logic.
+
+	* webmail: get rid of some leftover javascript crap in spellchk.html
+
+	* all: Fix authldap connection failure recovery    (Brian Candler)
+
+2001-01-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/status.html.in,install.html: mention the fact that
+	SSL key generation by the default initscript can take 5-6 minutes.
+
+2001-01-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/tcpd.c: added --stderrloggername option, and used it in esmtp,
+	pop3, and imap startup scripts to manually set the name of the program
+	recorded in syslog.
+
+	* courier/module.esmtp/courieresmtpd.c (main): If AUTH_REQUIRED is
+	set, require the client to authenticate, before sending any mail.
+
+2001-01-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: log byte count of delivered mail
+
+	* webmail: dump leftover javascript from spellchk.html
+
+2001-01-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/courieresmtpd.c (main): Added NOOP stub.
+
+	* Fix authldap connection failure recovery    (Brian Candler)
+
+	* courier/doc/FAQ.html: Many updates to the FAQ.
+
+2001-01-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.local/deliver.c (main): mail loop should exit
+	with EX_NOUSER, resulting in a bounce.
+
+	* courier/perms.sh.in: subreportfooter.tmpl was missing
+	
+	* courier/libs/islocal.c (config_is_indomain): allow !hostname
+	to exclude specific domain names from .wildcards.
+
+	* courier/Makefile.am: Remove cruft from courier/Makefile.am and
+	courier/module.esmtp/Makefile.am that renamed two existing config
+	files to to configfilename.bak - not needed any more thanks to
+	sysconftool.
+
+2001-01-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap: updates for thread-06.txt
+
+2001-01-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildrop: Actually made octal notation work.
+
+	* authlib/configure.in: added --with-dyn-mysql option to specify
+	MySQL installation directory to dynamically link with vpopmail.
+
+	* imaptoken.h (IT_MAX_ATOM_SIZE): Set to 16384.  Should be enough
+	(UW-IMAP limits entire commands to 8192).
+
+2000-12-31  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: implemented flowed text format (RFC 2646).
+
+2000-12-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd.c: Fixed a compilation error in --without-tcpddns option.
+
+2000-12-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Patch for negative MX priorities.
+
+2000-12-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* deliverquota: automatically create maildirs, and provide for a
+	warning message to be created.
+
+	* webmail: applied https-auto patch.
+
+2000-12-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* soxwrap.c: check if RTLD_NOW is defined.
+
+	* webmail: Explicitly set the charset in the HTTP header.
+
+	* webmail: Removed Content-Type: metatag from all .html files, it's
+	now in the HTTP header.
+
+	* webmail: Implemented unicode support.  Added message that will be
+	printed whenever the message character set does not match the display
+	character set.
+
+	* webmail: get rid of spurious error message with vchkpw with
+	webpass optional enabled being installed suid root.
+
+	* webmail: First login of the month renames Sent to Sent.MMM-YYYY.
+
+	* webmail: newmsg_newdraft: major code cleanup.  Took most of what
+	was in here and moved it to librfc2045.a as a generic function that
+	generates replies to MIME messages.  Got rid of a lot of cruft.  The
+	reply and forward function needs to be heavily tested now.  Changes:
+
+	+ mailing list address compare now case insensitive.
+
+	+ new functions in librfc2045.a: rfc2045_makereply(), which contains
+	most of the original code from newmsg_newdraft;
+	rfc2045_searchcontenttype(), search for a MIME section to reply to;
+	rfc2045_decodemimesection() - decode a MIME section.
+	rfc2045header_start(), rfc2045header_get(), rfc2045header_end() -
+	read headers from a MIME section.
+
+	+ librfc2045 now has a make check action to check header parsing.
+	
+0.30
+
+2000-12-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* reftest.c: fix dependency on qsort order.
+
+	* imap: unicode/README tells you how to go about adding code for
+	additional character sets.
+
+
+2000-12-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: fix rare null ptr deref in RFC 2369 header processing.
+
+2000-12-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Replaced group wheel with bin, for some installed files.  Neither
+	group wheel nor group root appear to work for everyone, but bin should.
+
+	* courier/module.esmtp/esmtpd.dist.in:  Fixed entry for ESMTPDSTART 
+
+	* courier.spec.in: Changed %post smtpauth to start esmtpd only if
+	ESMTPDSTART is set to yes.
+
+	* Stick setlocale() calls all over the place (for courierd and
+	children initialize LC_ALL in courierd.dist).  Complaints?  Write to
+	glibc maintainers.
+
+	* librfc2045.a wasn't correctly handling boundary= attribute in
+	non-multipart MIME section, which confused imapd.
+
+2000-12-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/esmtpiov.c (iovwaitfordata): include IP address
+	in timeout error logs.
+
+2000-12-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/Makefile.am: Fixed bad chgrp on esmtpauthclient.
+
+2000-12-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/module.local/local.c: convert hostdomain to lowercase.
+
+2000-12-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: found and nuked a wild pointer in cgi.c
+
+2000-12-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* webmail: Created "Reply To List"
+
+	* webmail: Created address book quick add.
+
+	* webmail: get rid of extra blank line that was being prepended to
+	the new message.
+
+	* install.html: documented quota support (it was always there, but not
+	documented very well).
+
+	* webmail: made maildirquotas work with mail filters.  This is done
+	entirely in libmaildir.a -- mf_saverules() reads maildirsize(), if it
+	exists, and uses it to initialize MAILDIRQUOTA in the generated recipe.
+
+2000-11-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* deliverquota: convert most system failures to temp error codes.
+
+	* courier/module.local/local.c: convert any local domain to lowercase.
+
+2000-11-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* pop3dserver.c: Fix a bug in TOP command.
+
+	* imapd.c: Implement hierarchical folder rename.
+
+2000-11-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Replaced rfc822t_alloc() with rfc822t_alloc_new().
+
+2000-11-23  Mr. Sam  <mrsam@gwl.email-scan.com>
+
+	* courieresmtpd.c: forgot to implement a teergrube on a bad RCPT TO,
+	also adjust max teergrube sleep to 2 minutes.
+
+2000-11-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* preauthvchkpw.c update.
+
+2000-11-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier/doc/Makefile.am: test -f changed to test -d
+
+2000-11-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* imap: Plug a file descriptor leak in quota update code. patch to
+	ignore write failures to the IMAP UID file. updated to
+	draft-ietf-imapext-thread-04
+
+	* all: Added support for SASL PLAIN authentication.
+
+0.29
+	all: Authentication overhaul.  authdaemond split into alternate
+	versions, one for each database back end.  The original "authdaemond"
+	replaced by a shell script that checks for the installed authdaemond
+	alternates, and run whatever's installed.  The idea is to allow
+	LDAP and MySQL support to be separately packaged, and for LDAP and
+	MySQL support to be added simply by installing the extra package
+	(the base packaged for the garden variety and the LDAP/MySQL back
+	end remains the same).  See NEWS for more information.
+
+	all: Some tweaks to MySQL configuration and detection logic.
+
+	all: Added a "custom" authentication module -- a stub that doesn't
+        authenticate anything.  It takes care of all the low level details
+        relating to interfacing with the authentication library.  Just insert
+        site-specific code in the right spot.
+
+	pop3: Added POP3 over SSL.  Minor enhancements to the POP3 server.
+
+	imap: Added optional unicode mapping tables for the following
+	character sets: windows-1250 through windows-1258, ibm437, ibm775,
+	ibm852, ibm855, ibm857, ibm860 through ibm866, and ibm869.
+
+	imap: Optimized downloading of large attachments for Netscape
+	Messenger.
+
+	imap: Fixed ENVELOPE to properly handle legacy RFC-822 group list
+	notation.
+	
+        webmail: loosen up permissions on the cgi bin to make mod_mime_magic
+	happy.
+
+	webmail: Some tweaks for some MSIE breakage.
+
+	webmail: Fixed bug where nicknames were automatically lowercased.
+
+	mail: implemented LDAP-based aliasing.
+
+	all: Fixed OpenLDAP memory leak.
+
+	all: Minor fixes -- bad stat in maildir_try_create, move chdir to
+	homedir after setting uid/gid.
+
+	all: rename perlfilter man page to courierperlfilter -- there's
+	already a perlfilter man page in perl.
+
+0.28
+	mlm: Major cleanup of the couriermlm source code.
+
+	mlm: New option - STARTPROBE - when to start sending probe messages
+	     to bouncing addresses (previous default was 3 days, hardcoded).
+
+	mlm: lsub command now shows the date an address subscribed to the
+	     list (for new subscriptions only).
+
+	mlm: generate daily reports of new/removed subscriptions.  Report is
+	     mailed to REPORTADDR.
+
+        all: Use mysql_real_connect(), if available.
+
+	imap: Strip () from name of mail envelope sender that uses old-style
+              header format, by calling rfc822_getname instead of
+              rfc822_gettok.
+
+        all: Reengineer couriertcpd locking mechanism, that permits
+             SO_REUSEADDR.  New locking mechanism uses liblock's daemon
+             functions.  Removed --forcebind option, obsolete.  Added --stop
+             and --restart to couriertcpd.
+
+        maildrop: Change permissions that files in the maildir are created to
+                  0644 from 0600, in order to support delivery to shared
+                  folders.  Since maildirmake, by default, uses mode 0700 for
+                  creating standard, non-shared, maildirs, there is no issue
+                  with private folders.
+
+        all: Remove the "feature" that broke aliases if defaulthost != me.
+             Please run makealiases after an upgrade.
+
+	imap: Add unicode-based support for non-English character sets.
+
+0.27
+       imap: Performance tweaks.
+
+       imap: IMAP_CHECK_ALL_FOLDERS option added.
+
+       imap: Implement IMAP SUBSCRIBE/UNSUBSCRIBE for private folders.
+
+       imap: Subject stripping for THREAD and SORT updated to definition in
+             draft-ietf-imapext-thread-02.txt ... Except for the broken part.
+             Should be interesting to see if someone spots the obvious glaring
+             error, there.
+
+       imap: Experimental THREAD REFERENCES implementation.
+
+       imap: Fixed a bug in THREAD ORDEREDSUBJECT which skipped over messages
+             without a subject header.
+
+       imap: Fixed a typo in IMAP_CAPABILITY -- should be THREAD= not THREAD-,
+             oops.
+
+       mail: Fix duplicate MX records reported as a soft error.
+
+       esmtp: Fixed ESMTP option negotiation quackup.
+
+       esmtp: Use TCP_CORK when sending ESMTP mail under Linux.
+
+       webmail: Add cc option to maildirfilter (deliver to folder and continue
+                filtering).
+
+       webmail: fix obscure bug where headers containing consecutive 8-bit
+                characters weren't being properly MIME-encoded.
+
+       webmail: properly MIME-decode 8-bit characters in headers in message
+                composition preview
+
+       all: More questions for the FAQ
+
+       all: Reorder default order of authentication odules -- authpam is cranky
+            and wants to go last.
+
+0.26
+       courier: bug fixes
+
+       courier: split off dupfilter stuff from courierfilter man page into
+                dupfilter man page
+
+       courier: created perlfilter filtering module.
+
+0.25
+       all: SSL peer certification checking bug fixes.
+
+       mail: Added STARTTLS support to the ESMTP client.
+
+       mlm: Added NOBOZOs flag to automatically block misdirected admin
+            requests.
+
+       pop3: Fixed error handling.
+
+       webmail: Added ability to create mail filters (requires maildrop be
+                configured as a local mail delivery agent).
+
+       all: SSL wrapper bug fixes.
+
+       imap: IMAP STARTTLS, alternative/complement to IMAP over SSL.
+
+       mail: Fix a problem with cancelling a message when local mail delivery
+             agent is offline and returns tempfail -- no delay on retries for
+             message cancellation means that the cancel keeps rapidly looping
+             through the queue.  Added an additional log record that gets put
+             in when a message is immediately rescheduled after a cancel, and
+             if it already exists, the usual retry intervals will now apply.
+
+       esmtp: Log SASL authentication method in the headers.
+
+       esmtp: Tested ESMTP authentication with CRAM-MD5.
+
+       esmtp: Authenticated ESMTP support in the ESMTP client.
+
+       esmtp: Added a log file option to log a message to syslog, but not a
+              control file (used for logging remote ESMTP recipient by
+              courieresmtp). This removes the spurious message from showing
+              up in DSNs, and resulting in a technically non-compliant rfc822;
+              DSN log format.
+
+       all: Delivery to ports other than port 25.
+
+       new: makemime utility.
+
+       maildrop: defaults to --disable-tempdir now, similar fixes in reformime.
+
+       imap: some optimizatiosn
+
+       courier: removed some C++ methods from being inlined, due to
+              miscompilation by gcc 2.96 (Red Hat 7.x)  Added make check
+              to spec file, as an afterthought.  Changed spec file to
+              build under RH 7.x's FHS-compliant filesystem.
+
+0.24
+       all: Berkeley DB 3 support
+
+       all: Complete rewrite of MySQL authentication.  New authmysql
+            module supports CRAM-MD5 authentication.
+
+       all: Added virtual domain information to the FAQ.
+
+       imap: CHILDREN extension.
+
+       all: Added couriertls.  stunnel is no longer needed.  New
+            SSL/TLS configuration.
+
+0.23a
+       imap: fix several authentication-related bugs (synchronize with
+             standalone imap build)
+
+       webmail: fix random corruption of message envelope return addresses
+             on some platforms.
+
+0.23
+
+       mail: Dynamic .courier delivery instructions.
+
+       imap: remove spurious space in LIST response.
+
+       mail: log relay IP address for successful deliveries.
+
+       mail: put a suicide alarm into the sendmail wrapper.
+
+       webmail: Miscellaneous address book enhancements.
+
+       webmail: Forwarding a message with attachments preserves the attachments.
+
+       webmail: Fixed obscure bug that occasionally corrupted envelope return
+             addresses.
+
+       oops: section 5 man pages weren't being installed.  fixed.
+
+       oops: openbsd was broken
+
+       oops: aliasfilteracct was broken.  Redesigned and reimplemented.
+
+       mail: installed testmxlookup
+
+       mail: tolerate illegal MX records pointing to a CNAME (I'll probably
+             regret this, later).
+
+       mail: added dotforward
+
+0.22
+       webmail: Added "show for printing option".
+
+       webmail: Added a config file - logindomainlist.  If exists, login
+       screens will include a drop down list of domains.
+
+       webmail: Added address import from LDAP directories.
+
+       ESMTP STARTTLS extension.
+
+       couriermlm: Added KEYWORD option.
+
+       imap: added server-side sorting extensions.
+
+       imap: set ulimit for server processes.
+
+0.21 - Added import and export commands to couriermlm.
+       Fixed many bugs and memory leaks in the authentication code.
+       CRAM-MD5 authentication with LDAP now works.
+       Added IMAP_MOVE_EXPUNGE_TO_TRASH to imap.
+       IPv6 support.
+       Revised documentation.
+       FreeBSD uses sys/mount.h and sys/param.h instead of sys/statfs.h
+       Many FreeBSD-related fixes.
+       SECURITY:  Additional security installed for the authstart wrapper
+       (authstart is used by authenticated ESMTP).  The additional measures
+       are intended to make it more difficult to misuse the wrapper in order
+       to elevate one's privileges on a system that's already been
+       compromised.  Also, the RPM build script now puts authstart into a
+       separate subpackage, so that authstart is now optional in the default
+       RPM build.
+       Made maildir delivery more resistant to failures.  DJB was wrong -
+       do not loop for errors other than ENOENT -- if, say, tmp permissions
+       are wrong, the deliverer is now stuck in an infinite loop.  Instead,
+       break out for any error, and attempt to go ahead and create the file,
+       if there's an error, just abort the delivery.
+       Added icon images to the webmail server, to make it look rather spiffy.
+
+0.20 - Minor tweaks, fixes.  Uploaded to SF.  First public release.

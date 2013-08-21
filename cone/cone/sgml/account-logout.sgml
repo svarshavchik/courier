@@ -1,0 +1,64 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-logout">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::logout</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::logout</refname>
+      <refpurpose>Close a mail account</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail-&gt;<function>logout</function></funcdef>
+	  <void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::ACCOUNT::logout</function> closes a mail account.
+This method should be called before destroying the
+<function>mail::ACCOUNT</function> object.
+Some types of mail accounts require certain processing before they are
+closed.
+Destroying the object without
+<function>mail::ACCOUNT::logout</function> may result in some changes to
+the mail account's contents not being permanently saved.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+      <para>
+The
+<function>mail::ACCOUNT</function> object should be destroyed after this
+function returns.
+The object should not be recycled, and connected to another mail
+ account.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-login"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::login</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>Courier MySQL authentication module</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B"
+alink="#FF0000">
+<h1>Courier MySQL authentication module</h1>
+
+<p>This module allows authentication information to be stored in a MySQL
+database.</p>
+<ul>
+  <li>Supports both physical and virtual mail accounts.<br />
+    <br />
+  </li>
+  <li>Can be configured to use either crypted or cleartext passwords (or
+    both). Cleartext passwords allow CRAM-MD5 authentication to be
+    implemented.</li>
+</ul>
+
+<p>When <code>authmysql</code> is installed, a default configuration file,
+<code>authmysqlrc</code> will be installed too. You must edit this file to
+set up your MySQL authentication.</p>
+
+<hr />
+
+<p>Edit <code>authmysqlrc</code>, and initialize the following variables:</p>
+<ul>
+  <li><code>MYSQL_SERVER</code> - MySQL server name (required).</li>
+  <li><code>MYSQL_PORT</code> - server port where MySQL accepts
+  connections.</li>
+  <li><code>MYSQL_SOCKET</code> - If MySQL is running on the same machine and
+    can accept connections from a filesystem socket, enter the path to the
+    filesystem socket here, and do not initialize SERVER/PORT.</li>
+  <li><code>MYSQL_USERNAME</code> - MySQL username with log in with
+    (required).</li>
+  <li><code>MYSQL_PASSWORD</code> - MySQL password with log in with
+    (required).</li>
+  <li><code>MYSQL_DATABASE</code> - MySQL database to log in to
+  (required).</li>
+  <li><code>MYSQL_SSL_KEY</code> - name of the field containing a SSL key path
+    (optional).</li>
+  <li><code>MYSQL_SSL_CERT</code> - name of the field containing a SSL
+    certificate path (optional).</li>
+  <li><code>MYSQL_SSL_CACERT</code> - name of the field containing a SSL CA
+    certificate (optional).</li>
+  <li><code>MYSQL_SSL_CAPATH</code> - name of the filend containing a name to a
+    directory that contains trusted SSL CA certificates in pem format. (optional).</li>
+  <li><code>MYSQL_SSL_CIPHER</code> - name of the field containing a SSL
+    cipher list (optional).</li>
+  <li><code>MYSQL_USER_TABLE</code> - name of the MySQL with the
+    authentication information (see below) (required).</li>
+  <li><code>MYSQL_LOGIN_FIELD</code> - field that contains the login id for
+    this account.</li>
+  <li><code>MYSQL_CRYPT_PWFIELD</code> - name of the field containing the
+    crypt-ed password (either <code>MYSQL_CRYPT_PWFIELD</code> or
+    <code>MYSQL_CLEAR_PWFIELD</code> is required). <strong>NOTE: this
+    password must be crypt-ed using the operating system's crypt function,
+    NOT MySQL's crypt function. MySQL's crypt() function is non-standard and
+    is not generally compatible with the operating system's crypt
+    function.</strong></li>
+  <li><code>MYSQL_CLEAR_PWFIELD</code> - name of the field containing the
+    cleartext password (either <code>MYSQL_CRYPT_PWFIELD</code> or
+    <code>MYSQL_CLEAR_PWFIELD</code> is required).</li>
+  <li><code>MYSQL_UID_FIELD</code> - field that contains the system userid
+    for this account.</li>
+  <li><code>MYSQL_GID_FIELD</code> - field that contains the system groupid
+    for this account.</li>
+  <li><code>MYSQL_MAILDIR_FIELD</code> - name of the field containing a
+    non-default location of the account's system mailbox (optional).</li>
+  <li><code>MYSQL_DEFAULTDELIVERY</code> - default mail delivery instructions
+    for the Courier mail server. If this field in the record is not empty,
+    its contents supercede the DEFAULTDELIVERY setting.</li>
+  <li><code>MYSQL_QUOTA_FIELD</code> - name of the field containing a maildir
+    quota (optional).</li>
+  <li><code>MYSQL_AUXOPTIONS</code> - auxiliary options. This field, if
+    defined, should consist of a <code>VARCHAR</code> consisting of a
+    comma-separate list of "<code>IDENTIFIER=VALUE</code>" pairs, that
+    specify per-account options. See INSTALL's description of the "Account
+    OPTIONS" setting for more information.</li>
+  <li><code>DEFAULT_DOMAIN</code> - if the user logs in without specifying
+    <code>@domain</code>, use the following domain (in this case the id field
+    must always contain <code>user@host</code>) (optional).</li>
+  <li><code>MYSQL_WHERE_CLAUSE</code> - optional freeform SQL that is
+    appended to the SQL query string.</li>
+</ul>
+
+<p>Here's a recommended definition of <code>MYSQL_USER_TABLE</code>:</p>
+<pre>CREATE TABLE passwd (
+        id                    char(128) DEFAULT '' NOT NULL,
+        crypt                 char(128) DEFAULT '' NOT NULL,
+        clear                 char(128) DEFAULT '' NOT NULL,
+        name                  char(128) DEFAULT '' NOT NULL,
+        uid                   int(10) unsigned DEFAULT '65534' NOT NULL,
+        gid                   int(10) unsigned DEFAULT '65534' NOT NULL,
+        home                  char(255) DEFAULT '' NOT NULL,
+        maildir               char(255) DEFAULT '' NOT NULL,
+        defaultdelivery       char(255) DEFAULT '' NOT NULL,
+        quota                 char(255) DEFAULT '' NOT NULL,
+        options               char(255) DEFAULT '' NOT NULL,
+        KEY id (id(128))
+);</pre>
+
+<p>Observe that a valid SQL expression may be used in place of any field
+setting, since all that happens is that the contents of the settings are
+inserted into an SQL SELECT statement. Specifically, the <code>options</code>
+field may be replaced by several normal fields, such as
+"<code>disablepop3</code>", "<code>disableimap</code>",
+"<code>disablewebmail</code>", and "<code>sharedgroup</code>"; then
+<code>MYSQL_AUXOPTIONS</code> would be set to:</p>
+
+<blockquote>
+  <code>CONCAT("disableimap=",disableimap,",disablepop3=",disablepop3,",disablewebmail=",disablewebmail,",sharedgroup=",sharedgroup)</code></blockquote>
+
+<p>This results in the expected comma-delimited options list, which is built
+up from individual table fields.</p>
+</body>
+</html>

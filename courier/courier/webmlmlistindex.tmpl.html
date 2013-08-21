@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="Bluefish 1.0.7"/>
+  <link rel="stylesheet" type="text/css" href=
+  "[@LISTURL@]/style.css" />
+
+  <title>Courier Mailing List Manager</title>
+</head>
+
+<body>
+  <h1>[@LISTNAME@]</h1>[@LISTDESCR@]
+
+  <h2>Subscribe</h2>
+
+  <form action="[@LISTURL@]/sendsub" method="post">
+    <p>Your E-mail address:&nbsp;<input type="text" name="address"
+    value="" size="40" /><input type="submit" name="subscribe"
+    value="Subscribe" /></p>
+
+    <p>Or, you can also send a blank E-mail message to:
+    &lt;<a href="##subscribe##" title=
+    "E-mail subscription address">##-subscribe##</a>&gt;</p>
+  </form>
+  <hr />
+
+  <h2>Unsubscribe</h2>
+
+  <form action="[@LISTURL@]/sendunsub" method="post">
+    <p>Your E-mail address:&nbsp;<input type="text" name="address"
+    value="" size="40" /><input type="submit" name="unsubscribe"
+    value="Unsubscribe" /></p>
+
+    <p>Or, you can also send a blank E-mail message to:
+    &lt;<a href="##unsubscribe##" title=
+    "E-mail unsubscription address">##-unsubscribe##</a>&gt;</p>
+  </form>
+  <hr />
+  <a href="[@LISTURL@]/admin">Administrative login</a>
+</body>
+</html>

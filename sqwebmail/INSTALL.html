@@ -1,0 +1,1332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>INSTALL</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink=
+"#551A8B" alink="#FF0000" lang="en" xml:lang="en">
+  <!-- Copyright 1998 - 2011 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <h1>Installation</h1>
+
+  <div>
+    <ul>
+      <li><a href="#upgrade">Upgrading from an earlier
+      version</a></li>
+
+      <li><a href="#overview">Overview</a></li>
+
+      <li><a href="#spellcheck">Spell checking</a></li>
+
+      <li><a href="#pam">PAM authentication</a></li>
+
+      <li><a href="#changepass">Password changes</a></li>
+
+      <li><a href="#runtime">Runtime configuration</a></li>
+
+      <li><a href="#loginexec">Account initialization hook</a></li>
+
+      <li><a href="#sessiontimeouts">Adjusting session
+      timeouts</a></li>
+
+      <li><a href="#maxsizes">Adjusting maximum message
+      size</a></li>
+
+      <li><a href="#randseed">Random seed</a></li>
+
+      <li><a href="#domaintemps">Domain-based templates</a></li>
+
+      <li><a href="#nametemps">Name-based templates</a></li>
+
+      <li><a href="#shared">Shared folders</a></li>
+
+      <li><a href="#ldapabook">LDAP address books</a></li>
+
+      <li><a href="#filters">Mail Filtering</a></li>
+
+      <li><a href="#calendar">Calendaring</a></li>
+
+      <li><a href="#gpg">Encryption</a></li>
+
+      <li><a href="#faq3">FAQ: Problems with downloading
+      attachments with Internet Explorer versions 4 and 5</a></li>
+    </ul>
+  </div>
+
+  <h2><a name="upgrade" id="upgrade">Upgrading from an earlier
+  version</a></h2>
+
+  <p>Follow the general installation instructions, below, in order
+  to upgrade an existing installation. You just need to make sure
+  that the options to the <code>configure</code> script are the
+  same as for the previous version. You may specify additional
+  options as well, that are new to this release.</p>
+
+  <h3>Upgrading from versions prior to 5.4</h3>
+
+  <p>Building SqWebMail now requires the <a href=
+  "http://www.gnu.org/software/libidn/">The GNU IDN
+  library</a>.</p>
+
+  <h3>Upgrading from versions prior to 5.1</h3>
+
+  <p>SqWebMail now requires the <a href=
+  "http://www.pcre.org"><tt>PCRE</tt></a> library to compile.
+  Additionally, if using <tt>maildrop</tt>, <tt>maildrop</tt> must
+  be upgraded to version 2.0.</p>
+
+  <p>Version 2.0 of <tt>maildrop</tt> now uses the <tt>PCRE</tt>
+  for pattern matching (<tt>PCRE</tt> is still required to compile
+  SqWebMail even if <tt>maildrop</tt> is not used), and it's
+  possible that some arkane existing pattern is no longer valid
+  under <tt>maildrop</tt> 2.0. What will happen is that the first
+  time SqWebMail's mail filtering screen is opened, the
+  non-compatible filtering rules will be quietly deleted. This is a
+  necessary even, and must be done, and the updated filtering rules
+  must be saved, in order to enable mail delivery to this
+  account.</p>
+
+  <h3>Upgrating from versions prior to 5.0</h3>
+
+  <p>There are two major changes in version 5.0. Starting with 5.0,
+  the authentication library that used to be a part of SqWebMail's
+  source has been spun off into a standalone authentication
+  library.</p>
+
+  <p>You must download and install the Courier authentication
+  library from <a href=
+  "http://www.courier-mta.org/download.php#authlib">http://www.courier-mta.org/download.php#authlib</a>
+  before upgrading. Review the documentation in the
+  <code>courier-authlib</code> package for more information.</p>
+
+  <p>The second major change is that the default installation
+  directories for SqWebMail have been changed. SqWebMail's default
+  installation is now more closely aligned with standard
+  installation directories used by many other packages based on the
+  GNU toolchain.</p>
+
+  <p>Earlier versions of SqWebMail preferred to be installed in
+  <code>/usr/local/share/sqwebmail</code>, with various bits and
+  pieces scattered elsewhere.</p>
+
+  <p>Now, SqWebMail's installation layout follows the standards
+  much closer. SqWebMail now implements the usual configuration
+  directives: <code>--prefix</code>, <code>--exec-prefix</code>,
+  <code>--bindir</code>, <code>--datadir</code>, and all the rest.
+  There's only one non-standard default: unless the
+  <code>--prefix</code> option is specified, SqWebMail will be
+  install in <code>/usr/lib/sqwebmail</code>. That's the default
+  installation tree.</p>
+
+  <p>Use the following procedure to upgrade the current
+  installation of SqWebMail:</p>
+
+  <p>If you're using a package manager, such as <code>RPM</code> or
+  <code>APT</code>, build a new package, and let the package
+  manager figure out what to do. Only one manual step may be
+  required, which the package manager probably won't be able to
+  handle on its own: there might be some left-over custom
+  configuration files in <code>/usr/local/share/sqwebmail</code>.
+  Review the old configuration files, and re-apply any custom
+  changes to the new version's configuration file (which will be in
+  <code>/usr/lib/sqwebmail/etc</code>, or wherever your
+  <code>--sysconfdir</code> option places them). <strong>DO
+  NOT</strong> just copy the configuration file verbatim. Manually
+  re-apply changes, one at a time.</p>
+
+  <p>Otherwise: install the authentication library first. Make sure
+  it is working. Use the <code>authtest</code> program to verify
+  that the authentication library is seeing the existing mail
+  accounts.</p>
+
+  <p>Download the new version of SqWebMail, and extract the source
+  code into a new directory. Follow the regular installation
+  instructions up until the "make install" command.</p>
+
+  <p>Don't run the "make install" command. Switch to the directory
+  with the old SqWebMail's source code, and run "make uninstall" to
+  remove the old version of SqWebMail. Go back to the new source
+  code, then run "make install", then "make install-configure".</p>
+
+  <p>After upgrading, check SqWebMail's older installation
+  directory (usually <code>/usr/local/share/sqwebmail</code>).
+  It'll probably still have some left-over configuration files.
+  Start the new version of SqWebMail, verify that it's working,
+  then nuke <code>/usr/local/share/sqwebmail</code> in order to
+  avoid any future confusion.</p>
+
+  <h3>Upgrading from versions prior to 4.1</h3>
+
+  <p>In 4.1, the sqwebmaild, authdaemond and pcpd processes all run
+  in the foreground; they are daemonized by running them under the
+  control of a 'courierlogger' process, which also captures their
+  stderr output and sends it to syslog. The script
+  <code>sqwebmaild.rc</code> takes care of this for you. After
+  upgrading to 4.1 you will need to modify your system startup
+  script to run <code>sqwebmaild.rc start</code> and <i>not</i> to
+  run <code>sqwebmaild start</code> or <code>authdaemond
+  start</code>. See below for more information.</p>
+
+  <p>Additional authentication debugging capabilities have been
+  added. See <code>authlib/README.authdebug.html</code> for more
+  information.</p>
+
+  <p>A new configuration file,
+  <code>/usr/local/share/sqwebmail/sqwebmaild</code> has been
+  added. Make sure you run <code>make install-configure</code> to
+  create the initial version of this file.</p>
+
+  <h3>Upgrading from versions prior to 3.0</h3>
+
+  <p><b>THIS IS A MAJOR UPGRADE</b></p>
+
+  <p>All mail passwords must be reset when upgrading from versions
+  prior to 3.0. Prior to 3.0 SqWebMail maintained a separate
+  password file for webmail logins. It was automatically
+  initialized with the system password, but then maintained
+  separately. "System password" here refers to whatever password
+  authentication was installed: traditional
+  <code>/etc/passwd</code> file, or MySQL, LDAP, or several other
+  methods.</p>
+
+  <p>The separate webmail password file was needed because
+  SqWebmail lacked a convenient way to update the system password.
+  Starting in 3.0, additional code and scripts were added that
+  update the "real" password, and SqWebMail's separate password
+  files are removed. Here is a suggested migration plan:</p>
+
+  <p>Note: if you were using the <code>authvchkpw</code> module
+  then you're pretty much off the hook. All except very old
+  versions of SqWebMail had a special <code>authvchkpw</code>
+  module that kept SqWebMail's and vpopmail's passwords in sync.
+  Although you're mostly off the hook, you should still follow
+  these instructions in order to insure a smooth transition.</p>
+
+  <ul>
+    <li>Add the following options to the configure script:
+    <code>--prefix=/usr/local/share/sqwebmail3
+    --with-cachedir=/var/cache/sqwebmail3
+    --enable-imageurl=/webmail3
+    --enable-imagedir=/var/www/htdocs/webmail3
+    --enable-cgibindir=/var/www/cgi-bin/sqwebmail3</code>
+
+      <p>The effect of these options is to install SqWebMail3 into
+      different directories than the previous version of sqwebmail
+      (you may need to use a different
+      <code>--enable-imagedir</code> option that reflects your web
+      document root). The default configuration installs
+      <code>SqWebMail</code> in
+      <code>/usr/local/share/sqwebmail</code> (using
+      <code>/var/cache/sqwebmail</code> as the login cache, and
+      <code>/webmail</code> for images). By carefully picking the
+      options, SqWebMail 3.0 can coexist with an earlier version.
+      Earlier versions of SqWebMail also installed a couple of
+      files in <code>/usr/local/libexec</code>, SqWebMail 3.0 no
+      longer does that.</p>
+    </li>
+
+    <li>Specify the same options to the configure script that were
+    specified for the existing SqWebMail install.</li>
+
+    <li>After compiling, run the following command as a non-root
+    user: <code>make install DESTDIR=/tmp/sqwebmail3</code> (as
+    always, use <code>gmake</code> instead of <code>make</code> on
+    xBSD, this command is implemented by GNU make only).</li>
+
+    <li>This essentially installs all files in
+    <code>/tmp/sqwebmail3</code>, which is like a virtual chroot
+    jail: <code>/usr/local/share/sqwebmail</code> becomes
+    <code>/tmp/sqwebmail3/usr/local/share/sqwebmail</code>, etc...
+    Examine the contents of the <code>/tmp/sqwebmail3</code> tree.
+    This will allow you to confirm that the real <code>make
+    install</code> is not going to scribble over any part of the
+    existing installation. Examine all files and directories
+    underneath <code>/tmp/sqwebmail3</code> and verify that they
+    are different from the existing install.</li>
+
+    <li>Run <code>make install</code> for real. Reenter all
+    configuration data into version 3's configuration files, to
+    match the existing sqwebmail's configuration. Don't forget to
+    set up version 3's cleanup cron job. For a short period of time
+    there will be two copies of each. Some careful attention will
+    be needed to keep everything in order.</li>
+
+    <li>If you are using the authuserdb authentication module, run
+    the <code>makeuserdb</code> script from sqwebmail 3.0 to
+    rebuild the userdb database.</li>
+
+    <li>Create a test mail account (if none already exist). Log
+    into the mail account using the previous version of SqWebMail's
+    (which should still be installed) password, password A.</li>
+
+    <li>Run the new <code>sqwebmaild.rc start</code> script (and
+    install version 3's cron job). Reset the test mail account's
+    password to password B. Load the URL for version 3's
+    <code>sqwebmail</code> binary in a browser. The URL will
+    probably be
+    <code>http://domain/cgi-bin/sqwebmail3/sqwebmail</code>. Log
+    into the test mail account with password B. Go into the
+    preferences and change password B to password C. Log out and
+    log in using password C. Now, go back to the existing version
+    of SqWebMail (probably
+    <code>http://domain/cgi-bin/sqwebmail</code>), and observe that
+    you will still use password A with the existing version of
+    SqWebMail, which maintains a separate password file.</li>
+
+    <li>Convince yourself that everything Is Working
+    Right[tm].</li>
+
+    <li>Make arrangements to reset all mail account passwords.
+    That's mostly an administrative function.</li>
+
+    <li>Go into the <code>cgi-bin</code> directory. Rename the
+    existing <code>sqwebmail</code> binary to
+    <code>sqwebmail.old</code>, then move the new
+    <code>sqwebmail</code> binary from the <code>sqwebmail3</code>
+    subdirectory.</li>
+
+    <li>After everything has been running smoothly for a couple of
+    weeks, blow away the old version of SqWebMail. Decommission its
+    <code>authdaemond</code> process, and delete its cron job.
+    You'll have to make yourself a mental note to always use the
+    extra options to the <code>configure</code> script in order to
+    be able to upgrade future versions of <code>SqWebMail</code>
+    into the same non-default installation location. That's not the
+    end of the world, and if you feel comfortable knowing what
+    you're doing, you can always rerun <code>configure</code>, and
+    reinstall version 3 into the default installation location.
+    This is up to you.</li>
+  </ul>
+
+  <p><b>NOTE:</b> the default configuration settings have been
+  changed to always build the <code>authdaemon</code> module, and
+  build all real authentication modules inside
+  <code>authdaemond</code>. This is true even with the
+  <code>authvchkpw</code> module. <code>authdaemond</code> is
+  needed to support the new password authentication framework.</p>
+
+  <h3>Upgrading from versions prior to 1.1</h3>
+
+  <p>Prior to SqWebMail 1.1, each version installed a default set
+  of configuration files. If some custom changes were made to an
+  existing configuration, after installation those changes had to
+  be reapplied.</p>
+
+  <p>Beginning with version 1.1 this process is mostly automated.
+  Starting with version 1.1, the configuration files contain
+  additional metadata that allow them to be upgraded automatically.
+  For this to work both the old and the new configuration files
+  must contain this metadata.</p>
+
+  <p>Therefore, when upgrading to version 1.1, proceed as follows.
+  Back up the existing configuration, then follow the procedures
+  below to install this version. Because the existing configuration
+  files carry no auto-update metadata, the installation script will
+  rename each configuration file "filename" to "filename.bak", and
+  write a default "filename" in its place. Afterward, edit
+  "filename" and manully reenter all custom changes. Do NOT simply
+  copy the previous configuration file and overwrite the new
+  version, because the autoupdate metadata will be lost.</p>
+
+  <p>Note: not all configuration files can be upgraded
+  automatically. Only those configuration files that carry multiple
+  settings ( <code>authdaemonrc</code>, <code>authldaprc</code>,
+  <code>authmysqlrc</code>, and <code>ldapaddressbook</code>) can
+  be automatically upgraded.</p>
+
+  <h2><a name="overview" id="overview">Overview</a></h2>
+
+  <p>The requirements to install SqWebMail are:</p>
+
+  <ul>
+    <li>A C++ compiler. SqWebMail is written in C but there are
+    some auxiliary programs that are written in C++. gcc is
+    recommended.</li>
+
+    <li>The <a href="http://www.pcre.org"><tt>PCRE</tt></a>
+    library.</li>
+
+    <li>GNU make. This is the default make on Linux. xBSD and other
+    systems usually install GNU make as "gmake". Replace all
+    references to "make" in this document to "gmake".</li>
+
+    <li><a href="http://www.gnu.org/software/libidn/">The GNU IDN
+    library</a> (http://www.gnu.org/software/libidn/).</li>
+
+    <li>A web server. Apache will do nicely, but so will any web
+    server that fully implements the Common Gateway Interface.
+    SqWebMail is a straight CGI app, and does not need any other
+    support from the web server. However, the web server must
+    implement the full CGI interface, since SqWebMail makes the use
+    of pretty much every CGI variable in existence.</li>
+
+    <li>The Courier authentication library. Before installing
+    Courier-IMAP, download and install <a onclick="" href=
+    "http://www.courier-mta.org/authlib/">http://www.courier-mta.org/authlib/</a>.</li>
+  </ul>
+
+  <p>The typical sequence of commands to compile and install
+  SqWebMail is as follows:</p>
+  <pre>
+ 
+  ./configure [options - see below]
+  make configure-check
+  make
+  make check
+  make install-strip       # Do a make install if this doesn't work
+  make install-configure   # Install configuration files.
+
+  # Create post-install cron jobs, and modify system startup script
+
+  # <a href="#tweak">Tweak your web server for MSIE</a>
+</pre>
+
+  <p>GNU make is required to compile and install SqWebMail. On xBSD
+  systems GNU make is installed as the "gmake" command. Anywhere
+  this documentation mentions the make command, substitute gmake
+  for make. If you do not have gmake on your system, install it
+  before installing SqWwebMail.</p>
+
+  <p>The options to the configure program are as follows:</p>
+
+  <ul>
+    <li><code>--with-libcharset</code> - use the GNU libcharset
+    library, if installed. Some systems do not implement the
+    nl_langinfo(CODESET) system call, which determines the
+    character set used by system messages. If SqWebMail cannot
+    determine the system character set then some items may not be
+    displayed in the correct character set. One example would be
+    the message date times, which use the system strftime()
+    function. Some systems nl_langingo(CODESET) may be available,
+    but may not return the preferred or the correct MIME character
+    set name. Both problems may be fixed by installing the GNU
+    libcharset library, and using the option to compile the support
+    for it.</li>
+
+    <li><code>--with-cachedir=<i>dir</i>,
+    --with-cacheowner=<i>userid</i></code> - SqWebMail uses a cache
+    of currently active logins. SqWebMail runs for each and every
+    HTTP request, and after starting, it needs to locate the
+    account's maildir. Because hitting the authentication module
+    can be expensive (think MySQL/PostgreSQL/LDAP query for every
+    HTTP request!) SqWebMail caches the login information, in order
+    to avoid having your authentication server brought down to its
+    knees. By default, the directory
+    <code>/var/cache/sqwebmail</code> or
+    <code>/var/run/sqwebmail</code> will be used, owned by the
+    <i>bin</i> user. These options can be used to specify a
+    different location for the sqwebmail login cache
+    directory.<br />
+    You MUST add a periodic cron job to run the
+    <code>cleancache.pl</code> script in order to delete stale
+    cache records from the cache directory. <code>make
+    install</code> will display the message containing the text of
+    the cron job.</li>
+
+    <li><code>--without-gzip</code> - do not use gzip compression.
+    By default, some pages will be compressed with gzip before
+    being sent by sqwebmail (to browsers that support gzip
+    compression). Note that this may result in additional load on
+    your server, so <code>--without-gzip</code> can be used to turn
+    it off, if necessary. The <code>gzip</code> program must be in
+    your default path at the time you run <code>configure</code> in
+    order for gzip compression to be enabled (the absolute pathname
+    is computed and used at runtime).</li>
+
+    <li>
+      <p><code>--with-db=db</code> - Either the GDBM or the DB
+      library is required by SqWebMail. The configuration script
+      will check for either one's availability. If both are found,
+      GDBM is selected. Use this option to select the DB library
+      instead (if you only have the DB library installed, this
+      option is not required).</p>
+    </li>
+
+    <li><code>--enable-https</code> - have SqWebMail generate
+    https:// URLs for all accesses, instead of http://.</li>
+
+    <li><code>--enable-https=login</code> - generate a single
+    https:// URL for the login function only. The idea is to use
+    SSL just to send the login and the password. In order for this
+    option to work the URL for both http:// and https:// path to
+    SqWebMail must be identical!</li>
+
+    <li><code>--enable-https=auto</code> - this is now the default
+    option. SqWebMail will detect whether the client connects via
+    SSL, or not, and generate either http:// or https:// URLs,
+    appropriately.</li>
+
+    <li><code>--enable-hardtimeout=<em>seconds</em></code> - hard
+    session timeout interval, in seconds. After the interval
+    expires, the user is automatically logged out.</li>
+
+    <li><code>--enable-softtimeout=<em>seconds</em></code> - soft
+    session timeout interval, in seconds. If no account accesses
+    come within the indicated time period, the user is
+    automatically logged out.</li>
+
+    <li><code>--enable-autopurge=<em>days</em></code> - messages in
+    the Trash folder are automatically deleted after this time
+    interval.</li>
+
+    <li><code>--enable-maxpurge=days</code> - allow users to
+    specify "days" as the maximum interval for preserving messages
+    in the trash.</li>
+
+    <li><code>--with-defaultlang=<em>en</em></code> - reserved for
+    future use. Selects which set of HTML template files SqWebMail
+    uses by default. Currently only English HTML templates are
+    supplied.</li>
+
+    <li><code>--enable-cgibindir=<em>directory</em></code> - where
+    to install the sqwebmail CGI stub. This should be your /cgi-bin
+    directory. The <code>configure</code> script will look for a
+    cgi-bin directory in some popular locations; this option can be
+    used to tell <code>configure</code> where to look.</li>
+
+    <li><code>--enable-imagedir=<em>directory</em></code> - where
+    to install the icons and graphic images. This should be
+    somewhere in your web server's document hierarchy. The
+    <code>configure</code> script searches for your web server's
+    document directory in the usual places, this option can be used
+    to tell <code>configure</code> where to look.</li>
+
+    <li><code>--enable-imageurl=<em>URL</em></code> - the URL to
+    the directory containing images and icons.</li>
+
+    <li><code>--enable-mimetypes=<em>filelist</em></code> - a
+    colon-separated list of your <code>mime.types</code> files.
+    When an attachment is uploaded, the corresponding MIME type is
+    derived by searching for the file's extension in the mime.types
+    file. A <code>mime.types</code> file normally comes with Pine
+    or Apache. If this option is not specified,
+    <code>configure</code> looks in some places where
+    <code>mime.types</code> is usually found. If a
+    <code>mime.types</code> file is found in any directory, it is
+    added to the list. This is a list of multiple files separated
+    by a colon. If the MIME type is not found in the first file,
+    SqWebMail will look in the next file.</li>
+
+    <li><code>--enable-mimecharset=<em>charset</em></code> -
+    default charset= tag to stick into the Content-Type: header.
+    the default is <code>iso-8859-1</code>.</li>
+
+    <li><code>--enable-lang=<em>lang</em></code> - reserved for
+    future. Default language of web pages to serve.</li>
+
+    <li>
+      <code>--enable-bannerprog=<em>program</em></code> - full path
+      to a banner program. sqwebmail replaces the character
+      sequence [#B#] in HTML template files with the output
+      generated by this program. The first argument to the program
+      will be the name of the HTML file. The banner program can use
+      that to customize banner output.
+
+      <p>It is also possible for a site to stick multiple @B tags
+      in the same HTML page. To distinguish each instance follow
+      the @B tag with up to 30 letters or digits, surrounded by
+      braces. For example: <code>[#B#]{TOP}</code> and
+      <code>[#B#]{BOTTOM}.</code> "TOP", or "BOTTOM" (or anything
+      else) will be the second argument to the banner program.</p>
+    </li>
+
+    <li><code>--with-maxargsize</code> =n - set maximum size of an
+    HTTP post SqWebMail will accept. This is, essentially, the
+    maximum length of a text message (excluding any attachments)
+    that SqWebMail will accept. This setting can also be adjusted
+    at runtime. See <a href="#maxsizes">Adjusting maximum message
+    size</a>, below.</li>
+
+    <li><code>--with-maxformargsize=n</code> - like the above, but
+    applies to an HTTP multipart/formdata post. This is
+    approximately the largest attachment that can be uploaded
+    SqWebMail. This setting can also be adjusted at runtime. See
+    <a href="#maxsizes">Adjusting maximum message size</a>,
+    below.</li>
+
+    <li><code>--with-maxmsgsize=n</code> - maximum size of messages
+    (including attachments. Defaults to 2097152 (two megabytes).
+    Note that attachments are base64-encoded, which adds 25%
+    overhead, so the maximum size of all attachments is really
+    about 1.5 megabytes. This setting can also be adjusted at
+    runtime. See <a href="#maxsizes">Adjusting maximum message
+    size</a>, below.</li>
+
+    <li><code>--with-ispell=<i>pathname</i></code> - if
+    <code>configure</code> finds <code>ispell</code> in the default
+    path, or if you specify the full name to <code>ispell</code>
+    using this option, users will be able to spell check their
+    documents.</li>
+
+    <li><code>--without-ispell</code> - disable spell
+    checking.</li>
+
+    <li><code>--disable-autorenamesent</code> - do not rename the
+    Sent folder every month. This option can also be controlled by
+    the SQWEBMAIL_AUTORENAMESENT environment variable (which can be
+    set in Apache's httpd.conf, for example). This setting gives
+    the initial configuration, that can be individually adjusted in
+    the Preferences screen.</li>
+
+    <li><code>--with-calendarpurge=N</code> - if calendaring is
+    enabled, purge expired calendar events after N days (default:
+    30).</li>
+
+    <li><code>--with-trashquota</code> - include deleted messages,
+    and the Trash folder, in the estimated quota usage for
+    maildirs. Quotas are optional, see the file
+    maildir/README.maildirquota.html for more information. The
+    default configuration does not count messages marked as deleted
+    (but not yet expunged) and the contents of the Trash folder
+    (which are automatically purged by the server) against the
+    quota usage.</li>
+
+    <li><code>--with-syslog=DEST</code> - select syslog
+    destination, giving one of the facility codes from syslog.h
+    such as "LOCAL7". Defaults to "MAIL".</li>
+  </ul>
+
+  <p>After running <code>configure</code>, run <code>make
+  configure-check</code> to verify the directories where the CGI
+  and the image files will be installed. <code>make
+  configure-check</code> prints the directories that the
+  configuration script thinks your web server is installed. Rerun
+  <code>configure</code> and use <code>--enable-cgibindir</code>
+  and <code>--enable-imagedir</code> if SqWebMail guessed
+  wrong.</p>
+
+  <p>Run <code>make</code> to compile SqWebMail, and <code>make
+  install-strip</code>to install the files. As mentioned before,
+  use <code>make install</code> if <code>make install-strip</code>
+  doesn't work.</p>
+
+  <p><b>WARNING:</b> set your umask to 022 before running
+  <code>make install</code> or <code>make install-strip</code>.</p>
+
+  <p>Before running <code>make install-strip</code>, verify the
+  contents of the <code>sendit.sh</code> script, and make sure that
+  your mail transfer agent is corrently invoked.</p>
+
+  <h3>Modify your system startup script</h3>
+
+  <p>The following command starts <code>sqwebmail</code>. This
+  command should be added to the system startup script so that
+  <code>sqwebmail</code> automatically starts during the system
+  boot.</p>
+
+  <p><code>/usr/lib/sqwebmail/libexec/sqwebmaild.rc
+  start</code></p>
+
+  <p>"<code>sqwebmaild.rc stop</code>" may also be used to shut
+  down the webmail service.</p>
+
+  <h3>SELinux</h3>
+
+  <p>The following extension may be necessary to make SqWebMail
+  work when SELinux kernel extensions are turned on:</p>
+  <pre>
+allow httpd_sys_script_t var_t:sock_file write;
+allow httpd_sys_script_t unconfined_t:unix_stream_socket connectto;
+</pre>
+
+  <h3>Install the cleancache.pl cron job</h3>
+
+  <p>After installing, add a cron job that runs the
+  <code>cleancache.pl</code> script at regular intervals (once an
+  hour is fine). <code>cleancache.pl</code> is installed in
+  <code>/usr/lib/sqwebmail/share/sqwebmail</code>. <code>make
+  install</code> will print additional information on installing
+  the <code>cleancache.pl</code> script.</p>
+
+  <h3>Install configuration files</h3>
+
+  <p>Run <code>make install-configure</code> to initialize certain
+  configuration files. Some SqWebMail's configuration files carry
+  multiple configuration settings, such as
+  <code>authdaemonrc</code>, <code>ldapaddressbook</code>, and
+  others (see elsewhere in INSTALL for additional information
+  regarding these configuration settings).</p>
+
+  <p>For each such configuration file, <code>make install</code>
+  installs <code>filename.dist</code>. <code>make
+  install-configure</code> takes each <code>filename.dist</code>
+  and creates <code>filename</code>. If the previous
+  <code>filename</code> existed, and it contained autoupdate
+  information (SqWebMail 1.1 or later), the existing configuration
+  settings will be preserved, wherever possible. Older
+  configuration files, that are not auto-updatable, will be renamed
+  to <code>filename.bak</code>.</p>
+
+  <p>During an autoupdate <code>make install-configure</code> will
+  report on the disposition of each configuration setting. A
+  configuration setting will be preserved as long as it is still
+  valid in the new version of SqWebMail. Obsolete configuration
+  settings are automatically removed. If a configuration setting
+  may not be valid, it is not preserved, but will revert to its
+  default setting from <code>filename.dist</code>. It is
+  recommended that the output of <code>make
+  install-configure</code> be saved (<code>make install-configure
+  &gt;upgrade.log</code>), so that its report can be examined to
+  identify any configuration settings that are flagged for manual
+  action</p>
+
+  <h3>Post-install configuration</h3>
+
+  <p>The default configuration script installs the authdaemond
+  process that handles authentication, and it is started by
+  sqwebmaild.rc start</p>
+
+  <p><code>sqwebmaild.rc stop</code> should also be executed at
+  system shutdown, but is not strictly necessary.</p>
+
+  <h3><a name="tweak" id="tweak">Tweak the web server for
+  MSIE</a></h3>
+
+  <p>The MSIE browser has a number of bugs in its HTTP/1.1
+  implementation, at least as of MSIE 4.x and 5.x. You must
+  configure your web server to use HTTP/1.0 when talking to any
+  MSIE browser (at least until MSIE gets fixed). The problem has to
+  do with downloading attachments. Apparently, MSIE forgets how
+  MIME works, when it uses HTTP/1.1. For the Apache server, insert
+  the following directive in httpd.conf:</p>
+  <pre>
+BrowserMatch "MSIE" nokeepalive downgrade-1.0 force-response-1.0
+</pre>
+
+  <p>Recent versions of Apache already have a similar directive for
+  a specific version of MSIE, MSIE 4.0b2. Just replace it with a
+  browsermatch for any MSIE version.</p>
+
+  <h3>Load the login screen</h3>
+
+  <p>Specify the URL to the <code>sqwebmail</code> binary to
+  display the login page. Try to log in to a test account. Review
+  the rest of this configuration file in order to enable optional
+  features that you want to use.</p>
+
+  <h2><a name="spellcheck" id="spellcheck">Spell checking</a></h2>
+
+  <p>SqWebMail can use either the ispell or the aspell package for
+  spell checking messages. Install ispell or aspell before
+  installing SqWebMail.</p>
+
+  <p>NOTE: SqWebMail assumes that the spell checking dictionary is
+  called "english". Some systems use a different name for the
+  default spell checking dictionary. To change the name of the
+  spell checking dictionary used by SqWebMail, put the name of the
+  dictionary into the file
+  <code>/usr/lib/sqwebmail/share/sqwebmail/html/en-us/ISPELLDICT</code>.</p>
+
+  <h2><a name="pam" id="pam">PAM authentication</a></h2>
+
+  <p>SqWebMail uses the "webmail" service with the Courier
+  authentication library. When the optional groupware calendaring
+  mode is enabled, SqWebMail also uses the "calendar" service. You
+  will have to take additional, site-specific, steps in order to
+  configure your PAM library for the "webmail" and "calendar" PAM
+  services. The specific details regarding your PAM configuration
+  differs from system to system, and you should consult your own
+  documentation.</p>
+
+  <p>See the Courier authentication library documentation for more
+  PAM-related information.</p>
+
+  <p>HINT: try to look at how other PAM services are set up, and
+  duplicate their configuration for the <code>webmail</code> and
+  <code>calendar</code> services. A good example to follow would be
+  the <code>ppp</code> service, if it exists.</p>
+
+  <h2><a name="changepass" id="changepass">Password
+  changes</a></h2>
+
+  <p>After installing SqWebMail be sure to test that the login
+  password can be changed through SqWebMail. Be sure to change the
+  password a couple of times, logging out and back in each
+  time.</p>
+
+  <p>If you do not want to use the password change function you can
+  also remove the <code>sqwebpasswd</code> program. This is a
+  helper program, installed with the set-groupid bit set, that
+  relays the password change request to the authentication daemon,
+  through the filesystem socket that is not globally accessible.
+  The password change request consists of the account name, the old
+  password, and the new password. The password change request is
+  validated by the authentication daemon, and the old password must
+  match the existing password on the account, before the password
+  change goes through. This set-groupid helper program is safe to
+  use.</p>
+
+  <h2><a name="runtime" id="runtime">Runtime configuration</a></h2>
+
+  <p>There are some options which can be used to change sqwebmail's
+  behaviour on individual accounts, or globally, using the "Account
+  Options" feature in the Courier Authentication library. The
+  individual account's setting takes precedence over the
+  DEFAULTOPTIONS settings in the <i>authdaemonrc</i> configuration,
+  so for example if you want to disable webmail access for most
+  accounts but enable it for a select few, you can set
+  <code>DEFAULTOPTIONS="disablewebmail=1"</code> in the
+  <code>authdaemonrc</code> configuration file, and add the option
+  <code>disablewebmail=0</code> to individual accounts. See the
+  section "Account options" in README_authlib.html in the
+  courier-authlib package for more information on setting the
+  following account options:</p>
+
+  <p><code>disablewebmail</code> - if set to a non-zero value, this
+  account will not be permitted to login to webmail (e.g. because
+  the user is only allowed to use POP3 or IMAP)</p>
+
+  <p><code>wbnochangingfrom</code> - if set to a non-zero value,
+  SqWebMail will not allow the <code>From:</code> header to be
+  changed, it will always have its default value.</p>
+
+  <p><code>wbnochangepass</code> - if set to a non-zero value,
+  SqWebMail will not allow passwords to be changed. See "<a href=
+  "#changepass">Password changes</a>", above, for more
+  information.</p>
+
+  <p><code>wbusexsender</code> - if set to a non-zero value,
+  SqWebMail will attach an <code>X-Sender:</code> header to all
+  outgoing messages. This can be used in the event you would like
+  to be able to modify the From: header, yet also be able to track
+  sent mail to the original account. Although your mail server
+  should records the id of the sending user in the headers of
+  outgoing messages, this is not possible when you have many
+  virtual accounts that share the same system userid.</p>
+
+  <p><code>wbnoimages</code> - if set to a non-zero value then no
+  images or icons will be used. The generated interface will be a
+  text-only interface.</p>
+
+  <p><code>wbnodsn</code> - set to a non-zero value then the option
+  to request delivery confirmation receipts will not be shown.
+  Delivery confirmation receipts require the local mail server to
+  support RFC 1894 delivery status notifications, and some mail
+  servers do not implement DSNs. NOTE: Qmail does not implement
+  DSNs, so this option must be set when installing sqwebmail on a
+  Qmail box.</p>
+
+  <p>In addition, there's some global configuration that can be
+  done after installation. The following presumes that SqWebMail's
+  configuration files are installed in
+  <code>/usr/lib/sqwebmail</code> (the default).</p>
+
+  <p><code>/usr/lib/sqwebmail/etc/hostname</code> - when SqWebMail
+  is installed with a basic configuration for a single domain,
+  SqWebMail sets the domain in the return address for outgoing
+  messages to the defined system hostname. If this file exists it
+  will be used instead of the defined system hostname.</p>
+
+  <p><code>/usr/lib/sqwebmail/etc/autoresponsesquota</code> - the
+  systemwide quota on autoreplies, if autoreplies and mail
+  filtering are enabled. This file contains one line: "Cnnn" or
+  "Snnn" (or both strings, on the same line). Cnnn: allow up to
+  #nnn autoreplies to be created. Snnn: allow up to #nnn bytes as
+  the total size of all autoreplies, combined. If both Cnnn and
+  Snnn are specified, both quotas apply. If this file does not
+  exist, there is no limit on autoreplies. This quota setting
+  applies systemwide. To override the quota setting for a
+  particular Maildir, create the <code>autoresponsesquota</code>
+  file in that Maildir (which takes precedence).</p>
+
+  <p><code>/usr/lib/sqwebmail/share/sqwebmail/sendit.sh</code> is a
+  shell script that's called to actually mail a message. It can be
+  customized to do something like rewriting some of the headers, or
+  adding the client's IP address to the headers
+  (<code>sqwebmail</code> does not do that by default).</p>
+
+  <p><code>/usr/lib/sqwebmail/etc/logindomainlist</code> - if this
+  file exists, it can be used in a vast number of ways to fine tune
+  the user login experience. See
+  <code>README.logindomainlist.html</code> for more
+  information.</p>
+
+  <p>
+  <code>/usr/lib/sqwebmail/share/sqwebmail/html/<i>LANG</i>/footer</code>
+  - if this file exists, its contents will be appended to the end
+  of every sent message. <i>LANG</i> is the language code here,
+  there can be a separate footer per installed language. The
+  <i>footer</i> file carries the following requirements:</p>
+
+  <ul>
+    <li>
+      <p>The footer file must be coded in <tt>UTF-8</tt>.</p>
+    </li>
+
+    <li>
+      <p>The footer file must follow the <tt>format=flowed;
+      delsp=yes</tt> format, as specified by <tt>RFC 3676</tt>.
+      Capsule summary:</p>
+
+      <ul>
+        <li>
+          <p>Paragraphs are delimited by blank lines.</p>
+        </li>
+
+        <li>
+          <p>Paragraphs that consist of more than one line must
+          have a trailing space ending each line except the last
+          line in the paragraph.</p>
+        </li>
+
+        <li>
+          <p>That trailing space is in addition to a space that
+          delimits individual words in most Western languages.
+          Therefore, a line that ends on a word without punctuation
+          and continues with the next word at the beginning of the
+          next line must end with two spaces: the usual space that
+          separates individual words, and a second space that
+          indicates that the paragraph continues on the next
+          line.</p>
+        </li>
+
+        <li>
+          <p>Restated: a line that ends with a space is logically
+          joined with the next line, after the trailing space is
+          logically removed.</p>
+        </li>
+
+        <li>
+          <p>Lines that begin with a space character or the "&gt;"
+          character must have an additional space character
+          prepended to them. This leading space character is
+          logically removed from the contents of the line.</p>
+        </li>
+      </ul>
+    </li>
+
+    <li>
+      <p>Signature content gets formatted as part of the message
+      together with the rest of the content. Sender-selected option
+      to format the message as either a plain text message, or
+      using wiki-style HTML markup applies to the footer file too.
+      The footer file's contents should be constructed taking into
+      account the possibility that wiki-style HTML markup may get
+      optionally applied to the footer content.</p>
+    </li>
+  </ul>
+
+  <p>
+  <code>/usr/lib/sqwebmail/share/sqwebmail/html/<em>LANG</em>/TIMEZONELIST</code>
+  - a list of alternative timezones. By default all dates and times
+  are shown in the server's default timezone, and the dropdown list
+  on the login screen can be used to select an alternative
+  timezone. SqWebMail comes with a default alternative timezone
+  list that lists only a small number of timezones. Additional
+  timezones can be entered into this file to be shown on the login
+  screen.</p>
+
+  <h2><a name="loginexec" id="loginexec">Account Initialization
+  Hook</a></h2>
+
+  <p>If there is a file or a symbolic link in the maildir called
+  "loginexec", and if it is executable, then the executable file
+  will be invoked after a succesful login. If the program
+  terminates with an exit code of 0, the "loginexec" file (or a
+  symbolic link) will be removed.</p>
+
+  <h2><a name="sessiontimeouts" id="sessiontimeouts">Adjusting
+  session timeouts</a></h2>
+
+  <p>A login session is automatically logged out after certain
+  period of inactivity. The timeout period defaults to 20 minutes,
+  and is set by the <code>--enable-softtimeout</code> option to the
+  configure script. It is also possible to adjust this value by
+  setting the <code>SQWEBMAIL_TIMEOUTSOFT</code> environment
+  variable. For example, with Apache, by adding the following to
+  <code>httpd.conf</code>:</p>
+  <pre>
+SetEnv SQWEBMAIL_TIMEOUTSOFT 3600
+</pre>
+
+  <p>There is also a hard timeout, which logs out a session no
+  matter what. The default of two hours is changed with the
+  <code>--enable-hardtimeout</code> option to the configure script,
+  and the <code>SQWEBMAIL_TIMEOUTHARD</code> environment
+  variable.</p>
+
+  <p><b>WARNING:</b></p>
+
+  <p>The hard timeout interval is used to calculate the maintenance
+  of the login cache (if that option is selected). This factor is
+  used in the <code>cleancache.pl</code> cleanup script, and
+  changes to this value must be coordinated appropriately. It is
+  not possible to use different hard timeout values with the same
+  login cache (in different virtual domains, as described in the
+  next session). Leisurely tinkering with this environment variable
+  is STRONGLY DISCOURAGED, it's very easy to screw up the whole
+  system. You've been warned.</p>
+
+  <p>If you adjust the hard timeout, you must simultaneously delete
+  your current login cache directory, and adjust $timeouthard in
+  the installed <code>cleancache.pl</code> script.</p>
+
+  <h2><a name="maxsizes" id="maxsizes">Adjusting maximum message
+  size</a></h2>
+
+  <p>The <code>--with-maxargsize</code>,
+  <code>--with-maxformargsize</code>, and
+  <code>--with-maxmsgsize</code> options to the
+  <code>configure</code> script set the parameters that control the
+  maximum size of messages and attachments. These parameters can
+  also be set through the following environment variables.</p>
+
+  <blockquote>
+    <p><em>NOTE:</em> The <code>configure</code> script parameters
+    define the minimum settngs. The following environment variables
+    may be used to set larger limits only.</p>
+
+    <p><em>NOTE:</em> These settings limit only the maximum size of
+    messages sent by SqWebMail. The limit on the incoming message
+    size is set by your mail server.</p>
+  </blockquote>
+
+  <dl>
+    <dt><code>SQWEBMAIL_MAXARGSIZE</code></dt>
+
+    <dd>
+      Approximate maximum size, in bytes, of the message, excluding
+      any attachments (overrides the <code>--with-maxargsize</code>
+      parameter to the <code>configure script</code>). This is the
+      maximum message that can be typed into SqWebMail.
+
+      <p><em>NOTE:</em> SqWebMail has an inactivity timeout. While
+      composing a new message use the "Preview" button frequently
+      to save the unfinished message and keep the session from
+      timing out.</p>
+    </dd>
+
+    <dt><code>SQWEBMAIL_MAXATTSIZE</code></dt>
+
+    <dd>
+      Approximate maximum size, of each allowed attachment.
+      (overrides the <code>--with-maxargsize</code> parameter to
+      the <code>configure script</code>).
+
+      <p><em>NOTE:</em> Attaching binary files to E-mail messages
+      incurs an overhead of approximately 33%. E-mail is really not
+      the optimum medium for exchanging files. Setting
+      <code>SQWEBMAIL_MAXATTSIZE</code> to 4000000 will effectively
+      allow attaching files of up to 3000000 bytes in length,
+      approximately.</p>
+    </dd>
+
+    <dt><code>SQWEBMAIL_MAXMSGSIZE</code></dt>
+
+    <dd>Approximate maximum size, of a message, including the text
+    portion and all attachments (overrides the
+    <code>--with-maxmsgsize</code> parameter to the <code>configure
+    script</code>). There can be any number of attachments, each
+    one up to <code>SQWEBMAIL_MAXATTSIZE</code> bytes long, but the
+    sum total of the entire message cannot exceed
+    <code>SQWEBMAIL_MAXMSGSIZE</code>.</dd>
+  </dl>
+
+  <p>These variables must be set in the environment that runs the
+  SqWebMail <code>CGI</code> program. With Apache, these variables
+  can be set in the <i>httpd.conf</i> file by the
+  <code>SetEnv</code> command. <i>httpd.conf</i> example:</p>
+
+  <blockquote>
+    <pre>
+SetEnv SQWEBMAIL_MAXATTSIZE 1000000
+SetEnv SQWEBMAIL_MAXMSGSIZE 4000000
+</pre>
+  </blockquote>
+
+  <blockquote>
+    <p><em>NOTE:</em> These settings are global, and apply to all
+    mailboxes. However, advanced Apache configuration can be used
+    to use different environment variable settings with different
+    virtual hosts.</p>
+
+    <p><em>NOTE:</em> On 32-bit platforms, the maximum limits may
+    not exceed 2 gigabytes. A 64-bit platform is required to have
+    SqWebMail capable of handling attachments and messages larger
+    than 2 gigabytes.</p>
+  </blockquote>
+
+  <h2><a name="randseed" id="randseed">Random seed</a></h2>
+
+  <p>A random seed is required for preventing certain kinds of
+  external attacks against the SqWebMail server. The random seed
+  must be a constant value, only varying between different
+  instances of SqWebMail. By default the random seed is derived
+  from the inode number of one of the supporting script files. The
+  script file ordinarily remains constant, thus the random seed
+  does not change, but different SqWebMail installs will end up
+  with a different seed.</p>
+
+  <p>When a pool of SqWebMail servers is combined for
+  load-balancing, all servers must use the same random seed. This
+  is done by defining the <tt>SQWEBMAIL_RANDSEED</tt> environment
+  variable. This can be set in the <i>httpd.conf</i> as well:</p>
+
+  <blockquote>
+    <pre>
+SetEnv SQWEBMAIL_RANDSEED 82738AZ
+</pre>
+  </blockquote>
+
+  <p><tt>SQWEBMAIL_RANDSEED</tt> should contain up to ten letters
+  or numbers.</p>
+
+  <h2><a name="domaintemps" id="domaintemps">Domain-based
+  templates</a></h2>
+
+  <p>The default set of templates for the dynamically generated
+  HTML is installed in
+  <code>/usr/lib/sqwebmail/share/sqwebmail/html</code>. When the
+  same server is used to provide webmail access for multiple
+  domains it is possible to specify a different set of HTML
+  templates for each domain.</p>
+
+  <p>This functionality is not directly implemented in SqWebMail,
+  simply because there is no standard way to specify this. Instead,
+  this is something that will need some minor work set up.</p>
+
+  <p>Domain-based templates are implemented by making the web
+  server set the environment variables
+  <code>SQWEBMAIL_TEMPLATEDIR</code> prior to running the
+  <code>sqwebmail</code> binary. The contents of this environment
+  variable override the default location of
+  <code>/usr/lib/sqwebmail/share/sqwebmail/html</code>. By having
+  the web server initialize this variable based on the domain name
+  it is possible to present different templates, based on the
+  domain name used.</p>
+
+  <p>To do this, make copies of the HTML template directory,
+  <code>/usr/lib/sqwebmail/share/sqwebmail/html. Then, configure
+  the web server to initialize</code> SQWEBMAIL_TEMPLATEDIR
+  appropriately. For example, with Apache:</p>
+  <pre>
+  &lt;VirtualHost <i>a.b.c.d</i>&gt;
+    ServerName <i>webmail.example.com</i>
+    [...]
+    SetEnv SQWEBMAIL_TEMPLATEDIR <i>/usr/lib/sqwebmail/share/sqwebmail/webmail.example.com</i>
+    [...]
+  &lt;/VirtualHost&gt;
+</pre>The possibilities are endless.
+
+  <h2><a name="nametemps" id="nametemps">Name-based
+  templates</a></h2>
+
+  <p>In versions of sqwebmail greater than sqwebmail-3.5.3.20030629
+  it is possible to display two or more templates from the same CGI
+  binary WITHOUT setting up multiple domain names.</p>
+
+  <p>For example, with Name-based templates an sqwebmail
+  administrator can set up sqwebmail to display a template in the
+  <code>/usr/lib/sqwebmail/share/sqwebmail/html</code> directory
+  when sqwebmail is called from the URL:
+  <code>http://www.foo.com/cgi-bin/sqwebmail</code></p>
+
+  <p>And display a <b>different</b> template in the
+  <code>/usr/lib/sqwebmail/share/sqwebmail/alternate-html</code>
+  directory when sqwebmail is called from the URL:
+  <code>http://www.foo.com/cgi-bin/sqwebmail-alt-template</code></p>
+
+  <p>This is made possible by a little web server magic (explained
+  below in the section entitled <a href="#nametempsapache">"Apache
+  Name-based template configuration example"</a>) and the setting
+  of TWO sqwebmail environment variables:</p>
+
+  <p><code>SQWEBMAIL_TEMPLATEDIR</code>
+  <code>SQWEBMAIL_IMAGEURL</code></p>
+
+  <p>You should recognize the SQWEBMAIL_TEMPLATEDIR environment
+  variable from the section above on <a href=
+  "#domaintemps">Domain-based templates</a>. If you haven't read
+  that section yet, please do so now.</p>
+
+  <p>The SQWEBMAIL_IMAGEURL environment variable is new in versions
+  of sqwebmail greater than sqwebmail-3.5.3.20030629. It allows us
+  to set, at run time, the image URL, or the root URL, in which to
+  look for our template's images. This image URL is then
+  automatically inserted into the current template anytime a
+  conditional image tag or an IMAGEURL tag is encountered.</p>
+
+  <p>This is an example of a conditional image tag:</p>
+
+  <p><code>[#@image.gif, ... @text@#]</code></p>
+
+  <p>The conditional image tag is replaced at template processing
+  time with an HTML &lt;img src="..."&gt; tag <b>if</b> (hence the
+  word "conditional") sqwebmail is set up to display images.</p>
+
+  <p>This is an example of an IMAGEURL tag:</p>
+
+  <p><code>[#IMAGEURL#]</code></p>
+
+  <p>The <code>IMAGEURL</code> tag is replaced at template
+  processing time with the contents of the
+  <code>SQWEBMAIL_IMAGEURL</code> environment variable, if set, and
+  otherwise with the value of the <code>--with-imageurl</code>
+  configure option, which defaults to "<code>/webmail</code>".</p>
+
+  <h3><a name="nametempsapache" id="nametempsapache">Apache
+  Name-based template configuration example</a></h3>
+
+  <p>Let's take a look at a simple Apache Name-based sqwebmail
+  template configuration example:</p>
+  <pre>
+  
+  # Sqwebmail Alternate Template URL
+  ScriptAlias /cgi-bin/sqwebmail-alt-template <i>"/usr/local/apache/cgi-bin/sqwebmail"</i>
+
+  &lt;Location <i>/cgi-bin/sqwebmail-alt-template</i>&gt;
+      Setenv SQWEBMAIL_TEMPLATEDIR <i>"/usr/lib/sqwebmail/share/sqwebmail/alternate-template"</i>
+      Setenv SQWEBMAIL_IMAGEURL <i>"/alternate-webmail"</i>
+      [...]
+  &lt;/Location&gt;
+      
+</pre>
+
+  <p>The above should allow your users to run sqwebmail with the
+  template in
+  <code>/usr/lib/sqwebmail/share/sqwebmail/alternate-template</code>
+  and an image URL of <code>/alternate-webmail</code>, simply by
+  calling sqwebmail from the following URL:</p>
+
+  <p>
+  <code>http://www.yourdomain.com/cgi-bin/sqwebmail-alt-template</code></p>
+
+  <p>The original sqwebmail templates would then still be available
+  from this URL:</p>
+
+  <p><code>http://www.yourdomain.com/cgi-bin/sqwebmail</code></p>
+
+  <p>Using Apache's &lt;Location&gt; directive we can utilize a
+  virtually unlimited number of templates without setting up a
+  single virtual domain.</p>
+
+  <h2><a name="shared" id="shared">Shared folders</a></h2>
+
+  <p>SqWebMail supports shared folders. The SqWebMail distribution
+  includes an enhanced <code>maildirmake</code> command that
+  created shared folders.</p>
+
+  <p>The <code>maildirmake</code> command will be installed in
+  <i>/usr/lib/sqwebmail/libexec/sqwebmail</i> by default, and the
+  manual page will be installed in <i>/usr/lib/sqwebmail/man</i> by
+  default.</p>
+
+  <p>See the manual page for more information on how to set up
+  shared folders.</p>
+
+  <h2><a name="ldapabook" id="ldapabook">LDAP address
+  books</a></h2>
+
+  <p>SqWebMail can import E-mail addresses from public LDAP address
+  books into an individual address book. A default systemwide list
+  of accessible LDAP address books is defined for everyone, and
+  individuals can configure additional LDAP address books for
+  themselves.</p>
+
+  <p>The OpenLDAP development toolkit must be installed before
+  building SqWebMail, in order for LDAP search code to compile.</p>
+
+  <p>The file <i>/usr/lib/sqwebmail/etc/ldapaddressbook</i> should
+  contain a default systemwide list of accessible address book. A
+  default file will be installed, listing some common Internet
+  address books. Each line in this file contains the following
+  information:</p>
+  <pre>
+name&lt;tab&gt;host&lt;tab&gt;port&lt;tab&gt;suffix&lt;tab&gt;binddn&lt;tab&gt;bindpw
+</pre>
+
+  <p><i>&lt;tab&gt;</i> is a single ASCII TAB character.
+  <i>name</i> is the unique name for this LDAP server. <i>host</i>
+  and <i>port</i> specify the connection parameters. <i>suffix</i>
+  specifies the root LDAP entry whose subtree gets searched. The
+  <i>binddn</i> and <i>bindpw</i> fields are not presently used
+  (they were used in earlier version of SqWebMail, before the LDAP
+  search interface was rewritten and simplified).</p>
+
+  <h2><a name="filters" id="filters">Mail Filtering</a></h2>
+
+  <p>Mail filtering is an optional feature. Mail filtering allows
+  installation of rules that either automatically deliver incoming
+  messages to specific folders, forward it, or reject it, based on
+  the contents of the message's header or body. A simple autoreply
+  function is also available. Mail filtering requires that the
+  maildrop mail filter must be installed as the local mail delivery
+  agent. Mail filtering requires maildrop version 2.0, or higher.
+  SqWebMail will generate a filtering recipe for maildrop to use
+  when delivering mail. Maildrop's mail filtering language is very
+  powerful, and SqWebMail can reasonably use only a fraction of the
+  mail filtering language, but enough functionality is supported
+  for the majority if mail filtering needs.</p>
+
+  <p>For information on installing and activating mail filtering,
+  see the file <code>maildir/README.maildirfilter.html</code>.</p>
+
+  <h3>Autoreplies</h3>
+
+  <p>The mail filtering option can also be used to set up
+  autoreplies. Autoreplies are prepared in advance on a separate
+  screen. By default there is no limit on the number of the size of
+  created autoreplies, therefore it is recommended that a quota be
+  set up on the autoreplies (see "<a href="#runtime">Runtime
+  Configuration</a>").</p>
+
+  <p>Autoreplies can include any valid MIME content (MIME content
+  other than plain text can be uploaded). The following special
+  procedure needs to be used to prepare multipart autoreply
+  content, such as text and html alternatives of the same
+  message:</p>
+
+  <p>Assign a filename extension to the <code>message/rfc822</code>
+  MIME content. For example, edit your <code>mime.types</code>
+  file, find the <code>message/rfc822</code> MIME type (append one
+  if it's not in <code>mime.types</code>), and make sure that it
+  has at least one filename extension, such as "msg".</p>
+
+  <p>Prepare the multipart MIME autoreply. The most convenient way
+  is to prepare a normal E-mail message using a conventional E-mail
+  client. Save the RFC822-formatted message in a file with a ".msg"
+  extension, and upload it on the autoreply screen.</p>
+
+  <p><code>SqWebMail</code> handles uploaded
+  <code>message/rfc822</code> content by removing all headers
+  except the MIME headers, leaving the MIME content type header,
+  and the actual MIME content.</p>
+
+  <h2><a name="calendar" id="calendar">Calendaring</a></h2>
+
+  <p>This release of SqWebMail contains a beta implementation of
+  basic calendaring, that can be optionally enabled. For more
+  information, see the file <a href=
+  "pcp_README.html"><code>pcp/README.html</code></a>. SqWebMail's
+  calendaring implementation is designed to be used on a private
+  mail server. It is not suitable for use on public webmail
+  servers. See the README file for additional information.</p>
+
+  <h2><a name="gpg" id="gpg">Encryption</a></h2>
+
+  <p>SqWebMail can be set up to encrypt and decrypt mail using
+  GnuPG. For more information on setting up and using encryption,
+  read the file <code>gpglib/README.html</code> in the source
+  distribution.</p>
+
+  <h2><a name="faq3" id="faq3">FAQ: Problems with downloading
+  attachments with Internet Explorer versions 4 and 5</a></h2>
+
+  <p>Certain versions of Microsoft Internet Explorer have a bug in
+  HTTP/1.1 protocol implementation that results in MSIE reporting
+  random weird errors when downloading attachments.</p>
+
+  <p>Here's how to tweak Apache to work around this particular bug.
+  Add the following directive to Apache's <code>httpd.conf</code>
+  forces the HTTP/1.0 protocol response for Internet Explorer
+  clients:</p>
+  <pre>
+BrowserMatch "MSIE [45]" nokeepalive downgrade-1.0 force-response-1.0
+</pre>
+</body>
+</html>

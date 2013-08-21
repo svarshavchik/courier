@@ -1,0 +1,218 @@
+#
+# Copyright 2004-2011 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+%define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
+
+%if 0%{!?dist:1}
+%if %is_not_mandrake
+%define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
+%else
+%define courier_release mdk
+%endif
+%else
+%define courier_release %{nil}
+%endif
+
+%define initdir %(if test -d /etc/init.d/. ; then echo /etc/init.d ; else echo /etc/rc.d/init.d ; fi)
+%define using_systemd %(test -d /etc/systemd && echo 1 || echo 0)
+
+Summary: Courier Socks 5 client library.
+Name: courier-sox
+Version: @VERSION@
+Release: 1%{?dist}%{?courier_release}
+License: GPL
+Group: System Environment/Libraries
+URL: http://www.courier-mta.org
+Source0: %{name}-%{version}.tar.bz2
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRequires: libtool
+BuildRequires: courier-authlib-devel
+BuildRequires: /usr/include/ltdl.h
+
+%description
+This package installs a Socks 5 client support library that allows applications
+to establish network connections through a Socks 5 proxy running on a firewall.
+
+%package devel
+Summary: Socks 5 client development files
+Group: Development/Libraries
+Requires: %{name} = 0:%{version}-%{release}
+
+%package server
+Summary: Socks 5 server
+Group: Networking/Utilities
+Requires: %{name} = 0:%{version}-%{release}
+%if %using_systemd
+Requires(post):   /bin/systemctl
+Requires(preun):  /bin/systemctl
+Requires(postun): /bin/systemctl
+%else
+Requires(post):   /sbin/chkconfig
+Requires(preun):  /sbin/chkconfig
+%endif
+
+%package utils
+Group: Networking/Utilities
+Summary: Socks 5 server utilities
+Requires: %{name} = 0:%{version}-%{release}
+
+%description devel
+This package contains development files for building applications that use
+the Socks 5 client support library.
+
+Install this package if you want to develop applications that use Socks 5
+proxies.
+
+%description server
+This package contains the Courier Socks 5 server.
+Install this package if you want to run a Socks 5 server.
+
+%description utils
+
+This package installs a utility script that creates blacklisted IPv4
+addresses.
+The Courier Socks 5 server can optionally block connections to addresses
+listed in a blacklist.
+This package installs a script that converts a text file in the common
+IPv4 blacklist format to a fast binary database format that the
+Courier Socks 5 server uses to vet connection attempts.
+
+%prep
+%setup -q
+PATH=/usr/bin:$PATH %configure
+
+%build
+%{__make} %{_smp_mflags}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__mkdir_p} $RPM_BUILD_ROOT%{_localstatedir}/run
+> $RPM_BUILD_ROOT%{_localstatedir}/run/sockd.pid
+
+%if %using_systemd
+%{__mkdir_p} $RPM_BUILD_ROOT%{_datadir}
+%{__mkdir_p} $RPM_BUILD_ROOT/lib/systemd/system
+
+%{__cp} courier-sox.sysvinit $RPM_BUILD_ROOT%{_datadir}
+%{__cp} courier-sox.service $RPM_BUILD_ROOT/lib/systemd/system
+%else
+%{__mkdir_p} $RPM_BUILD_ROOT%{initdir}
+%{__cp} courier-sox.sysvinit $RPM_BUILD_ROOT%{initdir}/courier-sox
+%endif
+
+%{__mkdir_p} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
+
+if ls /lib*/security/pam_stack.so 2>/dev/null >/dev/null
+then
+  cat >$RPM_BUILD_ROOT%{_sysconfdir}/pam.d/socks <<EOF
+#%PAM-1.0
+ 
+auth       required     pam_nologin.so
+auth       required     pam_stack.so service=system-auth
+account    required     pam_stack.so service=system-auth
+session    required     pam_stack.so service=system-auth
+EOF
+else
+  cat >$RPM_BUILD_ROOT%{_sysconfdir}/pam.d/socks <<EOF
+#%PAM-1.0
+ 
+auth       required     pam_nologin.so
+auth       include      system-auth
+account    include      system-auth
+session    include      system-auth
+EOF
+fi
+%{__rm} -f $RPM_BUILD_ROOT%{_libdir}/*.so.0
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%post server
+
+%if %using_systemd
+if test -f /etc/init.d/courier-sox
+then
+   /sbin/chkconfig --del courier-sox
+   /bin/systemctl stop courier-sox.service || :
+fi
+
+/bin/systemctl daemon-reload || :
+/bin/systemctl enable courier-sox.service &> /dev/null || :
+%else
+/sbin/chkconfig --del courier-sox
+/sbin/chkconfig --add courier-sox
+%endif
+
+%preun server
+
+%if %using_systemd
+if test "$1" = "0"
+then
+   /bin/systemctl stop courier-sox.service
+   /bin/systemctl disable courier-sox.service
+fi
+%else
+%{initdir}/courier-sox stop >/dev/null
+if test "$1" = "0"
+then
+	/sbin/chkconfig --del courier-sox
+fi
+%endif
+%postun server
+
+%if %using_systemd
+if test "$1" != "0"
+then
+   /bin/systemctl try-restart courier-sox.service
+fi
+%endif
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/socksify
+%{_libdir}/*.so.*.*
+%{_mandir}/man5/*
+%{_mandir}/*/socksify*
+%{_sysconfdir}/socksrc
+
+%doc COPYING README NEWS AUTHORS ChangeLog *.html
+%defattr(-,root,root,-)
+
+%files devel
+%defattr(-,root,root,-)
+%{_libdir}/*.la
+%{_libdir}/*.a
+%{_libdir}/*.so
+%{_includedir}/*
+%{_mandir}/man3/*
+
+%files server
+%defattr(-,root,root,-)
+%{_sbindir}/sockd
+%{_libexecdir}/sockd
+%attr(644,root,root) %ghost %verify(not size mtime md5) %{_localstatedir}/run/sockd.pid
+%if %using_systemd
+%{_datadir}/courier-sox.sysvinit
+/lib/systemd/system/*
+%else
+%attr(555,root,root) %{initdir}/*
+%endif
+%{_mandir}/man1/sockd*
+%attr(644,root,root) %config(noreplace) %{_sysconfdir}/pam.d/*
+
+%files utils
+%defattr(-,root,root,-)
+%{_bindir}/mkbl4
+%{_mandir}/man8/mkbl4*
+
+%changelog
+* Sun Jul 11 2004 Mr. Sam <sam@email-scan.com> - sox-1
+- Initial build.
+

@@ -1,0 +1,12 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+If <replaceable>rights</replaceable> begins with <quote>+</quote>, the
+remaining access rights are added to any existing rights that
+<replaceable>identifier</replaceable> already has.
+If <replaceable>rights</replaceable> begins with <quote>-</quote>, the
+remaining access rights are removed from
+<replaceable>identifier</replaceable> existing access rights.</para>
+
+

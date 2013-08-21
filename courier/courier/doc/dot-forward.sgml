@@ -1,0 +1,167 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1999 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>dot-forward</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>dotforward</refname>
+    <refname>dot-forward</refname>
+    <refpurpose>Read <filename moreinfo="none">$HOME/.forward</filename></refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <informalexample>
+      <programlisting format="linespecific">
+$ cat $HOME/.courier
+|| dotforward
+./Maildir
+</programlisting>
+</informalexample>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The <command moreinfo="none">dotforward</command> program is a compatibility module that reads
+forwarding instructions in <filename moreinfo="none">$HOME/.forward</filename>.
+<command moreinfo="none">dotforward</command> is used for compatibility
+with <command moreinfo="none">sendmail</command> or
+other mail servers that use the <filename moreinfo="none">$HOME/.forward</filename> file. The
+<command moreinfo="none">dotforward</command> program is intended to be executed from a
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+delivery instruction file. The
+system administrator can add it to the default set of delivery instructions,
+thus unilaterally implementing <filename moreinfo="none">$HOME/.forward</filename> systemwide.  To
+read forwarding instructions from <filename moreinfo="none">$HOME/.forward</filename>, put
+"<literal moreinfo="none">|| dotforward</literal>" on the first line of
+<filename moreinfo="none">$HOME/.courier*</filename>. "<literal moreinfo="none">|| dotforward</literal>"
+can also be added to the <envar>DEFAULTDELIVERY</envar> setting in the
+<literal moreinfo="none">courierd</literal> configuration file.  In both cases it must be followed
+by a newline, and the remaining delivery instructions, which will be used if
+<filename moreinfo="none">$HOME/.forward</filename> does not exist.</para>
+
+    <para>
+<command moreinfo="none">dotforward</command> expects to be invoked from
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+delivery instruction file via the
+"<token>||</token>" operator (or from <envar>DEFAULTDELIVERY</envar>). <command moreinfo="none">dotforward</command>
+checks its environment, reads the message from standard input, reconciles its
+environment with the contents of <filename moreinfo="none">$HOME/.forward</filename>, then prints on
+standard output equivalent
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+compatible delivery instructions.
+The "<token>||</token>" operator reinterprets <command moreinfo="none">dotforward</command>'s output as additional
+delivery instructions, by the
+<application moreinfo="none">Courier</application> mail server.</para>
+
+    <para>
+The different security models of the
+<application moreinfo="none">Courier</application> mail server and other mail
+servers that use
+<filename moreinfo="none">$HOME/.forward</filename>, such as <command moreinfo="none">sendmail</command>,
+means that it is
+not possible to faithfully duplicate 100% of the behavior of
+<filename moreinfo="none">$HOME/.forward</filename> that originated with <command moreinfo="none">sendmail</command>. The
+following section documents the behavior of the <command moreinfo="none">dotforward</command>
+utility in the the <application moreinfo="none">Courier</application>
+mail server mail server.</para>
+
+    <refsect2>
+      <title><filename moreinfo="none">$HOME/.forward</filename> processing</title>
+
+      <para>
+<command moreinfo="none">dotforward</command> reads the <envar>DTLINE</envar> environment variable,
+and the headers of the message being delivered, from standard input.
+<envar>DTLINE</envar> contains the recipient's E-mail address.  The
+<literal moreinfo="none">Delivered-To</literal> headers list the recipients that already received
+this message.  This is used to prevent mail loops between
+<filename moreinfo="none">$HOME/.forward</filename> files from different recipients, which forward
+mail to each other.</para>
+
+      <para>
+If <filename moreinfo="none">$HOME/.forward</filename> does not exist, <command moreinfo="none">dotforward</command>
+quietly terminates with a zero exit code, doing nothing. The remaining
+delivery instructions in <filename moreinfo="none">$HOME/.courier</filename> are then carried out.</para>
+
+      <para>
+If <filename moreinfo="none">$HOME/.forward</filename> exists, it is expected to contain a list of
+addresses that the message should be forwarded to. An address may be an actual
+E-mail address, or a name of a program or a mailbox.  Each line in
+<filename moreinfo="none">$HOME/.forward</filename> should contain a list of comma-separated
+addresses.  Use "| /path/to/program" (including the double quotes) to specify
+a delivery to a program (the message is piped to the given program). Use
+"/path/to/mailbox" or "./path/to/mailbox" (again including the double quotes)
+to specify a delivery to a mailbox (relative to <literal moreinfo="none">$HOME</literal> in the
+second case).</para>
+
+      <para>
+"<literal moreinfo="none">| /path/to/program</literal>",
+"<literal moreinfo="none">/path/to/mailbox</literal>",
+ and "<literal moreinfo="none">./path/to/mailbox</literal>" may also
+be listed on a line by themselves without the double quotes.</para>
+
+      <para>
+All other addresses are interpreted as E-mail addresses where the mail
+should be forwarded.  Any backslash at the beginning of an E-mail address is
+removed. Backslashes are used by <command moreinfo="none">sendmail</command> to prevent mail
+loops.
+The <application moreinfo="none">Courier</application> mail server does not need the
+backslashes -- it uses a different mechanism to
+prevent mail loops.</para>
+
+      <para>
+Every E-mail address is checked against the list of E-mail addresses found
+in <literal moreinfo="none">Delivered-To</literal> headers.  If the E-mail address specified in
+<filename moreinfo="none">$HOME/.forward</filename> matches any address in the
+<literal moreinfo="none">Delivered-To</literal> header, it is automatically removed from a list of
+addresses.</para>
+
+      <para>
+<command moreinfo="none">dotforward</command> normally terminates with the exit code set to
+<errorcode moreinfo="none">99</errorcode>.
+This results in the <application moreinfo="none">Courier</application> mail server
+considering the message to be succesfully delivered,
+and any additional delivery instructions in the <filename moreinfo="none">.courier</filename> file
+will not be carried out.  If an address read from <filename moreinfo="none">$HOME/.forward</filename>
+matches the address in the <envar>DTLINE</envar> environment variable, the
+address is removed from the list of addresses that the message will be
+forwarded to, and <command moreinfo="none">dotforward</command> terminates with the exit code set to
+0 (after printing all the relevant delivery instructions to standard output).
+The messages will be forwarded, and the
+<application moreinfo="none">Courier</application> mail server will proceed with
+additional
+delivery instructions in the <filename moreinfo="none">.courier</filename> after finishing with the
+delivery instructions it reads from <command moreinfo="none">dotforward</command>.</para>
+
+    </refsect2>
+  </refsect1>
+
+<refsect1>
+<title>BUGS</title>
+
+<para>The restrictions and precautions mentioned in
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+are also applicable here. There is
+an upper limit on the maximum number of characters that are read from any
+process executed by <token>||</token>.
+Also if any delivery instruction fails with a transit
+exit code, the message will be completely redelivered at a later point, even
+to all the addresses it has been succesfully delivered the first time
+around.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

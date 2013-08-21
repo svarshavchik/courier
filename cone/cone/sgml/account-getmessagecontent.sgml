@@ -1,0 +1,116 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getmessagecontent">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getMessageContent</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getMessageContent</refname>
+      <refpurpose>Read message content</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-store;
+      <literallayout>
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getMessageContent</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; &amp;<parameter>msgList</parameter></paramdef>
+	  <paramdef>bool <parameter>peek</parameter></paramdef>
+	<paramdef>mail::readMode <parameter>requestType</parameter></paramdef>
+	  <paramdef><parameter>storeCallback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getMessageContent</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	  <paramdef>bool <parameter>peek</parameter></paramdef>
+	  <paramdef>const mail::mimestruct &amp;<parameter>messagePart</parameter></paramdef>
+	<paramdef>mail::readMode <parameter>requestType</parameter></paramdef>
+	  <paramdef><parameter>storeCallback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::ACCOUNT::getMessagesContent</function>
+reads messages in the currently open folder.
+There are two alternative versions of this method.</para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+The first version receives a list of message numbers.
+This version is capable of returning headers and/or content of multiple
+messages.</para>
+&libmail-amsglist;
+	</listitem>
+
+	<listitem>
+	  <para>
+The second version receives a single message number, and a
+<link linkend="mimestruct"><structname>mail::mimestruct</structname></link>
+object that refers to a single MIME
+attachment or a section of this message.
+The
+<link linkend="mimestruct"><structname>mail::mimestruct</structname></link>
+object was previously obtained from
+<link linkend="account-getmessagestructure"><citerefentry>
+		<refentrytitle>mail::ACCOUNT::getMessageStructure</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>,
+for this message.
+This method returns a recursive tree of
+<structname>mail::mimestruct</structname> objects which enumerates the
+individual MIME sections in the message.
+<parameter>messagePart</parameter> must be a reference to one of these objects
+(or to a copy of these objects).</para>
+	</listitem>
+      </itemizedlist>
+
+      &libmail-peek;
+
+      <para>
+<parameter>storeCallback</parameter>'s
+<function>store</function> method receives the requested content, which is
+determined by the remaining parameters.</para>
+
+      &libmail-messagecontent;
+
+    </refsect1>
+
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-account-return;
+
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-getmessagecontentdecoded"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageContentDecoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getmessageenvelope"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageEnvelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getmessagestructure"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageStructure</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>
+

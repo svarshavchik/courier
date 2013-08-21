@@ -1,0 +1,46 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<varlistentry>
+  <term><literal>/timeout=</literal><replaceable>N</replaceable></term>
+
+  <listitem>
+    <para>
+Close the connection if the IMAP/SMAP, POP3, or NNTP server does not respond
+to a command in <replaceable>N</replaceable> seconds (default: 60).</para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><literal>/noop=</literal><replaceable>N</replaceable></term>
+
+  <listitem>
+    <para>
+Check for new messages in the currently open IMAP/SMAP folder every
+<replaceable>N</replaceable> seconds (default: 600).</para>
+
+    <note>
+      <para>
+Most IMAP servers implement a protocol extension that reports new messages
+(and other changes to the folder's contents) immediately, without waiting
+for an explicit request to check for new mail.</para>
+    </note>
+
+    <para>
+This option is also used by POP3 folders, where it defaults to 60 seconds.
+POP3 does not provide for new mail notification;
+the option's only purpose is to prevent
+the POP3 server from disconnecting due to inactivity.</para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><literal>/autologout=</literal><replaceable>N</replaceable></term>
+
+  <listitem>
+    <para>
+Automatically close an NNTP connection after
+<replaceable>N</replaceable> seconds of inactivty (default: 300).
+The connection will be automatically reestablished, when necessary.</para>
+  </listitem>
+</varlistentry>

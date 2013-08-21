@@ -1,0 +1,21 @@
+#! @SHELL@
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+libexecdir="@libexecdir@"
+
+if test -f ${sysconfdir}/cone
+then
+	set -a
+	. ${sysconfdir}/cone
+	set +a
+fi
+
+if test -f ${HOME}/.conerc
+then
+	set -a
+	. ${HOME}/.conerc
+	set +a
+fi
+exec $libexecdir/cone "$@"

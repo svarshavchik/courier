@@ -1,0 +1,13 @@
+#! @SHELL@
+#
+# Copyright 2002-2010 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+
+. @filterbindir@/init
+
+cat >$OUTDIR/.pdf
+@PDFTOPS@ -q $OUTDIR/.pdf $OUTDIR/.ps
+rm -f $OUTDIR/.pdf
+
+$GS -P -sDEVICE=faxg3 $FAXRES -dBATCH -sOutputFile=$OUTDIR/f%04d -dNOPAUSE -q -dSAFER - <$OUTDIR/.ps

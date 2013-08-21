@@ -1,0 +1,261 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="mail-attachments">
+  <refmeta>
+    <refentrytitle>mail::Attachment</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::Attachment</refname>
+    <refpurpose>Create MIME content.</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;libmail/attachments.H&gt;
+</literallayout>
+    </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+The <structname>mail::Attachment</structname> class formats a wide
+variety of MIME messages from raw content.
+Most of the functionality in this class is provided by the constructors.
+<structname>mail::Attachment</structname> provides a variety of constructors
+for creating content MIME entities, and multipart MIME entities.</para>
+
+    <refsect2>
+      <title>Creating content MIME entities</title>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef><function>mail::Attachment</function></funcdef>
+	  <paramdef>std::string <parameter>headers</parameter></paramdef>
+	  <paramdef>int <parameter>content_fd</parameter></paramdef>
+	</funcprototype>
+
+	<funcprototype>
+	  <funcdef><function>mail::Attachment</function></funcdef>
+	  <paramdef>std::string <parameter>headers</parameter></paramdef>
+	  <paramdef>int <parameter>content_fd</parameter></paramdef>
+	  <paramdef>std::string <parameter>charset</parameter></paramdef>
+	  <paramdef>std::string <parameter>transfer_encoding</parameter>=""</paramdef>
+	</funcprototype>
+	<funcprototype>
+	  <funcdef><function>mail::Attachment</function></funcdef>
+	  <paramdef>std::string <parameter>headers</parameter></paramdef>
+	  <paramdef>std::string <parameter>content_str</parameter></paramdef>
+	</funcprototype>
+
+	<funcprototype>
+	  <funcdef><function>mail::Attachment</function></funcdef>
+	  <paramdef>std::string <parameter>headers</parameter></paramdef>
+	  <paramdef>std::string <parameter>content_str</parameter></paramdef>
+	  <paramdef>std::string <parameter>charset</parameter></paramdef>
+	  <paramdef>std::string <parameter>transfer_encoding</parameter>=""</paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      <para>
+A non-multipart entity is created by providing the content in a file descriptor
+(<parameter>content_fd</parameter>) or explicitly
+(<parameter>content_str</parameter>).</para>
+
+      <note>
+	<para>
+The <structname>mail::Attachment</structname>
+object makes an internal copy of the file descriptor.
+The original file descriptor does not need to remain open after the
+<structname>mail::Attachment</structname> object is constructed.
+The duplicate file descriptor will be closed automatically when the object
+is destroyed.</para>
+      </note>
+
+      <para>
+The headers of the MIME entity are provided explicitly.
+The first argument to the constructor (<parameter>headers</parameter>)
+is usually an initialized
+<link linkend="header-list"><citerefentry>
+	    <refentrytitle>mail::Header::list</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> object.
+It's <function>std::string</function> operator will conveniently
+generate a well-formed list of mail headers.</para>
+
+      <para>
+The
+<parameter>charset</parameter> and
+<parameter>transfer_encoding</parameter> parameters are optional.
+<parameter>content_fd</parameter> or <parameter>content_str</parameter>
+provides the raw, unencoded, data for the MIME object.
+The <structname>mail::Attachment</structname> object will heuristically
+select the most appropriate MIME encoding if the
+<parameter>charset</parameter> and <parameter>transfer_encoding</parameter>
+parameters are not provided.</para>
+
+      <para>
+The data may be either plain text, or binary data.
+<structname>mail::Attachment</structname> will determine it automatically.
+The optional <parameter>charset</parameter> parameter specifies the
+plain text's character set.
+If specified, it will be factored into
+<structname>mail::Attachment</structname>'s heuristic selection of the most
+appropriate MIME encoding for this plain text content.
+Finally, specifying <parameter>transfer_encoding</parameter> will override
+<structname>mail::Attachment</structname>'s heuristics, and forcibly set
+the MIME encoding accordingly.</para>
+
+      <note>
+	<para>
+To specify the MIME encoding only, specify an empty string for
+<parameter>charset</parameter> (this would be appropriate for setting the
+MIME encoding - which will obviously be <literal>base64</literal> here -
+for binary content that is not associated with any character set.</para>
+      </note>
+
+      <para>
+<parameter>headers</parameter> must include the <literal>Content-Type</literal>
+header, but must not contain the <literal>Content-Transfer-Encoding</literal>
+header, which will be provided by the
+<structname>mail::Attachment</structname>
+class.</para>
+    </refsect2>
+
+    <refsect2>
+      <title>Pre-formatted MIME content</title>
+
+      <para>
+It is possible to set <parameter>content_fd</parameter> or
+<parameter>content_str</parameter> to something that's already MIME-formatted.
+<structname>mail::Attachment</structname> will conclude that the content
+is already MIME-formatted when <parameter>headers</parameter> already contain
+a <literal>Content-Transfer-Encoding</literal> header, or a
+<literal>Content-Type</literal> header that sets the MIME type to
+either <quote>message/rfc822</quote> or any <quote>multipart</quote>
+MIME type.</para>
+
+      <para>
+This is often used when the content is an existing, well-formed MIME message.
+Providing a <quote>Content-Type: message/rfc822</quote> in
+<parameter>headers</parameter> creates an attached MIME message.
+This is just one of the two ways to create an attached MIME message.
+A better way to create an attached MIME message is described later.</para>
+
+      <note>
+	<para>
+A <quote>multipart</quote>
+<literal>Content-Type</literal> header must have a <quote>boundary</quote>
+parameter that actually matches the the MIME boundary delimiter in the
+specified content.</para>
+      </note>
+    </refsect2>
+
+    <refsect2>
+      <title>Creating multipart MIME content</title>
+
+      <para>
+A multipart MIME content is constructed by creating
+<structname>mail::Attachment</structname> for each content MIME section,
+then using the following multipart constructors:</para>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef><function>mail::Attachment</function></funcdef>
+	  <paramdef>std::string <parameter>headers</parameter></paramdef>
+	  <paramdef>const std::vector&lt;mail::Attachment *&gt; &amp;<parameter>parts</parameter></paramdef>
+	</funcprototype>
+
+	<funcprototype>
+	  <funcdef><function>mail::Attachment</function></funcdef>
+	  <paramdef>std::string <parameter>headers</parameter></paramdef>
+	  <paramdef>const std::vector&lt;mail::Attachment *&gt; &amp;<parameter>parts</parameter></paramdef>
+	  <paramdef>std::string <parameter>multipart_type</parameter></paramdef>
+	  <paramdef>const mail::mimestruct::parameterList &amp;<parameter>multipart_parameters</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      <para>
+The headers of a multipart MIME section must include a well-formed
+<literal>Content-Type</literal> header set to either
+<quote>message/rfc822</quote> or <quote>multipart/<replaceable>subtype</replaceable></quote>.
+Alternatively, 
+<structname>mail::Attachment</structname> will supply a
+<literal>Content-Type</literal> header when provided with
+<parameter>multipart_type</parameter> and
+<parameter>multipart_parameters</parameter>.</para>
+
+      <note>
+	<para>
+<parameter>parts</parameter> must be a vector of exactly one element
+when <parameter>multipart_type</parameter> (or an existing
+<literal>Content-Type</literal> header) is
+<quote>message/rfc822</quote>).</para>
+      </note>
+    </refsect2>
+
+    <refsect2>
+      <title>Generating MIME-formatted messages</title>
+
+    <literallayout>
+mail::Attachment top_attachment;
+std::string buffer;
+bool errflag;
+
+   top_attachment-&gt;begin();
+   while ((buffer=top_attachment-&gt;generate(errflag)).size() > 0)
+   {
+       std::cout &lt;&lt; buffer;
+   }
+</literallayout>
+
+      <para>
+Once all <structname>mail::Attachment</structname> objects are created,
+the MIME-formatted message is generated by first calling the
+<function>begin</function>() method of the topmost
+<structname>mail::Attachment</structname> object, then repeatedly calling
+the <function>generate</function>() method until it returns an empty string.
+Each call to <function>generate</function>() returns the next portion of the
+formatted MIME message, and the empty string is returned after the entire
+MIME message is produced.
+All <structname>mail::Attachment</structname> objects must be destroyed
+immediately afterwards.</para>
+
+      <para>
+A <literal>false</literal> <parameter>errflag</parameter>, when
+<function>generate</function>() returns an empty string, indicates that the
+MIME-formatted message was generated succesfully.
+A <literal>true</literal> <parameter>errflag</parameter> indicated an
+<literal>errno</literal>-related failure to generate the MIME-formatted
+message.</para>
+
+      <note>
+	<para>
+<function>generate</function>() will supply the
+<quote>Mime-Version: 1.0</quote> header.
+This header does not need to be explicitly included in the
+<parameter>headers</parameter> of the topmost
+<structname>mail::Attachment</structname> object.</para>
+      </note>
+    </refsect2>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-encoded"><citerefentry>
+	    <refentrytitle>mail::Header::encoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-plain"><citerefentry>
+	    <refentrytitle>mail::Header::plain</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

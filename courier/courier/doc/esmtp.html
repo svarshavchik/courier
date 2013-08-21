@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="author" content="Mr. Sam"/>
+
+  <title>The esmtp module</title>
+  <!-- Copyright 2000-2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h2>The <code>esmtp</code> module</h2>- support for delivering
+  and accepting mail via smtp/emstp over TCP/IP.
+
+  <h3>Configuration
+  files</h3><code>esmtpacceptmailfor,esmtpacceptmailfor.dat</code>
+  - lists domains whose mail we accept.
+
+  <p><code>esmtpgreeting</code> - what smtpd announces as its
+  greeting.</p>
+
+  <p><code>esmtphelo</code> - what to announce in my HELO command.
+  Defaults to me.</p>
+
+  <p><code>esmtppercentrelay.dat</code> - a GDBM database file. If
+  address <code>&lt;user%foo@bar&gt;</code> is given, foo must be
+  in percenthack as the key. Which is then rewritten by smtpd as
+  <code>&lt;user@val&gt;</code>, where val is the value of that key
+  in the GDBM file, which can be created by makegdbm.</p>
+
+  <p><code>esmtproutes</code> - If the host being delivered to is
+  found in this file, the value will be used instead of looking up
+  MX or A records. The value is a space/tab separated list of IP
+  addresses or hostnames.</p>
+
+  <p><code>esmtptimeout</code> - general STMP timeout, in seconds.
+  Both smtpd, and the output module will stop after waiting the
+  specific amount for a response from the remote server.</p>
+
+  <h2>Shared library</h2><code>rewritedel</code> - if domain is of
+  the form foo@bar, accept delivery for host bar, user foo@bar.
+
+  <p>Rewrite functions:</p>
+
+  <p><code>esmtp</code> - compile-time options may be used to
+  specify various kinds of behavior when envelope recipient is
+  being rewritten by submit, including: check for mailbox validity
+  - this involves simply locating any loaded rewritedel function,
+  and failing otherwise (!); or forking and running an external
+  filter!</p>
+
+  <h2>Input module</h2>
+
+  <p>courieresmtpd is typically invoked by couriertcpd to handle
+  incoming connections. courieresmtpd is a full-fledged ESMTP
+  server. courieresmtpd reads ESMTP commands and runs submit to
+  process incoming messages.</p>
+
+  <p>courieresmtpd reads BOFHNOEXPN and BOFHNOVRFY environment
+  variables to disable the EXPN and VRFY commands.</p>
+
+  <h2>Output module</h2>
+
+  <p>The output module reads esmtproutes to check for any hardcoded
+  smarthosts.</p>
+</body>
+</html>

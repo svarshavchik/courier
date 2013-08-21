@@ -1,0 +1,90 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-gettoplevelfolders">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getTopLevelFolders</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getTopLevelFolders</refname>
+      <refpurpose>Enumerate top-level folders</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+mail::ACCOUNT::FolderList folderList;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getTopLevelFolders</function></funcdef>
+	  <paramdef><parameter>folderList</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+      <literallayout>
+size_t nFolders=folderList::size();
+const mail::folder *folder=folderList[n];
+</literallayout>
+
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+A mail account contains a collection of folders, arranged in a top-to-bottom
+hierarchy.
+This function returns the list of the folders at the top-level of the
+folder hierarchy.</para>
+
+      <para>
+<function>mail::ACCOUNT::getTopLevelFolders</function>, if succesful,
+initializes a list of
+<structname>mail::folder</structname> objects, which are maintained by the
+<structname>mail::ACCOUNT::FolderList</structname> class.
+Each
+<structname>mail::folder</structname> object represents a mail account's
+folder.
+The number of folders, and a pointer to each folder object, is obtained
+according to the example above.</para>
+
+      <note>
+	<para>
+Pointers to <structname>mail::folder</structname> objects are no longer
+valid after the <structname>mail::ACCOUNT::FolderList</structname> object
+is destroyed.
+The application should use
+<link linkend="folder-clone"><citerefentry>
+	    <refentrytitle>mail::folder::clone</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> to create
+a duplicate copy of the
+<structname>mail::folder</structname> object (which the application is now
+responsible for destroying).</para>
+      </note>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+      &libmail-account-return;
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-login"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::login</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getsubfolders"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

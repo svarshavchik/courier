@@ -1,0 +1,70 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-tostring">
+    <refmeta>
+      <refentrytitle>mail::folder::toString</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::toString</refname>
+      <refpurpose>Save a folder object</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+#include &lt;libmail/mail.H&gt;
+mail::folder *folder;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>std::string str=folder-&gt;<function>toString</function></funcdef>
+<void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This method returns a <structname>std::string</structname> that can be
+placed in some quiet, out of the way spot.
+At some later point in time,
+passing the <structname>std::string</structname> to
+<link linkend="mail-folderfromstring"><citerefentry>
+	    <refentrytitle>mail::account::folderfromstring</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+will
+create a <structname>mail::folder</structname> object that will refer
+to the same folder as the original object.</para>
+
+&libmail-foldernote2;
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      <para>
+This function returns a <literal>std::string</literal> that the application
+should not attempt to interpret in any way (except as a parameter to
+<link linkend="mail-folderfromstring"><citerefentry>
+	    <refentrytitle>mail::account::folderfromstring</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+
+      &libmail-foldernote;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-folderfromstring"><citerefentry>
+	    <refentrytitle>mail::account::folderfromstring</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

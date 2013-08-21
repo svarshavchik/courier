@@ -1,0 +1,33 @@
+#! @SHELL@
+#
+# Copyright 1998 - 2001 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+localstatedir="@localstatedir@"
+bindir="@bindir@"
+sbindir="@sbindir@"
+
+case `basename $0` in
+makesmtpaccess)
+	. ${sysconfdir}/esmtpd
+	;;
+makesmtpaccess-msa)
+	. ${sysconfdir}/esmtpd
+	. ${sysconfdir}/esmtpd-msa
+	;;
+*)
+	echo "I must be invoked as makesmtpaccess or makesmtpaccess-msa" >&2
+	exit 1
+	;;
+esac
+
+umask 022
+${bindir}/makedat \
+	-src=${ACCESSFILE} \
+	-file=${ACCESSFILE}.dat \
+	-tmp=${ACCESSFILE}.tmp -cidr || exit 1
+
+${sbindir}/couriertcpd -pid=$PIDFILE -restart

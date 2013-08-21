@@ -1,0 +1,58 @@
+0.16
+
+2009-09-23  Alessandro Vesely <vesely@tana.it>
+
+	* courier-analog.in: Typo.
+
+2009-05-02  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-analog.in: Combine all RCPT TO errors together
+
+0.15
+
+2007-09-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Updated Courier IMAP/POP3 log format includes the port number.
+
+2007-07-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* COPYING: GPL 3
+
+0.14
+
+2007-03-24  Peer Heinlein <p.heinlein+courier-imap@heinlein-support.de>
+
+	* Fixed logging of TLS connections
+
+0.13
+
+2005-06-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* COPYING: Updated FSF mailing address.
+
+2005-02-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier-analog.in: Updated 523 message.
+
+2004-11-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier-analog: some Math::BigInt fixes, see if they help.
+
+0.12
+
+2004-09-17  "Jürgen Walch" <jwalch@plumsoft.de>
+
+	* courier-analog.in (track_esmtp_err): More error message grouping.
+
+2004-09-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier-analog.in: Fix typo.
+
+2004-09-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier-analog.in: Added IMAP and POP3 reports.
+
+2004-09-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Initial release.
+

@@ -1,0 +1,25 @@
+#! @SHELL@
+#
+# Copyright 2002 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+
+. @filterbindir@/init
+
+cat >$OUTDIR/.png
+@PNGTOPNM@ $OUTDIR/.png >$OUTDIR/.pnm
+rm -f $OUTDIR/.png
+@PNMSCALE@ -xysize 1728 2000 $OUTDIR/.pnm >$OUTDIR/.pnm2 2>/dev/null
+rm -f $OUTDIR/.pnm
+
+if test "$FAXRES" = "lo"
+then
+	@PNMSCALE@ -yscale 0.5 $OUTDIR/.pnm2 >$OUTDIR/.pnm 2>/dev/null
+	mv $OUTDIR/.pnm $OUTDIR/.pnm2
+fi
+
+@PPMTOPGM@ $OUTDIR/.pnm2 >$OUTDIR/.pgm
+rm -f $OUTDIR/.pnm2
+@PGMTOPBM@ $OUTDIR/.pgm >$OUTDIR/.pbm
+rm -f $OUTDIR/.pgm
+@PBMTOG3@ $OUTDIR/.pbm >$OUTDIR/f0001.g3

@@ -1,0 +1,7 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+This function returns the converted path string.
+An empty string is returned if <parameter>folderPath</parameter> is not
+a valid folder path.</para>

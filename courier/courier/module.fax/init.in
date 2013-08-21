@@ -1,0 +1,35 @@
+#
+# Copyright 2002 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# Common initialization for shell-based filters
+
+OUTDIR="$1"
+TROFF=@TROFF@
+DPOST=@DPOST@
+TBL=@TBL@
+GS=@GS@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+sysconfdir=@sysconfdir@
+
+FAXRES="${FAXRES:-hi}"
+
+if test "$FAXRES" = "lo"
+then
+    FAXRES="-r204x98"
+else
+    FAXRES="-r204x196"
+fi
+
+die() {
+    echo "Unable to generate fax document - $1 not found" >&2
+    exit 1
+}
+
+test -x $TROFF || die $TROFF
+test -x $DPOST || die $DPOST
+test -x $TBL || die $TBL
+
+set -e

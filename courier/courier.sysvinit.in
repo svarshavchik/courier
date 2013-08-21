@@ -1,0 +1,272 @@
+#! @SHELL@
+#
+# chkconfig: 2345 35 65
+# description: Courier - SMTP server
+#
+# NOTE: The 'restart' here does a "hard" stop, and a start.  Be gentle, use
+# "courierd restart" for a kindler, gentler, restart.
+#
+#
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+datarootdir="@datarootdir@"
+sysconfdir="@sysconfdir@"
+sbindir="@sbindir@"
+bindir="@bindir@"
+libexecdir="@libexecdir@"
+datadir="@datadir@"
+
+if test ! -f ${sysconfdir}/esmtpd
+then
+	echo "${sysconfdir}/esmtpd does not exist, forgot make install-configure?"
+	exit 1
+fi
+
+case "$1" in
+start)
+        cd /
+        # Start daemons.
+        touch /var/lock/subsys/courier
+
+        echo -n "Starting Courier mail server:"
+
+	# First time after install create aliases.dat and makesmtpaccess.dat
+
+	test -f ${sysconfdir}/aliases.dat || ${sbindir}/makealiases
+
+	esmtpdcert=0
+
+	. ${sysconfdir}/esmtpd
+	case x$ESMTPDSTART in
+	x[yY]*)
+		esmtpdcert=1
+		;;
+	esac
+
+	test -f ${ACCESSFILE}.dat || ${sbindir}/makesmtpaccess
+
+	. ${sysconfdir}/esmtpd-msa
+	case x$ESMTPDSTART in
+	x[yY]*)
+		esmtpdcert=1
+		;;
+	esac
+
+	test -f ${ACCESSFILE}.dat || ${sbindir}/makesmtpaccess-msa
+
+	${sbindir}/courierfilter start
+	echo -n " courierfilter"
+
+	if test -x ${sbindir}/courierldapaliasd
+	then
+		${sbindir}/courierldapaliasd start
+		echo -n " courierldapaliasd"
+	fi
+
+	if test -f ${libexecdir}/courier/sqwebmaild
+	then
+		${sbindir}/webmaild start
+		echo -n " webmail"
+	fi
+
+	${sbindir}/courier start
+        echo -n " courierd"
+
+	if test "$esmtpdcert" = 1
+	then
+# If we do not have a certificate, make one up.
+
+		if test ! -f ${datadir}/esmtpd.pem
+		then
+			if test -x $COURIERTLS
+			then
+				echo -n " generating-ESMTP-SSL-certificate..."
+				${sbindir}/mkesmtpdcert >/dev/null 2>&1
+			fi
+		fi
+	fi
+
+	. ${sysconfdir}/esmtpd
+	case x$ESMTPDSTART in
+	x[yY]*)
+
+		${sbindir}/esmtpd start
+		echo -n " esmtpd"
+		;;
+	esac
+
+	. ${sysconfdir}/esmtpd-msa
+	case x$ESMTPDSTART in
+	x[yY]*)
+
+		${sbindir}/esmtpd-msa start
+		echo -n " esmtpd-msa"
+		;;
+	esac
+
+	if test -f ${sysconfdir}/esmtpd-ssl
+	then
+		. ${sysconfdir}/esmtpd-ssl
+	fi
+	case x$ESMTPDSSLSTART in
+	x[yY]*)
+		if test -x $COURIERTLS
+		then
+			${sbindir}/esmtpd-ssl start
+			echo -n " esmtpd-ssl"
+		fi
+		;;
+	esac
+
+	if test -x ${sbindir}/pop3d
+	then
+		POP3DSTART=""
+		POP3DSSLSTART=""
+
+		if test -f ${sysconfdir}/pop3d
+		then
+			. ${sysconfdir}/pop3d
+		fi
+		case x$POP3DSTART in
+		x[yY]*)
+			${sbindir}/pop3d start
+			echo -n " pop3d"
+			;;
+		esac
+		if test -f ${sysconfdir}/pop3d-ssl
+		then
+			. ${sysconfdir}/pop3d-ssl
+		fi
+		case x$POP3DSSLSTART in
+		x[yY]*)
+			if test -x $COURIERTLS
+			then
+# If we do not have a certificate, make one up.
+
+				if test ! -f ${datadir}/pop3d.pem
+				then
+					echo -n " generating-POP3-SSL-certificate..."
+
+					${sbindir}/mkpop3dcert >/dev/null 2>&1
+				fi
+
+				${sbindir}/pop3d-ssl start && \
+					echo -n " pop3d-ssl"
+			fi
+			;;
+		esac
+	fi
+
+	if test -x ${sbindir}/imapd
+	then
+		. ${sysconfdir}/imapd
+		case x$IMAPDSTART in
+		x[yY]*)
+			${sbindir}/imapd start
+			echo -n " imapd"
+			;;
+		esac
+		. ${sysconfdir}/imapd-ssl
+		case x$IMAPDSSLSTART in
+		x[yY]*)
+			if test -x $COURIERTLS
+			then
+# If we do not have a certificate, make one up.
+
+				if test ! -f ${datadir}/imapd.pem
+				then
+					echo -n " generating-IMAP-SSL-certificate..."
+
+					${sbindir}/mkimapdcert >/dev/null 2>&1
+				fi
+
+				${sbindir}/imapd-ssl start && \
+					echo -n " imapd-ssl"
+			fi
+			;;
+		esac
+	fi
+
+	if test -x ${bindir}/webmlmd
+	then
+		. ${sysconfdir}/webmlmrc
+		if test "$LISTS" != ""
+		then
+			${bindir}/webmlmd start ${sysconfdir}/webmlmrc && \
+				echo -n " webmlmd"
+		fi
+	fi
+	echo ""
+        ;;
+stop)
+        echo -n "Stopping Courier mail server:"
+
+	if test -x ${bindir}/webmlmd
+	then
+		${bindir}/webmlmd stop ${sysconfdir}/webmlmrc
+		echo -n " webmlmd"
+	fi
+
+	if test -x ${sbindir}/imapd
+	then
+		${sbindir}/imapd stop
+		echo -n " imapd"
+	fi
+
+	if test -x ${sbindir}/imapd-ssl
+	then
+		${sbindir}/imapd-ssl stop
+		echo -n " imapd-ssl"
+	fi
+
+	${sbindir}/esmtpd-ssl stop
+	echo -n " esmtpd-ssl"
+
+	${sbindir}/esmtpd-msa stop
+	echo -n " esmtpd-msa"
+
+	${sbindir}/esmtpd stop
+	echo -n " esmtpd"
+
+	if test -x ${sbindir}/pop3d
+	then
+		${sbindir}/pop3d stop
+		echo -n " pop3d"
+	fi
+
+	if test -x ${sbindir}/pop3d-ssl
+	then
+		${sbindir}/pop3d-ssl stop
+		echo -n " pop3d-ssl"
+	fi
+
+	${sbindir}/courier stop
+	echo -n " courierd"
+
+
+	if test -f ${libexecdir}/courier/sqwebmaild
+	then
+		${sbindir}/webmaild stop
+		echo -n " webmail"
+	fi
+
+	if test -x ${sbindir}/courierldapaliasd
+	then
+		${sbindir}/courierldapaliasd stop
+		echo -n " courierldapaliasd"
+	fi
+
+	${sbindir}/courierfilter stop
+	echo " courierfilter"
+        rm -f /var/lock/subsys/courier
+	;;
+restart)
+	$0 stop
+	$0 start
+        ;;
+condrestart)
+	test -f /var/lock/subsys/courier && $0 restart || :
+	;;
+esac
+exit 0

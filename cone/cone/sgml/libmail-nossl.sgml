@@ -1,0 +1,8 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+		<para>
+Do not upgrade a plain connection to an encrypted one.
+This option is primarily used for testing and debugging purposes.
+Sometimes this option might be useful with servers that claim to offer
+encryption, but are unable to do so when taken up on their offer.</para>

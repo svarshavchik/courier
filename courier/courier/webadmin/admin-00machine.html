@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <title>@PACKAGE@ @VERSION@ - Mail server name and local domains</title>
+  <!--
+  [#BADHOSTNAME=ERROR: Invalid hostname#]
+
+  [#SAVED=<span style="color: #008000">Configuration saved</span>#]
+
+  [#DELETE=delete#]
+
+  [#BADLOCAL=<span style="color: #800000">ERROR: Invalid hostname</span>#]
+
+  [#LOCALEXISTS=<span style="color: #800000">ERROR: duplicate local domain</span>#]
+  [#VIRTUALEXISTS=<span style="color: #800000">ERROR: this domain is already defined as a virtual domain.  The virtual domain must be removed before it can be added as a local or a locally-hosted domain.</span>#]
+
+  [#LOCALHOSTED=<span style="color: #800000">ERROR: domain cannot be both local and locally-hosted</span>#]
+
+  [#BADHOSTED=<span style="color: #800000">ERROR: Invalid hostname</span>#]
+
+  [#HOSTEDEXISTS=<span style="color: #800000">ERROR: duplicate locally-hosted domain</span>#]
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<h1><tt>@PACKAGE@ @VERSION@</tt> - Mail server name and local domains</h1>
+
+<p>@SAVEDMSG@</p>
+
+<form method="post" action="00machine">
+
+  <table border="0">
+    <tbody>
+      <tr valign="middle">
+        <td align="right">Server name:</td>
+        <td><tt><input type="text" size="20" name="ME" value="@ME@" /></tt>
+          (default: <tt>@defaultME@</tt>)</td>
+      </tr>
+      <tr>
+        <td colspan="2"><span style="color: #ff0000">@MEERROR@</span> </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+  <input type="submit" value="Save" name="Submit" /></p>
+</form>
+<hr>
+
+<h2>Local domains</h2>
+
+<p>Mail to <tt>&lt;user@localdomain&gt;</tt> will be delivered to local
+account "<tt>user</tt>".</p>
+
+<form method="post" action="00machine">
+
+  <div style="margin-left: 3.5em;">
+    @LOCALS@</div>
+
+  <p>Add local domain: <tt><input type="text" size="20"
+  name="newlocaldomain" /></tt> 
+  <input type="submit" value="Add" name="addlocal" /></p>
+
+  <p>@LOCALERR@</p>
+</form>
+<hr>
+
+<h2>Locally-hosted domains</h2>
+
+<p>Mail to <tt>&lt;user@hosteddomain&gt;</tt> will be delivered to local
+account "<tt>user@hosteddomain</tt>".</p>
+
+<form method="post" action="00machine">
+
+  <div style="margin-left: 3.5em;">
+    @HOSTED@</div>
+
+  <p>Add locally hosted domain: <tt><input type="text" size="20"
+  name="newhosteddomain" /></tt> 
+  <input type="submit" value="Add" name="addhosted" /></p>
+
+  <p>@HOSTEDERR@</p>
+</form>
+<hr>
+
+<h2>Other domain settings</h2>
+
+<form method="post" action="00machine">
+
+  <table border="0">
+    <tbody>
+      <tr valign="top">
+        <td align="right">Default domain:</td>
+        <td><tt><input type="text" size="20" name="defaultdomain"
+          value="@DEFAULTDOMAIN@" /></tt><br />
+          (defaults to server name)</td>
+        <td>- domain added to unqualified addresses in mail headers.</td>
+      </tr>
+      <tr>
+        <td colspan="3"> </td>
+      </tr>
+      <tr valign="top">
+        <td align="right">Message-ID domain:</td>
+        <td><tt><input type="text" size="20" name="msgidhost"
+          value="@MSGIDHOST@" /></tt><br />
+          (defaults to server name)</td>
+        <td>- domain used in Courier-generated Message-ID: headers</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><span style="color: #ff0000">@OTHERDOMAINERR@</span></p>
+
+  <p>
+  <input type="submit" value="Save" name="submit" /></p>
+</form>
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

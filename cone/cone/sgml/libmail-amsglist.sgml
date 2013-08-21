@@ -1,0 +1,31 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+      <para>
+<parameter>msgList</parameter> specifies a list of messages.
+Messages are numbered starting with message #0 and up to one
+less than
+<link linkend="account-getfolderindexsize"><citerefentry>
+	<refentrytitle>mail::ACCOUNT::getFolderIndexSize</refentrytitle>
+	<manvolnum>3x</manvolnum></citerefentry></link>
+(when <function>mail::account::getFolderIndexSize</function> returns 6,
+the messages are numbered 0 through 5).
+Only the messages that appear in <parameter>msgList</parameter> are
+processed by this request.
+When a message is removed from the folder, by
+<link linkend="account-updatefolderindexinfo"><citerefentry>
+	<refentrytitle>mail::ACCOUNT::updateFolderIndexInfo</refentrytitle>
+	<manvolnum>3x</manvolnum></citerefentry></link>,
+the following messages are renumbered accordingly.</para>
+
+      <note>
+	<para>
+Most mail servers allow multiple applications to open the same folder.
+Therefore, changes to the folder's contents can occur at any time.
+Before making this request, the application should use
+<link linkend="account-checknewmail"><citerefentry>
+	<refentrytitle>mail::ACCOUNT::checkNewMail</refentrytitle>
+	<manvolnum>3x</manvolnum></citerefentry></link> to verify that
+no unexpected changes have been made to the folder's contents.</para>
+      </note>
+
+

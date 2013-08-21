@@ -1,0 +1,8 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+Setting <parameter>peek</parameter> to true does not reset the
+<structfield>unread</structfield> message status flag for this message.
+Otherwise the
+<structfield>unread</structfield> message status flag will be reset.</para>

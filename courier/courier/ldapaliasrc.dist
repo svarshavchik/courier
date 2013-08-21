@@ -1,0 +1,138 @@
+##VERSION: $Id:$
+#
+# ldapaliasrc created from ldapaliasrc.dist by sysconftool
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+# Copyright 2000-2006 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# This configuration file configures the courierldapaliasd process.
+#
+# courierldapaliasd, essentially, is an implementation of aliasing against
+# an LDAP directory.  See the makealiases(8) manual page for the description
+# of aliasing.  Aliasing, essentially, is rerouting mail addressed to one
+# address to another address.  Mail headers are not touched, only the
+# the recipient address is rewritten.  Here's how it works.
+# Courier receives a recipient address of user@domain.com, and issues an
+# LDAP search for "mail=user@domain.com".  If the LDAP search returns a
+# record, the "maildrop" attribute specifies the address to use instead of
+# user@domain.com.  For example:
+#
+# dn: mail=user@example.com, dc=example.com
+# mail: user@example.com
+# maildrop: user@server1.example.com
+#
+# Multiple maildrop attributes are allowed, and the message gets sent to
+# each maildrop, essentially implementing a mailing list.
+#
+# The format of this file must be as follows:
+#
+# field[spaces|tabs]value
+#
+# That is, the name of the field, followed by spaces or tabs, followed by
+# field value.  No trailing spaces.
+#
+# Here are the fields:
+#
+##NAME: LDAP_ALIAS:0
+#
+# Whether or not use courierldapaliasd at all.  Courier is shipped by default
+# with courierldapaliasd turned off, and you enable it by setting LDAP_ALIAS
+# to 1
+
+LDAP_ALIAS		0
+
+##NAME: LDAP_LOCATION:2
+#
+# Location of your LDAP server:
+
+LDAP_URI	ldap://ldap.example.com:389
+
+##NAME: LDAP_NUMPROCS:0
+#
+# Number of courierldapaliasd processes to start (there's always an extra
+# cleanup process)
+
+LDAP_NUMPROCS		5
+
+##NAME: LDAP_BASEDN:0
+#
+# LDAP_BASEDN is the base where LDAP search starts from:
+
+LDAP_BASEDN		organizationalUnit=maildrops, dc=example.com
+
+##NAME: LDAP_BINDINFO:1
+#
+# You MAY need to specify the login and password for LDAP.  Because you've got
+# a password here, authldaprc should not be world-readable!!!
+#
+
+LDAP_BINDDN		cn=administrator, dc=example.com
+LDAP_BINDPW		penguin
+
+##NAME: LDAP_TIMEOUT:0
+#
+# Timeout for the LDAP search.
+
+LDAP_TIMEOUT		5
+
+##NAME: LDAP_MAIL:0
+#
+# If you want to search on some other attribute, other than "mail", change the
+# following:
+
+LDAP_MAIL		mail
+
+##NAME: LDAP_MAILDROP:0
+#
+# If you want to read maildrops from some other attribute, other than
+# "maildrop", change the following:
+
+LDAP_MAILDROP		maildrop
+
+##NAME: LDAP_SOURCE:1
+#
+# If you want to create source-specific aliases, define LDAP_SOURCE like this:
+#
+# Then, for mail received via esmtp, the query would be something like
+# (&(mail=[mail])(mailsource=esmtp)).  This allows something like this:
+#
+# LDAP_SOURCE   mailsource
+#
+# dn: mail=staff, dc=example.com
+# mail: staff
+# mailsource: local
+# maildrop: tom
+# maildrop: john
+# maildrop: steve
+#
+# So that the address <staff> can only be used locally, a private mailing
+# list.  If no records are found, the search is repeated as follows:
+# (&(mail=[mail])(!(source=*))), which will search records without any
+# source attribute.
+
+LDAP_SOURCE
+
+##NAME: LDAP_VIRTUALMAP:1
+#
+# courierldapaliasd can also map virtual domain to local accounts, like
+# makealiases.  In makealiases, "@domain.com: luser" results in mail addressed
+# to foobar@domain.com to be delivered to luser-foobar@localhost.  This only
+# works for localhost.  To enable virtual domain mapping, uncomment the
+# following two settings, LDAP_VDOMAIN and LDAP_VUSER:
+#
+# Then, you'll have something like this:
+#
+# dn: vdomain=domain.com, dc=example.com
+# virtualdomain: vdomain.com
+# virtualdomainuser: luser
+#
+# You can also specify source-based virtual domains, by the way.
+#
+# LDAP_VDOMAIN		virtualdomain
+# LDAP_VUSER		virtualdomainuser
+
+LDAP_VDOMAIN
+LDAP_VUSER

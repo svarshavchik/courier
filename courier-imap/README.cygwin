@@ -1,0 +1,73 @@
+From: "Chris Rodgers" <courier-imap@bulk.rodgers.org.uk>
+To: courier-users@lists.sourceforge.net
+Subject: [courier-users] FYI building courier-imap under cygwin (patch for changing maildir filenames away from colon as separator)
+
+Hello,
+
+I thought I'd send out a copy of these notes for the archives... :-D
+
+[If someone more knowledgeable out there would be prepared to check I've not
+done anything stupid, that'd be much appreciated!! :-)]
+
+--
+
+I am experimenting with various OSes on my PC. I wanted a platform
+independent way of storing my e-mail. Courier-IMAP seemed good, especially
+as I have Unix Maildirs e-mail clients...
+
+Here's how I got it to build under cygwin:
+
+1. Need to enable NTFS Extended Attributes for Cygwin
+
+Edit C:\CYGWIN\CYGWIN.BAT
+Add a line before bash is run: SET CYGWIN=ntea
+
+this lets file permissions work properly.
+
+2. Go to the cygwin bash prompt.
+
+N.B. Archive MUST be unpacked from within cygwin so that permissions work
+out OK.
+
+tar -xvzf /..../courier-imap-1.4.6.tar.gz
+(/..../ is wherever you put the tarball)
+
+./configure  --disable-root-check --without-authldap --with-waitfunc=wait
+
+Courier uses colons in filenames to implement soft quotas. Win32 does not
+support the colon in filenames, the following patch adds a header
+maildir/mdirsep.h which defines the separator character to use.
+
+[ patch added ]
+
+make
+make install
+make install-configure
+
+copy cygwin1.dll into the windows system directory.
+
+/usr/lib/courier-imap/libexec/imapd.rc start
+
+Passwords can be set up using /etc/userdb as per the manual.
+
+It's running!
+
+Yours,
+
+Chris Rodgers
+http://rodgers.org.uk/
+PGP Key: http://rodgers.org.uk/ChrisRodgersPGPKey.htm
+
+"LORD, I have heard of your fame; I stand in awe of your deeds, O LORD.
+Renew them in our day, in our time make them known; in wrath remember
+mercy." Hab 3:2 NIV.
+
+
+
+-------------------------------------------------------
+Sponsored by:
+ThinkGeek at http://www.ThinkGeek.com/
+_______________________________________________
+courier-users mailing list
+courier-users@lists.sourceforge.net
+Unsubscribe: https://lists.sourceforge.net/lists/listinfo/courier-users

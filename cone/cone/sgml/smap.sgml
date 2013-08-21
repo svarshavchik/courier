@@ -1,0 +1,3338 @@
+<!-- Copyright 2002-2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<appendix id="smap1">
+  <title>Simple Mail Access Protocol, Version 1</title>
+
+  <note>
+    <para>
+This document is a work-in-progress.</para>
+  </note>
+
+  <section>
+    <title>Introduction</title>
+
+    <para>
+Simple Mail Access Protocol (SMAP, or SMAP1 if referring specifically
+to this version)
+enables programs (referred in this
+document as "clients") to use a network connection to a server process
+for reading and manage MIME E-mail messages in a mailbox.</para>
+
+    <para>
+SMAP is an experimental protocol for testing new mail client/server
+functionality that's not possible with existing mail access protocols.
+SMAP is sufficient for
+implementing traditional mail access functionality: a hierarchical
+arrangement of folders; random access to messages in a folder;
+access individual MIME sections of messages; per-message metadata such
+as various flags, and a datestamp.
+Beyond that, SMAP's primary focus is to serve as an experimental
+implementation of advanced mail client/server functionality.</para>
+
+    <section>
+      <title>Summary</title>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+SMAP tries to provide powerful mail access service using
+a structurally-simple, line oriented syntax.  Client commands and
+server replies are newline-delimited lines of text
+consisting of whitespace-delimited tokens.
+SMAP syntax's complexity is closer to POP3's and SMTP's,
+rather than to IMAP's.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+SMAP's design allows it to coexist with IMAP.
+Both IMAP and SMAP can be implemented
+by the same server.
+An SMAP client has the ability to fall back to IMAP if the server does not
+have SMAP capabilities.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+SMAP decodes MIME-encoded attachments, and sends the raw data to the
+SMAP client.
+<literal>base64</literal>-encoded MIME attachments enjoy a 25% reduction
+in bandwidth needed to download the attachment...</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+A single SMAP transaction saves a new message to a folder, and sends the
+message to its designated recipients.
+This essentially halfes the bandwidth required to send a new message.
+Without SMAP, a mail client has to transmit the message twice: once to save
+a file-copy of the sent message in a folder, and a second time to send
+the message using <literal>SMTP</literal>.
+With SMAP, the mail client only needs to send the message once.
+The server saves the message in the folder, the sends the message to its
+listed recipients.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+An SMAP client does not need to download the entire index of folder's contents
+when reopening a previously seen folder.
+When reopening a folder, the client receives a much shorter list of changes
+to the folder's contents since the last time the client had the folder
+opened.</para>
+
+	  <para>
+This is done by the client and server saving an index of folder's contents.
+After reopening the folder the server only needs to send
+the delta of changes between the saved folder index, and the current folder
+index.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+SMAP provides a hierarchical collection of mail folders.
+Folder names use the UTF-8 character set.
+A <command>telnet</command> connection from an UTF-8 terminal will be able
+to fully navigate and manage the folders.
+Names of SMAP folders may contain any UTF-8 character (excluding the control
+character range U+0000 through U+001F).
+SMAP does not reserve a folder hierarchy delimiter character.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+SMAP specifies
+a clearly defined process for synchronizing multiple SMAP clients
+that have the same folder opened concurrently.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+SMAP uses simple unique identifiers that are similar to the POP3's
+model.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+SMAP provides two ways for removing messages from a folder.
+Messages may be removed directly, or using a
+<quote>mark as deleted, then expunge</quote> paradigm.</para>
+
+	  <para>
+Similarly, messages are moved between folders using a single
+<quote>move</quote> process, instead of
+<quote>copy, delete, expunge</quote> (which is also available).
+This allows for greater efficiency with quota-limited mail accounts,
+since moving messages between folders will not require reserving quota-limited
+space equivalent to the sum total of the messages that are moved.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Additional facilities, that are useful in internationalized environments,
+include specifying native languages for error messages, and internationalized
+folder names.</para>
+	</listitem>
+
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Roadmap</title>
+
+      <para>
+SMAP is a work-in-progress.
+Additional advanced mail handling protocols are expected to be defined
+in the future.
+At this time, the following additions are planned:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+Advanced mechanism for uploading new messages to the server.
+Individual attachments are uploaded as binary data.
+The server selects and applies the appropriate encoding.
+The server creates the appropriate MIME headers.</para>
+	</listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Conventions used in this document</title>
+
+      <para>
+	This document uses <quote>U+<replaceable>hhhh</replaceable></quote>,
+where <replaceable>hhhh</replaceable> is a hexadecimal number, to refer
+to a specific Unicode/ISO-10646 character.
+In examples,
+<quote><literal>C:</literal></quote> indicates a command
+sent by the SMAP client to the server, and
+<quote><literal>S:</literal></quote> indicates the server's response.</para>
+
+      <para>
+Some examples have long commands or replies line-wrapped for
+readability purposes.
+The actual commands and replies are generally a single line of text,
+terminated by the LF character (U+000A).</para>
+    </section>
+  </section>
+
+  <section id="smapsyntax">
+    <title>SMAP syntax overview</title>
+
+    <para>
+The rest of this document defines the actual SMAP commands, but all
+commands from the client, and replies from the server, follow the same basic
+syntax.
+All SMAP commands, and replies, use the UTF-8 character set (no matter what
+the natural language is used for error messages, or prompts).
+An SMAP command is generally one or more words.
+The words are separated by at least one whitespace
+character (U+0020, U+0009, or U+000D).
+An SMAP command is terminated by the newline character, (U+000A).</para>
+
+    <note>
+      <para>
+The server does not translate actual message contents to UTF-8.
+The server provides the contents of a message as is, to the client.
+The UTF-8 character set is used for:</para>
+      <itemizedlist>
+	<listitem><para>Names of folders</para></listitem>
+	<listitem><para>Error and status messages</para></listitem>
+	<listitem><para>Search strings</para></listitem>
+      </itemizedlist>
+
+      <para>
+Other text-based entities already use an implicit character set
+(such as US-ASCII for names of E-mail headers) or are specified as
+opaque text strings (such as message unique identifiers, loginid and
+password) and have no explicitly defined character set.</para>
+
+    </note>
+
+    <section id="smaplimits">
+      <title>Maximum limitations and timeouts</title>
+      <para>
+<ulink url="http://www.rfc-editor.org/rfc/rfc2822.txt">RFC 2822</ulink>
+sets the maximum length of a line in an E-mail message as 998 characters.
+This limitation is applicable to SMAP, since SMAP deals with E-mail.
+Additionally, SMAP commands may not exceed 8000 characters.
+SMAP servers should accept commands up to 8000 characters long.
+SMAP clients should not send commands that exceed 8000 characters in
+length.</para>
+
+      <note>
+	<para>
+This, of course, does not apply to binary-formatted multiline replies,
+that transfer binary MIME attachments.</para>
+      </note>
+
+      <para>
+SMAP servers should terminate inactive SMAP clients.
+SMAP servers must have a timeout of at least 30 minutes.
+SMAP clients must not wait more than 29 minutes before sending the next
+command to the server.
+SMAP clients that must remain idle for a prolonged period of time should
+periodically send the <literal>NOOP</literal> command to prevent themselves
+from being disconnected for inactivity.</para>
+
+    </section>
+    <section>
+      <title>Words</title>
+
+      <para>
+A word can contain any character except for a control character (U+0000
+through U+001F).
+If a word contains spaces or quotes (U+0020 or U+0022),
+a quote must be added before the first character
+of the word, and a second quote character
+must follow the last character of the word.
+Quotes that are part of the word are doubled.
+For example:
+<literal>"Learning the ""ABC""'s"</literal>
+is a single SMAP word.
+The word contains
+a single quote character before the letter "A" and a second quote character
+after the letter "C".
+Everything else is as it appears.
+A word that contains a single quote character is represented
+as <literal>""""</literal>.
+A word that's meant to be completely empty is represented by two quotes:
+<literal>""</literal>.</para>
+    </section>
+
+    <section>
+      <title>SMAP server replies</title>
+
+      <para>
+SMAP server replies also (except where noted) are lines of text terminated
+by U+000A.
+There are three general classes of server replies.
+All three of them generally contain either
+whitespace-delimited words (formatted similarly), or they begin with one or
+more whitespace-delimited words, with the rest being an informative,
+free-form message.</para>
+
+      <para>
+SMAP servers are allowed to reply with lines of text terminated by the
+CR+LF sequence, U+000D U+000A.  The ASCII CR character
+is interpreted by SMAP clients
+as whitespace filler, and is generally ignored.
+SMAP servers must be prepared to receive client commands that use
+either the CR+LF or the bare LF newline sequence.
+The only exception to this rule is the initial connection negotiation,
+which must use CR+LF in order to remain compatible with IMAP.</para>
+
+      <para>
+An SMAP client receives the server's response by reading
+an entire U+000A-terminated
+line, then parsing the first word, or character, to determine the reply's
+format.</para>
+    </section>
+
+    <section id="statusreply">
+      <title>Status replies</title>
+      <para>
+A line whose first word is either <quote>+OK</quote> or
+<quote>-ERR</quote> is a
+<quote>status reply</quote>.
+<quote>+OK</quote> indicates that the client's request succeeded,
+<quote>-ERR</quote> indicates that it failed.
+The rest of the line is a free-form message,
+suitable to be displayed as the original command's acknowledgement.
+The status reply does not include any actual information requested
+by the original command (if any).
+The status reply indicates whether the command succeeded
+or failed.
+Information requested by the original command will be sent before the status
+reply, using either a "single line", or a "multiple line" format
+(see below).
+A command can result in more than one single or multi-line reply.
+The client, after sending an SMAP command,
+keeps reading single and multi-line
+replies, until a final status reply is read.
+After receiving the status reply, the client may proceed to send the
+next server command.</para>
+
+      <para>
+The SMAP client must wait until the status reply is received before sending
+the next command.</para>
+
+      <note>
+	<para>
+In order to allow interoperability with IMAP, server replies prior to
+logging in are an exception to this reply format.
+They follow the general IMAP syntax.</para>
+      </note>
+    </section>
+
+    <section id="singleline">
+      <title>Single line replies</title>
+
+      <para>
+A server reply where the first whitespace-delimited word is the
+<quote>*</quote> character is called a
+<quote>single line reply</quote>.
+Single line replies send information, requested by the original command,
+formatted as whitespace-delimited words.
+The information carried by the words depends on the reply.
+The actual format of a single line reply depends on the original command,
+but can usually be determined by the word that follows <quote>*</quote>.
+This single-line reply does not indicate if the client's command succeeded,
+the client must still wait to receive the final status reply.
+The only exception to this rule is the initial connection greeting,
+or the unexpected connection termination situation, which is described
+later.</para>
+
+      <note>
+	<para>
+The client must be prepared to receive multiple
+single line and multiple line replies,
+followed by an <quote><literal>-ERR</literal></quote> status reply.
+This happens when the server encounters an error in a middle of processing
+the client's request.</para>
+      </note>
+    </section>
+
+    <section id="multiline">
+      <title>Multiple line replies</title>
+      <para>
+Certain information returned by an SMAP server cannot be conveniently
+represented as a single line of text.
+An example would be the contents of a message.
+Obviously, messages contains many lines of text.
+A server reply whose first word starts with the '{' character is called a
+<quote>multiple line reply</quote>.
+This name is actually slightly misleading;
+this format may carry binary data
+that bears no resemblance to lines of text.</para>
+
+      <para>
+There are two separate multi-line reply formats.
+The first format is suitable for line-oriented textual content.
+It's called the <quote>dot-stuffed format</quote>.
+The first word of the server reply is
+<quote>{.<replaceable>nnnn</replaceable>}</quote>,
+where <quote><replaceable>nnnn</replaceable></quote>
+is a decimal number.
+This number is the server's estimate of the total size
+of the multi-line reply, in bytes.
+It is not an exact byte count, just a reasonable estimate.
+The server is not required to compute the exact byte count before sending
+the data, just provide a ballpark estimate.</para>
+
+      <para>The remaining words of the server's multi-line reply line
+contain other information, depending on the nature of the data.
+For example, a single SMAP command can request the server to return the
+contents of two or more messages.
+The server may process those messages in any order.
+The remainder of the server's multi-line reply line indicates which
+message this multi-line reply refers to.
+The actual data follows the server's multi-line reply line.
+The data is transmitted as lines of text, each line terminated by
+the U+000A character.
+Servers are also allowed to use the U+000D/U+000A end-of-line sequence.
+The end of the data is marked by a line that contains only a single period,
+U+002E, followed by optional whitespace.
+Lines of data that begin with U+002E have a second U+002E character
+prepended.</para>
+
+      <para>An SMAP client, upon receiving a multi-line reply in this
+format, begins reading U+000A-terminated lines of text, until
+it reads a line containing
+a single U+002E, and optional whitespace.
+Other lines with a leading U+002E
+character have it removed, and the
+rest of the line gets saved as the returned data.</para>
+
+      <para>The second multi-line server reply format carries binary data.
+It begins with the word
+<quote>{<replaceable>xxxx</replaceable>/<replaceable>yyyy</replaceable>}</quote>,
+where
+<quote><replaceable>xxxx</replaceable></quote> and
+<quote><replaceable>yyyy</replaceable></quote> are decimal numbers.
+<quote><replaceable>yyyy</replaceable></quote> gives the server's estimate of
+the total size
+of the binary data, and <quote><replaceable>xxxx</replaceable></quote>
+gives the
+byte count of the first part that the server is about to send.
+The server does not have to send everything as one binary goop.
+The server is allowed to break down the binary data in smaller, managable,
+chunks, which are sent one at a time.</para>
+
+      <para>The remaining words of the multi-line reply line format are the
+same as as the dot-stuffed format's.
+Immediately
+following the multi-line reply's trailing U+000A, the server sends exactly
+the number of bytes given by <replaceable>xxxx</replaceable>.
+This is called a "binary chunk".</para>
+
+      <para>Each binary chunk is
+followed by another line of text terminated by the U+000A
+character.
+A trailing line that's empty, or contains only whitespace, indicates the end
+of the multi-line binary data.
+Otherwise the line contains a single word, <replaceable>xxxx</replaceable>
+(which can have leading or trailing whitespace filler),
+that gives the byte count of the next binary chunk, which immediately follows
+the U+000A character.</para>
+
+      <para>The SMAP client reads the initial multi-line reply line, and
+obtains
+the first chunk's byte count, and the estimated total byte count.
+The SMAP client then reads the exact number of bytes indicated by the byte
+count.  Afterwords, the SMAP client enters a loop where it first reads a
+newline-terminated line of text.  If the line is empty or contains only
+whitespace filler, then this is the end of the binary data, and
+the client proceeds
+to read the next server reply.  Otherwise the client extracts the next chunk's
+byte count, reads the indicated number of bytes, then repeats the
+process.</para>
+    </section>
+
+    <section>
+      <title>An empty multi-line reply</title>
+      <para>
+An expected multi-line reply may be empty.
+An example: the client requests specific E-mail headers, but the message
+does not have them.
+This is indicated by an empty multi-line reply.
+An empty multi-line reply is indicated by the word "{.0}" (followed by the
+remaining words that specify the context of this multi-line reply).
+The next line sent by the server contains a single "." character.
+This sequence is parsed by an SMAP client as a completely empty
+multi-line reply.</para>
+    </section>
+  </section>
+
+  <section id="conn">
+    <title>SMAP connection negotiation</title>
+
+    <para>
+It is possible to have a server that handles both IMAP4rev1 and SMAP1.
+This is done by establishing the initial SMAP1 client/server connection
+in a manner that's compatible with IMAP.
+When the server receives a connection from a client, the server sends the
+following reply:</para>
+
+    <para>
+<literallayout>
+* OK [CAPABILITY <replaceable>capabilitylist</replaceable>] <replaceable>message</replaceable>
+</literallayout>
+</para>
+
+    <note>
+      <para>
+Servers that offer both IMAP and SMAP must terminate the initial reply
+with CRLF.
+SMAP-only servers can use the LF character alone.</para>
+    </note>
+
+    <para>
+<quote><replaceable>message</replaceable></quote> is free-form text, that
+identifies
+the server software in human-readable format.
+<quote><replaceable>capabilitylist</replaceable></quote> is a list of
+keywords that
+describe the server's technical implementation.
+Keywords in the list are separated by whitespace.
+Clients should separate whitespace-delimited
+<quote><replaceable>capabilitylist</replaceable></quote> into
+individual keywords.
+Multiple keywords may occur in any order, and clients must search the
+entire list for keywords the client understands.</para>
+
+    <para>
+The presence of the <literal>SMAP1</literal> keyword specifies
+that the server implements the protocol defined by this document.
+Absence of the
+<literal>SMAP1</literal> keyword indicates
+that the server is probably an IMAP server.
+Clients that support both SMAP and IMAP protocol can automatically revert
+to IMAP, if they so choose.</para>
+
+    <para>
+The server's initial reply to the client may include the
+<quote><replaceable>message</replaceable></quote> part only, without a leading
+keyword capability list inside.
+This indicates that the server is only an IMAP server,
+and does not support SMAP.</para>
+
+    <para>
+<quote><replaceable>capabilitylist</replaceable></quote> may include additional
+keywords besides <literal>SMAP1</literal>.
+This document defines the following keywords.
+Other keywords may be added in the future.
+SMAP clients coded to this specification should ignore keywords they do
+not recognize.</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>STARTTLS</term>
+	<listitem>
+	  <para>
+This SMAP server supports an SSL/TLS connection, via the STARTTLS
+command.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>AUTH=<replaceable>mechanism</replaceable></term>
+	<listitem>
+	  <para>
+This SMAP server supports the
+<quote><replaceable>mechanism</replaceable></quote>
+authentication mechanism, as defined by
+<ulink url="http://www.rfc-editor.org/rfc/rfc3501.txt">RFC 3501</ulink>,
+and its successors.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>LANG=<replaceable>language</replaceable></term>
+	<listitem>
+	  <para>
+This SMAP1 server can return diagnostic messages in the
+natural language
+<quote><replaceable>language</replaceable></quote>.
+<quote><replaceable>language</replaceable></quote>
+is a language tag defined by
+<ulink url="http://www.rfc-editor.org/rfc/rfc1766.txt">RFC 1766</ulink>.
+A multilingual SMAP server lists
+multiple <literal>LANG</literal> keywords, one keyword for each
+language.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term>KEYWORDS</term>
+	  <listitem>
+	    <para>
+The SMAP1 server supports user-defined per-message <literal>KEYWORDS</literal>
+attributes.</para>
+	  </listitem>
+	</varlistentry>
+
+    </variablelist>
+
+
+    <note>
+      <para>
+The <literal>STARTTLS</literal> and <literal>AUTH</literal> keywords
+are also used by IMAP in the same way.
+IMAP does not define the <literal>LANG</literal> keyword (there is an optional
+extension to the base IMAP protocol specification that is
+functionally similar, but
+not compatible, with this definition).
+At this time, <literal>LANG</literal> does not introduce interoperability
+issues with IMAP.
+IMAP also does not define <literal>KEYWORD</literal>, a similar functionality
+is indicated by the <literal>PERMANENTFLAGS</literal> untagged reply.</para>
+
+      <para>
+In the future, there's a small chance that a new IMAP protocol
+extension or revision may not be compatible with the
+<literal>LANG</literal>
+or
+<literal>KEYWORDS</literal>
+capability keywords, or any other SMAP
+capability keyword.
+Should this occur,
+the next revision of this document will
+remove <literal>LANG</literal> or
+<literal>KEYWORD</literal> (or another incompatible keyword)
+from the initial capability list.
+The client should issue the "<literal>\SMAP1 CAPABILITY</literal>"
+command to retrieve an SMAP1-specific capability list that includes the
+complete SMAP capability keyword list.</para>
+
+      <para>
+Should IMAP introduce an interoperability issue with the
+<literal>SMAP1</literal> keyword itself, it will be replaced by another
+keyword.</para>
+
+    </note>
+
+    <para>Example:</para>
+
+    <para>
+<literallayout>
+S: * OK [CAPABILITY SMAP1 KEYWORDSAUTH=CRAM-MD5 STARTTLS
+        LANG=EN LANG=EN-US IMAP4rev1] SMAP/IMAP hybrid server ready
+</literallayout>
+</para>
+
+    <section>
+      <title>IMAP/SMAP protocol selection</title>
+
+      <para>
+The first word of IMAP commands is an arbitrary command identification tag.
+The first set of SMAP commands,
+that set up and log in to the mail account, are prefixed by the word
+<literal>"\SMAP1"</literal>.
+The backslash character is not allowed in IMAP command identification tags.
+A server that implements both IMAP and SMAP reads the first
+whitespace-delimited word of the first command it receives.
+If the first word in <literal>"\SMAP1"</literal> the server knows that
+the client is using SMAP.  Subsequent server replies will now be SMAP replies.
+Otherwise, the first word must be an IMAP command identification tag, so
+the server reverts to IMAP mode for this client connection.</para>
+    </section>
+
+
+    <section>
+      <title>SMAP capability list</title>
+
+      <para>
+The server responds to this command with a
+"<literal>* CAPABILITY</literal>"
+<link linkend="singleline">single line</link>
+reply.
+The remaining words in the reply enumerate SMAP capabilities supported
+by the server.  Example:</para>
+
+      <para>
+<literallayout>
+C: \SMAP1 CAPABILITY
+S: * CAPABILITY SMAP1 AUTH=CRAM-MD5 STARTTLS LANG=EN LANG=EN-US IMAP4rev1
+S: +OK SMAP1 capability list complete.
+</literallayout>
+</para>
+
+      <para>
+The server should reply with the same capability list as the initial
+<literal>* OK</literal> message.</para>
+
+    </section>
+
+    <section>
+      <title>Enabling encryption</title>
+
+      <para>
+The <literal>STARTTLS</literal>
+capability indicates that the server
+is capable of encrypting the connection between the client and the server.
+See
+<ulink url="http://www.rfc-editor.org/rfc/rfc2595.txt">RFC 2595</ulink>
+for some additional comments on using TLS with mail-related protocols.
+</para>
+
+      <para>
+SSL/TLS negotiation begins immediately after the client receives
+a successfull
+<link linkend="statusreply">status reply</link>
+from the server.  Example:</para>
+
+      <para>
+<literallayout>
+C: \SMAP1 STARTTLS
+S: +OK Ready to accept an encrypted SMAP1 connection
+
+<emphasis>[ TLS negotiation occurs ]</emphasis>
+
+</literallayout>
+</para>
+    </section>
+
+    <section>
+      <title>Language selection</title>
+
+      <para>
+This command instructs the server to send
+all subsequent messages in a different natural language.
+Example:</para>
+
+      <para>
+<literallayout>
+C: \SMAP1 LANGUAGE FR
+S: +OK Bonjour
+</literallayout>
+</para>
+
+      <para>
+The specified language must be one of the languages enumerated in the
+capability list.</para>
+
+      <note>
+	<para>
+The UTF-8 character set is used for all languages.</para>
+      </note>
+    </section>
+
+    <section>
+      <title>Userid/password login</title>
+
+      <para>
+The <literal>\SMAP1 LOGIN</literal> command initiates a simple userid/password
+login sequence.
+The third word of this command is the login userid, the fourth word is the
+login password.
+The server's
+<link linkend="statusreply">status reply</link>
+indicates whether the supplied credentials were
+accepted.  Example:</para>
+
+      <para>
+<literallayout>
+C: \SMAP1 LOGIN joneil p3r472
+S: -ERR Login invalid
+C: \SMAP1 LOGIN joneil p2r798
+S: +OK Logged in
+</literallayout>
+</para>
+    </section>
+
+    <section>
+      <title>SASL login</title>
+
+      <para>
+The "<literal>\SMAP1 AUTHENTICATE</literal>" command initiates a
+generic SASL-based
+login mechanism.
+The third word of this command specifies the SASL authentication mechanism,
+which must be one of the <literal>AUTH</literal> mechanism listed in the
+server's capability list.
+The subsequent SASL conversation, if any, is identical to an IMAP SASL
+conversation: each server challenge is sent as a line of text that starts
+with the <literal>&gt;</literal>
+character, whitespace filler, then the base64-encoded server
+challenge.
+The client replies with a line of text containing the base64-encoded reply.
+Example:</para>
+
+      <para>
+<literallayout>
+C: \SMAP1 AUTHENTICATE LOGIN
+S: &gt; VXNlciBOYW1lAA==
+C: bWl0bGlz
+S: &gt; UGFzc3dvcmQA
+C: Zmxvc2pidw==
+S: +OK Logged in
+</literallayout>
+</para>
+
+    </section>
+  </section>
+
+  <section id="smapfolders">
+    <title>Folders</title>
+
+    <para>
+Access to the mail account becomes available after a succesful
+"<literal>\SMAP1 LOGIN</literal>" or
+"<literal>\SMAP1 AUTHENTICATE</literal>" command.
+A mail account contains a list of folders.
+A folder contains a list of individual messages.
+A folder may also contain other folders (so-called "subfolders") instead.
+A folder that contains subfolders is called a "folder directory".
+Subfolders may also contain other subfolders, and so on.</para>
+
+    <para>
+Some SMAP servers are capable of creating hybrid folders that contain both
+messages and other subfolders, but SMAP clients should not depend on the
+server's ability to create such folders.</para>
+
+    <para>
+SMAP folders are referenced by listing the folder's name, the name of its
+parent
+folder (if any), then the name of the parent folder's parent folder, and so on.
+The name of the top level folder is listed first, and the name of
+the folder itself is listed last, and each folder's name is specified as
+a separate, whitespace-delimited word.
+Some <literal>SMAP1</literal> commands mark the end
+of the sequence of words that identifies a folder by an extra, empty word
+(folder names cannot be empty themselves).
+For example, the command to create a folder called "December" as a subfolder
+of another folder called "2002", which itself is a subfolder of a folder
+called "Important Mail" is:</para>
+
+    <para>
+<literallayout>
+CREATE "Important Mail" 2002 December
+</literallayout>
+</para>
+
+    <para>
+Folder names are written using the UTF-8 character set; they may contain
+any UTF-8 character except for U+0000 through U+001F.</para>
+
+    <para>
+SMAP servers may allow clients to create top-level
+folder or folder directories.
+SMAP servers may also prohibit clients from creating top-level folder
+or folder directories;
+instead, they provide a predefined list of top-level
+folder directories, such as "Private Folders" and "Public Folders", and
+SMAP clients are directed to to create subfolders under either top level folder
+directory.
+Servers that have this restriction should reject attempts to create
+top-level folders with an informative error message.</para>
+
+    <section>
+      <title>Creating folders and folder directories</title>
+
+      <para>
+<literallayout>
+C: CREATE "Private Folders" Todo-List
+S: +OK Folder created
+C: MKDIR Customers
+S: -ERR Folders may not be created here.  Please create a folder in
+   "Private Folders" or "Public Folders".
+</literallayout>
+</para>
+
+      <para>
+The <literal>CREATE</literal> command creates a new folder.
+The <literal>MKDIR</literal> command creates a new folder directory
+(a folder that contains other folders).
+The remaining words specify the name of the new folder
+or folder directory.</para>
+
+      <note>
+	<para>
+An SMAP client should not create a new folder directory until it is
+ready to create its first subfolder.
+The <literal>MKDIR</literal>
+command should be immediately followed by a <literal>CREATE</literal>
+command that creates the first subfolder in the new folder directory.
+Empty folder directories serve no particular purpose; SMAP servers
+are permitted (but not required) to omit empty folder directories when
+responding to a <literal>LIST</literal> command.
+An SMAP client that wishes to create a new folder directory now, and
+a subfolder some time later should be implicitly aware of the fact that
+it created a new folder directory even if a subsequent
+<literal>LIST</literal> command does
+not reveal its presence.</para>
+      </note>
+
+      <para>
+Some SMAP servers can implement hybrid folders that contain both folders
+and subfolders.  Clients must explicitly use both
+<literal>CREATE</literal> and <literal>MKDIR</literal> commands, which
+may be used in either order.
+It is possible that hybrid-capable servers do not differentiate between
+the <literal>MKDIR</literal> and <literal>CREATE</literal> commands.
+Either one creates a folder that's ready to hold messages or subfolders.
+These servers must ignore a duplicate request to create an existing
+folder or
+folder directory (normally a server SHOULD reject such a request).
+This is because SMAP clients will send both command because they
+cannot rely on this behavior.</para>
+
+      <section>
+	<title>Executive Summary</title>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+Use <literal>CREATE</literal> to create a folder, <literal>MKDIR</literal>
+to create a folder directory.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Clients should create new folder directories just prior creating their
+first subfolder.
+Clients should not create new folder directories until they are ready to
+create the first subfolder.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+SMAP
+servers may ignore <literal>MKDIR</literal>, and treat it as a no-op, and
+automatically create logical folder directories on as-needed basis.</para>
+	  </listitem>
+	</itemizedlist>
+      </section>
+    </section>
+
+    <section>
+      <title>Deleting folders and folder directories</title>
+
+      <para>
+<literallayout>
+C: DELETE "Private Folders" Todo-List
+S: +OK Folder deleted
+C: RMDIR Customers
+S: +OK Folder directory deleted
+</literallayout>
+</para>
+
+      <para>
+The
+<literal>DELETE</literal>
+and
+<literal>RMDIR</literal>
+commands are the opposite of
+<literal>CREATE</literal>
+and
+<literal>MKDIR</literal>
+commands.
+They delete the indicated folder or folder directory.
+Some SMAP servers may automatically remove a folder directory after its
+last subfolder is deleted.
+Normally a server
+should reject a request to remove a non-existent folder or folder directory.
+Servers that automatically remove empty directories
+should not reject requests to remove a non-existent directory,
+they should ignore and accept the request, but do nothing.
+The request to remove a non-existent directory is probably initiated
+by a client that just removed the last subfolder; the client cannot assume
+that the server will delete the empty directory, so it explicitly asks the
+server to do that.</para>
+    </section>
+
+    <section>
+      <title>Renaming folders and folder directories</title>
+
+      <para>
+<literallayout>
+C: RENAME "Dr. Jekyll" "" "Mr. Hyde"
+S: +OK Folder renamed.
+C: RENAME "Saved Mail" "Tomorrow's To-Do List" "" "Saved Mail" "To-Do Today"
+S: +OK Folder renamed.
+</literallayout>
+</para>
+
+      <para>
+The <literal>RENAME</literal> command changes the name of an existing
+folder or folder directory.
+The command is followed by a whitespace-delimited word list
+that specifies an existing folder;
+then an empty word;
+then another whitespace-delimited word
+list which specifies a new name for the folder or folder directory.
+Both the old name, and the new name, must be complete folder name paths.</para>
+
+      <para>
+The first example above renames a folder named "Dr. Jekyll" to
+"Mr. Hyde".
+The second example renames a subfolder of "Saved Mail" named
+"Tomorrow's To-Do List" as "To-Do Today".
+Most SMAP servers can move a folder/subfolder to a different parent folder.
+This is done by specifying a different path for the new name.</para>
+
+      <para>
+Both folder and folder directories may be renamed.
+A renamed folder directory's subfolders "follow along" with their
+parent folder directory.</para>
+
+    </section>
+
+    <section>
+      <title>Listing folders</title>
+
+      <para>
+<literallayout>
+C: LIST
+S: * LIST INBOX "New Mail" FOLDER
+S: * LIST Drafts Drafts FOLDER
+S: * LIST "Saved Mail" "Saved Mail" DIRECTORY
+S: +OK Here are your folders
+C: LIST "Saved Mail"
+S: * LIST 2001 2001 DIRECTORY
+S: * LIST 2002 2002 DIRECTORY
+S: +OK Here are your folders
+C: LIST "Saved Mail" 2002
+S: * LIST February February FOLDER
+S: * LIST January January FOLDER
+S: +OK Here are your folders
+</literallayout>
+</para>
+
+      <para>
+The <literal>LIST</literal> command, without any arguments, returns
+a list of top level folders.
+A list of subfolders of an existing folder directories is returned by
+appending the folder name path to the LIST command.
+</para>
+
+      <para>
+The server responds with zero or more <quote>* LIST</quote>
+<link linkend="singleline">single line</link>
+replies, one reply for each folder or folder directory.
+The next word after <quote>* LIST</quote>
+is the name of the folder or folder directory.
+The following word (called "description") is usually the same as the
+name of the folder.
+Certain reserved folders may have a different description (see below).
+
+The remaining words contain keywords that describe the folder's attributes.
+The following attributes are defined at this time:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><literal>FOLDER</literal></term>
+	  <listitem>
+	    <para>
+This is a regular folder that contains messages.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>READONLY</literal></term>
+	  <listitem>
+	    <para>
+This is a read-only folder.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>DIRECTORY</literal></term>
+	  <listitem>
+	    <para>
+This is a folder directory that contains other folders.</para>
+	  </listitem>
+	</varlistentry>
+
+      </variablelist>
+
+      <para>
+Every <quote>* LIST</quote> reply includes
+either <literal>FOLDER</literal> or <literal>DIRECTORY</literal>.
+Both attributes indicate a hybrid folder -
+a folder that contains both messages and subfolders.</para>
+
+      <section>
+	<title>Reserved folders and descriptions</title>
+
+	<para>
+Some SMAP servers may not allow clients to create new top-level folders.
+Instead, they provide a fixed set of top-level folders and folder
+directories, such as
+"INBOX",
+"private",
+and "public".
+Clients can only create new subfolders of the reserved
+folder directories.
+Other servers may do both: provide a fixed set of reserved, top-level folders,
+and allow clients to create new top-level folders.</para>
+
+	<para>
+A reserved folder
+is generally a symbolic representation for a special folder, or a folder
+directory, with a pre-defined purpose.
+The most common example would be the mail folder where new mail arrives;
+it is typically called <quote>INBOX</quote>.
+Reserved folders usually have brief, curt names, such as <quote>INBOX</quote>,
+<quote>public</quote>, or <quote>private</quote>.
+An SMAP server can offer a more meaningful description
+using the description word in the
+<quote>* LIST</quote> reply; for example: <quote>New Mail</quote>,
+<quote>Public Folders</quote>, or <quote>My Folders</quote>.
+If the client selects a different natural language, at login time,
+the server can provide a description in the selected language, but
+still use the same actual folder name.</para>
+
+	<para>
+SMAP clients should always use the official folder name, when referencing
+the folder in any SMAP command, and display the folder's description
+to the user (recall that for regular folders they are one and the same).</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Getting folder status</title>
+
+      <para>
+<literallayout>
+C: STATUS FULL "Saved Mail"
+S: * STATUS EXISTS=17 UNSEEN=5
+S: +OK Status retrieved
+</literallayout>
+</para>
+      
+      <para>
+The <literal>STATUS</literal> command returns the status of a folder.
+The next word after <quote><literal>STATUS</literal></quote> is a
+comma-delimited list of the following keywords.
+The remaining whitespace-delimited words specify a folder whose requested
+status should be returned.</para>
+
+      <para>
+The first word following <quote><literal>STATUS</literal></quote> contains
+a comma-delimited keyword list.
+The following keywords are defined at this time.
+Additional keywords may be added in the future.
+SMAP server should ignore keywords they do not recognize.</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>FULL</term>
+	  <listitem>
+	    <para>
+Request the number of messages in the folder (sent as the
+<quote><literal>EXISTS</literal></quote> response), and the number of
+messages that do not have the <literal>SEEN</literal> flag set
+(the <quote><literal>UNSEEN</literal></quote> response).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>CHEAP</term>
+	  <listitem>
+	    <para>
+Same as <literal>FULL</literal> but return the message counts only if
+the server is capable of calculating the message counts cheaply and without
+delay.
+This keyword is mutually-exclusive with <literal>FULL</literal>.
+If the message counts cannot be calculated cheaply, the
+<quote><literal>* STATUS</literal></quote> response is not sent, but the
+server still responds with an <quote><literal>+OK</literal></quote>.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+The server's <quote><literal>* STATUS</literal></quote> reply gives the
+requested message counts.</para>
+
+    </section>
+
+      <section>
+	<title>Access Control Lists</title>
+
+	<para>
+Access Control Lists (or <quote>ACL</quote>s) may be optionally implemented
+by an SMAP server.
+ACLs are usually implemented by servers that support shared folder access,
+where accounts may mutually share access to their folders, and ACLs
+specify which accounts may access which folders.
+ACLs define certain level of granularity; for example an ACL may specify
+that a given account may read messages in the folder, but not delete them,
+or add messages to the folder.</para>
+
+	<para>
+An SMAP server which implements ACLs will include
+<quote><literal>ACL2=</literal><replaceable>method</replaceable></quote>
+in its capability list. <quote>Method</quote> is the server's
+method for computing ACLs (see below).</para>
+
+	<section>
+	  <title>Identifiers and rights</title>
+
+	  <para>
+Each folder maintains a separate access control list, which applies to
+that folder only.
+An access control list consists of zero or more records.
+Each record contains two data items: an identifier, and rights.
+<quote>Rights</quote> is a list of zero more characters, that enumerate
+which kinds of access rights are given to the entity specified by the
+<quote>identifier</quote>.
+An identifier may take the following values:</para>
+
+	  <variablelist>
+	    <varlistentry>
+	      <term><literal>anyone</literal></term>
+	      <listitem>
+		<para>
+The access rights apply to all server accounts.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><literal>anonymous</literal></term>
+	      <listitem>
+		<para>
+This is an alias for <quote>anonymous</quote>.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><literal>user=</literal><replaceable>id</replaceable></term>
+	      <listitem>
+		<para>
+The access rights apply to account named <quote>id</quote>.
+The account name is specified using the <literal>UTF-8</literal>
+character set.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><literal>group=</literal><replaceable>id</replaceable></term>
+	      <listitem>
+		<para>
+The access rights apply to a group of accounts named <quote>id</quote>.
+The group name is specified using the <literal>UTF-8</literal>
+character set.
+Account groups are site-specific lists, maintained in a site-defined
+manner.
+Each SMAP server implementation needs to specify separately the nature
+and the names of the available account groups (if they exist at all).</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+
+	  <para>
+Access rights are specified using a list of zero or more characters,
+as follows:</para>
+
+	  <variablelist>
+	    <varlistentry>
+	      <term><literal>a</literal></term>
+	      <listitem>
+		<para>
+Administer this folder.
+Maintain this folder's ACLs.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><literal>c</literal></term>
+	      <listitem>
+		<para>
+Create subfolders.</para>
+	      </listitem>
+	    </varlistentry>
+
+
+	    <varlistentry>
+	      <term><literal>e</literal></term>
+	      <listitem>
+		<para>
+Remove messages from this folder (the <literal>EXPUNGE</literal>
+and the <literal>MOVE</literal> commands).</para>
+	      </listitem>
+	    </varlistentry>
+
+
+	    <varlistentry>
+	      <term><literal>i</literal></term>
+	      <listitem>
+		<para>
+Insert messages into this folder (<literal>COPY</literal>
+or <literal>MOVE</literal> messages to this folder, and the
+<literal>ADD</literal> command).</para>
+	      </listitem>
+	    </varlistentry>
+
+
+	    <varlistentry>
+	      <term><literal>l</literal></term>
+	      <listitem>
+		<para>
+List this folder.
+This folder is visible, and is shown by the <literal>LIST</literal>
+command.</para>
+	      </listitem>
+	    </varlistentry>
+
+
+	    <varlistentry>
+	      <term><literal>r</literal></term>
+	      <listitem>
+		<para>
+Read, or open this folder (the <literal>OPEN</literal> or the
+<literal>SOPEN</literal> command).</para>
+	      </listitem>
+	    </varlistentry>
+
+
+	    <varlistentry>
+	      <term><literal>s</literal></term>
+	      <listitem>
+		<para>
+Add or remove the <literal>SEEN</literal> flag on messages.</para>
+	      </listitem>
+	    </varlistentry>
+
+
+	    <varlistentry>
+	      <term><literal>t</literal></term>
+	      <listitem>
+		<para>
+Add or remove the <literal>DELETED</literal> flag on messages.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><literal>w</literal></term>
+	      <listitem>
+		<para>
+Add or remove any message flag, except for <literal>SEEN</literal> and
+<literal>DELETED</literal>; add and remove keywords.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><literal>x</literal></term>
+	      <listitem>
+		<para>
+Delete this folder.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</section>
+
+	<section id="aclnegrights">
+	  <title>Negative rights</title>
+
+	  <para>
+An access control list entry may have
+an identifier that begins with a dash.
+This access control list entry
+specifies a <quote>negative right</quote>, which revokes, rather than adds,
+the corresponding rights from the identifier.
+For example, consider the the following access control list:</para>
+
+	  <informalexample>
+	    <programlisting>
+anyone      alr
+user=fred   -r
+</programlisting>
+	  </informalexample>
+
+	  <para>
+This ACL gives access, list, and read privileges to everyone, and revokes
+read privileges from the <literal>fred</literal> user.
+Presumably, everyone except fred can administer, list, and read the folder;
+while fred can only administer and read it.</para>
+	</section>
+
+	<section>
+	  <title>Computing access rights</title>
+
+	  <para>
+As hinted in the previous example, there may be more than one access
+control list entry that's applicable to a given user.
+The SMAP server needs to compute the actual access rights for a folder
+based on all applicable access control list entries.
+There are several approaches to do that.
+The SMAP server declares its chosen method of access rights computation
+using the <quote>ACL2</quote> capability.
+At this time, two access computation methods are defined:</para>
+
+	  <variablelist>
+	    <varlistentry>
+	      <term>ACL2=UNION</term>
+	      <listitem>
+		<para>
+Access rights from all
+applicable ACL entries are combined together,
+then, all negative rights from all applicable ACL entries are removed,
+giving the final result.
+This is the computation method used in the previous example.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term>ACL2=MOST-SPECIFIC</term>
+	      <listitem>
+		<para>
+Only access rights from the <quote>most specific</quote> ACL entries
+are factored in.
+That is, ACL entries referring specifically to the user
+(the <quote>user=</quote> ACL entries, and/or <quote>owner</quote>
+entries) are used, if present.
+Otherwise, any applicable <quote>group=</quote> entries are used, if present.
+Otherwise, <quote>anyone</quote> and <quote>anonymous</quote> entries are
+used by default.</para>
+
+		<para>
+Multiple applicable most-specific entries are combined in the same way
+as the <quote>union</quote> method.</para>
+
+		<para>
+Here's
+the equivalent <quote>most-specific</quote> version of the earlier
+example:</para>
+
+		<informalexample>
+		  <programlisting>
+anyone      alr
+user=fred   al
+</programlisting>
+		</informalexample>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</section>
+
+	<section>
+	  <title>Obtaining access rights</title>
+
+	  <para>
+<literallayout>
+C: ACL INBOX
+S: * ACL "aceilrstwx"
+S: +OK ACL retrieved
+</literallayout>
+</para>
+
+	  <para>
+The <literal>ACL</literal> command computes the requesting client's access
+rights on the indicated folder.
+
+The whitespace-delimited words after <quote><literal>ACL</literal></quote>
+specify the folder whose access rights are computed and returned.
+</para>
+	  <para>
+The server responds with a <quote>* ACL</quote> message, which contains a
+single word that lists the access rights on the given folder.</para>
+	</section>
+
+	<section>
+	  <title>Retrieving access control lists</title>
+
+	  <para>
+<literallayout>
+C: GETACL INBOX
+S: * GETACL "owner" "aceilrstwx" "user=fred" "ace"
+S: +OK ACLs retrieved
+</literallayout>
+</para>
+
+	  <para>
+The <literal>GETACL</literal> command returns the access control list for
+the indicated folder.
+The whitespace-delimited words after <quote><literal>GETACL</literal></quote>
+specify the folder whose access control list is requested.</para>
+
+	  <para>
+The server responds with a <quote>* GETACL</quote> message.
+The remaining whitespace-delimited words after
+<quote><literal>* GETACL</literal></quote> consist of a zero or more
+<replaceable>identifier</replaceable>/<replaceable>rights</replaceable>
+pairs.
+In each pair,
+<replaceable>identifier</replaceable> names the identity to which
+<replaceable>rights</replaceable> apply.</para>
+
+	<para>
+The server may respond with two or more <quote>* GETACL</quote> messages
+when the access control list is very large.</para>
+	</section>
+
+	<section>
+	  <title>Modifying access rights</title>
+
+	  <para>
+<literallayout>
+C: SETACL INBOX "" user=fred ace
+S: * GETACL "owner" "aceilrstwx" "user=fred" "ace"
+S: +OK Updated ACLs
+C: SETACL INBOX "" user=fred +rwx
+S: * GETACL "owner" "aceilrstwx" "user=fred" "acerwx"
+S: +OK Updated ACLs
+
+</literallayout>
+</para>
+
+	  <para>
+The <literal>SETACL</literal> command modifies rights for a single access
+control list identifier.
+The whitespace-delimited words after <quote><literal>SETACL</literal></quote>
+specify the folder whose access control list will be modified.
+The folder's name is followed by a single empty word, the identifier, then
+the requested access rights.</para>
+
+	  <para>
+The existing access rights assigned to the identifier are replaced by the
+new rights specified in the command.
+If the identifier does not exist in the access control list, it is added
+with the specified rights.</para>
+
+	  <para>
+If the access rights are prefixed by <quote>+</quote>, the specified rights
+are added to the existing rights, for this identifier.
+If the access rights are prefixed by <quote>-</quote>, the specified rights
+are removed from the existing rights, for this identifier.
+It is not an error to add an access right that already exists, or remove an
+access right that did not exist; in both cases the request is ignored
+(for that specific access right).</para>
+
+	  <para>
+<replaceable>identifier</replaceable>
+may specify a <link linkend="aclnegrights">negative right</link>.
+When the server uses <quote>ACL2=UNION</quote> computation method, setting
+an empty access right list for an identifier will remove the identifier from
+the access control list.</para>
+
+	  <para>
+The server responds with zero or more
+<quote><literal>* GETACL</literal></quote> messages, that return the updated
+access control list for this folder.</para>
+	</section>
+
+	<section>
+	  <title>Deleting access rights</title>
+
+	  <para>
+<literallayout>
+C: DELETEACL INBOX "" user=fred
+S: * GETACL "owner" "aceilrstwx"
+S: +OK Updated ACLs
+
+</literallayout>
+</para>
+
+	  <para>
+The <literal>DELETEACL</literal> command removes an identifier from the
+access control list.
+The identifier
+may be a <link linkend="aclnegrights">negative right</link>.
+The whitespace-delimited words after
+<quote><literal>DELETEACL</literal></quote>
+specify the folder whose access control list will be modified.
+The folder's name is followed by a single empty word, than
+the identifier to be removed.
+It is not an error to name an identifier that does not exist,
+the request is effectively ignored (but the server still responds
+with <quote><literal>* GETACL</literal></quote> messages).</para>
+
+	  <para>
+The server responds with zero or more
+<quote><literal>* GETACL</literal></quote> messages, that return the updated
+access control list for this folder.</para>
+	</section>
+
+
+      </section>
+  </section>
+
+  <section id="smapusingfolders">
+    <title>Using Folders</title>
+
+    <para>
+A folder must be opened before accessing its messages.
+Only one folder can be opened at a time.
+Opening a second folder automatically closes the first folder.
+When opening a folder,
+the SMAP server's response indicates how many messages there are in the
+folder.
+The messages are numbered consecutively, from 1 to the message count
+returned by the <literal>OPEN</literal> command.</para>
+
+    <para>
+New messages can be added to the folder while it is open.
+Other application can also remove or modify existing messages, while
+the folder is opened.
+There are two mechanisms by which the SMAP client is notified about these
+changes.</para>
+
+    <para>
+The SMAP client explicitly requests to be notified about any other changes
+by issuing either the <literal>NOOP</literal> or the
+<literal>EXPUNGE</literal> command.
+The server's response to the client includes notification of any messages
+that were added, modified, or removed from the server.</para>
+
+    <para>
+The <literal>NOOP</literal> and <literal>EXPUNGE</literal> commands work
+like all other commands: the server does the requested action, and
+replies accordingly.
+The second mechanism uses the <literal>IDLE</literal> command, which works
+a little differently.
+The server's initial reply includes any changes to the folder's contents,
+as with <literal>NOOP</literal> and <literal>EXPUNGE</literal>, but the
+story doesn't end there.
+The client's next command, after <literal>IDLE</literal>, must be the
+<literal>RESUME</literal> command.
+Until the server receives the <literal>RESUME</literal>,
+the server may immediately notify the client any time the folder's contents
+change.
+SMAP servers that are not capable of immediate notification of this type should
+periodically poll the folder for changes, until they get a
+<literal>RESUME</literal>.</para>
+
+    <para>
+When the client is waiting for user input it should issue the
+<literal>IDLE</literal> command, so that it knows about any
+changes to the folder made by other applications, and react immediately.
+The client issues a <literal>RESUME</literal> when it finally has something
+to do.  This can be a result of user input, or caused by a change to the
+folder's contents (when new mail arrives, for example, the client may want to
+automatically download its headers).</para>
+
+    <note>
+      <para>
+Messages in the folder are always consecutively numbered, starting with
+message #1.
+The messages are renumbered after removing a message; and new messages
+are added at the end.
+For example: a folder has five messages, numbered 1 through 5.
+The third message is removed, and messages #4 and #5 become messages #3 and
+#4, respectively.
+When two more messages are added to the folder, they become messages #5 and
+message #6.</para>
+    </note>
+
+    <note>
+      <para>
+The client may send the <quote>RESUME</quote> command at the same time the
+server is sending a message to the client concerning some changes to the
+folder that just occured.
+The SMAP client should always wait and process any
+remaining folder content notification
+changes, until it receives that status reply for <quote>RESUME</quote>.</para>
+    </note>
+
+    <section>
+      <title>Opening a folder</title>
+
+      <para>
+<literallayout>
+C: OPEN "Saved Mail" 2002
+S: * EXISTS 17
+S: +OK Folder opened
+</literallayout>
+</para>
+
+      <para>
+The <literal>OPEN</literal> command opens a folder.
+If another folder is already opened, the other folder is closed.
+The other folder is closed automatically, whether or not the
+<literal>OPEN</literal> command ultimately succeeds.</para>
+
+      <para>
+The whitespace-delimited words after <quote><literal>OPEN</literal></quote>
+specify the folder to open.
+If it's a valid folder, the server response includes a "* EXISTS"
+<link linkend="singleline">single line reply</link>.</para>
+
+      <para>
+SMAP servers are encouraged to offer concurrent access to the same folder
+to multiple application.
+SMAP servers that are unable to do so should reject the <literal>OPEN</literal>
+command if the folder is already opened by someone else.</para>
+
+      <para>
+<literallayout>
+C: SOPEN "28378jhaskdjk9@localhost" "Saved Mail" 2002
+S: * SNAPSHOTEXISTS "28378jhaskdjk9@localhost"
+S: * EXPUNGE 10-13
+S: * EXISTS 25
+S: +OK Folder opened
+</literallayout>
+</para>
+
+      <para>
+The <literal>SOPEN</literal> command enables folder snapshots, and opens a
+previously folder snapshot.
+A folder snapshot is a saved, or cached, copy of the folder's contents.
+Both the SMAP client and the SMAP server maintain synchronizes cached copies,
+or snapshots, of the folder's contents.
+This includes the list of messages in the folder, and the message state flags.
+Normally, after opening a folder the SMAP client needs to download the
+entire list of messages, and their states, from the server.
+Restoring a previously snapshot eliminates that step.</para>
+
+      <para>
+The first whitespace-delimited word after <literal>SOPEN</literal> is a
+snapshot identifier, as returned by a <quote>* SNAPSHOT</quote> message
+(see <link linkend="noop"><literal>NOOP</literal></link>).
+The remaining words specify the name of the folder, as in
+<literal>OPEN</literal>.</para>
+
+      <para>
+The server responds with a <quote>* SNAPSHOTEXISTS</quote> message, with a
+copy of the snapshot identifier, followed by zero or more
+<quote>* EXPUNGE</quote>, <quote>* FETCH <replaceable>msgnum</replaceable>
+FLAGS</quote>, and <quote>* EXISTS</quote> message that reflect any changes
+to the folder's contents that occured since the snapshot was made.
+When the final <literal>+OK</literal> is received, the folder's contents
+are brough up to date, and the SMAP client should issue a
+<literal>NOOP</literal> command to make an updated snapshot.</para>
+
+      <para>
+If the server is unable to find the requested snapshot, it should respond
+just like to the <literal>OPEN</literal> command, with a single
+<quote>* EXISTS</quote> message.
+If the client does not receive a <quote>* SNAPSHOTEXISTS</quote> message,
+the client will conclude that the requested snapshot is not available.
+This is not an error condition.
+The requested snapshot might be too old, and the server decided that it
+should be removed by now.</para>
+
+      <para>
+A client that wants to use snapshots, but does not have a saved snapshot,
+should use the <literal>SOPEN</literal> command with an empty string for a
+snapshot identifier.
+This is because the server would not normally make snapshots if the client
+used the <literal>OPEN</literal> command to open a folder.
+The server responds to an <literal>SOPEN</literal> with an empty identifier
+in the same way as to an <literal>OPEN</literal> command, but enable and make
+snapshots.</para>
+    </section>
+
+    <section>
+      <title>Closing a folder</title>
+
+      <para>
+<literallayout>
+C: CLOSE
+S: +OK Folder closed
+</literallayout>
+</para>
+
+      <para>
+The <literal>CLOSE</literal> command closes the currently-opened folder.
+This command should always succeed, and should ideally do nothing if no
+folder is currently open.</para>
+
+      <para>
+SMAP servers that do not support concurrent access to the same folder,
+by multiple applications, should release the folder so that other applications
+can open it.</para>
+    </section>
+
+    <section id="noop">
+      <title>The <literal>NOOP</literal> command</title>
+
+      <para>
+<literallayout>
+C: NOOP
+S: * EXPUNGE 10-13 17
+S: * FETCH 12 FLAGS=SEEN
+S: * EXISTS 32
+S: +OK Ok.
+C: NOOP
+S: * SNAPSHOT "89238yu90doi923@localhost"
+C: +OK Ok.
+</literallayout>
+</para>
+
+      <para>
+<literal>NOOP</literal> polls the server for any changes made to the folder's
+contents by other applications.
+The server's response includes 0 or more
+<link linkend="singleline">single line replies</link>
+before <literal>NOOP</literal>'s
+<link linkend="statusreply">status reply</link>.</para>
+
+      <para>
+The single line replies may be sent in any order, and
+the SMAP client should process each single line reply individually, based
+on its current understanding of the folder's contents, which is taken into
+account when processing the next single line reply.</para>
+
+      <para>
+The <quote><literal>* EXPUNGE</literal></quote>
+single line reply lists messages that have been removed from the folder.
+The remaining words enumerate the removed message numbers.
+<quote><replaceable>a</replaceable>-<replaceable>b</replaceable></quote>
+indicates messages #a through #b, inclusive, and the entire list must
+be sorted in strict numerically increasing order, with no overlaps.
+This message indicates that the specified messages have been removed, and
+the remaining messages were renumbered by shifting over to fill in the
+gaps.</para>
+
+      <note>
+	<para>
+Some time may elapse before a server receives a <literal>NOOP</literal>,
+after a message is removed by some other application.
+Since the client will not be aware of the removed message, the server must
+handle client commands as if the message was not yet removed.
+For example, after message #13 is removed, message #14 now becomes message #13.
+Until the server receives a <literal>NOOP</literal>, it should be aware that
+client's
+<literal>FETCH</literal>
+and
+<literal>STORE</literal>
+commands that reference message #14 really
+reference
+message #13.
+The server must process these
+commands accordingly, until
+the server receives a <literal>NOOP</literal>, and notifies
+the client.</para>
+      </note>
+
+      <note>
+	<para>
+Excessively long lists of expunged messages may result in multiple
+<literal>* EXPUNGE</literal> messages, instead of a single, huge
+<literal>* EXPUNGE</literal>.</para></note>
+
+      <para>
+The <literal>* EXISTS</literal> message indicates that new messages were
+added to the folder, and specifies the new number of messages now in the
+folder.</para>
+
+      <para>
+The <literal>* FETCH</literal> message indicates that an existing message
+attribute was changed.
+The next word specifies the number of the changed message, and the remaining
+word provide the new message attributes.
+See the <link linkend="attributes">description of the
+<literal>FETCH</literal> command</link> for
+more information.</para>
+
+      <para>
+The server creates snapshots of the folder's index
+when the folder was opened with the <literal>SOPEN</literal> command.
+If the <literal>NOOP</literal> command did not report any changes to the
+folder's contents, the server sends a <quote>* SNAPSHOT</quote>, followed
+by a single word that specifies the saved snapshot's identifier.
+The format of the snapshot's identifier is defined by the server, and the
+client should treat it as an opaque text string.</para>
+
+      <para>
+A client issues the <literal>NOOP</literal> command when it wants the server
+to save the folder's snapshot.
+If the server comes back with other messages that report changes to the folder,
+the client should issue another <literal>NOOP</literal>, and try again.</para>
+
+      <para>
+When the server finds no changes to the folder, and no changes at all since
+the previous <literal>NOOP</literal> that returned a snapshot, the server does
+not need to make a second, identical snapshot.
+A client may not receive any response to a <literal>NOOP</literal>; neither
+a list of folder's changes, nor a <quote>* SNAPSHOT</quote> message.
+This indicates that the folder's contents have not changed since the last
+snapshot.  The client should already know this; but if not, that's how the
+server will remind it.</para>
+
+      <note>
+	<para>
+The server is not required to keep saved snapshots indefinitely.
+A server does not need to save more than two snapshots per session.
+After making snapshots A and B, after processing a request to make a third
+snapshot, C, the server may delete snapshot A.</para>
+
+	<para>
+The server cannot delete snapshot B, because the client may crash or be
+disconnected before it receives the server's acknowledgement of creating
+snapshot C, and the next time the client reopens the same folder it will
+specify snapshot B to the <literal>SOPEN</literal> command.
+If a client opens a folder using <literal>SOPEN</literal>, but does not
+name either A or B, (or C), the server may conclude that another client
+is opening the same folder, and should not remove any of the saved snapshots,
+unless they are very old.</para>
+      </note>
+    </section>
+
+    <section>
+      <title>The <literal>EXPUNGE</literal> command</title>
+
+      <para>
+<literallayout>
+C: EXPUNGE 7
+S: * EXPUNGE 7 9 11
+S: +OK Ok.
+</literallayout>
+</para>
+
+      <para>
+The <literal>EXPUNGE</literal> command is similar <literal>NOOP</literal>,
+except that <literal>EXPUNGE</literal> also
+removes messages from the folder, and
+the server's response to <literal>EXPUNGE</literal> includes the removed
+messages.
+The response also includes any additional messages removed by other
+applications, and any other changes to the folder's contents.</para>
+
+      <para>
+Message numbers to remove should follow the <literal>EXPUNGE</literal>
+command, as whitespace-delimited words.
+An <literal>EXPUNGE</literal> without an explicit message list is the same
+as an <literal>EXPUNGE</literal> that lists all messages that have the
+<literal>DELETED</literal> flag set.</para>
+    </section>
+
+    <section>
+      <title>The <literal>IDLE</literal>/<literal>RESUME</literal> command</title>
+
+      <para>
+<literallayout>
+C: IDLE
+S: +OK Idling...
+
+<emphasis>[ ... some time passes ... ]</emphasis>
+
+S: * FETCH 15 FLAGS=SEEN,DELETED
+S: * EXPUNGE 4
+C: RESUME
+S: +OK Resumed...
+</literallayout>
+</para>
+
+      <para>
+The SMAP client sends the <literal>IDLE</literal> command to inform
+the server that client wants to know about any changes to the folder's
+contents immediately, without waiting for a <literal>NOOP</literal> or
+<literal>EXPUNGE</literal>.
+If the folder already had some changed made by another process,
+the server will notify the client immediately after the status reply.</para>
+
+      <para>
+The next command sent by the client (at some later time)
+must be the <literal>RESUME</literal>
+command.
+<literal>RESUME</literal> indicates that the client is no longer interested
+in receiving folder updates, and the server should wait until
+another
+<literal>NOOP</literal>,
+<literal>EXPUNGE</literal>, or
+<literal>IDLE</literal> before notifying the client about any changes
+to the folder's contents.</para>
+
+      <para>
+The client must be aware that the folder's contents might be changed
+after it sends a <literal>RESUME</literal> and before the server receives it.
+In this case
+the client might receive additional single line replies before the server
+responds to the <literal>RESUME</literal>.
+The client must still properly process single line replies, until
+it receives the server's status reply to the <literal>RESUME</literal>.</para>
+    </section>
+  </section>
+
+  <section id="attributes">
+    <title>Reading message attributes</title>
+
+    <para>
+<literallayout>
+C: FETCH 4 6-7 FLAGS SIZE
+S: * FETCH 4 FLAGS=SEEN,REPLIED SIZE=8341
+S: * FETCH 6 FLAGS= SIZE=13862
+S: * FETCH 7 FLAGS=SEEN SIZE=11802
+S: +OK Ok
+</literallayout>
+</para>
+
+    <para>
+<literal>FETCH</literal> is a versatile command that retrieves message contents
+or attributes.
+<literal>FETCH</literal> is followed by whitespace-delimited words that
+enumerate message numbers whose attributes or contents the server
+should retrieve.
+The list of message numbers if followed by the list of
+attributes (or specific message content) to retrieve.
+When requesting more than one attribute, and/or attributes from more than
+one message, the server's response may list the messages and attributes
+in any order.
+The server may also list all requested attributes for each message in one
+<literal>* FETCH</literal> reply, or use a separate
+<literal>* FETCH</literal> reply for each attribute.
+The following response is also a valid reply in the previous example:</para>
+
+    <para>
+<literallayout>
+C: FETCH 4 6-7 FLAGS SIZE
+S: * FETCH 7 SIZE=11802
+S: * FETCH 6 SIZE=13862
+S: * FETCH 4 SIZE=8341
+S: * FETCH 4 FLAGS=SEEN,REPLIED
+S: * FETCH 6 FLAGS=
+S: * FETCH 7 FLAGS=SEEN
+S: +OK Ok
+</literallayout>
+</para>
+
+    <para>
+The first word in each <literal>* FETCH</literal>
+<link linkend="singleline">single line reply</link>
+is the message number, the remaining whitespace-delimited words specify
+the requested attributes.
+Each requested attribute is returned as a single, whitespace-delimited
+word in the <literal>* FETCH</literal> reply.
+For future expansion, both servers and clients should ignore attributes
+they do not recognize.</para>
+
+    <para>
+The following attributes are defined at this time:</para>
+
+    <variablelist>
+      <varlistentry>
+        <term><literal>UID</literal></term>
+        <listitem>
+	  <para>
+Request the message's unique identifier.
+The server assigns a unique identifier word to each message in a folder.
+The client should not attempt to interpret the unique identifier in any way,
+and treat it as an opaque text string.
+The only known property of the unique identifier is that no two messages
+in the same folder will ever have the same unique identifier.
+Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 9-10 UID
+S: * FETCH 9 UID=1043320248/3456
+S: * FETCH 10 UID=1043320248/3461
+S: +OK FETCH completed
+</literallayout>
+</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><literal>FLAGS</literal></term>
+	<listitem>
+	  <para>
+Each message has one or more message state flags.
+The following flags are currently defined:</para>
+
+	  <variablelist>
+	    <varlistentry>
+	      <term><literal>DELETED</literal></term>
+	      <listitem>
+		<para>
+This message is marked for deletion.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><literal>REPLIED</literal></term>
+	      <listitem>
+		<para>
+This message has been replied to.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><literal>SEEN</literal></term>
+	      <listitem>
+		<para>
+The message's contents were previous read by <literal>FETCH CONTENTS</literal>
+at least once.
+The server automatically sets this flag after processing a
+<literal>FETCH CONTENTS</literal>
+command, but it can also be set or cleared manually
+by the <link linkend="store"><literal>STORE</literal> command</link>.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><literal>DRAFT</literal></term>
+	      <listitem>
+		<para>
+This is a draft message.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><literal>MARKED</literal></term>
+	      <listitem>
+		<para>
+This messge is <quote>marked</quote>.
+<quote>MARKED</quote> is a generic flag that applications may use for
+their own purposes.
+The <link linkend="search"><literal>SEARCH</literal> command</link>
+also uses this flag.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+
+	  <para>
+The server responds to a <literal>* FETCH</literal> by returning
+<quote>FLAGS=<replaceable>list</replaceable></quote>, where
+<replaceable>list</replaceable> is a comma-separated list of flags that are
+set for this message.
+A message without any flags set results in an empty
+<replaceable>list</replaceable>, or the absence of the 
+<quote>FLAGS=<replaceable>list</replaceable></quote> response
+altogether.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term><literal>KEYWORDS</literal></term>
+	  <listitem>
+	    <para>
+The <literal>KEYWORDS</literal> attribute is available when
+<literal>KEYWORDS</literal> is listed as an SMAP1 capability
+(see <quote><link linkend="conn">SMAP connection negotiation</link></quote>).
+Each message may have one or more arbitrary tags associated with it.
+The SMAP1 server associates no special meaning to any keyword, except to note
+that it's there.
+The SMAP1 client is free to name keywords in any useful manner.
+The name of each keyword may contain any UTF-8 character except for a comma,
+or a control character.</para>
+
+	    <note>
+	      <para>
+Certain punctuation characters should be avoided if interoperability with
+IMAP is desired.
+IMAP prohibits certain characters from appearing in keywords, namely:
+spaces, parenthesis, quotes, and the following characters:
+<keycap>{</keycap>,
+<keycap>%</keycap>,
+<keycap>*</keycap>,
+<keycap>\</keycap>,
+<keycap>]</keycap>.
+Do not use these characters if IMAP interoperability is desired.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+
+      <varlistentry>
+	<term><literal>SIZE</literal></term>
+	<listitem>
+	  <para>
+The server's <literal>* FETCH</literal> reply contains
+<quote>SIZE=<replaceable>bytecount</replaceable></quote>, where
+<replaceable>bytecount</replaceable> gives the estimated size of the
+message.
+This may not necessarily be an exact byte count.
+SMAP servers are permitted to provide a ballpark estimate of the message's
+size, if an exact byte count is unavailable.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>INTERNALDATE</literal></term>
+	<listitem>
+	  <para>
+The server's <literal>* FETCH</literal> reply contains
+<quote>INTERNALDATE=<replaceable>rfcdate</replaceable></quote>, where
+<replaceable>rfcdate</replaceable> gives the date and time the message
+was added to the folder.
+Note that this is not necessarily the contents of the message's
+<literal>Date:</literal> header.
+<replaceable>rfcdate</replaceable> uses the same
+<ulink url="http://www.rfc-editor.org/rfc/rfc2822.txt">RFC 2822</ulink>
+date/time format as the <literal>Date:</literal> header.
+Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 4 INTERNALDATE
+S: * FETCH 4 "INTERNALDATE=Tue, 21 Jan 2003 20:57:48 -0500"
+S: +OK Ok
+</literallayout>
+</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+
+  <section id="smapmessagecontents">
+    <title>Reading message contents</title>
+
+    <para>
+<literallayout>
+C: FETCH 1 CONTENTS=BODY
+S: {.7160} FETCH 1 CONTENTS
+S:
+S: Hello,
+S:
+S: There will be a meeting tomorrow.
+S:
+S:<emphasis>...</emphasis>
+S:
+S: .
+S: * FETCH 1 FLAGS=
+S: +OK Ok
+</literallayout>
+</para>
+
+    <para>
+There are additional
+<literal>FETCH</literal> keywords that instruct the server to retrieve
+the actual message contents.
+These keywords, described in the
+following sections, may be requested at the same time
+as the attribute keywords specified in the previous section.
+The server will respond with both single-line replies that contain the
+attributes, and multi-line replies that contain the requested message content.
+As always, the server may send the
+individual replies in any order.</para>
+
+    <para>
+The <literal>CONTENTS=</literal><replaceable>part</replaceable>
+keyword results in a
+<link linkend="singleline">multiple line</link> reply from the server,
+returning the requested content, specified by <replaceable>part</replaceable>.
+The server may use either multiple line format (dot-stuffed, or binary)
+at its discretion.
+The server may use either the <literal>LF</literal> or the
+<literal>CRLF</literal>
+sequence to terminate lines.
+The server automatically sets the <literal>SEEN</literal> flag on this
+message, which SHOULD generate an additional single line
+<literal>* FETCH</literal> reply from the server.</para>
+
+    <para>
+Using <literal>CONTENTS.PEEK</literal> instead of <literal>CONTENTS</literal>
+does not set the <literal>SEEN</literal> flag.
+The following documentation refers only to <literal>CONTENTS</literal>, but
+either one may be used; they are identical to each other in all ways except
+for the <literal>SEEN</literal> flag.</para>
+
+    <para><replaceable>part</replaceable> should be a keyword
+chosen from the following list:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><literal>HEADERS(</literal><replaceable>list</replaceable><literal>)</literal></term>
+	<listitem>
+	  <para>
+Returns only the header portion of the message.
+<replaceable>list</replaceable> is a comma-separated list of
+case-insensitive header names.
+The list may be empty, in which case all the headers
+are returned; otherwise only the specified headers are returned, if they
+are present.
+<replaceable>list</replaceable> may also contain the following keywords
+which are a shorthand representation for frequently requested headers:</para>
+
+	  <variablelist>
+	    <varlistentry>
+	      <term><literal>:ENVELOPE</literal></term>
+	      <listitem>
+		<para>
+This is the same as <quote>DATE,SUBJECT,FROM,SENDER,REPLY-TO,TO,CC,BCC,IN-REPLY-TO,MESSAGE-ID,REFERENCES</quote>.</para>
+
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><literal>:MIME</literal></term>
+	      <listitem>
+		<para>
+This is the same as <quote>:ENVELOPE</quote>, plus <quote>MIME-VERSION</quote>
+and all headers that start with <quote>CONTENT-</quote>.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+
+	  <para>
+In all cases, folded header lines are automatically unfolded by the server.
+All folding newline characters, and the leading whitespace on the continuation
+lines, are replaced by a single space character. Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 1 CONTENTS.PEEK=HEADERS(FROM,MIME-VERSION,CONTENT-TYPE)
+S: {.300} FETCH 1 HEADERS
+S: Mime-Version: 1.0
+S: Content-Type: text/plain; charset=iso-8859-1
+S: From: Tom Jones &lt;tjones@example.com&gt;
+S: .
+S: +OK Ok
+</literallayout>
+</para>
+
+	  <para>
+Another example:</para>
+
+<literallayout>
+C: FETCH 1 CONTENTS.PEEK=HEADERS(:ENVELOPE)
+S: {.300} FETCH 1 HEADERS
+S: From: Tom Jones &lt;tjones@example.com&gt;
+S: To: Bob Smith &lt;bsmith@example.com&gt;
+S: Subject: Meeting
+S: Message-ID: &lt;802374jekdj90@example.com&gt;
+S: Date: Mon, 21 Apr 2002 16:56:11 -0400
+S: .
+S: +OK Ok
+</literallayout>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>MIME(</literal><replaceable>list</replaceable><literal>)</literal></term>
+	<listitem>
+	  <para>
+Returns the header portion of all MIME sections in the message.
+<replaceable>list</replaceable> is a comma-separated list of
+case-insensitive header names, as in the <literal>HEADER</literal> keyword.
+Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 1 CONTENTS.PEEK=MIME(MIME-VERSION,CONTENT-TYPE,CONTENT-TRANSFER-ENCODING)
+S: {.80} FETCH 1 LINES=207 SIZE=3120 MIME.ID=
+S: Mime-Version: 1.0
+S: Content-Type: multipart/mixed; boundary="0123456789ABCDEF"
+S: .
+S: {.40} FETCH 1 LINES=185 SIZE=1012 MIME.ID=1 MIME.PARENT=
+S: Content-Type: multipart/alternative; boundary="ABCDEF0123456789"
+S: .
+S: {.80} FETCH 1 LINES=81 SIZE=208 "MIME.ID=1 1" MIME.PARENT=1
+S: Content-Type: text/plain; charset=iso-8859-1
+S: Content-Transfer-Encoding: quoted-printable
+S: .
+S: {.80} FETCH 1 LINES=42 SIZE=783 "MIME.ID=1 2" MIME.PARENT=1
+S: Content-Type: text/html; charset=iso-8859-1
+S: Content-Transfer-Encoding: quoted-printable
+S: .
+S: {.80} FETCH 1 LINES=50 SIZE=1257 MIME.ID=2 MIME.PARENT=
+S: Content-Type: image/gif
+S: Content-Transfer-Encoding: base64
+S: .
+S: {.80} FETCH 1 LINES=45 SIZE=907 MIME.ID=3 MIME.PARENT=
+S: Content-Type: message/rfc822
+S: .
+S: {.120} FETCH 1 LINES=27 SIZE=452 "MIME.ID=3 1" MIME.PARENT=3
+S: Mime-Version: 1.0
+S: Content-Type: text/plain; charset=iso-8859-1
+S: Content-Transfer-Encoding: 8bit
+S: .
+S: +OK Ok
+</literallayout>
+</para>
+
+	  <para>
+<ulink url="http://www.rfc-editor.org/rfc/rfc2045.txt">RFC 2045</ulink>,
+and related documents,
+specifies the format of MIME messages.
+A MIME message contains one or more individual or multipart
+MIME sections; a multipart MIME section
+itself contains inferior individual or multipart sections, forming a
+distinct hierarchy.
+Consult RFCs 2045 through 2049 for additional information.</para>
+
+	  <para>
+<literal>MIME(</literal><replaceable>list</replaceable><literal>)</literal>
+parses the MIME structure of a message, and recursively returns the requested
+headers from each MIME section in the message.
+The server returns a series of <link linkend="multiline">multi-line</link>
+replies, each reply carries headers from a single MIME section.
+The multi-line replies may be sent in any order, except that the headers
+for the topmost MIME section must always be sent first, and the headers from
+the other MIME sections may only be sent after the headers from their parent
+MIME section, and the headers from all of
+their preceding sibling MIME section
+(which is just a fancy way of saying that the server
+uses either the prefix or the infix traversal order).</para>
+
+	  <para>
+The server assigns a
+unique <quote>MIME section ID</quote> to each MIME section.
+The method the server uses to generate a MIME section ID is entirely up to
+the server, with one exception:
+the MIME section ID for the entire message must
+be an empty string.
+SMAP clients should treat MIME section ID as opaque text strings, and must
+not interpret them in any way (except for the blank mime ID referring to the
+entire message).
+</para>
+
+	  <para>
+<quote><literal>MIME.ID=</literal><replaceable>id</replaceable></quote>
+specifies the MIME section ID of the following headers.
+<quote><literal>MIME.PARENT=</literal><replaceable>id</replaceable></quote>
+specifies the MIME section ID of the parent MIME section (this attribute
+is not specified for the topmost MIME section, which has no parent).
+<quote><literal>MIME.PARENT=</literal><replaceable>id</replaceable></quote>
+is not returned for the first, topmost MIME section, and since its
+MIME section ID is always an empty string, its inferior MIME section
+will have <quote><literal>MIME.PARENT=</literal></quote>,
+the empty <replaceable>id</replaceable> referring to the topmost MIME
+section.</para>
+
+          <para>
+The SMAP client uses this information to reconstruct the structure of the
+MIME message.</para>
+
+	  <para>
+The above example shows a MIME <literal>multipart/mixed</literal> message
+with three sections.
+The first section is a MIME <literal>multipart/alternative</literal> with
+two subsections: <literal>text/plain</literal> and
+<literal>text/html</literal>.
+The second section is an <literal>image/gif</literal>, and the third section
+is a
+<literal>message/rfc822</literal>.</para>
+
+	  <para>
+<literal>message/rfc822</literal> MIME sections are parsed as
+multipart sections, with exactly one
+component section: the attached message.
+The above example shows that the attached message consists of a single
+<literal>text/plain</literal> section.</para>
+
+	  <note>
+	    <para>
+The <literal>MIME.ID</literal>, <literal>MIME.PARENT</literal>,
+<literal>SIZE</literal>
+and <literal>LINES</literal>
+values may occur in any order.
+<literal>SIZE</literal> gives an estimated size of the content portion
+of the MIME section, and
+<literal>LINES</literal>
+gives the approximate number of text lines in the content portion of the
+MIME section.
+These numbers are not to be taken as exact counts, but as ballpark
+estimates.</para></note>
+
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>HEADERS[</literal><replaceable>id</replaceable><literal>](</literal><replaceable>list</replaceable><literal>)</literal></term>
+	<listitem>
+	  <para>
+This is the same as
+<literal>HEADERS(</literal><replaceable>list</replaceable><literal>)</literal>,
+except that the server returns headers from the MIME section specified by
+<replaceable>id</replaceable>.  Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 1 "CONTENTS.PEEK=HEADERS[1 2](CONTENT-TYPE,CONTENT-TRANSFER-ENCODING)"
+S: {.80} FETCH 1 HEADERS
+S: Content-Type: text/html; charset=iso-8859-1
+S: Content-Transfer-Encoding: quoted-printable
+S: .
+S: +OK Ok
+</literallayout>
+</para>
+
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>BODY</literal></term>
+	<listitem>
+	  <para>
+Returns the only the body portion of the message.  Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 1 CONTENTS=BODY
+S: {.80} FETCH 1 BODY
+S: Mary had a little lamb, its fleece was white as snow,
+S: and everywhere Mary went, the lamb was sure to go.
+S: .
+S: +OK Ok
+</literallayout>
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>BODY[</literal><replaceable>id</replaceable><literal>]</literal></term>
+	<listitem>
+	  <para>
+Returns the only the body portion of the specified
+MIME section.  Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 1 "CONTENTS=BODY[1 1]"
+S: {.80} FETCH 1 BODY
+S: Itsy-bitsy spider went up the water spout,
+S: Down came the rain, and washed the spider out.
+S: .
+S: +OK Ok
+</literallayout>
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>ALL</literal></term>
+	<listitem>
+	  <para>
+Returns both the headers and the body portion of the message.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>ALL[</literal><replaceable>id</replaceable><literal>]</literal></term>
+	<listitem>
+	  <para>
+Returns the headers, a blank line, then the body portion of the specified
+MIME section.  Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 1 "CONTENTS=ALL[1 1]"
+S: {.120} FETCH 1 ALL
+S: Content-Type: text/plain; charset=iso-8859-1
+S: Content-Transfer-Encoding: 7bit
+S:
+S: Itsy-bitsy spider went up the water spout,
+S: Down came the rain, and washed the spider out.
+S: .
+S: +OK Ok
+</literallayout>
+</para>
+
+	  <note>
+	    <para>
+Unlike <literal>HEADERS</literal>, folded header lines are not unfolded
+by <literal>ALL</literal>.</para>
+	  </note>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>BODY.DECODED</literal></term>
+	<listitem>
+	  <para>
+Same as <literal>BODY</literal> except that the server automatically
+decodes the MIME-encoded section, and sends the raw decoded content as
+a binary, multi-line reply.  Example:</para>
+
+	  <para>
+<literallayout>
+C: FETCH 1 CONTENTS=BODY.DECODED
+S: {322/322} FETCH 1 BODY.DECODED
+S:
+S: <emphasis>[ 322 bytes, then a blank line, follows ]</emphasis>
+S: +OK Ok.
+</literallayout>
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>BODY.DECODED[</literal><replaceable>id</replaceable><literal>]</literal></term>
+	<listitem>
+	  <para>
+Return the decoded contents of the indicated MIME section.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+
+  <section id="store">
+    <title>Modifying message attributes</title>
+
+    <para>
+<literallayout>
+C: STORE 4 6-7 +FLAGS=DELETED
+S: * FETCH 4 FLAGS=SEEN,DELETED
+S: * FETCH 6 FLAGS=SEEN,DELETED
+S: * FETCH 7 FLAGS=SEEN,DELETED
+S: +OK STORE completed
+C: STORE 4 "INTERNALDATE=Mon, 20 Jan 2003 18:43:09 -0500"
+S: * FETCH 4 "INTERNALDATE=Mon, 20 Jan 2003 18:43:09 -0500"
+S: +OK STORE completed
+</literallayout>
+</para>
+
+    <para>
+The <literal>STORE</literal> command updates attributes of existing messages.
+A list of message numbers, as whitespace-delimited words, follows the
+<literal>STORE</literal>.
+<quote><replaceable>m</replaceable>-<replaceable>n</replaceable></quote>
+designates messages #m through #n, inclusively.</para>
+
+    <para>
+One or more words follow the message number list; they specify which
+attributes to set.
+Attribute settings are generally specified as
+<replaceable>name</replaceable>=<replaceable>value</replaceable>.
+As is with the <literal>FETCH</literal> command, servers should ignore
+attributes they do not recognize.
+The following attributes are defined at this time:</para>
+
+    <variablelist>
+
+      <varlistentry>
+	<term>FLAGS=<replaceable>list</replaceable></term>
+	<listitem>
+	  <para>
+Sets the messages flags precisely
+to <replaceable>list</replaceable>, which is a
+comma-separated list of message flags.
+See <quote><link linkend="attributes">Reading message attributes</link></quote>
+for a list of defined message flags.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>+FLAGS=<replaceable>list</replaceable></term>
+	<listitem>
+	  <para>
+Adds the flags in <replaceable>list</replaceable> to the messages' flags.
+Other flags, if they are set for a message, remain set.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-FLAGS=<replaceable>list</replaceable></term>
+	<listitem>
+	  <para>
+Remove the flags in <replaceable>list</replaceable> from the messages' flags.
+Other flags, if they are set for a message, remain set.</para>
+	</listitem>
+      </varlistentry>
+
+
+      <varlistentry>
+	<term>KEYWORDS=<replaceable>list</replaceable></term>
+	<listitem>
+	  <para>
+If the server's capability list includes
+<quote><literal>KEYWORD</literal></quote>,
+then set the keywords associated with the message
+to <replaceable>list</replaceable>, which is a
+comma-separated list of keywords.
+See <quote><link linkend="conn">SMAP connection negotiation</link></quote>
+for more information.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>+KEYWORDS=<replaceable>list</replaceable></term>
+	<listitem>
+	  <para>
+Adds keywords named in <replaceable>list</replaceable>, which is a
+comma-separated list of keywords, to the existing keywords already set
+for the message.
+Existing keywords remain unaffected.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-KEYWORDS=<replaceable>list</replaceable></term>
+	<listitem>
+	  <para>
+Removes keywords named in <replaceable>list</replaceable>, which is a
+comma-separated list of keywords, from the list of existing keywords
+associated with this message.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>INTERNALDATE=<replaceable>date</replaceable></term>
+	<listitem>
+	  <para>
+Set the <literal>INTERNALDATE</literal> timestamp on a message to
+<replaceable>date</replaceable>, which is an RFC-2822 formatted date/time
+value.
+See <quote><link linkend="attributes">Reading message attributes</link></quote>
+for more information on the <literal>INTERNALDATE</literal> attribute.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+The server's response includes
+<quote><literal>* FETCH</literal></quote> single line replies that
+give the updated attributes of all affected messages.
+This is specifically needed when updating message flags, and is optional
+when updating <literal>INTERNALDATE</literal>s (there's not much point in
+echoing back the same timestamp).</para>
+  </section>
+
+  <section id="smapconcurrency">
+    <title>More comments on concurrency</title>
+
+    <para>
+As mentioned earlier, it is possible for a client to request attributes
+or contents of messages that are no longer available.
+Another application might have removed the message from the folder,
+and the SMAP client has not polled the server for changes to the folder's
+contents.</para>
+
+    <para>
+With one exception, the server should ignore requests for attributes or
+content of messages that are no longer available.
+When the client requests attributes or content of multiple messages, the
+unavailable messages should simply be omitted from the server's single
+or multi-line replies.  When the client requests a single message, which
+is no longer available, the server may reply with either an explicit
+error message, or just a good status line reply, but without any single
+or multi-line replies containing the requested data.</para>
+
+    <para>
+Another acceptable response in this situation is for the server to return
+default data.
+The server can synthesize a short, generic message whose sole contents
+is the text "This message is no longer available.", and respond to queries
+as if this message has been put in place of the requested message.</para>
+
+    <note>
+      <para>
+Here's the exception.
+The server should always remember the unique identifiers of messages.
+The server should always respond to
+requests for <literal>UID</literal>s, even if the message is no longer
+available.
+No two messages in a folder will ever have the same
+<literal>UID</literal>, so memorizing them should not be too difficult.</para>
+    </note>
+  </section>
+
+  <section id="add">
+    <title>Adding messages to folders</title>
+    <para>
+<literallayout>
+C: ADD FOLDER Folders "Sent Mail" ""
+S: +OK Ok
+C: ADD RCPTTO=tom@example.com RCPTTO=alice@example.com
+S: +OK Ok
+C: ADD MAILFROM=john@example.com FLAGS=SEEN,DRAFT
+S: +OK Ok
+C: ADD {.7618}
+S: &gt; Proceed, please.
+C: From: &lt;john@example.com&gt;
+C: To: distribution-list: ;
+C: Subject: Meeting
+C:
+C: <emphasis>[ ... ]</emphasis>
+C: .
+S: * ADD UID=1043320248/3479
+S: +OK Message added
+</literallayout>
+</para>
+
+    <para>
+The <literal>ADD</literal> command uploads a message from the client to the
+server to a folder, and/or sends the message to its designated
+recipients.
+In most cases the client sends several <literal>ADD</literal> commands
+that specify the attributes, and/or the properties of a given message.
+The client may send everything in a single <literal>ADD</literal> command
+provided that it is not large enough to exceed the maximum line length
+limitation, but most clients will find it easier just to use multiple
+commands.
+Other SMAP commands cannot be intermixed with a batch
+of <literal>ADD</literal> commands.
+Upon receiving another command, the server quietly aborts the upload process
+before handling the command, and the client will have to start over at
+some later point in time.
+A single rejected <literal>ADD</literal> does not abort the upload, the
+client can retry or explicitly issue some other command (such as
+the <link linkend="rset"><literal>RSET</literal></link> command)
+to abort it.</para>
+
+    <para>
+The following attributes and/or keywords follow the <literal>ADD</literal>
+command:</para>
+
+    <variablelist>
+
+      <varlistentry>
+	<term>FOLDER <replaceable>name</replaceable> ""</term>
+
+	<listitem>
+	  <para>
+This keyword specifies the folder where the message is added to.
+A maximum of one <literal>FOLDER</literal> may be specified.
+Whitespace-delimited words that name an existing folder follow the
+<literal>FOLDER</literal> keyword, followed by a single empty word.
+At least one <literal>RCPTTO</literal> keyword is required if
+<literal>FOLDER</literal> is not specified, in which case the message
+is only mailed to the designated recipients without saving a copy in
+any folder.
+Both <literal>FOLDER</literal> and <literal>RCPTTO</literal> keywords
+may be specified; the message is both saved in the folder, and sent to
+its designated recipients.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>RCPTTO=<replaceable>user</replaceable>@<replaceable>host</replaceable></term>
+
+	<listitem>
+	  <para>
+Specifies the message's recipient.
+If this keyword is present, the message will be mailed to the specified
+address.
+Multiple occurences of
+<literal>RCPTTO</literal> specify multiple recipients.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>MAILFROM=<replaceable>user</replaceable>@<replaceable>host</replaceable></term>
+
+	<listitem>
+	  <para>
+Specifies the message's return address.
+This is optional, if not specified, the server uses whatever it thinks
+the return address is.
+Clients should not rely on this, because the mechanism by which the server
+makes this determination is not specified, and will vary from server to
+server.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>NOTIFY=<replaceable>list</replaceable></term>
+
+	<listitem>
+	  <para>
+Sets delivery status notification options for the sent message, as
+described by
+<ulink url="http://www.rfc-editor.org/rfc/rfc1891.txt">RFC 1891</ulink>.
+This is an optional keyword that may not be implemented by all servers.
+Servers that do not implement delivery status notifications should reject
+this keyword.</para>
+
+	  <para>
+<replaceable>list</replaceable> is a comma-separated list of the usual
+delivery confirmation requests, such as
+<quote><literal>SUCCESS,FAIL</literal></quote>.
+The default set of delivery status notifications (when this keyword is
+not specified) is implementation-defined.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>FLAGS, KEYWORDS, INTERNALDATE</term>
+
+	<listitem>
+	  <para>
+The <literal>FLAGS</literal>,
+<literal>KEYWORDS</literal>, and <literal>INTERNALDATE</literal> set
+their corresponding attributes, when the message is to be saved in a folder.
+See <quote><link linkend="attributes">Reading message attributes</link></quote>
+for more information.
+These keywords are optional, and the server will use implementation-defined
+defaults if they are not specified.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>{.<replaceable>nnnn</replaceable>} or {<replaceable>xxxx</replaceable>/<replaceable>yyyy</replaceable>}</term>
+
+	<listitem>
+	  <para>
+This keyword must appear in the last <literal>ADD</literal> command
+(when the client uses multiple <literal>ADD</literal> commands to list all
+attributes and properties).
+It indicates that the client is ready to upload the contents of the message
+to the server.
+The client uses the same multi-line or binary format that's used for
+downloading message contents from the server, with one difference.
+The client does not proceed with sending the actual message immediately.
+The client must wait for the server's reply.
+The server replies with a single line of text whose first whitespace-delimited
+word is a single <literal>&gt;</literal> character.
+Note that the server may reject the command
+(and the client will receive an <literal>-ERR</literal>),
+otherwise, upon receiving the <quote><literal>&gt;</literal></quote>
+the client
+should then proceed to send the contents of the message, in accordance with
+the selected transmission format, then wait for the server's final
+reply.</para>
+
+	  <para>
+The server's final response may include an optional <literal>* ADD</literal>
+single line reply.  A list of whitespace-delimited keywords follow.
+At this time, only the following keyword is defined by this
+specification:</para>
+
+	  <variablelist>
+
+	    <varlistentry>
+	      <term>UID=<replaceable>uid</replaceable></term>
+
+	      <listitem>
+		<para>
+Specifies the message's unique identifier, if the message is succesfully
+saved in a folder.</para>
+
+		<note>
+		  <para>
+This keyword is not sent when the message is only mailed, without saving
+a copy in a folder.
+Furthermore,
+the <literal>ADD</literal> command is not limited to saving the message
+in the currenly open folder.
+The message may be saved in any folder.
+But if it is, the message will not be immediately accessible.
+The clients needs to issue a <literal>NOOP</literal>.
+Presumably the server will indicate that new messages were added to the
+folder, and additional <literal>FETCH</literal> commands will reveal that
+one of the messages has the same unique identifier that was specified
+in this reply.</para>
+
+		  <para>
+Of course, it is always possible that someone else deleted the new message
+before this client had a chance to issue a <literal>NOOP</literal>, so
+the new message is still not guaranteed to be there.
+Such is life in a multiprocessing environment, I suppose...</para>
+		</note>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <section id="rset">
+      <title>The <literal>RSET</literal> command</title>
+
+      <para>
+<literallayout>
+C: RSET
+S: +OK RSET completed
+</literallayout>
+</para>
+
+      <para>
+This command does absolutely nothing.
+Its main purpose is the side effect of aborting the current upload of a
+new message via the <link linkend="add"><literal>ADD</literal></link>
+command.</para>
+    </section>
+  </section>
+
+  <section id="smapcopymovemessages">
+    <title>Copying and moving messages</title>
+
+    <para>
+<literallayout>
+C: COPY 3-5 8 "" Folders "Sent Mail"
+S: * COPY 3 NEWUID=1043320248/3601
+S: * COPY 4 NEWUID=1043320248/3602
+S: * COPY 5 NEWUID=1043320248/3603
+S: * COPY 8 NEWUID=1043320248/3604
+S: +OK Messages copied
+</literallayout>
+</para>
+
+    <para>
+The <literal>COPY</literal> command copies messages from the currently
+open folder to another folder.
+<literal>COPY</literal> is followed by whitespace-delimited words that
+enumerate messages to be copied, an empty word, then whitespace-delimited
+words that name the folder the messages are copied to.</para>
+
+    <para>
+<quote><replaceable>m</replaceable>-<replaceable>n</replaceable></quote>
+can be a shortcut designation for messages #m through #n, inclusive.
+The message number list must be in a numerically-increasing order, with
+no overlaps.</para>
+
+    <para>
+The server responds with one ore more <literal>* COPY</literal> single line
+replies, one reply for each copied message.
+The next word contains the message number of the copied message, followed
+by a list of attributes.  At present time only one attribute is defined:
+<quote><literal>UID=</literal><literal>id</literal></quote> gives the
+assigned unique id of the saved message in the destination folder.</para>
+
+    <para>
+<literallayout>
+C: MOVE 3-5 8 "" Folders "Sent Mail"
+S: * COPY 3 NEWUID=1043320248/3601
+S: * COPY 4 NEWUID=1043320248/3602
+S: * COPY 5 NEWUID=1043320248/3603
+S: * COPY 8 NEWUID=1043320248/3604
+S: * EXPUNGE 3-5 8
+S: +OK Messages copied
+</literallayout>
+</para>
+
+    <para>
+The <literal>MOVE</literal> command is like <literal>COPY</literal> except
+that the messages are moved to the folder, instead of copied.
+Or, to put it another way, the messages are automatically removed from the
+current folder after they are copied.</para>
+
+    <para>
+The server also responds with <quote><literal>* COPY</literal></quote>
+that indicates messages that were copied to the destination folder; the
+subsequent <quote><literal>* EXPUNGE</literal></quote> messages indicate
+the messages were removed from the original folder.</para>
+
+    <note>
+      <para>
+The server's response to <literal>COPY</literal> or <literal>MOVE</literal>
+may include additional
+<quote><literal>* EXPUNGE</literal></quote>,
+<quote><literal>* EXISTS</literal></quote>,
+and <quote><literal>* FETCH</literal></quote> messages reflecting changes
+to the folder's contents by other applications that have the same folder
+opened.</para>
+
+      <para>
+Servers may, but are not required to, notify of other changes to the
+folder's contents as part of the response to <literal>COPY</literal> and
+<literal>MOVE</literal>.</para>
+    </note>
+
+    <note>
+      <para>
+Servers have several choices for handling requests to copy a message that
+were removed by another application.
+A server may handle this situation by doing any one of the following:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+Respond with an <quote><literal>-ERR</literal></quote> and do nothing.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Copy some or all remaining messages, then report an
+<quote><literal>-ERR</literal></quote>.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Copy all remaining messages, as if the nonexistent messages were not
+specified at all by the client's
+<literal>MOVE</literal> or
+<literal>COPY</literal>.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>
+In all cases the server's response must reflect which messages, if any,
+were actually copied.
+It is the user's responsibility to avoid running multiple applications that
+issue conflicting SMAP requests.</para>
+    </note>
+  </section>
+  <section id="search">
+    <title>Searching messages</title>
+
+    <para>
+<literallayout>
+C: SEARCH MARKED NOT TO "nobody@example.com"
+S: * SEARCH 1 3-5 7
+S: +OK Messages searched
+C: SEARCH 1-5,15-20 LARGER 10000
+S: * SEARCH 1 3-5 17
+S: +OK Messages searched
+</literallayout>
+</para>
+
+    <para>
+The <literal>SEARCH</literal> command instructs the server to search messages
+in the currently open folder.
+The next whitespace delimited word specifies the set of messages to search.
+The remaining words specify the search criteria.
+The set of messages to search is specified in one of four ways:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>MARKED</term>
+	  <listitem>
+	    <para>
+Search only the messages that have the <literal>MARKED</literal> flag already
+set.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>UNMARKED</term>
+	  <listitem>
+	    <para>
+Search only the messages that do not have the <literal>MARKED</literal> flag
+set.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>ALL</term>
+	  <listitem>
+	    <para>
+Search all messages.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><replaceable>range</replaceable></term>
+	  <listitem>
+	    <para>
+<replaceable>range</replaceable> is a comma-separated range of message
+numbers to search.
+Consecutive message numbers may be given as
+<replaceable>A</replaceable>-<replaceable>B</replaceable>, indicating
+messages A through B, inclusive.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    <para>
+Each <literal>SEARCH</literal> command specifies a single search criteria.
+Simple criterias are combined to form more complicated searches by using
+a series of <literal>SEARCH</literal> and <literal>STORE</literal> commands.
+First, all messages have their <literal>MARKED</literal> flag cleared.
+The list of messages found by the first <literal>SEARCH MARKED</literal>
+command is fed into the <literal>STORE</literal> command, setting their
+marked flags.
+Then additional searches are performed, using <literal>SEARCH MARKED</literal>
+or <literal>SEARCH UNMARKED</literal>, with or without the
+<literal>NOT</literal> keyword, forming a complex query.</para>
+
+    <para>
+The <literal>NOT</literal> keyword optional follows, and indicates that the
+following search criteria specification should be logically inverted.
+For example, if the search is for messages with the subject line containing
+<quote>foo</quote>, the search will not be for messages whose subject line does
+not contain <quote>foo</quote>.</para>
+
+    <para>
+The available search criteria are:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>REPLIED</term>
+	<listitem>
+	  <para>
+Search for messages that have the <literal>REPLIED</literal> flag set.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>DELETED</term>
+	<listitem>
+	  <para>
+Search for messages that have the <literal>DELETED</literal> flag set.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>DRAFT</term>
+	<listitem>
+	  <para>
+Search for messages that have the <literal>DRAFT</literal> flag set.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SEEN</term>
+	<listitem>
+	  <para>
+Search for messages that have the <literal>SEEN</literal> flag set.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>FROM <replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their <quote><literal>From:</literal></quote> header.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>TO <replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their <quote><literal>To:</literal></quote> header.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>CC <replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their <quote><literal>Cc:</literal></quote> header.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>BCC <replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their <quote><literal>Bcc:</literal></quote> header.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SUBJECT <replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their <quote><literal>Subject:</literal></quote> header.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>HEADER <replaceable>header</replaceable>
+<replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their <quote><replaceable>header</replaceable></quote> (without the
+colon) header.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>BODY <replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their content.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>TEXT <replaceable>string</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages that have <replaceable>string</replaceable>
+in their content or headers.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>BEFORE <replaceable>mm-ddd-yyyy</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose <literal>INTERNALDATE</literal>
+is earlier than <replaceable>mm-ddd-yyyy</replaceable>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>ON <replaceable>mm-ddd-yyyy</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose <literal>INTERNALDATE</literal>
+is <replaceable>mm-ddd-yyyy</replaceable>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SINCE <replaceable>mm-ddd-yyyy</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose <literal>INTERNALDATE</literal>
+is on or after <replaceable>mm-ddd-yyyy</replaceable>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SENTBEFORE <replaceable>mm-ddd-yyyy</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose <literal>Date:</literal> header
+is prior to <replaceable>mm-ddd-yyyy</replaceable>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SENTON <replaceable>mm-ddd-yyyy</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose <literal>Date:</literal>
+header reads <replaceable>mm-ddd-yyyy</replaceable>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SENTSINCE <replaceable>mm-ddd-yyyy</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose <literal>Date:</literal> header
+reads on or after <replaceable>mm-ddd-yyyy</replaceable>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>LARGER <replaceable>n</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose estimated size is more than
+<replaceable>n</replaceable> bytes.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SMALLER <replaceable>n</replaceable></term>
+	<listitem>
+	  <para>
+Search for messages whose estimated size is less than
+<replaceable>n</replaceable> bytes.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <note>
+      <para>
+All text strings above use the UTF-8 character set.
+For header or content searches, the search string must be converted to the
+header's (MIME-encoded) or content's character set.  Searching should be
+case insensitive.</para>
+
+      <para>
+Date-based searches specify months by their short English names.</para>
+    </note>
+
+    <para>
+The server's <literal>* SEARCH</literal> reply enumerates messages found
+by the search.
+For extremely large folders, the server may send multiple
+<literal>* SEARCH</literal> replies in order to keep line lengths under the
+maximum.
+No
+<literal>* SEARCH</literal> replies are sent when no messages are found
+by the search criteria.</para>
+  </section>
+
+  <section id="smaplogout">
+    <title>Logging off</title>
+
+    <para>
+<literallayout>
+C: LOGOUT
+S: * BYE Goodbye
+</literallayout>
+</para>
+
+    <para>
+The SMAP client disconnects from the server by sending the
+<literal>LOGOUT</literal> command.
+The server terminates the connection after sending the
+<literal>* BYE</literal> reply.
+The server should also try to send the <literal>* BYE</literal> command
+at any time the connection to the client needs to be terminated due to some
+unexpected reason.  The client always be prepared to handle
+<literal>* BYE</literal>.</para>
+  </section>
+</appendix>

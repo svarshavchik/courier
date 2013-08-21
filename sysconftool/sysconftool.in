@@ -1,0 +1,375 @@
+#!@PERL@
+# Copyright 2000 Double Precision, Inc.  See COPYING for
+# distribution information.
+ 
+use IO::File;
+use Getopt::Long;
+
+my $exitcode=0;
+
+my $ver;
+my $noclobber;
+my $force;
+my $require;
+
+my $myversion="@VERSION@";
+
+exit 1 unless GetOptions("v" => \$ver, "n" => \$noclobber,
+			 "f" => \$force, "r=s" => \$require);
+
+print "$myversion\n" if $ver;
+
+die "$0: Version not supported.\n"
+    if $require && versioncmp($myversion, $require) < 0;
+
+while ($#ARGV >= 0)
+{
+    my $filename=shift @ARGV;
+
+    $filename =~ s/\.dist$//;
+
+    my $rc;
+
+    eval {
+	$rc=sysconftool($filename, $noclobber, $force);
+    } ;
+
+    if ($@)
+    {
+	$rc=9;
+
+	$@ .= "\n" unless $@ =~ /\n/s;
+	print "$@";
+    }
+
+    $exitcode=$rc if $rc > $exitcode;
+}
+
+exit ($exitcode);
+
+sub sysconftool {
+    my $filename=shift;
+    my $noclobber=shift;
+    my $force=shift;
+
+    my $distfile=new IO::File;
+
+    die "$filename.dist: $!\n" if ! $distfile->open("< $filename.dist");
+
+    my ($distheader, $distver);
+
+    ($distheader, $distver)= sysconftool_readver($distfile);
+
+    die "$filename.dist: configuration header not found.\n" unless $distver;
+
+    my $oldfile=new IO::File;
+
+    if ( ! $oldfile->open($filename))
+    {
+	$oldfile=undef;
+    }
+    else
+    {
+	my ($dummy, $configver);
+
+	($dummy, $configver)= sysconftool_readver($oldfile);
+
+	if (! defined $dummy)
+	{
+	    $oldfile=undef; # Legacy config file
+	}
+	elsif ($configver eq $distver)
+	{
+	    return 0 unless $force;
+	}
+    }
+
+    my %old_settings;
+    my %old_version;
+
+    # If there's an old file, read old settings.
+
+    if (defined $oldfile)
+    {
+	my $configname="";
+	my $configversion="";
+	my $line;
+	my $resetflag=0;
+
+	while (defined ($line=<$oldfile>))
+	{
+	    if ($line =~ /^\#/)
+	    {
+		$configname=$configversion="" if $resetflag;
+		$resetflag=0;
+
+		if ($line =~ /^\#\#NAME:(.*):(.*)/)
+		{
+		    ($configname, $configversion)=($1, $2);
+		    
+		    $configname =~ s/[ \t]//g;
+		    $configversion =~ s/[ \t]//g;
+
+		    $old_version{$configname}=$configversion;
+		}
+	    }
+	    else
+	    {
+		$resetflag=1;
+		$old_settings{$configname} .= $line
+		    if $configname;
+	    }
+	}
+	$oldfile=undef;
+    }
+
+    my $newfile=new IO::File;
+
+    die "$filename.new: $!\n"
+	if ! $newfile->open($noclobber ? ">/dev/null":">$filename.new");
+
+    eval {
+	{
+	    my $f=$filename;
+
+	    $f =~ s:^.*/([^/]*)$:$1:;
+
+	    print $f . ":\n";
+	}
+
+	# Try to carry over ownership and perms
+
+	my @inode=stat($distfile);
+
+	die $! unless $#inode > 0;
+
+	if (! $noclobber)
+	{
+	    chown $inode[4], $inode[5], "$filename.new";
+	    chmod $inode[2], "$filename.new";
+	}
+
+	(print $newfile $distheader) || die $!;
+
+	sysconftool_writeout($newfile, $distfile, \%old_settings,
+			     \%old_version, "$filename.dist");
+    } ;
+
+    if ($@)
+    {
+	$newfile=undef;
+	unlink "$filename.new";
+	die "$filename.new: $@";
+    }
+
+    $newfile=undef;
+
+    rename "$filename", "$filename.bak" unless $noclobber;
+    rename "$filename.new", "$filename" unless $noclobber;
+    return 0;
+}
+
+# Read the version header from the file.
+
+sub sysconftool_readver {
+    my $fh=shift;
+
+    my $header;
+    my $cnt;
+
+    for (;;)
+    {
+	my $line=<$fh>;
+
+	last if ! defined $line || ++$cnt > 20;
+
+	$header .= $line;
+
+	return ($header, $line) if $line =~ /^\#\#VERSION:/;
+    }
+
+    return undef;
+}
+
+#
+# Read the dist file, write out the config file, and try to piece it back
+# from the old config file.
+
+sub sysconftool_writeout {
+    my $newfile=shift;
+    my $oldfile=shift;
+    my $old_settings=shift;
+    my $old_version=shift;
+    my $filename=shift;
+
+    my $line;
+
+    my $prefix_comment=0;
+    my $old_setting="";
+
+    my $last_setting=undef;
+    my $prev_setting=undef;
+
+    while (defined($line=<$oldfile>))
+    {
+	if (! ($line =~ /^\#/))
+	{
+	    if ($prev_setting)
+	    {
+		# Before the first line of a new configuration setting
+		# print the obsoleted config setting (commented out).
+
+		(print $newfile $prev_setting) || die $!;
+		$prev_setting=undef;
+	    }
+	    if ($prefix_comment > 0)
+	    {
+		# Keeping old config setting, comment out the new dist
+		# setting.
+
+		if ($prefix_comment < 2)
+		{
+		    $prefix_comment=2;
+		    (print $newfile "#\n# DEFAULT SETTING from $filename:\n") || die $!;
+		}
+		$line = "#$line";
+	    }
+	}
+	elsif ($line =~ /^\#\#NAME:(.*):(.*)/)
+	{
+	    ($configname, $configversion)=($1, $2);
+
+	    $configname =~ s/[ \t]//g;
+	    $configversion =~ s/[ \t]//g;
+
+	    $prefix_comment=0;
+
+	    if (defined $last_setting)
+	    {
+		# Write out old config setting before we go to the next
+		# setting in the dist file.
+
+		(print $newfile $last_setting) || die $!;
+		$last_setting=undef;
+	    }
+
+	    if ( defined $$old_settings{$configname})
+	    {
+		if ($$old_version{$configname} eq $configversion)
+		{
+		    # Setting didn't change in the dist file, keep
+		    # current settings.
+
+		    print "  $configname: unchanged\n";
+		    $prefix_comment=1;
+		    $last_setting=$$old_settings{$configname};
+		}
+		else
+		{
+		    # Must install updated setting.  Carefully comment
+		    # out the current setting.
+
+		    print "  $configname: UPDATED\n";
+
+		    my @lines=
+			split (/\n/s,"$$old_settings{$configname}\n");
+
+		    push @lines, "" if $#lines < 0;
+
+		    grep (s/^/\# /, @lines);
+
+		    $prev_setting= "#\n# Previous setting (inserted by sysconftool):\n#\n" .
+			join("\n", @lines) . "\n#\n";
+		}
+	    }
+	    else
+	    {
+		print "  $configname: new\n";
+	    }
+	}
+
+	(print $newfile $line) || die $!;
+    }
+
+    # Write out any pending settings.
+
+    if (defined $last_setting)
+    {
+	(print $newfile $last_setting) || die $!;
+	$last_setting=undef;
+    }
+
+    if ($prev_setting)
+    {
+	(print $newfile $prev_setting) || die $!;
+    }
+}
+
+#######
+
+# Not everyone has Sort::Version, so we roll our own here.  It's not that bad.
+
+sub versioncmp {
+    my @a=split (/\./, shift);
+    my @b=split (/\./, shift);
+
+    for (;;)
+    {
+	my $a=shift @a;
+	my $b=shift @b;
+
+	last if (! defined $a) && (! defined $b);
+
+	return -1 if ! defined $a;
+	return 1 if ! defined $b;
+
+	my @ap=versionsplitclass($a);
+	my @bp=versionsplitclass($b);
+
+	for (;;)
+	{
+	    my $a=shift @ap;
+	    my $b=shift @bp;
+
+	    last if (! defined $a) && (! defined $b);
+
+	    return -1 if ! defined $a;
+	    return 1 if ! defined $b;
+
+	    my $n;
+
+	    if ( $a =~ /[0-9]/)
+	    {
+		$n= $a <=> $b;
+	    }
+	    else
+	    {
+		$n= $a cmp $b;
+	    }
+
+	    return $n if $n;
+	}
+    }
+    return 0;
+}
+
+sub versionsplitclass {
+    my $v=shift;
+    my @a;
+
+    while ( $v ne "")
+    {
+	if ($v =~ /^([0-9]+)(.*)/)
+	{
+	    push @a, $1;
+	    $v=$2;
+	}
+	else
+	{
+	    die unless $v =~ /^([^0-9]+)(.*)/;
+	    push @a, $1;
+	    $v=$2;
+	}
+    }
+    return @a;
+}

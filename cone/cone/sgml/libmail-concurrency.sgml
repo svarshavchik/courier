@@ -1,0 +1,15 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <note>
+	<para>
+Multiple applications may have the same account and folder opened at the
+same time.
+It is possible that a message referenced by this request was already
+deleted by another application.
+Depending on the underlying server implementation this will result in
+either a failed request, invoking
+<function>callback.fail</function>, or the request completing
+(<function>callback.success</function> invoked) but without invoking
+any callback function that refer to the message.</para>
+      </note>

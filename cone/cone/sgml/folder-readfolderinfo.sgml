@@ -1,0 +1,102 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-readfolderinfo">
+    <refmeta>
+      <refentrytitle>mail::folder::readFolderInfo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::readFolderInfo</refname>
+      <refpurpose>Get folder status</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+<literallayout>
+mail::folder *folder;
+
+class myFolderInfoCallback : public mail::callback::folderInfo {
+
+public:
+        void success()
+        {
+            displayFolderStatus(messageCount, unreadCount);
+        }
+};
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>readFolderInfo</function></funcdef>
+	  <paramdef>myFolderInfoCallback &amp;<parameter>folderInfoCallback</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function reads the current status of <parameter>folder</parameter>, which
+may refer to any folder in the mail account (not necessarily the currently
+open folder).</para>
+
+      <para>
+<parameter>folderInfoCallback</parameter>'s
+<function>success</function> method will be invoked when the folder's
+status is determined.
+The following variables will be initialized prior to invoking
+<function>success</function>:</para>
+
+      &libmail-folderstatus;
+
+      <note>
+	<para>
+<parameter>folderInfoCallback</parameter>'s
+<function>success</function> method will be invoked just prior to
+<parameter>callback</parameter>'s
+<function>success</function> method
+(unless <structfield>fastInfo</structfield> is true and message counts
+cannot be computed cheaply).
+The application must still wait until
+<parameter>callback</parameter>'s
+<function>success</function>, or
+<function>fail</function> is invoked, and must not destroy the
+<structname>mail::callback::folderInfo</structname> object until either
+method has been invoked.</para>
+      </note>
+
+      <note>
+	<para>
+Message count computation is considered cheap with maildir-based and
+POP3-based accounts.
+Message count computation is considered expensive with mbox-based
+accounts, and with IMAP-based accounts.</para>
+      </note>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+
+<link linkend="mail-checknewmail"><citerefentry>
+	    <refentrytitle>mail::account::checkNewMail</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="folder-open"><citerefentry>
+		    <refentrytitle>mail::folder::open</refentrytitle>
+		    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

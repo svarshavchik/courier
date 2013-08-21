@@ -1,0 +1,18 @@
+#! @SHELL@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+pidfile=@localstatedir@/run/sockd.pid
+courierlogger=@courierlogger@
+sockd=@libexecdir@/sockd
+umask 022
+
+uidgid=`@libexecdir@/sockd -uidgid`
+test $? = 0 || exit 1
+
+opts=`@libexecdir@/sockd -opts`
+test $? = 0 || exit 1
+
+exec @courierlogger@ -pid=$pidfile -droproot $uidgid -facility=daemon -$1 \
+	@libexecdir@/sockd $opts

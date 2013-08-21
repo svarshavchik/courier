@@ -1,0 +1,73 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-hassubfolders">
+    <refmeta>
+      <refentrytitle>mail::folder::hasSubFolders</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::hasSubFolders</refname>
+      <refpurpose>Determine if the folder is capable of storing other folders</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+mail::folder *folder;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool flag=folder-&gt;<function>hasSubFolders</function></funcdef>
+          <void />
+	</funcprototype>
+      </funcsynopsis>
+
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+Some folders contain messages.
+Other folders contain other folder (subfolders).
+Some IMAP servers are capable of creating dual-purpose folders that contain
+both messages and other subfolders.
+The
+<function>hasSubFolders</function> indicates whether
+<parameter>folder</parameter> is capable of containing other folders
+(subfolders).</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+A <literal>true</literal> result indicates that
+<parameter>folder</parameter> is capable of storing other folders.
+It may not necessarily mean that
+<parameter>folder</parameter> actually contains any folders, it might
+very well be an empty folder.</para>
+
+      <para>
+Applications should interpret a <literal>true</literal> result to mean
+that the
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+function may be used
+to create subfolders.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="folder-hasmessages"><citerefentry>
+	    <refentrytitle>mail::folder::hasMessages</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

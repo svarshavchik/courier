@@ -1,0 +1,84 @@
+
+Courier benchmarks:
+
+a) Local ESMTP loopback test.
+   Hardware:  ASUS P2B-DS Dual PentiumII-450 motherboard.
+              FAST SCSI-II disk (Quantum Fireball)
+              256MB RAM.
+              Network card: NE2000 clone, 10mbps ethernet.
+
+   Software:  Two copies of Courier running locally:
+              Courier S is the sending server.
+              Courier R is the receiving server.
+
+              Default options for both Courier S and R, with the following
+              exceptions:
+              Both copies of Courier are configured for 40 ESMTP connections
+              maximum (Courier R has the max sessions per C block
+              bumped up to 40).
+              Courier R is configured to issue forward/reverse IP address
+              DNS query for every connecting session (default configuration).
+              Courier R is configured to check each connection against two
+              DNS blacklists (default configuration).
+              Note -- all DNS queries were over an analog dialup 28.8
+              connection (but the test ran locally).
+              Courier R is configured to check IDENT for each connection
+              (default).
+              Courier R has SMTP spam filtering enabled (but no spam filter
+              is actually used for this test).
+              Courier R had BOFHCHECKDNS disabled, so the sender's address
+              wasn't checked in DNS.
+
+              Both versions of Courier had certain modules linked with the
+              ElectricFence malloc debugger, which introduces its own overhead.
+              Basically, there was some additional overhead in this test.  In
+              the real world the timings would probably be faster by a hair.
+
+   Test consists of sending messages from Courier S to Courier R as fast
+   as possible.  Courier R is configured to treat *.example.com as a local
+   address.  Courier S is configured to send all mail to *.example.com to the
+   same IP address as what's assigned to the local NIC card, which is
+   functionally identical to sending all trafic through 127.0.0.1.
+
+   Because multiple hostnames are used, Courier S is tricked into opening
+   multiple ESMTP clients in parallel, instead of queueing up everything for
+   a few connections.  The following script was used to generate test
+   messages (hostnames and account names changed to protect the innocent):
+  
+	for n in 1 2 3 4 5 6 7 8 9 10
+	do
+	for f in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+	do
+		env - /tmp/courier/bin/sendmail \
+			-f sender@example.com \
+		recipient-foo-$f@$f.foo.example.com <<EOF
+	From: sender
+	To: recipient
+	Subject: test $f
+
+	test $f
+	EOF
+	done
+	done
+
+   A global .courier-foo-default file is used in the recipient account
+   to dump all mail into the same Maildir.  As you can see, there are 20
+   different recipient addresses scattered across 20 different hostnames.
+   Courier's default configuration opens a maximum of four connections to
+   the same recipient hostname, so this test can theoretically use up to 80
+   parallel connections, however both Courier R and S were configured to
+   use no more than 40, causing contention.  Ten copies of each message
+   were sent.
+
+   Total run time: 1 min 5 seconds for 196 messages.  Four messages were
+   stuck waiting on a stalled DNS query, and were delivered when it timed out
+   and retried, 50-75 seconds later.
+
+   Mail logs show that there were 57 total ESMTP connections made.  So,
+   Courier's message scheduler was able to reuse most ESMTP sessions, but the
+   scheduler did close some connections along the way.
+
+   NOTE that each ESMTP connection required four DNS lookups.  So, in the
+   space of 1 min 5 seconds Courier was able to deliver 196 messages and
+   issue 53*4=216 DNS lookups over a severely bandwidth-limited line.
+

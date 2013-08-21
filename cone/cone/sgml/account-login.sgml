@@ -1,0 +1,80 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="account-login">
+  <refmeta>
+    <refentrytitle>mail::ACCOUNT::login</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::ACCOUNT::login</refname>
+    <refpurpose>Open a new mail account</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail=new mail::ACCOUNT;
+
+mail::account::openInfo accountOpenInfo;
+
+</literallayout>
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>bool ok=mail-&gt;<function>login</function></funcdef>
+	<paramdef><parameter>accountOpenInfo</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+    &libmail-accterrmsg;
+  </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+<function>mail::ACCOUNT::login</function> opens a new mail account.
+The mail account's location is specified by
+<parameter>accountOpenInfo</parameter>.
+See
+<link linkend="mail-open"><citerefentry>
+	  <refentrytitle>mail::account::open</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>
+for the description of the parameters set by
+<parameter>accountOpenInfo</parameter>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURN CODES AND CALLBACKS</title>
+    &libmail-account-return;
+
+    <note>
+      <para>
+The object must be destroyed
+if <function>mail::ACCOUNT::login</function> fails.
+A new <structname>mail::ACCOUNT</structname>
+object must be created for another login attempt.</para>
+
+    </note>
+
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<link linkend="account-logout"><citerefentry>
+	  <refentrytitle>mail::ACCOUNT::logout</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-loginurlencode"><citerefentry>
+	  <refentrytitle>mail::loginUrlEncode</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-setappcharset"><citerefentry>
+	  <refentrytitle>mail::setAppCharset</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+  </refsect1>
+
+</refentry>

@@ -1,0 +1,81 @@
+<!-- Copyright 2006-2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <chapter id="cone14ldapaddressbook">
+    <title>LDAP Address Books</title>
+
+    <para>
+&app; optionally supports searching LDAP directories for E-mail addresses.
+If this option is available, pressing <keycap>A</keycap> from the
+main Address Book screen displays the following screen:</para>
+
+    <section>
+      <title>Add LDAP Address Book screen</title>
+
+      <programlisting>
+::B::
+ LDAP ADDRESSBOOK ADD                 CONE                                   
+
+
+
+
+                               Add LDAP directory
+
+                         Directory name: ____________________
+                   LDAP server hostname: ____________________
+                       LDAP suffix/root: ____________________
+
+                                         [ SAVE ]
+
+                                         [ CANCEL ]
+
+
+
+
+
+
+::B::
+                                                                             
+ L Folder List   Q Quit
+ M Main Menu     W Write Msg
+</programlisting>
+
+      <variablelist>
+	<varlistentry>
+	  <term>Directory name</term>
+	  <listitem>
+	    <para>
+Enter a nickname of this LDAP-based address book.
+This address book appears under this name on the Address Book screen.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>LDAP server hostname</term>
+	  <listitem>
+	    <para>
+Enter the name of the machine that's running the LDAP server.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>LDAP suffix/root</term>
+	  <listitem>
+	    <para>
+This setting specifies the suffix, or the root node, of the LDAP E-mail
+directory, such as "<literal>dc=example, dc=com</literal>",
+and depends on how the LDAP directory is configured.
+Contact the LDAP server administrator to get the correct LDAP suffix/root
+setting.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+The directory and the server hostname are required, the LDAP root/suffix
+is optional (depending on the LDAP server's configuration).
+Highlight <quote>Save</quote> and press <keycap>Enter</keycap> to add this
+LDAP server to the list of address books that are automatically looked up,
+or <quote>Cancel</quote> to abort.</para>
+    </section>
+  </chapter>

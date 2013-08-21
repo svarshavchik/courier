@@ -1,0 +1,48 @@
+#! @SHELL@
+#
+# Copyright 1998 - 2004 Double Precision, Inc.  See COPYING for
+# distribution information.
+# Dynamically calculate dependencies for transport module libraries
+#
+# Creates modules.lst.new, then, if it's different than modules.lst, or
+# if any file in there is newer than modules.lst, renames modules.lst.new
+# to modules.lst
+
+cp /dev/null modules.lst.la.new
+
+for d in $*
+do
+	echo "$d/librewrite.la" >>modules.lst.la.new
+done
+
+doupdate=0
+
+if test -f modules.lst.la
+then
+	if cmp -s modules.lst.la.new modules.lst.la
+	then
+		newmodules="`find \`cat modules.lst.la.new\` -newer modules.lst.la -print`"
+		if test "$newmodules" = ""
+		then
+			rm -f modules.lst.la.new
+			exit 0
+		else
+			echo "New modules: $newmodules"
+			doupdate=1
+		fi
+	else
+		echo "Driver selection has changed."
+		doupdate=1
+	fi
+else
+	doupdate=1
+fi
+
+if test $doupdate = 1
+then
+	echo "Updating modules.lst.la"
+	mv modules.lst.la.new modules.lst.la
+else
+	rm -f modules.lst.la.new
+fi
+	

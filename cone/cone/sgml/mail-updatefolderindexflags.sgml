@@ -1,0 +1,74 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-updatefolderindexflags">
+    <refmeta>
+      <refentrytitle>mail::account::updateFolderIndexFlags</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::updateFolderIndexFlags</refname>
+      <refpurpose>Update status of multiple messages</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      <literallayout>
+mail::account *account;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>updateFolderIndexFlags</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	  <paramdef>bool <parameter>doFlip</parameter></paramdef>
+	  <paramdef>bool <parameter>enableDisable</parameter></paramdef>
+	  <paramdef>const messageInfo &amp;<parameter>msgInfo</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This is a version of
+<link linkend="mail-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+that updates the status of multiple messages with one request.</para>
+
+      <para>&libmail-msglist;</para>
+
+      <para>
+<parameter>msgInfo</parameter> selects which message status flags
+should be updated in every message.
+See
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+
+      &libmail-updateflags;
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-updatestatus;
+      &libmail-concurrency;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

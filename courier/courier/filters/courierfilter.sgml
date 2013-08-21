@@ -1,0 +1,315 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>courierfilter</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>courierfilter</refname>
+    <refpurpose>Courier mail filters</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">courierfilter</command>
+      <group choice="opt" rep="norepeat">
+	<arg choice="opt" rep="norepeat">start</arg>
+	<arg choice="opt" rep="norepeat">stop</arg>
+	<arg choice="opt" rep="norepeat">restart</arg>
+      </group>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">filterctl</command>
+      <group choice="opt" rep="norepeat">
+	<arg choice="opt" rep="norepeat">start</arg>
+	<arg choice="opt" rep="norepeat">stop</arg>
+      </group>
+      <arg choice="opt" rep="norepeat"><replaceable>filter</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The <command moreinfo="none">filterctl</command> commands install or uninstall global
+mail <replaceable>filter</replaceable>s. Global mail filters are used to
+selectively block unwanted
+mail. More than one mail filter can be enabled at the same time. Two filters -
+<ulink url="dupfilter.html"><citerefentry><refentrytitle>dupfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+and
+<ulink url="courierperlfilter.html"><citerefentry><refentrytitle>courierperlfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> -
+are provided as examples for writing mail filters.</para>
+
+    <para>
+<command moreinfo="none">courierfilter start</command> runs all mail filters that have been
+installed by <command moreinfo="none">filterctl</command>.
+<command moreinfo="none">courierfilter stop</command> shuts down all running mail filters.
+After <command moreinfo="none">courierfilter start</command>, any
+<command moreinfo="none">filterctl</command> commands take effect immediately. After
+<command moreinfo="none">courierfilter stop</command> any <command moreinfo="none">filterctl</command>
+commands will take
+effect at the next <command moreinfo="none">courierfilter start</command>.</para>
+
+    <para>
+<command moreinfo="none">courierfilter restart</command> signals the running
+<command moreinfo="none">courierfilter</command> to
+reread its configuration files. This is normally done automatically, by
+<command moreinfo="none">filterctl</command>.</para>
+
+    <para>
+If any mail filter is installed, the mail filter must be running in order
+for any mail to be processed.  Mail filters are assumed to be empowered to
+enforce system-wide mail policies, so if an installed mail filter is not
+running then mail will not be accepted by the system.  Note that mail will not
+be rejected, if possible.  Every attempt will be made to send a temporary
+error code to an external mail system, asking it to try again later.</para>
+
+    <para>
+For this reason, you should modify your system boot script to run
+<command moreinfo="none">courierfilter start</command> as soon as possible, and run
+<command moreinfo="none">courierfilter stop</command> during the final portion of your system
+shutdown script. It is not necessary to run <command moreinfo="none">courierfilter</command>
+if you do not install a mail filter with <command moreinfo="none">filterctl</command>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>MAIL FILTER IMPLEMENTATION</title>
+
+    <para>
+This section explains how mail filters are implemented, and how to write a
+new global mail filter.</para>
+
+    <para>
+Available mail filter binaries are located in the directory
+<filename moreinfo="none">@libexecdir@/filters</filename>.
+The <command moreinfo="none">filterctl</command> script looks in
+this directory to see which mail filters are available to be installed.
+Installing a mail filter consists of simply creating a soft link from the
+directory <filename moreinfo="none">@sysconfdir@/filters/active</filename> to its
+corresponding binary in <filename moreinfo="none">@libexecdir@/filters</filename>.
+The <filename moreinfo="none">courierfilter start</filename> command simply reads
+<filename moreinfo="none">@sysconfdir@/filters/active</filename> and runs every
+program in this directory.</para>
+
+    <para>
+The <command moreinfo="none">filterctl</command> script sends a HUP signal to
+<command moreinfo="none">courierfilter</command> after installing or uninstalling a filter.
+<command moreinfo="none">courierfilter</command> will reread the contents of
+<filename moreinfo="none">@sysconfdir@/filters/active</filename> then start or stop
+individual mail filters.</para>
+
+    <para>
+After starting, an individual mail filter must create a filesystem domain
+socket in one of two directories:
+<filename moreinfo="none">@localstatedir@/filters</filename> or
+<filename moreinfo="none">@localstatedir@/allfilters</filename>.  The name of the socket
+should be the
+same as a name of the filter, and the mail filter must make sure to remove any
+socket by the same name in the other directory.  For various silly reasons,
+the recommended implementation is to create
+<filename moreinfo="none">@localstatedir@/filters/.<replaceable>NAME</replaceable></filename> or
+<filename moreinfo="none">@localstatedir@/allfilters/.<replaceable>NAME</replaceable></filename>
+(after making sure that it doesn't exist) then
+rename <replaceable>.NAME</replaceable> to
+<replaceable>NAME</replaceable>.</para>
+
+    <para>
+After initializing the socket, the mail filter must then close its file
+descriptor #3.  File descriptor 3 is inherited by every mail filter that's
+executed by the <command moreinfo="none">courierfilter start</command> command.  The
+mail filter's file descriptor 3 is connected to the <emphasis>write</emphasis>
+end of a pipe, which may be relevant to certain ways of implementing the
+closing of the file descriptor, for instance in Perl where you may be forced to
+pseudo-open the descriptor (in write mode) before closing it.  The
+<command moreinfo="none">courierfilter start</command> command will not exit until every
+started
+mail filter closes its file descriptor 3.  This allows for all mail filters to
+orderly initialize themselves before <command moreinfo="none">courierfilter start</command>
+command returns.</para>
+
+    <para>
+All mail filters also inherit a pipe on standard input, and must terminate
+when the pipe is closed.  Mail filters must simultaneously listen for new
+connections on the mail filter socket, and for their standard input to
+close.</para>
+
+    <para>
+The mail filter receives a new connection on its socket for every message
+that needs to be filtered.  After establishing a connection, the mail filter
+will immediately read the following information from the new socket:</para>
+
+    <para>
+A pathname to a file containing the contents of the message.</para>
+
+    <para>
+One or more pathnames to control files for this message.</para>
+
+    <para>
+Each pathname is terminated by a single newline character.  The last
+pathname is followed by a second newline character.  The pathnames may either
+be relative pathnames to <filename moreinfo="none">@prefix@</filename> or absolute
+pathnames, depending on the system configuration.</para>
+
+    <para>
+The mail filter is free to judge the message's worthiness by reading its
+contents and/or control file(s) as soon as a second consecutive newline
+character is received. The final verdict is rendered by writing back a result
+code on the same socket. The result code follows the same format as regular
+SMTP replies (even though the message may not have been received via SMTP),
+and can be used to communicate acceptance, temporary failure, or a permanent
+failure. If it's a failure, then the text portion of the result code will be
+used, if possible.  The result code may be a multiline response, just like a
+regular SMTP reply.  The mail filter must immediately close the connection
+after writing the result code.  After closing the socket the mail filter must
+then proceed to wait for another connection request on the original listening
+socket.</para>
+
+    <para>
+The mail filter can be multithreaded or multitasked, and can accept
+multiple connections simultaneously.  When its standard input is closed the
+mail filter should stop accepting new connections and wait for any existing
+connections to be closed, prior to exiting.</para>
+
+    <para>
+Global mail filters must be EXTREMELY resilient to runtime failures.  Since
+mail will not be processed if an installed mail filter is not running, if a
+mail filter crashes it will effectively shut down the mail server.  Currently
+<command moreinfo="none">courierfilter</command> does not attempt to restart mail filters which
+crash.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>MAIL FILTER INVOCATION</title>
+
+    <para>
+The system administrator defines what mail gets filtered by editing the
+contents of the <filename moreinfo="none">enablefiltering</filename> configuration file in
+<filename moreinfo="none">@sysconfdir@</filename>.  This configuration file contains a
+list of mail sources that should be filtered, like esmtp or local.  See
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+for more information.  A default
+<filename moreinfo="none">@sysconfdir@/enablefiltering</filename> file is installed that
+specifies
+only the <literal moreinfo="none">esmtp</literal> mail source as subject to filtering.</para>
+
+    <para>
+A message is not subject to filtering if its source is not listed in
+<filename moreinfo="none">@sysconfdir@/enablefiltering</filename>.  Otherwise the
+following rules apply.</para>
+
+    <para>
+Certain mail destinations have the ability to selectively whitelist
+arbitrary messages.  For example, local mail recipients have the ability to
+selectively whitelist individual messages, provided that a local mail filter
+(independent of any global mail filter) is installed that implements the
+<ulink url="localmailfilter.html">maildrop filtering API</ulink>.</para>
+
+    <para>
+New messages are filtered by connecting to every socket in
+<filename moreinfo="none">@localstatedir@/filters</filename> and/or
+<filename moreinfo="none">@localstatedir@/allfilters</filename>, one at a time.
+All mail filters must
+accept the message, for it to be accepted by Courier.  If a socket exists but
+a connection cannot be established then the message is not accepted, and a
+temporary failure indication is returned. That's why no mail will be accepted
+unless all installed mail filters are running.</para>
+
+    <para>
+Mail recipients that did not whitelist the sender, via the maildrop API,
+will have their mail filtered against everything in
+<filename moreinfo="none">@localstatedir@/filters</filename> and
+<filename moreinfo="none">@localstatedir@/allfilters</filename>.
+Mail to recipients that whitelisted
+the sender, or mail to destinations that do not use a maildrop API-compatible
+filter, will be filtered only against the contents of
+<filename moreinfo="none">@localstatedir@/allfilters</filename>.</para>
+
+    <para>
+This gives system administrators a choice whether to install selective, or
+mandatory mail filters, or a combination of both.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+Many filesystem domain socket implementation are buggy.</para>
+
+    <para>
+Handling of crashed mail filters could be improved.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><filename moreinfo="none">@libexecdir@/filters</filename></term>
+	<listitem>
+	  <para>
+Available mail filters.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters</filename></term>
+	<listitem>
+	  <para>
+Miscellaneous configuration files.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/active</filename></term>
+	<listitem>
+	  <para>
+Installed mail filters.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/enablefiltering</filename></term>
+	<listitem>
+	  <para>
+Which mail sources to filter.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@localstatedir@/allfilters</filename></term>
+	<listitem>
+	  <para>
+Mandatory filters.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@localstatedir@/filters</filename></term>
+	<listitem>
+	  <para>
+Optional filters.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="localmailfilter.html"><citerefentry><refentrytitle>localmailfilter</refentrytitle><manvolnum>7</manvolnum></citerefentry></ulink>,
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="dupfilter.html"><citerefentry><refentrytitle>dupfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="courierperlfilter.html"><citerefentry><refentrytitle>courierperlfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>

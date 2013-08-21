@@ -1,0 +1,24 @@
+Welcome to the Courier Socks 5 proxy toolkit
+
+The Courier Socks 5 proxy toolkit now includes a server component.
+
+The Socks 5 server supports both incoming and outgoing proxy connections,
+authenticated or anonymous.
+
+The Socks 5 server also supports blocking connections to large numbers of
+blacklisted IP addresses.  The current impementation uses a binary database
+that easily supports over a hundred thousand blacklisted IP address ranges.
+A Perl script creates the binary database from a flat file in the common
+IPv4 blacklist format.
+
+Only TCP connections are supported.  Support for proxying UDP sockets is
+not yet implemented.
+
+You must install the Courier Authentication Library before building this
+Socks 5 toolkit.  Download the Courier Authentication Library from
+http://www.courier-mta.org/authlib
+
+You must install this package before building Courier-MTA, if you want Socks 5
+support in Courier.  If this package is installed before building Courier,
+Courier will automatically compile the support for sending outgoing mail
+through a Socks 5 proxy.

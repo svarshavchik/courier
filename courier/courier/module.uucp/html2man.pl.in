@@ -1,0 +1,174 @@
+#! @PERL@
+#
+# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+############################################################################
+#
+# Preprocess HTML file: put all directives on a separate line.  Remove
+# blank lines.
+#
+#
+############################################################################
+
+$pid=open(FD, "-|");
+
+die "Can't fork.\n" unless defined $pid;
+
+if ($pid == 0)
+{
+	while (<>)
+	{
+		if ( $_ =~ s/^ *<[lL][iI]>// )
+		{
+			$line=$_;
+			$line=<> if $line eq "\n";
+			chop $line;
+			$line =~ s/ - /\n/;
+			($line0,$line1)=split(/\n/,$line);
+			$line0 =~ s/"/\\"/g;
+			$line0 =~ s/\\/\\\\/g;
+			print ".TP\n.B \"$line0\n$line1\n";
+			next;
+		}
+		while ( /<[^>]*\n$/ )
+		{
+			chop;
+			$foo=$_;
+			last unless defined ($_=<>);
+			$_="$foo$_";
+		}
+		print;
+	}
+	exit 0;
+}
+
+$pid2=open(FD2, "-|");
+die "Can't fork.\n" unless defined $pid2;
+
+sub dosubst {
+	s/<[^>]*>//g;
+	s/&nbsp;/ /g;
+	s/&lt;/</g;
+	s/&gt;/>/g;
+	s/&amp;/\&/g;
+}
+
+$INH1=0;
+$INBODY=0;
+
+$inpre=0;
+
+if ($pid2 == 0)
+{
+	while (<FD>)
+	{
+		s/\\/\\\\/g;
+		s/<[iI]>/\\fI/g;
+		s/<\/[iI]>/\\fP/g;
+		s/<BR>/\n.br/g;
+		s/<br>/\n.br/g;
+		s/<[pP]>/\n.PP\n/g;
+		s/^\n\././;
+
+		s/^ *// unless $inpre;
+		if (s/^<[hH]1>/.SH NAME\n/)
+		{
+			$INH1=1;
+		}
+		s/-/\\-/ if $INH1;
+		$INH1=0 if ( /<\/[hH]1>/ );
+
+		if (s/^<[hH]2>//)
+		{
+			$_=<FD> if $_ eq "\n";
+			&dosubst;
+			$_ =~ s/^/.SH "/;
+			print $_;
+			next;
+		}
+
+		if (s/^<[hH][3456789]>//)
+		{
+			$_=<FD> if $_ eq "\n";
+			&dosubst;
+			$_ =~ s/^/.SS "/;
+			print $_;
+			next;
+		}
+		if (/^ *<(TITLE|title)>/)
+		{
+			while ( ! /<\/(title|TITLE)>/)
+			{
+				chop;
+				$_ = $_ . <FD>;
+			}
+		}
+
+
+		if (/^ *<(TITLE|title)>(.*)<\/(title|TITLE)>/)
+		{
+			($cmd, $desc)=split(/ - /,$2);
+			$cmd =~ s/ *$//;
+			$desc =~ s/^ *//;
+
+			open (DATE, 'date "+%B %e, %Y" | ')
+				|| die "Can't run date.\n";
+			$date=<DATE>;
+			close(DATE);
+			chomp $date;
+			$TITLE=".TH \"$cmd\" [SECTION] \"$date\" \"Double Precision, Inc.\" \"\"\n";
+			next;
+		}
+
+		if (/^<!-- *SECTION/)
+		{
+			chop;
+			s/.*SECTION *//;
+			s/ .*//;
+			$SECTION=$_;
+			next;
+		}
+		if (/^<!-- \$Id/)
+		{
+			s/.*\$Id/\$Id/;
+			s/ *-->.*//;
+			$RCS=".\\\" $_";
+			print $RCS if $INBODY;
+			next;
+		}
+		if (/<\/(HEAD|head)>/)
+		{
+			$TITLE =~ s/\[SECTION\]/$SECTION/;
+			print $TITLE;
+			print $RCS;
+			print ".\\\" Copyright 1998-1999 Double Precision, Inc.  See COPYING for\n";
+			print ".\\\" distribution information.\n";
+			$INBODY=1;
+		}
+
+		s/^\./\\\&./ unless /^\.(SH|PP|br|TP|B|I) / || /^\.(SH|PP|br|TP|B|I|)\n/;
+
+		$inpre=1 if s/^<(PRE|pre)>/.nf\n\n/;
+		$inpre=0 if s/<\/(PRE|pre)>/\n.fi\n.PP/;
+
+		&dosubst;
+		print "$_";
+	}
+	exit 0;
+}
+
+$first=1;
+$innf=0;
+while (<FD2>)
+{
+	$first=0 if /^.TH/;
+	next if $first;
+	next if (! $innf) && /^\n$/;
+	$innf=1 if /^\.nf/;
+	$innf=0 if /^\.fi/;
+
+	s/^ ? ? ?// if $innf;
+	print;
+}
+exit 0;

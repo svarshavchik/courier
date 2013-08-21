@@ -1,0 +1,84 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>mailq</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mailq</refname>
+    <refpurpose>Display the mail queue</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">mailq</command>
+      <arg choice="opt" rep="norepeat">-sort</arg>
+      <arg choice="opt" rep="norepeat">-batch</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">mailq</command> displays a list of all messages that have not
+been delivered yet. The display contains: the queue ID; sending user; the
+size of the message and the time the message was created; the return address,
+and a list of the message's recipients. If the message was already delivered
+or failed for some recipients, this will be indicated as well.</para>
+
+    <para>
+The optional <command moreinfo="none">-sort</command> sorts the list according to the
+messages'
+timestamps, oldest messages first. This may take a while if the mail queue is
+very large.</para>
+
+    <para>
+The optional <command moreinfo="none">-batch</command> uses an alternative, machine-parsable
+output format, one line per message:</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+size;qid;date;user;from;[status;recipient];[status;recipient];[...]
+</programlisting>
+</informalexample>
+
+    <para>
+Only the superuser can view the contents of the entire mail queue. Everyone
+else can only see their own messages.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+
+    <para>
+The 80-column limitation forced a somewhat ugly design.</para>
+
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="cancelmsg.html">
+<citerefentry>
+	  <refentrytitle>cancelmsg</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="courier.html">
+<citerefentry>
+	  <refentrytitle>courier</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

@@ -1,0 +1,61 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-poll">
+    <refmeta>
+      <refentrytitle>mail::account::poll</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::poll</refname>
+      <refpurpose>Wait for the next event</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef><function>mail::account::poll</function></funcdef>
+	<paramdef>std::vector&lt;mail::pollfd&gt; &amp;<parameter>pollfds</parameter></paramdef>
+	<paramdef>int <parameter>timeout</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+    <para>
+<function>mail::account::poll</function>
+is a C++ wrapper around the
+<citerefentry>
+	    <refentrytitle>poll</refentrytitle>
+	    <manvolnum>2</manvolnum></citerefentry> system call, that receives
+C++ objects as arguments, instead of an array count, and a pointer.</para>
+  </refsect1>
+  <refsect1>
+    <title>Return Codes</title>
+
+    <para>
+<function>mail::account::poll</function>
+returns the exit code from
+<citerefentry>
+	    <refentrytitle>poll</refentrytitle>
+	    <manvolnum>2</manvolnum></citerefentry>.
+</para>
+  </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-process"><citerefentry>
+	    <refentrytitle>mail::account::process</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<citerefentry>
+	    <refentrytitle>poll</refentrytitle>
+	    <manvolnum>2</manvolnum></citerefentry>.</para>
+    </refsect1>
+  </refentry>

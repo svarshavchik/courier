@@ -1,0 +1,63 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-clone">
+    <refmeta>
+      <refentrytitle>mail::folder::clone</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::clone</refname>
+      <refpurpose>Clone a <structname>mail::folder</structname> object</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+mail::folder *folder;
+
+mail::folder *folderCopy;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folderCopy=folder-&gt;<function>clone</function></funcdef>
+	  <void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function creates a new
+<structname>mail::folder</structname> object that refers to the
+same mail folder, in every possible way.
+This is usually used by some callback methods that receive pointers to
+<structname>mail::folder</structname>s, and wish to preserve them for the
+main application (<structname>mail::folder</structname>s received by
+callback methods are usually destroyed as soon as the callback method
+terminates).</para>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-foldernote;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

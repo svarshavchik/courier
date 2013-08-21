@@ -1,0 +1,132 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+[
+
+<!ENTITY authcallback SYSTEM "authcallback.sgml">
+<!ENTITY optionlist SYSTEM "optionlist.sgml">
+
+]>
+
+  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-generic">
+
+  <refmeta>
+    <refentrytitle>auth_generic</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_generic</refname>
+    <refpurpose>Generic authentication request</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_generic</function></funcdef>
+	<paramdef>const char *<parameter>service</parameter></paramdef>
+	<paramdef>const char *<parameter>authtype</parameter></paramdef>
+	<paramdef>const char *<parameter>authdata</parameter></paramdef>
+
+	<paramdef>int <parameter>(*callback_func)</parameter>
+               <funcparams>struct authinfo *, void *</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<function>auth_generic</function> processes a generic authentication request.
+You do not want to use this function.
+You really want to use
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
+<parameter>service</parameter> specifies which so-called "service" is
+being authenticated; like <quote>imap</quote> or <quote>pop3</quote>.
+<parameter>service</parameter> may or may not be used by the Courier
+authentication library's configured back-end module.</para>
+
+    <para>
+<function>authtype</function> specifies the format of the authentication
+request.
+Three authentication formats are defined in
+<filename>courierauth.h</filename>:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><literal>AUTHTYPE_LOGIN</literal></term>
+	<listitem>
+	  <para>
+<parameter>authdata</parameter> contains the following string:
+<quote><replaceable>userid</replaceable>\n<replaceable>password</replaceable>\n</quote>.
+That is, the userid being authenticated, an <acronym>ASCII</acronym>
+newline character, the password, and a second newline character.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>AUTHTYPE_CRAMMD5</literal> or <literal>AUTHTYPE_CRAMSHA1</literal></term>
+	<listitem>
+	  <para>
+This format is used
+with <acronym>CRAM-MD5</acronym> or <acronym>CRAM-SHA1</acronym>.
+<parameter>authdata</parameter> contains the following string:
+<quote><replaceable>challenge</replaceable>\n<replaceable>response</replaceable>\n</quote>.
+<replaceable>challenge</replaceable> is the base64-encoded challenge, which
+is followed by an <acronym>ASCII</acronym>
+newline character.
+<replaceable>response</replaceable> is a base64-encoded string that's
+followed by a second newline character.
+The base64-encoded string consists of the responding userid, a space
+character, then the response to the challenge expressed as hexadecimal
+digits.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURNS</title>
+
+    <para>
+<function>callback_func</function> will be invoked if
+<function>auth_generic</function>
+succeeds, and <function>callback_func</function>'s return value becomes
+the return value from <function>auth_generic</function> (which should be 0, by convention).
+<function>callback_func</function> will not be invoked if an error occurs,
+which is reported by a non-zero return value from <function>auth_generic</function>.
+By convention, a positive return value indicates an internal, temporary
+failure, such as the authentication daemon process not running; a negative
+return value indicates that this request was processed, but it failed.</para>
+
+    &authcallback;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_passwd.html"><citerefentry><refentrytitle>auth_passwd</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getoption.html"><citerefentry><refentrytitle>auth_getoption</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
+

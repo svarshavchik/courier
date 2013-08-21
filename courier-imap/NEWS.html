@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+       "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>Courier-IMAP</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B"
+alink="#FF0000">
+<!-- Copyright 2003-2005 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<h1>Courier-IMAP version 4.0</h1>
+
+<p>Contents of this NEWS file:</p>
+
+<blockquote>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td><a href="#intro">Introduction</a></td>
+      </tr>
+      <tr>
+        <td><a href="#acl">Shared folders and access control lists</a></td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+
+<h3><a name="intro" id="intro">Introduction</a></h3>
+
+<p>Courier-IMAP 4.0 brings many changes and improvements. All
+authentication-related code in Courier-IMAP has been moved into the external
+<a href="http://www.courier-mta.org/authlib/">Courier Authentication
+Library</a>. See the contents of the <a href="INSTALL.html">INSTALL</a> file
+for more information. Courier-IMAP now includes an IMAP/POP3 aggregation
+proxy, like Perdition. See the "imap/README.proxy" file in the source
+distribution for more information. Mail accounts can be distributed across a
+pool of servers. A separate server (or another pool of servers) accept
+connections from IMAP and POP3 clients, waits for the client's login request,
+looks the mail account's server, and connects to the IMAP/POP3 server on the
+right host, with the IMAP/POP3 client being no wiser. Any kind of an upper
+limit on the scalability of the IMAP/POP3 server, or how large of a mail
+store it can support, has been eliminated. The only limit to Courier-IMAP's
+horizontal scaling is the available bandwidth on the LAN.</p>
+
+<h3><a name="acl" id="acl">Shared folders and access control lists</a></h3>
+
+<p>New to Courier-IMAP 3 are the ACL (access control list) IMAP extension,
+and ACL-based virtual shared folders. Courier-IMAP 3 implements both the
+existing ACL specification, RFC 2086, as well as an experimental
+implementation of the second draft revision of the ACL specification. Virtual
+shared folders is a different implementation of shared folders that
+supplements an older implementation in Courier-IMAP 2, and earlier. The
+older, POSIX permission-based shared folders are still implemented and
+supported. Here's a summary of the differences between the two shared folder
+mechanisms:</p>
+
+<blockquote>
+
+  <table>
+    <tbody>
+      <tr>
+        <th>POSIX-based shared folders</th>
+        <th>ACL shared folders<br />
+        </th>
+      </tr>
+      <tr>
+        <td>May be used with system accounts only<sup>1</sup></td>
+        <td>May be used with virtual accounts only; cannot be used on systems
+          that have end-user login shell access: bypassing ACLs and accessing
+          the folders directly is trivial<br />
+        </td>
+      </tr>
+      <tr>
+        <td>Access rights based on traditional POSIX filesystem
+        permissions</td>
+        <td>Access rights based on IMAP access control lists<br />
+        </td>
+      </tr>
+      <tr>
+        <td>Sharable folders must be set up manually, using the "maildirmake"
+          command</td>
+        <td>A site-specific process must be installed to compile an index of
+          all virtual mailboxes; afterwords, individual users may create and
+          manage shared folders themselves<br />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <blockquote>
+    <p><sup>1</sup> This is because access rights are governed by filesystem
+    permissions. POSIX shared folders may also be used with virtual accounts,
+    but it will not be possible to grant read-only access to shared folders,
+    and everyone will be able to delete messages from shared folders (instead
+    of only the creator of each message)</p>
+  </blockquote>
+</blockquote>
+
+<p>After installation, read the "maildiracl" manual page for a brief overview
+of access control lists.</p>
+
+<p>Read "maildir/README.sharedfolders.html" for information on configuring
+virtual shared folders</p>
+</body>
+</html>

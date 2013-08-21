@@ -1,0 +1,192 @@
+
+<para>
+The second argument to <function>callback_func</function> will be
+<function>callback_arg</function>, which is not interpreted by this
+function in any way.
+The first argument will be a pointer to the following structure:</para>
+
+<blockquote>
+  <example>
+    <title>struct authinfo</title>
+    <programlisting>
+struct authinfo {
+	const char *sysusername;
+	const uid_t *sysuserid;
+	gid_t sysgroupid;
+	const char *homedir;
+
+	const char *address;
+	const char *fullname;
+	const char *maildir;
+	const char *quota;
+	const char *passwd;
+	const char *clearpasswd;
+
+	const char *options;
+
+	} ;
+</programlisting>
+  </example>
+    </blockquote>
+
+<para>
+Description of the above fields:</para>
+
+<variablelist>
+  <varlistentry>
+    <term>address</term>
+    <listitem>
+      <para>
+The authenticated login ID.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>sysusername</term>
+    <listitem>
+      <para>
+The authenticated account's userid and groupid can be looked up in the
+password file using <literal>address</literal>.
+If this field is <literal>NULL</literal>, obtain the userid and the groupid from
+<literal>sysuserid</literal> and <literal>sysgroupid</literal>.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>sysuserid</term>
+    <listitem>
+      <para>
+<literal>sysuserid</literal> may be <literal>NULL</literal> if
+<literal>sysusername</literal> is initialized, otherwise it's a pointer to
+the account's numeric userid.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>sysgroupid</term>
+    <listitem>
+      <para>
+Account's numeric groupid.
+<literal>sysgroupid</literal> is only used when <literal>sysusername</literal>
+is <literal>NULL</literal>.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>fullname</term>
+    <listitem>
+      <para>
+This is the account's full name.
+This field is optional, it may be <literal>NULL</literal>.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>homedir</term>
+    <listitem>
+      <para>
+The account's home directory.
+This field cannot be <literal>NULL</literal>.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>maildir</term>
+    <listitem>
+      <para>
+The pathname to the account's mailbox.
+This field is optional, it can be <literal>NULL</literal> in which case the
+default location is assumed.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>quota</term>
+    <listitem>
+      <para>
+Optional maildir quota on the account's mailbox (and <literal>NULL</literal>
+if no quota is set).</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>passwd</term>
+    <listitem>
+      <para>
+The account's encrypted password, if available.
+If the account has a cleartext password defined, this field
+can be set to <literal>NULL</literal>.
+The encrypted password can take several formats:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+A traditional triple-DES crypted password, or a MD5+salt-hashed password,
+as used in Linux.</para>
+	</listitem>
+	<listitem>
+	  <para>
+<quote>{MD5}</quote> followed by a base64-encoded MD5 hash
+of the password.</para>
+	</listitem>
+	<listitem>
+	  <para>
+<quote>{SHA}</quote> followed by a base64-encoded SHA1 hash
+of the password.</para>
+	</listitem>
+      </itemizedlist>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>clearpasswd</term>
+    <listitem>
+      <para>
+The account's cleartext password, if available.
+If the account has an encrypted password defined, this field
+can be set to <literal>NULL</literal>.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term>options</term>
+    <listitem>
+      <para>
+A comma-separated list of miscellaneous account options.
+See below for more information.</para>
+    </listitem>
+  </varlistentry>
+</variablelist>
+
+<refsect2>
+  <title>Account options</title>
+
+  <para>
+Depending on the configuration of the Courier authentication library,
+accounts may have individual options associated with them.
+If the authentication library configuration does not implement account
+options, the option string will be a <literal>NULL</literal> value.
+Otherwise it will be a comma-separated list of
+<quote><replaceable>option</replaceable>=<replaceable>value</replaceable></quote>
+settings.</para>
+
+  <note>
+    <para>
+The application is responsible for actually implementing the
+options.
+For example,
+sn authentication request for service <quote>imap</quote>, for example,
+will succeed provided that the userid and the password are valid,
+even if <quote>disableimap=1</quote> is set.
+The application's <function>callback_func</function> should check for this
+condition, and return a negative return code.</para>
+  </note>
+
+  &optionlist;
+</refsect2>
+
+<!--
+Local Variables:
+sgml-parent-document: ("auth_generic.sgml" "refsect1" "para")
+End:
+-->

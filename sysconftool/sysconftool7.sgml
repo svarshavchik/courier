@@ -1,0 +1,454 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<!-- $Id: sysconftool7.sgml,v 1.3 2007/04/06 20:04:16 mrsam Exp $ -->
+<!-- Copyright 2000-2005 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="sysconftool.7">
+
+  <docinfo>
+    <title>sysconftool</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+  </docinfo>
+
+
+  <refmeta>
+    <refentrytitle>sysconftool</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>sysconftool</refname>
+    <refpurpose>format of configuration files installed by sysconftool</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+
+    <informalexample>
+      <programlisting>
+   #
+   ##VERSION: &#36;Id$
+
+   ##NAME: configname1:configname1version
+   #
+   # Description
+
+   SETTING1=VALUE1
+
+   ##NAME: configname2:configname2version
+   #
+   # Description
+
+   SETTING2=VALUE2
+
+   ...</programlisting>
+    </informalexample>
+  </refsynopsisdiv>
+
+  <refsect1>
+
+    <title>DESCRIPTION</title>
+
+    <para>
+This manual page describes the format of configuration files installed by
+<ulink
+url="sysconftool.1.html"><citerefentry>
+	  <refentrytitle>sysconftool</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry></ulink>.
+This format is flexible enough to accomodate any
+kind of application configuration file format.
+<command>sysconftool</command> makes
+four assumptions about the configuration file:</para>
+
+    <orderedlist>
+      <listitem>
+	<para>It is a plain text file.</para>
+      </listitem>
+
+      <listitem>
+	<para>Lines that begin with a single '#' character are comments that
+contain a description of the following configuration setting.</para>
+      </listitem>
+
+      <listitem>
+	<para>
+Lines that do not begin with the '#' character contain the configuration
+setting described by the previous comment lines.</para>
+      </listitem>
+
+      <listitem>
+	<para>
+Configuration settings are self contained, and completely independent,
+changing one configuration setting never requires that another, different,
+configuration setting must be changed too (perhaps any logical conflicts are
+automatically resolved by the application in a safe, fallback, manner)</para>
+      </listitem>
+    </orderedlist>
+
+    <para>
+The additional information used by <command>sysconftool</command> is encoded as
+specially-formatted comment lines that begin with two '#' characters.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>FILENAMES</title>
+
+    <para>
+An application installs a default configuration file as
+"<filename>filename.dist</filename>", when the actual name of the
+configuration file is
+really "<filename>filename</filename>". If there is no existing
+<filename>filename</filename>,
+<command>sysconftool</command> simply copies
+<filename>filename.dist</filename> to
+<filename>filename</filename>, and calls it a day. Otherwise,
+<command>sysconftool</command>
+copies the existing <filename>filename</filename> to <filename>filename.bak</filename> and creates a new
+<filename>filename</filename> based on the contents of both files.</para>
+
+    <para>
+<command>sysconftool</command> is designed to solve a common problem with
+application configuration.  New versions of applications often include
+additional functionality that requires new configuration settings. Without the
+new configuration settings the application will not work, so new configuration
+files should be installed during the upgrade.  However, when that happens, any
+changes to the existing configuration settings are lost.
+<command>sysconftool</command> is designed to solve this dillemma, and
+merge old
+configuration settings with new ones. <command>sysconftool</command>
+is designed in
+a fail-safe way. Whenever there's a doubt as to what's The Right Thing To
+Do, <command>sysconftool</command> will use the configuration settings
+from the
+new file, that are supposedly known to be good, and leave it up to a physical
+being to sort out any conflicts and make any manual decisions.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>FILE VERSIONING</title>
+
+    <para>
+The following line should appear at the beginning of
+<filename>filename.dist</filename>:</para>
+
+    <informalexample>
+      <programlisting>
+   ##VERSION: <replaceable>version</replaceable>
+</programlisting>
+    </informalexample>
+
+    <para>
+This doesn't have to be the very first line in
+<filename>filename.dist</filename>, but it
+should appear somewhere within the first twenty lines, right before the first
+configuration setting. "<filename>version</filename>" should be some kind
+of an identifier
+for this particular version of the configuration files. All that
+<command>sysconftool</command> cares about is that any change to the default
+configuration, in <filename>filename.dist</filename>, results in a different
+<replaceable>version</replaceable>.
+An excellent way to do this is to simply use the &#36;Id$
+RCS/CVS version identification strings, and have this little detail taken care
+of automatically.</para>
+
+    <para>
+New revisions of an application should not necessarily have a new
+configuration file <replaceable>version</replaceable>.  If the default
+application configuration
+settings have not changed from the previous release,
+<replaceable>version</replaceable> can remain
+the same. <replaceable>version</replaceable> is copied from
+<filename>filename.dist</filename> to
+<filename>filename</filename>.</para>
+
+    <para>
+If there's an existing <filename>filename</filename>, and it
+includes the same
+<replaceable>version</replaceable> identifier, <command>sysconftool</command>
+silently skips over this
+configuration file, and doesn't do anything, assuming that this configuration
+file has already been installed.  Therefore,
+running <command>sysconftool</command>
+more than once (accidentally) will not break anything.</para>
+
+    <para>
+If there's an existing <filename>filename</filename>, but it's
+<replaceable>version</replaceable> is
+different, <command>sysconftool</command> backs it up to
+<filename>filename.bak</filename>, then
+creates a new <filename>filename</filename>.
+If there's
+an existing <filename>filename</filename>, but it doesn't contain a
+recognizable "##VERSION:
+<replaceable>version</replaceable>" line, <command>sysconftool</command>
+assumes that the previous
+version of the application did not use the <command>sysconftool</command> tool.
+That's not a problem. <filename>filename</filename> is copied
+to <filename>filename.bak</filename>, and
+<filename>filename.dist</filename> gets installed as the new
+<filename>filename</filename>, allowing
+<command>sysconftool</command> to work with the next version
+of this configuration file.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>CONFIGURATION SETTING VERSIONING</title>
+
+    <para>
+Each configuration setting uses the following format in the configuration
+file:</para>
+
+    <informalexample>
+      <programlisting>
+   ##NAME: <replaceable>name</replaceable>:<replaceable>revision</replaceable>
+   #
+   # <replaceable>description</replaceable>
+
+   <replaceable>setting</replaceable>
+</programlisting>
+    </informalexample>
+
+    <para>
+<command>sysconftool</command>
+looks for a line that begins with "<literal>##NAME</literal>". This line
+gives the name and the revision of the following setting.
+<replaceable>name</replaceable> must be
+unique within its configuration file (the same
+<replaceable>name</replaceable> can be used by
+different configuration files, <command>sysconftool</command> works with
+one file at
+a time). <replaceable>revision</replaceable> is used by
+<command>sysconftool</command> to decide when
+the configuration setting can be safely carried over from an older
+configuration file, and when it is better to reinstall the default setting
+from the new configuration file.</para>
+
+    <para>
+One or more comment lines - lines that begin with the '#' character - may
+follow "##NAME".  The first line that does not begin with '#' is considered to
+be the first line that contains the value of the configuration setting, which
+lasts. The value can be spread over multiple lines.  The configuration setting
+is considered to last until either the end of the file, or until the first
+following line that begins with another "<literal>##NAME</literal>".</para>
+
+    <para>
+Aside from that, <command>sysconftool</command> does not care how the
+configuration setting is represented.  It can be
+"<literal>NAME=VALUE</literal>", it can be
+"<literal>NAME: VALUE</literal>",
+or "<literal>NAME&lt;tab&gt;VALUE</literal>", it can even be a base64-encoded
+binary object, and it can always have leading or trailing blank lines.
+<command>sysconftool</command> merely looks at which lines begin with the '#'
+comment character.  After the
+'<literal>##NAME:</literal>' line, <command>sysconftool</command> looks
+ahead until the first line that does not begin with '#', and that's the first
+line of the configuration setting.
+Then, <command>sysconftool</command> looks ahead
+until the next line that starts with a
+"<literal>##NAME:</literal>", which marks the end of this
+configuration setting.</para>
+
+    <para>
+For this reason it is important that all commented description lines that
+follow '<literal>##NAME:</literal>' must begin with the '#' character.
+If a blank line follows
+the line with '<literal>##NAME:</literal>' it is assumed to be the start of
+the corresponding
+configuration setting.  For example, this is correct:</para>
+
+    <informalexample>
+      <programlisting>
+   ##NAME: flag1:0
+   #
+   #
+   # This is the first configuration flag
+   #
+
+   flag1=1
+</programlisting>
+    </informalexample>
+
+    <para>This is not correct:</para>
+
+    <informalexample>
+      <programlisting>
+   ##NAME: flag1:0
+
+   #
+   # This is the first configuration flag
+   #
+
+   flag1=1
+</programlisting>
+    </informalexample>
+
+  </refsect1>
+
+  <refsect1>
+    <title>CONFIGURATION FILE CREATION</title>
+
+    <para>
+A new configuration file, "<filename>filename</filename>", is created
+from its previous
+version, "<filename>filename.bak</filename>" and the new default
+configuration file,
+"<filename>filename.dist</filename>", using the following, simple, two-step
+process.</para>
+
+    <orderedlist>
+      <listitem>
+	<para>
+<command>sysconftool</command> begins with <filename>filename.dist</filename>
+in hand. This
+makes sure that <command>sysconftool</command> begins with a good, known,
+default configuration file.</para>
+      </listitem>
+
+      <listitem>
+	<para>
+<command>sysconftool</command> then takes each configuration setting in
+<filename>filename.dist</filename>, then searches
+<filename>filename.bak</filename>.  If it finds a
+configuration setting that has an identical
+"<replaceable>name</replaceable>" and
+"<replaceable>version</replaceable>", then the corresponding configuration
+setting value is taken
+from <filename>filename.bak</filename>, replacing the default in
+ <filename>filename.dist</filename>. After
+all configuration settings in <filename>filename.dist</filename> are
+looked up (and
+potentially replaced), what's left becomes the new
+<filename>filename</filename>.</para>
+      </listitem>
+    </orderedlist>
+
+  </refsect1>
+
+  <refsect1>
+    <title>THE END RESULT</title>
+
+    <para>
+The above process is a logical description.  The actual technical
+implementation is slightly different (for example,
+<filename>filename</filename> is not
+backed up to <filename>filename.bak</filename> until the new configuration
+file has been
+already created), but is logically equivalent to this process.  This process
+carries a number of consequences that must be considered.</para>
+
+    <para>
+If a new application revision needs a new configuration setting, it will
+get a new <replaceable>name</replaceable> and <replaceable>version</replaceable>.  Since <filename>filename.dist</filename> is used
+as a starting point for the new configuration file, the new configuration file
+will include the new configuration setting.  When a configuration setting is
+removed, it will disappear from the new configuration file for the same exact
+reason.</para>
+  </refsect1>
+
+
+  <refsect1>
+    <title>CONFIGURATION SETTING VERSION</title>
+
+    <para>
+<command>sysconftool</command> looks at both <replaceable>name</replaceable>
+and <replaceable>version</replaceable>. A
+configuration setting with the same <replaceable>name</replaceable> but
+different <replaceable>version</replaceable>s
+are seen by <command>sysconftool</command> as completely different settings.
+The
+existence of <replaceable>version</replaceable> allows a finer-grained control of configuration
+upgrades, as described below.</para>
+
+    <para>
+<command>sysconftool</command> copies setting values with the same
+<replaceable>name</replaceable>
+and <replaceable>version</replaceable> from the old configuration file to the
+new configuration
+file.  However, the associated descriptive comments are not copied, and are
+taken from the new <filename>filename.dist</filename>.  Therefore, if a new
+version of the
+configuration file contains an updated or an embellished description of a
+particular setting, it will be included in the new configuration file, but the
+existing configuration value will be preserved!  Generally, if a configuration
+setting does not change its meaning or function, its
+<replaceable>name</replaceable> and
+<replaceable>version</replaceable> should remain the same. Its comments can
+be edited to fix a
+typo, or revised in a more substantive fashion.
+<replaceable>Name</replaceable> and <replaceable>version</replaceable>
+should only be changed if there's a functional change in the configuration
+setting.</para>
+
+    <para>
+What to do with <replaceable>name</replaceable> and
+<replaceable>version</replaceable> after a functional change
+depends on the nature and the magnitude of the change.  The nature and the
+magnitude of the change must be considered not only with respect to the most
+recent revision of the application, but to all the previous revisions as well.
+When in doubt, go based upon the largest change in magnitude, in order to
+guarantee a functional default setting, from
+<filename>filename.dist</filename>, and leave
+it up to a living being to manually figure it out.</para>
+
+    <para>
+If only the default value of a setting should be changed for new
+application installation, but the existing installations can continue to use
+the existing value of the setting, both the <replaceable>name</replaceable> and <replaceable>version</replaceable>
+should be left alone.  Existing configuration settings will be preserved, and
+new installations will get the new default.  The descriptive comment of this
+setting can be updated too (see above).</para>
+
+    <para>
+This should be done only as long as <emphasis>ALL</emphasis>
+previous values of this
+configuration setting will ALWAYS be valid in the new application revision. If
+some possible values of this configuration setting will no longer be valid,
+<replaceable>version</replaceable> should be changed.
+<command>sysconftool</command> does not care how
+<replaceable>name</replaceable> and <replaceable>version</replaceable> are
+formatted.  Both are opaque labels.  The
+only requirements is for the label to be different.  The difference between
+changing <replaceable>version</replaceable> and changing both
+<replaceable>name</replaceable> and <replaceable>version</replaceable> is
+this:</para>
+
+    <para>
+If there's an old configuration setting with the same
+<replaceable>name</replaceable> but different
+<replaceable>version</replaceable>, <command>sysconftool</command> will
+still use the new,
+safe, default value from <filename>filename.dist</filename>, however
+<command>sysconftool</command> will also append an additional comment,
+on its own
+accord, reminding the reader that this configuration value has been reset, and
+the reader should consider whether to manually restore the configuration value
+from the old configuration.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>MISCELLANEA</title>
+
+    <para>
+When <command>sysconftool</command> decides to keep an existing setting,
+with the
+same <replaceable>name</replaceable> and <replaceable>value</replaceable>,
+it will also insert a short comment to that
+effect, reminding the reader to check the default in
+<filename>filename.dist</filename>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink
+url="sysconftool.1.html"><citerefentry>
+	  <refentrytitle>sysconftool</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

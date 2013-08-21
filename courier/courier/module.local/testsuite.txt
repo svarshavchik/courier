@@ -1,0 +1,102 @@
+Test1:
+RC=0
+.stdout:
+.stderr:
+DEFAULT=bar-foobar
+DTLINE=Delivered-To: receipient-foo-bar@example.com
+EXT2=bar-foobar
+EXT3=foobar
+EXT4=
+EXT=foo-bar-foobar
+HOST=example.com
+LOCAL=receipient-foo-bar
+PATH=/bin:/usr/bin:/usr/local/bin
+RECIPIENT=receipient-foo-bar@example.com
+RPLINE=Return-Path: <sender-env@example.com>
+SENDER=sender-env@example.com
+.Mailbox:
+Test2:
+RC=0
+RC=0
+.stdout:
+.stderr:
+.Mailbox:
+Delivered-To: receipient@example.com
+Return-Path: <sender@example.com>
+From: postmaster@example.com
+To: postmaster@example.com
+Subject: testmsg1
+
+testmsg1
+.Mailbox2:
+Delivered-To: receipient@example.com
+Return-Path: <sender@example.com>
+From: postmaster@example.com
+To: postmaster@example.com
+Subject: testmsg2
+
+testmsg2
+Test3:
+RC=0
+.stdout:
+.stderr:
+Foo
+Test4:
+RC=10
+.stdout:
+.stderr:
+Ok - Foo
+Test5:
+RC=0
+.stdout:
+foo
+bar
+foobar
+barfoo
+bazfoo
+.stderr:
+Foo
+Test6:
+From foo@bar Fri Jun  4 08:14:18 EDT 1999
+Return-Path: bugs@courier
+Delivered-To: test6@testsuite
+From: postmaster@example.com
+To: postmaster@example.com
+Subject: testmsg1
+
+testmsg1
+Foo
+Test7:
+stdout:
+stderr:
+Mailbox
+Delivered-To: receipient@example.com
+Return-Path: <sender@example.com>
+From: nobody@example.com
+To: nobody@example.com
+Subject: test of dynamic delivery instructions.
+
+test
+Mailbox2
+Delivered-To: receipient@example.com
+Return-Path: <sender@example.com>
+From: nobody@example.com
+To: nobody@example.com
+Subject: test of dynamic delivery instructions.
+
+test
+Mailbox3
+Delivered-To: receipient@example.com
+Return-Path: <sender@example.com>
+From: nobody@example.com
+To: nobody@example.com
+Subject: test of dynamic delivery instructions.
+
+test
+Mailbox4
+Not found.
+Test8:
+Exit Status: 67
+stdout:
+stderr:
+Maximum recursion level for dynamic delivery instructions exceeded.

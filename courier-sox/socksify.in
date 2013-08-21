@@ -1,0 +1,14 @@
+#! @SHELL@
+#
+#
+# Copyright 2004 Double Precision, Inc.
+# See COPYING for distribution information.
+#
+
+if test "$LD_PRELOAD" != ""
+then
+	LD_PRELOAD=" $LD_PRELOAD"
+fi
+LD_PRELOAD="@LIBNAME@${LD_PRELOAD}"
+export LD_PRELOAD
+exec "$@"

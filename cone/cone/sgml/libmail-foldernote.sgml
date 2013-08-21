@@ -1,0 +1,20 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <note>
+	<para>
+<structname>mail::folder</structname>s are linked to their corresponding
+<structname>mail::account</structname>s.
+A <structname>mail::folder</structname> created by one
+<structname>mail::account</structname> may not be used with a different
+<structname>mail::folder</structname>.
+All
+<structname>mail::folder</structname>s created by
+a <structname>mail::account</structname> are invalidated when
+this <structname>mail::account</structname> object is destroyed.
+Note that the
+<structname>mail::folder</structname> objects are not automatically destroyed;
+the application is still responsible for destroying any remaining
+<structname>mail::folder</structname>s, after their
+a <structname>mail::account</structname> is destroyed.</para>
+      </note>

@@ -1,0 +1,123 @@
+test1:
+  one: new
+  two: new
+  three: new
+
+##VERSION: 1
+#
+#
+##NAME: one:1
+
+ONE=one
+
+##NAME: two:1
+#
+# TWO=two
+
+
+##NAME: three:1
+
+THREE=three
+test1:
+  one: unchanged
+  two: unchanged
+  three: unchanged
+
+##VERSION: 1
+#
+#
+##NAME: one:1
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#ONE=one
+#
+
+ONE=one
+
+##NAME: two:1
+#
+# TWO=two
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#
+
+TWO=0
+
+##NAME: three:1
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#THREE=three
+
+THREE=three
+test1:
+  one: unchanged
+  two: unchanged
+  three: unchanged
+
+##VERSION: 2
+#
+#
+##NAME: one:1
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#ONE=one
+#
+
+ONE=one
+
+##NAME: two:1
+#
+# TWO=two
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#
+
+TWO=0
+
+##NAME: three:1
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#THREE=three
+
+THREE=three
+test1:
+  one: UPDATED
+  two: unchanged
+  three: unchanged
+
+##VERSION: 3
+#
+#
+##NAME: one:2
+#
+# Previous setting (inserted by sysconftool):
+#
+# 
+# ONE=one
+#
+
+ONE=two
+
+##NAME: two:1
+#
+# TWO=three
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#
+
+TWO=0
+
+##NAME: three:1
+#
+# DEFAULT SETTING from .test/test1.dist:
+#
+#THREE=three
+
+THREE=three

@@ -1,0 +1,67 @@
+#! @SHELL@
+#
+# Copyright 1998 - 2004 Double Precision, Inc.
+# See COPYING for distribution information.
+#
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+libexecdir="@libexecdir@"
+sysconfdir="@sysconfdir@"
+localstatedir="@localstatedir@"
+piddir="@piddir@"
+
+filterbindir="${libexecdir}/filters"
+filteractivedir="${sysconfdir}/filters/active"
+pidfile="${piddir}/courierfilter.pid"
+
+cmd="$1"
+filter="$2"
+
+case "$cmd" in
+start)
+	;;
+stop)
+	;;
+*)
+	filter=""
+	;;
+esac
+
+if test "$filter" = ""
+then
+	echo "Usage: $0 (start | stop) [ filter ]" >&2
+	exit 1
+fi
+
+case "$filter" in
+*/*)
+	filter=""
+	;;
+*)
+	if test ! -x $filterbindir/$filter
+	then
+		filter=""
+	fi
+	;;
+esac
+
+if test "$filter" = ""
+then
+	echo "This filter is not installed in $filterbindir\n" >&2
+	exit 1
+fi
+
+case "$cmd" in
+start)
+	test ! -x $filterbindir/$filter \
+		|| ln -s $filterbindir/$filter $filteractivedir/$filter \
+		|| exit 1
+	;;
+stop)
+	rm -f $filteractivedir/$filter || exit 1
+	;;
+esac
+
+test -f "$pidfile" && kill -HUP "`cat $pidfile`" 2>/dev/null
+exit 0

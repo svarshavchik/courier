@@ -1,0 +1,89 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-updatefolderindexinfo">
+    <refmeta>
+      <refentrytitle>mail::account::updateFolderIndexInfo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::updateFolderIndexInfo</refname>
+      <refpurpose>Update status of the currently open folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      <literallayout>
+mail::account *account;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>updateFolderIndexInfo</function></funcdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function requests that the status of the currently open folder be updated.
+Messages marked as deleted are removed.
+The application will also be notified about
+changes to the folder made by any other
+application that has the same folder opened.</para>
+
+      <para>
+This request invokes methods in the currently opened folder's
+<structname>mail::callback::folder</structname> object, as follows:</para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+The <function>mail::account::messageChanged</function> method is invoked for
+all messages which have an updated status flag set.</para>
+	</listitem>
+	<listitem>
+	  <para>
+<function>mail::account::messagesRemoved</function> is invoked for all
+messages removed from the folder (those that were marked as deleted by this
+application and those that were removed from the folder by any other
+application that has this folder opened).</para>
+	</listitem>
+	<listitem>
+	  <para>
+<function>mail::account::newMessages</function> is invoked if any messages
+were added to this folder.
+The application should use
+<link linkend="mail-getfolderindexsize"><citerefentry>
+		<refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link>,
+and compare it to the previously-known folder size, in order to determine
+how many messages were added to the folder (new messages are always added to
+the end of the message list).</para>
+	</listitem>
+      </itemizedlist>
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-updatenotify"><citerefentry>
+	    <refentrytitle>mail::account::updateNotify</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

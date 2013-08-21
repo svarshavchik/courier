@@ -1,0 +1,76 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>pop3d</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>pop3d</refname>
+    <refname>pop3d-ssl</refname>
+
+    <refpurpose>Start or stop the <application moreinfo="none">Courier</application>
+POP3 server</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">@sbindir@/pop3d</command>
+      <group choice="opt" rep="norepeat">
+        <arg choice="opt" rep="norepeat">start</arg>
+        <arg choice="opt" rep="norepeat">stop</arg>
+      </group>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">@sbindir@/pop3d-ssl</command>
+      <group choice="opt" rep="norepeat">
+        <arg choice="opt" rep="norepeat">start</arg>
+        <arg choice="opt" rep="norepeat">stop</arg>
+      </group>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+"<command moreinfo="none">pop3d start</command>" reads the POP3 server configuration
+from
+<filename moreinfo="none">@sysconfdir@/pop3d</filename>
+(and <filename moreinfo="none">@sysconfdir@/pop3d-ssl</filename>) and runs
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+to accept new POP3 connections.</para>
+
+    <para>
+"<command moreinfo="none">pop3d-ssl start</command>" reads
+<filename moreinfo="none">@sysconfdir@/pop3d-ssl</filename>
+(and <filename moreinfo="none">@sysconfdir@/pop3d</filename>) and runs
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+to accept new POP3-over-SSL connections.</para>
+
+    <note>
+      <para>
+The <application moreinfo="none">Courier</application>
+POP3 server supports Maildir mailboxes only.</para>
+    </note>
+
+    <para>
+<command moreinfo="none">"pop3d stop"</command>
+<command moreinfo="none">"pop3d-ssl stop"</command> shut down their respective servers.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="courierpop3d.html"><citerefentry><refentrytitle>courierpop3d</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>7</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

@@ -1,0 +1,42 @@
+#!@SHELL@
+#
+#
+# Copyright 1998 - 2005 Double Precision, Inc.  See COPYING for
+# distribution information.
+# Performance test.
+#
+# This one will optimize Courier's performance by sending a message
+# with complete MIME headers, so that Courier won't have to rewrite it.
+#
+# Benchmark 1: 1000 messages, 5 receipients per message.
+# Start Courier.  Start pushing the messages into the queue.
+# Total completion until the last message was delivered: 3 mins 42 seconds.
+
+# Benchmark 2: 1000 messages, 5 receipients per message.
+# Submit messages into the queue while Courier is not running.  Start Courier.
+# Total time to submit messages into the queue: 32 seconds.
+# Total completion until the last message was delivered: 4 mins 52 seconds.
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+csendmail="@bindir@/sendmail"
+
+nummessages="$1"
+addresses="$2"
+
+n=0
+
+while test $n -lt $1
+do
+	env -i $csendmail $addresses <<EOF
+From: perftest1@example.com
+To: perftest1@example.com
+Subject: test
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+test $n
+EOF
+	n=`expr $n + 1`
+done

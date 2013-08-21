@@ -1,0 +1,96 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="sockd">
+
+  <docinfo>
+    <title>socksrc</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+
+  </docinfo>
+  <refmeta>
+    <refentrytitle>sockd</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>sockd</refname>
+    <refpurpose>Socks 5 proxy server</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>@sbindir@/sockd</command>
+      <group choice='req'>
+	<arg>start</arg>
+	<arg>stop</arg>
+	<arg>restart</arg>
+      </group>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The <command>sockd</command> server allows applications behind a firewall
+to establish outside network connections.
+The application makes a connection to the
+<command>sockd</command> server, authenticates itself (if required), then
+<command>sockd</command> establishes a network connection on behalf of the
+application, then transparently transfers the data between the two
+connections.</para>
+
+    <para>
+This Socks 5 server does not yet support <acronym>UDP</acronym>
+connections.
+<command>sockd</command> supports <acronym>TCP</acronym> connections
+only.</para>
+
+    <para>
+<quote><command>sockd start</command></quote> starts the Socks 5 server,
+reading its configuration from
+<filename>@sysconfdir@/socksrc</filename>.
+<quote><command>sockd stop</command></quote> shuts down the Socks server,
+terminating any active connections.
+<quote><command>sockd restart</command></quote> re-reads the server
+configuration from <filename>@sysconfdir@/socksrc</filename> without
+affecting any existing network connections.</para>
+
+    <note>
+      <para>
+Not all configuration settings are updated by <command>sockd restart</command>.
+Only changes to the
+<quote>port</quote>,
+<quote>anonproxy</quote>,
+<quote>authproxy</quote>, and
+<quote>prefork</quote> settings in <filename>@sysconfdir@/sockrc</filename>
+will take effect.
+Changes to other settings require a <command>sockd stop</command>, followed
+by <command>sockd start</command> to take effect.</para>
+    </note>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="socksify.html">
+<citerefentry>
+	  <refentrytitle>socksify</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="socksrc.html">
+<citerefentry>
+	  <refentrytitle>socksrc</refentrytitle>
+	  <manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+
+</refentry>

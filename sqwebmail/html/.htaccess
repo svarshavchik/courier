@@ -1,0 +1,3 @@
+<FilesMatch "^index\.html$">
+	ForceType application/x-httpd-php
+</FilesMatch>

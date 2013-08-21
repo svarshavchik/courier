@@ -1,0 +1,103 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<!-- Copyright 2006 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="mkbl4">
+  
+  <docinfo>
+    <title>mkbl4</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+
+  </docinfo>
+  <refmeta>
+    <refentrytitle>mkbl4</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mkbl4</refname>
+    <refpurpose>Process IPv4 SOCKS blacklist file</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>@sbindir@/mkbl4</command>
+      <arg choice='req'><replaceable>txtfile</replaceable></arg>
+      <arg choice='req'><replaceable>dbfile</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+	<para>
+<command>mkbl4</command>
+reads <replaceable>txtfile</replaceable>, which is a flat, plain text file
+whose lines are formatted as follows:</para>
+
+	<informalexample>
+	  <programlisting>
+description:aaa.bbb.ccc.ddd-eee.fff.ggg.hhh
+</programlisting>
+	</informalexample>
+
+	<para>
+The description part of each line, the part that precedes the colon,
+is ignored.
+An IPv4 address range, expressed as a
+<replaceable>starting</replaceable>-<replaceable>ending</replaceable>
+address range, follows the colon.</para>
+
+	<para>
+The IP address ranges are sorted, and overlapping ranges are removed.
+<command>mkbl4</command> creates <replaceable>dbfile</replaceable>, a binary
+database format that's used by the <ulink url="sockd.html">
+<citerefentry>
+	      <refentrytitle>sockd</refentrytitle>
+	      <manvolnum>1</manvolnum>
+	    </citerefentry>
+</ulink> SOCKS server.
+The <quote>block4=</quote> setting in the
+<ulink url="socksrc.html">
+<citerefentry>
+	      <refentrytitle>socksrc</refentrytitle>
+	      <manvolnum>5</manvolnum>
+	    </citerefentry>
+</ulink>
+configuration file.</para>
+
+	<para>
+The contents of any existing <replaceable>dbfile</replaceable> are replaced
+complete.</para>
+
+	<note>
+      <para>
+<command>mkbl4</command> creates a new database in a temporary file, then
+renames it to <replaceable>dbfile</replaceable>.
+It is safe to run <command>mkbl4</command> while
+<command>sockd</command> is using <replaceable>dbfile</replaceable> at the
+same time.</para>
+    </note>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="socksify.html">
+<citerefentry>
+	  <refentrytitle>socksify</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry>
+</ulink>,
+<ulink url="socksrc.html">
+<citerefentry>
+	  <refentrytitle>socksrc</refentrytitle>
+	  <manvolnum>5</manvolnum>
+	</citerefentry>
+</ulink>.</para>
+  </refsect1>
+</refentry>

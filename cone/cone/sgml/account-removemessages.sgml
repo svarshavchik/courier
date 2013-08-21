@@ -1,0 +1,60 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-removemessages">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::removeMessages</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::removeMessages</refname>
+      <refpurpose>Remove messages from the folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail-&gt;<function>removeMessages</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function removes messages from the currently open folder.
+<parameter>msgList</parameter>
+is a list of messages to be removed.</para>
+
+      &libmail-removemessages;
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-account-return;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="account-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-removemessages"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::removeMessages</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

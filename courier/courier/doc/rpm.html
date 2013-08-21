@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="author" content="Sam Varshavchik"/>
+
+  <title>The Courier mail server - Building RPMs</title>
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <!-- Copyright 2000-2009 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <h1>Building <em>Courier</em> mail server RPMs</h1>
+
+  <p>You can build binary <em>Courier</em> mail server RPMs directly from
+  the tarball, using RPM version 4.0.2 or higher. For example:</p>
+  <pre>
+rpmbuild -ta courier-<em>version</em>.tar.bz2
+</pre>
+
+  <p>Because the RPMs can be built directly from the tarball,
+  binary RPMs will not be distributed separately.</p>
+
+  <blockquote>
+    <p><strong>NOTE:</strong></p>
+
+    <p>The first attempt to build binary RPMs will likely result in
+    an error message requesting additional RPMs to be installed
+    first, such as the LDAP server, MySQL and PostgreSQL databases,
+    and various other development libraries.</p>
+
+    <p><span style="color: #ff4040">Do not blow off these
+    requirements, and attempt to hack your way around them.</span>
+    Install the required RPMs, and try again. These RPMs are
+    required to build the full complement of the <em>Courier</em> mail
+    server packages, and they may be removed after building the
+    <em>Courier</em> mail server.</p>
+
+    <p>Parts of the <em>Courier</em> mail server that use these optional
+    RPMs will be built into separate, optional subpackages, and
+    will not be required to run the <em>Courier</em> mail server. The
+    optional RPMs must be installed only for the duration of the
+    build process.</p>
+  </blockquote>
+
+  <p>Note that the <em>Courier</em> mail server does not allow itself to be
+  built as root. A single mistake -- especially when trying to
+  build a system-level utility -- can have serious consequences.
+  Therefore the configuration script won't let you. There's an
+  undocumented flag to disable the check, for folks who don't make
+  mistakes :-) See the <a href="FAQ.html">FAQ</a> for instructions
+  on how to configure RPM to build packages as non-root.</p>
+
+  <p>Building the RPM packages yourself will also result in the
+  packages being customized for your system. This procedure builds
+  the following packages:</p>
+
+  <ul>
+    <li><code>courier.rpm</code> - the base mail server.</li>
+
+    <li><code>courier-smtpauth.rpm</code> - install this package to
+    enable authenticated ESMTP, in the ESMTP server.</li>
+
+    <li><code>courier-ldap.rpm</code> - module to authenticate
+    against an LDAP directory. Install this module if you would
+    like to use an LDAP directory to authenticate and manage mail
+    accounts. LDAP support requires the OpenLDAP library to be
+    installed. If OpenLDAP development libraries are not installed,
+    this package will be empty.</li>
+
+    <li><code>courier-mysql.rpm</code> - module to authenticate
+    using a MySQL database. Install this module if you would like
+    to use a MySQL database to authenticate and manage mail
+    accounts. If MySQL development libraries are not installed,
+    this package will be empty.</li>
+
+    <li><code>courier-pgsql.rpm</code> - module to authenticate
+    using a PostgreSQL database. Install this module if you would
+    like to use a PostgreSQL database to authenticate and manage
+    mail accounts. If PostgreSQL development libraries are not
+    installed, this package will be empty.</li>
+
+    <li><code>courier-fax-<em>version</em>--1.%{_arch}.rpm</code> -
+    several supporting scripts for sending E-mails by fax.</li>
+
+    <li><code>courier-pop3d.rpm</code> - the POP3 server.</li>
+
+    <li><code>courier-imapd.rpm</code> - the IMAP server.</li>
+
+    <li><code>courier-webmail.rpm</code> - the webmail server.</li>
+
+    <li><code>courier-webadmin.rpm</code> - the web-based
+    administration tool (just the <code>cgi-bin</code> wrapper,
+    actually, the remaining files are installed by other
+    packages).</li>
+
+    <li><code>courier-maildrop.rpm</code> - <em>maildrop</em> mail
+    filter (required if you want to implement mail filtering).</li>
+
+    <li><code>courier-mlm.rpm</code> - the <em>couriermlm</em>
+    mailing list manager.</li>
+
+    <li><code>courier-sendmail-wrapper.rpm</code> - install this
+    package to create soft links from
+    <code>/usr/bin/sendmail</code>, <code>/usr/lib/sendmail</code>,
+    and several other popular places, to the <em>Courier</em> mail server's
+    sendmail wrapper. This package will not be created on Red Hat
+    7.3 and later, which uses the Debian-derived alternatives
+    mechanism. The alternatives mechanism will be incorporated into
+    the main <em>Courier</em> mail server package.</li>
+
+    <li><code>courier-maildrop-wrapper.rpm</code> - install this
+    package to create soft links in the <code>/usr/local/bin</code>
+    subdirectory, for applications which expect to find
+    <code>maildrop</code> in the <code>/usr/local/bin</code>
+    directory. <code>maildrop</code> is also available as a
+    standalone package, which normally installs in the
+    <code>/usr/local/bin</code> subdirectory. The <em>Courier</em> mail
+    server includes an integrated version of <code>maildrop</code>,
+    and you can install this package to allow applications that are
+    configured for the standalone <code>maildrop</code> version to
+    use the <em>Courier</em> mail server's integrated version instead.</li>
+  </ul>
+
+  <p><strong>NOTE:</strong> these packages are built with certain
+  directories in a non-default location. Specifically, the
+  configuration files are installed in <code>/etc/courier</code>,
+  the mail spool is installed in <code>/var/spool/courier</code>,
+  and the manual pages are installed directly in
+  <code>/usr/man</code>. Other configuration settings are left at
+  their defaults. If you need to change the defaults, you will have
+  to build your own packages.</p>
+
+  <p><strong>NOTE:</strong> the first time the system boots after
+  installing the the <em>Courier</em> mail server RPM, the system may pause
+  for several minutes at the "Starting The <em>Courier</em> mail server"
+  prompt. That's because the startup script automatically creates
+  test SSL certificates the first time the script is executed
+  (provided that SSL support is available). This can take as much
+  as 5-6 minutes on a slow machine. Subsequent starts should take
+  only a few seconds. Have patience. Also note that the main
+  <em>Courier</em> mail server RPM has the ESMTP server turned off. You
+  must manually enable receiving mail via ESMTP by editing the
+  <code>esmtpd</code> configuration file.</p>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<!-- Copyright 2000-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="sysconftool.1">
+
+  <docinfo>
+    <title>sysconftool</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+  </docinfo>
+
+  <refmeta>
+    <refentrytitle>sysconftool</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>sysconftool</refname>
+    <refpurpose>install configuration files</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>sysconftool</command>
+      <arg choice='opt'>options</arg>
+      <arg rep='repeat'>filename.dist</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command>sysconftool</command> is a development utility that helps to install
+application configuration files. <command>sysconftool</command> allows an
+existing
+application to be upgraded without losing the older version's configuration
+settings.</para>
+
+    <para>
+A new version of an application often introduces new configuration
+settings. Sometimes obsolete configuration settings are removed.  Existing
+configuration settings may also now have additional options, or certain
+options are no longer valid any more.  Because of this, an application upgrade
+usually installs a fresh set of configuration files, containing a default
+configuration that's known to work.  Keeping the existing files carries the
+risk of the application failing to function properly due to a configuration
+that is no longer valid.</para>
+
+    <para>
+A typical application installation script copies over configuration files
+with default settings.  Existing configuration files are backed up or
+overwritten. With <command>sysconftool</command>, an application will install a
+configuration file names <filename>filename.dist</filename>, instead of
+<filename>filename</filename>.
+Then, the application's installation script runs
+<command>sysconftool</command>.
+<command>sysconftool</command> copies <filename>filename.dist</filename> to
+<filename>filename</filename>, but
+also checks if <filename>filename</filename> from an older version of the
+application
+already exist. If <filename>filename</filename> an older
+<command>sysconftool</command>-installed
+configuration file, it's configuration settings replace the defaults in
+<filename>filename.dist</filename>, which is then subsequently installed
+as <filename>filename</filename>.
+<command>sysconftool</command> is smart enough to:
+<itemizedlist>
+	<listitem>
+	  <para>
+Remove configuration settings that no longer exist.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Add new configuration settings.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Do not preserve an
+older configuration setting if there's a possibility that it is no longer
+valid in the new version of the application.</para>
+	</listitem>
+      </itemizedlist>
+</para>
+
+    <para>
+<command>sysconftool</command> produces a short report when it runs. The report
+lists every configuration setting in
+<filename>$filename.dist</filename>, and its disposition.
+The possible dispositions are:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><literal>new</literal></term>
+	<listitem>
+	  <para>
+This a new configuration setting that wasn't
+found in the existing <filename>$filename</filename>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>unchanged</literal></term>
+	<listitem>
+	  <para>
+This setting's value was taken
+from the existing <filename>$filename</filename>,
+replacing the default value provided by
+<filename>$filename.dist</filename>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>UPDATED</literal></term>
+
+	<listitem>
+	  <para>
+This setting has been previously set in <filename>$filename</filename>,
+but the setting's value may no longer be valid in the new version of the
+application, so its default value is taken from
+<filename>$filename.dist</filename>, and it may
+need to be manually adjusted.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+All this logic is based on some additional metadata that must be included
+in each configuration file, that <command>sysconftool</command> reads.
+For this to work, both the old and the new version of the
+application must be <command>sysconftool</command>-ized.
+<command>sysconftool</command>
+operates in a fail-safe mode.  If the old version did not use
+<command>sysconftool</command>, <filename>$filename</filename> is backed up to
+<filename>$filename.bak</filename>, and <filename>$filename</filename> is
+copied to <filename>$filename</filename>. This
+is what would essentially happen anyway without <command>sysconftool</command>.
+The local configuration needs to be reentered into
+<filename>$filename</filename>, so
+nothing is lost.  However, the next upgrade will see
+<command>sysconftool</command> do its job.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>ADDING SYSCONFTOOL SUPPORT TO AN EXISTING APPLICATION</title>
+
+    <para>
+<command>sysconftool</command> requires the application to use
+<command>autoconf</command> and <command>automake</command>. The first step
+is to run the
+<command>sysconftoolize</command> script from the application's source
+directory.
+<command>sysconftoolize</command> copies the <command>sysconftool</command>
+script to the
+current directory, and appends a default <literal>install-configure</literal>
+rule to
+<filename>Makefile.am</filename>. After running
+<command>sysconftoolize</command> the macro
+<literal>AC_PROG_SYSCONFTOOL</literal> must be manually added to
+<filename>configure.in</filename>, and <filename>Makefile.am</filename> must be modified as
+follows.</para>
+
+    <para>
+<filename>Makefile.am</filename> must be modified to install configuration
+files as
+<filename>filename.dist</filename> instead of
+<filename>filename</filename>.  The default
+<literal>install-configure</literal> rule assumes that
+<literal>sysconf_DATA</literal> lists all
+configuration files in
+<filename>sysconfdir</filename>, and runs <command>sysconftool</command> on
+them.
+This will usually have to be modified, according to the application's
+individual needs. Finally, <filename>Makefile.am</filename> must be modified to
+distribute the <command>sysconftool</command> script in the application's
+source
+distribution.  Adding <command>sysconftool</command> to
+<literal>EXTRA_DIST</literal> is what's needed in most cases.</para>
+
+    <para>
+Finally, certain <command>sysconftool</command> magic incantations must be
+added to the application's configuration files, see <ulink
+url="sysconftool.7.html"><citerefentry>
+	  <refentrytitle>sysconftool</refentrytitle>
+	  <manvolnum>7</manvolnum>
+	</citerefentry></ulink> for more information. The last
+step involves updating the application's
+<filename>INSTALL</filename> instructions, so that the
+application can be properly installed.  The following instructions must be
+added to <filename>INSTALL</filename>:</para>
+
+    <orderedlist>
+      <listitem>
+	<para>
+Run "make install-configure" after "make install".</para>
+      </listitem>
+
+      <listitem>
+	<para>
+If this is the first <command>sysconftool</command>-ized version, DO NOT
+simply copy over the old configuration files, and overwrite the new
+configuration files.  Instead, manually edit each configuration file, and
+manually reset each configuration setting.  This is because the new
+configuration files include the magic code for <command>sysconftool</command>, which
+would be lost when the configuration file is overwritten.</para>
+      </listitem>
+
+      <listitem>
+	<para>
+If this is not the first <command>sysconftool</command>-ized version, the
+output of <command>make install-configure</command> must be reviewed in
+order to
+manually adjust or tweak what <command>sysconftool</command> did.  Many large
+configuration files can result in lots of output, so the output of
+<command>make
+install-configure</command> should be saved into a file, and reviewed.</para>
+      </listitem>
+    </orderedlist>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink
+url="sysconftoolcheck.1.html"><citerefentry>
+	  <refentrytitle>sysconftoolcheck</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry></ulink>,
+<ulink
+url="sysconftool.7.html"><citerefentry>
+	  <refentrytitle>sysconftool</refentrytitle>
+	  <manvolnum>7</manvolnum>
+	</citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

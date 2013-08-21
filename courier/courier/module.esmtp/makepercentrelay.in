@@ -1,0 +1,16 @@
+#! @SHELL@
+#
+# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+localstatedir="@localstatedir@"
+bindir="@bindir@"
+
+umask 022
+exec ${bindir}/makedat \
+	-src=${sysconfdir}/esmtppercentrelay.dir \
+	-file=${sysconfdir}/esmtppercentrelay.dat \
+	-tmp=${sysconfdir}/esmtppercentrelay.tmp

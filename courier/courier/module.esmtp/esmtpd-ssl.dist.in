@@ -1,0 +1,305 @@
+##VERSION: $Id:$
+#
+# esmtpd-ssl created from esmtpd-ssl.dist by sysconftool
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+#  Copyright 2000-2008 Double Precision, Inc.  See COPYING for
+#  distribution information.
+#
+#  This configuration file sets various options for the Courier-SMTP server
+#  when used to handle SSL ESMTP connections.
+#
+#  SSL and non-SSL connections are handled by a dedicated instance of the
+#  couriertcpd daemon.  If you are accepting both SSL and non-SSL ESMTP
+#  connections, you will start two instances of couriertcpd, one on the
+#  ESMTP port 25, and another one on the ESMTP-SSL port 465.
+#
+#  Download OpenSSL from http://www.openssl.org/
+#
+##NAME: install_prefix:0
+#
+# Do not change the following settings.
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+##NAME: BOFHCHECKDNS:0
+#
+#  Comment out the following line in order to accept mail with a bad
+#  return address.
+
+BOFHCHECKDNS=1
+
+##NAME: BOFHNOEXPN:1
+#
+#  Set BOFHNOEXP to 1 to disable EXPN
+
+BOFHNOEXPN=0
+
+##NAME: BOFHNOVRFY:1
+#
+#  Set BOFHNOVERIFY to disable VRFY
+
+BOFHNOVRFY=0
+
+##NAME: TARPIT:1
+#
+#  Set TARPIT to 0 to disable tarpitting
+
+TARPIT=1
+
+##NAME: NOADDMSGID:0
+#
+#  The following environment variables keep Courier from adding
+#  default Date: and Message-ID: header to messages which do not have them.
+#  If you would like to add default headers only for mail from certain
+#  IP address ranges, you can override them in couriertcpd access file,
+#  see couriertcpd(8).
+
+NOADDMSGID=1
+
+##NAME: NOADDDATE:0
+#
+
+NOADDDATE=1
+
+##NAME: NOADDRREWRITE:0
+#
+# Don't rewrite To:, From:, and Cc: headers.  Set to 2 in order to omit
+# rewriting them only if there is a DKIM-Signature.
+
+NOADDRREWRITE=0
+
+##NAME: ESMTP_LOG_DIALOG:0
+#
+#  If set, log the esmtp dialog.
+
+ESMTP_LOG_DIALOG=0
+
+##NAME: AUTH_REQUIRED:0
+#
+# Set AUTH_REQUIRED to 1 in order to force the client to use ESMTP
+# authentication.  You can override AUTH_REQUIRED on a per-IP address basis
+# using smtpaccess.  See makesmtpaccess(8).
+
+AUTH_REQUIRED=0
+
+##NAME: SSLPORT:0
+#
+#  Options in the esmtpd-ssl configuration file AUGMENT the options in the
+#  esmtpd configuration file.  First the esmtpd configuration file is read,
+#  then the esmtpd-ssl configuration file, so we do not have to redefine
+#  anything.
+#
+#  However, some things do have to be redefined.  The port number is
+#  specified by SSLPORT, instead of PORT.  The default port is port 465.
+#
+#  Multiple port numbers can be separated by commas.  When multiple port
+#  numbers are used it is possibly to select a specific IP address for a
+#  given port as "ip.port".  For example, "127.0.0.1.900,192.168.0.1.900"
+#  accepts connections on port 900 on IP addresses 127.0.0.1 and 192.168.0.1
+#  The SSLADDRESS setting is a default for ports that do not have
+#  a specified IP address.
+
+SSLPORT=465
+
+##NAME: SSLADDRESS:0
+#
+#  Address to listen on, can be set to a single IP address.
+#
+# SSLADDRESS=127.0.0.1
+
+SSLADDRESS=0
+
+##NAME: SSLPIDFILE:0
+#
+#
+
+SSLPIDFILE=@piddir@/esmtpd-ssl.pid
+
+##NAME: ESMTPDSSLSTART:0
+#
+#  Whether or not to start ESMTP over SSL on esmtps port:
+
+ESMTPDSSLSTART=NO
+
+##NAME: COURIERTLS:0
+#
+# The following variables configure ESMTP over SSL.  If OpenSSL or GnuTLS
+# is available during configuration, the couriertls helper gets compiled, and
+# upon installation a dummy TLS_CERTFILE gets generated. courieresmtpd will
+# automatically advertise the ESMTP STARTTLS extension if both TLS_CERTFILE
+# and COURIERTLS exist.
+#
+# WARNING: Peer certificate verification has NOT yet been tested.  Proceed
+# at your own risk.  Only the basic SSL/TLS functionality is known to be
+# working. Keep this in mind as you play with the following variables.
+#
+
+COURIERTLS=@bindir@/couriertls
+
+##NAME: TLS_PRIORITY:0
+#
+# Set TLS protocol priority settings (GnuTLS only)
+#
+# DEFAULT: NORMAL:-CTYPE-OPENPGP
+#
+# TLS_PRIORITY="NORMAL:-CTYPE-OPENPGP"
+
+##NAME: TLS_PROTOCOL:0
+# 
+# TLS_PROTOCOL sets the protocol version.  The possible versions are:
+#
+# OpenSSL:
+#
+# SSL3 - SSLv3
+# SSL23 - either SSLv2 or SSLv3 (also TLS1, it seems)
+# TLS1 - TLS1
+#
+# Note that this setting, with OpenSSL, is modified by the TLS_CIPHER_LIST
+# setting, below.
+#
+# SSL23 (OpenSSL)
+
+##NAME: TLS_CIPHER_LIST:0
+#
+# TLS_CIPHER_LIST optionally sets the list of ciphers to be used by the
+# OpenSSL library.  In most situations you can leave TLS_CIPHER_LIST
+# undefined
+#
+# OpenSSL:
+#
+# TLS_CIPHER_LIST="SSLv3:TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
+#
+#
+
+##NAME: TLS_MIN_DH_BITS:0
+#
+# TLS_MIN_DH_BITS=n
+#
+# GnuTLS only:
+#
+# Set the minimum number of acceptable bits for a DH key exchange.
+#
+# GnuTLS's compiled-in default is 727 bits (as of GnuTLS 1.6.3). Some server
+# have been encountered that offer 512 bit keys. You may have to set
+# TLS_MIN_DH_BITS=512 here, if necessary.
+
+##NAME: TLS_TIMEOUT:0
+# TLS_TIMEOUT is currently not implemented, and reserved for future use.
+# This is supposed to be an inactivity timeout, but its not yet implemented.
+#
+
+##NAME: TLS_DHCERTFILE:0
+#
+# TLS_DHCERTFILE - PEM file that stores a Diffie-Hellman -based certificate.
+# When OpenSSL is compiled to use Diffie-Hellman ciphers instead of RSA
+# you must generate a DH pair that will be used.  In most situations the
+# DH pair is to be treated as confidential, and the file specified by
+# TLS_DHCERTFILE must not be world-readable.
+#
+# TLS_DHCERTFILE=
+
+##NAME: TLS_CERTFILE:0
+#
+# TLS_CERTFILE - certificate to use.  TLS_CERTFILE is required for SSL/TLS
+# servers, and is optional for SSL/TLS clients.  TLS_CERTFILE is usually
+# treated as confidential, and must not be world-readable. Set TLS_CERTFILE
+# instead of TLS_DHCERTFILE if this is a garden-variety certificate
+#
+# VIRTUAL HOSTS (servers only):
+#
+# Due to technical limitations in the original SSL/TLS protocol, a dedicated
+# IP address is required for each virtual host certificate. If you have
+# multiple certificates, install each certificate file as
+# $TLS_CERTFILE.aaa.bbb.ccc.ddd, where "aaa.bbb.ccc.ddd" is the IP address
+# for the certificate's domain name. So, if TLS_CERTFILE is set to
+# /etc/certificate.pem, then you'll need to install the actual certificate
+# files as /etc/certificate.pem.192.168.0.2, /etc/certificate.pem.192.168.0.3
+# and so on, for each IP address.
+#
+# GnuTLS only (servers only):
+#
+# GnuTLS implements a new TLS extension that eliminates the need to have a
+# dedicated IP address for each SSL/TLS domain name. Install each certificate
+# as $TLS_CERTFILE.domain, so if TLS_CERTFILE is set to /etc/certificate.pem,
+# then you'll need to install the actual certificate files as
+# /etc/certificate.pem.host1.example.com, /etc/certificate.pem.host2.example.com
+# and so on.
+#
+# Note that this TLS extension also requires a corresponding support in the
+# client. Older SSL/TLS clients may not support this feature.
+#
+# This is an experimental feature.
+
+TLS_CERTFILE=@mydatadir@/esmtpd.pem
+
+##NAME: TLS_TRUSTCERTS:0
+#
+# TLS_TRUSTCERTS=pathname - load trusted certificates from pathname.
+# pathname can be a file or a directory. If a file, the file should
+# contain a list of trusted certificates, in PEM format. If a
+# directory, the directory should contain the trusted certificates,
+# in PEM format, one per file and hashed using OpenSSL's c_rehash
+# script. TLS_TRUSTCERTS is used by SSL/TLS clients (by specifying
+# the -domain option) and by SSL/TLS servers (TLS_VERIFYPEER is set
+# to PEER or REQUIREPEER).
+
+TLS_TRUSTCERTS=@cacerts@
+
+##NAME: TLS_VERIFYPEER:0
+#
+# TLS_VERIFYPEER - how to verify client certificates.  The possible values of
+# this setting are:
+#
+# NONE - do not verify anything
+#
+# PEER - verify the client certificate, if one's presented
+#
+# REQUIREPEER - require a client certificate, fail if one's not presented
+#
+#
+TLS_VERIFYPEER=NONE
+
+##NAME: TLS_EXTERNAL:0
+#
+# To enable SSL certificate-based authentication:
+#
+# 1) TLS_TRUSTCERTS must be set to a pathname that holds your certificate
+#    authority's SSL certificate
+#
+# 2) TLS_VERIFYPEER=PEER or TLS_VERIFYPEER=REQUIREPEER (the later settings
+#    requires all SSL clients to present a certificate, and rejects
+#    SSL/TLS connections without a valid cert).
+#
+# 3) Set TLS_EXTERNAL, below, to the subject field that holds the login ID.
+#    Example:
+#
+#  TLS_EXTERNAL=emailaddress
+#
+# The above example retrieves the login ID from the "emailaddress" subject
+# field. The certificate's emailaddress subject must match exactly the login
+# ID in the courier-authlib database.
+
+##NAME: MAXDAEMONS:0
+#
+#  Maximum number of daemons started
+#
+
+MAXDAEMONS=40
+
+##NAME: MAXPERC:0
+#
+#  Maximum number of connections accepted from the same C address block
+#
+
+MAXPERC=5
+
+##NAME: MAXPERIP:0
+#
+#
+#  Maximum number of connections accepted from the same IP address
+
+MAXPERIP=5

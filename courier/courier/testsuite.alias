@@ -1,0 +1,11 @@
+everyone@example.com: gloria@example.com
+everyone@example.com: john@example.com
+everyone@example.com: steve@domain.com
+everyone@example.com: steve@example.com
+sales@example.com: gloria@example.com
+sales@example.com: john@example.com
+steve@example.com: steve@domain.com
+steve@example.com: steve@example.com
+sysadmin@example.com: john@example.com
+sysadmin@example.com: steve@domain.com
+sysadmin@example.com: steve@example.com

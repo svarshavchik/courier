@@ -1,0 +1,24 @@
+NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+
+This repository does not store files that are automatically generated
+by autoconf, automake, and libtool.  There's no reason to waste space
+storing automatically-generated rubbish.
+
+This means that you will not find configure, Makefile.in, config.h.in,
+and the rest of that stuff in here.  The only thing you will get is
+configure.in, Makefile,am, and maybe acconfig.h.
+
+Therefore, in order to start compiling, you will have to obtain the
+latest version of autoconf, automake, and possibly libtool (may or may
+not be needed).  Then, you will need to rebuild configure and Makefile.in
+by yourself.
+
+NOTE: You will also need to install the sysconftool utility.  Download
+sysconftool from http://www.courier-mta.org/sysconftool/.  This is a short
+autoconf macro.
+
+The autobloat script will hopefully take care of this for you.  Cross your
+fingers, and run 'sh autobloat' in the checked out top directory.  It will
+recursively run autoconf, automake, libtool, and sysconftool, in the current
+directory, and all subdirectories.
+

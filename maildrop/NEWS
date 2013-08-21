@@ -1,0 +1,17 @@
+Maildrop 1.7
+------------
+
+The new URL for maildrop's home page is http://www.courier-mta.org/maildrop/
+
+Maildrop 1.2
+------------
+
+The major change in maildrop 1.2 is that the legacy installation layout has
+been finally removed. maildrop now installs in the standard GNU/FHS-compliant
+installation directories.  The standard options to configure, --prefix,
+--exec-prefix, and others, are now used as intended.
+
+Additionally, development libraries are also installed.  The development
+libraries contain functions that may be useful for programs and applications
+that parse E-mail and MIME headers.
+

@@ -1,0 +1,7 @@
+Courier-analog has been released!
+
+Courier-analog requires Courier 0.47, or later.  Courier-analog can also
+be used with the Courier-IMAP build, version 3.0.8 or later, but will obviously
+generate IMAP and POP3 reports only.  All SMTP reports will be blank.
+
+

@@ -1,0 +1,81 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-delrights">
+  <refmeta>
+    <refentrytitle>mail::folder::delRights</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::folder::delRights</refname>
+    <refpurpose>Delete an access control list identifier</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    &libmail-mycallback;
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>folder-&gt;<function>delRights</function></funcdef>
+	<paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	<paramdef>std::string &amp;<parameter>errorIdentifier</parameter></paramdef>
+	<paramdef>std::vector&lt;std::string&gt; &amp;<parameter>errorRights</parameter></paramdef>
+	<paramdef>std::string <parameter>identifier</parameter></paramdef>
+
+      </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+    &libmail-aclintro;
+
+    &libmail-acldelrights;
+
+    <refsect2>
+      <title>Identifier</title>
+
+      &libmail-aclentities;
+      &libmail-aclentitiesutf8;
+    </refsect2>
+
+    <refsect2>
+      <title>Access rights</title>
+
+      &libmail-aclrights;
+    </refsect2>
+
+    <refsect2>
+      <title>Extended error reporting</title>
+
+      &libmail-aclrightsinfo;
+    </refsect2>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-getmyrights"><citerefentry>
+            <refentrytitle>mail::account::getMyRights</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-getrights"><citerefentry>
+            <refentrytitle>mail::account::getRights</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-setrights"><citerefentry>
+            <refentrytitle>mail::account::setRights</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>.
+</para>
+    </refsect1>
+  </refentry>

@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <title>@PACKAGE@ @VERSION@ - Outbound FAX</title>
+  <!--
+
+  [#SAVED=<span style="color: #008000">Saved</span>#]
+
+  [#BADAREACODE=<span style="color: #800000">ERROR: Invalid area code</span>#]
+  [#BADPREFIX=<span style="color: #800000">ERROR: Local dialing prefix may not start with a 1</span>#]
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<!-- Copyright 2002 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<form method="post" action="35fax">
+  <h1><tt>@PACKAGE@ @VERSION@</tt> - Outbound FAX</h1>
+  @ERROR@
+
+  <table>
+    <tbody>
+      <tr valign="top">
+        <td rowspan="2">Your dialing scheme</td>
+        <td>@DIALNANPA@</td>
+        <td>North American Numbering Plan (7/10 digit local calls, 1+10 digit
+          long distance)</td>
+      </tr>
+      <tr>
+        <td>@DIALOTHER@</td>
+        <td>Other</td>
+      </tr>
+    </tbody>
+  </table>
+  <hr width="90%" />
+
+  <h2>North American Numbering Plan</h2>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td>Your area code:</td>
+        <td><input type="text" size="3" name="nanpa_areacode"
+          value="@NANPA_AREACODE@" maxlength="3" /></td>
+      </tr>
+      <tr valign="top">
+        <td>Additional&nbsp;10&nbsp;digit&nbsp;area&nbsp;codes:</td>
+        <td><input type="text" size="20" name="nanpa_10digit"
+          value="@NANPA_10DIGIT@" /> <br />
+          If you are in a 10 digit local calling area, enter all additional
+          area codes that must be dialed without a leading 1. You may enter
+          multiple area codes separated by spaces.</td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td>Dialing prefix for local calls:</td>
+        <td><input type="text" size="10" name="nanpa_local_prefix"
+          value="@NANPA_LOCAL_PREFIX@" /></td>
+      </tr>
+      <tr>
+        <td>Dialing prefix for long distance calls (must include "1"):</td>
+        <td><input type="text" size="10" name="nanpa_long_prefix"
+          value="@NANPA_LONG_PREFIX@" /></td>
+      </tr>
+      <tr>
+        <td>Dialing prefix for international calls:</td>
+        <td><input type="text" size="10" name="nanpa_intl_prefix"
+          value="@NANPA_INTL_PREFIX@" /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td>@NANPA_LOCAL_011@</td>
+        <td>Permit international 011 faxes from local sources</td>
+      </tr>
+      <tr>
+        <td>@NANPA_ESMTP_011@</td>
+        <td>Permit international 011 faxes from remote (ESMTP) sources</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="Save" /></form>
+<hr />
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

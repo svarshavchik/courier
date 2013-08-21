@@ -1,0 +1,16 @@
+[Unit]
+Description=Courier-IMAP service
+Wants=network.target
+Wants=courier-authlib.service
+After=network.target
+After=courier-authlib.service
+
+[Install]
+WantedBy=mail-transfer-agent.target
+WantedBy=multi-user.target
+
+[Service]
+Type=forking
+RemainAfterExit=true
+ExecStart=@datadir@/courier-imap.sysvinit start
+ExecStop=@datadir@/courier-imap.sysvinit stop

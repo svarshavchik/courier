@@ -1,0 +1,105 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-renamefolder">
+    <refmeta>
+      <refentrytitle>mail::folder::renameFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::renameFolder</refname>
+      <refpurpose>Rename a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      &libmail-mycallbackfolderlist;
+      <literallayout>
+mail::folder *folder;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>renameFolder</function></funcdef>
+	  <paramdef>const mail::folder *<parameter>newParent</parameter></paramdef>
+	  <paramdef>std::string <parameter>name</parameter></paramdef>
+	  <paramdef>myFolderCallback &amp;<parameter>folderCallback</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function renames an existing folder.
+<parameter>folder</parameter> is an existing folder or a folder directory
+(see
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for more information on folders and folder directories).
+<parameter>newParent</parameter>, if not NULL, specifies the new
+parent folder directory.
+A NULL <parameter>newParent</parameter> specifies that the folder should
+be be moved to the top level of the mail account's folder hierarchy.</para>
+
+      <para>
+<parameter>name</parameter> specifies the new name of the folder, in the
+application's character set.</para>
+
+      &libmail-foldername;
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+      &libmail-readfolders1;
+
+      <para>
+If the folder was succesfully renamed,
+the
+<function>folderCallback.success</function> method
+receives a vector that contains a single pointer to a
+<structname>mail::folder</structname> object that refers to this
+folder under its new name.
+The existing
+<structname>mail::folder</structname> object is no longer valid, and
+should be destroyed.
+The new
+<structname>mail::folder</structname> object should now be used to refer
+to this folder.</para>
+
+      &libmail-foldernote;
+
+      &libmail-readfolders2;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-clone"><citerefentry>
+	    <refentrytitle>mail::folder::clone</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-create"><citerefentry>
+	    <refentrytitle>mail::folder::create</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-destroy"><citerefentry>
+	    <refentrytitle>mail::folder::destroy</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

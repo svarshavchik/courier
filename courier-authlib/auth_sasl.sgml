@@ -1,0 +1,187 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2004-2008 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-sasl">
+
+  <refmeta>
+    <refentrytitle>auth_sasl</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_sasl</refname>
+    <refname>auth_sasl_ex</refname>
+    <refpurpose><acronym>SASL</acronym> implementation</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauthsasl.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_sasl</function></funcdef>
+	<paramdef>const char *<parameter>method</parameter></paramdef>
+	<paramdef>const char *<parameter>initialresponse</parameter></paramdef>
+
+	<paramdef>char *<parameter>(*conversation_func)</parameter><funcparams>const char *, void *)</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+	<paramdef>char **<parameter>authtype_ret</parameter></paramdef>
+	<paramdef>char **<parameter>authdata_ret</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_sasl_ex</function></funcdef>
+	<paramdef>const char *<parameter>method</parameter></paramdef>
+	<paramdef>const char *<parameter>initialresponse</parameter></paramdef>
+	<paramdef>const char *<parameter>externalauth</parameter></paramdef>
+
+	<paramdef>char *<parameter>(*conversation_func)</parameter><funcparams>const char *, void *)</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+	<paramdef>char **<parameter>authtype_ret</parameter></paramdef>
+	<paramdef>char **<parameter>authdata_ret</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<function>auth_sasl</function>
+is a generic <acronym>SASL</acronym> server implementation.
+<parameter>method</parameter> is the requested <acronym>SASL</acronym>
+method.
+At this time
+<function>auth_sasl</function>
+knows how to handle the following SASL methods:</para>
+
+    <itemizedlist>
+      <listitem>
+	<para><literal>LOGIN</literal></para>
+      </listitem>
+      <listitem>
+	<para><literal>PLAIN</literal></para>
+      </listitem>
+      <listitem>
+	<para><literal>CRAM-MD5</literal></para>
+      </listitem>
+      <listitem>
+	<para><literal>CRAM-SHA1</literal></para>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+<parameter>initialresponse</parameter>
+is a base64-encoded initial response provided in the client's
+<acronym>SASL</acronym> request.
+<parameter>initialresponse</parameter>
+must be <literal>NULL</literal> if an initial response was not included in
+the client's <acronym>SASL</acronym> request.</para>
+
+    <para>
+<parameter>conversation_func</parameter>
+is the application-implemented <acronym>SASL</acronym>
+conversation callback function.
+<parameter>conversation_func</parameter>
+receives a base64-encoded <acronym>SASL</acronym> prompt,
+and the <parameter>callback_arg</parameter>
+argument to <function>auth_sasl</function>.
+<parameter>conversation_func</parameter>
+must return a buffer containing the base64-encoded reply from the client.
+<function>auth_sasl</function>
+will
+<citerefentry><refentrytitle>free</refentrytitle><manvolnum>3</manvolnum></citerefentry>
+this buffer when it's done.
+<parameter>conversation_func</parameter>
+should return <literal>NULL</literal>
+to abort the <acronym>SASL</acronym> conversation.</para>
+
+    <para>
+<function>auth_sasl_ex</function> is a version of
+<function>auth_sasl</function> that recognizes the <literal>EXTERNAL</literal>
+<acronym>SASL</acronym> method. It takes an extra parameter,
+<parameter>externalauth</parameter>. This parameter should be set to indicate
+an login that was authenticated via some other means, such as, perhaps,
+an <acronym>SSL</acronym> certificate, or <literal>NULL</literal> if no
+externally-authenticated identity was established.</para>
+
+    <para>
+If <parameter>method</parameter> is not <literal>EXTERNAL</literal>,
+<function>auth_sasl_ex</function> is identical to
+<function>auth_sasl</function>, and <parameter>externalauth</parameter> is
+ignored. Otherwise, if <parameter>method</parameter> is
+<literal>EXTERNAL</literal> and <parameter>externalauth</parameter> is not
+<literal>NULL</literal>, <function>auth_sasl_ex</function> returns
+<literal>AUTHSASL_OK</literal>, and sets
+<parameter>*authtype_ret</parameter> and
+<parameter>*authdata_ret</parameter> accordingly, so that the subsequent
+invocation of <function>auth_generic</function>() returns authentication
+information for the login ID specified by
+<parameter>externalauth</parameter>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURNS</title>
+
+    <para>
+If the <acronym>SASL</acronym> conversation succesfully completes,
+<function>auth_sasl</function> or <function>auth_sasl_ex</function>
+initializes <parameter>*authtype_ret</parameter> and
+<parameter>*authdata_ret</parameter>.
+They will be set to a
+<citerefentry><refentrytitle>malloc</refentrytitle><manvolnum>3</manvolnum></citerefentry>-ed
+buffers that can be directly passed as arguments to
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
+It is the application's responsibility to
+<citerefentry><refentrytitle>free</refentrytitle><manvolnum>3</manvolnum></citerefentry>
+these buffers when it's done with them.</para>
+
+    <para>
+<function>auth_sasl</function> or <function>auth_sasl_ex</function>
+returns
+<literal>AUTHSASL_OK</literal> when the
+<acronym>SASL</acronym> conversation succesfully completes, and
+<parameter>*authtype_ret</parameter> and
+<parameter>*authdata_ret</parameter> are succesfully assembled.
+Any other return indicates an error condition.
+Right now two error conditions are defined:</para>
+    <variablelist>
+      <varlistentry>
+	<term><literal>AUTHSASL_ABORTED</literal></term>
+	<listitem>
+	  <para>
+The <acronym>SASL</acronym> conversation was aborted by the client.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><literal>AUTHSASL_ERROR</literal></term>
+	<listitem>
+	  <para>
+General error (insufficient memory, or some other reason).
+Check <varname>errno</varname> for any clues.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
+

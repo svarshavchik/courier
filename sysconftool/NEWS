@@ -1,0 +1,12 @@
+sysconftool is a script that is used by applications to update configuration
+files when a new version of the application is installed. sysconftool reads
+the new application configuration files, reads any older versions of those
+files that are already installed, then replaces the old versions with the
+new ones, but preserving any custom changes contained in the old versions.
+
+For more information on sysconftool, and why applications need it, see
+the installed manual pages: sysconftool(1) and sysconftool(7).  With most
+versions of the man command: "man 1 sysconftool" and "man 7 sysconftool".
+Some man commands use the following syntax: "man -s 1 sysconftool" and
+"man -s 7 sysconftool".
+

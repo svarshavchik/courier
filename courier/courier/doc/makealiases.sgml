@@ -1,0 +1,482 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>makealiases</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>makealiases</refname>
+    <refpurpose>Create an alias database</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">makealiases</command>
+
+      <arg choice="opt" rep="norepeat">-protocol=<replaceable>protocol</replaceable></arg>
+      <arg choice="opt" rep="norepeat">-alias=<replaceable>filename</replaceable></arg>
+
+      <arg choice="opt" rep="norepeat">-src=<replaceable>pathname</replaceable></arg>
+      <arg choice="opt" rep="norepeat">-tmp=<replaceable>filename</replaceable></arg>
+      <arg choice="opt" rep="norepeat">-chk</arg>
+      <arg choice="opt" rep="norepeat">-dump</arg>
+      <arg choice="opt" rep="norepeat"><replaceable>module</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The <application moreinfo="none">Courier</application> mail server's
+<filename moreinfo="none">@sysconfdir@/aliases.dat</filename> file is a unified
+implementation of sendmail-style address aliasing, qmail-style virtual
+domains, plus several
+<application moreinfo="none">Courier</application> mail server-style
+enhancements.</para>
+
+    <para>
+The term <emphasis>aliasing</emphasis>
+refers to substituting one or more addresses for
+another address. A one-to-one substitution results in the
+<application moreinfo="none">Courier</application> mail server accepting mail
+for one address, and delivering the mail to another address. A one-to-many
+substitution results in the <application moreinfo="none">Courier</application>
+mail server accepting mail for one address, and delivering
+a separate copy of the message to every address defined by the alias.</para>
+
+    <para>
+<filename moreinfo="none">@sysconfdir@/aliases.dat</filename> is a binary database file.
+<command moreinfo="none">makealiases</command> creates the binary database file by reading the
+aliases from plain text files, and <command moreinfo="none">makealiases</command> creates
+<filename moreinfo="none">@sysconfdir@/aliases.dat</filename> by default.</para>
+
+    <para>
+<command moreinfo="none">makealiases</command> creates <filename moreinfo="none">@sysconfdir@/aliases.dat</filename> from
+one or more source files, which are plain text files that may be created by
+any text editor. The format of those source files is defined below. By
+default, <command moreinfo="none">makealiases</command> obtains the source text from
+<filename moreinfo="none">@sysconfdir@/aliases</filename>. If this is a text file, it is used
+verbatim. If this is a directory (the
+<application moreinfo="none">Courier</application> mail server creates it as
+a directory by
+default), all the non-hidden files in this directory are concatenated
+together.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+	<term>-alias=<replaceable>filename</replaceable></term>
+	<listitem>
+	  <para>
+Create <replaceable>filename</replaceable>, instead of
+<filename moreinfo="none">@sysconfdir@/aliases.dat</filename>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-chk</term>
+	<listitem>
+	  <para>
+Try to search for bad addresses used in the
+<filename moreinfo="none">aliases.dat</filename> file. This option takes some time to
+complete. It
+does not create an <filename moreinfo="none">aliases.dat</filename> file, but instead tries to
+check every address specified by the source text file. Why is this
+necessary? That's because non-delivery reports will not be sent to the
+sender for failures in delivering mail to an aliased address. This is by
+design. the <application moreinfo="none">Courier</application> mail server
+considers aliases to be private mailing lists. Because
+non-delivery notices are not sent, bad addresses will not be immediately
+detected.</para>
+
+	  <note>
+	    <para>
+The <option>-chk</option> option is really effective for
+addresses which are local, because there is no real way to determine if a
+remote mail address is valid.</para>
+	  </note>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-dump</term>
+	<listitem>
+	  <para>
+Do not create <filename moreinfo="none">aliases.dat</filename>, instead
+display the contents of the alias database, in plain text form. The
+contents will be the combined contents of all the source files, with all
+addresses converted to canonical format, with duplicates removed and
+sub-aliases expanded.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-src=<replaceable>pathname</replaceable></term>
+	<listitem>
+	  <para>
+Use <replaceable>pathname</replaceable> instead of
+<filename moreinfo="none">@sysconfdir@/aliases</filename> as the source file.
+<replaceable>pathname</replaceable> can
+also refer to a directory. This concatenates every non-hidden file in the
+directory.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-tmp=<replaceable>filename</replaceable></term>
+	<listitem>
+	  <para>
+Use <replaceable>filename</replaceable> as a temporary
+file, instead of <filename moreinfo="none">@sysconfdir@/aliases.tmp</filename>.
+<command moreinfo="none">makealiases</command> requires a temporary file for its own purposes,
+which is automatically removed when done. This temporary file MUST reside
+on the same filesystem as <filename moreinfo="none">aliases.dat</filename>. If the
+<option>-alias</option> option specifies a file on a different filesystem, use
+this option to specify where to temporary place a file in the same
+filesystem. Because <command moreinfo="none">makealiases</command> always uses the same name
+for
+a temporary file you cannot run more than one <command moreinfo="none">makealiases</command>
+process at the same time.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-protocol=<replaceable>protocol</replaceable></term>
+	<listitem>
+	  <para>
+Use an alias list that's
+private to messages coming from <replaceable>protocol</replaceable>.  See below.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+The optional <replaceable>module</replaceable> specifies the module
+whose rewriting rules are used
+to convert E-mail addresses into a canonical form. If not specified, the
+<literal moreinfo="none">local</literal> module's address rewriting rules will be used.</para>
+  </refsect1>
+
+  <refsect1>
+<title>PROTOCOL ALIASES</title>
+
+<para>Addresses in <filename moreinfo="none">@sysconfdir@/aliases.dat</filename> will be checked in every
+message.  Use the <option>-protocol</option> option to create aliases that will be
+checked only for message that are received via a specific protocol, such as
+ESMTP, UUCP, or locally-generated mail. This allows you, for example, to
+create an alias such as "everyone", which is only avaliable to locally
+generated mail, and does not work for mail received via ESMTP. The argument to
+the <option>-protocol</option> option is one of: <literal moreinfo="none">esmtp</literal>,
+<literal moreinfo="none">uucp</literal>, or <literal moreinfo="none">local</literal>.</para>
+
+<para>Protocol-specific alias files are
+<filename moreinfo="none">@sysconfdir@/aliases-<replaceable>protocol</replaceable>.dat</filename>, where "<replaceable>protocol</replaceable>"
+is the specific protocol, such as "local", "esmtp", or "uucp", and the source
+file read by <command moreinfo="none">makealiases</command> would be
+<filename moreinfo="none">@sysconfdir@/aliases-<replaceable>protocol</replaceable></filename>. If the
+<option>-protocol</option> option is specified, <command moreinfo="none">makealiases</command> will
+access these files instead of <filename moreinfo="none">@sysconfdir@/aliases.dat</filename> and
+<filename moreinfo="none">@sysconfdir@/aliases</filename>.</para>
+  </refsect1>
+
+  <refsect1>
+<title>ALIAS SPECIFICATIONS</title>
+
+    <para>
+The sources file used to create the binary <filename moreinfo="none">aliases.dat</filename>
+database are plain text files that may be created using any editor.</para>
+
+    <para>
+Each alias specification takes the following form:</para>
+<informalexample>
+<programlisting format="linespecific">
+alias: address1, address2, ...
+</programlisting>
+</informalexample>
+
+    <para>
+Mail received by the <application moreinfo="none">Courier</application> mail
+server addressed to <replaceable>alias</replaceable> will be delivered to the
+list of addresses specified. The list of addresses may be split across
+multiple lines, if the second and subsequent line starts with a space
+character.</para>
+
+    <para>
+Lines starting with the # character are ignored, they are comments.</para>
+
+    <para>
+<replaceable>alias</replaceable> is not restricted to be a local address.
+It may be any valid
+<ulink url="http://www.rfc-editor.org/rfc/rfc822.txt">RFC 2822</ulink>
+address. All addresses do not necessary have to be in a canonical
+form.</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+alias: :include:/absolute/pathname
+</programlisting>
+    </informalexample>
+    <para>
+This notation reads the list of addresses from another file,
+<replaceable>/absolute/pathname</replaceable>.
+This file should contain one address per line
+(comma separated addresses on the same line will also work).</para>
+
+    <note>
+      <para>
+If <replaceable>alias</replaceable> refers to a local, existing,
+account, this
+account will never get any mail. Any mail with the account listed as recipient
+will be redirected to all the addresses specified for that alias. To have a
+copy of the mail delivered to the account, define it as one of the addresses
+in the alias itself. For example:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+larry: larry, moe, curly, shemp
+</programlisting>
+      </informalexample>
+
+      <para>
+Larry will still receive his mail, but copies will will also be sent to Moe,
+Curly, and Shemp. If Larry wasn't specified in the alias, he would never get
+any mail, it will all be forwarded to Moe, Curly, and Shemp.</para>
+    </note>
+
+  </refsect1>
+
+  <refsect1>
+    <title>DUPLICATE ADDRESSES</title>
+
+    <para>
+Alias definitions may refer to other alias definitions, and
+<command moreinfo="none">makealiases</command> automatically incorporates addresses from other
+aliases. If the same address is listed in multiple aliases, and two or more of
+them are specified as recipients of the same message, only one copy of the
+message will be delivered to the address.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>VIRTUAL DOMAINS</title>
+
+    <para>
+The following special syntax implements a virtual domain. A
+virtual domain redirects all mail for an entire domain to one user:</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+@domain: user
+</programlisting>
+    </informalexample>
+    <para>
+This special entry results in any recipient address of the form
+<literal moreinfo="none">foo@domain</literal> to be rewritten as
+<literal moreinfo="none">user-foo@me</literal>, where
+<replaceable>me</replaceable> is the hostname of the machine,
+which we expect to be a local domain.</para>
+
+    <para>
+The following examples use the alias entry "<literal moreinfo="none">@example.com:
+john</literal>", and "<literal moreinfo="none">domain.com</literal>" is in the
+<filename moreinfo="none">control/me</filename>
+file. The address "<literal moreinfo="none">postmaster@example.com</literal>" becomes
+"<literal moreinfo="none">john-postmaster@domain.com</literal>", and
+"<literal moreinfo="none">sales-info@example.com</literal>" becomes
+"<literal moreinfo="none">john-sales-info@domain.com</literal>".</para>
+
+    <para>
+The intended behavior is to use an actual account named
+<literal moreinfo="none">john</literal>.
+As a result of the virtual domain address rewriting, delivery instructions for
+<literal moreinfo="none">postmaster@example.com</literal> can now be specified by
+<literal moreinfo="none">john</literal>'s <filename moreinfo="none">$HOME/.courier-postmaster</filename> file,
+and delivery
+instructions for <literal moreinfo="none">sales-info@example.com</literal> may be specified by
+<filename moreinfo="none">$HOME/.courier-sales-info</filename>. <literal moreinfo="none">john</literal>'s
+<filename moreinfo="none">$HOME/.courier-default</filename> may be used to specify delivery
+instructions for any other address in the <literal moreinfo="none">example.com</literal>
+domain,
+which does not have an explicit <filename moreinfo="none">.courier</filename> file.</para>
+
+    <para>
+If the alias entry was "<literal moreinfo="none">@example.com: john-example</literal>", the
+corresponding files in <literal moreinfo="none">john</literal>'s <filename moreinfo="none">$HOME</filename>
+directory are
+<filename moreinfo="none">.courier-example-postmaster</filename>,
+<filename moreinfo="none">.courier-example-sales-info</filename>, and
+<filename moreinfo="none">.courier-example-default</filename>. See
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+for more information on <filename moreinfo="none">.courier</filename> files.</para>
+
+    <note>
+    <para>
+Virtual domain rewriting is NOT recursive, unlike regular
+aliases. For example:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+tom: john@example.com
+@example.com: larry
+</programlisting>
+      </informalexample>
+
+      <para>
+You should explicitly expand the alias out:</para>
+      <informalexample>
+	<programlisting format="linespecific">
+tom: larry-john
+</programlisting>
+      </informalexample>
+    </note>
+  </refsect1>
+
+  <refsect1>
+    <title>PROGRAM OR MAILBOX ALIASES</title>
+
+    <para>
+The following notation associates an address directly with a
+mailbox, or with a program:</para>
+    <informalexample>
+      <programlisting format="linespecific">
+info: /var/shared/info
+</programlisting>
+    </informalexample>
+
+    <para>
+Messages addressed to "info" will be delivered to the mailbox or maildir
+<filename moreinfo="none">/var/shared/info</filename>.  A full pathname must be
+specified.</para>
+    <informalexample>
+      <programlisting format="linespecific">
+info: | /usr/local/shared/info
+</programlisting>
+    </informalexample>
+
+    <para>
+Mail addressed to "info" will be delivered to the indicated program. The
+program receives each message on standard input.</para>
+
+<para>
+Program/mailbox delivery notation is primarily used to support legacy
+sendmail aliases entries.  This is considered to be a legacy feature, and new
+installations should create a
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+file with the
+necessary delivery instructions.  In fact, aliases for programs or mailboxes
+is not directly supported by the <application moreinfo="none">Courier</application>
+mail server's aliasing mechanisms. It's implemented
+by having the <command moreinfo="none">makealiases</command> script automatically create a
+<filename moreinfo="none">.courier</filename> file, and point the alias address to it.</para>
+
+    <para>
+See
+<ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
+for more information.</para>
+
+    <note>
+      <para>
+Unlike sendmail, the <application moreinfo="none">Courier</application> mail server
+delivers as user "<literal moreinfo="none">@mailuser@</literal>"
+(group @mailgroup@) when delivering to programs or mailboxes.</para>
+    </note>
+
+  </refsect1>
+
+  <refsect1>
+    <title>UUCP VIRTUAL DOMAINS</title>
+
+    <para>
+The following notation allows mail addressed to a certain domain to be
+forwarded via uucp:</para>
+    <informalexample>
+      <programlisting format="linespecific">
+@domain: uucp!bang!path!
+</programlisting>
+    </informalexample>
+
+    <para>
+The trailing <token>!</token> tells the
+<application moreinfo="none">Courier</application> mail server not to append a dash,
+so <literal moreinfo="none">user@domain</literal> gets rewritten as
+<literal moreinfo="none">uucp!bang!path!user</literal>,
+and not <literal moreinfo="none">uucp!bang!path-user</literal>, which is probably not what you
+want.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>DELIVERY STATUS NOTIFICATIONS</title>
+
+    <para>
+An alias with only one address does not affect delivery status
+notification attributes of an E-mail message.</para>
+
+    <para>
+An alias with multiple addresses is treated like a private mailing list, as
+defined by
+<ulink url="http://www.rfc-editor.org/rfc/rfc1894.txt">RFC 1894</ulink>.
+If the message requests a successful delivery
+notification, the <application moreinfo="none">Courier</application> mail server
+generates a delivery status notification for the
+successful delivery to the aliased address, and each alias recipient address
+will have DSNs set to NEVER.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+This has nothing to do with the <application moreinfo="none">Courier</application>
+mail server's support for a Qmail-style alias
+account.</para>
+
+    <para>
+<literal moreinfo="none">owner-foo</literal> feature of sendmail's aliasing is not
+supported.</para>
+
+    <para>
+the <application moreinfo="none">Courier</application> mail server normally tries to
+eliminate duplicate addresses listed as
+recipients for the same message. Some mail servers are not capable of
+delivering messages with multiple recipients, and will transmit a separate
+copy of the same message addressed to each recipient.
+The <application moreinfo="none">Courier</application> mail server can't do
+anything in this case. Each copy of the same original text is considered an
+individual, separate, message.</para>
+
+<para>
+Duplicate elimination can fail in certain rare circumstances, involving
+exotic features of
+<ulink url="http://www.rfc-editor.org/rfc/rfc822.txt">RFC 2822</ulink>
+concerning case sensitivity.</para>
+
+    <para>
+"<literal moreinfo="none">@example.com: jack, jill</literal>" is allowed, but strongly
+discouraged under the penalty of law.</para>
+
+    <para>
+Because multiple-recipient aliases are treated like private mailing lists,
+failure DSNs are turned off, and a bad recipient address is hardly noticed by
+anyone.</para>
+
+    <para>
+The <command moreinfo="none">makealiases</command> command may execute while the
+<application moreinfo="none">Courier</application> mail server is
+running, and any changes take effect immediately. However, only one instance of
+<command moreinfo="none">makealiases</command> is permitted to run at the same time.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

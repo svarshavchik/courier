@@ -1,0 +1,47 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+	  <para>
+This option creates a reply to the current message.
+&app; may ask a few questions before creating a reply.
+&app; knows how to format replies in three different ways.
+Not every format reply is available with every message.
+No questions are asked when only one reply format is possible for the
+message.
+&app; asks when more than one reply format is available.</para>
+
+	  <para>
+Proper selection of a reply format is only possible when the main menu's
+setup screen is initialized with all applicable E-mail addresses.
+The available reply formats are:</para>
+
+	  <variablelist>
+	    <varlistentry>
+	      <term>Reply to a mailing list</term>
+	      <listitem>
+		<para>
+If one or more of the recipients of the original message are mailing list
+addresses, the reply is addressed to the mailing list addresses only,
+ignoring any sender or carbon-copy addresses.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term>Reply to all</term>
+	      <listitem>
+		<para>
+If
+the message is addressed to or from more than one address, excluding the
+user's address, the reply is addressed to all original senders and
+recipients, except for the user's address.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term>Reply</term>
+	      <listitem>
+		<para>
+The reply is addressed to the sending party.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>

@@ -1,0 +1,267 @@
+##VERSION: $Id:$
+#
+# faxrc created from faxrc.dist by sysconftool
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+#  Copyright 2002 Double Precision, Inc.  See COPYING for
+#  distribution information.
+#
+##NAME: faxrc:0
+#
+# courierfax configuration directives.  These directives specify which
+# phone numbers courierfax will dial, as well as some basic transformation
+# rules.  The default set of directives are designed for the North American
+# Number Plan dialing: seven digit local number, 1+10 digit area code.
+#
+# This should really be done by a Perl script, for maximum flexibility,
+# however loading the Perl interpreter into the mail server code is just too
+# much, so we're left with what we have.
+#
+# Blank lines in this file are ignored.  Lines that begin with # are comments,
+# and are also ignored.  Because this file is processed by sysconftool,
+# do not add comments in the middle or at the tail end of the configuration
+# directives, otherwise you'll lose them on upgrades.  All the comments go
+# here.
+#
+# There are two basic directives:
+#
+#   rw[flags]      [search]   [replace]
+#
+#   accept[flags]  [search]   [source]
+#
+#   reject[flags]  [search]   [source]
+#
+#  "Pattern" is described below.  The 'rw' directive rewrites the phone number.
+#  If the phone number matches the "search" pattern, it is replaced with
+#  "replace", and we continue to the next directive.  If the phone number
+#  doesn't match 'search', we go on to the next directive.
+#
+#  The 'accept' directive "accepts" the phone number.  If the phone number
+#  matches the "search" pattern, and the mail originates from "source", the
+#  phone number is accepted.  "source" must be one of the following strings:
+#  local, esmtp, uucp, dsn.  This allows, for example, to send faxes only
+#  from locally-originated mail, and not for mail received via ESMTP.
+#
+#  The 'reject' directive is the opposite of 'accept'.  If the phone number
+#  matches the "search" pattern, and the mail originates from "source", the
+#  phone number is immediately rejected, without further processing.
+#
+#  Note that after the 'accept' directive is processed, courierfax continues
+#  to process the rest of the file.  When the entire faxrc file is read,
+#  courierfax determines if the phone number was accepted, if not the message
+#  is bounced.
+#
+#  Therefore, the overall strategy is as follows:
+#
+#  1) Issue 'rw' directives that rewrite the phone number into a 'canonical'
+#     form.  For NANPA, it's either a 10-digit phone number (without 1+), or
+#     011 followed by an international phone number.
+#
+#  2) Issue accept directives.  Here, it's still possible to discriminate,
+#     in the sample case, between international and local phone numbers.
+#
+#  3) Issue 'rw' directives that post-process the phone number, for example:
+#     drop the default area code, prepend any dialing prefixes, such as "9,".
+#
+#  The 'rw' and 'accept' directives may be followed by the following
+#  characters:
+#
+#  ^    It is sufficient for the pattern to match the phone number's prefix
+#       only.  Normally, the pattern must match the entire phone number.
+#
+#  *    If the pattern matches, lather, rinse, and repeat.  Only meaningful for
+#       the 'rw' directive.
+#
+#  SEARCH
+#
+#  The "search" string is compared against the phone number, verbatim, except
+#  for the following character sequences:
+#
+#  n      The 'n' character in the search pattern matches any digit in the
+#         phone number (there are other things in the phone number, you know,
+#         such as *, #, and commas).
+#
+#  .      The '.' character in the search pattern will match any single
+#         character in the phone number.
+#
+#  ( .. ) Stuff inside the parenthesis is compared against the phone number,
+#         and if it matches, it is made available in the replacement string
+#         as "$1".  The second occurence of () is made available in the
+#         replacement string as "$2".  Up to eight parenthesis pairs may be
+#         specified and they may not nest.
+#
+#  ~      Matches the DTMF '#' character in the phone number.  Because the
+#         DTMF character '#' conflicts with the comment character in this
+#         configuration file, the ~ character represents the DTMF # character
+#         in this configuration file.
+#
+#  -      Matches the , character in the dialing string.  Since commas are used
+#         in E-mail headers to separate addresses, a dash in the local part
+#         of the E-mail address is translated to a comma in the dialing string.
+#
+#  +      Matches the @ character in the dialing string.  Since @s are used
+#         in E-mail addresses for other purposes, a + in the local part of
+#         the E-mail address is replaced with the @ character in the dialing
+#         string.
+#
+#  Anything else in the search pattern must match the phone number string
+#  verbatim.
+#
+#  REPLACE
+#
+#  If the SEARCH string matches the phone number, it is replaced by the
+#  REPLACE string, and the next line in this configuration file is read.
+#  $1, $2 ... $8 in REPLACE is replaced by the corresponding parts of the
+#  original phone number, as designated by the ( .. ) pairs.  When the
+#  'rw' keyword is followed by '^', trailing parts of the original phone
+#  number are available as $9.
+#
+#
+#  EXPLANATION OF DEFAULT REWRITING RULES.
+#
+#  Here's the explanation the default set of configuration directives
+#  from the Courier distribution.  The default set of configuration directives
+#  is for the North American dialing plan, with a nonexistent local area code
+#  of "999", that uses seven digit local dialing.
+#
+#  Step 1: Convert all phone numbers to canonical form: a ten digit
+#  areacode+phone number, or a variable length international phone number that
+#  begins with 1:
+#
+#  rw^*    1               $9
+#
+#        -- first things first: remove all leading 1s from the phone #
+#
+#  rw^     011             1011$9
+#  rw^     n11             1
+#  rw^     1011            011$9
+#
+#        -- now, what this is all about is that we want to reject all
+#           phone numbers that begin with x11 (such as 911, you don't want
+#           to send any faxes there, of course),  EXCEPT for the international
+#           011 prefix.  Therefore, we first prepend a "1" to all 011 numbers
+#           then replace ANY number that begins with x11 with a single
+#           digit 1 (that's the entire phone number, which gets later rejected
+#           as an invalid).  Finally, we lop replace 1011 with 011.
+#
+#  rw      (nnnnnnn)       999$1
+#
+#        -- Prefix the default area code of "999" to all seven digit numbers.
+#
+# Step 2: Accept all valid numbers to dial
+#
+# accept   2nnnnnnnnn   local
+# accept   2nnnnnnnnn   esmtp
+#
+# ...
+#
+# accept   9nnnnnnnnn   local
+# accept   9nnnnnnnnn   esmtp
+#
+#  So, we now accept all 10 digit numbers that begin with 2 through 9 as
+#  valid.  "accept [whatever] local" accepts this number from local senders,
+#  and "accept [whatever] esmtp" accepts this number from remote (esmtp)
+#  senders.
+#
+#  Do not specify the 'dsn' module, unless you have no problems with some
+#  joker causing your server to fax-bomb someone with bounces.
+#
+#  Now, listing "esmtp" does not automatically allow anyone in the world to
+#  send faxes.  You still need to set FAXRELAYCLIENT, as described in the
+#  following note:
+#
+#  NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+#
+#   Some mail clients, like Pine, send mail via ESMTP to localhost (usually
+#   by running 'sendmail -bs').  That looks like esmtp mail to courierfax,
+#   therefore the default configuration, below, also accepts esmtp.  HOWEVER:
+#   faxes are accepted via ESMTP only after an additional requirement of the
+#   FAXRELAYCLIENT envuironment variable being set, which is typically
+#   implemented by setting FAXRELAYCLIENT for authorized IP address ranges
+#   only (and FAXRELAYCLIENT is automatically set by sendmail -bs, and by
+#   authenticated via ESMTP).
+#
+#  NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+#
+#
+# accept^ 011    local
+# accept^ 011    esmtp
+#
+#       -- This allows faxes to be sent to international phone numbers.
+#          Remove these two lines to block faxes to international numbers.
+#
+# Step 3 - we're almost there.  Time to specify how numbers should be dialed.
+#
+# rw^    (.)       1$1$9
+# rw^    1011      011$9
+# rw^    1999      $9
+#
+#       -- First, we prepend 1 to every number, then remove it for
+#          international calls.  So now we have two possibilities:
+#          a) 011+international number, and b) 1+10 digit area code.
+#
+#          Finally, we want all numbers in the 999 area code to be dialed
+#          as ten digits.  Numbers in the 999 area code are currently
+#          prefixed with "1999", so we drop that.
+#
+#  OPTIONAL EXTRA:
+#
+#  rw^   (.)       9,$1$9
+#
+#       -- This prepends "9," to every phone number dialed.  Append this
+#          extra rule at the very end, to take effect for any number.
+#
+#  ALTERNATIVE #1: ten digit local calling.
+#  Some areas in North America dial ten digit for local calls (in a small
+#  number of area codes), and 1+ten digits for all other area codes.
+#  Say that our local calling area includes the 999 and 998 area codes,
+#  which must be dialed 10 digits, with 1+10 digits for everyone else.
+#  Here's the third portion of the rewriting rules that accomplishes that:
+#
+#  rw^    (.)       1$1$9
+#  rw^    1011      011$9
+#  rw^    1999      999$9
+#  rw^    1998      998$9
+#
+#  Think - you should be able to figure out how this works, by now.
+#
+#  IMPORTANT IMPORTANT IMPORTANT IMPORTANT
+#
+#  Remove the first 'rw' line below - "rw^   .    1" - this is a hack to
+#  disable fax transmission in the default Courier install, so that it has
+#  to be manually enabled.  After removing the first 'rw' line, everything
+#  above this paragraph becomes applicable!
+#
+
+rw^     .               1
+
+rw^*    1               $9
+rw^     011             1011$9
+rw^     n11             1
+rw^     1011            011$9
+rw      (nnnnnnn)       999$1
+accept   2nnnnnnnnn   local
+accept   2nnnnnnnnn   esmtp
+accept   3nnnnnnnnn   local
+accept   3nnnnnnnnn   esmtp
+accept   4nnnnnnnnn   local
+accept   4nnnnnnnnn   esmtp
+accept   5nnnnnnnnn   local
+accept   5nnnnnnnnn   esmtp
+accept   6nnnnnnnnn   local
+accept   6nnnnnnnnn   esmtp
+accept   7nnnnnnnnn   local
+accept   7nnnnnnnnn   esmtp
+accept   8nnnnnnnnn   local
+accept   8nnnnnnnnn   esmtp
+accept   9nnnnnnnnn   local
+accept   9nnnnnnnnn   esmtp
+accept^ 011    local
+accept^ 011    esmtp
+rw^    (.)       1$1$9
+rw^    1011      011$9
+rw^    1999      $9
+
+

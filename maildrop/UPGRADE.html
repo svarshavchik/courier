@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="" />
+
+  <title>maildrop 2.4</title><!-- SECTION 1 -->
+  <!-- Copyright 1998 - 2010 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EF" vlink=
+"#51188E" alink="#FF0000">
+  <h1>maildrop 2.4</h1>
+
+  <p>When maildrop is configured to use system accounts, if a
+  maildrop filtering recipe runs an external program, the group id
+  of the external program may now be different then what it was in
+  previous version of maildrop, if the maildrop binary is installed
+  with the set-group-id bit set.</p>
+
+  <p>Previously, maildrop started the external process using either
+  the recipient's group id, or the group id of the process that
+  invoked maildrop (presumably your mail server's group id),
+  depending on the system configuration. This was not immediately
+  apparent, or very intuitive, and could've been overlooked leading
+  to security-related implications.</p>
+
+  <p>Starting with this version of maildrop, the external program's
+  userid will be either the recipient's group id, or the group id
+  specified by the set-group-id bit on maildrop's binary.</p>
+
+  <p>If in earlier versions of maildrop, maildrop's group id was
+  the recipient's group id, there is no change. If in earlier
+  version of maildrop, maildrop's binary had the set-group-id bit
+  set, processes started by maildrop will run using the same group
+  id.</p>
+
+  <p>You are impacted by this change if:</p>
+
+  <ol>
+    <li>
+      <p>You have maildrop installed with the set group id bit set
+      on the binary</p>
+    </li>
+
+    <li>
+      <p>You have maildrop configured to deliver mail to system
+      accounts</p>
+    </li>
+
+    <li>
+      <p>Your mailbox directory (usually /var/spool/mail) does not
+      have the sticky bit set</p>
+    </li>
+  </ol>
+
+  <p>If all of the above is true, you will need to verify and
+  confirm that the new maildrop behavior meets your security
+  model.</p>
+
+  <h1>maildrop 2.0</h1>
+
+  <p>Version 2.0 introduces a new pattern matching engine that uses
+  the <tt>PCRE</tt> library, that uses a completely different
+  syntax. However, very few changes should be required to upgrade
+  existing maildrop recipes to the new syntax.</p>
+
+  <p>Review the <tt>maildropfilter</tt> manual page which has been
+  revised to document the new pattern matching syntax. The legacy
+  pattern matching engine is still available by setting
+  <tt>MAILDROP_OLD_REGEXP</tt> to <tt>1</tt>. See also the
+  "Conversion of maildrop 1.x pattern to 2.0" section in the manual
+  page, for more information.</p>
+
+  <h1>maildrop 1.2</h1>
+
+  <p>If you're upgrading from maildrop 0.74 or earlier, read the
+  next section, then come back here.</p>
+
+  <p>Starting with maildrop 1.2, the installation directories will
+  use the GNU layout. It might be painful, but it has to be done.
+  The previous installation directories were based on two years'
+  worth of legacy code, and had to go, in order for maildrop to be
+  able to be shipped in a distribution.</p>
+
+  <p>The installation layout used by maildrop 1.1 and earlier:</p>
+
+  <p><code>/usr/local/lib/maildrop/bin</code> - binaries.</p>
+
+  <p><code>/usr/local/lib/maildrop/man</code> - manual pages.</p>
+
+  <p><code>/usr/local/lib/maildrop/html</code> - HTML
+  documentation.</p>
+
+  <p><code>/usr/local/bin</code> - soft links to binaries in
+  <code>/usr/local/lib/maildrop/bin</code>.</p>
+
+  <p>Starting with maildrop 1.2, maildrop will use the GNU
+  installation layout:</p>
+
+  <p><code>{bindir}</code> - binaries.</p>
+
+  <p><code>{mandir}</code> - manual pages.</p>
+
+  <p><code>{datadir}/maildrop</code> - scripts and HTML
+  documentation.</p>
+
+  <p>For scripts that are intended to be invoked from the shell
+  command line, there will be soft links from {bindir} to
+  {datadir}/maildrop.</p>
+
+  <p>This means that the default installation layout will be as
+  follows:</p>
+
+  <p><code>/usr/local/bin</code> - binaries.</p>
+
+  <p><code>/usr/local/man</code> - manual pages.</p>
+
+  <p><code>/usr/local/share/maildrop</code> - scripts and HTML
+  documentation.</p>
+
+  <p>maildrop 1.2 also installs development libraries. They are
+  optional, and can be removed after installation, if not needed.
+  The development files will be installed in {libdir} and
+  {includedir}. The default installation layout would be:</p>
+
+  <p><code>/usr/local/include</code> - include files.</p>
+
+  <p><code>/usr/local/lib</code> - libraries.</p>
+
+  <h2>Manually upgrading from earlier versions of maildrop</h2>
+
+  <p>The recommended upgrade path is to first manually remove the
+  previous version of maildrop, then install the new version of
+  maildrop afterwards.</p>
+
+  <h2>Upgrading using the packaged RPM build script</h2>
+
+  <p>The packaged RPM build script now installs maildrop in
+  <code>/usr/bin</code>, instead of the previous
+  <code>/usr/local/bin</code>. This is because the build script now
+  uses the platform build defaults.</p>
+
+  <p>The new script also puts manual pages into a separate RPM, as
+  well as creating a separate devel RPM with the libraries and
+  include files.</p>
+
+  <h1>maildrop 0.75</h1>
+
+  <p>Read this document if you're upgrading from 0.74, or
+  earlier.</p>
+
+  <p>Maildrop 0.75 includes several bug fixes to the userdb
+  scripts, however the main change in 0.75 is a different
+  installation layout.</p>
+
+  <p>Maildrop versions 0.74 and earlier used the following
+  installation layout. Typically, the following files were
+  installed in the directory <code>/usr/local/bin</code>:</p>
+
+  <p><code>/usr/local/bin/dotlock</code><br />
+  <code>/usr/local/bin/maildrop</code><br />
+  <code>/usr/local/bin/reformail</code><br />
+  <code>/usr/local/bin/reformime</code> - core maildrop
+  binaries</p>
+
+  <p><code>/usr/local/bin/maildirmake</code> - soft link to
+  <code>maildrop.maildirmake</code><br />
+  <code>/usr/local/bin/maildrop.maildirmake</code></p>
+
+  <p><code>/usr/local/bin/makedat</code> - soft link
+  to<code>maildrop.makedat</code><br />
+  <code>/usr/local/bin/maildrop.makedat</code> - optionally
+  installed if GDBM/DB support is selected during configuration</p>
+
+  <p><code>/usr/local/bin/deliverquota</code> - soft link
+  to<code>maildrop.deliverquota</code><br />
+  <code>/usr/local/bin/maildrop.deliverquota</code> - optionally
+  installed if maildir quota support is selected during
+  configuration</p>
+
+  <p><code>/usr/local/bin/makeuserdb</code> - soft link to
+  <code>maildrop.makeuserdb</code><br />
+  <code>/usr/local/bin/pw2userdb</code> - soft link to
+  <code>maildrop.pw2userdb</code><br />
+  <code>/usr/local/bin/userdb</code> - soft link to
+  <code>maildrop.userdb</code><br />
+  <code>/usr/local/bin/maildrop.makeuserdb</code><br />
+  <code>/usr/local/bin/maildrop.pw2userdb</code><br />
+  <code>/usr/local/bin/maildrop.userdb</code> - optional scripts
+  installed if userdb support is selected during
+  configuration<br />
+  <code>/usr/local/man</code> - various manual pages were installed
+  underneath this directory.</p>
+
+  <p>There was a reason why I initially decided to use this
+  particular installation layout. At least, I think I had one.</p>
+
+  <p>Although I haven't received any comments on this layout, I
+  believe that this layout is not very convenient, and may be
+  confusing. So I've decided to try a new installation layout
+  starting with maildrop 0.75. My goals were:</p>
+
+  <ul>
+    <li>A logical, straightforward layout</li>
+
+    <li>Try to avoid breaking any existing stuff</li>
+
+    <li>Allow easier management. For example, permit a quick and
+    painless way to roll back to a previous release of
+    <code>maildrop</code> (for some future releases, of
+    course).</li>
+  </ul>
+
+  <p>Maildrop 0.75 and onward will use the following installation
+  layout by default:</p>
+
+  <p><code>/usr/local/lib/maildrop/bin</code> - all base and
+  optional binaries will be installed here</p>
+
+  <p><code>/usr/local/lib/maildrop/man</code> - all manual pages
+  will be installed here</p>
+
+  <p><code>/usr/local/lib/maildrop/html</code> - all HTML versions
+  of manual pages, and additional documentation, will be installed
+  here.</p>
+
+  <p>Soft links in <code>/usr/local/bin</code>. The installation
+  script will install the following soft links in the
+  <code>/usr/local/bin</code> directory. The following soft links
+  will point to the binaries that are installed in the
+  <code>/usr/local/lib/maildrop/bin</code> directory:</p>
+
+  <p><code>/usr/local/bin/maildrop</code><br />
+  <code>/usr/local/bin/reformail</code><br />
+  <code>/usr/local/bin/reformime</code><br />
+  <code>/usr/local/bin/dotlock</code><br />
+  <code>/usr/local/bin/maildirmake</code><br />
+  <code>/usr/local/bin/makedat</code><br />
+  <code>/usr/local/bin/deliverquota</code><br />
+  <code>/usr/local/bin/makeuserdb</code><br />
+  <code>/usr/local/bin/pw2userdb</code><br />
+  <code>/usr/local/bin/userdb</code><br /></p>
+
+  <p>Configuration switches that select whether or not certain
+  optional binaries are installed will remain the same.</p>
+
+  <p>Basically, anything that expects to find things in
+  <code>/usr/local/bin</code> should continue to work.</p>
+
+  <p>However, when you are ready to install a later release of
+  maildrop, you can simply move your current
+  <code>/usr/local/lib/maildrop</code> directory before installing
+  the later release. In the event that you need to back out to the
+  previous version of maildrop, you can do that simply by removing
+  the newly installed <code>/usr/local/lib/maildrop</code>
+  directory, and moving the previous one in its place.</p>
+
+  <p>I think that this is a definite improvement from the previous
+  layout.</p>
+
+  <h2>Upgrading from maildrop 0.74 and earlier</h2>
+
+  <p>If you compile and install maildrop 0.74 from the original
+  source code tarball, you can proceed to configure, compile, and
+  install maildrop as usual. You can use the <code>--prefix</code>
+  option to the <code>configure</code> script to change the main
+  installation directory from <code>/usr/local/lib/maildrop</code>
+  to something else. If your previous version of maildrop was not
+  installed in the default directory <code>/usr/local/bin</code>,
+  you can use the <code>--bindir</code> option to the configure
+  script to specify your non-default installation directory.</p>
+
+  <p><code>make install</code> should be able to create the correct
+  soft links. After running <code>make install</code>, or
+  <code>make install-strip</code>, you will need to manually
+  perform the following steps:</p>
+
+  <ul>
+    <li>Manually remove any old maildrop binaries from
+    <code>/usr/local/bin</code>, such as
+    <code>maildrop.makedat</code>,
+    <code>maildrop.deliverquota</code>, and others. Anything
+    <code>maildrop.*</code> can be removed.</li>
+
+    <li>New manual pages are installed underneath the main
+    <code>/usr/local/lib/maildrop</code> directory. You will need
+    to remove old manual pages from the <code>/usr/local/man</code>
+    directory. Find all files underneath
+    <code>/usr/local/man</code> that begin with "maildrop". You
+    will also need to look for a corresponding soft link that
+    points to each manual page.</li>
+
+    <li>Configure your <code>man(1)</code> command to search
+    <code>/usr/local/lib/maildrop/man</code> for manual pages,
+    which is where maildrop's manual pages are now installed. In
+    most cases, you need to simply add the path
+    <code>/usr/local/lib/maildrop/man</code> to the MANPATH
+    environment variable. If you use the Bourne or Bash shells,
+    simply add the following code to
+    <code>/etc/profile</code>:<br />
+    <br />
+    <code>MANPATH="/usr/local/lib/maildrop:$MANPATH"</code><br />
+    <code>export MANPATH</code></li>
+  </ul>
+
+  <h2>Upgrading binary RPMS for Red Hat Linux</h2>
+
+  <p>I recommend that instead of using the rpm -U command to
+  upgrade your binary RPM, you should first remove the old maildrop
+  rpm, using rpm -e, then install the new RPM using rpm -i.</p>
+
+  <p>The binary RPM takes care of setting the MANPATH variable.
+  Also, note that the binary RPM installes the HTML version of
+  manual pages, plus additional documentation, in
+  <code>/usr/doc</code> instead of
+  <code>/usr/local/lib/maildrop/html</code>.</p>
+</body>
+</html>

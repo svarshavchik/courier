@@ -1,0 +1,819 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone01folderlist">
+  <title>Folder Listing</title>
+  <para>
+This is the first screen that comes up after starting &app;.
+This screen lists all configured mail accounts.
+After starting, &app; automatically opens the first configured mail account,
+prompting for a password if necessary.
+&app; is capable of handling multiple mail accounts, and
+any additional configured mail accounts are initially closed.
+To open one of the other mail account, highlight it with the cursor and
+press <keycap>ENTER</keycap>.</para>
+
+  <para>
+When a mail account is opened, &app; lists the default set of folders
+in the mail account.
+Folders that contain other subfolders, instead of messages, are prefixed
+by a <quote><literal>+</literal></quote>, or a
+<quote><literal>&rarr;</literal></quote>
+(depending on the display).
+Certain mail servers may have folders that contain both messages and
+subfolders.
+Those so-called <quote>hybrid</quote> folders are prefixed
+by a <quote><literal>*</literal></quote>, or a
+<quote><literal>&bull;</literal></quote>
+(depending on the display).</para>
+
+  <para>
+Move the cursor to highlight a folder and press <keycap>ENTER</keycap>
+to display its contents (either an index of messages in the folder; or
+a list of the folder's subfolders).
+Use <keycap>+</keycap> to display subfolders of a hybrid folder,
+use <keycap>ENTER</keycap> to display the index of messages in a hybrid
+folder.</para>
+
+  <para>
+Move the cursor to highlight a folder with displayed subfolders and press
+<keycap>-</keycap> to remove its subfolders from display.</para>
+
+  <para>
+Some mail accounts will display the number of messages in
+each folder, automatically.
+Sometimes the number of messages in a mail folder
+cannot be quickly determined, so &app; will not bother to show the
+folder's size.
+Message counts are automatically shown for:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+Mail stored in local maildir folders.</para>
+    </listitem>
+    <listitem>
+      <para>
+Mail stored on most remote POP3 and IMAP servers.</para>
+    </listitem>
+  </itemizedlist>
+
+  <para>
+Message counts are not automatically shown for:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+Mail stored in local mailbox files.</para>
+    </listitem>
+    <listitem>
+      <para>
+Mail stored on some IMAP servers.</para>
+    </listitem>
+  </itemizedlist>
+
+  <para>
+Sometimes &app; cannot correctly determine whether the IMAP server
+provides message counts quickly.
+Use the <quote><literal>/slowstatus</literal></quote> or the
+<quote><literal>/faststatus</literal></quote> flag when creating the new mail
+account to specify whether &app; should automatically show message counts
+for displayed folders.</para>
+
+  <para>
+When &app; runs for the very first time, &app; creates a mail account
+that contains local mail folders.
+Use the main menu screen to add additional mail accounts.
+Here's an example of the <quote>Folder Listing</quote> screen:</para>
+
+  <section>
+    <title>Folder Listing Screen</title>
+
+    <programlisting>
+::B::
+ FOLDERS                              CONE                                   
+
+    Main Account: Courier-IMAP server
+      New Mail (5 messages)
+      + Lists
+        Courier-Users (1 messages)
+        JunkFax-L
+        System-Testers
+        Release-Notice
+        Sqwebmail
+      + Folders
+
+    account3@example.com: POP3 - Courier Mail Server
+      Folder: 40 messages, 39 unread
+
+    account4@example.com:
+
+
+
+
+
+::B::
+  LIST completed                                                             
+ A Add          ^D Move down     M Main Menu     U Use special   W Write Msg
+ D Delete        E Edit Acct     R Rename       ^U Move up
+</programlisting>
+
+    <para>
+The bottom two lines of the screen lists the available <quote>hotkeys</quote>,
+and their corresponding actions.
+<quote><literal>^</literal></quote> indicates that <keycap>CTRL</keycap>
+should be held down while pressing the following key.
+On this screen, for example, press and hold <keycap>CTRL</keycap>,
+then press and release <keycap>D</keycap> to invoke the
+<quote>Move down</quote> action (described below).</para>
+
+    <para>
+Screens with more <quote>hotkeys</quote> that can fit on the screen will
+use <keycap>CTRL</keycap>-<keycap>O</keycap> to cycle through the complete
+<quote>hotkey</quote> listing.</para>
+
+    <para>
+As shown in the illustration above, &app; lists the hierarchy of available
+folders in a natural, tree-like format.
+The list of folders in each mail account begins with a list called
+<quote>top-level folders</quote>; the 
+<keycap>ENTER</keycap> and <keycap>+</keycap>
+keys will then display the contents of each folder.</para>
+
+    <para>
+When a new mail account is configured, &app; creates a default list of
+<quote>top-level folders</quote>, as follows:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>Local mail folders</term>
+	<listitem>
+	  <para>
+The default top-level folder list initially contains one entry, the name
+of the directory where local mail folders are kept, and a second, optional
+entry that represents the default system mailbox.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>Local maildirs</term>
+	<listitem>
+	  <para>
+The default top-level folder list initially contains two entries:
+<quote>INBOX</quote> - messages; and
+<quote>Folders</quote> - folders
+(&app; implements the <quote>Maildir++</quote> folder extension, as
+implemented by the <ulink url="http://www.courier-mta.org"><application>Courier
+Mail Server</application></ulink>).</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>POP3 mailboxes</term>
+	<listitem>
+	  <para>
+A POP3 mailbox does not contain any folders.
+When opened, a POP3 mail account displays the number of messages in
+the POP3 mailbox where the top-level folder list is usually shown.
+Highlighting it and pressing <keycap>ENTER</keycap> will display the
+index of messages in the POP3 mailbox.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>IMAP accounts</term>
+	<listitem>
+	  <para>
+The default top-level folder list initially contains
+<quote>INBOX</quote> (the default IMAP new mail folder), and any other
+default mail folder hierarchies, as announced by the IMAP server.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>SMAP accounts</term>
+	<listitem>
+	  <para>
+The default top-level folder list is initialized by downloading the
+default folder list from the SMAP server.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>NetNews (Usenet) accounts</term>
+	<listitem>
+	  <para>
+The default top-level folder list contains
+four entries, described below.</para>
+	</listitem>
+      </varlistentry>
+
+    </variablelist>
+
+      <section>
+	<title>Reading Usenet Newsgroups</title>
+
+	<para>
+Opening a NetNews (Usenet) account displays four entries:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>All Newsgroups</term>
+	    <listitem>
+	      <para>
+This entry opens a hierarchical listing of all available newsgroups,
+subscribed and unsubscribed.
+Highlight a newsgroup with the cursor and press <keycap>ENTER</keycap> to
+subscribe and open the newsgroup for the first time.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>Check for new newsgroups</term>
+	    <listitem>
+	      <para>
+This entry opens a list of all recently created newsgroups.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>Refresh newsgroup list</term>
+	    <listitem>
+	      <para>
+Highlight this entry with the cursor and press <keycap>ENTER</keycap> to
+download and save the server's entire list of available newsgroups.
+This process may take a long time.
+On low bandwidth connections it may take 15-20 minutes, depending on the
+number of newsgroups carried by the server.</para>
+
+	      <para>
+Sometimes servers may not correctly report newly-created newsgroups,
+so using this option will be necessary in order to add the new groups to
+"All newsgroups".
+Additionally, this is the only way to remove newsgroups no longer carried
+by the server from "All newsgroups".</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>Subscribed newsgroups</term>
+	    <listitem>
+	      <para>
+This entry contains a list of subscribed newsgroups.
+To subscribe to a newsgroup, find it under "All newsgroups" and open it.
+This action automatically subscribes the newsgroup.
+To unsubscribe a newsgroup, highlight it here, then press
+<keycap>D</keycap> (Delete).</para>
+
+	      <para>
+Another way to subscribe to a newsgroup is described in the following
+section.</para>
+
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </section>
+    <section>
+      <title>Adding top-level folders</title>
+
+      <para>
+There are two ways to manually insert additional folders into the top-level
+list.
+The easiest way is to highlight an existing folder, then press
+<keycap>U</keycap>, then <keycap>T</keycap>.
+This folder is now included in the top-level folder list.
+It is important to note that the actual mail folder is not renamed, or
+otherwise moved in the mail account, it is only shown as part of the
+default top-level folder hierarchy.
+The top-level entry for this folder can be thought of as a
+<quote>shortcut</quote> to the folder.
+If the original folder is located deep in the mail account's folder hierarchy,
+it is no longer necessary to dive deep into the hierarchy each time the
+mail account is opened, in order to reach the folder; it's going to be
+right there, in the top-level folder hierarchy.</para>
+
+      <para>
+Top-level folders do no appear in their original location in the mail
+account's folder hierarchy.
+When the folder is first added to the top-level folder list it momentarily
+appears twice: in its actual location, on the screen, and at the topmost
+level.
+After its original hierarchy folder level is closed, it will no longer
+appear.
+As noted above, the folder is still there, it just appears as a shortcut
+at the topmost level.
+When the shortcut is removed (see the next section), the folder reappears
+in its place.</para>
+
+      <para>
+The second way to create top-level folder shortcuts is to highlight the name
+of the mail account with the cursor, then press
+<keycap>A</keycap> (Add).
+&app; shows the following prompt:
+<quote><literal>Add folder/directory in</literal>
+<replaceable>account</replaceable></quote>.
+Enter the complete folder name, as used by the mail account's server.
+This method for adding top-level folders requires some knowledge of the
+folder's location on the mail server.
+However it can be used to add folders
+that are outside of the currently-configured folder hierarchies
+(which is sometimes the case with IMAP servers), as follows:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>IMAP folders</term>
+	  <listitem>
+	    <para>
+The folder name is used as is.
+This means that folders whose names contain characters that are not in
+the application's character set, or do not follow the IMAP modified
+<literal>UTF-7</literal>
+folder name encoding, cannot be entered.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>SMAP folders</term>
+	  <listitem>
+	    <para>
+Specify the complete folder path name.
+Use the forward slash character,
+<quote><literal>/</literal></quote> to separate
+names of individual folders in the <literal>SMAP</literal> folder hierarchy.
+Unicode/ISO-10646 characters that cannot be represented in the application's
+character set may be specified as
+<quote><literal>%</literal><replaceable>n</replaceable><literal>;</literal></quote>,
+where <replaceable>n</replaceable> is a decimal Unicode value.
+Use <quote><literal>\/</literal></quote> to specify a forward slash character
+in the folder name, <quote><literal>\\</literal></quote> to specify
+a backslash character, and <quote><literal>\%</literal></quote> to specify
+the <quote>%</quote> character.</para>
+	  </listitem>
+	</varlistentry>
+
+	  <varlistentry>
+	    <term>Usenet (NetNews) newsgroups</term>
+
+	    <listitem>
+	      <para>
+Usenet accounts already have a dedicated link to subscribed newsgroups.
+For Usenet accounts, this process is used to subscribe to a new newsgroup
+which does not appear under "All newsgroups".</para>
+
+	      <para>
+It is not possible for NetNews (Usenet) readers to maintain a correct,
+accurate list of available newsgroups.
+Usenet readers must download a list of available newsgroups, which can be
+quite large and require a significant time to download.
+It's not feasible to do this every time.
+As such, Usenet readers keep a saved copy of the download newsgroup list.
+Upon request, the newsgroup list may be downloaded again, and the locally
+saved list is brought up to date.
+This is what "Refresh newsgroup list" does.</para>
+
+	      <para>
+"Check for new newsgroups" is a partial solution that's supported by most
+Usenet news servers, and can usually do the trick and download recently
+added newsgroups.
+There's no way to remove newsgroups no longer carried by the server, except
+by using "Refresh newsgroup list", but at least "Check for new newsgroups"
+will do the trick and include new groups under "All newsgroups", so that they
+can be subscribed to.</para>
+
+	      <para>
+However, sometimes "Refresh newsgroup list" might not work with some oddball
+news server, or the news server can accidentally lose its wits and "forget"
+which new newsgroups were added, recently.
+In any case, use
+the process for creating a top-level folder in order to manually subscribe
+to a newsgroup.
+Type in the newsgroup's name, carefully checking for the correct spelling.
+After creating a link, open it and the newsgroup will now be subscribed to,
+and it will now appear under "Subscribed newsgroups".</para>
+	    </listitem>
+	  </varlistentry>
+
+	<varlistentry>
+	  <term>Local mbox-type mail folders and maildirs</term>
+	  <listitem>
+	    <para>
+Specify the complete folder path name, relative to main folder directory.
+For example, if this mail account is configured as a local mbox mail account
+in <filename>$HOME/Mail</filename>, use
+<quote><literal>foo/bar</literal></quote> to specify
+<filename>$HOME/Mail/foo/bar</filename>.
+Use the forward slash character,
+<quote><literal>/</literal></quote> to separate
+names of individual folders in the local mail folder hierarchy.
+The actual folder names use the modified <literal>UTF-7</literal> character
+set, and the entered folder name is automatically converted from the
+application's character set to modified <literal>UTF-7</literal>.
+This is needed for compatibility reasons (making it possible to access
+local mail folders both directly, and using IMAP or SMAP).</para>
+
+	    <para>
+Unicode/ISO-10646 characters that cannot be represented in the application's
+character set may be specified as
+<quote><literal>%</literal><replaceable>n</replaceable><literal>;</literal></quote>,
+where <replaceable>n</replaceable> is a decimal Unicode value.
+Use <quote><literal>\\</literal></quote> to specify
+a backslash character, and <quote><literal>\%</literal></quote> to specify
+the <quote>%</quote> character.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </section>
+
+    <section>
+      <title>Removing top-level folders</title>
+
+      <para>
+Highlight a top-level folder with the cursor, and press
+<keycap>D</keycap> to remove it.
+The folder is not actually deleted from the mail account, it is only removed
+from its top-level placement, and it will now appear in its real location
+in the mail account's folder hierarchy.</para>
+    </section>
+
+      <section>
+	<title>Removing memorized headers</title>
+
+	<para>
+&app; memorizes custom mail headers in sent messages.
+When replying to a message in a folder, or creating a new message when the
+folder's contents are shown, the memorized content are used to set up the
+initial default values of custom headers.
+Different mail folders may have different defaults memorized.
+Additionally, each mail account has a global set of memorized default headers,
+which are used when replying or writing a message for the first time in a
+new folder.</para>
+
+	<note>
+	  <para>
+At encryption key used for signing messages is handled just like a custom
+header, and a different encryption key may be set as a default for each
+folder.</para>
+	</note>
+
+	<para>
+Highlight a folder and press <keycap>CTRL</keycap>-<keycap>R</keycap> to
+remove all memorized header defaults for the highlighted folder.
+The initial header values for this folder
+will now default to the global account defaults.</para>
+      </section>
+
+    <section>
+      <title>Renaming folders</title>
+
+      <para>
+Highlight an existing mail folder and press <keycap>R</keycap> to
+rename it.
+This option does not work when a top-level folder is highlighted.
+A top-level folder is, essentially, a shortcut to an existing folder.
+Remove the top-level folder shortcut, find the original folder in its
+regular position in the folder hierarchy, then rename it.</para>
+    </section>
+
+    <section>
+      <title>Creating new folders</title>
+
+      <para>
+To create a new folder, highlight its parent folder directory, then
+press <keycap>A</keycap> (Add).
+&app; responds with the following prompt:
+<quote><literal>Create new folder in</literal>
+<replaceable>parent</replaceable></quote>.
+Enter the name of a new folder, and press <keycap>ENTER</keycap>.</para>
+
+      <para>
+Press
+<keycap>CTRL</keycap>-<keycap>D</keycap> before
+<keycap>ENTER</keycap> in order to create a folder directory, instead of
+a regular folder.
+A folder directory contains other subfolders, instead of messages.
+Some IMAP and SMAP mail servers can create so-called
+<quote>hybrid</quote> folders -- folders that contain both messages and
+other subfolders.
+Repeat this process twice to create a hybrid folder.
+Enter the same name both times; first to create a folder, then a folder
+directory with the same name.</para>
+
+      <para>
+Local mbox-type mail accounts cannot have hybrid folders.
+Hybrid folders are available with local maildir accounts.</para>
+
+      <para>
+Do not create a folder directory without creating at least one subfolder
+immediately afterwards.
+When a parent directory is shown,
+some mail accounts may not display a folder directory that does not have
+at least one subfolder.
+For best results:
+after creating a new folder directory, make sure that its name is highlighted,
+then use this command to create its first subfolder.</para>
+    </section>
+
+    <section>
+      <title>Deleting folders</title>
+
+      <para>
+Highlight the name of a folder with a cursor then press
+<keycap>D</keycap> (Delete) to remove it.
+The folder, and its contents, will be deleted.
+Use the same process to remove a folder directory.
+When trying to remove a hybrid folder, &app; will prompt to choose to
+remove either the subfolders, or the messages in the hybrid folder.</para>
+
+      <para>
+Some mail accounts may require that all messages in a folder be
+manually removed first, and will not remove a folder until it's completely
+empty.</para>
+
+      <para>
+Some mail accounts may require that all subfolders in a folder directory be
+manually removed first, and will not remove a folder
+directory until it's completely
+empty.</para>
+
+      <para>
+Note: highlighting a top-level folder and pressing <keycap>D</keycap> removes
+only the top-level shortcut, and does not remove the actual folder.</para>
+
+    </section>
+
+      <section>
+	<title>Editing folder permissions</title>
+
+	<para>
+Highlight a folder, then press <keycap>P</keycap> to view or edit folder
+permissions.
+Folder permissions determine whether other IMAP mail accounts may view, or
+change the contents of the folder.
+This option is only available for folders on IMAP mail servers that
+implement access control lists (access control lists are
+an optional IMAP protocol feature that is implemented by many IMAP servers).
+Attempting to use this option on a folder that's not an IMAP folder, or
+if the IMAP server does not implement access control lists, will result
+in an error.</para>
+
+	<para>
+Pressing <keycap>P</keycap> shows a submenu with two options:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>View permissions</term>
+	    <listitem>
+	      <para>
+Press <keycap>V</keycap> to display
+your permissions are on the given folder.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>Edit permissions</term>
+	    <listitem>
+	      <para>
+Press <keycap>E</keycap> to display all permissions for the given folder;
+this option may also be used to modify or adjust them.</para>
+
+	      <para>
+This option is available only if <quote>View permissions</quote> shows that
+you have the
+<quote>Administrator</quote> permission for the folder.
+Otherwise selecting this option results in an error.</para>
+
+               <para>
+The <quote>Edit permissions</quote> screen is designed to be self-explanatory.
+Folder permissions, or <quote>access control list</quote> as its called,
+consists of a list of identifier/rights pairs.
+<quote>identifier</quote> designates the entity with the associated
+rights.</para>
+	    </listitem>
+	  </varlistentry>
+        </variablelist>
+
+	&libmail-aclentities;
+
+	<para>
+Highlight an identifier with the cursor and press <keycap>Enter</keycap>
+to modify the identifier's rights.
+To delete an identifier, and its associated rights,
+highlight it with the cursor and press <keycap>D</keycap>.
+Press <keycap>A</keycap> to add an identifier.
+Use the next submenu to select the new identifier
+(<quote><literal>owner</literal></quote>,
+<quote><literal>user</literal></quote>,
+etc...), then specify the new identifier's rights.</para>
+
+	<note>
+          <para>
+Not all servers support every kind of an access control list identifier.
+Additionally, some IMAP servers are limited in the combination of access
+rights that may be given to an identifier.
+For example, IMAP servers that implement version 1 of the access control
+list protocol can only assign the <quote>Delete/undelete messages</quote>,
+<quote>Expunge deleted messages</quote>, and
+<quote>Delete folder</quote> together as a group.
+Either all three access rights must be given to an identifier, or none of
+them.
+An attempt to add only one or two of these access rights will be rejected
+by the server.</para>
+
+	  <para>
+Other IMAP servers may have other restrictions on which combination of
+access rights are valid, or not.
+Depending on the server, the error message which rejects an invalid access
+rights combination may or may not be informative.
+Check the IMAP server's documentation for more information.</para>
+      </note>
+         
+      </section>
+      <section>
+	<title>Installing filters</title>
+
+	<para>
+Highlighting a folder and pressing <keycap>F</keycap> opens a screen where
+the folder's filters may be entered or modified.
+This is an advanced topic.
+See <link linkend="cone12filters"><quote>Mail Filters</quote></link> for more
+information.</para>
+      </section>
+
+    <section>
+      <title>Removing mail accounts</title>
+
+      <para>
+Highlight the mail account's name with the cursor, and press
+<keycap>D</keycap> to remove it.
+This action logs out and removes the mail account.
+New mail accounts are added from the main menu.</para>
+    </section>
+
+    <section>
+      <title>Rearranging accounts and top-level folders</title>
+
+      <para>
+The order in which mail accounts, and their top-level folders, are listed
+may be adjusted by highlighting a mail account, or a top-level folder,
+and then using <keycap>CTRL</keycap>-<keycap>U</keycap> or
+<keycap>CTRL</keycap>-<keycap>D</keycap>.</para>
+
+      <para>
+<keycap>CTRL</keycap>-<keycap>U</keycap> moves the highlighted mail account,
+or folder, one position upwards,
+<keycap>CTRL</keycap>-<keycap>D</keycap> moves it one position
+downwards.</para>
+
+      <para>
+<keycap>CTRL</keycap>-<keycap>U</keycap> and
+<keycap>CTRL</keycap>-<keycap>D</keycap> only work when a mail account,
+or a top-level folder, is highlighted.
+Other folders are always shown in alphabetical order.</para>
+    </section>
+
+    <section>
+      <title>Defining special folders</title>
+
+      <para>
+&app; needs to assign folders for certain tasks.
+Highlighting a folder, and pressing <keycap>U</keycap> (Use special)
+brings up the following prompt, which designates the highlighted folder
+as follows:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><keycap>A</keycap> - address book</term>
+	  <listitem>
+	    <para>
+&app; can save its simple E-mail address book on a remote server, in
+addition to its local address book.
+POP3 mail folders cannot be used as remote address books, only IMAP or
+SMAP folders can do that.
+To create a new address book on a remote server, create a new IMAP or SMAP
+folder, highlight it with a cursor, and use this option.</para>
+
+	    <para>
+This option adds a new remote address book.
+&app; can handle more than one address book, and E-mail addresses are
+looked up in each configured address book, sequentially, until the address
+is found.</para>
+
+	      <para>
+&app; can also search LDAP server-based address books.
+LDAP address books are added by choosing the <quote>Address Book</quote>
+option from the Main Menu.</para>
+
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>D</keycap> - draft</term>
+	  <listitem>
+	    <para>
+The draft folder is where new,
+unfinished messages, that have not been sent yet, are saved.
+Only one draft folder may be defined;
+selecting a new draft folder automatically unselects the previous draft
+folder.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>S</keycap> - sent mail</term>
+	  <listitem>
+	    <para>
+This special folder contains saved copies of sent messages.
+Each time a message is sent, a copy is automatically placed into this folder,
+by default.</para>
+
+	    <para>
+This option adds a new sent mail folder.
+&app; can handle more than one sent mail folder.
+When writing a new message, a sent mail folder may be selected where a
+copy of this message will be saved, after it is sent.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>R</keycap> - remote configuration</term>
+
+	  <listitem>
+	    <para>
+Enables remote configuration and uses this folder to save the configuration
+data.
+See
+<link linkend="cone07remoteconfig"><quote>Remote Configuration</quote></link>
+for more information.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>T</keycap> - top level folder</term>
+	  <listitem>
+	    <para>
+This option was already discussed previously.</para>
+	  </listitem>
+	</varlistentry>
+
+      </variablelist>
+
+      <para>
+IMPORTANT: a POP3 folder cannot be used as a special folder.
+Only IMAP, SMAP, or a local mail folder may be used as a special folder.</para>
+
+      <para>
+IMPORTANT: do not delete a mail folder, or a mail account, that contains a
+special folder.
+Remove an existing address book using the <quote>Address Book</quote>
+selection from &app;'s main menu.
+Remove an existing draft folder first by selecting a draft folder on a
+different mail account.
+Remove an existing sent-mail folder by choosing the <quote>Setup</quote>
+selection from &app;'s main menu.
+Then, the folder or the account containing a special folder
+can be deleted.</para>
+
+      <para>
+IMPORTANT: Do not open an address book folder, or a remote configuration folder
+manually, unless the remote IMAP/SMAP server allows concurrent access to the
+same folder.
+&app; opens and closes these folders automatically, when needed.
+If the remote IMAP/SMAP server does not allow the same folder opened more than
+once, opening the folder manually will result in unpredictable errors.</para>
+
+    </section>
+
+    <section>
+      <title>Reconfiguring an account</title>
+
+      <para>
+Use the cursor to highlight the name of a mail account, and press
+<keycap>E</keycap> to edit the mail account's configuration.
+This is primarily useful with remote mail accounts.
+There isn't much to do with local mail accounts.
+Just remove an existing local mail account, then add a new account that
+points to a different mail folder directory.</para>
+
+      <para>
+More details about the process of configuring a mail account can be found in
+the section that describes the process of adding a new mail account.</para>
+    </section>
+
+    <section>
+      <title>Other commands</title>
+
+      <variablelist>
+	<varlistentry>
+	  <term><keycap>M</keycap></term>
+	  <listitem>
+	    &cone-mainmenu;
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>W</keycap></term>
+	  <listitem>
+	    &cone-write;
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </section>
+  </section>
+</chapter>

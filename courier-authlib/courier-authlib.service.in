@@ -1,0 +1,8 @@
+[Unit]
+Description=Courier Authentication Library
+
+[Service]
+Type=forking
+RemainAfterExit=true
+ExecStart=@datadir@/courier-authlib.sysvinit start
+ExecStop=@datadir@/courier-authlib.sysvinit stop

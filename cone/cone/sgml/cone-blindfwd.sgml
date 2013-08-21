@@ -1,0 +1,10 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+	  <para>
+<quote>Blindly</quote> forward the current message.
+The message is resent without adding any additional comments, or changing the
+sender's name.
+&app; prompt for the recipient's name, or names, and send the messages without
+changing the message's headers in any way (additional headers may be added by the
+mail server, of course).</para>

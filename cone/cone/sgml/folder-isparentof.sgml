@@ -1,0 +1,68 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-isparentof">
+    <refmeta>
+      <refentrytitle>mail::folder::isparentof</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::isParentOf</refname>
+      <refpurpose>Check if another folder is this folder's subfolder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+mail::folder *folder;
+mail::folder *otherFolder;
+
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool flag=folder-&gt;<function>isParentOf</function></funcdef>
+          <paramdef><parameter>otherFolder-&gt;getPath()</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function returns an indication whether a folder's path
+(returned by
+<link linkend="folder-getpath"><citerefentry>
+	    <refentrytitle>mail::folder::getPath</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>)
+refers to a subfolder of this folder.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+The function returns <literal>true</literal>
+if the specified path refers to a subfolder of this folder.</para>
+
+      <note>
+	<para>
+<literal>true</literal>
+is returned even if the path does not refer to a direct subfolder
+(a path referring to a subfolder of a subfolder will still result in
+a <literal>true</literal> return).</para>
+      </note>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="folder-getpath"><citerefentry>
+	    <refentrytitle>mail::folder::getPath</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

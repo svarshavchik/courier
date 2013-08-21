@@ -1,0 +1,10 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+mail::searchParams mySearchParams;
+
+mySearchParams.criteria=<replaceable>criteria</replaceable>;
+mySearchParams.searchNot=<replaceable>notFlag</replaceable>;
+mySearchParams.param1="<replaceable>text</replaceable>";
+mySearchParams.param2="<replaceable>text</replaceable>";
+mySearchParams.charset="<replaceable>text</replaceable>";
+mySearchParams.scope=<replaceable>scope</replaceable>;

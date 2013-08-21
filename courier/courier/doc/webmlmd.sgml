@@ -1,0 +1,430 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 2007-2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+  <refmeta>
+    <refentrytitle>webmlmd</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+  <refnamediv>
+    <refname>webmlmd</refname>
+    <refpurpose>WebMLM interface to couriermlm</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">cp @libexecdir@/courier/webmail/webmlm /var/www/cgi-bin</command>
+    </cmdsynopsis>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">webmlmd</command>
+      <group choice="req" rep="norepeat">
+        <arg choice="opt" rep="norepeat">start</arg>
+        <arg choice="opt" rep="norepeat">restart</arg>
+        <arg choice="opt" rep="norepeat">stop</arg>
+      </group>
+      <arg choice="req" rep="norepeat">@sysconfdir@/webmlmrc</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+    <para>
+    <application moreinfo="none">WebMLM</application> is a service that
+    offers an alternative web-based access to some
+    <command moreinfo="none">couriermlm</command> commands, as an
+    alternative to submitting them via E-mail.</para>
+    <para>At this time, 
+    <application moreinfo="none">WebMLM</application> implements requests to
+    subscribe and unsubscribe from the mailing list, and
+configuration of basic mailing list settings.</para>
+    <para>Before configuring 
+    <application moreinfo="none">WebMLM</application>, the mailing list must be set
+    up using 
+    <citerefentry>
+	<refentrytitle>couriermlm</refentrytitle>
+	<manvolnum>1</manvolnum>
+      </citerefentry>. 
+    <application moreinfo="none">WebMLM</application> is not a separate application,
+    it is an add-on to 
+    <command moreinfo="none">couriermlm</command>. 
+    <application moreinfo="none">WebMLM</application> will not work correctly until
+    the mailing list is fully configured, and all 
+    <filename moreinfo="none">.courier</filename> files, that correspond to this
+    list, are installed.</para>
+  </refsect1>
+  <refsect1>
+    <title>Overview</title>
+    <para>
+    <application moreinfo="none">WebMLM</application> consists of three
+    parts:</para>
+    <itemizedlist>
+      <listitem>
+        <para>A configuration file, (default:
+        <filename moreinfo="none">@sysconfdir@/webmlmrc</filename>) that enumerates
+        all 
+        <command moreinfo="none">couriermlm</command>-created mailing list
+        directories for which 
+        <application moreinfo="none">WebMLM</application> will offer its services
+(a single instance of <application moreinfo="none">WebMLM</application> can support multiple
+mailing list directories).
+        The configuration file also specifies the name of a local
+        filesystem socket (a named pipe) where
+        <command moreinfo="none">webmlm</command> and 
+        <command moreinfo="none">webmlmd</command> programs talk to each other,
+and several other
+        configuration parameters.</para>
+      </listitem>
+      <listitem>
+        <para><command moreinfo="none">webmlmd</command> is a background daemon process
+        that reads the configuration file, creates the
+        communication socket specified by the configuration file,
+        and listens for web requests.</para>
+      </listitem>
+      <listitem>
+        <para><command moreinfo="none">webmlm</command> is a small stub program which must
+        be installed as a script in 
+        <application moreinfo="none">Apache</application> http server's 
+        <filename moreinfo="none">cgi-bin</filename> directory. 
+        <application moreinfo="none">Apache</application> runs the script to process
+        every request received from a web client/browser. 
+        <command moreinfo="none">webmlm</command> reads web browser's request, reads
+        the configuration file, opens the communication socket file
+        specified in the configuration file, sends the request to
+        the 
+        <command moreinfo="none">webmlmd</command> daemon process, and waits for 
+        <command moreinfo="none">webmlmd</command>'s response, which is forwarded
+        to the web browser/client.</para>
+        <note>
+          <para>
+          <command moreinfo="none">webmlm</command> is originally installed in the 
+          <filename moreinfo="none">@libexecdir@/courier/webmail</filename> directory, and
+          must be manually copied to Apache's 
+          <filename moreinfo="none">cgi-bin</filename> directory. Most installable 
+          <application moreinfo="none">Courier</application> packages (including the
+          
+          <application moreinfo="none">Courier</application>
+          <acronym>RPM</acronym> package built using its default 
+          <acronym>RPM</acronym> build script) have a separate
+          subpackage that installs 
+          <command moreinfo="none">webmlm</command> directly into the 
+          <filename moreinfo="none">cgi-bin</filename> directory. Installing the
+          subpackage is all that's needed in those cases.</para>
+        </note>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+Use the following process to web-enable <command moreinfo="none">couriermlm</command>-managed
+mailing lists:</para>
+
+    <orderedlist inheritnum="ignore" continuation="restarts">
+      <listitem><para>Configure the <literal moreinfo="none">LISTNAME</literal>,
+<literal moreinfo="none">LISTDESCR</literal>, <literal moreinfo="none">LISTPW</literal>
+and <literal moreinfo="none">URL</literal>
+<command moreinfo="none">couriermlm</command> list options.</para></listitem>
+
+      <listitem><para>Set up the <filename moreinfo="none">webmlmrc</filename> configuration
+file.</para></listitem>
+
+      <listitem><para>Start <command moreinfo="none">webmlmd</command>, and arrange start it
+automatically during the system boot.</para></listitem>
+
+      <listitem><para>Install <command moreinfo="none">webmlm</command> in your web server's
+<filename moreinfo="none">cgi-bin</filename> directory.</para></listitem>
+    </orderedlist>
+  </refsect1>
+
+  <refsect1>
+    <title>Configure <command moreinfo="none">couriermlm</command> list options</title>
+
+    <para>
+Use the <quote><command moreinfo="none">couriermlm</command>
+<literal moreinfo="none">set</literal>
+<replaceable>directory</replaceable>
+<replaceable>name</replaceable>=<replaceable>value</replaceable></quote>
+command,
+for each <command moreinfo="none">couriermlm</command> list
+<replaceable>directory</replaceable> to set the following settings:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>LISTNAME</term>
+	<listitem>
+	  <para>The mailing list's short title, or caption.
+Example: <quote>The courier-users mailing list</quote>.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>LISTDESCR</term>
+	<listitem>
+	  <para>
+This is a longer, more verbose description of this mailing list.
+This setting is displayed, as raw HTML, on the list's main page.
+This is an optional setting.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>URL</term>
+	<listitem>
+	  <para>
+The <acronym>URL</acronym> to the main page for this mailing list.
+You'll need to figure out what this <acronym>URL</acronym> should be set to
+by planning ahead where <command moreinfo="none">webmlm</command> gets installed, in the last
+step in this installation process.</para>
+
+	  <para>
+After installing <command moreinfo="none">webmlm</command> in Apache's
+<filename moreinfo="none">cgi-bin</filename> directory, the URL for the
+<command moreinfo="none">webmlm</command> command would probably be something like
+<quote>http://<replaceable>servername</replaceable>/cgi-bin/webmlm</quote>.
+The list's <acronym>URL</acronym> is the name of the list's directory appended
+to <command moreinfo="none">webmlm</command>'s <acronym>URL</acronym>.</para>
+
+	  <para>
+For example, if the <command moreinfo="none">couriermlm</command> mailing list directory
+is <filename moreinfo="none">/var/lists/devel-list</filename>, its <acronym>URL</acronym>
+<emphasis>MUST</emphasis> be
+<quote>http://<replaceable>servername</replaceable>/cgi-bin/webmlm/devel-list</quote>.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>LISTPW</term>
+	<listitem>
+	  <para>
+This is the password to the mailing list administration screen.
+The password must be set using the <command moreinfo="none">couriermlm</command>
+command.</para>
+
+	  <note>
+	    <para>
+We are not talking military-grade security, here!
+Do not recycle sensitive passwords for this purpose.
+The password is saved, in plain text, in the <filename moreinfo="none">options</filename>
+file in the mailing list directory.
+You should consider removing the world read and execute permissions on
+the mailing list directory.
+Changing the permissions on the
+<filename moreinfo="none">options</filename> file is ineffective, it will be
+restored the next time any configuration setting is changed.</para>
+
+	    <para>
+Furthermore, authorization for the administration screen is
+provided by storing the list password in a browser cookie, which also
+gets transmitted over the network, in the clear.
+Consider using <acronym>SSL</acronym> with <command moreinfo="none">webmlmd</command>.</para>
+
+	    <para>
+This is a simple password-based implementation.
+High levels of security require a lot of care to set up, and are usually
+somewhat complicated to implement and manage.
+Keep that in mind.</para>
+	  </note>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+Put apostrophes around each option setting when running
+<command moreinfo="none">couriermlm</command>.
+Most of these configuration settings (especially <literal moreinfo="none">LISTDESCR</literal>)
+contain special shell characters and must be quoted.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>Setting up the <filename moreinfo="none">webmlmrc</filename> configuration file</title>
+
+    <para>
+A default <command moreinfo="none">webmlmd</command> configuration file is installed
+as <filename moreinfo="none">@sysconfdir@/webmlmrc</filename>.  The file contains a description
+of each required configuration setting.  Briefly:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>PORT</term>
+	<listitem>
+	  <para>
+The filesystem socket port file.
+This is a local filesystem socket that's used to process web requests.
+The directory that contains the filesystem socket must either be owned by
+the same userid that owns the <command moreinfo="none">couriermlm</command> mailing list
+directory, or <command moreinfo="none">webmlmd</command> must be started as root (in the
+next step of this installation process).
+The default <filename moreinfo="none">@sysconfdir@/webmlmrc</filename> configuration file
+sets the filesystem socket file to a <application moreinfo="none">Courier</application>
+directory that's only writable by root, so <command moreinfo="none">webmlmd</command> needs
+to be started by root, in the step step, in the default configuration.</para>
+
+	  <para>
+Additionally, the filesystem socket port file must be accessible by the userid
+that executes web cgi-bin scripts.  This is the <literal moreinfo="none">nobody</literal>
+user, in Apache's default configuration.</para>
+
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>LISTS</term>
+
+	<listitem>
+	  <para>
+A colon-separated list of <command moreinfo="none">couriermlm</command> mailing list
+directories, as absolute paths.
+A single instance of <application moreinfo="none">WebMLM</application> is capable of handling
+multiple lists, provided that:</para>
+
+	  <orderedlist inheritnum="ignore" continuation="restarts">
+	    <listitem>
+	      <para>
+The names of all mailing list directories, the last components of all
+directories, are unique.</para>
+	    </listitem>
+
+	    <listitem>
+	      <para>
+All mailing list directories are owned by the same userid and groupid.</para>
+	    </listitem>
+	  </orderedlist>
+
+	  <para>
+Otherwise, multiple, separate instances of <application moreinfo="none">WebMLM</application>
+must be set up.</para>
+
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Starting <command moreinfo="none">webmlmd</command></title>
+
+    <para>
+The following command starts <command moreinfo="none">webmlmd</command>:</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+webmlmd start <replaceable>configfile</replaceable></programlisting>
+    </informalexample>
+
+    <para>
+This command should be added to your system start up script (replacing
+<replaceable>configfile</replaceable> with the absolute pathname to the
+configuration file).</para>
+
+    <note>
+      <para>
+Most installable <application moreinfo="none">Courier</application> packages (including the
+<application moreinfo="none">Courier</application> <acronym>RPM</acronym> package built using
+its default <acronym>RPM</acronym> build script) install a system
+startup script.
+The script invokes the appropriate magical incantation if the
+configuration file (<filename moreinfo="none">@sysconfdir@/webmlmrc</filename>) has a
+non-empty <literal moreinfo="none">LISTS</literal> setting.
+Initially, <literal moreinfo="none">LISTS</literal> is empty and nothing happens.
+Once the mailing list directories are defined, the startup script will
+take care of starting <command moreinfo="none">webmlmd</command>.</para>
+    </note>
+
+    <para>
+The <command moreinfo="none">webmlmd</command> command returns immediately, it continues
+to run as a background daemon process).
+To stop the daemon process:</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+webmlmd stop <replaceable>configfile</replaceable></programlisting>
+    </informalexample>
+
+    <para>
+As mentioned previously, <command moreinfo="none">webmlmd</command> must be either invoked
+as root, or under the same userid that owns the mailing list directories,
+provided that <envar>PORT</envar>'s directory is writable by the userid.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>Installing <command moreinfo="none">webmlm</command></title>
+
+    <para>Install the <command moreinfo="none">webmlm</command> program by either manually
+copying it from the <filename moreinfo="none">@libexecdir@/courier/webmail</filename>
+directory to your Apache's <filename moreinfo="none">cgi-bin</filename> directory.
+Most pre-built <application moreinfo="none">Courier</application> packages typically do not
+have a <filename moreinfo="none">@libexecdir@/courier/webmail</filename> directory, but have
+have an optional subpackage that installs <command moreinfo="none">webmlm</command>
+directly into the <filename moreinfo="none">cgi-bin</filename> directory</para>
+  </refsect1>
+
+  <refsect1>
+    <title>Multiple <application moreinfo="none">WebMLM</application> instances</title>
+
+    <para>
+Sometimes, very specialized environments may require multiple instances
+of <application moreinfo="none">WebMLM</application>.  For example, to support mailing list
+directories that are owned by different userids.
+This may not be supported by most generic, pre-built,
+<application moreinfo="none">Courier</application> packages, and must be done manually.</para>
+
+    <refsect2>
+      <title>Install multiple copies of <command moreinfo="none">webmlm</command></title>
+
+      <para>
+Make separate copies of the <command moreinfo="none">webmlm</command> program, one
+for each instance of <application moreinfo="none">WebMLM</application>.
+Install them all in
+your web server's <filename moreinfo="none">cgi-bin</filename> directory.  This can be done
+with soft or hard links, but there must be separate instances of
+<command moreinfo="none">webmlm</command>.</para>
+
+      <para>
+Each instance of <command moreinfo="none">webmlm</command> reads a configuration file
+whose name is formed by appending <quote>rc</quote> to the command, and
+looking for the file in <filename moreinfo="none">@sysconfdir@</filename>.
+For example, the unmodified <command moreinfo="none">webmlm</command> reads
+<filename moreinfo="none">@sysconfdir@/webmlmrc</filename>.
+If a second copy named <command moreinfo="none">webmlm2</command> exists, it will read
+<filename moreinfo="none">@sysconfdir@/webmlm2rc</filename>.</para>
+
+      <para>
+Additionally, the optional <envar>WEBMLMRC_DIR</envar> environment variable
+overrides the <filename moreinfo="none">@sysconfdir@</filename> portion of the configuration
+filename.
+If <command moreinfo="none">webmlm</command> finds that this environment variable is set,
+its contents replace the <quote>@sysconfdir@</quote> portion.
+For example, a <command moreinfo="none">webmlm</command> that reads <quote>/etc/lists</quote>
+from <envar>WEBMLMRC_DIR</envar>
+will open the <filename moreinfo="none">/etc/lists/webmlmrc</filename> configuration file.
+Similarly, if its own name, in the web server's script directory, is
+<command moreinfo="none">webmlm2</command>, it will open
+<filename moreinfo="none">/etc/lists/webmlm2rc</filename>.</para>
+
+      <para>
+Use Apache's <quote>SetEnv</quote> directory to set environment
+variables:</para>
+
+      <informalexample>
+	<programlisting format="linespecific">
+SetEnv WEBMLMRC_DIR /etc/lists
+</programlisting>
+      </informalexample>
+
+      <para>
+Use whatever mechanism makes sense for you to arrange a unique configuration
+file for each copy of the <command moreinfo="none">webmlm</command> command.</para>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <ulink url="couriermlm.html">
+        <citerefentry>
+          <refentrytitle>couriermlm</refentrytitle>
+          <manvolnum>1</manvolnum>
+        </citerefentry>
+      </ulink>
+    </para>
+  </refsect1>
+</refentry>

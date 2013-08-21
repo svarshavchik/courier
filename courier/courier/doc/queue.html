@@ -1,0 +1,873 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="author" content="Mr. Sam"/>
+  <!-- Copyright 2000-2009 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <title>Mail Queue</title>
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h1>Mail Queue</h1>
+
+  <p><em>Courier</em>'s mail queue is a combination of certain filesystem
+  directory structures and an set of several code modules. Each
+  code module performs a specific, narrowly-defined, task. Code
+  modules use FIFOs and pipes to communicate with each other.</p>
+
+  <h2>Module diagram</h2>
+
+  <p>Here's a somewhat crude diagram that illustrates the
+  relationship between the modules:</p>
+  <pre>
+ Input modules                                                 Output modules
+ =============                                                 ==============
+
++-------------+                                               +--------------+
+|  sendmail   |   -----\                               /----&gt; | courierlocal |
++-------------+        |                               |      +--------------+
+                       |                               |
++-------------+        |                               |      +--------------+
+|courieresmtpd|   -----|    +------+     +----------+  |----&gt; | courieresmtp |
++-------------+        |    |      |     |          |  |      +--------------+
+                       +---&gt;|submit| --&gt; | courierd |--+ 
++-------------+        |    |      |     |          |  |      +--------------+
+| courierdsn  |   -----/    +------+     +----------+  |----&gt; |  courierdsn  |
++-------------+                                        |      +--------------+
+                                                       |
+                                                       |      +--------------+
+                                                       \----&gt; |  courieruucp |
+                                                              +--------------+
+</pre>
+
+  <p>The first set of modules are the "input modules". An input
+  module receives the message from some unspecified external
+  source. The "sendmail" module is designed to read the message
+  directly from the system command line, or an external process.
+  The sendmail module is also linked as "rmail". In the "rmail"
+  incantation, sendmail reads mail from a UUCP gateway. The
+  "courieresmtpd" module talks ESMTP to receive a message from a
+  remote mail relay. The input module may or may not rewrite the
+  headers of the E-mail message, before passing it to the
+  <code>submit</code> module.</p>
+
+  <h2>The <code>submit</code> module</h2>
+
+  <p>The <code>submit</code> module is a uniform mechanism for
+  adding a message to the mail queue. The permissions on
+  <code>submit</code> are set so that it cannot be executed by an
+  ordinary process, and is only accessible to the input modules.
+  <code>submit</code>'s tasks include:</p>
+
+  <ul>
+    <li>Verify the integrity of the message.<br />
+    <br /></li>
+
+    <li>Rewriting all E-mail addresses - the sender, the
+    recipients, the addresses in the mail headers - into a
+    canonical form.<br />
+    <br /></li>
+
+    <li>Run all recipient addresses through the system's alias
+    database. Remove duplicate addresses from the recipient
+    list.<br />
+    <br /></li>
+
+    <li>Run any site-defined mail filters to reject the message for
+    all, or some recipients.</li>
+
+    <li>Create a control file and a data file for the
+    message.<br />
+    <br /></li>
+  </ul>
+
+  <p><code>Submit</code> does a lot of work here. By design, as
+  much time consuming work as possible is placed into the
+  <code>submit</code> process. The system may receive many incoming
+  messages at the same time, and multiple <code>submit</code>
+  processes can be running concurrently, avoiding any major
+  serializes bottlenecks where everything must be squeezed into.
+  Only once the message is completely accepted by
+  <code>submit</code> does it go into the global mail queue.</p>
+
+  <p>Each message in the mail queue consists of two files: control
+  and data. The data file contains just the text of the actual
+  message, as received and rewritten by <code>submit</code>. The
+  control file contains all the associated metadata for the
+  message. The metadata in the control files includes: the sender
+  address and the recipient addresses; a complete record of all
+  delivery attempts for each recipient, and a designation of which
+  recipients have been delivered or permanently rejected; the times
+  of any completed delivery attempts and the corresponding error
+  messages; when another delivery attempt is scheduled, and the
+  message's expiration time in the mail queue.</p>
+
+  <p><code>submit</code> may create multiple control and data files
+  if the message has a very large list of recipients, but usually
+  there's just one. The control and data files are created in the
+  directory <code>$localstatedir/tmp/<em>iiiii</em></code>.
+  "$localstatedir" is a variable that is set by <em>Courier</em>'s
+  configuration script, it defaults to
+  <code>/usr/lib/courier/var</code>. "iiiii" represents the current
+  system time, represented as seconds since the epoch, divided by
+  10,000. New "iiiii" subdirectories are created automatically.
+  Older ones are automatically deleted.</p>
+
+  <p><code>submit</code> does not have a permanent connection to
+  the "courierd" process, which oversees the global mail queue.
+  After <code>submit</code> creates the control and the data file,
+  it sends a signal through a FIFO to the courierd process. If
+  courierd process is not running, <code>submit</code> ignores the
+  error. If <em>Courier</em>'s main server processes are not running,
+  incoming mail can continue to pile up in
+  <code>$localstatedir/tmp</code>, and it will be processed when
+  the server is started. There is a specific convention used for
+  naming the files in <code>$localstatedir/tmp</code> are named.
+  This convention allows incomplete control and data files - files
+  for a message that has not yet been completely received by the
+  input module - to be ignored. Any files older than 36 hours are
+  automatically deleted.</p>
+
+  <h2>Mail queue on disk</h2>
+
+  <p>The mail queue consists of two directories:
+  <code>$localstatedir/msgs</code> and
+  <code>$localstatedir/msgq</code>. The control file is stored in
+  <code>$localstatedir/msgs/nnnn/Ciiiii</code>, and the data file
+  is <code>$localstatedir/msgs/nnnn/Diiiiii</code>.
+  "<code>iiiiii</code>" is the inode number of the control file.
+  Since inode numbers are always unique, the inode is a convenient
+  way to obtain unique identifiers for each message in the mail
+  queue. "<code>nnnn</code>" is the inode number hashed, the size
+  of the hash is set by the configure script (100 is the default,
+  so this is usually just the last two digits of the inode
+  number).</p>
+
+  <p>One item of information that's stored in the control is the
+  time of the next scheduled delivery attempt of this message,
+  expressed as seconds this the epoch. There is also a hard link to
+  the control file:
+  <code>$localstatedir/msgq/xxxx/Ciiiiii.tttttt</code>.
+  "<code>tttttt</code>" is the next scheduled delivery time of this
+  message. "<code>xxxx</code>" is the time divided by 10,000.
+  10,000 seconds is approximately two and a half hours. Each
+  subdirectory is created on demand. Once all delivery attempts,
+  scheduled for the time range that's represented by each
+  subdirectory, have been made, the empty subdirectory is deleted.
+  If a message needs to be re-queued for another delivery attempt,
+  later, the next scheduled delivery time is written into the
+  control file, and it's hard link in
+  <code>$localstatedir/msgq</code> is renamed.</p>
+
+  <p>This scheme comes into play when there is a large amount of
+  mail backed up. When reading the mail queue, <em>Courier</em> doesn't need
+  to read the contents of any directory that represents a time
+  interval in the future. Also, <em>Courier</em> does not have to read the
+  contents of all subdirectories that represent the current and
+  previous time intervals, when it's falling behind and can't keep
+  up with incoming mail. <em>Courier</em> does not cache the entire mail
+  queue in memory. <em>Courier</em> needs to only cache the contents of the
+  oldest one or two subdirectories, in order to begin working on
+  the oldest messages in the mail queue.</p>
+
+  <h2>Output modules</h2>
+
+  <p>The courierd process manages the mail queue, and schedules
+  messages for delivery. courierd only schedules the delivery
+  attempts. The actual delivery attempts are implemented in the
+  output modules.</p>
+
+  <p><code>courierlocal</code> delivers mail to local mailboxes.
+  <code>courieresmtp</code> delivers mail to remote mail relays,
+  via ESMTP. courieruucp forwards message to a UUCP gateway.
+  <code>courierdsn</code> is a hack that generates delivery status
+  notifications (bounces). After a message is delivered, <em>Courier</em>
+  checks if the message requested any delivery notifications
+  (bounces or return receipts). If a delivery status notification
+  is necessary, <em>Courier</em> dispatches the message to the
+  <code>courierdsn</code> output module. <code>courierdsn</code>
+  reads the control and the data file, and formats the delivery
+  status notification message. The DSN is then injected into the
+  mail queue by running <code>submit</code>. After
+  <code>submit</code> takes the DSN, <code>courierdsn</code> then
+  deletes the original message from the mail queue. If the original
+  message did not need a DSN, courierd deletes the message by
+  itself.</p>
+
+  <h2><code>courierd</code></h2>
+
+  <p>This process is the core mail server engine whose task is to
+  make sure that messages are moving through the mail queue,
+  smoothly. This process uses several different data structures in
+  order to be able to achieve a nearly constant implementation
+  complexity.</p>
+
+  <h3>The message queue cache</h3>
+
+  <p>"The message queue" refers to the portion of the mail queue
+  that is cached in memory. <em>Courier</em> reads the mail queue, in
+  chunks, into memory, then works with the message queue cache to
+  schedule messages for delivery attempts, without going back to
+  disk. The size of the message queue is computed when <em>Courier</em>
+  initially starts. There is a separate "high watermark" and "low
+  watermark" message queue size. The high watermark value is the
+  fixed maximum size of the message queue. <em>Courier</em> reads the mail
+  queue until it's read all of it, or until the message queue
+  reached its high watermark size. As message delivery attempts
+  conclude, the corresponding entries in the message queue are
+  deleted. When the size of the message queue falls below the low
+  watermark value, <em>Courier</em> goes back to the disks, and fills the
+  mail queue up to the high watermark again.</p>
+
+  <p>Each output module has a corresponding configuration file:
+  <code>$sysconfdir/module.local</code>,
+  <code>$sysconfdir/module.uucp</code>,
+  <code>$sysconfdir/module.local</code>, and
+  <code>$sysconfdir/module.dsn</code>. <code>$sysconfdir</code> is
+  set by <em>Courier</em>'s configuration script, its default value is
+  <code>/usr/lib/courier/etc</code>. Each module configuration file
+  contains several settings. The <code>MAXDELS</code> value sets
+  the maximum number of simultaneous delivery attempts that this
+  module can handle. The default low and high watermark values are
+  calculated based on the output modules' <code>MAXDELS</code>
+  values.</p>
+
+  <p>The default low watermark value is the sum of all
+  <code>MAXDELS</code> values. If the sum is less than 200, it is
+  adjusted to 200.</p>
+
+  <p>The default high watermark value is twice the low watermark
+  value, with a maximum of 1000 above the low watermark value.</p>
+
+  <p>The configuration file <code>$sysconfdir/queuelo</code>
+  overrides the computed low watermark value. The configuration
+  file <code>$sysconfdir/queuehi</code> overrides the computer high
+  watermark value. These configuration files can be used to
+  manually tune <em>Courier</em>'s performance.</p>
+
+  <p><em>Courier</em> reads the mail queue when it starts, and whenever the
+  message queue falls below the low watermark value. <em>Courier</em> begins
+  with the mail queue subdirectory for the oldest time interval.
+  <em>Courier</em> doesn't stop reading the subdirectory when the message
+  queue goes over the high watermark. That's because files can be
+  listed in a directory in any arbitrary order, therefore <em>Courier</em>
+  continues to read the rest of the mail queue subdirectory, to
+  pick up messages that have an earlier scheduled delivery time
+  than (some of) the messages in the message queue. Each time
+  <em>Courier</em> finds a message with an earlier delivery time than the
+  message with the message queue with the most latest delivery
+  time, the message with the most latest delivery time is evicted
+  from the message queue, to make room for the new message. Note
+  that the files in the mail queue subdirectory have both their
+  unique message queue id number (their inode number), and their
+  scheduled delivery time, encoded into the filename. Therefore,
+  can ignore the messages that are already in the message queue,
+  and messages with a delivery time that's after the latest
+  delivery time in the message queue (if the message queue is at
+  the high watermark).</p>
+
+  <p><code>courierd</code> receives a signal (via a FIFO) whenever
+  <code>submit</code> receives a new message. When
+  <code>courierd</code> starts, or when it receives the signal,
+  <code>courierd</code> will read <code>$localstatedir/tmp</code>,
+  and move any new messages it finds into
+  <code>$localstatedir/msgs</code> and
+  <code>$localstatedir/msgq</code>. Afterwards, the message is
+  added to the message queue cache, subject to the same exact
+  condition. The new message will be added if the message queue is
+  below its high watermark size, or if another message with a later
+  scheduled delivery time can be evicted from the message
+  queue.</p>
+
+  <h3>The wait queue and the pending queue</h3>
+
+  <p>The message queue is further subdivided into two parts - the
+  wait queue and the pending queue. At any time the message queue
+  may contain messages whose delivery times are in the past, or in
+  the future. A message that's added to the message queue goes into
+  the pending queue part if its next scheduled delivery time has
+  already been passed. Otherwise, it goes into the wait queue, and
+  when its scheduled delivery time comes up, it goes into the
+  pending queue.</p>
+
+  <p>Moving a message into the pending queue is a fairly involved
+  process. The message's control file is read to obtain a list of
+  the recipients that haven't been delivered to, yet. A recipient
+  address is stored in a canonical form usually "user@domain" (or a
+  UUCP bang-path). Each recipient address is then decomposed into
+  three parts: driver, host, and address.</p>
+
+  <p>Each output module (courierlocal, courieresmtp, courieruucp)
+  has a function that's linked directly into the courierd process.
+  This function is called a "rewrite function". It's job is to
+  rewrite an address into its three components: driver, host, and
+  address. The rewrite functions come from the different output
+  module, but they are physically present in the courierd process.
+  A rewrite function may fail to rewrite an address, meaning that
+  this output module simply cannot deliver mail to this particular
+  address. For example, courierlocal's rewrite function will only
+  accept addresses of local mailboxes. The courierd process calls
+  the output modules' rewrite functions, until one of them returns
+  the host and the address component, then the driver component is
+  set to the corresponding output module. If none of the rewrite
+  functions accept the address, the message's control file is
+  updated to mark that recipient as undeliverable. Every recipient
+  (except those recipients to whom the message has already been
+  delivered) is rewritten in this fashion.</p>
+
+  <p>The <code>PRIORITY</code> setting in a module's configuration
+  file determines the order in which the rewrite functions are
+  called. The actual <code>PRIORITY</code> value is set by
+  <em>Courier</em>'s configuration script, and appears in the module
+  configuration file for informative purposes only.</p>
+
+  <p>courierd does not place any literal interpretation on the host
+  or the address component of a rewritten address. The output's
+  rewrite function derives these components, and the output module
+  (the driver) receives this information when it is time to deliver
+  the message to the recipient, so the output module also
+  interprets their meaning. Just as an example: the courieresmtpd
+  output module sets the "host" value to the domain portion of the
+  address, and "address" to be the full address, "user@domain".</p>
+
+  <p>However, courierd does use the host component in scheduling
+  delivery attempts. After decomposing all the recipient addresses
+  into their individual driver, host, and address components,
+  courierd groups together all addresses with the same driver and
+  host values, on the presumptions that these addresses can be
+  handled by a single delivery attempt.</p>
+
+  <p>The configuration file of each output module contains a
+  <code>MAXRCPT</code> setting. This is the maximum number of
+  recipients in a single delivery attempt. courierd will not create
+  larger groups of addresses, for a single delivery attempt. If
+  necessary, courierd will create multiple delivery attempts for
+  the same driver and host. Some modules (such as
+  <code>courieresmtpd</code>), allow <code>MAXRCPT</code> to be
+  adjusted. Some modules do not. The <code>courierlocal</code> must
+  have <code>MAXRCPT</code> set to 1. <em>Courier</em> will fail to start if
+  <code>courierlocal</code>'s <code>MAXRCPT</code> is anything
+  else.</p>
+
+  <p>The conclusion of the rewriting phase is a list of one or more
+  "delivery attempts". A delivery attempt consists of a driver, a
+  host, and one or more addresses. <code>courierd</code> will then
+  attempt to start the delivery attempt.</p>
+
+  <p>The configuration file for each output module contains two
+  values, <code>MAXDELS</code> and <code>MAXHOST</code>.
+  <code>MAXDELS</code> is the maximum number of outstanding
+  delivery attempts for this driver. An outstanding delivery
+  attempt is a delivery attempt that has been sent to the output
+  module, for processing, but which has not yet finished.
+  <code>MAXHOST</code> is the maximum number of outstanding
+  delivery attempts with the same "host" value (as returned by the
+  output module's rewrite function). Both <code>MAXDELS</code> and
+  <code>MAXHOST</code> can be adjusted, subject to the resource
+  limits of the operating system. After adjusting
+  <code>MAXDELS</code>, <code>MAXHOST</code> (and
+  <code>MAXRCPT</code>, if you know what you're doing), the command
+  <code>courier restart</code> must be executed for <em>Courier</em> to
+  restart and reconfigure itself, appropriately.</p>
+
+  <p>A delivery attempt is immediately sent to the output module
+  provided that the total number of outstanding delivery attempts
+  is less than <code>MAXDELS</code>, and the total number of
+  outstanding delivery attempts for the same host is less than
+  <code>MAXHOST</code>. Otherwise, the delivery attempt is placed
+  into the "pending delivery attempt" queue.</p>
+
+  <p>When the output module finishes a delivery attempt, it updates
+  the message's control file with the status of each recipient
+  (accepted, rejected, postponed). The delivery attempt then comes
+  back to <code>courierd</code>. The first thing that happens is
+  that <code>courierd</code> looks at the pending delivery attempt
+  queue, in order to check if it's possible now to send any pending
+  delivery attempt to the output module. The pending delivery
+  attempt queue is sorted by the "host" value. Additionally, it is
+  maintained in the MRU order - most recently used. When a delivery
+  attempt comes back to courierd, any other pending delivery
+  attempts for the same host are moved to the head of the pending
+  delivery attempt queue, so that they come up first. The
+  assumption is that a preference for most recently seen hosts will
+  translate to less setup overhead in the output module. One such
+  example is the <code>courieresmtp</code> output module. After
+  delivering the message to the remote mail relay the connection is
+  kept open for a short period of time. If
+  <code>courieresmtp</code> receives another delivery attempt to
+  the same host, the message will be sent using the existing
+  connection, instead of creating a new one. This can result in
+  substantial savings, if the connection used authentication or
+  encryption.</p>
+
+  <p>After moving the completed host's pending deliveries to the
+  head of the queue, the host at the tail end of the pending queue
+  is also moved to the head of the pending delivery attempt queue,
+  in order to prevent a "starvation" situation. With a classical
+  most-recently-used implementation, a non-stop stream of mail to
+  the same host can "starve out" mail to other hosts. The same host
+  will be constantly moved to the beginning of the pending delivery
+  attempt queue, and mail to other hosts will starve at the end of
+  the pending queue. Therefore, the oldest pending delivery attempt
+  is artificially raised to the head of the pending delivery
+  attempt queue, each time another host gets up there on its own
+  merits. The end result is a balance between a preference for most
+  recently seen hosts and starved hosts.</p>
+
+  <p>After finishing with the pending delivery attempt queue,
+  <code>courierd</code> then checks if the completed delivery
+  attempt was the last outstanding delivery attempt for its
+  message. A message to multiple recipients will usually have more
+  than one delivery attempt. If a message has any other outstanding
+  delivery attempts, nothing else needs to be done. If all delivery
+  attempts has been completed, the message's control file is read
+  to determine if all recipients have been delivered to (or
+  rejected).</p>
+
+  <p>If some recipients haven't been delivered to (their delivery
+  was postponed due to a transient delivery error), the message is
+  simply evicted from the message queue. If the message has been
+  completely delivered (or if it's time in the mail queue has
+  expired), the control file is also consulted to check if the
+  message will require a delivery status notification (a bounce, or
+  a return receipt). If a DSN is not required, the message is
+  deleted from the mail queue. Otherwise, a fake delivery attempt
+  is created for the <code>courierdsn</code> output module. This
+  delivery attempt gets queued up the same way as bone-fide
+  delivery attempts. When a completed delivery attempt comes back
+  from the <code>courierdsn</code> driver, <code>courierd</code>
+  knows that it simply needs to be tossed away, without looking at
+  the control file again (the <code>courierdsn</code> module takes
+  care of deleting the message from the mail queue).</p>
+
+  <p>Delayed DSNs are handled similarly. After the last outstanding
+  delivery attempt for a message has been completed, but the
+  message has recipients that haven't been delivered to yet,
+  <code>courierd</code> checks the control file to determine if the
+  message was queued up long enough, and a delayed DSN has not been
+  sent yet. If the conditions are met, a dummy delivery attempt to
+  <code>courierdsn</code> is prepared, dispatched, and the control
+  file is updated accordingly. When the <code>courierdsn</code>
+  delivery attempt comes back, the message is evicted from the
+  message queue.</p>
+
+  <p>Before evicting the message that has not been fully delivered,
+  <code>courierd</code> calculates the next scheduled delivery
+  attempt. The control file is updated, and the link in
+  <code>$localstatedir/msgq</code> is renamed accordingly. After
+  evicting the message from the message queue, the mail queue is
+  rescanned if the message queue is now below the low watermark
+  size. Unless there's a mail back-up, this message will simply go
+  back into the message queue with its new scheduled delivery
+  time.</p>
+
+  <h2>Control File Format</h2><code>control/msgs</code> and
+  <code>control/msgq</code> contains messages that have not yet
+  been delivered. Each message consists of a control file, and a
+  message file. The message file contains the actual E-mail
+  message. The control file contains the message's status: who are
+  the envelope recipients, which recipients have not been delivered
+  to yet, and other information listed below.
+
+  <p><em>Courier</em> is transport neutral. All that the main scheduling and
+  processing engine knows is that messages originate from one of
+  several defined 'transports', such as SMTP, UUCP, or the local
+  Unix shell command line, and that messages eventually should end
+  up being delivered to another transport. Each defined transport
+  mechanism has an 'input' module, which submits messages to
+  <em>Courier</em>, and an 'output' module, which delivers messages from
+  <em>Courier</em> (see the first half of this document for details).
+  <em>Courier</em> doesn't care much about the input module, all that the
+  input module needs to do is to run <em>Courier</em>'s submit program to
+  put a message into <em>Courier</em>'s scheduling queue. However, <i>Courier</i>
+  does care about the output module, which is started by <em>Courier</em>,
+  and communicates with <em>Courier</em> via pipes in a specific protocol.
+  <em>Courier</em> tells the output module which message to send, and to
+  which addresses. The output module is responsible for fetching
+  the message from the message queue, and attempting to deliver it.
+  When done, the output module is responsible for updating the
+  control file in the message queue, and informing <em>Courier</em> that the
+  delivery attempt has been complete.</p>
+
+  <p>In the message file, all headers appear in the 'canonical'
+  format. Different transports may use different address
+  conventions. E-mail addresses from all transports are converted
+  to a standard, canonical format. E-mail addresses on messages
+  dispatched to a transport provider are rewritten according to the
+  transport module's conventions. The 'canonical' format is the one
+  that is used by E-mail messages that are to be delivered to local
+  mailboxes, so that when <em>Courier</em> delivers a local message, certain
+  optimizations may be possible. The headers are rewritten from the
+  'canonical' format when the message is sent to a non-canonical
+  address.� This is the responsibility of the output module.</p>
+
+  <p>There is a corresponding canonical convention format for
+  message envelope sender and recipients, which are rewritten to
+  the canonical format when a message is entered into the
+  queue.</p>
+
+  <h3>Control file</h3>The control file is a text file, with
+  newline-delimited lines of text. Each line of text begins with a
+  character, specifying the type of the record contained in the
+  line, with the record's contents following.
+
+  <h3>Control records</h3>sxxxxxxxxxx
+
+  <p>The 's' record specifies the message envelope sender. It may
+  be null. The 's' record is always the first record in the control
+  file.</p>
+
+  <p>rxxxxxxxxxx</p>
+
+  <p>The 'r' record specifies the message recipient. The first 'r'
+  record is recipient #0, the next one is recipient #1, etc...</p>
+
+  <p>Rxxxxxxxxxx</p>
+
+  <p>The 'R' record specifies the "original message recipient", as
+  defined by RFC1891 (Delivery Status Notification). The first 'R'
+  record is original recipient #0, the next one is original
+  recipient #1, etc... An empty R record is used to designate that
+  the original message recipient was not specified. The contents of
+  the R record are in the encoded form.</p>
+
+  <p>Nsss</p>
+
+  <p>The 'N' record specifies any delivery status notifications to
+  be sent in regards to this recipient. The contents of the N
+  record are zero or more of the following characters: 'S' - notify
+  upon succesfull delivery, 'F' - notify upon failed delivery, 'D'
+  - notify upon delayed delivery, 'N' - do not send DSNs for any
+  reason.. Empty contents can be interpreted as a default.</p>
+
+  <p>faddresstype; address</p>
+
+  <p>The "Received-From-MTA" record. This specifies what goes into
+  this header for DSNs generated due to this message.</p>
+
+  <p>exxxxxxxxxxx</p>
+
+  <p>The envid of this message, as specified in RFC1891. If this
+  record is missing, no ENVID was specified</p>
+
+  <p>tx</p>
+
+  <p>'x' is either 'F' or 'H', specifying FULL or HDRS in the RET
+  parameter that was given in the MAIL FROM command, as specified
+  in RFC1891. If RET was not used, x is not specified.</p>
+
+  <p>Etttttt</p>
+
+  <p>Expiration time of this message. If undeliverable after that
+  time, the message gets bounced. "tttttt" would be the time in
+  seconds, as returned by the time() system call.</p>
+
+  <p>Wtttttt</p>
+
+  <p>When to send a warning message to the sender, if the message
+  remains undeliverable at that time. "tttttt" is also in
+  seconds.</p>
+
+  <p>w</p>
+
+  <p>The simple 'w' record indicates that a warning message has
+  already been sent.</p>
+
+  <p>8</p>
+
+  <p>The simple '8' record indicates that the message contains 8bit
+  data. This fact can be used by the output module for
+  optimization.</p>
+
+  <p>In t xxxxxxx</p>
+
+  <p>'I' records contain diagnostic information that is reported
+  for each delivery attempt to recipient #n. After each delivery
+  attempt for recipient #n is made (whether the delivery was
+  succesfull, unsuccessfull, or deferred), one or more I records
+  are appended to the control file. In each I record, the recipient
+  number immediately follows the I, followed by a single space, a
+  diagnostic type, a space, then diagnostic text. Multiple I
+  records may be appended for a single delivery attempt.</p>
+
+  <p>Diagnostic type 'P' - this record contains the address of the
+  remote peer who was contacted for this delivery attempt.</p>
+
+  <p>Diagnostic type 'C' - this record contains a text describing
+  an error that occured while trying to connect to a remote
+  peer.</p>
+
+  <p>Diagnostic type 'S' - this record contains a message that was
+  sent to the remote peer which caused an error.</p>
+
+  <p>Diagnostic type 'R' - one or more of these contains the
+  possibly multiline response from the remote server. For failures,
+  this will be an error message. For successfull deliveries, this
+  will be the acknowledgement reply. The diagnostic type R records
+  always follow the format of an SMTP reply message. The last line
+  of a reply starts with three digits, followed by a space and
+  arbitrary text. For multiline responses, the preceding lines of a
+  reply starts with three digits, a dash, then arbitrary text.</p>
+
+  <p>Sn tttttt y<br />
+  Fn tttttt<br />
+  Dn tttttt</p>
+
+  <p>These control records indicate that for recipient #n, a
+  delivery attempt succeeded - 'S', failed - 'F', or deferred -
+  'D', at time tttttt (in seconds, as returned by the time() system
+  call. The 'y' parameter is optional, and can specify the
+  following: 'r' - message relayed to a non-RFC1891-conforming
+  relay, 'l' - message delivered locally. Absence of the 'y'
+  parameter indicates that the message has been delivered to an
+  RFC1891-conforming relay.</p>
+
+  <p>One or more S, F, or D records will always appear after I
+  records for a given delivery attempt.</p>
+
+  <p>NOTE: when a message has multiple recipients, it is possible
+  that multiple delivery attempts will conclude at about the same
+  time. It is NOT guaranteed that all I records for a single
+  delivery attempt will ALWAYS appear consecutively in the control
+  file, and will IMMEDIATELY be followed by an S, F, or a D
+  record.</p>
+
+  <p>Ctttttt</p>
+
+  <p>All delivery attempts for this message have been completed at
+  the indicated time. Counting the number of C records tells you
+  how many times <em>Courier</em> tried to deliver the message, and is used
+  to calculate the exponential retry backoff interval.</p>
+
+  <p>V</p>
+
+  <p>Presence of this record indicates that the envelope sender
+  address should be VERPed. <em>Courier</em> will always send a single copy
+  of the message to each recipient, even if all the recipients go
+  to the same module and host. For each recipient, a different
+  sender will be used. If the message envelope sender is user@host,
+  then if the recipient's address is foo@bar, the envelope sender
+  will be set to user-foo=bar@host, on the message to the user.
+  Please note that the VERP feature must be implemented by each
+  individual output module. When one <em>Courier</em> server sends mail via
+  ESMTP to another <em>Courier</em> server, only one copy of VERPed messages
+  are sent.</p>
+
+  <h3>Queue directories</h3><code>$localstatedir/msgs</code>
+  contains the current message queue (messages not yet delivered).
+  The queue directory is organized as follows.
+
+  <p>There are no files directly in
+  <code>$localstatedir/msgs</code>, the only contents of
+  <code>$localstatedir/msgs</code> are subdirectories, named 0, 1,
+  2, and so on, up to the hash value set (or defaulted to) by the
+  <code>configure</code>.</p>
+
+  <p>The control file Cnnnnn, where nnnnn is the control file's
+  inode number, can be found in <code>$localstatedir/msgs/x</code>,
+  where 'x' is the remainder of nnnnn divided by HASHMAX.</p>
+
+  <p>Every control file also has a second link to it, in
+  <code>$localstatedir/msgq</code>. The second link for the control
+  file Cnnnnnn is called Cnnnnnn.tttttt, where tttttt is the next
+  scheduled attempted delivery time, in seconds. Cnnnnnn.tttttt is
+  located in <code>$localstatedir/msgq/xxxxxx</code>, where xxxxxx
+  is tttttt without the last FOUR digits. What this does is put the
+  control files to all messages scheduled to be delivered in the
+  same 10000 second interval (slightly less than three hours), into
+  the same directory. So when <em>Courier</em> needs to figure out which
+  messages should be delivered next, it will not have to scan the
+  entire message queue, just this directory. This should result in
+  much better performance on very busy mailing list servers.</p>
+
+  <h3>Adding messages to the queue</h3>The following procedure is
+  executed when a message is added to the queue by the
+  <code>submit</code> process. Note that unless <code>submit</code>
+  is executed by group mail, it won't have write privileges to
+  <code>local/tmp</code>.
+
+  <p>A) <code>Submit</code> is invoked with one argument - the name
+  of the input module. This is used for header rewriting. submit
+  opens all the shared libraries, and initializes them.</p>
+
+  <p>B) <code>Submit</code> reads one or more addresses from
+  standard input. Each address comes on one line of text. The first
+  address may be empty. The list of addresses ends when an empty
+  line is read. The first address is the message envelope sender,
+  the second and subsequent addresses are message envelope
+  recipients.</p>
+
+  <p>C) The first address can be optional followed by a tab
+  character, then optionally by F or H, representing the FULL or
+  HDRS paramater to the MAIL FROM: command; another character; then
+  the ENVID field as specified in RFC1891. The second and the
+  subsequent addresses can be optionally followed by a tab
+  character, then zero or more of the following letters: S, F, D,
+  N; another tab character, and original recipient address, as
+  specified by RFC1891.</p>
+
+  <p>D) For each address read, submit prints a reply on standard
+  output, indicating if the address is accepted. If the envelope
+  sender address is rejected, submit immediately terminates.� The
+  addresses are verified as follows. The input module's shared
+  library's <code>rw_rewrite()</code> function is called with mode
+  argument set to <code>RW_ENVSENDER</code> or
+  <code>RW_ENVRECIPIENT</code>. In addition, for recipients, submit
+  actually attempts to locate the rewritten address's output
+  module, by calling <code>rw_rewritedel</code> functions. Errors
+  reported by any shared library function will cause this address
+  to be rejected. If submit was invoked with command line arguments
+  that request an address to be VRFYed and EXPNed, submit only
+  carries out the recipient verification code. If submit was
+  invoked with EXPNed, submit cheats, and attempts to read
+  <code>aliases.dat</code> GDBM files (see below) to look up the
+  mailing list recipients for the rewritten addresses, and prints
+  those.</p>
+
+  <p>E) The reply follows the RFC822 SMTP reply format --
+  indicating acceptance, deferral, or permanent rejection. It can
+  be a multiline response.</p>
+
+  <p>F) After the blank line that ends the list of envelope
+  recipients, submit reads the message itself, from standard input,
+  until end of file.</p>
+
+  <p>G) Somewhere along the process, the file
+  <code>$localstatedir/tmp/yyyyyyyy/tttttt.ppppp.hhhhhh</code> is
+  created. <code>tttttt</code> is the current system time as
+  returned by time(). <code>yyyyyyyy</code> is the current system
+  time without the last four digits. <code>hhhhhhh</code> is the
+  return value of the <code>gethostname()</code> system call.
+  <code>ppppp</code> is the process ID of the submit process. This
+  guarantees that these filenames are unique even if multiple
+  processes are submitting the same message. Due to the presence of
+  the hostname, it is possible to EXPORT
+  <code>$localstatedir/tmp</code>, PROVIDED THAT
+  <code>stat()/fstat()</code> on the client returns the inode on
+  the *server*. That is, a client running on a machine that has
+  mounted this tmp directory will obtain inode numbers from the
+  filesystem on the server exporting the directory. This allows
+  multiple machines on the network submit mail into the server.
+  Also, the contents of <code>$sysconfdir/me</code> may be used
+  instead of <code>gethostname()</code>, but in this case every
+  machine on the network must have their own distinct
+  <code>me</code>! If submit is unable to create the file, it is
+  possible that the yyyyyyyy sub directory hasn't been created yet.
+  <code>$localstatedir/tmp</code> is NOT writeable by the mail
+  group, only by the mail user, and submit only has the
+  set-group-id bit set, not set-user-id. If <code>submit</code>
+  can't create the file, it tries to fork and exec the
+  <code>$libexecdir/courier/submitmkdir</code> utility, which is
+  executable only by the mail or user group, and has the
+  set-user-id bit set. <code>submitmkdir</code> merely creates the
+  subdirectory, chmods it to group-writeable, and returns.</p>
+
+  <p>H) <code>submit</code> reads the <code>batchsize</code>
+  configuration file, which specifies the maximum number of
+  recipients per file. If the message has more recipients, submit
+  does the following: it renames the file created in step F to
+  <code>Ciiiiii.0</code>, where <code>iiiiii</code> is its inode
+  number. Then, submit creates additional control files, as many as
+  necessary to hold all the recipients, starting with
+  <code>Ciiiiii.1</code>, then <code>Ciiiiii.2</code>, and so
+  on.</p>
+
+  <p>I) The file <code>$localstatedir/tmp/yyyyyyyy/Diiiiii</code>
+  is created, where <code>iiiiii</code> is the inode number of the
+  file created in step F. The first line in the file will be a
+  Received: header added by submit, showing its userid. submit then
+  appends all remaining input to the file, which is then closed.
+  The message follows the Received: header, and submit rewrites
+  headers according to rewriting rules defined for the input
+  module. Submit will not add a <code>Received:</code> header if
+  its real userid is mail -- message is coming from a trusted
+  input, which should add its own <code>Received:</code>
+  header.</p>
+
+  <p>J) After receiving the entire message, submit consults the
+  environment variable "MIME" to check if the message needs to be
+  rewritten according to RFC2045. MIME will be set to: "7bit" to
+  specify that 8bit or raw text must be converted to
+  quoted-printable; "8bit" to specify that quoted-printable encoded
+  text can be converted to 8bit; "none" to specify that absolutely
+  no kind of RFC2045 rewriting must take place. If MIME is not set,
+  the default behavior is to simply add any missing RFC2045 headers
+  in order to specify the system's locale. If rewriting needs to be
+  done, submit rewrites the message to <code>Diiiiii.1</code>, then
+  renames the file back to <code>Diiiiii.</code></p>
+
+  <p>K) If submit created additional control files in step G,
+  <code>Diiiiii</code> is hard-linked to <code>Miiiiii.1</code>,
+  then <code>Miiiiii.2</code>, etc...</p>
+
+  <p>L) The first control file is closed, and renamed to Cnnnnnn.
+  submit tries to open <code>$localstatedir/tmp/trigger</code> for
+  write only, with O_NDELAY set, write one null byte, and close it
+  (silently ignoring any errors).</p>
+
+  <p>M) submit rejects messages longer than <code>sizelimit</code>
+  bytes. If the environment variable <code>SIZELIMIT</code> is set,
+  it overrides <code>$sysconfdir/sizelimit</code>.</p>
+
+  <p>N) submit implements sendmail-style aliasing using a GDBM
+  database file, using <code>$sysconfdir/aliases.dat</code>. After
+  calling the input module's rewrite function, with mode set to
+  <code>RW_ENVRECIPIENT</code>, the end result is looked up in
+  these files, to see if aliases are defined for this address. If
+  not found, and the address's @domain is in locals, strip the
+  domain, and try again. If we succeed, we replace the single
+  recipient with its aliases.</p>
+
+  <p>O) Submit counts Received: headers.</p>
+
+  <p>P) After submit has received end of file, submit exits with 0
+  if the control file has been succesfully renamed, or non-0 if
+  there was an error. Submit may also print an SMTP-style response
+  code on standard output. Programs running submit must close the
+  pipe they use to send the message, wait until standard output
+  from submit is closed, saving the message in a buffer, then read
+  submit's exit code.</p>
+
+  <p>Q) Additional environment variables: NOADDMSGID - if set,
+  submit will not generate a Message-ID: header, if one is missing;
+  NOADDDATE - if set, submit will not generate a Date: header, if
+  one is missing.</p>
+
+  <p>R) Additional environment variables used only if their
+  corresponding values are not specified as input to submit: DSNRET
+  - contains FULL or HDRS, and DSNENVID, containing DSN envelope
+  ID. DSNNOTIFY - contains NEVER, SUCCESS, FAIL, DELAY - specifies
+  DSN conditions. See "C" for more details.</p>
+
+  <h3>tmp directory cleanup, and front end processing</h3>The
+  <code>courierd</code> daemon, amongst its other duties, keeps
+  <code>$localstatedir/trigger</code> open for reading. Each time
+  it reads something from submit, the following processing is
+  performed (more details below).
+
+  <p>A) <code>$localstatedir/tmp</code> is read. Each time a C file
+  is found, the inode number is divided by HASHMAX, to calculate
+  'x'.</p>
+
+  <p>B) Call
+  <code>rename($localstatedir/tmp/yyyyyyyy/Mnnnnnn,$localstatedir/msgs/x/Dnnnnnn)</code>.
+  If the rename call fails, call <code>mkdir(local/queue/x)</code>,
+  then try the rename again. Execute the first rename call again.
+  This automatically creates the hash directories, as needed.</p>
+
+  <p>C) Call
+  <code>rename($localstatedir/tmp/yyyyyyyy/Cnnnnnn,$localstatedir/msgs/x/Cnnnnnn)</code>,
+  then link(<code>$localstatedir/msgs/x/Cnnnnnn,
+  $localstatedir/msgq/y/Cnnnnnn.tttttt</code>).</p>
+
+  <p>On a regular basis, <code>$localstatedir/tmp</code> is purged
+  of all files more than two days old. More on that later.</p>
+</body>
+</html>

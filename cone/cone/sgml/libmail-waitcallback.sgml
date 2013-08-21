@@ -1,0 +1,25 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+The application must wait until
+<parameter>callback</parameter>'s
+<function>success</function> or
+<function>fail</function> method is invoked.
+The <function>success</function> method is invoked when this request is
+succesfully processed.
+The <function>fail</function> method is invoked if this request cannot
+be processed.
+The application must not destroy
+<parameter class='function'>callback</parameter> until either the
+<function>success</function> or
+<function>fail</function> method is invoked.</para>
+
+      <note>
+	<para>
+<parameter>callback</parameter>'s
+<function>fail</function> method may be invoked even after other
+callback methods were invoked.
+This indicates that the request was partially completed before the error
+was encountered.</para>
+      </note>

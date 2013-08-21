@@ -1,0 +1,9 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <literallayout>
+class myFolderCallback : public mail::callback::folderlist {
+public:
+    void success(const std::vector&lt;const mail::folder *&gt; &amp;folders);
+};
+</literallayout>

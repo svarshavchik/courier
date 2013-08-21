@@ -1,0 +1,74 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-getrights">
+    <refmeta>
+      <refentrytitle>mail::folder::getRights</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::getRights</refname>
+      <refpurpose>Read access control list</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>getRights</function></funcdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	  <paramdef>std::list&lt;std::pair&lt;std::string, std::string&gt; &gt;
+&amp;<parameter>rights</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+    &libmail-aclintro;
+
+    &libmail-aclgetrights;
+
+    <refsect2>
+      <title>Identifier</title>
+
+      &libmail-aclentities;
+      &libmail-aclentitiesutf8;
+    </refsect2>
+
+    <refsect2>
+      <title>Access rights</title>
+
+      &libmail-aclrights;
+
+    </refsect2>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-delrights"><citerefentry>
+            <refentrytitle>mail::account::delRights</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-getmyrights"><citerefentry>
+            <refentrytitle>mail::account::getMyRights</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-setrights"><citerefentry>
+            <refentrytitle>mail::account::setRights</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>.
+</para>
+    </refsect1>
+  </refentry>

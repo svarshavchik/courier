@@ -1,0 +1,19 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+	  <para>
+Pressing <keycap>W</keycap> opens the <quote>Write
+Message</quote> screen.
+This is the screen where a new message can be typed, and sent.
+&app; checks for any unfinished messages in the Draft
+folder, before opening this screen.
+If the Draft folder contains any messages, &app;
+offers an option to resume writing an unfinished message, instead of
+starting a new message.
+&app; automatically saves a backup copy of the current message being edited, at
+regular intervals, so that a backup copy can be recovered in the event that
+&app; is interrupted, or terminated, in a middle of editing a new message.
+If a backup copy exists, &app; announces the existence of an interrupted
+message, and prompts to resume writing the interrupted message.
+An interrupted message must be opened and either: sent, explicitly cancelled, or
+saved in the Draft folder; before another message can be written.</para>

@@ -1,0 +1,24 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+    <para>
+Pressing <keycap>Q</keycap> on most screens
+exits &app;.
+&app; tries to gracefully log out and shut down all server connections.
+If &app; cannot log out of a remote server because the remote server is
+down, press <keycap>CTRL</keycap>-<keycap>C</keycap>
+(after <keycap>Q</keycap> to terminate &app;).</para>
+
+    <para>
+Use <keycap>CTRL</keycap>-<keycap>Z</keycap> to temporarily suspend &app;
+and drop back to the shell prompt.
+&app; remains suspended in the background, and may be restarted by using
+the shell's <command>fg</command> command.</para>
+
+    <note>
+      <para>
+Connections to remote mail servers may be disconnected
+for inactivity if &app; remains suspended for a prolonged period of time.
+When suspended, &app; cannot maintain any active connections to remote
+mail servers.</para>
+    </note>

@@ -1,0 +1,167 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-createsubfolder">
+    <refmeta>
+      <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::createSubFolder</refname>
+      <refpurpose>Create a new folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      &libmail-mycallbackfolderlist;
+      <literallayout>
+mail::folder *folder;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>createSubFolder</function></funcdef>
+	  <paramdef>std::string <parameter>name</parameter></paramdef>
+	  <paramdef>bool <parameter>createDirectory</parameter></paramdef>
+	  <paramdef>myFolderCallback &amp;<parameter>folderCallback</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+Most mail accounts support the ability to create and delete folders, which
+are arranged in a tree-like hierarchy.
+<function>mail::folder::createSubFolder</function> creates a new folder,
+as a subfolder of
+<parameter>folder</parameter> (which does not necessarily have to
+refer the currently open
+folder; it may be any
+<structname>mail::folder</structname> object that's associated with an
+active <structname>mail::account</structname>).</para>
+
+      <para>
+Folders may be created in IMAP accounts, and local mail (either mbox or
+maildir) accounts.
+Folders cannot be created in POP3 accounts, as this functionality is not
+supported by the POP3 protocol (this operation will fail).</para>
+
+      <para>
+There are two types of folders: folder that contain messages
+(regular folders), and folders
+that contain other sub-folders ("folder directories", or
+"directories" for short).
+<parameter>isDirectory</parameter> specifies whether the new folder is
+a regular folder, or a folder directory.</para>
+
+      <note>
+	<para>
+Local maildir-based accounts, and some IMAP servers, are capable of
+supporting so-called "dual-purpose" folders; folders that contain both
+messages and other sub-folders.
+A dual-purpose folder may be created by invoking
+<function>mail::folder::createSubFolder</function> twice, once with
+<parameter>isDirectory</parameter> set to <literal>false</literal>; and a
+second time with
+<parameter>isDirectory</parameter> set to <literal>true</literal>, specifying
+the same <parameter>name</parameter> both times.</para>
+      </note>
+
+      <para>
+<parameter>name</parameter> specifies the name of the new folder, in the
+application's character set.</para>
+
+      &libmail-foldername;
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+      &libmail-readfolders1;
+
+      <para>
+If the folder was succesfully created,
+the
+<function>folderCallback.success</function> method
+receives a vector that contains a single pointer to a
+<structname>mail::folder</structname> object.
+The
+<structname>mail::folder</structname> object will refer to the newly-created
+folder.</para>
+
+      &libmail-foldernote;
+
+      &libmail-readfolders2;
+
+      <note>
+	     <para>
+For some kinds of accounts,
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+may not enumerate new folder directories until they contain at least one
+folder.
+Therefore the recommended process to create a new folder directory is
+as follows:</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+Invoke
+<function>mail::folder::createSubFolder</function> to request the creation
+of a new folder directory.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+In
+<function>folderCallback.success</function>, use
+<link linkend="folder-clone"><citerefentry>
+		  <refentrytitle>mail::folder::clone</refentrytitle>
+		  <manvolnum>3x</manvolnum></citerefentry></link>
+to save a copy of the
+<structname>mail::folder</structname> object which refers to the new
+folder directory.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+After the
+<function>myCallback.success</function> method is invoked, use the saved
+<structname>mail::folder</structname> object's
+<function>createSubFolder</function> method to create a new folder in the
+new folder directory.</para>
+	  </listitem>
+	</itemizedlist>
+      </note>
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-clone"><citerefentry>
+	    <refentrytitle>mail::folder::clone</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-create"><citerefentry>
+	    <refentrytitle>mail::folder::create</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-destroy"><citerefentry>
+	    <refentrytitle>mail::folder::destroy</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-renamefolder"><citerefentry>
+	    <refentrytitle>mail::folder::renameFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

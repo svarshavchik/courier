@@ -1,0 +1,74 @@
+<?php
+
+$server_name=$_SERVER['SERVER_NAME'];
+
+$uri=$_SERVER['REQUEST_URI'];
+
+if (strlen($uri) == 0)
+{
+  $uri="/";
+}
+
+if (strlen($server_name) != 0)
+{
+  $uri="//" . $server_name . $uri;
+
+  if (strlen($_SERVER['HTTPS']) != 0)
+  {
+     $uri="https:" . $uri;
+  }
+  else
+  {
+     $uri="http:" . $uri;
+  }
+}
+
+$pos=strrpos($uri, "/");
+
+if ($pos != false && substr($uri, $pos) == "/index.html")
+{
+   $uri=substr($uri, 0, $pos);
+   $filename="";              /* chop off /index.html and redirect here */
+}
+else
+{
+   $filename=$_SERVER['QUERY_STRING'];
+
+   if (strpos($filename, "/") != false)
+   {
+      $filename="";
+   }
+
+   if (!$filename)
+   {
+      readfile("index2.html");
+      return;
+   }
+
+   if ($pos != false)
+   {
+     $uri=substr($uri, 0, $pos);
+   }
+}
+
+header("Location: $uri/$filename\n");
+echo "";
+
+$lt=chr(0x3e);
+$gt=chr(0x3c);
+
+echo "${lt}html${gt}${lt}body${gt}This page has moved to ${lt}a href='$uri/$filename'${gt}$uri/$filename${lt}/a${gt}${lt}/body${gt}${lt}/html${gt}\n";
+return;
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<html>
+<head>
+  <title>Document moved</title>
+</head>
+
+<body>
+  <p>This page has moved. <a href="index2.html">Click here</a></p>
+</body>
+</html>

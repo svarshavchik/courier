@@ -1,0 +1,12 @@
+Welcome to the Courier Socks 5 proxy library.
+
+See NEWS for the latest Courier-specific Socks NEWS.
+
+This is a generic Socks 5 client support library, and a Socks 5 server.
+
+A typical "socksify" script is included, and will be installed.  Do not
+install this Socks library on a system that already includes another
+Socks library.  It is very likely that installing this library will overwrite
+some files.
+
+

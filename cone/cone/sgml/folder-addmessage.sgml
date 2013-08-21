@@ -1,0 +1,387 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-addmessage">
+    <refmeta>
+      <refentrytitle>mail::folder::addMessage</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::addMessage</refname>
+      <refpurpose>Add a message to a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+	<literallayout>
+#include &lt;libmail/addmessage.H&gt;
+
+mail::folder *folder;
+time_t messageDate;
+mail::messageInfo newMessageInfo;
+std::string messageBody;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::addMessage *msg=folder-&gt;<function>addMessage</function></funcdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+<literallayout>
+msg-&gt;messageDate=messageDate;
+msg-&gt;messageInfo=messageInfo;
+msg-&gt;saveMessageContents(messageBody);
+
+if (changedMyMind)
+    msg-&gt;fail(std::string errmsg);
+else
+    msg-&gt;go();
+</literallayout>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This method begins the process of manually adding a message to a folder.
+The
+<function>mail::folder::addMessage</function> method returns a pointer to
+a <structname>mail::addMessage</structname> object.
+The application should then define the contents of the message by invoking
+the object's <function>saveMessageContents</function> method.
+The entire contents of the message does not have to be specified at once.
+A large message may be defined by repeatedly invoking
+<function>saveMessageContents</function>, consecutively, each time specifying
+the next portion of the message's contents.</para>
+
+      <para>
+After the contents of the message are defined by invoking
+<function>saveMessageContents</function>, the application must invoke the
+<function>go</function> method in order to actually place the new message
+into the folder.
+The application may abort the process at any time by invoking the
+<function>fail</function> method, and specifying the error message.</para>
+
+      <para>
+The application does not need to explicitly destroy the
+<structname>mail::addMessage</structname> object, the object is automatically
+destroyed by <function>go</function> or <function>fail</function>.</para>
+
+      <para>
+The application may set the following
+<structname>mail::addMessage</structname> fields prior to invoking
+<function>go</function>.
+If not initialized, the following fields will be set to their default
+values.</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>messageDate</term>
+	  <listitem>
+	    <para>
+The message's timestamp, as
+retrieved by <literal>mail::account::ARRIVALDATE</literal>
+parameter to
+<link linkend="mail-readmsgattr"><citerefentry>
+		  <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+		  <manvolnum>3x</manvolnum></citerefentry></link>().</para>
+	    <note>
+	      <para>
+This timestamp does not necessarily have to be the same as the
+timestamp in the message's <literal>Date:</literal> header.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>messageInfo</term>
+	  <listitem>
+	    <para>
+The message flags, as returned by
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+		  <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+		  <manvolnum>3x</manvolnum></citerefentry></link>().</para>
+
+	    <note>
+	      <para>
+The contents of <structfield>uid</structfield>, the message's unique ID,
+are ignored, only the message flags in <structfield>messageInfo</structfield>
+are read.
+The message gets automatically assigned a new unique ID when it gets added
+to the folder.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect1>
+
+  <refsect1>
+    <title>MIME-BASED MESSAGE COMPOSITION</title>
+
+  &libmail-mycallback;
+
+    <funcsynopsis>
+      <funcsynopsisinfo>
+mail::addMessage *msg;
+</funcsynopsisinfo>
+      <funcprototype>
+	<funcdef>msg-&gt;<function>assembleContent</function></funcdef>
+	<paramdef>size_t &amp;<parameter>handleRet</parameter></paramdef>
+	<paramdef>const mail::Attachment &amp;<parameter>attachment</parameter></paramdef>
+	<paramdef>mail::callback &amp;<parameter>cb</parameter></paramdef>
+      </funcprototype>
+      <funcprototype>
+	<funcdef>msg-&gt;<function>assembleMessageRfc822</function></funcdef>
+	<paramdef>size_t &amp;<parameter>handleRet</parameter></paramdef>
+	<paramdef>std::string <parameter>headers</parameter></paramdef>
+	<paramdef>size_t <parameter>handle</parameter></paramdef>
+	<paramdef>mail::callback &amp;<parameter>cb</parameter></paramdef>
+      </funcprototype>
+      <funcprototype>
+	<funcdef>msg-&gt;<function>assembleMultipart</function></funcdef>
+	<paramdef>size_t &amp;<parameter>handleRet</parameter></paramdef>
+	<paramdef>std::string <parameter>headers</parameter></paramdef>
+	<paramdef>const std::vector&lt;size_t&gt; <parameter>parts</parameter></paramdef>
+	<paramdef>std::string <parameter>multipart_type</parameter></paramdef>
+	<paramdef>const mail::mimestruct::parameterList &amp;<parameter>options</parameter></paramdef>
+	<paramdef>mail::callback &amp;<parameter>cb</parameter></paramdef>
+      </funcprototype>
+
+      <funcprototype>
+	<funcdef>bool flag=msg-&gt;<function>assemble</function></funcdef>
+	<void />
+      </funcprototype>
+    </funcsynopsis>
+
+    <para>
+This is an alternative way of adding a message to a folder by assembling it
+one MIME section at a time.
+First, use the <function>assembleContent</function> method to specify the
+individual content-containing (non-<literal>multipart</literal> and
+non-<literal>message/rfc822</literal>) MIME sections.
+Before <function>assembleContent</function>
+invokes <parameter>cb</parameter>'s <function>success</function> method it
+will initialize <parameter>handleRet</parameter> with a <quote>handle</quote>
+that refers to this MIME section.
+Use these MIME section handles to assemble the individual MIME sections
+into <literal>multipart</literal> and <literal>message/rfc822</literal>
+MIME sections.
+The <function>assembleMessageRfc822</function> and
+<function>assembleMultipart</function> methods also create a new MIME
+section handle,
+which refers to the assembled MIME section, in the same way.
+Those handles themselves may also be re-assembled
+into higher-level <literal>multipart</literal>
+or <literal>message/rfc822</literal> MIME sections.</para>
+
+    <para>
+Finally, after defining the topmost MIME section, use
+<function>assemble</function> to assemble the entire message.
+If
+<function>assemble</function> returns <literal>true</literal>,
+use the <function>go</function> (or the <function>fail</function>) method.
+If
+<function>assemble</function> returns <literal>false</literal>,
+an <literal>errno</literal>-related error has occured; the application
+should call <function>fail</function> to report it, and clean up the
+<structname>mail::addMessage</structname> object.</para>
+
+    <para>
+The <function>assembleContent</function> method receives a
+<link linkend="mail-attachments"><citerefentry>
+	    <refentrytitle>mail::Attachment</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> object.</para>
+
+    <para>
+The second parameter to <function>assembleMessageRfc822</function> are the
+MIME headers of the <literal>message/rfc822</literal> attachment.
+The MIME headers must be terminated by a single newline character, and
+include the <literal>Content-Type</literal> header.
+In nearly all situations, this parameter should be set to the fixed string
+<quote>Content-Type: message/rfc822\n</quote> (note the trailing newline).
+The third parameter is the handle of the attachment's top-level MIME
+section.</para>
+
+    <para>
+The second parameter to <function>assembleMultipart</function> is a
+string containing MIME
+headers for the multipart MIME section.
+These headers should <emphasis>not</emphasis> include the
+<literal>Content-Type</literal> header.
+The <literal>Content-Type</literal> header
+for the multipart section will be generated internally.
+If there are any extra headers, they must have a single trailing newline
+character.
+Most situations do not need extra headers, so this parameter should
+be an empty string, <quote></quote>.</para>
+
+    <para>
+The third parameter to <function>assembleMultipart</function> is the vector
+of previously-defined handles of each MIME section that's to be assembled
+into a multipart MIME section.
+The fourth parameter is the actual MIME type of this section, usually
+<quote>multipart/mixed</quote> or <quote>multipart/alternative</quote>
+(any <quote>multipart</quote> type is allowed).
+The fifth parameter is optional, and specifies the MIME content type
+parameter list (the parameter list should not include the
+<quote>boundary</quote> parameter, because it's taken care of automatically
+by this function).</para>
+
+    <para>
+The last parameter to
+<function>assembleContent</function>,
+<function>assembleMessageRfc822</function>, or
+<function>assembleMultipart</function> is the callback object.
+The callback object's
+<function>success</function> method will be invoked when the MIME section
+has been assembled.
+The <function>fail</function> method will be invoked if an error
+occured.
+Depending on the type of the folder the message is being added to, the MIME
+section may be assembled immediately (in which case
+<function>success</function> or
+<function>fail</function> gets called right before the function terminates)
+or the function will terminate immediately, and the callback function will
+be called at a later time.</para>
+
+    <refsect2>
+      <title>COPYING ATTACHMENTS FROM OTHER MESSAGES</title>
+
+      <funcsynopsis>
+	<funcsynopsisinfo>
+mail::addMessage *msg;
+</funcsynopsisinfo>
+	<funcprototype>
+	  <funcdef>msg-&gt;<function>assembleImportAttachment</function></funcdef>
+	  <paramdef>size_t &amp;<parameter>handleRet</parameter></paramdef>
+	  <paramdef>mail::account *<parameter>acct</parameter></paramdef>
+	  <paramdef>std::string <parameter>uid</parameter></paramdef>
+	  <paramdef>const mail::mimestruct &amp;<parameter>attachment</parameter></paramdef>
+	  <paramdef>mail::callback &amp;<parameter>cb</parameter></paramdef>
+	</funcprototype>
+
+	<funcprototype>
+	  <funcdef>msg-&gt;<function>assembleRemoveAttachmentsFrom</function></funcdef>
+	  <paramdef>size_t &amp;<parameter>handleRet</parameter></paramdef>
+	  <paramdef>mail::account *<parameter>acct</parameter></paramdef>
+	  <paramdef>std::string <parameter>uid</parameter></paramdef>
+	  <paramdef>const mail::mimestruct &amp;<parameter>attachment</parameter></paramdef>
+	  <paramdef>const std::set &amp;<parameter>mimeIdList</parameter></paramdef>
+
+	  <paramdef>mail::callback &amp;<parameter>cb</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      <para>
+The <function>assembleImportAttachment</function> function assembles a new
+MIME section by copying an existing MIME section from another message.
+<parameter>acct</parameter> specifies an open mail account, with an open
+mail folder.
+<parameter>uid</parameter> specifies the unique identifier of a message in
+<parameter>acct</parameter>'s open folder, which can be obtained from
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+<parameter>attachment</parameter> specifies which attachment in message
+<parameter>uid</parameter> should be copied.
+<parameter>attachment</parameter> must be obtained
+using <literal>mail::account::MIMESTRUCTURE</literal> with
+<link linkend="mail-readmsgattr"><citerefentry>
+	    <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+
+      <note>
+	<para>
+<parameter>acct</parameter> can refer to any open mail account or folder,
+and does not have to be the same folder the message is being added to!</para>
+</note>
+
+      <para>
+<parameter>attachment</parameter> may refer to a multipart, or a non-multipart
+MIME section.
+An <parameter>attachment</parameter> referring to a multipart MIME section
+imports the entire multipart MIME section, and all subsections it contains.
+<function>assembleRemoveAttachmentsFrom</function> also copies the entire
+multipart MIME section, but skips selected MIME subsections.
+Any subsection appearing in <parameter>mimeIdList</parameter> is not copied.
+<parameter>mimeIdList</parameter> is a list of MIME section identifiers,
+obtained from
+<link linkend="mimestruct"><citerefentry>
+	    <refentrytitle>mail::mimestruct</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>'s
+<structfield>mime_id</structfield> field.</para>
+
+      <para>
+<function>assembleRemoveAttachmentsFrom</function> implements the
+<quote>Remove Attachments</quote> function in a typical mail client, which
+removes individual attachments from a message.
+To do that, set <parameter>attachment</parameter> to the top-level MIME section
+that refers to the entire message (literally the same object returned by
+<link linkend="mail-readmsgattr"><citerefentry>
+	    <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>) and
+specify the attachments to remove in <parameter>mimeIdList</parameter>.
+Use <citerefentry>
+	  <refentrytitle>mail::folder::addMessage</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry> to add the message
+to the same folder as the original message (this must be done before
+invoking <function>assembleRemoveAttachmentsFrom</function>, of course),
+then when that's done remove the original message.</para>
+    </refsect2>
+  </refsect1>
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      <para>
+<function>mail::addMessage::fail</function> automatically invokes the
+callback object's <function>fail</function> method, prior to returning.
+<function>mail::addMessage::go</function> automatically invokes
+the callback object's <function>success</function> method, when the message
+is added.
+<function>mail::addMessage::go</function> will invoke
+<function>fail</function> if the message cannot be added to the folder,
+for some reason.</para>
+
+      <note>
+	<para>
+The <function>mail::folder::addMessage</function> function returns a NULL
+pointer if the <structname>mail::addMessage</structname> object cannot be
+created.
+This does not necessarily indicate an out-of-memory condition.
+It is not possible to manually add messages to some types of folders.
+For example, messages cannot be manually added to POP3 folders, since
+this is not supported by the POP3 protocol.</para>
+
+	<para>
+The callback object's
+<function>fail</function> method gets invoked just prior to this function
+returning NULL, in these kinds of situations.</para>
+      </note>
+
+      &libmail-waitcallback;
+
+      <note>
+	<para>
+<parameter>folder</parameter> does not necessarily have to be a
+<structname>mail::folder</structname> object that refers to the currently
+open folder.
+Any
+<structname>mail::folder</structname> object from an active
+<structname>mail::account</structname> object may be used.</para>
+</note>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>(),
+<link linkend="mail-readmsgattr"><citerefentry>
+	    <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>().</para>
+    </refsect1>
+  </refentry>

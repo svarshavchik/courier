@@ -1,0 +1,108 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-getsendfolder">
+    <refmeta>
+      <refentrytitle>mail::account::getSendFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::getSendFolder</refname>
+      <refpurpose>Create a folder object for sending mail</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      <literallayout>
+
+#include &lt;libmail/smtpinfo.H&gt;
+#include &lt;libmail/addmessage.H&gt;
+
+mail::account *account;
+
+mail::smtpInfo info;
+
+info.sender="nobody@example.com";
+
+info.recipients.push_back("recipient@example.com");
+
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::folder *folder=account-&gt;<function>getSendFolder</function></funcdef>
+	  <paramdef>const mail::smtpInfo &amp;<parameter>info</parameter></paramdef>
+	  <paramdef>const mail::folder *<parameter>saveFolder</parameter></paramdef>
+	  <paramdef>std::string <parameter>errmsg</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      <literallayout>
+myCallback sendCallback;
+
+mail::addMessage *addMessage= folder-&gt;addMessage(sendCallback);
+
+addMessage-&gt;saveMessageContents(std::string messageText);
+addMessage-&gt;go();
+</literallayout>
+
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function creates a special folder object:
+copying a message to
+this folder will E-mail it to the designated recipient list.
+The <structname>mail::account</structname> object must be an account that's
+capable of creating this kind of a folder (such as
+<literal>smtp</literal> accounts created by
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>).
+The message may be manually added to the folder with
+<link linkend="folder-addmessage"><citerefentry>
+            <refentrytitle>mail::folder::addmessage</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>,
+or by copying a message
+from another folder using
+<link linkend="mail-copymessagesto"><citerefentry>
+            <refentrytitle>mail::folder::copyMessagesTo</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+      <note>
+	<para>
+Multiple messages may be copied to this <structname>mail::folder</structname>.
+Each messages is E-mail separately, to all recipients.
+Excersize caution to prevent an accidental request to copy an entire folder,
+with thousand messages, to a thousand recipients.</para>
+      </note>
+
+      &libmail-smtpinfo;
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      <para>
+<function>mail::account::getSendFolder</function> returns NULL
+if this
+<structname>mail::account</structname> object is not capable of sending
+mail.
+<parameter>errmsg</parameter> is initialized with an appropriate error
+message.
+</para>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <title>@PACKAGE@ @VERSION@ - BOFH mail filters</title>
+  <!--
+
+  [#BADCHARS=<p><font style="color: #ff0000" size="+1">ERROR: Invalid character in E-mail address</font></p>#]
+
+  [#BADIP=<p><font style="color: #ff0000" size="+1">ERROR: Invalid IP address</font></p>#]
+
+  [#DELETE=remove#]
+
+  [#ANYTHING=<em>anything</em>#]
+
+  [#___#]
+
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<h1><tt>@PACKAGE@ @VERSION@</tt> - BOFH mail filters</h1>
+
+<p>@ERRMSG@</p>
+
+<form method="post" action="50bofh">
+  <h2>Maximum recipients</h2>
+
+  <p>Maximum recipients per message: <input type="text" size="5"
+  name="MAXRCPTS" value="@MAXRCPTS@" /></p>
+
+  <p>@MAXRCPTSHARD@ Bounce additional recipients, instead of deferring
+  them</p>
+
+  <p>
+  <input type="submit" value="Save" name="addmaxrcpts" /></p>
+</form>
+<hr />
+
+<form method="post" action="50bofh">
+  <h2>Blocked return addresses</h2>
+
+  <p>Reject all mail carrying the following return addresses:</p>
+
+  <div style="margin-left: 3.5em;">
+    @BADFROM@</div>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td rowspan="5" valign="top">Add:</td>
+        <td> </td>
+        <td><input type="text" size="20" name="badfrom1" />(<font
+          size="-1"><tt>user@domain</tt></font>)</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center">OR</td>
+      </tr>
+      <tr>
+        <td align="right"><tt>@</tt></td>
+        <td><input type="text" size="20" name="badfrom2" />(entire domain)</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center">OR</td>
+      </tr>
+      <tr>
+        <td align="right"><tt>@anything.</tt></td>
+        <td><input type="text" size="20" name="badfrom3" />(all sub-domain)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="addbadfrom" /></form>
+<hr />
+
+<form method="post" action="50bofh">
+  <h2>Blocked mail relays</h2>
+
+  <p>Reject all mail with a return address in any domain that receives mail
+  via the following mail relays:</p>
+
+  <div style="margin-left: 3.5em;">
+    @BADMX@</div>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td rowspan="3">Add:</td>
+        <td><tt>[<input type="text" size="16" name="badmx" />]</tt>(<font
+          size="-1"><tt>aaa.bbb.ccc.dddd</tt></font>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="addbadmx" /></form>
+<hr />
+
+<form method="post" action="50bofh">
+  <h2>Freemail</h2>
+
+  <p>Reject all mail with the return address in the following domains, unless
+  the mail relay's IP address is resolved in the same domain:<br />
+  <font size="-1">(additional domains authorized to send using this return
+  address)</font></p>
+
+  <div style="margin-left: 3.5em;">
+    @FREEMAIL@</div>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td>Add:</td>
+        <td><tt>@<input type="text" size="16" name="freemail" /></tt></td>
+        <td> (<input type="text" size="40" name="freemail2" />)</td>
+      </tr>
+      <tr>
+        <td colspan="2"> </td>
+        <td align="center"><font size="-1">(enter additional domains,
+          separated by spaces)</font></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="addfreemail" /></form>
+<hr />
+
+<form method="post" action="50bofh">
+  <h2>Spamtraps</h2>
+
+  <p>Reject all mail addressed to the following recipients.  Note - specify a
+  local mailbox by appending "@servername" (see "<a href="00machine">Mail
+  server name and local domains</a>"):</p>
+
+  <div style="margin-left: 3.5em;">
+    @SPAMTRAP@</div>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td rowspan="3">Add:</td>
+        <td><tt><input type="text" size="30" name="spamtrap"
+          value="@ME@" /></tt></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="addspamtrap" /></form>
+<hr />
+
+<form method="post" action="50bofh">
+  <h2>Default handling of corrupted/invalid MIME-formatted mail</h2>
+
+  <table>
+    <tbody>
+      <tr>
+        <td>@BOFHBADMIMEWRAP@</td>
+        <td>Reformat as an attachment</td>
+      </tr>
+      <tr>
+        <td>@BOFHBADMIMEREJECT@</td>
+        <td>Reject</td>
+      </tr>
+      <tr>
+        <td>@BOFHBADMIMEACCEPT@</td>
+        <td>Accept</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="addbofhbadmime" /></form>
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

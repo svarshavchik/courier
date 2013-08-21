@@ -1,0 +1,13 @@
+# Sample PAM configuration for SuSE distributions.
+#
+# Author: Jan Zimmerschied <jan@zimmerschied.de>
+#
+# To use the authpam authentication module with courierpop3d, you must
+# configure your PAM library to authenticate the "pop3" service.
+# See your system documentation for information on how to configure your
+# PAM services. In most cases, all you need to do is to install this file
+# as /etc/pam.d/pop3, but check your system documentation to make sure.
+#
+auth       required     pam_unix2.so nullok
+account    required     pam_unix2.so
+session    required     pam_unix2.so

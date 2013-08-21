@@ -1,0 +1,60 @@
+<!-- Copyright 2002-2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<para>
+This command opens the screen with a list of attachments to the current message.
+This is the <quote>View Attachment</quote> screen.
+It is a very simple screen: each attachment is listed, giving its MIME type
+(the type of the attachment), its approximate size, and the
+attachments's description, if provided.</para>
+
+<para>
+Plain text attachments may be viewed individually, by pressing <keycap>ENTER</keycap>.
+Press <keycap>S</keycap> to download and save the highlighted attachment.
+Use <keycap>I</keycap> to return to the folder index screen, <keycap>L</keycap>
+to return to the folder listing screen, and <keycap>M</keycap> to go back to the
+main menu screen.</para>
+
+<para>
+After downloading an attachment it may be optionally deleted, or removed
+from the message.
+Press <keycap>D</keycap> to delete the highlighted attachment.
+Pressing <keycap>D</keycap> does not delete the attachment immediately,
+it only marks the attachment for deletion.
+More than one attachment may be marked for deletion at the same time.
+Press <keycap>X</keycap> to permanently remove all attachments that are
+marked for deletion.
+Beforing pressing <keycap>X</keycap>, a marked attachment can be unmarked by
+pressing <keycap>U</keycap>.
+Once <keycap>X</keycap> is pressed all the deleted attachments are gone for
+good, and cannot be undeleted.</para>
+
+<note>
+  <para>
+Only messages in local mail folders, IMAP folders, and POP3 maildrop folders
+may have their attachments removed.
+Messages in POP3 folders and NetNews folders cannot have their attachments
+removed.</para>
+</note>
+
+<para>
+When <application>GnuPG</application> is installed, highlighting an attachment
+that contains GPG/PGP keys and pressing <keycap>ENTER</keycap> imports the
+keys. &app; prompts for a confirmation, then runs
+<application>GnuPG</application> to import the attached keys.
+Some versions of <application>Gnu</application> require a special procedure
+for importing private keys.
+&app;'s prompt has an explicit private key export option.
+With other versions of <application>GnuPG</application> this option doesn't
+matter.
+Selecting the default import option will import whatever keys were attached,
+public or private.</para>
+
+<para>
+When running in an X-terminal, highlighting an image attachment and pressing
+<keycap>ENTER</keycap> displays the image in a separate window.
+This is done by running either Gnome's <application>eog</application>, or
+KDE's <application>kview</application> image viewer.
+&app;'s manual page contains instructions for installing hooks for viewing
+other kinds of attachments, or using a different image viewer.</para>
+

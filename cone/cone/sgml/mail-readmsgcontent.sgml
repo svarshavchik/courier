@@ -1,0 +1,111 @@
+<!-- Copyright 2002-2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-readmsgcontent">
+    <refmeta>
+      <refentrytitle>mail::account::readMessageContent</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::readMessageContent</refname>
+      <refpurpose>Read messages</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallbackmessage;
+
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>readMessageContent</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; &amp;<parameter>msgList</parameter></paramdef>
+	  <paramdef>bool <parameter>peek</parameter></paramdef>
+	<paramdef>mail::readMode <parameter>requestType</parameter></paramdef>
+	  <paramdef>myCallbackMessage &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>readMessageContent</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	  <paramdef>bool <parameter>peek</parameter></paramdef>
+	  <paramdef>mail::mimestruct &amp;<parameter>msginfo</parameter></paramdef>
+	<paramdef>mail::readMode <parameter>requestType</parameter></paramdef>
+	  <paramdef>myCallbackMessage &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::readMessagesContent</function>
+reads messages in the currently open folder.
+There are two alternative versions of this method.</para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+The first version receives a list of message numbers.
+&libmail-msglist;
+This version is capable of returning headers and/or content of multiple
+messages.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+The second version receives a single message number, and a
+<link linkend="mimestruct"><structname>mail::mimestruct</structname></link>
+object that refers to a single MIME
+attachment or a section of this message.
+The <parameter>mail::account::MIMESTRUCTURE</parameter> argument to
+<link linkend="mail-readmsgattr"><citerefentry>
+		<refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+		<manvolnum>3x</manvolnum></citerefentry></link> returns
+a recursive tree of
+<structname>mail::mimestruct</structname> objects which enumerates the
+individual MIME sections in the message.
+<parameter>msgInfo</parameter> must be a reference to one of these objects
+(or to a copy of these objects).</para>
+	</listitem>
+      </itemizedlist>
+
+      &libmail-peek;
+
+      &libmail-updatestatus;
+
+      <para>
+The <function>mail::callback::message::messageTextCallback</function>
+method receives the requested content, which is determined by the remaining
+parameters.</para>
+
+      &libmail-messagecontent;
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-concurrency;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-readmsgattr"><citerefentry>
+	    <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-readmsgcontentdecoded"><citerefentry>
+	    <refentrytitle>mail::account::readMessageContentDecoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

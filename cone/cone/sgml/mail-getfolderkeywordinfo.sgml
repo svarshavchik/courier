@@ -1,0 +1,68 @@
+<!-- Copyright 2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-getfolderkeywordinfo">
+    <refmeta>
+      <refentrytitle>mail::account::getFolderKeywordInfo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::getFolderKeywordInfo</refname>
+      <refpurpose>Return message keywords</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+
+mail::account *account;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>getFolderKeywordInfo</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	  <paramdef>std::set&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::getFolderKeywordInfo</function>
+retrieves the current keywords for message
+#<parameter>messagenum</parameter> and
+places them into <parameter>keywords</parameter> (removing any existing
+contents).
+If the message does not have any keywords set, <parameter>keywords</parameter>
+will be an empty set.
+<parameter>messageNum</parameter> must be between zero and one less than
+the return code from
+<link linkend="mail-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+    <para>
+This function returns immediately.</para>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-updatekeywords"><citerefentry>
+	    <refentrytitle>mail::account::updateKeywords</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

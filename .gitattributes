@@ -1,0 +1,2 @@
+*.in	filter=keywords
+*.dist	filter=keywords

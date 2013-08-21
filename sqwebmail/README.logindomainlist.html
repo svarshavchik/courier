@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html>
+<head>
+  <title>logindomainlist</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <!-- Copyright 2003 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B"
+alink="#FF0000" xml:lang="en" lang="en">
+<p></p>
+
+<h1>Introduction</h1>
+
+<p>In sqwebmail versions prior to <code>3.5.0.20030408</code>, the
+<code>logindomainlist</code> file had rather limited functionality. An
+administrator could specify a list of domains, one per line. The user would
+then see a drop down list to the right of the user id field in the
+<code>login.html</code> page. This drop down list was of limited usefulness
+because it always defaulted to an empty (non-existant) domain. The user would
+then have to search through the drop down to find the correct mail domain he
+wanted to log in under. In addition, the drop down had no access controls,
+and it showed EACH user ALL of the domains listed in the
+<code>logindomainlist</code> file.</p>
+
+<p>The above functionality is still available, and the new
+<code>logindomainlist</code> functionality is 100% backward compatible.
+However, the <code>logindomainlist</code> file syntax has been extended and
+is now MUCH more useful. For example, administrators can now specify a group
+field for each drop down menu record and selectively display only the domains
+for which each user is a member. In addition, the new file syntax allows
+administrators to specify default domains so that their users don't have to
+search for domains in the drop down list.</p>
+
+<p>What if you don't want to display a drop down menu? Administrators can now
+specify records that generate a hidden field in <code>login.html</code>, or
+an editable text field, allowing sqwebmail to show only one mail login domain
+to each user per access URL or IP address. This functionality can greatly
+reduce confusion for first time webmail users, and greatly speed the login
+process for frequent webmail users.</p>
+
+<p>Finally, the new <code>logindomainlist</code> file offers a new tool to
+ease maintenance. Administrators can now use wildcards to "rewrite" the
+domain portion of the access URL to the mail domain equivalent. For example,
+the following record can rewrite the URL "<code>mail.*.com</code>" to the
+mail domain "<code>*.com</code>"</p>
+
+<p><code>*.com:mail.*.com:@</code></p>
+
+<p>This powerful wildcard functionality can ease the login process for most
+of your server's mail domains with just one or two
+<code>logindomainlist</code> records.</p>
+
+<p></p>
+
+<h1>File Format</h1>
+
+<p>Let's take a look at the NEW <code>logindomainlist</code> file format:</p>
+
+<p><code>firstfield:secondfield:thirdfield</code></p>
+
+<p>Above, we can see that the new <code>logindomainlist</code> records are
+made up of three fields delimited by colons. But what does each field do?</p>
+
+<p><code>First Field</code> - the first field contains the "mail domain" for
+which we would like the user to log in under. The mail domain is the part of
+an email address after the @ symbol. For example, in the email address
+"<code>user@domain.com</code>", "<code>domain.com</code>" is the mail
+domain.</p>
+
+<p><code>Second Field</code> - the second field contains the "access domain".
+The access domain contains an URL or IP address that is used to figure out
+which mail domain to use by default. For example, in the following
+<code>logindomainlist</code> record:</p>
+
+<p><code>domain1.com:domain2.com</code></p>
+
+<p>"<code>domain2.com</code>" is the "access domain" and
+"<code>domain1.com</code>" is the "mail domain". If the user logs into the
+following URL:</p>
+
+<p><code>http://domain2.com/cgi-bin/sqwebmail</code></p>
+
+<p>His default "mail domain" will be "<code>domain1.com</code>".</p>
+
+<p><code>Third Field</code> - the third field may contain a modifier. The
+modifier may be either a single character modifier, or a group identification
+string. The single character modifiers and the group modifier are described
+in detail below.</p>
+
+<p>Finally, the <code>logindomainlist</code> file may also contain comments
+and empty lines. Empty lines can be used to group records visually, and
+comments can be used to explain why a certain record or group of records look
+the way they do.</p>
+
+<p>If the first character of a line is a '#', then the entire line is
+considered a comment and is ignored. If the first character of a line
+contains whitespace, the entire line is assumed to be an empty line and is
+ignored.</p>
+
+<p></p>
+
+<h1>Modifiers</h1>
+
+<p><code>@</code> - the '@' modifier can be used to create a hidden field on
+the <code>login.html</code> page which contains the default mail domain. In
+addition, this field will automatically display the default mail domain in
+plain text to the right of the userid text box.</p>
+
+<p>NOTE: The '@' modifier ALLOWS the use of wildcards to automate the
+relationship between "access domains" and "mail domains". See the heading
+"<b>Wildcards</b>" below for more information about wildcarding.</p>
+
+<p><code>-</code> - the '-' modifier can be used to create an editable text
+field on the <code>login.html</code> page which contains the default mail
+domain.</p>
+
+<p>NOTE: The '-' modifier ALLOWS the use of wildcards to automate the
+relationship between "access domains" and "mail domains". See the heading
+"<b>Wildcards</b>" below for more information about wildcarding.</p>
+
+<p><code>group string</code> - If no modifier is specified in the third
+field, or if the third field modifier is a group identifier string, then a
+drop down menu will be displayed on the <code>login.html</code> page. Records
+with the SAME group string will be displayed together in the drop down. For
+example, if your <code>logindomainlist</code> file contains the following
+records:</p>
+<pre>     domain1.com:domain2.com:firstgroup
+     domain3.com:domain4.com:firstgroup
+     domain5.com:domain6.com:firstgroup
+     domain7.com:domain8.com:secondgroup
+     domain9.com:domain10.com:secondgroup</pre>
+
+<p>And the user logs into sqwebmail with the following URL:</p>
+
+<p><code>http://domain4.com/cgi-bin/sqwebmail</code></p>
+
+<p>He will see a drop down containing ONLY the following domains:</p>
+<pre>     domain1.com
+     domain3.com
+     domain5.com</pre>
+
+<p>"<code>domain3.com</code>" will be automatically selected, or defaulted.
+Only the records in the <code>firstgroup</code> will be visible to the user.
+This functionality is great for organizations with more than one mail
+domain.</p>
+
+<p>NOTE: The group string modifier does NOT allow the use of wildcards to
+automate the relationship between "access domains" and "mail domains". This
+is because drop down menus are fundamentally incompatible with wildcards.</p>
+
+<p></p>
+
+<h1>Wildcards</h1>
+
+<p>If a record's modifier allows wildcarding (See "<b>Modifiers</b>" above
+for information about which modifiers allow wildcarding and which do not.)
+then the first and second fields of that record _MAY_ contain wildcards.
+Wildcards match against the HTTP_HOST CGI environment variable only. IP
+addresses can NOT be used if either the first or second fields contain the
+wildcard character. However, if neither the first nor second fields contain
+the wildcard character, then the second field can contain an IP address.</p>
+
+<p>In the <code>logindomainlist</code> file, an asterisk (*) character in
+either the first and/or second field represents a wildcard. Any asterisk in
+the second field will be used to match an access domain. If an asterisk
+exists in the first field then any characters which the asterisk in the
+second field represents will replace the asterisk in the first field when
+sqwebmail determines the default mail domain. However, asterisks are not
+required in either the first or second fields. They are totally optional. For
+example, given the following <code>logindomainlist</code> record:</p>
+
+<p><code>*.com:mail.*.com:@</code></p>
+
+<p>If the user logs into sqwebmail with the following URL:</p>
+
+<p><code>http://mail.mydomain.com/cgi-bin/sqwebmail</code></p>
+
+<p>The asterisk in the second field will represent the string
+"<code>mydomain</code>". This string will then replace the asterisk in the
+first field to give the following default mail domain:
+<code>mydomain.com</code></p>
+
+<p>Similarly, if the following record exists in the
+<code>logindomainlist</code> file:</p>
+
+<p><code>*:*:@</code></p>
+
+<p>Then ANY URL the user uses to access sqwebmail will be automatically used
+for the default mail domain.</p>
+
+<p>But the first field doesn't _HAVE_ to contain an asterisk. The following
+will work just fine:</p>
+
+<p><code>mydomain.com:mydomain.*:@</code></p>
+
+<p>The above example will allow the user to access the
+"<code>mydomain.com</code>" mail domain from any of the following URLs:
+"<code>mydomain.org</code>", "<code>mydomain.net</code>",
+"<code>mydomain.us</code>", etc...</p>
+
+<p>And finally, the first field doesn't have to contain anything at all! If
+the first field is empty, that record will serve as an explicit no-default
+mail domain. No default mail domain will be specified if the second field
+matches the user's login URL. This is useful because the
+<code>logindomainlist</code> is searched from the top down. Any wildcard
+records at the bottom of the list will be overridden by records closer to the
+top. An "explicit no-default" record can be used to specify certain domains
+as "system account" domains so that no default mail domain is specified.</p>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-send">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::send</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::send</refname>
+      <refpurpose>Send a message</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+#include &lt;libmail/smtpinfo.H&gt;
+
+mail::ACCOUNT *mail;
+
+class myAddMessagePull : public mail::addMessagePull {
+
+public:
+    std::string getMessageContents();
+};
+
+myAddMessagePull message;
+
+mail::smtpInfo info;
+
+info.sender="nobody@example.com";
+
+info.recipients.push_back("recipient@example.com");
+
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>send</function></funcdef>
+	  <paramdef><parameter>info</parameter></paramdef>
+	  <paramdef>const mail::folder *<parameter>saveFolder</parameter></paramdef>
+	  <paramdef><parameter>message</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This method sends a message via SMTP.
+The application should create a
+<structname>mail::ACCOUNT</structname> object, and invoke
+<link linkend="account-login"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::login</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+specifying a
+<literal>smtp:</literal>,
+<literal>smtps:</literal> or
+<literal>sendmail:</literal>
+<parameter>url</parameter>.
+The resulting <structname>mail::ACCOUNT</structname>'s
+<function>send</function> method will be able to deliver the
+<parameter>message</parameter>.</para>
+
+      &libmail-addmessage;
+
+      &libmail-smtpinfo;
+
+    </refsect1>
+
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-account-return;
+
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-login"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::login</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>
+

@@ -1,0 +1,52 @@
+#! @PERL@
+# Copyright 2000 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+my $linenum=0;
+
+my $foundver=0;
+
+my $filename=shift @ARGV;
+
+open (F, $filename) || die "$filename: $!\n";
+
+while (<F>)
+{
+    ++$linenum;
+    if (/^\#\#VERSION:/)
+    {
+	$foundver=1;
+	last;
+    }
+
+    last if $linenum > 20;
+}
+
+die "Did not find a ##VERSION header.\n" unless $foundver;
+
+while (<F>)
+{
+    ++$linenum;
+    next unless /^\#/;
+
+    my $foundtag=0;
+
+    $foundtag=1 if /^\#\#NAME:/;
+
+    while (<F>)
+    {
+	++$linenum;
+
+	if ( /^\#\#NAME:/ )
+	{
+	    die "Line $linenum: second ##NAME tags, without a setting.\n"
+		if $foundtag;
+	    $foundtag=1;
+	}
+
+	last unless /^#/;
+    }
+
+    print "Warning - line $linenum - did not see a ##NAME.\n"
+	unless $foundtag;
+}

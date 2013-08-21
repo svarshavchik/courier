@@ -1,0 +1,64 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<!-- Copyright 2000-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="sysconftoolcheck.1">
+
+  <docinfo>
+    <title>sysconftoolcheck</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+  </docinfo>
+
+  <refmeta>
+    <refentrytitle>sysconftoolcheck</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>sysconftoolcheck</refname>
+    <refpurpose>check a sysconftool configuration file</refpurpose>
+  </refnamediv>
+
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>sysconftoolcheck</command>
+      <arg choice='req'>filename</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command>sysconftoolcheck</command> reads
+<replaceable>filename</replaceable> and checks if it is a
+valid sysconftool configuration file. <command>sysconftoolcheck</command> is a
+useful tool to use in order to spot often occuring typos.
+<command>sysconftoolcheck</command> can't really know whether or not a
+<command>sysconftool</command> configuration file will work as expected,
+but it can
+be used to flag some obvious errors and omissions.
+<command>sysconftoolcheck</command> abilities will increase, over time.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink
+url="sysconftool.1.html"><citerefentry>
+	  <refentrytitle>sysconftool</refentrytitle>
+	  <manvolnum>1</manvolnum>
+	</citerefentry></ulink>,
+<ulink
+url="sysconftool.7.html"><citerefentry>
+	  <refentrytitle>sysconftool</refentrytitle>
+	  <manvolnum>7</manvolnum>
+	</citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

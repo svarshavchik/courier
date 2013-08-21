@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="">
+  <meta name="MSSmartTagsPreventParsing" content="TRUE">
+  <meta name="Author" content="Sam Varshavchik">
+  <title>@PACKAGE@ @VERSION@ - Sender Policy Framework</title>
+  <!--
+
+  [#SAVED=<span style="color: #008000">Saved</span>#]
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<h1><tt>@PACKAGE@ @VERSION@</tt> - Sender Policy Framework</h1>
+@ERROR@
+
+<form method="post" action="30xspf">
+  <h2>Enable/disable sender policy framework checking for:</h2>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <th colspan="2">Remote server ID (<tt>EHLO/HELO</tt>)</th>
+        <th style="width: 5px" rowspan="10"></th>
+        <th style="background-color: #808080; width: 1px; padding: 0px"
+        rowspan="10"></th>
+        <th style="width: 5px" rowspan="10"></th>
+        <th colspan="2">Return address (<tt>MAIL FROM:</tt>)</th>
+        <th style="width: 5px" rowspan="10"></th>
+        <th style="background-color: #808080; width: 1px; padding: 0px"
+        rowspan="10"></th>
+        <th style="width: 5px" rowspan="10"></th>
+        <th colspan="2">Sender's address (<tt>From:</tt> header)</th>
+      </tr>
+      <tr>
+        <td colspan="2">@SPFEHDISABLED@disabled</td>
+        <td colspan="2">@SPFMFDISABLED@disabled</td>
+        <td colspan="2">@SPFFRDISABLED@disabled</td>
+      </tr>
+      <tr>
+        <td colspan="2">@SPFEHENABLED@enabled (default options)</td>
+        <td colspan="2">@SPFMFENABLED@enabled (default options)</td>
+        <td colspan="2">@SPFFRENABLED@enabled (default options)</td>
+      </tr>
+      <tr>
+        <td colspan="2">@SPFEHCUSTOM@custom:</td>
+        <td colspan="2">@SPFMFCUSTOM@custom:</td>
+        <td colspan="2">@SPFFRCUSTOM@custom:</td>
+      </tr>
+      <tr>
+        <td>@SPFEHNONE@</td>
+        <td>"<tt>none</tt>" is acceptable</td>
+        <td>@SPFMFNONE@</td>
+        <td>"<tt>none</tt>" is acceptable</td>
+        <td>@SPFFRNONE@</td>
+        <td>"<tt>none</tt>" is acceptable</td>
+      </tr>
+      <tr>
+        <td>@SPFEHNEUTRAL@</td>
+        <td>"<tt>neutral</tt>" is acceptable</td>
+        <td>@SPFMFNEUTRAL@</td>
+        <td>"<tt>neutral</tt>" is acceptable</td>
+        <td>@SPFFRNEUTRAL@</td>
+        <td>"<tt>neutral</tt>" is acceptable</td>
+      </tr>
+      <tr>
+        <td>@SPFEHSOFTFAIL@</td>
+        <td>"<tt>softfail</tt>" is acceptable</td>
+        <td>@SPFMFSOFTFAIL@</td>
+        <td>"<tt>softfail</tt>" is acceptable</td>
+        <td>@SPFFRSOFTFAIL@</td>
+        <td>"<tt>softfail</tt>" is acceptable</td>
+      </tr>
+      <tr>
+        <td>@SPFEHFAIL@</td>
+        <td>"<tt>fail</tt>" is acceptable</td>
+        <td>@SPFMFFAIL@</td>
+        <td>"<tt>fail</tt>" is acceptable</td>
+        <td>@SPFFRFAIL@</td>
+        <td>"<tt>fail</tt>" is acceptable</td>
+      </tr>
+      <tr>
+        <td>@SPFEHERROR@</td>
+        <td>"<tt>error</tt>" is acceptable</td>
+        <td>@SPFMFERROR@</td>
+        <td>"<tt>error</tt>" is acceptable</td>
+        <td>@SPFFRERROR@</td>
+        <td>"<tt>error</tt>" is acceptable</td>
+      </tr>
+      <tr>
+        <td>@SPFEHUNKNOWN@</td>
+        <td>"<tt>unknown</tt>" is acceptable</td>
+        <td>@SPFMFUNKNOWN@</td>
+        <td>"<tt>unknown</tt>" is acceptable</td>
+        <td>@SPFFRUNKNOWN@</td>
+        <td>"<tt>unknown</tt>" is acceptable</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <tbody>
+      <tr valign="top">
+        <td><h2>Options:</h2>
+
+          <table border="0">
+            <tbody>
+              <tr valign="top">
+                <td>@BOFHSPFNOVERBOSE@</td>
+                <td>Suppress custom rejection error messages.</td>
+              </tr>
+              <tr valign="top">
+                <td>@BOFHSPFTRUSTME@</td>
+                <td>Disable SPF checking for clients with relaying
+                privileges.</td>
+              </tr>
+              <tr valign="top">
+                <td>@MAILFROMOK@</td>
+                <td>Disable SPF checking of <tt>From:</tt> header if <tt>MAIL
+                  FROM</tt> passes SPF checking.</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+        <td style="width: 10px"></td>
+        <td><h2>Bounces:</h2>
+
+          <table border="0">
+            <tbody>
+              <tr valign="top">
+                <td>@HARDNONE@</td>
+                <td>"<tt>none</tt>" is a hard bounce.</td>
+              </tr>
+              <tr valign="top">
+                <td>@HARDNEUTRAL@</td>
+                <td>"<tt>neutral</tt>" is a hard bounce.</td>
+              </tr>
+              <tr valign="top">
+                <td>@HARDSOFTFAIL@</td>
+                <td>"<tt>softfail</tt>" is a hard bounce.</td>
+              </tr>
+              <tr valign="top">
+                <td>@HARDFAIL@</td>
+                <td>"<tt>fail</tt>" is a hard bounce.</td>
+              </tr>
+              <tr valign="top">
+                <td>@HARDERROR@</td>
+                <td>"<tt>error</tt>" is a hard bounce.</td>
+              </tr>
+              <tr valign="top">
+                <td>@HARDUNKNOWN@</td>
+                <td>"<tt>unknown</tt>" is a hard bounce.</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <input type="submit" value="Save" name="Save"></form>
+<hr>
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-searchmessages">
+    <refmeta>
+      <refentrytitle>mail::account::searchMessages</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::searchMessages</refname>
+      <refpurpose>Search messages in the current folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+#include &lt;libmail/search.H&gt;
+
+class myCallback : public mail::searchCallback {
+public:
+    void success(const std::vector&lt;size_t&gt; &amp;found);
+    void fail(std::string errmsg);
+};
+
+&libmail-mysearchparams;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>searchMessages</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::searchMessages</function> searches messages in the
+currently-open folder. &libmail-msglist;</para>
+
+      &libmail-search;
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-concurrency;
+
+      <para>
+The <function>mail::searchCallback::success</function> method receives
+a vector that lists all messages found by the search.
+The vector will be empty if no messages were found.</para>
+      <note>
+	<para>
+The vector with found messages is destroyed as soon as
+the <function>mail::searchCallback::success</function> method terminates.
+The application should make a copy of it for any later use.</para>
+      </note>
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

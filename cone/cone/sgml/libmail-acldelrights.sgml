@@ -1,0 +1,9 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+    <para>
+This function
+removes <replaceable>identifier</replaceable>
+from <replaceable>folder</replaceable>'s access control list.</para>
+
+

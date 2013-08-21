@@ -1,0 +1,67 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-create">
+    <refmeta>
+      <refentrytitle>mail::folder::create</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::create</refname>
+      <refpurpose>Create a new folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>create</function></funcdef>
+	  <paramdef>bool <parameter>createDirectory</parameter></paramdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+An alternative way to create a new folder is to use
+
+<link linkend="mail-folderfromstring"><citerefentry>
+	    <refentrytitle>mail::account::folderFromString</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+to re-create a folder object, and then use the new object's
+<function>create</function> method to create the folder.</para>
+
+      <para>
+See
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for more information.</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-renamefolder"><citerefentry>
+	    <refentrytitle>mail::folder::renameFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

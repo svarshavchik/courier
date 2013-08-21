@@ -1,0 +1,87 @@
+LDAP support based on a patch by:
+Luc Saillard <luc.saillard@alcove.fr>  Thu, 30 Dec 1999 20:33:08 +0100
+
+Adapted as a generic authlib authentication module - SV 12/31/99.
+
+Configuration File
+------------------
+
+     LDAP configuration is placed in the file authldaprc, which is installed,
+     by default, as /usr/lib/courier-imap/etc/authldaprc.
+     Use --with-authldaprc=pathname to override the location.
+
+     This file must be owned by root and have the permissions set to 0400
+     because the LDAP administrator password is stored in this file.
+
+     See the default authldaprc for more information.
+
+     CC both me and Luc Saillard for questions on authldap.
+
+Schema
+------
+
+OpenLDAP 2.0 defaults to schema checking on all directories.  The file
+authldap.schema contains a definition of a LDAP objects
+CourierMailAccount, CourierMailAlias, and CourierDomainAlias.
+
+Only CourierMailAccount is used for mailbox authentication (i.e. IMAP,
+webmail).  The other two objects are used by LDAP-based mail routing
+in the Courier Mail Server.
+
+The file authldap.ldif contains an ldif format definition of the same objects.
+This is the same schema definition as in authldap.schema, except in the ldif
+format.
+
+Here are some sample LDAP objects that use this schema:
+
+dn: o=example, c=com
+ObjectClass: organization
+o: example
+c: com
+
+dn: mail=xyz123@example.com, o=example, c=com
+ObjectClass: CourierMailAccount
+ObjectClass: person
+cn: Xavier Y Zimmerman
+sn: Zimmerman
+mail: xyz123@example.com
+clearPassword: tux
+userPassword: {MD5}WrbkuYvH+3FvwH7Zj+34Ag==
+homeDirectory: /home/xyz123
+uidNumber: 1001
+gidNumber: 1001
+
+dn: mail=mailalias@example.com, o=example, c=com
+ObjectClass: CourierMailAlias
+ObjectClass: nisMailAlias
+cn: mailalias
+mail: mailalias
+maildrop: xyz123
+
+dn: virtualdomain=domain.com, o=example, c=com
+ObjectClass: nisMailAlias
+ObjectClass: CourierDomainAlias
+cn: domain.com
+virtualdomain: domain.com
+virtualdomainuser: wxyz456
+
+
+Notice on Luc's original patch:
+-------------------------------
+
+  Copyright (C) 1999 Luc Saillard
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+

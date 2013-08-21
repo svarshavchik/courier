@@ -1,0 +1,20 @@
+SqWebmail is written by
+
+Sam Varshavchik <mrsam@courier-mta.com>
+Double Precision, Inc.
+402 Main Street
+Suite 100-241
+Metuchen, NJ 08840
+
+Vchkpw support based on code by Ken Jones, http://www.inter7.com
+
+LDAP support based on a patch by:
+Luc Saillard <luc.saillard@alcove.fr>  Thu, 30 Dec 1999 20:33:08 +0100
+
+MySQL support based on a patch by:
+Laszlo KAISER <titanic@telnet.hu>
+
+Current set of HTML templates file based on design by cniconsulting.com
+
+PostgreSQL support based on a patch by:
+Vittorio Ballestra <vittorio.ballestra@infogestnet.it>

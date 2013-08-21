@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <title>@PACKAGE@ @VERSION@ - Webmail</title>
+  <!--
+
+  [#CALDISABLED=Disabled#]
+  [#CALLOCAL=Individual#]
+  [#CALNET=Groupware#]
+
+  [#SAVED=<p><span style="color: #006000">Changes saved</span></p>#]
+  [#___#]
+
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<h1><tt>@PACKAGE@ @VERSION@</tt> - Webmail</h1>
+
+<p>@ERRMSG@</p>
+
+<form method="post" action="47webmail">
+  <p>@maildirfilterconfig@ Enable mail filtering and autoresponders.<br />
+    <font size="-1">(note - only works with the default mail account
+  configuration - mail in <tt>$HOME/Maildir)</tt></font></p>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td>Autoresponse quota:</td>
+        <td><input type="text" size="20" name="AUTORESPONSEQUOTAC"
+          value="@AUTORESPONSEQUOTAC@" /></td>
+        <td>maximum autoreplies</td>
+      </tr>
+      <tr>
+        <td> </td>
+        <td><input type="text" size="20" name="AUTORESPONSEQUOTAS"
+          value="@AUTORESPONSEQUOTAS@" /></td>
+        <td>maximum autoreply text total (in bytes)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>@NOCHANGINGFROM@ Allow From: header to be set on outgoing mail</p>
+
+  <p>@USEXSENDER@ Add X-Sender: header to outgoing mail</p>
+
+  <p>@IMAGES@ Display graphics</p>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td valign="top">Available login domains:<br />
+          (one per line)</td>
+        <td>@logindomainlist@</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Calendaring services:@calendarmode@</p>
+
+  <p>
+  <input type="submit" value="Save" name="submit" /></p>
+</form>
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

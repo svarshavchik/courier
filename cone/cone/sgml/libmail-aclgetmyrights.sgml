@@ -1,0 +1,14 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+
+    <para>
+This function
+computes application's access
+rights on the <parameter>folder</parameter>.
+If this function succeeds (this function may fail if the requesting
+client does not have the required access to the folder),
+<parameter>rights</parameter> will be initialized by a text string that
+contains a list of character which describe the requested client's
+access rights on the folder.</para>
+

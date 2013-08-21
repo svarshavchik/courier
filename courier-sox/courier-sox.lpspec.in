@@ -1,0 +1,164 @@
+#
+# Copyright 2005 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+%define initdir %(if test -d /etc/init.d/. ; then echo /etc/init.d ; else echo /etc/rc.d/init.d ; fi)
+
+Name: courier-sox
+Version: @VERSION@
+Release: 1
+License: GPL
+URL: http://www.courier-mta.org
+BuildRequires: libtool
+BuildRequires: courier-authlib-devel
+BuildRequires: /usr/include/ltdl.h
+Source: %{__name}-%{__version}.bz2
+%{?repository: Repository(pgpkeys.txt): http://download.lpmtool.com/@REPOSITORY@/courier-sox}
+
+%package
+Summary: Courier Socks 5 client library
+Group: System Environment/Libraries
+
+This package installs a Socks 5 client support library that allows applications
+to establish network connections through a Socks 5 proxy running on a firewall.
+
+%package devel
+Summary: Socks 5 client development files
+Group: Development/Libraries
+Requires: %{__name} = %{__version}-%{__release}
+
+This package contains development files for building applications that use
+the Socks 5 client support library.
+<p>
+Install this package if you want to develop applications that use Socks 5
+proxies.
+
+%package server
+Summary: Socks 5 server
+Group: Networking/Utilities
+Requires: %{__name} = %{__version}-%{__release}
+Requires:   /bin/systemctl
+
+This package contains the Courier Socks 5 server.
+Install this package if you want to run a Socks 5 server.
+
+%package utils
+Summary: Socks 5 server utilities
+Requires: %{__name} = %{__version}-%{__release}
+
+This package installs a utility script that creates blacklisted IPv4
+addresses.
+<p>
+The Courier Socks 5 server can optionally block connections to addresses
+listed in a blacklist.
+This package installs a script that converts a text file in the common
+IPv4 blacklist format to a fast binary database format that the
+Courier Socks 5 server uses to vet connection attempts.
+%begin
+
+%setup
+%configure
+
+%begin build
+%{__make} %{_smp_mflags}
+
+%begin install
+
+rm -rf $__installdir
+%{__make} install DESTDIR=$__installdir
+%{__mkdir_p} $__installdir%{_localstatedir}/run
+> $__installdir%{_localstatedir}/run/sockd.pid
+
+%{__mkdir_p} $__installdir%{_datadir}
+%{__mkdir_p} $__installdir/lib/systemd/system
+
+%{__cp} courier-sox.sysvinit $__installdir%{_datadir}
+%{__cp} courier-sox.service $__installdir/lib/systemd/system
+
+%{__mkdir_p} $__installdir%{_sysconfdir}/pam.d
+if ls /lib*/security/pam_stack.so 2>/dev/null >/dev/null
+then
+  cat >$__installdir%{_sysconfdir}/pam.d/socks <<EOF
+#%PAM-1.0
+ 
+auth       required     pam_nologin.so
+auth       required     pam_stack.so service=system-auth
+account    required     pam_stack.so service=system-auth
+session    required     pam_stack.so service=system-auth
+EOF
+else
+  cat >$__installdir%{_sysconfdir}/pam.d/socks <<EOF
+#%PAM-1.0
+ 
+auth       required     pam_nologin.so
+auth       include      system-auth
+account    include      system-auth
+session    include      system-auth
+EOF
+fi
+%{__rm} -f $__installdir%{_libdir}/*.so.0
+
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%post server
+
+if test -f /etc/init.d/courier-sox
+then
+   /sbin/chkconfig --del courier-sox
+   /bin/systemctl stop courier-sox.service || :
+fi
+
+/bin/systemctl daemon-reload || :
+/bin/systemctl enable courier-sox.service &> /dev/null || :
+
+%preun server
+
+if test "$1" = "0"
+then
+   /bin/systemctl stop courier-sox.service
+   /bin/systemctl disable courier-sox.service
+fi
+
+%postun server
+
+if test "$1" != "0"
+then
+   /bin/systemctl try-restart courier-sox.service
+fi
+
+%files
+%{_bindir}/socksify
+%{_libdir}/*.so.*.*
+%{_mandir}/man5/*
+%{_mandir}/*/socksify*
+%{_sysconfdir}/socksrc
+
+%doc COPYING README NEWS AUTHORS ChangeLog *.html
+
+%files devel
+%{_libdir}/*.la
+%{_libdir}/*.a
+%{_libdir}/*.so
+%{_includedir}/*
+%{_mandir}/man3/*
+
+%files server
+%{_sbindir}/sockd
+%{_libexecdir}/sockd
+%attr(644,root,root) %ghost %verify(not size mtime md5) %{_localstatedir}/run/sockd.pid
+%{_datadir}/courier-sox.sysvinit
+/lib/systemd/system/*
+%{_mandir}/man1/sockd*
+%attr(644,root,root) %config(noreplace) %{_sysconfdir}/pam.d/*
+
+%files utils
+%{_bindir}/mkbl4
+%{_mandir}/man8/mkbl4*
+
+%changelog
+* Sun Jul 11 2004 Mr. Sam <sam@email-scan.com> - sox-1
+- Initial build.
+

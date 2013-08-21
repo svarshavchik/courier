@@ -1,0 +1,193 @@
+#ifndef	courier_h
+#define	courier_h
+/*
+** Copyright 1998 - 2012 Double Precision, Inc.
+** See COPYING for distribution information.
+*/
+
+#if	HAVE_CONFIG_H
+#undef	PACKAGE
+#undef	VERSION
+#include	"config.h"
+#endif
+#include	<stdio.h>
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
+#define	MAILUID		@mailuid@
+#define	MAILGID		@mailgid@
+#define	MAILUSER	"@mailuser@"
+#define	MAILGROUP	"@mailgroup@"
+
+#define	COURIER_HOME	"@prefix@"
+
+#define	COURIER_COPYRIGHT	"@COPYRIGHT@"
+
+#define	HAVE_LDAP	@HAVE_LDAP@
+/* Whether to compile courierldapalias */
+
+#define	MSGSDIR		LOCALSTATEDIR "/msgs"
+#define	MSGQDIR		LOCALSTATEDIR "/msgq"
+#define	TMPDIR		LOCALSTATEDIR "/tmp"
+#define TRACKDIR	LOCALSTATEDIR "/track"
+#define	MODULEDIR	LIBEXECDIR    "/courier/modules"
+#define	FILTERDIR	SYSCONFDIR    "/filters"
+
+#define	ALIASDIR	SYSCONFDIR    "/aliasdir"
+
+#define	RW_VERLO	0
+#define	RW_VERHI	0
+
+#define	CRLF	"\r\n"
+
+#define	TRIPLEBOUNCE	"#@[]"
+		/* Envelope sender on double bounces */
+
+typedef char *my_caddr_t;
+
+struct rfc822token;
+
+struct rw_install_info {
+        int rw_verlo;
+        int rw_verhi;
+	const char *server_id;
+	const char *courier_home;
+        } ;
+
+struct rw_info {
+	int mode;		/* See below */
+	struct rfc822token *ptr;
+	void (*err_func)(int, const char *, struct rw_info *);
+	const struct rfc822token *sender;
+	const struct rfc822token *host;	/* For courieruucp only */
+	const char *smodule;	/* Only when RW_SUBMIT|RW_ENVRECIPIEN set */
+	void *udata;
+	} ;
+
+#define	RW_ENVSENDER	1	/* Rewrite envelope sender */
+#define	RW_ENVRECIPIENT	2	/* Rewrite envelope recipient */
+#define	RW_HEADER	4	/* Rewrite header address */
+#define	RW_OUTPUT	8	/* Rewrite from output */
+#define	RW_SUBMIT	16	/* Submitting a message */
+
+#define	RW_FILTER	32	/* Filtering enabled */
+#define	RW_EXPN		64	/* expn */
+#define	RW_VERIFY	128
+
+#define	RW_SUBMITALIAS	256	/* Needed by module.local */
+
+#define	DSN		"dsn"	/* DSN generating transport module */
+
+struct rw_list {
+        /* struct rw_list *next; */
+        int rw_version;
+        const char *module_id;
+        void (*rewrite)(struct rw_info *, void (*)(struct rw_info *));
+        void (*rewrite_del)(struct rw_info *, void (*)(struct rw_info *),
+                    void (*)(struct rw_info *, const struct rfc822token *host,
+                                const struct rfc822token *addr));
+	int  (*filter_msg)(const char *,	/* Sending module */
+			int,			/* File descriptor */
+			const char *,		/* Host */
+			const char *,		/* Address */
+			const char *,		/* Envelope return address */
+			char *,			/* Buffer for optional msg */
+			unsigned);		/* Sizeof(buffer) */
+	} ;
+
+void set_courierdir(const char *);
+const char *courierdir();
+void *courier_malloc(unsigned);
+
+struct ctlfile;
+struct rfc822token;
+void rw_init_verbose(int);
+int rw_init_courier(const char *);
+extern int rw_init_verbose_flag;
+
+void rw_info_init(struct rw_info *, struct rfc822token *,
+		void (*)(int, const char *, struct rw_info *));
+
+struct stat;
+char	*readfile(const char *, struct stat *);
+void	removecomments(char *);
+char	*makeerrmsgtext(int, const char *);
+void	domainlower(char *);
+void	locallower(char *);
+void	gettmpfilenameargs(const char **, const char **, const char **);
+void	getnewtmpfilenameargs(const char **, const char **, const char **);
+char	*mktmpfilename();
+char	*dsnencodeorigaddr(const char *);
+
+int	freespace(const char *,	/* Filename */
+	unsigned long *,	/* # of blocks on fs */
+	unsigned long *,	/* # of blocks free */
+	unsigned long *,	/* # of inodes on fs */
+	unsigned long *,	/* # of inodes free */
+	unsigned *);		/* Block size */
+
+void	trigger(const char *);
+int	trigger_open(int);
+
+#define	TRIGGER_NEWMSG	"\n"
+#define	TRIGGER_STOP	"STOP\n"
+#define	TRIGGER_RESTART	"RESTART\n"
+#define	TRIGGER_FLUSH	"FLUSH\n"
+#define	TRIGGER_FLUSHMSG	"FLUSH"
+
+void clog_open_stderr(const char *);
+void clog_open_syslog(const char *);
+void clog_start_logger(const char *);
+void clog_msg_start_info();
+void clog_msg_start_err();
+void clog_msg_str(const char *);
+void clog_msg_int(int);
+void clog_msg_uint(unsigned);
+void clog_msg_ulong(unsigned long);
+void clog_msg_send();
+void clog_msg_errno();
+void clog_msg_prerrno();
+
+const char *config_me();		/* me config file */
+const char *config_esmtphelo();		/* helohost config file */
+const char *config_msgidhost();		/* msgidhost config file */
+const char *config_defaultdomain();	/* defaultdomain config file */
+const char *config_gethostname();	/* gethostname() call */
+const char *config_batchsize();		/* Max addresses per message */
+const char *config_defaultdelivery();	/* default delivery instructions */
+const char *config_maildropmda();	/* Location of the maildrop MDA */
+const char *config_maildropfilter();	/* Ditto, but for filtering */
+const char *config_esmtpgreeting();	/* ESMTP identification string */
+const char *config_filteracct();	/* Acct for rcpt filter for alises */
+const char *config_maildrop();		/* Where's maildrop */
+unsigned long config_sizelimit();	/* Maximum message size */
+char	*config_dsnfrom();		/* Complete From: address for DSNs */
+size_t	config_dsnlimit();		/* Max size of msg returned in DSN */
+
+const char *dsn_sender(struct ctlfile *, unsigned, int);
+					/* Determine if this delivery needs
+					** to generate a DSN.
+					*/
+
+#define	DSNDEFAULTNOTIFYDELAY	"DSNDEFAULTNOTIFYDELAY"
+/* Config set via environment variable: send delay notifications by default */
+
+int config_domaincmp(const char *, const char *, unsigned);
+int config_islocal(const char *, char **);
+int configt_islocal(const struct rfc822token *, char **);
+
+int config_is_indomain(const char *,
+		const char *);
+
+void	config_set_local_vhost(const char *);
+const char *config_get_local_vhost();
+int	config_has_vhost(const char *);
+char	*config_localfilename(const char *);
+char	*config_read1l(const char *);
+
+#ifdef	__cplusplus
+} ;
+#endif
+#endif

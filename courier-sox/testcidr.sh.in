@@ -1,0 +1,40 @@
+#! @SHELL@
+
+checkcidr() {
+ c=$1
+ a=$2
+ rc=$3
+
+ ./testcidr $c $a >/dev/null
+ R=$?
+ if test $R != $rc
+ then
+     echo "testcidr.sh failed: $a in $c: expected $rc, got $R" >&2
+     exit 1
+ fi
+}
+
+checkcidr 192.168.0.0/24 192.168.0.6 0
+checkcidr 192.168.0.0/24 192.168.1.6 1
+checkcidr 192.168.0.0/25 192.168.0.6 0
+checkcidr 192.168.0.0/25 192.168.0.127 0
+checkcidr 192.168.0.0/25 192.168.0.128 1
+checkcidr 192.168.0.0/32 192.168.0.128 1
+checkcidr 192.168.0.0/31 192.168.0.128 1
+checkcidr 192.168.0.0/31 192.168.0.0 0
+checkcidr 192.168.0.0/31 192.168.0.1 0
+checkcidr 192.168.0.0/31 192.168.0.2 1
+
+if test "@HAVE_IPV6@" = "1"
+then
+        checkcidr abc:: abc:def:0:1:2:3:4:5 0
+	checkcidr 1230::/15 1230:def:0:1:2:3:4:5 0
+	checkcidr 1230::/15 1231:def:0:1:2:3:4:5 0
+	checkcidr 1230::/15 1232:def:0:1:2:3:4:5 1
+
+        checkcidr 0:abc:: 0:abc:def:0:1:2:3:4 0
+	checkcidr 0:1230::/31 0:1230:def:0:1:2:3:4 0
+	checkcidr 0:1230::/31 0:1231:def:0:1:2:3:4 0
+	checkcidr 0:1230::/31 0:1232:def:0:1:2:3:4 1
+
+fi

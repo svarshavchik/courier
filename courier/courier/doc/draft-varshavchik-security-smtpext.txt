@@ -1,0 +1,226 @@
+
+
+
+
+
+
+1. Abstract
+
+   This document describes an [ESMTP] extension that enables the sender
+   to explicitly indicate the transport security level the mail system
+   must use in delivering the given message.
+
+   The SECURITY extension can also be used to establish secure mail
+   delivery channels between trusted hosts, connected by an untrusted
+   public network.
+
+2. Introduction
+
+   [STARTTLS] defines an SMTP service extension for using TLS/SSL to
+   send mail between ESMTP mail relays. [STARTTLS] is an optional SMTP
+   extension, but sometimes the sender might wish to require that
+   [STARTTLS], or an equivalent, must be used to deliver a particular
+   message.  Even if two mail nodes - the sending and the receiving
+   nodes - are set up to use [STARTTLS], there are known methods of
+   attack - such as [DNS] cache poisoning - which can be used to
+   intercept mail traffic.
+
+3. Framework for the SECURITY SMTP transport extension
+
+   This [ESMTP] transport extension is laid out as follows.
+
+      (1) The name of the SMTP transport extension defined here is
+          Message Security Level.
+
+      (2) The EHLO keyword associated with this extension is SECURITY.
+
+      (3) The SECURITY EHLO keyword takes a comma-delimited list as a
+          parameter.
+
+      (4) One optional ESMTP keyword SECURITY is associated with the
+          MAIL FROM command. This parameter takes a comma-delimited list
+          as a parameter.
+
+      (5) No additional ESMTP verbs are defined by this extension.
+
+      (6) The next section specifies how support for this extension
+          affects the behavior of a server and client SMTP.
+
+4. The SECURITY SMTP extension
+
+   The EHLO keyword SECURITY takes a comma-separated list of words as an
+   argument.  This document defines two words that may appear in the
+   EHLO SECURITY list:
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 1]
+
+SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
+
+
+          NONE      - No security.
+
+          STARTTLS  - Must use STARTTLS to deliver the message.
+
+
+   The optional SECURITY ESMTP keyword to the MAIL FROM command MUST use
+   one of these words as a parameter (if the SECURITY keyword is
+   provided at all).  This is used to select the requested security
+   level in transmitting this message
+
+   SECURITY=NONE essentially requests no security whatsoever, for this
+   message.  It is equivalent to complete absence of an explicit
+   SECURITY setting.
+
+   SECURITY=STARTTLS specifies that the mail relay MUST use [STARTTLS]
+   with a remote mail node.  The mail relay ignores this option if it
+   delivers the message to a local mailbox.  The sending mail relay MUST
+   also verify the X.509 certificate received from the remote mail relay
+   during TLS negotiation.  The remote relay’s X.509 certificate MUST be
+   signed by a certificate authority that is known and trusted by the
+   sending relay.  If the remote relay does not support [STARTTLS], or
+   is unable to provide a satisfactory X.509 certificate, the message
+   MUST be returned as undeliverable.
+
+   Note that [STARTTLS] allows the mail node to initially advertise
+   STARTTLS as its only [ESMTP] extension, until TLS is established.
+   Therefore, TLS MUST be established first, before checking for the
+   SECURITY [ESMTP] extension.
+
+   Note that after TLS is established, the EHLO no longer shows
+   STARTTLS, since TLS is already being used, and EHLO will now list the
+   SECURITY keyword without a STARTTLS keyword.  SECURITY may also
+   appear without STARTTLS even if TLS has not been established.  This
+   situation may happen with a connection over an internal, secure
+   network, to a mail firewall, essentially instructing the mail
+   firewall to use SECURITY to deliver the message over an external
+   network, even though TLS is not necessary to forward the mail from
+   the sender over the secure, internal, network.
+
+   A mail relay MAY automatically "upgrade" the SECURITY level of a
+   message based on the mail relay’s administrative policies.  A node
+   MUST NOT automatically downgrade the SECURITY level.  For the purpose
+   of determining the security level SECURITY=STARTTLS is considered to
+   be more secure than SECURITY=NONE.  This allows the implementation of
+   a secure mail delivery framework between trusted nodes, over an
+   untrusted network, without any modification to existing mail user
+   agents.
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 2]
+
+SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
+
+
+5. Example
+
+       220 example.com ESMTP
+       EHLO domain.com
+       250-example.com ESMTP
+       250 STARTTLS
+       STARTTLS
+       220 Go ahead.
+       [4m(TLS[24m [4mnegotiation[24m [4mtakes[24m [4mplace)[0m
+       EHLO domain.com
+       250-example.com ESMTP
+       250-SECURITY=NONE,STARTTLS
+       250-SIZE
+       250-DSN
+       250 HELP
+       MAIL FROM:<itny-out@domain.com> SIZE=1250 SECURITY=STARTTLS
+       250 Ok
+       [4m(Normal[24m [4mSMTP[24m [4mdialogue[24m [4mcontinues...)[0m
+
+6. Delivery Status Notifications
+
+   [DSN] messages generated for a message with any SECURITY keyword MUST
+   also use the same SECURITY keyword for the DSN.  This is because DSNs
+   may include portions of the original message.  The presumption is
+   that if a secure path existed between the sender, and the DSN-
+   generating node, a return secure path also exists.
+
+7. Security concerns
+
+   Note that it is not necessary for a mail client to negotiate TLS/SSL
+   in order to submit the message for delivery.  A mail node SHOULD
+   advertise and enable SECURITY in both plaintext and TLS/SSL-secured
+   sessions.
+
+   The SECURITY extension allows a fairly straightforward way to set up
+   a secure mail transmission infrastructure between trusted hosts over
+   a public, untrusted, network.  This is done by installing X.509
+   certificates signed by a trusted certificate authority, then using
+   SECURITY to require [STARTTLS] (or configuring the mail relay’s
+   configuration to automatically upgrade SECURITY for outgoing
+   messages).
+
+   The trusted CA must be a private CA that is used only by these nodes.
+   The secure mail traffic can still be intercepted if a public CA is
+   used.  This is because other techniques, such as IP address spoofing
+   or [DNS] cache poisoning, can be used to redirect mail to a node with
+   a valid certificate signed by a public CA.
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 3]
+
+SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
+
+
+   Note that a trusted mail node CAN use DNS cache poisoning to
+   intercept mail addressed to another trusted mail node, since the
+   attacker will have a certificate signed by the private CA.  It is
+   important to understand that the SECURITY extension is designed to
+   defend against attacks from untrusted mail nodes only.
+
+   The SECURITY extension’s scope is limited to delivery of a message to
+   the recipient’s mailbox.  Once a message is delivered, it is the
+   recipient’s responsibility to access the message in a secure
+   environment, such as by using SSL/TLS-wrapped versions of existing
+   mailbox access protocols.
+
+8. References
+
+   [ESMTP]    Klensin, J., Freed, N., Rose, M., Stefferud, E., Crocker,
+              D.  "SMTP Service Extensions", RFC 1425, United Nations
+              University, Innosoft International, Inc., Dover Beach
+              Consulting, Inc., Network Management Associates, Inc., The
+              Branch Office, February 1993
+
+   [STARTTLS] Hoffman, P., "SMTP Service Extension for Secure SMTP over
+              TLS", RFC 2487, Internet Mail Consortium, January 1999
+
+   [DSN]      Moore, K. "SMTP Service Extension for Delivery Status
+              Notifications", RFC 1891, University of Tennessee, January
+              1996.
+
+   [DNS]      Mockapetris, P., "Domain Names - Implementation and
+              Specification", RFC 1035, ISI, November 1987
+
+9. Author’s address
+
+   Sam Varshavchik
+   Double Precision, Inc.
+   402 Main Street Suite 100-241
+   Metuchen, NJ 08840
+   <mrsam@courier-mta.com>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 4]

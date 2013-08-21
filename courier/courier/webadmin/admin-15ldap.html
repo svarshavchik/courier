@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <title>@PACKAGE@ @VERSION@ - LDAP</title>
+  <!--
+
+  [#SAVED=<p><span style="color: #006000">Changed saved</span></p>#]
+  [#REQUIRED=<p><font style="color: #ff0000" size="+1">ERROR: A required field has not been set.  Enter the required field below.</font></p>#]
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<h1><tt>@PACKAGE@ @VERSION@</tt> - LDAP</h1>
+@ERROR@
+
+<form method="post" action="15ldap">
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <th colspan="2" align="left">LDAP server login</th>
+      </tr>
+      <tr>
+        <td>Server URL (ldap://...):</td>
+        <td><tt><input type="text" size="20" name="URI"
+          value="@URI@" /></tt></td>
+      </tr>
+      <tr>
+        <td>Admin DN:</td>
+        <td><tt><input type="text" size="20" name="BINDDN"
+          value="@BINDDN@" /></tt></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>For security reasons, set the password manually, by editing the
+          <tt>authldaprc</tt> file, <em>before making any changes on this
+          screen!</em></td>
+      </tr>
+      <tr>
+        <td>Timeout:</td>
+        <td><tt><input type="text" size="3" name="TIMEOUT"
+          value="@TIMEOUT@" /></tt> seconds</td>
+      </tr>
+      <tr>
+        <td align="right">@AUTHBIND@</td>
+        <td>Rebind as the authenticated user, to validate the password</td>
+      </tr>
+      <tr>
+        <th colspan="2" align="left">LDAP attributes:</th>
+      </tr>
+      <tr>
+        <td>LDAP Base DN:</td>
+        <td><tt><input type="text" size="20" name="BASEDN"
+          value="@BASEDN@" /></tt></td>
+      </tr>
+      <tr>
+        <td>Account:</td>
+        <td><tt><input type="text" size="20" name="MAIL"
+        value="@MAIL@" /></tt></td>
+      </tr>
+      <tr>
+        <td>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tbody>
+              <tr>
+                <td>Default domain:</td>
+                <td align="right"><tt>@</tt></td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+        <td><tt><input type="text" size="20" name="DOMAIN"
+          value="@DOMAIN@" /></tt> (optional)</td>
+      </tr>
+      <tr>
+        <td>Home directory:</td>
+        <td><tt><input type="text" size="20" name="HOMEDIR"
+          value="@HOMEDIR@" /></tt></td>
+      </tr>
+      <tr>
+        <td colspan="2"><hr />
+        </td>
+      </tr>
+      <tr>
+        <td>Encrypted password:</td>
+        <td><tt><input type="text" size="20" name="CRYPTPW"
+          value="@CRYPTPW@" /></tt></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>and/or</td>
+      </tr>
+      <tr>
+        <td>Cleartext password:</td>
+        <td><tt><input type="text" size="20" name="CLEARPW"
+          value="@CLEARPW@" /></tt></td>
+      </tr>
+      <tr>
+        <td colspan="2"><hr />
+        </td>
+      </tr>
+      <tr>
+        <td>Userid:</td>
+        <td><tt><input type="text" size="20" name="UID"
+        value="@UID@" /></tt></td>
+      </tr>
+      <tr>
+        <td>Groupid:</td>
+        <td><tt><input type="text" size="20" name="GID"
+        value="@GID@" /></tt></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>or</td>
+      </tr>
+      <tr>
+        <td>Global userid:</td>
+        <td><tt><input type="text" size="20" name="GLOB_UID"
+          value="@GLOB_UID@" /></tt> (system account)</td>
+      </tr>
+      <tr>
+        <td>Global groupid:</td>
+        <td><tt><input type="text" size="20" name="GLOB_GID"
+          value="@GLOB_GID@" /></tt> (system account)</td>
+      </tr>
+      <tr>
+        <td colspan="2"><hr />
+        </td>
+      </tr>
+      <tr>
+        <td>Non-default mail delivery instructions:</td>
+        <td><tt><input type="text" size="20" name="DEFAULTDELIVERY"
+          value="@DEFAULTDELIVERY@" /></tt> (optional)</td>
+      </tr>
+      <tr>
+        <td>Non-default maildir:</td>
+        <td><tt><input type="text" size="20" name="MAILDIR"
+          value="@MAILDIR@" /></tt> (optional)</td>
+      </tr>
+      <tr>
+        <td>Maildir quota:</td>
+        <td><tt><input type="text" size="20" name="MAILDIRQUOTA"
+          value="@MAILDIRQUOTA@" /></tt> (optional)</td>
+      </tr>
+      <tr>
+        <td>Full name:</td>
+        <td><tt><input type="text" size="20" name="FULLNAME"
+          value="@FULLNAME@" /></tt> (optional)</td>
+      </tr>
+      <tr>
+        <td>Additional Query Filter:</td>
+        <td><tt><input type="text" size="20" name="FILTER"
+          value="@FILTER@" /></tt> (optional)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <input type="submit" value="Save" name="Save" /></td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+<hr />
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getsubfolders">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getSubFolders</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getSubFolders</refname>
+      <refpurpose>Enumerate subfolders</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+const mail::folder *folder;
+mail::ACCOUNT::FolderList folderList;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getSubFolders</function></funcdef>
+	  <paramdef><parameter>folder</parameter></paramdef>
+	  <paramdef><parameter>folderList</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+      <literallayout>
+size_t nFolders=folderList::size();
+const mail::folder *folder=folderList[n];
+</literallayout>
+
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+A mail account contains folders that are arranged in a tree-like
+hierarchy.
+<function>mail::ACCOUNT::getSubFolders</function> enumerates
+<parameter>folder</parameter>'s
+subfolders
+(<parameter>folder</parameter> is obtained from a previous
+<function>mail::ACCOUNT::getSubFolders</function> or a
+<link linkend="account-gettoplevelfolders"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getTopLevelFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+call).</para>
+      <note>
+         <para>
+Use
+<link linkend="folder-hassubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::hasSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+to check if
+<parameter>folder</parameter> contains subfolders, and invoke
+<function>mail::ACCOUNT::getSubFolders</function> only if
+<function>mail::folder::hasSubFolders</function> returns true.</para>
+      </note>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+      &libmail-account-return;
+
+      <para>
+See
+<link linkend="account-gettoplevelfolders"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getTopLevelFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for additional notes and instructions on handling folder lists.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-getparentfolder"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getParentFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-gettoplevelfolders"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getTopLevelFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

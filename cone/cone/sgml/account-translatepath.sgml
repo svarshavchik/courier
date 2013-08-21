@@ -1,0 +1,58 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-translatepath">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::translatePath</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::translatePath</refname>
+      <refpurpose>Convert readable folder path to internal folder path</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>std::string path=mail-&gt;<function>translatePath</function></funcdef>
+	  <paramdef>std::string <parameter>folderPath</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      &libmail-translatepath1;
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-translatepath2;
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-getfolderfrompath"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromPath</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderfromstring"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromString</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-setappcharset"><citerefentry>
+	    <refentrytitle>mail::setAppCharset</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

@@ -1,0 +1,69 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getfolderindexinfo">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getFolderIndexInfo</refname>
+      <refpurpose>Return message status</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::messageInfo msgInfo=mail-&gt;<function>getFolderIndexSize</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::ACCOUNT::getFolderIndexInfo</function>
+returns a structure that contains a message's unique identifier, and the
+message's current status flags.
+&libmail-amsgnum;
+</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-messageinfo;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderkeywordinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderKeywordInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getmessageenvelope"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageEnvelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getmessagestructure"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMessageStructure</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getmyrights"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getMyRights</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

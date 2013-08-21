@@ -1,0 +1,171 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>courierperlfilter</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>courierperlfilter</refname>
+    <refpurpose>Sample Perl-based mail filter</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">filterctl</command>
+      <group choice="opt" rep="norepeat">
+	<arg choice="opt" rep="norepeat">start</arg>
+	<arg choice="opt" rep="norepeat">stop</arg>
+      </group>
+      <arg choice="opt" rep="norepeat">perlfilter</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+This is an example global mail filter that uses an embedded Perl script.
+"Embedded" means that the Perl interpreter is loaded once, and the same Perl
+code is repeatedly called to accept or reject incoming messages, one by one.
+Perl filtering is relatively time consuming (compared to filtering in C or
+C++), and excessive delays in mail filters result in incoming mail being
+deferred (rejected with a temporary error code).  Therefore the
+<command moreinfo="none">perlfilter</command> wrapper can create multiple
+<command moreinfo="none">perlfilter</command>
+processes, so that multiple processes are used to filter incoming mail.</para>
+
+    <para>
+<command moreinfo="none">perlfilter</command> requires Perl 5.004 or higher. The best way to
+create a Perl filter is to start with the sample filter,
+<filename moreinfo="none">@datadir@/perlfilter-example.pl</filename>. This filter reject messages that
+contain an excessively long Date: header (designed to crash certain
+poorly-written mail clients). Use it as a basis for writing your own filter.
+You can install your filter in any convenient location, then initialize the
+<filename moreinfo="none">@sysconfdir@/filters/perlfilter</filename> configuration file, as described
+below. Run <command moreinfo="none">filterctl start perlfilter</command> to activate filtering (if
+necessary, run <command moreinfo="none">courierfilter start</command> to start the mail filtering
+subsystem).</para>
+
+    <refsect2>
+<title>Setting up a Perl script</title>
+
+      <para>
+Most of the ugly details of connecting the Perl script to Courier's mail
+filtering engine is taken care of by the sample
+<filename moreinfo="none">perlfilter-example.pl</filename> script. One big no-no: the script MAY NOT
+change the current directory. Anything else goes, for the most part.  Loading
+other modules and classes, pretty much anything else you can do with Perl, is
+allowed.</para>
+
+      <para>
+The Perl script, just like any other mail filtering module, receives a
+pointer to a data file and one or more control files, each time a message is
+submitted to Courier for delivery. The sample script calls the
+<function moreinfo="none">filterdata</function>() function to process the data file. The data file
+contains the actual message. The <function moreinfo="none">filtercontrol</function>() function is
+called to process each control file.  The control file contains recipient and
+message metadata.  There may be more than one control file for each message.
+The example script includes an implementation of <function moreinfo="none">filterdata</function>()
+that blocks messages with corrupted headers. The example script doesn't do
+anything interesting with <function moreinfo="none">filtercontrol</function>().</para>
+
+      <para>
+<function moreinfo="none">filterdata</function>() and <function moreinfo="none">filtercontrol</function>() must return an
+empty string if no serious objections are raised for this message. Any other
+return string is interpreted as an SMTP-style error code that is used to
+reject the message.  Care must be taken that any error messages are formatted
+strictly according to the format of SMTP error messages (even though the
+message may not actually come in via SMTP).</para>
+
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>CREDITS</title>
+
+<para>
+A lot of the Perl glue code is based on examples from the
+<literal moreinfo="none">perlembed</literal> manual page, and other sources.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <para>
+<command moreinfo="none">perlfilter</command> uses the following configuration files. Changes to
+the following files do not take effect until the filter has been stopped and
+restarted.</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/perlfilter-mode</filename></term>
+	<listitem>
+	  <para>
+If this file exists
+and contains the word "all", <command moreinfo="none">perlfilter</command> will create its
+socket in <filename moreinfo="none">@localstatedir@/allfilters</filename>, otherwise the socket
+will be created in <filename moreinfo="none">@localstatedir@/filters</filename>, see
+<ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+for more information.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/perlfilter-numprocs</filename></term>
+	<listitem>
+	  <para>
+This file contains a number that sets how many <command moreinfo="none">perlfilter</command>
+processes are
+created. The default is 5 processes. There's always an extra
+<command moreinfo="none">perlfilter</command> process that's used to clean up crashed child
+processes.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@sysconfdir@/filters/perlfilter</filename></term>
+	<listitem>
+	  <para>
+This file MUST exist and
+it must contain a single line of text with the filename of the Perl script
+to load.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename moreinfo="none">@datadir@/perlfilter-example.pl</filename></term>
+	<listitem>
+	  <para>
+This is a sample Perl
+script of the kind that <filename moreinfo="none">@sysconfdir@/filters/perlfilter</filename>
+points to.  Use it as an example of writing your own Perl filters.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+Please exercise good judgment in writing Perl-based filters.  They should
+be reasonably fast, and do not allocate megabytes of memory.  They should not
+be very promiscuous in creating global Perl variables, and should clean up
+after themselves.  The current Perl wrapper does not destroy the Perl symbol
+table after each call to the filter script.  However, do not take that for
+granted. This may change in the future.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>

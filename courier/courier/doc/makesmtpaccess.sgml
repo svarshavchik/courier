@@ -1,0 +1,222 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>makesmtpaccess, makesmtpaccess-msa</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>makesmtpaccess</refname>
+    <refpurpose>Build ESMTP server access file</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">makesmtpaccess</command>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">makesmtpaccess-msa</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">makesmtpaccess</command> rebuilds the contents of the
+<filename moreinfo="none">@sysconfdir@/smtpaccess.dat</filename> database from the contents of
+the
+files in the <filename moreinfo="none">@sysconfdir@/smtpaccess</filename> directory. When the
+<command moreinfo="none">esmtpd</command> script starts <command moreinfo="none">couriertcpd</command>, the
+script
+specifies <filename moreinfo="none">@sysconfdir@/smtpaccess.dat</filename> file to control
+access to
+the <application moreinfo="none">Courier</application> mail server's
+ESMTP daemon. The <command moreinfo="none">makesmtpaccess</command> script
+must be
+run before any changes in the <filename moreinfo="none">@sysconfdir@/smtpaccess</filename>
+directory take effect.</para>
+
+    <para>
+The
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> manual page
+describes the general format of the access file.</para>
+
+    <para>
+The default
+<application moreinfo="none">Courier</application>
+mail server configuration uses the same access file,
+<filename moreinfo="none">@sysconfdir@/smtpaccess.dat</filename> for both the regular ESMTP server,
+and the message submission server on port 587
+(<ulink url="http://www.rfc-editor.org/rfc/rfc2476.txt">RFC 2476</ulink>).
+It is possible to
+use different access files. To do so, create a different access file, edit
+<filename moreinfo="none">@sysconfdir@/esmtpd-msa</filename>, and set
+<envar>ACCESSFILE</envar> to the
+filename of the access file directory (the directory containing the plain text
+files, not the .dat file).  Then, use <command moreinfo="none">makesmtpaccess-msa</command>
+instead
+of <command moreinfo="none">makesmtpaccess</command> to build the .dat file.</para>
+
+    <refsect2>
+      <title>The <filename moreinfo="none">smtpaccess</filename> configuration file</title>
+
+      <para>
+The
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> manual page
+describes the generic format of the access file.
+The access file specifies
+what should be done with connections from defined IP address ranges.
+The basic choices are to accept or reject the connection.
+Also, the generic format of the access file allows arbitrary environment
+variables to be set based on the connection's remote IP address.</para>
+
+<para>
+The <application moreinfo="none">Courier</application>
+mail server's ESMTPD server understands the following environment variables,
+which may be set in the access file:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>BLOCK</term>
+	  <listitem>
+	    <para>
+If this variable is set to a non-empty value,
+all mail will be rejected for this connection.  The
+contents of the environment variable will be used as the error
+message.
+This is not the same as the <command moreinfo="none">couriertcpd</command> access file
+setting that immediately drops the connection.
+The incoming connection is accepted, but every message will be rejected.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>FAXRELAYCLIENT</term>
+	  <listitem>
+	    <para>
+Allow the client to send faxes via the
+<ulink url="courierfax.html"><citerefentry><refentrytitle>courierfax</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+module.</para>
+	    <note>
+	      <para>
+When ESMTP authentication is enabled, a successful authentication
+automatically sets <envar>FAXRELAYCLIENT</envar>.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>RELAYCLIENT</term>
+	  <listitem>
+	    <para>
+Allow the client to relay mail.
+</para>
+	    <note>
+	      <para>
+When ESMTP authentication is enabled, a successful authentication
+automatically sets <envar>RELAYCLIENT</envar>.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+The following options are typically set globally in the
+<filename moreinfo="none">esmtpd</filename> configuration file, but may be overriden
+in the <filename moreinfo="none">smtpaccess</filename> configuration file:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>BOFHCHECKDNS</term>
+	  <listitem>
+	    <para>
+Do not check the return address's domain in DNS if this environment
+variable is set to <literal moreinfo="none">0</literal>.
+The default value of <envar>BOFHCHECKDNS</envar> is 1.</para>
+
+	    <note>
+	      <para>
+Turning off the DNS check disables a number of options in the
+<filename moreinfo="none">bofh</filename> configuration file.
+See
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> for more information.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+
+	<varlistentry>
+	  <term>BOFHCHECKHELO</term>
+	  <listitem>
+	    <para>
+Set this variable to <literal moreinfo="none">1</literal> to check the
+<replaceable>hostname</replaceable> argument to the
+ESMTP HELO/EHLO command, as follows:</para>
+
+	    <itemizedlist>
+	      <listitem>
+		<para>
+A <replaceable>hostname</replaceable> that's actually an IP address, and
+is the same as the connecting ESMTP client's IP address, is valid.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Otherwise <replaceable>hostname</replaceable> should be a valid DNS name
+with <literal moreinfo="none">MX</literal> and/or
+<literal moreinfo="none">A</literal> records, with at least one record matching the
+connecting ESMTP client's IP address.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+An ESMTP client with relaying privileges (either due to
+<envar>RELAYCLIENT</envar> explicitly set, or if it succesfully authenticates)
+may use anything for an EHLO/HELO.
+The EHLO/HELO argument coming from an authenticated/relaying client is not
+checked.</para>
+	      </listitem>
+	    </itemizedlist>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>BOFHNOEXPN</term>
+	  <listitem>
+	    <para>
+Disable the <literal moreinfo="none">EXPN</literal> command if this environment variable
+is set to <literal moreinfo="none">1</literal>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>BOFHNOVRFY</term>
+	  <listitem>
+	    <para>
+Disable the <literal moreinfo="none">VRFY</literal> command if this environment variable
+is set to <literal moreinfo="none">1</literal>.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+Other useful environment variables are listed in the
+<ulink url="submit.html"><citerefentry><refentrytitle>submit</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> manual page.</para>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="submit.html"><citerefentry><refentrytitle>submit</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

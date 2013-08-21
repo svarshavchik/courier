@@ -1,0 +1,247 @@
+##VERSION: $Id: authsqliterc 17 2011-04-04 02:07:37Z mrsam $
+#
+# Copyright 2012 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+# authsqliterc created from authsqliterc.dist by sysconftool
+#
+# Each line in this file must follow the following format:
+#
+# field[spaces|tabs]value
+#
+# That is, the name of the field, followed by spaces or tabs, followed by
+# field value.  Trailing spaces are prohibited.
+
+
+##NAME: LOCATION:0
+#
+# The SQLite database. You must create this database beforehand, and create
+# the users table, as defined below.
+
+SQLITE_DATABASE		/var/users.db
+
+##NAME: SQLITE_USER_TABLE:0
+#
+# Suggested format of the table specified by SQLITE_USER_TABLE:
+#
+# CREATE TABLE passwd (
+#        id                    text not null primary key,
+#        crypt                 text,   # Either...
+#        clear                 text,   # ... or
+#        name                  text,
+#        uid                   int,
+#        gid                   int,
+#        home                  text not null,
+#        maildir               text,
+#        defaultdelivery       text,
+#        quota                 text,
+#        options               text);
+#
+# Use either crypt or clear, to specify whether cleartext or crypted passwords
+# get used (and define either SQLITE_CRYPT_PWFIELD or SQLITE_CLEAR_PWFIELD,
+# below, accordingly).
+
+SQLITE_USER_TABLE	passwd
+
+##NAME: SQLITE_CRYPT_PWFIELD:0
+#
+# Either SQLITE_CRYPT_PWFIELD or SQLITE_CLEAR_PWFIELD must be defined.  Both
+# are OK too. crypted passwords go into SQLITE_CRYPT_PWFIELD, cleartext
+# passwords go into SQLITE_CLEAR_PWFIELD.  Cleartext passwords allow
+# CRAM-MD5 authentication to be implemented.
+
+SQLITE_CRYPT_PWFIELD	crypt
+
+##NAME: SQLITE_CLEAR_PWFIELD:0
+#
+#
+# SQLITE_CLEAR_PWFIELD	clear
+
+##NAME: SQLITE_DEFAULT_DOMAIN:0
+#
+# If DEFAULT_DOMAIN is defined, and someone tries to log in as 'user',
+# we will search for 'user@DEFAULT_DOMAIN' instead.
+#
+#
+# DEFAULT_DOMAIN		example.com
+
+##NAME: SQLITE_UID_FIELD:0
+#
+# Other fields in the sqlite table:
+#
+# SQLITE_UID_FIELD - contains the numerical userid of the account
+#
+SQLITE_UID_FIELD		uid
+
+##NAME: SQLITE_GID_FIELD:0
+#
+# Numerical groupid of the account
+
+SQLITE_GID_FIELD		gid
+
+##NAME: SQLITE_LOGIN_FIELD:0
+#
+# The login id, default is id.  Basically the query is:
+#
+#  SELECT SQLITE_UID_FIELD, SQLITE_GID_FIELD, ... WHERE id='loginid'
+#
+
+SQLITE_LOGIN_FIELD	id
+
+##NAME: SQLITE_HOME_FIELD:0
+#
+
+SQLITE_HOME_FIELD	home
+
+##NAME: SQLITE_NAME_FIELD:0
+#
+# The user's name (optional)
+
+SQLITE_NAME_FIELD	name
+
+##NAME: SQLITE_MAILDIR_FIELD:0
+#
+# This is an optional field, and can be used to specify an arbitrary
+# location of the maildir for the account, which normally defaults to
+# $HOME/Maildir (where $HOME is read from SQLITE_HOME_FIELD).
+#
+# You still need to provide a SQLITE_HOME_FIELD, even if you uncomment this
+# out.
+#
+# SQLITE_MAILDIR_FIELD	maildir
+
+##NAME: SQLITE_DEFAULTDELIVERY:0
+#
+# Courier mail server only: optional field specifies custom mail delivery
+# instructions for this account (if defined) -- essentially overrides
+# DEFAULTDELIVERY from ${sysconfdir}/courierd
+#
+# SQLITE_DEFAULTDELIVERY defaultdelivery
+
+##NAME: SQLITE_QUOTA_FIELD:0
+#
+# Define SQLITE_QUOTA_FIELD to be the name of the field that can optionally
+# specify a maildir quota.  See README.maildirquota for more information 
+#
+# SQLITE_QUOTA_FIELD	quota
+
+##NAME: SQLITE_AUXOPTIONS:0
+#
+# Auxiliary options.  The SQLITE_AUXOPTIONS field should be a char field that
+# contains a single string consisting of comma-separated "ATTRIBUTE=NAME"
+# pairs.  These names are additional attributes that define various per-account
+# "options", as given in INSTALL's description of the "Account OPTIONS"
+# setting.
+#
+# SQLITE_AUXOPTIONS_FIELD	options
+#
+# You might want to try something like this, if you'd like to use a bunch
+# of individual fields, instead of a single text blob:
+#
+# SQLITE_AUXOPTIONS_FIELD	"disableimap=" || disableimap || ",disablepop3=" || disablepop3 || ",disablewebmail=" || disablewebmail || ",sharedgroup=" || sharedgroup
+#
+# This will let you define fields called "disableimap", etc, with the end result
+# being something that the OPTIONS parser understands.
+
+
+##NAME: SQLITE_WHERE_CLAUSE:0
+#
+# This is optional, SQLITE_WHERE_CLAUSE can be basically set to an arbitrary
+# fixed string that is appended to the WHERE clause of our query
+#
+# SQLITE_WHERE_CLAUSE	server='mailhost.example.com'
+
+##NAME: SQLITE_SELECT_CLAUSE:0
+#
+# This is optional, SQLITE_SELECT_CLAUSE can be set when you have a database,
+# which is structuraly different from the proposed layout. The fixed string will
+# be used to do a SELECT operation on database, which should return fields
+# in order specified bellow:
+#
+# username, cryptpw, clearpw, uid, gid, home, maildir, quota, fullname, options
+#
+# The username field should include the domain (see example below).
+#
+# Enabling this option causes ignorance of any other field-related
+# options, excluding default domain.
+#
+# There are two variables, which you can use. Substitution will be made
+# for them, so you can put entered username (local part) and domain name
+# in the right place of your query. These variables are:
+#	 	$(local_part), $(domain), $(service)
+#
+# If a $(domain) is empty (not given by the remote user) the default domain
+# name is used in its place.
+#
+# $(service) will expand out to the service being authenticated: imap, imaps,
+# pop3 or pop3s.  Courier mail server only: service will also expand out to
+# "courier", when searching for local mail account's location.  In this case,
+# if the "maildir" field is not empty it will be used in place of
+# DEFAULTDELIVERY.  Courier mail server will also use esmtp when doing
+# authenticated ESMTP.
+#
+# For example:
+#
+# SQLITE_SELECT_CLAUSE	SELECT popbox.local_part || '@' || popbox.domain_name,\
+#			'{MD5}' || popbox.password_hash),		\
+#			popbox.clearpw,					\
+#			domain.uid,					\
+#			domain.gid,					\
+#			domain.path || '/' || popbox.mbox_name, 	\
+#			'',						\
+#			domain.quota,					\
+#			'',						\
+#			"disableimap=" || disableimap || ",disablepop3=" || \
+#                       disablepop3 || ",disablewebmail=" || disablewebmail || \
+#                              ",sharedgroup=" || sharedgroup           \
+#			FROM popbox, domain				\
+#			WHERE popbox.local_part = '$(local_part)'	\
+#			AND popbox.domain_name = '$(domain)'		\
+#			AND popbox.domain_name = domain.domain_name
+
+
+##NAME: SQLITE_ENUMERATE_CLAUSE:1
+#
+# Optional custom SQL query used to enumerate accounts for authenumerate,
+# in order to compile a list of accounts for shared folders.  The query
+# should return the following fields: name, uid, gid, homedir, maildir, options
+#
+# Example:
+# SQLITE_ENUMERATE_CLAUSE SELECT popbox.local_part || '@' || popbox.domain_name, \
+#			domain.uid,					\
+#			domain.gid,					\
+#			domain.path || '/' || popbox.mbox_name, 	\
+#			'',						\
+#			'sharedgroup=' || sharedgroup 			\
+#			FROM popbox, domain				\
+#			WHERE popbox.local_part = '$(local_part)'	\
+#			AND popbox.domain_name = '$(domain)'		\
+#			AND popbox.domain_name = domain.domain_name
+
+
+##NAME: SQLITE_CHPASS_CLAUSE:0
+#
+# This is optional, SQLITE_CHPASS_CLAUSE can be set when you have a database,
+# which is structuraly different from proposed. The fixed string will
+# be used to do an UPDATE operation on database. In other words, it is
+# used, when changing passwords. This is used by sqwebmail/Courier webmail.
+#
+# There are four variables, which you can use. Substitution will be made
+# for them, so you can put entered username (local part) and domain name
+# in the right place of your query. There variables are:
+# 	$(local_part) , $(domain) , $(newpass) , $(newpass_crypt)
+#
+# If a $(domain) is empty (not given by the remote user) the default domain
+# name is used in its place.
+# $(newpass) contains plain password
+# $(newpass_crypt) contains its crypted form
+#
+# SQLITE_CHPASS_CLAUSE	UPDATE	popbox					\
+#			SET	clearpw='$(newpass)',			\
+#				password_hash='$(newpass_crypt)'	\
+#			WHERE	local_part='$(local_part)'		\
+#			AND	domain_name='$(domain)'
+#

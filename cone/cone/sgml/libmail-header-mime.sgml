@@ -1,0 +1,118 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="header-mime">
+  <refmeta>
+    <refentrytitle>mail::Header::mime</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::Header::mime</refname>
+    <refpurpose>A structured MIME header.</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;libmail/headers.H&gt;
+
+mail::Header::mime content_type("Content-Type", "text/plain");
+
+    content_type.parameters.set_simple("charset", "iso-8859-1");
+
+mail::Header::mime content_disposition("Content-Disposition", "attachment")
+                              ("filename", "document.doc")
+                              ("name", "Monthly Sales", "iso-8859-1", "EN");
+
+std::cout &lt;&lt; content_type.toString();
+
+</literallayout>
+    </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+This class creates a structured MIME header.
+A structured MIME header, like
+<literal>Content-Type</literal> or <literal>Content-Disposition</literal>
+contains a literal value, and zero or more <quote>name=setting</quote>
+parameters, separated by semicolons.</para>
+
+    <para>
+Two arguments are provided to the constructor, the header's name, and its
+literal value.
+After constructing, use the <structfield>parameters</structfield> member
+to set the parameters.  This member has the following methods:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>set_simple(std::string name, std::string value)</term>
+	<listitem>
+	  <para>
+Set parameter <literal>name</literal> to <literal>value</literal>.
+<literal>value</literal> must contain <literal>US-ASCII</literal> text only.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>set(std::string name, std::string value, std::string charset, std::string language)</term>
+	<listitem>
+	  <para>
+Set parameter <literal>name</literal> to <literal>value</literal>.
+<literal>charset</literal> specifies <literal>value</literal>'s character
+set.
+<literal>language</literal> is optional, and
+specifies <literal>value</literal>'s language.
+<literal>value</literal> is converted to <literal>US-ASCII</literal>
+text according to
+<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>erase(std::string name)</term>
+	<listitem>
+	  <para>
+Remove parameter <literal>name</literal>.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+The <function>toString()</function> returns the header as a single text
+string: <quote><replaceable>name</replaceable>:
+<replaceable>value</replaceable></quote>.
+Long headers are folded accordingly.</para>
+
+    <refsect2>
+      <title>Dynamic parameter generation</title>
+
+      <para>
+Parameters can also be dynamically populated
+by repeatedly calling the <quote>()</quote>.</para>
+
+      <para>
+One version of the <quote>()</quote> operator receives the parameter
+name and value, and corresponds to the <function>set_simple</function>
+method.
+The second version also receives the character set and language information,
+and corresponds to the <function>set</function> function.</para>
+    </refsect2>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-encoded"><citerefentry>
+	    <refentrytitle>mail::Header::encoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-list"><citerefentry>
+	    <refentrytitle>mail::Header::list</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-plain"><citerefentry>
+	    <refentrytitle>mail::Header::plain</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+
+  <title>Courier Mail Server</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink=
+"#551A8B" alink="#FF0000">
+  <!-- Copyright 2003-2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <h1>Courier 0.56</h1>
+
+  <p>Contents of this NEWS file:</p>
+
+  <blockquote>
+    <table border="0">
+      <tbody>
+        <tr>
+          <td><a href="#intro">Introducing WebMLM</a></td>
+        </tr>
+
+        <tr>
+          <td><a href="#ssl23">The SSL mess</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </blockquote>
+
+  <h3><a name="intro" id="intro">Introducing WebMLM</a></h3>
+
+  <p>New in Courier 0.56 is the finished version of
+  <tt>WebMLM</tt>. <tt>WebMLM</tt> is a web-based interface to
+  <tt>couriermlm</tt>-managed mailing lists. <tt>WebMLM</tt>
+  implements nearly all of <tt>couriermlm</tt>'s functionality
+  through a web browser.</p>
+
+  <p>Due to that, <tt>couriermlm</tt>'s template files have
+  changed. After upgrading to this version, you must make a backup
+  copy of all of your customizations to <tt>couriermlm</tt>'s
+  template files, run <tt>couriermlm update</tt> against each
+  mailing list directory, then reapply your custom template
+  changes. This is mandatory even if you do not plan on using
+  <tt>WebMLM</tt>.</p>
+
+  <h3><a name="ssl23" id="ssl23">The SSL mess</a></h3>
+
+  <p>The default <tt>SSL3</tt> setting for <tt>TLS_PROTOCOL</tt>
+  (and <tt>SSL_PROTOCOL</tt>, in some cases) in the various
+  services' configuration files (<tt>esmtp</tt>, <tt>imap</tt>,
+  <tt>pop3</tt>, and <tt>webmail</tt>) no longer accepts legacy
+  <tt>SSL2</tt> connections. If you need legacy compatibility with
+  <tt>SSL2</tt>, change the appropriate setting from <tt>SSL3</tt>
+  to <tt>SSL23</tt>.</p>
+</body>
+</html>

@@ -1,0 +1,59 @@
+#! @SHELL@
+#
+#
+# Copyright 2000-2007 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# This is a short script to q`uickly generate a self-signed X.509 key for
+# ESMTP STARTTLS.  Normally this script would get called by an automatic
+# package installation routine.
+
+if test "@ssllib@" = "openssl"
+then
+	test -x @OPENSSL@ || exit 0
+else
+	test -x @CERTTOOL@ || exit 0
+fi
+
+if test -f @mydatadir@/esmtpd.pem
+then
+	echo "@mydatadir@/esmtpd.pem already exists."
+	exit 1
+fi
+
+cleanup() {
+	rm -f @mydatadir@/esmtpd.rand
+	rm -f @mydatadir@/esmtpd.pem
+	rm -f @mydatadir@/esmtpd.key
+	rm -f @mydatadir@/esmtpd.cert
+	exit 1
+}
+
+cd @mydatadir@
+
+if test "@ssllib@" = "openssl"
+then
+	cp /dev/null @mydatadir@/esmtpd.pem
+	chmod 600 @mydatadir@/esmtpd.pem
+	chown @mailuser@ @mydatadir@/esmtpd.pem
+	dd if=@RANDOMV@ of=@mydatadir@/esmtpd.rand count=1 2>/dev/null
+	@OPENSSL@ req -new -x509 -days 365 -nodes \
+		  -config @sysconfdir@/esmtpd.cnf -out @mydatadir@/esmtpd.pem -keyout @mydatadir@/esmtpd.pem || cleanup
+	@OPENSSL@ gendh -rand @mydatadir@/esmtpd.rand 512 >>@mydatadir@/esmtpd.pem || cleanup
+	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/esmtpd.pem || cleanup
+	rm -f @mydatadir@/esmtpd.rand
+else
+	cp /dev/null @mydatadir@/esmtpd.key
+	chmod 600 @mydatadir@/esmtpd.key
+	cp /dev/null @mydatadir@/esmtpd.cert
+	chmod 600 @mydatadir@/esmtpd.cert
+
+	@CERTTOOL@ --generate-privkey --outfile esmtpd.key
+	@CERTTOOL@ --generate-self-signed --load-privkey esmtpd.key --outfile esmtpd.cert --template @sysconfdir@/esmtpd.cnf
+	@CERTTOOL@ --generate-dh-params >>esmtpd.cert
+
+	cp /dev/null @mydatadir@/esmtpd.pem
+	chmod 600 @mydatadir@/esmtpd.pem
+	cat esmtpd.key esmtpd.cert >esmtpd.pem
+	rm -f esmtpd.key esmtpd.cert
+fi

@@ -1,0 +1,373 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-open">
+    <refmeta>
+      <refentrytitle>mail::folder::open</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::open</refname>
+      <refpurpose>Open a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+<literallayout>
+#include &lt;libmail/snapshot.H&gt;
+
+class myFolderCallback : public mail::callback::folder {
+
+public:
+    void newMessages();
+
+    void messagesRemoved(vector&lt; pair&lt;size_t, size_t> > &amp;removedList);
+
+    void messageChanged(size_t messageNumber);
+
+    void saveSnapshot(std::string snapshotId);
+    
+};
+
+class myRestoreSnapshot : public mail::snapshot {
+
+public:
+    void getSnapshotInfo(std::string &amp;snapshotId,
+                         size_t &amp;nMessages);
+
+    void restoreSnapshot(mail::snapshot::restore &amp;restoreCB);
+};
+
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>folder-&gt;<function>open</function></funcdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	  <paramdef>myRestoreSnapshot &amp;<parameter>restoreSnapshot</parameter></paramdef>
+	  <paramdef>myFolderCallback &amp;<parameter>folderCallback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+A mail folder must be formally "opened" before the messages in the folder
+may be accessed.
+Each mail account can have only one mail folder at any time
+Opening another folder automatically "closes" the previous folder.</para>
+
+      &libmail-open-multiple;
+
+      <refsect2>
+      	<title>Folder Updates</title>
+	<para>
+The <parameter>folderCallback</parameter> object is used to notify the
+application of changes to the folder's contents.
+The application must not destroy
+<parameter>folderCallback</parameter> until either the
+<structname>mail::account</structname> is destroyed, or another folder
+is opened.
+Changes to the folder's contents are reflected by invoking
+<parameter>folderCallback</parameter>'s methods.</para>
+
+	<para>
+<parameter>folderCallback</parameter>'s methods are usually invoked by
+
+<link linkend="mail-removemessages"><citerefentry>
+	    <refentrytitle>mail::account::removeMessages</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-updatefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-updatefolderindexflags"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexFlags</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>, and
+
+<link linkend="mail-checknewmail"><citerefentry>
+	    <refentrytitle>mail::account::checkNewMail</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+however the application must be prepared to handle any
+<parameter>folderCallback</parameter>'s method to be invoked at any time.
+Most mail servers reserve the right to notify the client of changes to the
+folder's contents at any time.</para>
+
+	<note>
+	  <para>
+As always, messages are numbered starting with 0.  That is, a folder with
+ten messages contains messages #0 through #9.</para>
+	</note>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>void newMessages()</term>
+	    <listitem>
+	      <para>
+This method is invoked whenever new messages are added to the currently
+open folder.
+The application should use
+<link linkend="mail-getfolderindexsize"><citerefentry>
+		    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+		    <manvolnum>3x</manvolnum></citerefentry></link>
+to determine how many messages now exist in the current folder, and use
+the number of messages the application already knows about to determine
+how many new messages have been added.</para>
+
+	      <para>
+Example:
+The application already knows that the folder has
+three messages.
+After <function>mail::callback::folder::newMessages</function> is invoked
+<link linkend="mail-getfolderindexsize"><citerefentry>
+		    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+		    <manvolnum>3x</manvolnum></citerefentry></link>
+now claims there are five messages in the folder.
+This means that the last two messages in the folder are new messages.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>void messagesRemoved(vector&lt; pair&lt;size_t, size_t> > &amp;removedList);</term>
+	    <listitem>
+	      <para>
+Messages were removed from the folder, and the remaining messages have been
+renumbered to fill in the gaps.
+<parameter>removedList</parameter> is an array that lists which messages
+were removed.
+Each array element contains a starting range and an ending range.
+The range <quote><literal>7-9</literal></quote> specifies that messages
+#7 through #9, three messages overall, were removed.
+The range <quote><literal>5-5</literal></quote> specifies that message
+#5 was removed.</para>
+
+	      <para>
+The remaining messages have been renumbered.
+For example, if the application knows that the folder has ten messages,
+then if <parameter>removedList</parameter> contains two ranges:
+<quote><literal>3-3</literal></quote>, and
+<quote><literal>5-7</literal></quote>, this indicates that messages #3,
+#5, #6, and #7 were removed.
+The old message #4 is now message #3,
+the old mesasge #8 is now message #4, and the old message #9 is now
+message #5, and there are now six messages left in the folder.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>void messageChanged(size_t messageNumber)</term>
+	    <listitem>
+	      <para>
+The flags of the indicated message have changed.
+The application should use
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+		    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+		    <manvolnum>3x</manvolnum></citerefentry></link>
+to read the current message flags.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect2>
+
+      <refsect2>
+	<title>Snapshots</title>
+
+	<para>
+Folder index snapshots are implemented by some mail account types.
+Folder index snapshots allow large folders to be opened quickly.
+If a folder contains many messages,
+&libname;
+may take a long time to open a folder.
+Folder index snapshots speed up the process of opening a folder which
+was recently opened.
+At this time, folder index snapshots are implemented
+with <literal>NNTP</literal>, <literal>pop3</literal>,
+and <link linkend="smap1"><literal>SMAP</literal></link>-based accounts.
+Attempts to use folder index snapshots with other account types will be
+quietly ignored.</para>
+
+	<para>
+Implementing folder index snapshots is optional.
+<parameter>restoreSnapshot</parameter> may be <literal>NULL</literal>,
+and &app; will open folder the old-fashional way, by
+patiently downloading the entire folder index when opening the folder.
+To implement snapshots the application must implemented the
+<function>saveSnapshot</function> method of its
+<structname>mail::callback::folder</structname> subclass, then
+pass a pointer to a <structname>mail::snapshot</structname> subclass to
+<function>mail::folder::open</function></para>
+
+	<para>
+Applications can pass a <literal>NULL</literal> pointer, and not define
+<function>saveSnapshot</function> if folder index snapshots are not
+needed.
+If <function>mail::folder::open</function> receives a
+non-<literal>NULL</literal> pointer, the object must not be destroyed until
+<parameter>callback</parameter>'s <function>success</function> or
+<function>fail</function> method is invoked.</para>
+
+	<para>
+When snapshots are enabled, &libname; invokes
+<function>mail::callback::folder::saveSnapshot</function> whenever a snapshot
+of the opened folder's index should be saved.
+<function>mail::callback::folder::saveSnapshot</function> gets invoked
+periodically as long as the folder remains open.
+<function>mail::callback::folder::saveSnapshot</function> receives
+an opaque identifier, <parameter>snapshotId</parameter>.
+<function>mail::callback::folder::saveSnapshot</function> should use
+<link linkend="account-getfolderindexsize"><citerefentry>
+	      <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+	      <manvolnum>3x</manvolnum></citerefentry></link>
+to obtain the number of messages in the folder, then use
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	      <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	      <manvolnum>3x</manvolnum></citerefentry></link>
+to save each message's folder index entry, alongside with the
+<parameter>snapshotId</parameter>, and the total number of messages.</para>
+
+	<para>
+<structname>mail::messageInfo</structname> has a convenient
+<function>operator string()</function> that converts the entire object
+into a string, and a corresponding constructor that initializes the entire
+<structname>mail::messageInfo</structname> object from a string.</para>
+
+	<para>
+The application needs only to save the most recent snapshot.
+<function>mail::callback::folder::saveSnapshot</function> should discard
+any previously-saved snapshot, and replace it with the current one.
+<function>mail::callback::folder::saveSnapshot</function> should not
+invoke any other &libname; methods, except
+<citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry>
+and
+<citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry>.</para>
+
+	<para>
+The <structname>mail::snapshot</structname>-subclassed object passed to
+<function>mail::folder::open</function> implements two methods:
+<function>getSnapShotInfo</function> and
+<function>restoreSnapshot</function>.
+<function>getSnapShotInfo</function> should initialize
+<parameter>snapshotId</parameter> to the opaque snapshot identifier of the
+most-recently saved snapshot, and
+<parameter>nMessages</parameter> to the number of messages in the
+snapshot.</para>
+
+	<para>
+An application that does not have a snapshot, but wishes to use snapshots
+(perhaps this is the very first time this folder was opened) should
+initialize
+<parameter>snapshotId</parameter> to an empty string, and set
+<parameter>nMessages</parameter> to zero.
+The application should not pass a <literal>NULL</literal>
+<parameter>restoreSnapshot</parameter> parameter, since that disables
+&libname;'s usage of snapshots.</para>
+
+	<para>
+After invoking
+<function>getSnapShotInfo</function>,
+&libname; will invoke
+<function>restoreSnapshot</function>,
+at which time the application needs to restore the folder index as it was
+saved by the snapshot.
+<function>restoreSnapshot</function>
+receives a reference to a
+<structname>mail::snapshot::restore</structname> object, which contains
+two methods:</para>
+
+	<variablelist>
+	  <varlistentry>
+	    <term>void restoreIndex(size_t msgNum, const mail::messageInfo &amp;msgInfo);</term>
+	    <listitem>
+	      <para>
+Repeatedly invoke this function to specify the previously saved
+<structname>mail::messageInfo</structname> of each message.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term>void abortRestore()</term>
+	    <listitem>
+	      <para>
+After restoring the entire folder index,
+<function>restoreSnapshot</function>
+should simply terminate.
+If the application cannot restore the entire folder index, for some reason,
+<function>abortRestore</function> should be invoke to invalidate any
+partially-restored index data.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+
+	<note>
+	  <para>
+With
+<literal>POP3</literal>
+accounts, message status flags are going to be preserved only when
+snapshots are used.
+The <literal>POP3</literal> does not provide any facility for saving
+message status flags; and without snapshots each time a <literal>POP3</literal>
+folder is opened all messages will be seen as new messages.
+Using snapshots saves each message's status, and restores it when the
+<literal>POP3</literal> folder is reopened.</para>
+	</note>
+
+      </refsect2>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="folder-readfolderinfo"><citerefentry>
+	    <refentrytitle>mail::folder::readFolderInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-checknewmail"><citerefentry>
+	    <refentrytitle>mail::account::checkNewMail</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+		    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+		    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-getfolderindexsize"><citerefentry>
+		    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
+		    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-removemessages"><citerefentry>
+	    <refentrytitle>mail::account::removeMessages</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-updatefolderindexflags"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexFlags</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+
+<link linkend="mail-updatefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::updateFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

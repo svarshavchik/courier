@@ -1,0 +1,61 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-openfolder">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::openFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::openFolder</refname>
+      <refpurpose>Open a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>openFolder</function></funcdef>
+	  <paramdef>const mail::folder *<parameter>folder</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+A mail folder must be formally "opened" before the messages in the folder
+may be accessed.
+Each mail account can have only one mail folder at any time
+Opening another folder automatically "closes" the previous folder.</para>
+
+      &libmail-open-multiple;
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-account-return;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-gettoplevelfolders"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getTopLevelFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-readfolderinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::readFolderInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

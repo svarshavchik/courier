@@ -1,0 +1,236 @@
+#! @SHELL@
+#
+# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# setperms automatically generated from setperms.in
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+datarootdir="@datarootdir@"
+
+PERMS="
+.			755
+
+@localstatedir@		755	x	bin	bin
+@localstatedir@/tmp	770
+@localstatedir@/msgs	750
+@localstatedir@/msgq	750
+@localstatedir@/track	755
+
+@sysconfdir@		755	x
+@sysconfdir@/aliasdir	755
+@sysconfdir@/aliases	750
+@sysconfdir@/enablefiltering	644	config
+@sysconfdir@/maildrop	644	config
+@sysconfdir@/smtpaccess	755
+@sysconfdir@/shared	755
+@sysconfdir@/shared.tmp	755
+@sysconfdir@/smtpaccess/default	644	config
+@sysconfdir@/courierd.dist	644	config
+@sysconfdir@/aliases/system	640	config
+@sysconfdir@/pop3d.dist	644	config
+@sysconfdir@/pop3d-ssl.dist	644	config
+@sysconfdir@/pop3d.authpam	644	config
+@sysconfdir@/pop3d.cnf		600	config
+@sysconfdir@/imapd.dist	644	config
+@sysconfdir@/imapd-ssl.dist	644	config
+@sysconfdir@/imapd.authpam	644	config
+@sysconfdir@/imapd.cnf		600	config
+@sysconfdir@/sqwebmaild.dist	644	config
+@sysconfdir@/webmail.authpam	644	config
+@sysconfdir@/webmlmrc.dist	644	config
+@sysconfdir@/quotawarnmsg.example	444
+
+@libexecdir@		755	x	bin	bin
+@libexecdir@/courier	755	x	bin	bin
+@libexecdir@/courier/modules	755	x	bin	bin
+@libexecdir@/courier/submitmkdir	4550
+@libexecdir@/courier/courierd	550
+@libexecdir@/courier/courierpop3d	555
+@libexecdir@/courier/courierpop3login	555
+@libexecdir@/courier/aliasexp		550
+@libexecdir@/courier/aliascombine	550
+@libexecdir@/courier/aliascreate	550
+@libexecdir@/courier/submit		550
+@libexecdir@/courier/makedatprog	555
+@libexecdir@/courier/imaplogin		555	x	bin	bin
+@libexecdir@/courier/pcpd		555	x	bin	bin
+@libexecdir@/courier/webmail		700	x	root	bin
+@libexecdir@/courier/webmail/webmail	555	x	root	bin
+@libexecdir@/courier/webmail/webmlm	555	x	root	bin
+@libexecdir@/courier/sqwebmaild		555
+@libexecdir@/courier/sqwebpasswd	2755
+@libexecdir@/courier/webmail/webadmin	4555	x	root	bin
+
+@sbindir@			755	x	bin	bin
+@sbindir@/courier		555
+@sbindir@/showconfig		555
+@sbindir@/showmodules		550
+@sbindir@/couriertcpd		555
+@sbindir@/imapd			555
+@sbindir@/imapd-ssl		555
+@sbindir@/sharedindexsplit	555
+@sbindir@/sharedindexinstall	555
+@sbindir@/aliaslookup		555
+@sbindir@/webmaild		555
+@datadir@/imapd			555	x	bin	bin
+@datadir@/imapd-ssl		555	x	bin	bin
+
+@bindir@			755	x	bin	bin
+@bindir@/cancelmsg		6555
+@bindir@/courier-config		555
+@bindir@/mailq			2555
+@bindir@/maildirmake		555
+@bindir@/maildiracl		555
+@bindir@/maildirkw		555
+@bindir@/sendmail		4511	x	root
+@bindir@/rmail			4511	x	root
+@bindir@/lockmail		555
+@bindir@/deliverquota		555
+@bindir@/mailbot		555
+@bindir@/makemime		555
+@bindir@/reformail		555
+@bindir@/reformime		555
+@bindir@/mimegpg		555
+@bindir@/couriermlm		555
+@bindir@/dotforward		555
+@bindir@/webmlmd		555
+@bindir@/webmlmd.rc		555
+
+@datadir@/makedat		555	x	bin	bin
+@bindir@/makedat		555
+@bindir@/testmxlookup		555
+@bindir@/imapd			555
+@datadir@/makealiases		550
+@sbindir@/makealiases		550
+@datadir@/makehosteddomains	555
+@sbindir@/makehosteddomains	555
+@datadir@/pop3d			755
+@sbindir@/pop3d			755
+@datadir@/pop3d-ssl		755
+@sbindir@/pop3d-ssl		755
+@sbindir@/webgpg		555
+
+@datadir@			755	x	bin	bin
+@datadir@/courierctl.start	555
+
+@datadir@/mkimapdcert		755
+@sbindir@/mkimapdcert		755
+@datadir@/mkpop3dcert		755
+@sbindir@/mkpop3dcert		755
+@datadir@/couriermlm		755
+
+@datadir@/couriermlm/adminrequest.tmpl	644
+@datadir@/couriermlm/confsubj.tmpl	644
+@datadir@/couriermlm/digestsubj.tmpl	644
+@datadir@/couriermlm/fetch.tmpl	644
+@datadir@/couriermlm/fetchsubj.tmpl	644
+@datadir@/couriermlm/help.tmpl	644
+@datadir@/couriermlm/idxsubject.tmpl	644
+@datadir@/couriermlm/idxheaderhtml.tmpl	644
+@datadir@/couriermlm/idxheader2html.tmpl 644
+@datadir@/couriermlm/idxheadertxt.tmpl	644
+@datadir@/couriermlm/modrejbody.tmpl	644
+@datadir@/couriermlm/modrejheader.tmpl	644
+@datadir@/couriermlm/modsubject.tmpl	644
+@datadir@/couriermlm/modtext.tmpl	644
+@datadir@/couriermlm/modtext2.tmpl	644
+@datadir@/couriermlm/sub.tmpl	644
+@datadir@/couriermlm/sub2.tmpl	644
+@datadir@/couriermlm/sub3.tmpl	644
+@datadir@/couriermlm/sub4.tmpl	644
+@datadir@/couriermlm/sub5.tmpl	644
+@datadir@/couriermlm/suback.tmpl	644
+@datadir@/couriermlm/subjrequest.tmpl	644
+@datadir@/couriermlm/subreportfooter.tmpl	644
+@datadir@/couriermlm/subreporthdr.tmpl 644
+@datadir@/couriermlm/subreporthdr1.tmpl 644
+@datadir@/couriermlm/subreporthdr2.tmpl 644
+@datadir@/couriermlm/subreporthdr3.tmpl 644
+@datadir@/couriermlm/unsub.tmpl	644
+@datadir@/couriermlm/unsub2.tmpl	644
+@datadir@/couriermlm/unsub3.tmpl	644
+@datadir@/couriermlm/warn1headers.tmpl	644
+@datadir@/couriermlm/warn1text.tmpl	644
+@datadir@/couriermlm/warn1text2.tmpl	644
+@datadir@/couriermlm/warn2msg.tmpl	644
+@datadir@/couriermlm/style.css.tmpl	644
+@datadir@/couriermlm/webmlm.tmpl	644
+@datadir@/couriermlm/webmlm.tmpl.html			644
+@datadir@/couriermlm/webmlmconfirm.html			644
+@datadir@/couriermlm/webmlmerror.tmpl.html		644
+@datadir@/couriermlm/webmlmidx.html			644
+@datadir@/couriermlm/webmlmlistadmin.tmpl.html		644
+@datadir@/couriermlm/webmlmlistadminmod.tmpl.html	644
+@datadir@/couriermlm/webmlmlistadminpw.tmpl.html	644
+@datadir@/couriermlm/webmlmlistindex.tmpl.html		644
+@datadir@/couriermlm/webmlmnotprocessed.html		644
+@datadir@/couriermlm/webmlmpleasewait.tmpl.html		644
+@datadir@/couriermlm/webmlmprocessed.html		644
+@datadir@/couriermlm/webmlmrequestreceived.tmpl.html	644
+@datadir@/couriermlm/webmlmsubinfo.tmpl.html		644
+@datadir@/couriermlm/webmlmsublist.tmpl.html		644
+
+"
+
+echo "$PERMS" | while read FILE MODE SPECIAL USER GROUP
+do
+	test -n "$FILE" || continue
+
+	if test "$SPECIAL" = "x"
+	then
+		SPECIAL=""
+	fi
+
+	if test "$USER" = ""
+	then
+		USER="@mailuser@"
+	fi
+
+	if test "$GROUP" = ""
+	then
+		GROUP="@mailgroup@"
+	fi
+
+	case $FILE in
+	/*)
+		;;
+	*)
+		FILE="@prefix@/$FILE"
+		if test -d $FILE
+		then
+#
+# Catch symbolic links
+#
+			echo $FILE/. $MODE $USER $GROUP $SPECIAL
+		fi
+		;;
+	esac
+
+	echo $FILE $MODE $USER $GROUP $SPECIAL
+done
+
+. ../libs/tcpd/couriertls.config
+
+if test "$couriertls" != ""
+then
+   echo @bindir@/couriertls 555 bin bin
+fi
+
+if test "@HAVE_LDAP@" != 0
+then
+	echo @sysconfdir@/ldapaliasrc.dist 640 @mailuser@ @mailgroup@ config
+	echo @sbindir@/courierldapaliasd 700 @mailuser@ @mailgroup@
+fi
+
+echo @datadir@/sqwebmail/images 755 @mailuser@ @mailgroup@
+
+for f in `cat ../libs/sqwebmail/images/filelist 2>/dev/null`
+do
+	echo @datadir@/sqwebmail/images/$f 444 @mailuser@ @mailgroup@
+done
+
+. ../libs/maildrop/uidgid
+
+echo @bindir@/maildrop 4511 $uid @mailgroup@

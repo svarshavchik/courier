@@ -1,0 +1,794 @@
+<!-- Copyright 2002-2006 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+    <title>&app;: COnsole Newsreader And Emailer</title>
+
+<!--
+    <informaltable pgwide='1' frame='none'>
+      <tgroup align='right' cols='1'>
+	<tbody>
+	  <row>
+	    <entry>
+<para>
+<ulink url="http://sourceforge.net/projects/courier/">
+<inlinemediaobject>
+	<imageobject>
+	  <imagedata width='88' depth='31' fileref="http://sourceforge.net/sflogo.php?group_id=5404&amp;amp;type=1&amp;amp;dummy=" format="PNG" />
+	</imageobject>
+	<textobject>
+	  <phrase>Sourceforge</phrase>
+	</textobject>
+      </inlinemediaobject>
+</ulink>
+</para>
+  </entry>
+  </row>
+  </tbody>
+  </tgroup>
+  </informaltable>
+-->
+
+    <section id="intro">
+      <title>Introduction</title>
+
+      <para>
+&app; is a text-based mail client.
+&app; seamlessly handles multiple POP3, IMAP accounts, and local mail
+folders.
+&app; is also a simple newsreader.
+&app;'s interface is foolproof enough to be used by inexperienced users,
+but it also offers advanced features for power users.</para>
+
+      <section>
+	<title>Overview</title>
+	<itemizedlist>
+	  <listitem>
+	    <para>
+An online tutorial provides a quick overview of &app;'s main features.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+A built-in <link linkend="leaf">text editor</link>
+for editing new messages, with search/replace and
+spell checking (requires <command>aspell</command> or
+<command>pspell</command>).</para>
+	    <para>
+Shortcuts - assign frequently used text to a function key, or to an
+abbreviation.  Insert the text by pressing the function key or typing
+its abbreviation.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Supports UTF-8 consoles (requires the wide-character
+version of the curses library).</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Displays HTML mail, with automatic de-moronization
+(<quote>smart quotes</quote>, and similar clutter, is replaced
+by plain garden-variety punctuation).</para></listitem>
+
+	  <listitem>
+	    <para>
+Displays attached images, if invoked from an X terminal,
+by running Gnome's <command>eog</command>,
+or KDE's <command>kview</command> image viewer.
+Displays <literal>PDF</literal> attachments by running
+<command>xpdf</command>.
+Other, or alternative, helper applications will be added as time
+permits.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+After attachments are downloaded, they can be optionally removed from
+the message.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Handles local mail folders, maildirs, IMAP and POP3 accounts, and
+Usenet newsgroups.
+All folders are shown in a hierarchical tree-like display.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Supports access to servers through a Socks 5 proxy, using the Courier Socks 5
+API toolkit.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Sends mail using an external SMTP server (with/without authentication),
+or the local
+<command>sendmail</command> command.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+All network protocols support SSL/TLS and SASL (CRAM-MD5, CRAM-SHA1, and
+LOGIN).</para></listitem>
+
+	<listitem>
+	  <para>
+Optional authentication using client SSL certificates.</para>
+	</listitem>
+
+	  <listitem>
+	    <para>
+Address books (which can be stored in an IMAP folder).</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Optional support for LDAP address books.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Remote configuration (share a common configuration between different
+instances of &app;).</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+An optional <quote>single sign-on</quote>.
+Use a single master password for multiple remote mail server
+accounts.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+PGP/GPG based encryption, and digital signatures.
+Sent messages are automatically signed.
+Different signing
+keys may be selected for different mail accounts, and the appropriate
+key is automatically selected when replying to a message from
+an account.
+Selecting a message for an encryption automatically looks up keys
+that match the recipients' E-mail addresses.</para>
+
+	    <para>
+Import, export, forward and receive PGP/GPG keys as MIME attachments.</para>
+
+	    <para>
+When a single sign-on master password is installed, the master password
+also handles access to passphrase-protected keys.</para>
+
+	  </listitem>
+
+	  <listitem>
+	    <para>
+&app; shares a lot of its code base with the
+<ulink url="http://www.courier-mta.org">Courier mail server</ulink>,
+which is why they share the same web site together.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+&app; also serves as a platform for development of a new experimental
+network mail access protocol,
+<link linkend="smap1">SMAP</link>, that offers additional
+functionality not available with IMAP or POP3.
+When &app; logs on to a SMAP-capable server,
+such as the current development version of Courier, additional features become
+available:</para>
+
+	    <orderedlist>
+	      <listitem>
+		<para>
+Folder names may utilize the full UTF-8 character set, without any
+reserved folder hierarchy separator characters.
+The user does not need to be aware of the underlying mail folder
+implementation.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Faster downloading of attachments.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Faster mail sending.
+SMAP does not require the client to open a second SMTP connection,
+and send a second copy of the message via SMTP.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Fast opening of large folders.
+&app; does not need to download the complete folder index every time
+the folder is opened, only what's changed to the folder
+since the last time it was open.</para>
+	      </listitem>
+
+	      <listitem>
+		<para>
+Many other useful features that are waiting to be implemented.</para>
+	      </listitem>
+	    </orderedlist>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+&app; owes its versatility in handling a large variety of mail protocols
+to the fact that it's based on <link linkend="libmail">&libname;</link>,
+a generic C++ library that provides a high-level mail-handling API.
+Using the <literal>--with-devel</literal> configuration setting
+installs the &libname; toolkit, which allows for development of independent
+E-mail software.</para>
+	  </listitem>
+	</itemizedlist>
+      </section>
+    </section>
+
+    <section id="INSTALL">
+      <title>Installing &app;</title>
+
+      <para>
+First, make sure that all the necessary requirements
+(<link linkend="README">README</link>) are satisfied.
+See RPM instructions below if building for Red Hat Linux.
+See additional notes below for upgrade instructions.
+Otherwise:</para>
+
+      <itemizedlist>
+
+	<listitem>
+	  <para>
+Download the Courier Socks 5 proxy client library from <ulink
+url="http://www.courier-mta.org/download.php#sox">http://www.courier-mta.org/download.php#sox</ulink>
+and follow its installation instructions. Binary RPMs can be built from the
+source code tarball by following the procedure outlined in <ulink
+url="http://www.courier-mta.org/FAQ.html#rpm">http://www.courier-mta.org/FAQ.html#rpm</ulink>
+using the <quote>courier-sox-<replaceable>version</replaceable></quote>
+tarball, and installing the
+<quote>courier-sox</quote> and 
+<quote>courier-sox-devel</quote> binary RPMs afterwards.</para>
+
+	  <para>
+This step can be omitted if Socks 5 support is not required.
+&app; will compile without the Socks 5 proxy toolkit.</para>
+        </listitem>
+	<listitem>
+	  <para>
+Download the source code tarball from
+<ulink url="http://www.courier-mta.org/download.php#cone">http://www.courier-mta.org/download.php#cone</ulink> and unpack it.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Set the appropriate environment variables if the compiler or linker
+needs any custom command line flags.
+Run <quote><command>./configure --help</command></quote> to list the
+available environment variables that specify additional arbitrary parameters
+for the C/C++ compiler.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Run <quote><command>./configure
+<replaceable>[options]</replaceable></command></quote>.
+See below for a list of available options.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Run <command>make</command>.</para>
+
+	  <note>
+	    <para>
+The GNU version of the <literal>command</literal> is required.
+On BSD systems it's the <command>gmake</command>.
+Use <command>gmake</command> in this, and the following steps.</para>
+	  </note>
+	</listitem>
+
+	<listitem>
+	  <para>
+Run <command>make check</command>.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Run <command>make install</command>.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Run <command>make install-configure</command>.</para>
+	</listitem>
+      </itemizedlist>
+
+      <note>
+	<para>
+Do not forget <quote><command>make install-configure</command></quote>.
+It is required.</para>
+      </note>
+
+      <para>
+Unless other options are used, &app; installs in
+<filename>/usr/local</filename>:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><filename>/usr/local/etc</filename></term>
+	  <listitem>
+	    <para>
+The configuration file.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><filename>/usr/local/bin</filename></term>
+	  <listitem>
+	    <para>
+The shell script that runs &app;.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><filename>/usr/local/libexec</filename></term>
+	  <listitem>
+	    <para>
+The &app; program itself.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><filename>/usr/local/share</filename></term>
+	  <listitem>
+	    <para>
+Documentation, online help, other files.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><filename>/usr/local/lib</filename>
+and <filename>/usr/local/include</filename></term>
+	  <listitem>
+	    <para>
+The development libraries and include files
+(only if <parameter>--with-devel</parameter> was specified to the
+<command>configure</command> script).</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+These installation directories, and other options, may be controlled by
+additional options to the <command>configure</command> script:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><parameter>--prefix</parameter>, <parameter>--bindir</parameter>,
+and others...</term>
+	  <listitem>
+	    <para>
+<command>./configure --help</command> lists about a dozen parameters to the
+<command>./configure</command> that specify the directories where various
+files should be installed.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><parameter>--with-certdb</parameter>,
+<parameter>--without-certdb</parameter>,
+<parameter>--with-certdb=<replaceable>filename</replaceable></parameter></term>
+
+	  <listitem>
+	    <para>
+Install or do not install a default set of trusted SSL certificate authorities.
+When using SSL &app; normally checks the server's SSL certificate, which
+must be signed by a trusted certificate authority.
+&app;'s source distribution includes the same list of trusted certificate
+authorities as the
+<ulink url="http://www.mozilla.org"><application>Mozilla</application></ulink>
+browser.
+&app;'s certificate list is installed by default, unless
+<ulink url="http://www.courier-mta.org"><application>Courier</application></ulink>
+is also installed, in which case &app;'s default configuration
+points to <application>Courier</application>'s <filename>rootcerts</filename>
+directory (which contains the same certificate as &app;'s).</para>
+
+	    <para>
+<parameter>--with-certdb</parameter> installs &app;'s trusted SSL certificate
+authority list, even if <application>Courier</application> is also installed,
+in <filename>/usr/local/share/cone/rootcerts</filename> (which is derived
+from the <parameter>--datadir</parameter> default option, as
+explained by
+<command>./configure --help</command>).
+<parameter>--with-certdb=<replaceable>filename</replaceable></parameter>
+installs the
+trusted SSL certificate authority list in the directory
+<replaceable>filename</replaceable>.
+<parameter>--without-certdb</parameter> does not install &app;'s
+trusted SSL certificate authority list.</para>
+	  </listitem>
+	</varlistentry>
+
+        <varlistentry>
+          <term><parameter>--with-gnutls</parameter></term>
+
+          <listitem>
+            <para>
+Select the GnuTLS library even if
+    the OpenSSL library is also installed. The <command>configure</command>
+script automatically selects
+    whichever one is available. The OpenSSL library is selected if
+    both are present. Use this option to override and select GnuTLS
+    instead.</para>
+          </listitem>
+        </varlistentry>
+
+	<varlistentry>
+	  <term><parameter>--with-devel</parameter></term>
+	  <listitem>
+	    <para>
+Install <link linkend="libmail">&libname;</link>,
+the mail library used by
+&app; to access and handle E-mail messages.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><parameter>--with-spellcheck=pspell</parameter></term>
+	  <listitem>
+	    <para>
+&app;
+can use either <command>aspell</command> or <command>pspell</command>
+for spell checking.
+<command>aspell</command> is used if both are installed.
+This option selects
+<command>pspell</command> instead.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <section>
+	<title>Upgrading from an earlier version of &app;</title>
+	<para>
+Upgrading &app; consists simply of building the new version, and installing it.
+The new version will overwrite the previous version.
+Special upgrade instructions are given below.</para>
+
+	<section>
+	  <title>Upgrading from version 0.59 and earlier</title>
+	  <para>
+The address book format has changed in version 0.60.
+The old address book format will be automatically converted to the new format,
+when necessary, so no manual intervention is necessary.
+If &app; is later downgraded to an earlier version, addresses in an address
+book that contain non-English characters will not be shown correctly.</para>
+	</section>
+      </section>
+      <section>
+	<title>RPM builds</title>
+
+	<para>
+Use the following procedure to build &app;.</para>
+
+	<para>
+The first step is to create a work area for building RPMs.
+Skip this step
+if an RPM build directory is already configured.</para>
+
+	<programlisting>
+echo "%_topdir    $HOME/rpm" &gt; $HOME/.rpmmacros
+mkdir $HOME/rpm
+cd $HOME/rpm
+mkdir SOURCES SPECS BUILD SRPMS RPMS
+</programlisting>
+
+	<para>
+Finally, download the source code to &app; from
+<ulink url="http://www.courier-mta.org/download.php#cone">http://www.courier-mta.org/download.php#cone</ulink>.
+Do not unpack the tarball.
+Execute <quote><command>rpmbuild -ta
+cone-<replaceable>version</replaceable>.tar.bz2</command></quote>.
+Two binary RPMs will be created: the main binary package contains &app;.
+The <quote>devel</quote> package contains
+the &libname; library
+and development files.
+It is only necessary to install the main package to run &app; the
+<quote>devel</quote> subpackage is only needed for additional development
+with
+&libname;.</para>
+      </section>
+
+      <section>
+	<title>CVS Source checkouts</title>
+
+	<para>
+It is also possible to check out the source from CVS, however additional
+requirements apply.
+Besides the usual prerequisites for building &app;, additional development
+software must be installed.
+See the <quote>Download via CVS</quote> instructions at
+<ulink url="http://www.courier-mta.org/status.html">http://www.courier-mta.org/status.html</ulink>.
+&app; has the same requirements as <application>Courier</application>
+for CVS builds (technically, &app; does not need libtool, but that may
+change in the future).
+Make sure that the prerequisite software is installed, then check out the
+<quote>&app;</quote> module from CVS, tagged at revision
+<quote>&app;-latest</quote>.
+The <literal>HEAD</literal> may be checked out, but carries more of the usual
+risks.</para>
+
+	<para>
+After the module is checked out, run the <filename>autobloat</filename>
+shell script to rebuild the autoconf/automake scripts.</para>
+      </section>
+    </section>
+
+    <section id="README">
+      <title>Building &app;</title>
+
+      <para>
+&app; is distributed in source code form, licensed under GPL.
+See COPYING for more information.
+The following prerequisites must be installed to build and run &app;:</para>
+
+      <itemizedlist>
+
+	<listitem>
+	  <para>
+A wide-character version of the curses library.
+<ulink url="http://dickey.his.com/ncurses/ncurses.html">ncurses</ulink>
+supports wide characters starting with version 5.3, if enabled at compile
+time.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+<ulink url="http://www.xmlsoft.org">Libxml2</ulink></para>
+	</listitem>
+
+	<listitem>
+	  <para>
+<ulink url="http://www.gnutls.org">GnuTLS</ulink>; or
+<ulink url="http://www.openssl.org">OpenSSL</ulink> 0.9.7 or higher</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    <ulink url="http://www.gnu.org/software/libidn/">Libidn</ulink>;
+	    although &app; will compile without it, internationalized domain
+	    names will not be shown properly. 
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>
+&app; optionally supports LDAP address books.
+LDAP support requires
+<ulink url="http://www.openldap.org">OpenLDAP</ulink>.</para>
+
+	  <note>
+	    <para>
+It is not sufficient to have only the OpenLDAP runtime libraries installed.
+The OpenLDAP development kit must be installed as well.
+On most systems it's usually called the "devel" component, that must be
+installed in addition to the base OpenLDAP component.
+Verify that the <filename>/usr/include/ldap.h</filename> file exist,
+before trying to build &app;.
+If not, the required OpenLDAP development libraries are missing, and must
+be installed.</para>
+	  </note>
+
+	  <note>
+	    <para>
+LDAP-based address books are highly recommended for corporate and
+organizational environments.
+&app;'s basic address books (local address books and IMAP/SMAP folder-based
+address books) have somewhat limited search functionality -- addresses are
+looked up by exact nicknames only.
+LDAP-based address books are more powerful, they may be searched not just
+by exact nicknames, but also by last name or full names.
+Partial searches are also possible.</para>
+	  </note>
+
+	</listitem>
+
+	<listitem>
+	  <para>
+<ulink url="http://aspell.sourceforge.net/">aspell</ulink> or
+<ulink url="http://pspell.sourceforge.net/">pspell</ulink></para>
+	</listitem>
+
+	<listitem>
+	  <para>
+<ulink url="http://www.gnome.org/~veillard/gamin/">Gamin</ulink>, or the older
+<ulink url="http://oss.sgi.com/projects/fam/">FAM</ulink>
+library</para></listitem>
+
+	<listitem>
+	  <para>
+The current version of the gcc compiler</para></listitem>
+
+	<listitem>
+	  <para>
+gmake (if not already installed)</para></listitem>
+
+	<listitem>
+	  <para>
+The Courier Socks 5 proxy client API toolkit is required for Socks 5
+support.
+Other Socks 5 proxy client libraries may or may not work.
+Download the Courier Socks 5 proxy client library from <ulink
+url="http://www.courier-mta.org/download.php#sox">http://www.courier-mta.org/download.php#sox</ulink>
+and follow its installation instructions.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>
+Right now the primary development focus is on the Linux platform,
+but &app; should build on other POSIX platforms; and any problems are likely
+to be minor, and trivial to resolve.
+A large portion of
+&app;'s code base comes from
+<ulink url="http://www.courier-mta.org">Courier</ulink>, which builds on
+many platforms.</para>
+
+      <note>
+	<para>
+&app; requires a wide-character-capable version of Curses.
+&app; will compile against a non-widechar Curses, but will not be able to
+display UTF-8, or other
+variable-length character sets.</para>
+      </note>
+
+      <section>
+	&cone-localmail;
+      </section>
+    </section>
+
+    <section id="maillist">
+      <title>Mailing list</title>
+
+      <para><ulink
+url="http://lists.sourceforge.net/mailman/listinfo/courier-cone">courier-cone</ulink>
+- the mailing list for &app;-related questions and comments.
+Its name is due to the fact that &app; is a parallel project, split off from
+Courier, and Sourceforge mailing lists have names that always begin with
+the main project's name.
+Go to
+<literal>http://lists.sourceforge.net/mailman/listinfo/courier-cone</literal>
+to subscribe to <literal>courier-cone</literal>, or send a message to
+<literal>&lt;courier-cone-request</literal><literal>@lists.sourceforge.net&gt;</literal>
+and put <quote>subscribe</quote> in the subject line.
+Search the list archives
+at <ulink url=
+	  "http://markmail.org/browse/net.sourceforge.lists.courier-cone">http://markmail.org/browse/net.sourceforge.lists.courier-cone</ulink></para>
+    </section>
+    <section id="moredocs">
+      <title>Additional documentation</title>
+
+      <para>
+The <link linkend="INSTALL">INSTALL</link> file contains instructions for
+building and installing &app;.
+Assorted useful tidbits, that don't seem to belong anywhere else,
+are collected and organized in the
+<link linkend="FAQ">FAQ</link>.</para>
+    </section>
+
+    <section id="FAQ">
+      <title>FAQ</title>
+
+      <variablelist>
+	<varlistentry>
+	  <term>Logging into the UW-IMAP server shows the following message:
+<quote><literal>ALERT: NO $HOME/.mh_profile not found, mh format
+names disabled</literal></quote>; and &app; lists several funny-named
+folders, like <quote><literal>#ftp</literal></quote> and
+<quote><literal>#news</literal></quote></term>
+	  <listitem>
+	    <para>
+When connecting to an IMAP server for the first time,
+&app; reads server's
+list of default mailboxes.
+UW-IMAP server's list of default mailboxes includes optional folders
+it is capable of supporting,
+even if those folders are not actually configured and enabled,
+which includes MH folders.
+When &app; asks for the number of messages in the <quote>#mhinbox</quote>
+folder,
+the UW-IMAP server reports an error unless the account already has an MH-format
+mailbox (which is usually not the case).</para>
+
+	    <para>
+Therefore,
+manual
+adjustments are needed after opening an UW-IMAP account for the first time.
+Highlight each unwanted mail folder, and press <keycap>D</keycap> to delete it.
+Leave only <quote>INBOX</quote> and <quote>Folders</quote>.
+The <quote>Folders</quote> directory will usually open the server account's
+home directory.
+The default UW-IMAP server configuration provides IMAP access to the
+entire server account's home directory.
+In most cases mail folders will not exist in the home directory, but in
+a subdirectory, such as <quote>Mail</quote>.
+Display the contents of the account's home directory by opening
+<quote>Folders</quote>, highlight the <quote>Mail</quote> subdirectory, then
+press <keycap>U</keycap>, then <keycap>T</keycap>.
+This action creates a top-level shortcut to
+<filename>$HOME/Mail</filename>, after which the
+top-level <quote>Folders</quote> entry may be deleted, leaving the UW-IMAP
+server account showing only <quote>INBOX</quote> and <quote>Mail</quote>
+as the initial list of folders.
+This is usually the preferred UW-IMAP server configuration.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&app; refuses to start on a UTF-8 terminal, reporting
+<quote><literal>ERROR:
+Your display appears to be set to the UTF-8 character set.
+This application cannot display this character set.  If this application did
+not read the display character set name correctly, the name of the display's
+character set name can be manually specified using the CHARSET environment
+variable.  Otherwise reconfigure your display to use a supported character
+set and try again.</literal></quote></term>
+
+	  <listitem>
+	    <para>
+Cone requires the wide-character version of the Curses library in order to
+support UTF-8 displays.
+Some Linux distributions (or other systems) may not include a wide-character
+Curses library.
+The <link linkend="INSTALL">INSTALL</link> file contains instructions for
+building a UTF-8 capable version of &app; for Red Hat 9, and earlier.</para>
+	  </listitem>
+
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&app; refuses to start on a UTF-8 terminal, reporting
+<quote><literal>ERROR:
+Your display appears to be set to the ANSI_X3.4-1968 character set.
+This application cannot display this character set.  If this application did
+not read the display character set name correctly, the name of the display's
+character set name can be manually specified using the CHARSET environment
+variable.  Otherwise reconfigure your display to use a supported character
+set and try again.</literal></quote></term>
+
+	  <listitem>
+	    <para>
+This error is reported if <envar>LC_ALL</envar>, <envar>LANG</envar>,
+or some other locale-related variable is not set.
+A similar error naming some other character set indicates that this
+character set is not supported by &app;.
+&app; supports most ISO-8859 and Cyrillic character sets.
+When built with a wide-character enabled Curses library &app; can also
+display UTF-8, and some East Asian character sets.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>&app; reports the following error when trying to connect
+to a POP3 server: <quote>This POP3 server does not appear to implement the
+POP3 UIDL command.</quote></term>
+	  <listitem>
+	    <para>
+The server is running old POP3 code that does not implement all the modern
+POP3 features.
+Instead of trying to configure a POP3 account, configure a POP3 maildrop
+account instead.
+A POP3 maildrop account will work with servers that do not implement the
+modern POP3 protocol.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </section>
+
+
+<!--
+Local variables:
+sgml-doctype: "book.sgml"
+End:
+-->

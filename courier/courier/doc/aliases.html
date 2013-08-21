@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+
+  <title>Alias support</title>
+  <!-- Copyright 2000-2009 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h1>Alias support</h1>
+
+  <p>The <em>Courier</em> mail server's support for the address alias file
+  is similar to sendmail's, but with some notable
+  differences.&nbsp; Aliasing addresses to programs is not allowed,
+  the alias list is strictly a list of E-mail addresses. Mail
+  addressed to a name of the alias is delivered to the list of
+  E-mail addresses defined for that alias.&nbsp; The name of an
+  alias has no corresponding mailbox, with one exception. The alias
+  may include an E-mail address that is the same as the alias name,
+  in which case the mail gets delivered to this mailbox in addition
+  to being sent to all the other addresses defined for that alias.
+  Otherwise, if a mailbox with the same name as an alias exists, it
+  will not receive any mail, as any mail addressed to it will be
+  forwarded to the alias members instead.</p>
+
+  <p>The alias file is called <code>aliases.dat</code>. The
+  <em>Courier</em> mail server looks for <code>aliases.dat</code> first in
+  the <code>${COURIER_HOME}/$ARCH/lib/modules/MODULE</code>
+  directory. If not found, the <em>Courier</em> mail server looks for
+  <code>aliases.dat</code> in <code>${COURIER_HOME}/lib</code>.
+  This lets you define aliases that can be mailed to only locally,
+  or define system wide aliases.</p>
+
+  <p>Please note that if
+  <code>lib/modules/MODULE/aliases.dat</code> exists, and the
+  E-mail address is not found there, the <em>Courier</em> mail server wll
+  try again using <code>lib/aliases.dat</code>.</p>
+
+  <h2><code>makealiases</code></h2>The <code>aliases.dat</code>
+  file is created using the <code>makealiases</code> program. The
+  syntax <code>makealiases</code> is as follows:
+  <pre>
+   makealiases -src=<em>srcfile</em> -tmp=<i>tmpfile</i> -auxtmp=<i>auxtmpfile</i> \
+      [ -alias=<em>aliasfile</em> ] [-dump] [<i>module</i>]
+</pre>The <code>src</code>, <code>tmp</code>, and
+<code>auxtmp</code> parameters must be specified. Either the <code>
+  alias</code> parameter or the <code>dump</code> flag must be
+  specified.
+
+  <p><em>srcfile</em> is a text file with alias definitions.
+  <code>makealiases</code> uses two temporary files to create the
+  <code>aliases.dat</code> file. You must specify the names of
+  those files using the <code>tmp</code> and <code>auxtmp</code>
+  parameters. aliasfile is the complete pathname to the final
+  <code>aliases.dat</code> file, which should be either in the
+  <code>lib</code> directory, or in the <code>MODULE</code>
+  directory. <em>tmpfile</em> and <i>auxtmpfile</i> must be on the
+  same filesystem as <em>aliasfile</em>.</p>
+
+  <p>You may not have more than one instance of
+  <code>makealiases</code> running at the same time, using the same
+  temporary files. <code>makealiases</code> automatically removes
+  the temporary files when done.</p>
+
+  <p>It is safe to run <code>makealiases</code> while the <em>Courier</em>
+  mail server is running. The new <code>aliases.dat</code> file
+  takes effect immediately.</p>
+
+  <p>All E-mail addresses in <em>srcfile</em> are rewritten to the
+  canonical format. The optional <code>module</code> parameter
+  specifies the module whose rewriting functions are used. If not
+  specified, it defaults to <code>local</code>, so that you can
+  specify addresses in srcfile without your local domain name.</p>
+
+  <p>The <code>-dump</code> flag prevents the alias file from being
+  created. Instead, <code>makealiases</code> just rewrites all the
+  addresses, removes the duplicates, and displays the final alias
+  list on standard output.</p>
+
+  <p><em>srcfile</em> can be set to "-". <code>makealiases</code>
+  will read alias specifications from standard input.</p>
+
+  <h2>The alias specifications file.</h2>Blank lines in the file
+  are ignored. Comments may be present on lines that start with the
+  # character, which are also ignored.
+
+  <p>An alias specification takes the form of:</p>
+
+  <p><code>alias: address1, address2, address3 ...</code></p>
+
+  <p>This specifies an alias whose name is alias. Mail that's sent
+  to alias will be delivered to the specified list of addresses
+  instead.</p>
+
+  <p>Instead of specifying an address, another alias can be used in
+  its place, inserting the contents of the second alias list into
+  the first alias list.</p>
+
+  <p>An alias specification may use mutiple lines. Start the second
+  line with a tab character, or a space. For example:</p>
+  <pre>
+everyone: john, steve, mary, alice, tom,
+          harry, gene
+</pre>For example, here's a three person organization. Gloria is in
+Sales, Steve is a system administrator, John does both sales and
+system administrators:
+  <pre>
+<code>sales: john, gloria
+ 
+sysadmin: steve, john
+ 
+everyone: sales, sysadmin</code>
+</pre>This alias file specifies that mail addressed to
+'<code>sales</code>', will be delivered to the john and gloria
+accounts. Mail sent to '<code>sysadmin</code>' will be delivered to
+to the <code>steve</code> and <code>john</code> accounts. Mail sent
+to '<code>everyone</code>' will be delievered to
+<code>steve</code>, <code>john</code>, and <code>gloria</code>.
+Although <code>john</code> is listed twice in the
+<code>everyone</code> alias - once in the <code>sales</code> alias,
+and the second time in the <code>sysadmin</code> alias -
+<code>john</code> will receive only one copy of the message. The
+<code>makealiases</code> command (and the <code>submit</code>
+command also), automatically eliminates duplicates. Running
+makealiases with the -dump flag results in the following output.
+  <pre>
+<code>everyone@example.com: john@example.com, gloria@example.com, steve@example.com
+
+sysadmin@example.com: steve@example.com, john@example.com
+
+sales@example.com: john@example.com, gloria@example.com</code>
+</pre>In this example, the local domain is
+'<code>@example.com</code>'. The makealiases commands automatically
+converts all addresses to the canonical format.
+
+  <p>The company grows in size, and it is now necessary for someone
+  to be available 24 hours a day. Steve volunteers, and the
+  following change is made:</p>
+  <pre>
+<code>sales: john, gloria
+ 
+sysadmin: steve, john
+ 
+everyone: sales, sysadmin
+ 
+steve: steve, steve@domain.com</code>
+</pre>All mail sent to <code>steve</code> will now have a second
+copy mailed to <code>steve@domain.com</code>, IN ADDITION to being
+delivered to the local mailbox. <code>steve@domain.com</code> is
+Steve's Internet account at home. This changes affects all mail
+sent to <code>steve</code>, not just to mail sent to one of the
+defined aliases. Running <code>makealiases</code> with
+<code>-dump</code> now results in the following output:
+  <pre>
+everyone@example.com: john@example.com, gloria@example.com, steve@example.com,
+        steve@domain.com
+ 
+steve@example.com: steve@example.com, steve@domain.com
+ 
+sysadmin@example.com: steve@example.com, john@example.com, steve@domain.com
+ 
+sales@example.com: john@example.com, gloria@example.com
+</pre>This kind of forwarding should really be implemented in the
+<code>.courier</code> delivery specification file in Steve's
+account. Although allowed, aliases should never have the same name
+as a local account. Typically, you should define aliases for <code>
+  postmaster</code>, and <code>mailer-daemon</code>.
+
+  <h2>The&nbsp; <code>-dump</code> flag</h2>The previous examples
+  of <code>-dump</code> flag's output give an indication of what
+  <code>makealiases</code> does:
+
+  <ul>
+    <li>All addresses are converted to the canonical format, using
+    the selected module's rewrite function (called with address
+    specified as <code>RW_RECIPIENT</code>).</li>
+
+    <li>When another alias is specified, the alias's list of
+    addresses is added. The output of <code>makealiases</code>
+    consists of all alias references resolved, so the contents of
+    all the defined aliases is just the end list of addresses.</li>
+
+    <li>The output of the <code>-dump</code> flag can be reread by
+    <font face="Abadi MT Condensed">makealiases (it's pretty safe
+    to assume that if addresses are already in canonical format,
+    the rewrite function does nothing)</font>. Note that some
+    information is lost - namely if a list of addresses in an alias
+    actually came from another alias.</li>
+
+    <li>The order in which aliases are listed by the
+    <code>-dump</code> flag is completely random.</li>
+
+    <li>If an alias contains many addresses, <code>-dump</code> may
+    list the alias in parts.</li>
+  </ul>
+
+  <h2>The <code>aliases.dat</code> file</h2>The
+  <code>aliases.dat</code> file is a GDBM (or a DB) database.
+  Unless the list of addresses in a single alias is large, the
+  layout is pretty basic. The GDBM/DB database is keyed by the
+  alias name, and the contents of the record are the addresses
+  defined by the alias. Each address is followed by a newline
+  character.
+
+  <p>In order to prevent the GDBM/DB library from consuming
+  excessive amounts of memory, if an alias defines a large list of
+  addresses, the list is saved in multiple records. The key of the
+  second record is the alias name, followed by a newline, followed
+  by "1". If a third record is necessary, it's name is the alias
+  name, followed by a newline, followed by a "2". And so on.</p>
+
+  <h2>Differences from sendmail's <code>/etc/aliases</code>
+  file</h2>
+
+  <p>Although the <em>Courier</em> mail server's implementation of
+  <code>aliases.dat</code> may seem very similar to sendmail's
+  <code>/etc/aliases</code> file, there are some important
+  differences:</p>
+
+  <ul>
+    <li>Pathnames and commands are not allowed. Only E-mail
+    addresses can go into an <code>aliases.dat</code> file. To
+    deliver mail to a command, or append it to a file, set aside a
+    system mailbox, or a Qmail-style alias account, then create an
+    appropriate <code>.courier</code> file.</li>
+
+    <li>owner-alias is not supported.</li>
+
+    <li>NIS maps are not supported.</li>
+
+    <li>The "<code>foo: \foo, bar</code>" syntax is made redundant.
+    Just use "<code>foo: foo, bar</code>".</li>
+
+    <li>Finally, address rewriting implementation is obviously
+    different. If you modify address rewriting code, you may need
+    to rerun <code>makealiases</code> in order for the address
+    rewriting changes to become effective.</li>
+  </ul>
+</body>
+</html>

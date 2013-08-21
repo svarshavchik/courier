@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+  <meta name="Author" content="Sam Varshavchik" />
+
+  <title>Download SqWebMail</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="icon" href="icon.gif" type="image/gif" />
+<script type="text/javascript" language="Javascript" src="frame.js"
+xml:space="preserve">
+</script>
+</head>
+
+<body>
+  <iframe xmlns="" scrolling="no" src="header.html" frameborder="0"
+  width="100%" height="30" allowtransparency="true" style=
+  "position: relative; left: 0px; top: 0px;"></iframe>
+
+  <h1>Download SqWebMail</h1>
+
+  <h2>Requirements</h2>
+
+  <p>SqWebMail requires that either the GDBM or the DB library must
+  be installed. Perl is also required. GNU make and gcc/egcs is
+  also highly recommended. There have been intermittent reports of
+  various problems with using other make utilities, or other
+  compilers. Chances are that everything will compile and install
+  properly, though. Currently, some of the component libraries
+  include some self-test code written in C++. SqWebMail itself is
+  written entirely in C, and the C++ components are not used;
+  however you have to be able to compile C++, for now.</p>
+
+  <p>Read <tt>INSTALL</tt>, <tt>SECURITY</tt> and <tt>BUGS</tt>
+  before compiling and installing SqWebMail. Loading
+  <tt>http://yourwebsite/cgi-bin/sqwebmail</tt> shows the login
+  page. You can manually move <tt>sqwebmail</tt> to any other
+  directory, and use any URL that resolves to
+  <tt>sqwebmail</tt>.</p>
+
+  <h2>Download</h2>
+
+  <p>Download and install the Courier Authentication Library from
+  <a target="_blank" href="http://www.courier-mta.org/authlib/"
+  shape=
+  "rect"><code>http://www.courier-mta.org/authlib/</code></a>, if
+  it's not installed already.</p>
+
+  <p>Download sqwebmail: <a target="_blank" href=
+  "http://www.courier-mta.org/download.php#sqwebmail" shape=
+  "rect"><code>http://www.courier-mta.org/download.php#sqwebmail</code></a></p>
+
+  <h3>CVS</h3>
+
+  <p>SqWebMail can also be downloaded from an anonymous CVS
+  repository. See <a target="_blank" href=
+  "http://www.courier-mta.org/status.html" shape=
+  "rect"><code>http://www.courier-mta.org/status.html</code></a>
+  for more information.</p>
+
+  <h3>RPMs</h3>
+
+  <p>You can build a binary RPM directly from this tarball.
+  Download this tarball, then type <tt>rpm -ta
+  <i>filename</i></tt>. RPM 3.0, or higher, is required. Use
+  <tt>rpmbuild -ta <i>filename</i></tt> with RPM 4.1, or higher
+  (Red Hat 8.0, or higher).</p><iframe xmlns="" src="footer.html"
+  width="100%" allowtransparency="true" frameborder="0" height=
+  "100"></iframe>
+</body>
+</html>

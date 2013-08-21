@@ -1,0 +1,111 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-loginurlencode">
+    <refmeta>
+      <refentrytitle>mail::loginUrlEncode</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::loginUrlEncode</refname>
+      <refpurpose>Create a mail account URL</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+      &libmail-includemail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>std::string url=<function>mail::loginUrlEncode</function></funcdef>
+	  <paramdef>std::string <parameter>method</parameter></paramdef>
+	  <paramdef>std::string <parameter>server</parameter></paramdef>
+	  <paramdef>std::string <parameter>uid</parameter></paramdef>
+	  <paramdef>std::string <parameter>password</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This utility function creates a URL, suitable for
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+for opening a mail account on a remote server.</para>
+
+      <para>
+<parameter>method</parameter> is one of the supported
+<application role="library">libmail</application> network protocols:
+"<literal>imap</literal>",
+"<literal>imaps</literal>",
+"<literal>pop3</literal>",
+"<literal>pop3s</literal>",
+"<literal>nntp</literal>",
+"<literal>nntps</literal>",
+"<literal>smtp</literal>", or
+"<literal>smtps</literal>".
+<parameter>server</parameter> is the remote server name.
+The server name is optionally appended by a colon and a port number, to
+specify a non-default port for the protocol.</para>
+
+      <para>
+<parameter>uid</parameter>
+identifies the mail account's login id.
+With "<literal>smtp</literal>", or
+"<literal>smtps</literal>",
+<parameter>uid</parameter>
+specifies the userid for authenticated ESMTP.
+The <parameter>password</parameter>
+is optional.
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+accepts a separate <parameter>password</parameter> parameter.
+This <parameter>password</parameter> should be an empty string, so that the
+resulting URL does not include the password.
+The real password is then passed as a parameter to
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+As an
+alternative, this <parameter>password</parameter> parameter can be initialized.
+The resulting URL will include the password, and the
+the <parameter>password</parameter> parameter to
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+should be set to an empty string.</para>
+      <refsect2>
+	<title>Options</title>
+	<para>
+Additional protocol options are specified by prefixing each option with
+the forward-slash character, "<token>/</token>", and appending all options
+to <parameter>server</parameter> (after any optional protocol port
+number).</para>
+      </refsect2>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+This function returns the resulting URL.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-loginurlencode"><citerefentry>
+	    <refentrytitle>mail::loginUrlEncode</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

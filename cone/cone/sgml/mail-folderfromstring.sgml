@@ -1,0 +1,71 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-folderfromstring">
+    <refmeta>
+      <refentrytitle>mail::account::folderFromString</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::folderFromString</refname>
+      <refpurpose>Restore a folder object</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+#include &lt;libmail/mail.H&gt;
+mail::account *account;
+mail::folder *folder;
+
+std::string savedFolder=folder-&gt;toString();
+
+...
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::folder *f=account-&gt;<function>folderFromString</function></funcdef>
+	  <paramdef>std::string <parameter>savedFolder</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<parameter>savedFolder</parameter> is a folder object that was previously
+saved as a string.
+The
+<function>mail::account::folderFromString</function>
+method recreates the original
+folder object.
+That is, the returned <structname>mail::folder</structname> object refers
+to the same mail folder as the original <structname>mail::folder</structname>
+object.</para>
+
+      &libmail-foldernote2;
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      <para>
+This function returns a NULL pointer if it cannot allocate memory for the
+new <structname>mail::folder</structname> object.</para>
+
+      &libmail-foldernote;
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-findfolder"><citerefentry>
+	    <refentrytitle>mail::account::findFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

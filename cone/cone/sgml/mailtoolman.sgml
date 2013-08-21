@@ -1,0 +1,435 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mailtool">
+    <refmeta>
+      <refentrytitle>mailtool</refentrytitle>
+      <manvolnum>1</manvolnum>
+
+      <refmiscinfo class='software'>
+	<productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mailtool</refname>
+      <refpurpose>Process mailboxes</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <cmdsynopsis>
+	<command>mailtool</command>
+	<arg choice='opt' rep='repeat'>options</arg>
+    </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<command>mailtool</command>
+is a diagnostic utility for handling various operations on mailboxes.
+<command>mailtool</command>'s
+main uses include: display the list of folders in a mailbox;
+displaying list of messages in a mailbox; and
+copying mailboxes.</para>
+
+      <para>
+The following mailboxes can be accessed by
+<command>mailtool</command>:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term>imap://<replaceable>userid</replaceable>@<replaceable>server</replaceable>[/options]</term>
+	  <listitem>
+	    <para>
+An IMAP account.
+<command>mailtool</command> will prompt for the login password.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>imaps://<replaceable>userid</replaceable>@<replaceable>server</replaceable>[/options]</term>
+	  <listitem>
+	    <para>
+An IMAP account accessed via an encrypted SSL connection.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pop3://<replaceable>userid</replaceable>@<replaceable>server</replaceable>[/options]</term>
+	  <listitem>
+	    <para>
+A POP3 account.
+<command>mailtool</command> will prompt for the login password.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pop3s://<replaceable>userid</replaceable>@<replaceable>server</replaceable>[/options]</term>
+	  <listitem>
+	    <para>
+A POP3 account accessed via an encrypted SSL connection.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>maildir:<replaceable>path</replaceable></term>
+	  <listitem>
+	    <para>
+A local maildir mailbox.
+<filename>path</filename> specifies the maildir's location relative to the
+home directory (NOT the current directory).</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>mbox:<replaceable>path</replaceable></term>
+	  <listitem>
+	    <para>
+Local mbox mail folders.
+<filename>path</filename> specifies the path to an mbox folder file,
+or a directory containing mbox folders, relative to the
+home directory (NOT the current directory).</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>inbox:<replaceable>path</replaceable></term>
+	  <listitem>
+	    <para>
+Local mbox mail folders, like
+<quote>mbox:<replaceable>path</replaceable></quote>;
+additionally, the system spool mailbox is automatically copied to
+<filename>$HOME/Inbox</filename>, which is accessible as folder
+<literal>INBOX</literal>.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+The name of a remote IMAP or POP3 server may be followed by one or more
+options that control various settings of the IMAP or POP3 connection:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><literal>/cram</literal></term>
+	  <listitem>
+	    &libmail-cram;
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>/imap</literal></term>
+
+	  <listitem>
+	    &libmail-imap;
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>/notls</literal></term>
+
+	  <listitem>
+	    &libmail-nossl;
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>/novalidate-cert</literal></term>
+
+	  <listitem>
+&libmail-novalidatecert;
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <refsect2>
+	<title>Displaying mailbox contents</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <group choice='plain'>
+	    <arg choice='plain'>-tree</arg>
+	    <arg choice='plain'>-list</arg>
+	  </group>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+<literal>-tree</literal> shows a hierarchical representation of mail folders
+in <replaceable>account</replaceable>.
+<literal>-list</literal> generates a simple folder listing, one folder name
+per line.
+<literal>-tree</literal> shows folder names,
+while <literal>-list</literal> shows the actual mail folder path in
+<replaceable>account</replaceable>.</para>
+	<informalexample>
+	  <programlisting>
+mailtool -tree imap://jsmith@mail.example.com/novalidate-cert/cram
+</programlisting>
+	</informalexample>
+
+      </refsect2>
+
+      <refsect2>
+	<title>Creating folders</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <group choice='plain'>
+	    <arg choice='plain'>-create</arg>
+	    <arg choice='plain'>-createdir</arg>
+	  </group>
+	  <arg choice='plain'><replaceable>folder</replaceable></arg>
+	  <arg choice='plain'><replaceable>name</replaceable></arg>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+<literal>-create</literal> creates a new subfolder of
+<replaceable>folder</replaceable> in <replaceable>account</replaceable>.
+The new subfolder's name is <replaceable>name</replaceable>.
+<literal>-createdir</literal> creates a new folder directory (a folder that
+contains other folders).</para>
+
+	<informalexample>
+	  <programlisting>
+mailtool -create INBOX.lists announcements maildir:Maildir
+</programlisting>
+	</informalexample>
+
+	<para>
+This command creates a new folder <quote>announcements</quote> as a
+subfolders of <quote>INBOX.lists</quote> in the local maildir.</para>
+      </refsect2>
+
+      <refsect2>
+	<title>Deleting folders</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <group choice='plain'>
+	    <arg choice='plain'>-delete</arg>
+	    <arg choice='plain'>-deletedir</arg>
+	  </group>
+	  <arg choice='plain'><replaceable>folder</replaceable></arg>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+<literal>-delete</literal> deletes an existing
+<replaceable>folder</replaceable> in <replaceable>account</replaceable>.</para>
+
+      <para>
+<literal>-deletedir</literal> deletes a folder directory.</para>
+
+	<informalexample>
+	  <programlisting>
+mailtool -delete INBOX.lists.announcements maildir:Maildir
+</programlisting>
+	</informalexample>
+      </refsect2>
+
+      <refsect2>
+	<title>Renaming folders</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <arg choice='plain'>-rename</arg>
+	  <arg choice='plain'><replaceable>oldfolder</replaceable></arg>
+	  <arg choice='plain'><replaceable>folder</replaceable></arg>
+	  <arg choice='plain'><replaceable>name</replaceable></arg>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+<literal>-renames</literal> renames an existing
+<replaceable>oldfolder</replaceable>.
+The folder is renamed as 
+<replaceable>name</replaceable>, as a subfolder of
+<replaceable>folder</replaceable>.
+<replaceable>folder</replaceable> may be an empty string if the folder should
+be moved to the top level of <replaceable>account</replaceable>'s folder
+hierarchy.</para>
+
+	<informalexample>
+	  <programlisting>
+mailtool -rename INBOX.lists.announcements INBOX.lists Announcements maildir:Maildir
+</programlisting>
+	</informalexample>
+
+	<para>
+The folder <quote>INBOX.lists.announcements</quote> is renamed to
+<quote>INBOX.lists.Announcements</quote>.
+This slightly unusual way to rename folder allows folders to be relocated
+in the mail <replaceable>account</replaceable>'s folder hierarchy.</para>
+      </refsect2>
+
+
+
+      <refsect2>
+	<title>Reading folder's index</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <arg choice='plain'>-index</arg>
+	  <arg choice='plain'><replaceable>folder</replaceable></arg>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+<literal>-index</literal> downloads and prints a summary of all messages in
+<replaceable>folder</replaceable>, in
+<replaceable>account</replaceable>.
+The summary shows the sender's and recipients' address, the message's subject,
+and size.</para>
+
+	<informalexample>
+	  <programlisting>
+mailtool -index INBOX imap://john@mail.example.com/novalidate-cert
+</programlisting>
+	</informalexample>
+      </refsect2>
+
+      <refsect2>
+	<title>Removing a message from a folder</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <arg choice='plain'>-remove</arg>
+	  <arg choice='plain'><replaceable>folder</replaceable></arg>
+	  <arg choice='plain'><replaceable>n</replaceable></arg>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+<literal>-remove</literal> removes message #<replaceable>n</replaceable>
+(ranging from 1 to the number of messages in the folder) in
+<replaceable>folder</replaceable>, in
+<replaceable>account</replaceable>.
+The message numbers may be obtained by using
+<literal>-index</literal>.</para>
+
+	<para>
+<replaceable>n</replaceable> may be a comma-separated list of message numbers,
+in strictly numerically increasing order. <literal>-remove</literal> confirms
+the list of messages to remove and issues a <quote>Ready:</quote> prompt.
+Press <keycap>ENTER</keycap> to remove the messages.</para>
+
+	<informalexample>
+	  <programlisting>
+mailtool -remove INBOX 28,31 imap://john@mail.example.com/novalidate-cert
+</programlisting>
+	</informalexample>
+      </refsect2>
+
+      <refsect2>
+	<title>Filtering messages</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <arg choice='plain'>-filter</arg>
+	  <arg choice='plain'><replaceable>folder</replaceable></arg>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+<literal>-filter</literal>
+is a combination of
+<literal>-index</literal> and <literal>-remove</literal>.
+<replaceable>folder</replaceable>'s index is downloaded, and the summary
+of each message is shown, one message at a time.
+Each message's summary is followed by a prompt:
+<quote>Delete, Skip, or Exit</quote>.
+Pressing <keycap>D</keycap> removes the message,
+<keycap>S</keycap> leaves the message unchanged, and
+<keycap>E</keycap> leaves the remaining messages unchanged.</para>
+
+	<informalexample>
+	  <programlisting>
+mailtool -filter INBOX pop3://john@mail.example.com/novalidate-cert
+</programlisting>
+	</informalexample>
+
+	<note>
+	  <para>
+<literal>-filter</literal> is not meant to be used with large folders.
+Unless messages are removed quickly, the connection to the server may be
+disconnected for inactivity.</para>
+	</note>
+      </refsect2>
+
+      <refsect2>
+	<title>Copying folders</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <arg choice='opt'>-recurse</arg>
+	  <arg choice='plain'>-tofolder</arg>
+	  <arg choice='plain'><replaceable>tofolder</replaceable></arg>
+	  <arg choice='plain'>-copyto</arg>
+	  <arg choice='plain'><replaceable>toaccount</replaceable></arg>
+	  <arg choice='plain'>-fromfolder</arg>
+	  <arg choice='plain'><replaceable>fromfolder</replaceable></arg>
+	  <arg choice='plain'><replaceable>fromaccount</replaceable></arg>
+	</cmdsynopsis>
+
+	<para>
+This command copies an entire folder,
+<literal>fromfolder</literal> in
+<literal>fromaccount</literal> to a new folder,
+<literal>tofolder</literal> (which will be created, if necessary)
+in <literal>toaccount</literal>.
+Optionally, <literal>-recurse</literal> specifies that all subfolders
+of <literal>fromfolder</literal> should also be copied.</para>
+
+	<informalexample>
+	  <programlisting>
+
+mailtool -tofolder INBOX -copyto maildir:Maildir \
+    -fromfolder "INBOX" imap://mbox100@mail.example.com/novalidate-cert
+
+mailtool -recurse -tofolder INBOX.converted_mail \
+    -copyto maildir:Maildir -fromfolder "mail" \
+        imap://mbox100@mail.example.com/novalidate-cert
+</programlisting>
+	</informalexample>
+
+	<para>
+This example first copies the INBOX on the IMAP server to
+<filename>$HOME/Maildir</filename>,
+then copies subfolders of <quote>mail</quote> on the IMAP server to the
+<quote>converted_mail</quote> subfolder in the maildir.</para>
+
+	<informalexample>
+	  <programlisting>
+mailtool -tofolder INBOX -copyto maildir:Maildir \
+   -fromfolder "INBOX" inbox:mail
+
+mailtool -recurse -tofolder INBOX.converted_mail \
+    -copyto maildir:Maildir -fromfolder "" mbox:mail
+
+</programlisting>
+	</informalexample>
+
+	<para>
+This example first copies <filename>$HOME/Inbox</filename>
+(accessed as the INBOX folder in inbox:mail) to
+<filename>$HOME/Maildir</filename>,
+then
+copies mbox folders from <filename>$HOME/mail</filename> to the
+<quote>converted_mail</quote> subfolder in the maildir.</para>
+
+	<note>
+	  <para>
+Mail accounts that contain hybrid folders (folders that
+contain both messages and subfolders) can only be copied to account types
+that also support hybrid folders: either local maildirs, or to remote servers
+that support hybrid folders.</para>
+	</note>
+      </refsect2>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="cone"><citerefentry><refentrytitle>cone</refentrytitle>
+	  <manvolnum>1</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

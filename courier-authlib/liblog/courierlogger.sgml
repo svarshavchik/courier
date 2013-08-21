@@ -1,0 +1,252 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2004-2007 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="courierlogger">
+
+  <refmeta>
+    <refentrytitle>courierlogger</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>courierlogger</refname>
+    <refpurpose>Courier syslog wrapper</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>courierlogger</command>
+      <arg>-name=<replaceable>title</replaceable></arg>
+      <arg>-facility=<replaceable>subsystem</replaceable></arg>
+      <arg>-pid=<replaceable>filename</replaceable></arg>
+      <arg>-user=<replaceable>user</replaceable></arg>
+      <arg>-group=<replaceable>group</replaceable></arg>
+      <arg>-droproot</arg>
+      <group>
+	<arg><arg choice='opt'>-respawn</arg> <arg choice='opt'>-start</arg>
+             <replaceable>program</replaceable> <arg rep='repeat'>argument</arg></arg>
+	<arg>-stop</arg>
+	<arg>-restart</arg>
+      </group>
+    </cmdsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command>courierlogger</command>
+is a wrapper that captures
+another process's error messages, and forwards them
+to the system logging facility,
+<quote>syslog</quote>.</para>
+
+    <para>
+There are two ways to use courierlogger:
+<orderedlist>
+	<listitem>
+	  <para>
+Use the shell to pipe another command's standard error, and/or its standard
+output, to
+<command>courierlogger</command>'s standard input.</para>
+	</listitem>
+	<listitem>
+	  <para>
+Alternatively,
+<command>courierlogger</command>
+itself can start another process, and arrange to have its standard error
+captured.</para>
+	</listitem>
+      </orderedlist>
+    </para>
+
+    <para>
+In either case, each read line of text is sent as a syslog message.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+	<term>-name=<replaceable>title</replaceable></term>
+	<listitem>
+<para>
+Use <replaceable>title</replaceable> for sending messages to syslog.
+<replaceable>title</replaceable> should be the application's name.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>-facility=<replaceable>subsystem</replaceable></term>
+	<listitem>
+	  <para>
+Use <replaceable>subsystem</replaceable> for classifying messages.
+Your syslog facility uses <replaceable>subsystem</replaceable> to determine
+which log messages are recorded in which log files.
+The currently defined subsystems are:</para>
+
+	  <itemizedlist>
+	    <listitem><para><literal>auth</literal></para></listitem>
+	    <listitem><para><literal>authpriv</literal></para></listitem>
+	    <listitem><para><literal>console</literal></para></listitem>
+	    <listitem><para><literal>cron</literal></para></listitem>
+	    <listitem><para><literal>daemon</literal></para></listitem>
+	    <listitem><para><literal>ftp</literal></para></listitem>
+	    <listitem><para><literal>kern</literal></para></listitem>
+	    <listitem><para><literal>lpr</literal></para></listitem>
+	    <listitem><para><literal>mail</literal></para></listitem>
+	    <listitem><para><literal>news</literal></para></listitem>
+	    <listitem><para><literal>security</literal></para></listitem>
+	    <listitem><para><literal>user</literal></para></listitem>
+	    <listitem><para><literal>uucp</literal></para></listitem>
+	    <listitem><para><literal>local0</literal></para></listitem>
+	    <listitem><para><literal>local1</literal></para></listitem>
+	    <listitem><para><literal>local2</literal></para></listitem>
+	    <listitem><para><literal>local3</literal></para></listitem>
+	    <listitem><para><literal>local4</literal></para></listitem>
+	    <listitem><para><literal>local5</literal></para></listitem>
+	    <listitem><para><literal>local6</literal></para></listitem>
+	    <listitem><para><literal>local7</literal></para></listitem>
+	  </itemizedlist>
+
+	  <note>
+	    <para>
+Not all of the above facility names are implemented on every system.
+Check your system's syslog documentation for information on which facility
+names are allowed, and which log files record the corresponding messages
+for each facility.</para>
+	  </note>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>-pid=<replaceable>filename</replaceable></term>
+	<listitem>
+<para>
+Save <command>courierlogger</command>'s
+process ID in <replaceable>filename</replaceable>.
+The <parameter>-pid</parameter> option is required when
+<parameter>-start</parameter>,
+<parameter>-stop</parameter>,
+<parameter>-restart</parameter> are given. If <parameter>-pid</parameter>
+is given without any of these, <parameter>-start</parameter> is assumed.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-start</term>
+	<listitem>
+	  <para>
+Run as a daemon. The <option>pid</option> option is required.
+<command>courierlogger</command> will quietly terminate if another
+<command>courierlogger</command> process is already running.
+This is used to make sure that only one instance of
+<filename>program</filename> is running at the same time.
+Specify a different filename with <option>pid</option> to start a second
+copy of <filename>program</filename>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-respawn</term>
+	<listitem>
+<para>
+Restart <filename>program</filename> if it terminates.
+Normally
+<command>courierlogger</command> itself will terminate when
+<filename>program</filename> finishes running.
+Use <option>respawn</option> to restart it instead.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-restart</term>
+	<listitem>
+	  <para>
+Send a <literal>SIGHUP</literal> signal to the courierlogger process
+(as determined by examining the contents of the file specified by
+<option>pid</option>), which will in turn send a <literal>SIGHUP</literal>
+to its child <filename>program</filename>.
+Does nothing if courierlogger is not running.</para>
+
+	  <note>
+	    <para>
+<filename>program</filename> must be originally started with the
+<option>respawn</option> option if sending it a <literal>SIGHUP</literal>
+causes it to terminate.</para>
+	  </note>
+
+	  <para>
+The same thing may be accomplished by sending <literal>SIGHUP</literal>
+to <command>courierlogger</command> itself.</para>
+
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-stop</term>
+	<listitem>
+<para>
+Send a <literal>SIGTERM</literal> signal to courierlogger, which in turn
+forwards it on to <filename>program</filename>.
+If <filename>program</filename> does not terminate in 8 seconds, kill it
+with <literal>SIGKILL</literal>.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-user=<replaceable>user</replaceable>, -group=<replaceable>group</replaceable></term>
+	<listitem>
+	  <para>
+If running as root, change credentials to the given user and/or group, which
+may be given as names or numeric ids.</para>
+<para>When running a child program, it is started
+<emphasis>before</emphasis> privileges are dropped
+(unless the <option>-droproot</option> option is also given).
+This gives a means of
+starting a child as root so it can bind to a privileged port, but still have
+courierlogger run as a non-root user. For the <option>-stop</option> and
+<option>-restart</option> options to work, you should configure the child
+program to drop its privileges to the same userid too.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-droproot</term>
+	<listitem>
+	  <para>
+Drop root privileges before starting the child process.
+The <option>-user</option> and <option>-group</option> options specify
+the non-privileges userid and groupid.
+Without the <option>-droproot</option> option the child process remains
+a root process, and only the parent <command>courierlogger</command>
+process drops root privileges.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>program</replaceable> [ argument ] ... </term>
+        <listitem>
+          <para>
+If a program is given <filename>program</filename>
+will be started as a child process of
+<command>courierlogger</command>, capturing its standard error.
+Otherwise, <command>courierlogger</command>
+reads message from standard input, and automatically terminates when
+standard input is closed.</para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>1</manvolnum></citerefentry></ulink>, your syslog man page.</para>
+  </refsect1>
+</refentry>

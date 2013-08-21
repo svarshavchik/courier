@@ -1,0 +1,64 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+      <note>
+	<para>
+Some mail servers reserve certain characters which cannot be used in
+folder names.
+IMAP mail servers use a special character
+(usually
+"<literal>/</literal>" or
+"<literal>.</literal>")
+as a separator between names in
+a hierarchical folder path.
+The actual character varies from server to server.
+An attempt to create/rename a folder
+whose name includes a reserved character will fail.
+Different IMAP servers use different hierarchy separator characters.
+An attempt to create a folder may fail on one IMAP server even if another
+IMAP server can succesfully create a folder with the same name.
+This is, unfortunately, a design flaw in the IMAP protocol.</para>
+</note>
+
+      <note>
+	<para>
+Maildir folders created by
+are compatible
+and can be read by the
+<ulink url="http://www.courier-mta.org">Courier-IMAP</ulink>
+server.
+Names of maildir folders may contain any character, including
+the characters
+"<literal>:</literal>",
+"<literal>/</literal>",
+"<literal>.</literal>",
+"<literal>~</literal>",
+and
+"<literal>:</literal>".
+However, if the same folders are exported
+via IMAP, folders whose name
+includes these characters may not be readable by some IMAP clients.
+Even a
+&libname; application may not be able to read
+one of these folders via IMAP.</para>
+
+      </note>
+
+      <note>
+	<para>
+Mbox mail folders created by
+&libname;
+are mostly compatible
+and can be exported by IMAP servers that read mbox-formatted mail folders
+(with some limitations, such as that the same mbox folder cannot be
+open by &libname; and another application at the
+same time).
+Names of mbox folders can contain any character, including
+the characters
+"<literal>/</literal>",
+and
+"<literal>~</literal>".
+However if mbox folders are exported
+via IMAP, folders whose name includes
+these characters may not be readable by some IMAP clients.</para>
+      </note>
+

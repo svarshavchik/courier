@@ -1,0 +1,77 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-renamefolder">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::renameFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::renameFolder</refname>
+      <refpurpose>Rename a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::folder *folder=mail-&gt;<function>renameFolder</function></funcdef>
+	  <paramdef>const mail::folder *<parameter>oldFolder</parameter></paramdef>
+	  <paramdef>const mail::folder *<parameter>newParent</parameter></paramdef>
+	  <paramdef>std::string <parameter>name</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function renames an existing folder.
+<parameter>oldFolder</parameter> is an existing folder or a folder directory
+(see
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for more information on folders and folder directories).
+<parameter>newParent</parameter>, if not NULL, specifies the new
+parent folder directory.
+A NULL <parameter>newParent</parameter> specifies that the folder should
+be be moved to the top level of the mail account's folder hierarchy.</para>
+
+      <para>
+<parameter>name</parameter> specifies the new name of the folder, in the
+application's character set.</para>
+
+      &libmail-foldername;
+
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      <para>
+This function returns a pointer to the renamed
+<structname>mail::folder</structname> object, or a NULL pointer if the
+folder cannot be renamed for some reason.
+The application is responsible for destroying the
+new <structname>mail::folder</structname> object, when it is no longer
+needed.</para>
+    </refsect1>
+
+    <refsect1>
+       <title>SEE ALSO</title>
+       <para>
+<link linkend="account-createfolder"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::createFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

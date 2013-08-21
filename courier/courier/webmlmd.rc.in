@@ -1,0 +1,53 @@
+#! @SHELL@
+
+case "$1" in
+
+/*)
+	prog="$1"
+	;;
+*)
+	prog="`which $1`"
+	;;
+esac
+
+set -e
+
+case "$2" in
+start)
+	if test "$3" = ""
+	then
+		echo "Usage: $prog start [configfile]" >&2
+		exit 1
+	fi
+
+	@SETENV@ -i @SHELL@ -c "set -a; . $3; $prog check || exit 1; \
+		@courierlogger@ -pid="'"${PIDFILE}"'" $LOGGEROPTS -start $prog"
+	exit $?
+	;;
+stop)
+	if test "$3" = ""
+	then
+		echo "Usage: $prog stop [configfile]" >&2
+		exit 1
+	fi
+
+	@SETENV@ -i @SHELL@ -c "set -a; . $3;\
+		@courierlogger@ -pid="'"${PIDFILE}"'" $LOGGEROPTS -stop $prog"
+	exit $?
+	;;
+restart)
+	if test "$3" = ""
+	then
+		echo "Usage: $prog restart [configfile]" >&2
+		exit 1
+	fi
+
+	@SETENV@ -i @SHELL@ -c "set -a; . $3; $prog check || exit 1; \
+		@MKDIR_P@ `dirname $PIDFILE` ; \
+		@courierlogger@ -pid="'"${PIDFILE}"'" $LOGGEROPTS -restart $prog"
+	exit $?
+	;;
+*)
+	echo "Invalid command" >&2
+	exit 1
+esac

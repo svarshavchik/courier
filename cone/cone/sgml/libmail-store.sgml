@@ -1,0 +1,15 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <literallayout>
+&libmail-includesynch;
+
+class myStoreCallback : public mail::ACCOUNT::Store {
+
+public:
+    void search(size_t messageNumber, std::string messageContents);
+};
+
+myStoreCallback storeCallback;
+</literallayout>
+

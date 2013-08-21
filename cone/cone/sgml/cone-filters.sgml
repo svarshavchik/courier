@@ -1,0 +1,291 @@
+<!-- Copyright 2002-2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone12filters">
+  <title>Mail Filters</title>
+
+    <para>
+This is a simple, automatic mail processing function.
+In this context, <quote>mail filtering</quote> means the ability to move,
+automatically delete, or automatically flag all messages that match
+a specific search criteria.</para>
+
+    <para>
+Where possible, it is always more efficient to have the mail server filter
+messages, instead of a mail client like &app;.
+&app; mail filters may prove to be sufficient
+if the mail server does not mail filtering abilities.
+In situations where the mail server is capable of filtering, the mail server's
+filters will usually be faster and more efficient.</para>
+
+    <para>
+Mail filters may be used with any IMAP, <link linkend="smap1">SMAP</link>,
+or a local mail account.
+Mail filters may also be used with POP3 accounts, but they'll be slow,
+and they'll have certain limitations.
+&app; will have to download a copy of every message in the POP3 mailbox, in
+order to check it against the searching criteria, for every mail filter
+search.  This is not needed with IMAP/SMAP accounts, where the search
+request is processed by the mail server.</para>
+
+    <para>
+Mail filters may also be used in limited ways with Usenet newsgroups.
+Only limited forms of searching are available: only Usenet message headers
+may be searched, and the searching criteria may only include English
+characters.  All other search requests can only be met by downloading a copy
+of every message from the newsgroup, which is not going to work very well,
+for obvious reasons.</para>
+
+    <para>
+The best use for mail filters with a Usenet newsgroup is as a simple
+killfile:
+<quote>Search From: contains troll@example.com</quote>,
+followed by <quote>Delete and Expunge</quote>.</para>
+
+    <para>
+A mail filter may be installed for any folder.
+Each folder has its own mail filters.
+The folder's mail filter is automatically processed by &app; whenever:</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+The folder is opened for the first time, or reopened after another folder
+was opened.</para>
+      </listitem>
+
+      <listitem>
+	<para>
+New messages are added to the folder.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+All messages in the folder are processed by the mail filters when the
+folder is opened.
+When new messages are added to the folder, only the new messages will be
+processed by the mail filters.
+Existing messages will be ignored.</para>
+
+  <section>
+    <title>Mail Filter Entry Screen</title>
+
+    <programlisting>
+::B::
+INBOX - FILTERS                      CONE
+
+  Current Filters:
+
+    Search Subject: contains RFC
+    Move to internet-drafts
+    Search From: contains boss@domain.com
+    Mark
+    [ Add new filter ]
+
+    [ Save Filters ]
+
+
+
+
+
+
+
+
+
+::B::
+
+ ^C Cancel     DEL Delete
+ ^D Move down   ^U Move up
+</programlisting>
+
+    <para>
+This screen is accessed by highlighting a folder on the Folder Listing
+screen, then pressing <keycap>F</keycap>.
+Each mail filter consists of one or more <quote>steps</quote>.
+There are two kinds of steps:
+a <quote>select</quote>
+step compiles a list of messages that match a certain search
+criteria; the selection step is followed by one or more steps that
+apply a particular <quote>action</quote> against all messages that were
+selected.
+More than one action step may follow a selection step; messages are processed
+by each action step in sequence, until another selection step, which searches
+the remaining messages again, and compiles a different list of selected
+messages.</para>
+
+      <para>
+Some actions cannot be naturally followed by any other action, and can only
+be followed by another selection step.
+Consider, for example,
+<quote>Delete And Expunge</quote> or <quote>Move to
+another folder</quote> filtering step:
+at the conclusion the selected messages are obviously removed,
+and nothing else can be done with them, any more.</para>
+
+    <para>
+This screen initially shows any existing filtering steps defined for the
+folder.
+All filtering steps are processed in the order shown.
+Highlighting an existing filtering step and pressing
+<keycap>CTRL</keycap>-<keycap>U</keycap>, or
+<keycap>CTRL</keycap>-<keycap>D</keycap>, moves the filtering step higher
+or lower, thus changing its relative order in the mail filter.
+<keycap>DEL</keycap> removes the existing filtering step.
+The folder's mail filter is removed by highlighting each step and pressing
+<keycap>DEL</keycap>, then highlighting <quote>Save Filters</quote> and
+pressing <keycap>ENTER</keycap>.</para>
+
+      <para>
+All changes made on this screen are temporary.
+<quote>Save Filters</quote>
+must be selected in order for any changes made on this screen to take
+effect.
+<keycap>CTRL</keycap>-<keycap>C</keycap> closes this screen without changing
+the folder's existing filter, throwing out all the temporary changes.</para>
+
+      <para>
+Highlighting
+<quote>Add new filter</quote> and pressing <keycap>ENTER</keycap> adds a new
+filtering step to the end of the mail filter.
+A sub-menu is shown to define the new filtering step:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><keycap>S</keycap> - select</term>
+
+	  <listitem>
+	    <para>
+Enters a new searching criteria which will be used to select messages for
+the following action steps.
+See <quote>Search criteria</quote>, below, for more
+information.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>D</keycap> - mark deleted</term>
+
+	  <listitem>
+	    <para>
+Marks all selected messages as deleted.
+The messages are not removed from the folder, but only marked as
+deleted.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>U</keycap> - unmark deleted</term>
+
+	  <listitem>
+	    <para>
+Removes the <quote>deleted</quote> mark from the selected messages.
+The selected messages are no longer marked as deleted.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>X</keycap> - delete and expunge</term>
+
+	  <listitem>
+	    <para>
+The selected messages are removed from the folder.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>R</keycap> - mark each message as tagged</term>
+
+	  <listitem>
+	    <para>
+Marks, or highlights the
+selected messages on the folder index screen.
+Tagged messages are shown as highlighted on the folder index screen,
+preceded by
+<quote><literal>*</literal></quote>.
+On some displays, tagged messages are flagged by a checkmark symbol
+instead of the
+<quote><literal>*</literal></quote>.</para>
+
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>K</keycap> - unmark, or untag the messages</term>
+
+	  <listitem>
+	    <para>
+Removes the highlighting mark from the selected messages.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>W</keycap> - watch thread</term>
+
+	  <listitem>
+	    <para>
+Watch the selected message's replies/subthreads (unless the message is
+already a part of a watched thread).
+See <link linkend="watch"><quote>Watching Threads</quote></link>
+in the <quote>Folder Index</quote> chapter for more information
+on thread watching.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>A</keycap> - unwatch thread</term>
+
+	  <listitem>
+	    <para>
+Stops watching the message, and its replies/subthreads.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>M</keycap> - move messages</term>
+
+	  <listitem>
+	    <para>
+Move the selected messages to another folder.
+Selecting this option reopens the folder index screen.
+Highlight the folder where the messages can be moved to,
+and press ENTER.</para>
+
+	    <note>
+	      <para>
+Messages can be moved only to folders in the same mail account.
+Messages cannot be moved to a folder in another mail account.</para>
+
+	      <para>
+This means that this option is not available with POP3 accounts, which
+naturally have only one folder.</para>
+	    </note>
+
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><keycap>C</keycap> - copy messages</term>
+
+	  <listitem>
+	    <para>
+Copies the selected messages to another folder.
+This is very similar to the move command, except copies of the selected
+messages remain in the original folder.</para>
+
+	    <note>
+	      <para>
+This mail filter will be processed every time a folder is opened.
+Therefore,
+the selected messages will be copied to another folder every time this
+folder is opened.
+This Copy filtering step should be followed by another filtering step,
+such as Move, or Delete/Expunge, that removes all selected messages.
+Otherwise the results could be quite amusing</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      &cone-search;
+  </section>
+</chapter>

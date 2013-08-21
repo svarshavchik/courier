@@ -1,0 +1,55 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-checknewmail">
+    <refmeta>
+      <refentrytitle>mail::account::checkNewMail</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::checkNewMail</refname>
+      <refpurpose>Check for new mail</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>checkNewMail</function></funcdef>
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This request checks for new messages in the currently open folder.
+With some accounts this request also checks for any messages that were
+removed from the folder by another process or application.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      &libmail-waitcallback;
+
+      <para>
+This request may result in additional callback methods invoked
+before the <function>success</function> method is invoked.
+The currently opened folder's
+<structname>callback::folder</structname>'s object's
+<function>newMessages</function> method will be invoked if the current
+folder has any new messages.
+The <function>messagesRemoved</function> and
+<function>messageChanged</function> methods may also be invoked.</para>
+    </refsect1>
+  </refentry>

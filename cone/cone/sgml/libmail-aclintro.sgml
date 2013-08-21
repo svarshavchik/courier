@@ -1,0 +1,13 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<para>
+This function implements folder access control lists (ACLs).
+Access control lists define who is allowed to do certain operations on
+a folder, or on messages in the folder.
+Folder ACLs are implement only for IMAP accounts on IMAP servers that
+implement access control lists.
+This function will fail if
+<replaceable>folder</replaceable>
+is not a folder on an IMAP server that
+supports access control lists.</para>

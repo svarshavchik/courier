@@ -1,0 +1,97 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone07remoteconfig">
+  <title>Remote Configuration</title>
+
+  <para>
+This is an advanced feature.
+When <quote>Remote Configuration</quote> is enabled,
+an IMAP or an
+<link linkend="smap1">SMAP</link> folder on a remote folder keeps
+a copy of &app;'s
+configuration.
+This allows &app;'s configuration to be accessed from multiple systems.
+An otherwise empty IMAP/SMAP folder must be reserved for this purpose.
+Highlight the folder with the cursor on the folder listing screen, then
+press <keycap>U</keycap> then <keycap>R</keycap>.</para>
+
+  <para>
+Answer <keycap>N</keycap> to the <quote>Import remote configuration</quote>
+question, and &app; will save its configuration to the remote folder, and
+automatically update the saved configuration, when needed.</para>
+
+  <para>
+Repeat the process by running &app; on another system, and answer
+<keycap>Y</keycap> to this question to import the previously saved
+configuration in this folder.
+&app; imports and reads the saved configuration, and will also automatically
+udpate the saved copy, when needed.</para>
+
+  <para>
+Although this feature allows the same configuration to be accessed
+from multiple locations, only one instance of &app; should be running at
+any given time and using the same remote configuration folder.
+Random errors will be reported if multiple instances of &app; try to
+open the same
+remote configuration folder, and the IMAP/SMAP server does not allow the same
+folder to be opened by two or more clients.
+Even if the server allows multiple access, &app; configuration will keep
+getting overwritten by the other &app;'s saved configuration, leading to
+unpredictable results.</para>
+
+  <section>
+    <title>Saved settings</title>
+
+    <para>
+Not all configuration information will be saved remotely.
+When remote configuration is enabled, the following configuration will be
+saved in the remote configuration folder:</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+Location and login information for remote accounts (IMAP, POP3, SMTP, and
+NetNews).
+Location of local mail accounts is not saved.
+It doesn't make much sense to share location of local mailboxes between
+different systems.</para>
+      </listitem>
+
+      <listitem>
+	<para>
+Customized headers, E-mail addresses, special folders, and folder sort
+order.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+The following configuration information will not be saved remotely:</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+Location of local mail accounts.</para>
+      </listitem>
+
+      <listitem>
+	<para>
+Cached data, including newsgroup subscription information.
+The configuration and login information of NetNews accounts is saved
+remotely, however the available newsgroup list, subscription information,
+and list of read and unread articles is not saved.
+The <filename>newsrc</filename> configuration file, which contains all that,
+can be quite big, and its not feasible to save it remotely.</para>
+      </listitem>
+    </itemizedlist>
+
+      <section>
+	<title>Disabling remote configuration</title>
+
+	<para>
+To disable remote configuration, open the setup screen from the main menu,
+highlight <quote>Turn off remote configuration</quote>, and press
+<keycap>ENTER</keycap>.</para>
+      </section>
+    </section>
+  </chapter>

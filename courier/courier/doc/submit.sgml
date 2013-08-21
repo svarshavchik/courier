@@ -1,0 +1,393 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>submit</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>submit</refname>
+    <refpurpose>Submit a new message to the <application>Courier</application> mail server</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command>@bindir@/submit</command>
+      <arg choice="opt" rep="norepeat">-expn=<replaceable>address</replaceable></arg>
+      <arg choice="opt" rep="norepeat">-vrfy=<replaceable>address</replaceable></arg>
+      <arg choice="opt" rep="norepeat">-vhost=<replaceable>address</replaceable></arg>
+      <arg choice="opt" rep="norepeat">-bcc</arg>
+      <arg choice="opt" rep="norepeat">-delay=<replaceable>n</replaceable></arg>
+      <arg choice="req" rep="norepeat">module</arg>
+      <arg choice="req" rep="norepeat">"<replaceable>type</replaceable>; <replaceable>hostid</replaceable>"</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The <command>submit</command> program submits messages to the
+<application>Courier</application> mail server for processing.
+The <command>submit</command> program is not intended to be invoked by the
+end user.
+It is used by the <application>Courier</application> mail server
+input modules only. The <command>submit</command> program's
+global read and execute permissions are turned off, so that it can only be
+executed by a process that's a member of the <literal>@mailgroup@</literal>
+group.
+<command>submit</command> is installed in the
+<filename>@libexecdir@/courier</filename>
+directory.</para>
+
+    <para><command>submit</command> always takes two command line arguments after any
+options:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>module</term>
+	<listitem>
+	  <para>
+This argument identifies the module that's running
+the <command>submit</command> command. It must be one of the module names that
+the <application>Courier</application> mail server knows about,
+such as <literal>local</literal>, or <literal>esmtp</literal>.
+This argument determines address rewriting rules.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>"<replaceable>type</replaceable>; <replaceable>hostid</replaceable>"</term>
+	<listitem>
+	  <para>
+This single argument identifies the source
+of the message, and must be suitable for the Remote-MTA: header in
+delivery status notifications, as specified by RFC 1894. For messages that
+are received via ESMTP, this argument is typically "<literal>dns; helohost
+(hostname [ip.address])</literal>".</para>
+	</listitem>
+      </varlistentry>
+
+    </variablelist>
+    <para>
+The <command>submit</command> program takes the following options:</para>
+    <variablelist>
+      <varlistentry>
+	<term>-expn=<replaceable>address</replaceable></term>
+	<listitem>
+	  <para>
+Do not accept a message, instead "expand"
+the given address. If the specified address matches a locally-defined
+alias, <command>submit</command> prints the addresses this address expands to.
+If the specified address does not match a locally-defined alias, the
+address is displayed by itself.
+</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-vrfy=<replaceable>address</replaceable></term>
+	<listitem>
+	  <para>
+Do not accept a message, instead verify the
+given address. <command>submit</command> prints a suitable message and sets the
+exit code to indicate whether the specified address is valid, or not. If
+the address matches a local alias, <command>submit</command> will indicate a
+valid address, and exit. If the address does not match a local alias,
+<command>submit</command> checks if this address is deliverable by any output
+protocol module. If so, <command>submit</command> will indicate a valid address,
+and exit. Otherwise, <command>submit</command> prints a "User unknown" error
+message, and exits.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-bcc</term>
+	<listitem>
+	  <para>
+If no recipients are given, obtain the list of
+recipients from <literal>Bcc:</literal> headers only. Normally, if no recipients
+are specified, <command>submit</command> reads the list of recipients from the
+<literal>To:</literal>, <literal>Cc:</literal> and <literal>Bcc:</literal> headers
+(<literal>Bcc:</literal> headers are always removed). The <literal>-bcc</literal>
+option ignores <literal>To:</literal> and <literal>Cc:</literal> headers for this
+purpose. This option is ignored if an explicit recipient list is specified
+(see below).</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-delay=<replaceable>n</replaceable></term>
+	<listitem>
+	  <para>
+Wait <replaceable>n</replaceable> seconds before delivering
+the message. If not specified, delivery begins after waiting the amount of
+time specified by the <filename>@sysconfdir@/submitdelay</filename> configuration
+time (default: 0 seconds -- immediate delivery).</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>-vhost=<replaceable>address</replaceable></term>
+	<listitem>
+	  <para>
+	    Append <quote>.<replaceable>address</replaceable></quote> to
+	    names of all configuration files Courier reads while processing
+	    this message.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+
+    <title>RESPONSES FROM <command>submit</command></title>
+
+    <para>
+All replies from <command>submit</command> follow the format of SMTP responses, as
+defined in RFC822.</para>
+
+    <para>
+To summarize: the responses are one or more lines long. Every line in the
+response instead of the last one consists of a three-digit numerical code, a
+dash, then arbitrary text. The last line (or the only line of the response)
+starts with a three-digit numerical code, a single space, and arbitrary text.
+The first digit of the numerical code indicates whether the response indicates
+success, or failure. If the first digit is 5, the response indicates a
+permanent failure. If the first digit is 4, the response indicates a temporary
+failure (the message or the address should be resubmitted later). If the first
+digit is not 4 or 5, the response indicates success, or acceptance.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>MESSAGE SUBMISSION</title>
+
+    <para>
+Unless either <option>-expn</option> or <option>-vrfy</option> option is specified,
+<command>submit</command> reads the message envelope and contents from standard
+input, as follows. All input and output to <command>submit</command> consists of
+newline-terminated (NOT carriage return/newline terminated) lines of
+text.</para>
+
+    <para>
+<command>submit</command> reads the first line of text, which specifies the
+envelope sender address. The line is formatted as follows:</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+address<token>&lt;tab&gt;</token>format<token>&lt;tab&gt;</token>envid
+</programlisting>
+    </informalexample>
+
+    <para>
+<token>&lt;tab&gt;</token> is the ASCII tab character. The address may be an
+empty string, optionally followed by tab, then "format", another tab, then
+"envid".</para>
+
+    <para>
+<replaceable>format</replaceable> is one or more chatacters that specify delivery status
+notification processing, and other message options. The 'F' character
+specifies that delivery status notifications should include the entire
+message, 'H' specifies just the headers of the message should be included.
+Absence of either 'F' or 'H' specifies no preference. "S{keyword}" specifies
+the optional SECURITY extension keyword for this message. The 'V' character in
+<replaceable>format</replaceable> sets the VERP extension flag for this message.</para>
+
+    <para>
+<replaceable>envid</replaceable> is the original message envelope ID, that will be shown on any
+delivery status notifications. NOTE: <replaceable>envid</replaceable> must be specified using
+xtext encoding (see the relevant RFCs).</para>
+
+    <para>
+After reading the first line of text, <command>submit</command> prints a response
+(see "RESPONSES FROM SUBMIT", above). If the response is a failure,
+<command>submit</command>
+terminates immediately. Otherwise, <command>submit</command>
+then reads one or more envelope recipients.</para>
+
+    <para>
+Each envelope recipient is read as a single non-empty line of text,
+formatted as follows:</para>
+
+    <informalexample>
+      <programlisting format="linespecific">
+address<token>&lt;tab&gt;</token>dsn<token>&lt;tab&gt;</token>orecipient
+</programlisting>
+    </informalexample>
+
+    <para>
+<replaceable>address</replaceable> is a non-empty recipient E-mail address, optionally followed
+by the tab character, then zero or more characters specifying <replaceable>dsn</replaceable>, then
+a tab character, then the <replaceable>orecipient</replaceable> value.</para>
+
+    <para>
+<replaceable>dsn</replaceable> is zero or more of the following characters: S - send a delivery
+status notification upon a successful delivery to this address, F - send a DSN
+upon a failed delivery, D - send a DSN upon a mail delay, N - never send a
+DSN. <replaceable>orecipient</replaceable> is the "Original Recipient", as specified in RFC1894,
+using xtext encoding.</para>
+
+    <para>
+<command>submit</command> will print a response to each recipient (see "RESPONSES
+FROM SUBMIT", above). If at least one recipient address has been succesfully
+specified, a blank line is read to specify end of recipient list, which is
+followed by the entire message, headers and body.</para>
+
+    <para>
+A single blank line terminates the list of recipients. That is followed by
+the message itself, until end of file.</para>
+
+    <para>
+The blank line can be present before even a the first recipient is
+specified. If so, <command>submit</command> obtains the list of recipient from the
+message's headers.</para>
+
+    <para>
+<command>submit</command> reads the message headers and body until end-of-file.
+Then, <command>submit</command> prints a response (see above), indicating whether or
+not the message was accepted for delivery, and terminates.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>ADDRESS REWRITING</title>
+    <para>
+Each recipient address (whether specified explicitly, or obtained from the
+message headers), will be rewritten according to the rewriting rules specified
+by the input module. Each address in the headers of the message will also be
+rewritten.</para>
+
+    <para>
+After rewriting each recipient address, <command>submit</command> will search the
+aliases.dat file for this address, to see if it represents a locally defined
+alias. Submit searches
+<filename>@libexecdir@/courier/modules/<replaceable>module</replaceable>/aliases.dat</filename> and
+<filename>@sysconfdir@/aliases.dat</filename> (actual locations may be changed by the
+system administrator). If the address is found, the recipient address will be
+replaced by the addresses defined in the <filename>aliases.dat</filename> file.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>ENVIRONMENT VARIABLES</title>
+    <para>
+<command>submit</command> also reads the following environment variables to further
+specify how the message is to be processed:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>BLOCK</term>
+	<listitem>
+	  <para>
+If this variable is set to a non-empty value,
+submit will reject every recipient (in effect, rejecting the message). The
+contents of the environment variable will be used as the error
+message.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>DSNENVID</term>
+	<listitem>
+	  <para>
+If envid is not specified, or is blank, and this
+environment variable is defined, the contents of this variable is used as
+the original envelope id field for DSNs. Note that DSNENVID is copied
+verbatim into the Original-Envelope-Id field (if the message is relayed to
+another MTA, the <application>Courier</application> mail server
+automatically xtext-encodes it).</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>DSNNOTIFY</term>
+	<listitem>
+	  <para>
+If the dsn field for a recipient is empty, the
+contents of this environment variable is used in its place. Also, if the
+recipient list is read from the headers, the contents of this environment
+variable are used to set the dsn setting.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>DSNRET</term>
+	<listitem>
+	  <para>
+If the format field for this message is empty, the
+contents of this environment variable is used in its place.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>NOADDDATE</term>
+	<listitem>
+	  <para>
+Normally the <application>Courier</application> mail server adds a
+<literal>Date:</literal>
+header to the message, if it does not have one. If this environment
+variable is set, the <application>Courier</application> mail server
+will not add a <literal>Date:</literal> header.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>NOADDMSGID</term>
+	<listitem>
+	  <para>
+Normally the <application>Courier</application> mail server adds a
+<literal>Message-Id:</literal> header to the message, if it does not have it.
+If this environment variable is set, the
+<application>Courier</application> mail server will not add a
+<literal>Message-Id:</literal> header.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>NOADDRREWRITE</term>
+	<listitem>
+	  <para>
+	    Normally the <application>Courier</application> mail server
+	    rewrites addresses in the <literal>From:</literal>,
+	    <literal>To:</literal>, and <literal>Cc:</literal> header fields.
+	    If this environment variable is set to <literal>1</literal>, the
+	    <application>Courier</application> mail server will not rewrite them.
+	    If it is set to a higher value, the
+	    <application>Courier</application> mail server will only rewrite it
+	    if no
+	    <literal>DKIM-Signature:</literal> header field was found.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>MIME</term>
+	<listitem>
+	  <para>
+Normally the <application>Courier</application> mail server
+adds any missing
+RFC2045 headers to the message. The <envar>MIME</envar> environment variable
+can be set to the following values: <literal>none</literal> - do not do any
+RFC2045 processing whatsoever; <literal>7bit</literal> - if the message contains
+any 8-bit text, convert it to <literal>quoted-printable</literal> encoding;
+<literal>8bit</literal> -if the message contains any quoted-printable encoded
+text that can be representing as 8bit-encoded text, then convert it to
+8bit encoding.</para>
+	</listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="courierpop3d.html"><citerefentry><refentrytitle>courierpop3d</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>7</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

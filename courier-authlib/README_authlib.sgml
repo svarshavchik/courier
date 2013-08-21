@@ -1,0 +1,1207 @@
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+
+[
+<!ENTITY optionlist SYSTEM "optionlist.sgml">
+
+]>
+
+  <!-- Copyright 1998 - 2010 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<chapter id="authlib">
+
+  <docinfo>
+    <title>Courier Authentication Library</title>
+    <orgname>Double Precision, Inc.</orgname>
+    <productname>Courier Mail Server</productname>
+  </docinfo>
+
+  <title>Courier Authentication Library</title>
+
+  <para>
+This library is used for two purposes:</para>
+  <para>
+1. Read the name of a mail account.
+Determine the local account's home directory, and system userid and
+groupid.</para>
+  <para>
+2. Read an account name, and a password.
+If valid, determine the account's home directory, system userid, and
+groupid.</para>
+  <para>
+The term "authentication" is used in the following documentation to refer
+to either one of these two functions.
+The library contains several alternative authentication modules to choose
+from, described below.</para>
+
+  <para>
+The configuration file <filename>@authdaemonrc@</filename> contains several
+settings.  The most important of them are:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para>
+A list of authentication modules to activate.
+By default, this list includes all available authentication modules,
+even if some are not actually installed at the moment.
+When the authentication library is set up, only those authentication
+modules that can be supported by the operating system will be installed.
+Some of the listed modules may not actually be there,
+however that's not a problem.
+Any unavailable authentication modules will be ignored.
+Also, on some platforms certain authentication modules are installed by
+optional sub-packages.
+Installing the sub-package is the only action needed to make use of it.</para>
+
+      <para>
+The only time the list of authentication modules need to be adjusted is
+when an available authentication module must be disabled for some reason.
+This should only be needed in the most unusual circumstances.</para>
+    </listitem>
+    <listitem>
+      <para>
+Number of authentication processes.
+The default setting is to start five authentication processes, which should be
+sufficient for normal usage.
+Try increasing this setting if its taking too long to log into an account,
+and you have determined that this is not due to a bottleneck in the whatever
+authentication database you're using (LDAP, MySQL, SQLite,
+or PostgreSQL).</para>
+
+      <para>
+An authentication request must be completed within thirty seconds, otherwise
+it gets rejected.
+When authentication requests come in faster than all five authentication
+processes can get to them, delays build up, and the timer is ticking.
+If all the activity maxes out the CPU or I/O bandwidth,
+nothing can be done about it, short
+of getting another server.  However if there's plenty of available CPU and
+I/O, increasing the number of processes will do the trick.</para>
+    </listitem>
+  </itemizedlist>
+
+  <sect1 id="authpwd">
+    <title>The <literal>authpwd</literal> authentication module</title>
+
+    <para>
+This modules obtains account information and passwords from the
+<filename>/etc/passwd</filename> file.</para>
+    <note>
+      <para>
+This module doesn't actually read the <filename>/etc/passwd</filename>
+file, it uses the C library's getpw() functions.
+The C library implementation could use any mechanism to obtain the equivalent
+information.</para>
+    </note>
+  </sect1>
+
+  <sect1 id="authshadow">
+    <title>The <literal>authshadow</literal> authentication module</title>
+
+    <para>
+This module is a version of the <literal>authpwd</literal> module that
+reads passwords
+from <filename>/etc/shadow</filename> (the C library's getsp()
+functions).</para>
+  </sect1>
+
+  <sect1 id="authpam">
+    <title>The <literal>authpam</literal> authentication module</title>
+
+    <para>
+This modules uses the system's PAM library
+(pluggable authentication modules) for authentication.
+This is, essentially, a way to use existing PAM modules for authentication.
+Note, however, that the authenticated account's home directory, userid and
+groupid are still read from the <filename>/etc/passwd</filename> file,
+since PAM functionality is limited to validating account passwords.</para>
+
+    <note>
+      <para>
+Not all PAM modules are compatible with Courier's authentication library.
+PAM modules that make use of PAM's session functions, or authentication token
+functions, like <literal>pam_krb5</literal> will not work with Courier.</para>
+    </note>
+    <note>
+      <para>
+Additional configuration steps will be required to set up
+the PAM library to authenticate Courier's services.
+Courier's IMAP and POP3 servers, for example, require that the
+<quote>imap</quote> and <quote>pop3</quote> PAM service to be
+configured.</para>
+
+      <para>
+The specific configuration steps differ from system to system.
+Consult the system documentation for more information.
+It might be tempting to throw in a towel and use
+<literal>authshadow</literal> or <literal>authpwd</literal>
+if you cannot figure out how to install PAM support,
+however that is not advisable.
+It is highly recommended to use
+<filename>authpam</filename> wherever the PAM library is available.</para>
+
+      <para>
+The exact configuration procedure depends on the PAM implementation.
+Most PAM libraries use configuration files in the
+<filename>/etc/pam.d</filename> directory.
+Therefore, it will be necessary to install the configuration files
+<filename>/etc/pam.d/imap</filename> and
+<filename>/etc/pam.d/pop3</filename>.  Similarly, Courier's webmail
+server, SqWebMail, uses <filename>/etc/pam.d/webmail</filename>, and
+its optional calendar component uses <filename>/etc/pam.d/webmail</filename>.
+Courier-MTA's authenticated SMTP component uses the
+<filename>/etc/pam.d/smtp</filename> service.</para>
+
+      <para>
+In nearly all cases all these configuration files will specify an
+identical PAM library configuration for all services.
+The exact configuration details are site-specific.
+Here's an example of a PAM configuration file for a recent version of the
+most common PAM library:</para>
+
+      <informalexample>
+	<programlisting>
+auth       required     pam_nologin.so
+auth       required     pam_stack.so service=system-auth
+account    required     pam_stack.so service=system-auth
+session    required     pam_stack.so service=system-auth
+</programlisting>
+      </informalexample>
+
+      <para>
+Again, the actual configuration is site specific.
+Examine the contents of existing configuration files in
+<filename>/etc/pam.d</filename> for similar services (if there's
+<filename>/etc/pam.d/ppp</filename>
+it's often a good example to follow) in order
+to derive the correct setup for Courier.</para>
+
+      <para>
+Older PAM libraries use a single configuration file, usually
+<filename>/etc/pam.conf</filename>.
+Append Courier-specific PAM settings to this configuration file, again
+using settings for existing services as a guide.
+For example:</para>
+
+      <informalexample>
+	<programlisting>
+imap  auth    required        pam_unix.so      try_first_pass
+imap  account required        pam_unix.so
+imap  session required        pam_permit.so
+pop3  auth    required        pam_unix.so      try_first_pass
+pop3  account required        pam_unix.so
+</programlisting>
+      </informalexample>
+
+      <para>
+Some PAM libraries use
+<filename>pam_pwdb.so</filename> instead of
+<filename>pam_unix.so</filename>; consult the PAM library's
+documentation for more information.</para>
+    </note>
+  </sect1>
+
+  <sect1 id="authpipe">
+    <title>The <literal>authpipe</literal> authentication module</title>
+
+
+    <para>This is a generic plug-in module that runs an external script,
+or a program, in response to authentication requests.</para>
+
+    <para>The external program reads from stdin and writes to stdout. It
+can be persistent and handle many authentication requests. Only one request
+will be sent to it at a time; each authdaemon process starts its own copy of
+the external script.</para>
+
+    <para>The location of the external program is set by the
+<literal>--with-pipeprog</literal> configure option,
+which defaults to
+<filename>@sysconfdir@/authlib/authProg</filename>. A sample program
+is included in the courier-authlib source.</para>
+  </sect1>
+    <sect1 id="authpipeproto">
+      <title>The <literal>authpipe</literal> protocol</title>
+
+      <para>
+authpipe uses the same protocol as authdaemon clients use to communicate
+with authdaemond.</para>
+
+<para>There are four possible requests: <literal>PRE</literal>,
+<literal>AUTH</literal>, <literal>PASSWD</literal> and
+<literal>ENUMERATE</literal>. Apart from <literal>AUTH</literal>, each
+request is a single line terminated by newline.
+</para>
+
+<variablelist>
+  <varlistentry>
+    <term>PRE . <replaceable>authservice</replaceable> <replaceable>username</replaceable> <emphasis>&lt;newline&gt;</emphasis></term>
+    <listitem>
+      <para>Look up data for an account.
+      <replaceable>authservice</replaceable> identifies the service the
+      user is trying to use - e.g. pop3, imap, webmail etc.</para>
+      <para>If the account exists, return the account
+      data as a series of ATTR=value newline-terminated lines, followed by a
+      period on a line of its own. Valid attributes are:
+      </para>
+      <screen>
+      USERNAME=username         -- system account which owns mailbox (name)
+      UID=uid                   -- system account which owns mailbox (numeric uid)
+      GID=gid                   -- numeric groupid
+      HOME=homedir              -- home directory
+      ADDRESS=addr              -- e-mail address
+      NAME=name                 -- full name
+      MAILDIR=maildir           -- Maildir relative to home directory
+      QUOTA=quota               -- quota string: maxbytesS,maxfilesC
+      PASSWD=cryptpasswd        -- encrypted password
+      PASSWD2=plainpasswd       -- plain text password
+      OPTIONS=acctoptions       -- option1=val1,option2=val2,...
+      .
+      </screen>
+      <para>
+      Of these, it is mandatory to return ADDRESS, HOME, GID, and either UID
+      or USERNAME; the others are optional.
+      </para>
+      <para>If the account is not known, return <literal>FAIL</literal><emphasis><literal>&lt;newline&gt;</literal></emphasis>.
+      If there is a temporary failure, such as a database being down, authProg
+      should terminate (thereby closing stdin/stdout) without sending any
+      response. authdaemon will restart the pipe module for the next
+      request, thus ensuring it is properly reinitialized.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>AUTH <replaceable>len</replaceable><emphasis>&lt;newline&gt;</emphasis><replaceable>len-bytes</replaceable></term>
+    <listitem>
+    <para>
+    Validate a login attempt. The AUTH line is followed by
+    <emphasis>len-bytes</emphasis> of authentication data, which does not
+    necessarily end with a newline. The currently defined authentication
+    requests are:
+    </para>
+    <screen>
+    service \n login \n username \n password [\n]         -- plaintext login
+    service \n cram-md5 \n challenge \n response [\n]     -- base-64 encoded challenge and response
+    service \n cram-sha1 \n challenge \n response [\n]    -- ditto
+    service \n cram-sha256 \n challenge \n response [\n]  -- ditto
+    </screen>
+    <para>
+    In the case of success, return the complete set of
+    account parameters in the same format as PRE, ending with a period on 
+    a line of its own. In the case of failure (e.g. username does not exist,
+    password wrong, unsupported authentication type), return
+    <literal>FAIL</literal><emphasis><literal>&lt;newline&gt;</literal></emphasis>.
+    If there is a temporary failure, such as a database being down, authProg
+    should terminate without sending any response.
+    </para>
+    <para>
+    Note: if the user provides a plaintext password and authenticates
+    successfully, then you can return it as PASSWD2 (plain text password)
+    even if the database contains an encrypted password. This is useful
+    when using the POP3/IMAP proxy functions of courier-imap.
+    </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>PASSWD <replaceable>service</replaceable><emphasis>&lt;tab&gt;</emphasis>
+      <replaceable>username</replaceable><emphasis>&lt;tab&gt;</emphasis>
+      <replaceable>oldpasswd</replaceable><emphasis>&lt;tab&gt;</emphasis>
+      <replaceable>newpasswd</replaceable><emphasis>&lt;tab&gt;</emphasis>
+      <emphasis>&lt;newline&gt;</emphasis>
+    </term>
+    <listitem>
+      <para>Request a password change for the given account: validate that
+      the oldpassword is correct, and if so, change it to the newpassword.
+      </para>
+      <para>Reply: the string
+      for success, or <literal>FAIL</literal><emphasis><literal>&lt;newline&gt;</literal></emphasis> for
+      a data error (e.g. no such account, old password wrong, new password not
+      acceptable). In the case of a temporary failure, such as a database
+      being down, authProg should terminate without sending any response.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>ENUMERATE <emphasis>&lt;newline&gt;</emphasis></term>
+    <listitem>
+    <para>
+    Return a list of all accounts, one per line in the following format,
+    ending with a period on a line of its own:
+    </para>
+    <screen>
+    username \t uid \t gid \t homedir \t maildir \t options \n
+    .
+    </screen>
+    <para>
+    If your module does not support the ENUMERATE command then return just
+    a period on a line of its own (which will still allow enumeration data
+    from other modules to be returned). In the case of a temporary failure,
+    such as a database being down or an error occuring mid-way through
+    returning account data, authProg should terminate before sending
+    the terminating period.
+    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+  </sect1>
+
+  <sect1 id="authuserdb">
+    <title>The <literal>authuserdb</literal> authentication module</title>
+    <para>
+This module
+uses a GDBM or a DB-based
+<ulink url="userdb.html"><citerefentry><refentrytitle>userdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> database.
+This module also incorporates userdb-based challenge-response authentication
+implementation that was done by a separate <literal>authcram</literal> module
+in previous versions of the Courier authentication library.</para>
+
+    <para>
+<filename>@sysconfdir@/authlib/userdb</filename> is a plain file that
+can be edited with any text editor.
+The file contains a list of account names, and their pertinent information.
+<filename>@sysconfdir@/authlib/userdb</filename> may alternatively be a
+directory containing plain text files, which are effectively concatenated
+together to form the actual list of accounts.
+The <command>makeuserdb</command> script compiles the account information
+into a GDBM or DB database file, which can be quickly looked up.</para>
+
+    <para>
+<filename>@sysconfdir@/authlib/userdb</filename> is loosely equivalent in
+function to <filename>/etc/passwd</filename> and
+<filename>/etc/shadow</filename>, and contain analous information: account
+name, its numeric userid and groupid, home directory, and passwords.
+<filename>@sysconfdir@/authlib/userdb</filename> also contains additional
+Courier-specific metadata, such as account quotas and other account-specific
+settings.
+<filename>@sysconfdir@/authlib/userdb</filename> files can also be
+maintained by custom-written Perl scripts, instead of being edited
+by hand.</para>
+
+    <para>
+<filename>@sysconfdir@/authlib/userdb</filename>
+allows creation of virtual mail accounts that do not have a corresponding
+login account -- virtual mail accounts that can share the same, reserved,
+system userid.
+<filename>@sysconfdir@/authlib/userdb</filename>
+can also be used to completely supersede
+<filename>/etc/passwd</filename>.
+With many accounts it can be quite a drain to have to continuously linearly
+scan <filename>/etc/passwd</filename> in order to look up an account.
+Instead, a fast database lookup can retrieve the same information from the
+database file.
+Review the included manual pages, starting with
+<ulink url="userdb.html"><citerefentry><refentrytitle>userdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>, for more information.</para>
+
+    <sect2 id="userdbprimer">
+      <title>A brief <literal>userdb</literal> primer</title>
+
+      <para>
+<literal>userdb</literal> is a way to implement many virtual mailboxes - many
+mailboxes that do not have to have a separate system userid allocated for
+each one, and there is no system login associated with each mailbox.
+<literal>userdb</literal> uses a database for mapping virtual addresses to physical
+maildirs. It should be scalable to thousands of mailboxes. It can also be
+used to replace linear searches of <filename>/etc/passwd</filename> with a database
+lookup, see
+<ulink url="userdb.html"><citerefentry><refentrytitle>userdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+
+      <para>
+Note - you still MUST use some valid system userid and groupid that is
+shared by all virtual mailboxes. Instead of allocating a single userid and
+groupid per each mailbox, the same userid and groupid is used for all of
+them.</para>
+
+      <para>
+This is a rough overview of using userdb. For additional information, read
+<ulink url="userdb.html"><citerefentry><refentrytitle>userdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+and
+<ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>. All the scripts will
+be installed in <filename>@sbindir@</filename>, so look for them there.</para>
+
+      <para>
+The best way to describe how <literal>userdb</literal> works is to try to create
+one virtual mail account. As mentioned before, virtual mailboxes still need
+one system account to be used for uid/gid purposes. Let's call this system
+account "vmail".</para>
+    </sect2>
+    <sect2 id="userdbsimple">
+      <title>A simple userdb setup</title>
+
+      <para>
+This approach should be used if you do not have many virtual mailboxes.
+It's very simple, but quickly becomes cumbersome if you administer many
+virtual mailboxes.</para>
+
+      <para>Create an empty <filename>@userdb@</filename> file:</para>
+      <informalexample>
+	<programlisting>
+# cp /dev/null @userdb@
+# chmod 700 @userdb@</programlisting></informalexample>
+
+      <para>
+<filename>@userdb@</filename> must have 700 permissions,
+since it will contain passwords.</para>
+
+      <para>
+Now, run the script <command>pw2userdb</command>, as root.
+This script converts the
+contents of <filename>/etc/passwd</filename>
+to the <filename>@userdb@</filename> format
+(including the contents of <filename>/etc/shadow</filename>,
+this is why permissions
+on <filename>@userdb@</filename> must be 700). This script is usually used
+where you
+want to convert a very large <filename>/etc/passwd</filename> to
+<filename>@userdb@</filename>. <literal>userdb</literal> applications can now
+use a fast
+<literal>userdb</literal> database instead of a linear scan
+of <filename>/etc/passwd</filename>
+in order to look up system accounts. However, you probably don't want to
+use this feature right now, so what you want to do is take the output
+of <command>pw2userdb</command>, and find the entry for the vmail account
+that you
+created earlier. Look for a line that starts with 'vmail' followed by tab,
+followed by familiar fields from <filename>/etc/passwd</filename>. Save the
+output of
+<command>pw2userdb</command> in a temporary file, edit it, and remove
+everything
+except the line containing vmail, and the very next line, which is a special
+entry that maps vmail's userid back to the vmail record.</para>
+
+      <para>
+Here's what you might find in the output of
+<command>pw2userdb</command>:</para>
+      <informalexample>
+	<programlisting>
+vmail   uid=1012|gid=1012|home=/home/vmail|systempw=*
+1012=   vmail</programlisting>
+      </informalexample>
+
+      <para>
+The actual numerical values and the home directory location may vary.
+Save
+these two lines as <filename>@userdb@</filename>, and set the permissions on
+<filename>@userdb@</filename> to 700:</para>
+
+      <informalexample>
+	<programlisting>
+$ chmod 700 <filename>@userdb@</filename>
+</programlisting>
+      </informalexample>
+
+      <para>
+Now, with that out of the way, let's really create a virtual account. In
+this example we'll create a virtual mailbox for 'john@example.com'.</para>
+      <informalexample>
+	<programlisting>
+# su vmail
+$ cd ~vmail
+$ mkdir john-example
+$ maildirmake john-example/Maildir
+$ exit
+#
+</programlisting>
+      </informalexample>
+
+      <para>
+You may need to specify a full path to your <command>maildirmake</command>
+program. The end result is that you created
+<filename>$HOME/john-example</filename> in vmail's account, which
+can be thought of as a <quote>virtual home directory</quote> for
+<quote>john@example.com</quote>, that contains the account's maildir
+mailbox.</para>
+
+      <para>
+Now, let's connect the dots here, and create an entry in
+<filename>@userdb@</filename> for <filename>john@example.com</filename>:</para>
+
+      <informalexample>
+	<programlisting>
+# userdb "john@example.com" set home=/home/vmail/john-example \
+                                uid=UUU gid=GGG
+</programlisting>
+      </informalexample>
+
+      <para>
+This command runs the script named <filename>userdb</filename> , which is
+installed, by default in <filename>@sbindir@</filename>. Replace UUU and
+GGG with the userid and groupid of the vmail account. If you now look in
+<filename>@userdb@</filename>, you will see that a new record for
+<quote>john@example.com</quote>
+has been appended to the end of the file.</para>
+
+      <para>
+One more detail: we need to set the IMAP password for this
+mailbox:</para>
+
+      <informalexample>
+	<programlisting>
+# userdbpw | userdb "john@example.com" set imappw</programlisting></informalexample>
+
+      <para>
+On most modern Linux and BSD distributions, you can specify the -md5
+option to <command>userdbpw</command>, in order to use MD5 password hashes,
+instead of crypt. The traditional password function allows passwords only
+up to 8 characters long; everything in excess is ignored.
+The newer MD5 passwords, now supported by most modern systems, allow
+longer passwords.</para>
+
+      <para>
+Use "<literal>systempw</literal>" instead of
+"<literal>imappw</literal>" if you would like to use the same password for the POP3
+server, and for all other services.
+The "<literal>imappw</literal>" field is only checked by the IMAP server.
+If not
+defined, "<literal>systempw</literal>" is used instead. The field
+<literal>pop3pw</literal>
+is checked only by Courier's POP3 server. If it is
+not defined the POP3 server will check <literal>systempw</literal> too.</para>
+
+      <para>Finally, compile the database:</para>
+
+      <informalexample>
+	<programlisting>
+# makeuserdb
+</programlisting>
+      </informalexample>
+
+      <para>
+This command creates the actual database, <filename>@userdb@.dat</filename> and
+<filename>@userdb@shadow.dat</filename> from the plain text file
+<filename>@userdb@</filename>. Courier will now start accepting logins to this
+mailbox. Adding and removing mailboxes can be done while Courier is
+running.</para>
+
+      <para>
+Courier reads <filename>@userdb@.dat</filename> and
+<filename>@userdb@shadow.dat</filename> only. The plain text source,
+<filename>@userdb@</filename> is not read by Courier itself. Changes take
+effect
+only when <command>makeuserdb</command> runs.</para>
+    </sect2>
+    <sect2 id="userdbcomplex">
+      <title>Large virtual domain farm</title>
+
+      <para>
+The previous approach used a single flat file, <filename>@userdb@</filename>.
+This
+will work for up to a couple of hundred accounts.
+An slightly different approach can scale to thousands of
+domains and mailboxes.</para>
+
+      <para>
+Instead of creating a <filename>@userdb@</filename> file, create a
+subdirectory:</para>
+
+      <informalexample><programlisting>
+# mkdir @userdb@
+# chmod 700 @userdb@
+</programlisting>
+      </informalexample>
+
+      <para>
+Now, create <filename>@userdb@/default</filename>, containing pw2userdb's
+output
+for the vmail account, as previously described.</para>
+
+      <para>
+This time, you probably want to create all mailboxes for the same domain
+in a separate subdirectory:</para>
+
+      <informalexample>
+	<programlisting>
+# su - vmail
+$ cd ~vmail
+$ mkdir -p domains/example-com
+$ mkdir domains/example-com/john
+$ maildirmake domains/example-com/john
+$ exit
+</programlisting>
+      </informalexample>
+
+      <para>
+The idea is that all the maildirs for <literal>@example.com</literal> will
+now be found
+in <filename>~vmail/domains/example-com</filename>. All maildirs for
+<literal>domain.org</literal> will be in
+<filename>~vmail/domains/domain.org</filename>. The actual layout and naming
+conventions are entirely up to you to define.</para>
+
+      <para>Here's how configure <filename>@userdb@</filename>:</para>
+
+      <informalexample>
+	<programlisting>
+$ userdb "example-com/john@example.com" set \
+             home=/home/vmail/domains/example-com/john \
+             uid=UUU gid=GGG</programlisting>
+      </informalexample>
+
+      <para>
+This creates the file <filename>@userdb@/example-com</filename> (the first
+parameter to the <command>userdb</command> command), and appends a record named
+"john@example.com". You will store all <literal>userdb</literal> entries for
+<literal>@example.com</literal> in the file
+<filename>@userdb@/example-com</filename>. All
+entries for <literal>@domain.org</literal> will be maintained in
+<filename>@userdb@/domain-org</filename>, and so on.</para>
+
+      <informalexample>
+	<programlisting>
+$ userdbpw | userdb "example-com/john@example.com" set imappw
+</programlisting>
+      </informalexample>
+
+      <para>
+This sets the IMAP access password for this account. Finally:</para>
+      <informalexample>
+	<programlisting>
+$ makeuserdb
+</programlisting>
+      </informalexample>
+    </sect2>
+
+    <sect2 id="moreuserdb">
+      <title>Beyond <literal>userdb</literal></title>
+
+      <para>
+<literal>userdb</literal> is a simple, straightforward solution that scales
+to a couple of thousand of mail accounts, depending on the hardware.
+Beyond that, one of database-based modules will need to be used,
+such as
+<literal>authldap</literal>,
+<literal>authmysql</literal>,
+<literal>authsqlite</literal>,
+<literal>authpgsql</literal>.
+Since <literal>userdb</literal> is maintained as plain text files that
+are easily parsed by a script, migrating data from userdb will not be
+difficult.</para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="authmysql">
+    <title>The <literal>authmysql</literal> authentication module</title>
+    <para>
+This module reads
+the list of mail accounts and passwords from a table in a
+MySQL database.
+The <filename>@authmysqlrc@</filename> configuration file defines the
+particular details regarding the MySQL database and the schema of the
+mail account table.</para>
+  </sect1>
+
+  <sect1 id="authpgsql">
+    <title>The <literal>authpgsql</literal> authentication module</title>
+    <para>
+This module reads
+the list of mail accounts and passwords from a table in a
+PostgreSQL database.
+The <filename>@authpgsqlrc@</filename> configuration file defines the
+particular details regarding the PostgreSQL database and the schema of the
+mail account table.</para>
+  </sect1>
+
+  <sect1 id="authsqlite">
+    <title>The <literal>authsqlite</literal> authentication module</title>
+    <para>
+This module reads
+the list of mail accounts and passwords from a table in a
+SQLite database file.
+The <filename>@authsqliterc@</filename> configuration file defines the
+particular details regarding the SQLite database file and the schema of the
+mail account table.</para>
+  </sect1>
+
+  <sect1 id="authldap">
+    <title>The <literal>authldap</literal> authentication module</title>
+    <para>
+This module reads
+the list of mail accounts and passwords from an LDAP directory.
+The <filename>@authldaprc@</filename> configuration file defines the
+particular details regarding the LDAP directory layout.</para>
+
+    <para>
+A suggested LDAP schema can be found in the file
+<filename>authldap.schema</filename>, 
+which is included in Courier authentication library's source code, and
+may be installed on your system.</para>
+  </sect1>
+
+  <sect1 id="authcustom">
+    <title><literal>authcustom</literal></title>
+    <para>
+This is a do-nothing module where custom authentication code
+can be added.
+This authentication module is just a stub that doesn't really do anything.
+It's purpose is to serve as a placeholder where custom authentication code
+can be easily implement.</para>
+  </sect1>
+
+  <sect1 id="options">
+    <title>Account options</title>
+
+    <para>
+The authentication library has a facility for keep arbitrary
+<quote>name=value</quote>-type settings,
+called <quote>options</quote>, for individual accounts. This feature is
+only available with
+<literal>userdb</literal>,
+<literal>LDAP</literal>, <literal>MySQL</literal>, <literal>SQLite</literal> and
+<literal>PostgresSQL</literal>
+modules. Individual account options are not supported with
+system-based authentication modules (password/shadow files, or PAM).</para>
+
+    <para>
+See
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
+for a description of option names used by various Courier packages.
+Other applications can make up names for their own settings, and
+use them in the same way.</para>
+
+    <para>
+Account options are specified via the authentication modules in the
+following manner:</para>
+    <variablelist>
+      <varlistentry>
+	<term><literal>userdb</literal></term>
+	<listitem>
+	  <para>
+Use the <command>userdb</command> command to set a field called
+"<literal>options</literal>". Example:</para>
+
+	  <informalexample>
+	    <programlisting>
+userdb user1@example.com set options=disableimap=1,sharedgroup=44
+makeuserdb
+</programlisting>
+	  </informalexample>
+
+	  <para>
+The option text string here is
+"<literal>disableimap=1,sharedgroup=44</literal>".
+It specifies two options.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><literal>LDAP</literal></term>
+	<listitem>
+	  <para>
+Account options are defined by the <literal>LDAP_AUXOPTIONS</literal>
+setting in the <filename>authldaprc</filename> configuration file.
+<literal>LDAP_AUXOPTIONS</literal> consists of a comma-separated list of
+"<literal>attribute=setting</literal>". "attribute" is the name of an LDAP
+attribute, and "setting" is the corresponding account setting name. The
+value of the attribute becomes the value of the setting. Unless you
+value your sanity, the names of LDAP attributes should be the same as
+the actual setting names (in which case "=setting" may be dropped and
+<literal>LDAP_AUXOPTIONS</literal> becomes a simple comma-separated list of
+supported settings), but they don't have to be.</para>
+	  <para>
+<literal>LDAP_AUXOPTIONS</literal> is nothing more than a simple mapping
+of LDAP attributes to account settings. A <literal>LDAP_AUXOPTIONS</literal>
+of "shared=sharedgroup,disableimap" means that the LDAP attribute
+called "shared" contains the "sharedgroup" setting, as described
+previously; and an LDAP attribute of disableimap contains the setting
+of the same name.</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><application>MySQL</application>,
+<application>SQLite</application>, and <application>PostgreSQL</application></term>
+	<listitem>
+	  <para>
+Account options are defined by <literal>MYSQL_AUXOPTIONS_FIELD</literal>,
+<literal>SQLITE_AUXOPTIONS_FIELD</literal>,
+or <literal>POSTGRESQL_AUXOPTIONS_FIELD</literal>, in its corresponding
+configuration file. In the most simplest case, add a character field to
+the database, and put the field name into the
+<literal>MYSQL_AUXOPTIONS_FIELD</literal>,
+<literal>SQLITE_AUXOPTIONS_FIELD</literal>, or
+<literal>POSTGRESQL_AUXOPTIONS_FIELD</literal> configuration file setting.
+For each account, the character field should contain the literal option
+string. Yes, you'll just put "shared=sharedgroup,disableimap"
+literally, in that field.</para>
+
+	  <para>
+Fortunately, there is a cleaner way to do this, which avoid driving
+a database designer batty. Keep in mind that the contents of
+<literal>MYSQL_AUXOPTIONS_FIELD</literal>/<literal>SQLITE_AUXOPTIONS_FIELD</literal>/<literal>POSTGRESQL_AUXOPTIONS_FIELD</literal>
+are simply inserted directly into the SQL query that fetches the
+account information. MySQL, SQLite, and PostgreSQL have a rich SQL that can
+be used to manufacture a suitable option string from plain,
+garden-variety, database fields. That is, you may define individual
+table fields like "disableimap", and "disablepop3", then provide a
+suitable (albeit ugly) SQL fragment that combines them together into
+the expected option string. An example of such an SQL string is
+provided in the comments portion of the configuration file.</para>
+
+	  <note>
+	    <para>
+When using the alternative custom query option, the option string
+        is the last field that the custom SQL query should return.</para>
+	  </note>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    &optionlist;
+
+  </sect1>
+
+  <sect1 id="authtest">
+    <title>Running <command>authtest</command></title>
+
+    <para>
+The <command>authtest</command> command may be used to verify that the
+authentication library is working:</para>
+    <informalexample>
+      <programlisting>
+authtest userid
+authtest userid password
+authtest userid password newpassword
+authenumerate</programlisting>
+    </informalexample>
+
+    <para>
+Running
+<command>authtest</command>
+with one argument should display the selected account's
+home directory, userid, groupid,
+and other related data.
+The second argument to
+<command>authtest</command>,
+if supplied, specifies the account's password.
+The two argument form of
+<command>authtest</command>
+validates the password, and displays an indication whether the given
+password is valid, or not.
+The three argument form of the
+<command>authtest</command>
+command attemps to change the account's password.
+The second argument is the old password, the third argument is the
+new password.</para>
+
+    <para>
+See <ulink url="README.authdebug.html"><filename>README.authdebug.html</filename></ulink> for more information.</para>
+
+    <sect2 id="pwchange">
+      <title>Changing account passwords</title>
+
+<para>For the virtual domain modules (<literal>authldap</literal>,
+<literal>authmysql</literal>,
+<literal>authsqlite</literal>,
+<literal>authpgsql</literal> and friends) changing the
+login is a no-brainer. The tricky situation is when SqWebMail uses system
+passwords to log in (the <literal>authpwd</literal>, <literal>authshadow</literal>, or
+<literal>authpam</literal> authentication module). Different systems use different
+ways to keep login passwords. Many systems use the traditional
+<filename>/etc/passwd</filename> and <filename>/etc/shadow</filename> files. Other systems
+use a binary database; other systems use NIS. And on some systems the
+password file lookup library is a wrapper that goes against an external LDAP
+directory, or a database. For maximum compatibility, SqWebMail changes login
+passwords by running the <command>passwd</command> command. This is the traditinal
+*nix command that changes login passwords. <command>passwd</command> is an
+interactive command. It's normally run from a terminal.
+ SqWebMail uses an
+<command>expect</command> script - as mentioned in
+the introduction - to answer interactive
+prompts from <command>passwd</command>. The <command>expect</command> script expects to
+get a plain, garden-variety, <command>passwd</command> command, which acts
+something like this:</para>
+      <informalexample>
+	<programlisting>
+     # passwd
+     Changing password for luser
+     (current) UNIX password:         (old password typed here)
+     New UNIX password:               (new password typed here)
+     Retype new UNIX password:        (new password retyped here)
+     passwd: all authentication tokens updated successfully
+     #
+</programlisting>
+      </informalexample>
+
+      <para>
+Systems that use a <command>passwd</command> command with very different prompts
+may find that the default <command>expect</command> script will fail. In which case
+it will be necessary to tweak the <command>expect</command> script to match the
+prompts from the system's <command>passwd</command> command.</para>
+
+      <para>
+Modern systems use a <command>passwd</command> command that rejects "bad"
+passwords - passwords that are based on dictionary words, are too short, or
+are obvious for other reasons. When testing the ability to change
+system passwords be sure to use randomly-generated gibberish for the test
+passwords. Otherwise, the default <command>expect</command> script will
+actually be
+working, but you won't be the wiser. For security reasons, the actual
+messages from <command>passwd</command> will not be shown by.</para>
+
+      <para>
+The <command>expect</command> script is installed as
+<filename>/usr/local/libexec/courier-authlib/authsystem.passwd</filename>
+(assuming default options to the <command>configure</command> script).</para>
+    </sect2>
+
+  </sect1>
+  <sect1 id="internals">
+    <title>Authentication internals</title>
+
+    <para>
+The following structure describes an authentication module:</para>
+
+    <blockquote>
+      <example id="authstaticinfo">
+	<title>struct authstaticinfo</title>
+	<programlisting>
+struct authstaticinfo {
+	const char *auth_name;
+	int (*auth_func)(const char *, const char *, char *, int,
+			 int (*)(struct authinfo *, void *),
+			 void *);
+	int (*auth_prefunc)(const char *, const char *,
+			    int (*)(struct authinfo *, void *),
+			    void *);
+	void (*auth_cleanupfunc)();
+	int (*auth_changepwd)(const char *, /* service */
+			      const char *, /* userid */
+			      const char *, /* oldpassword */
+			      const char *); /* new password */
+
+	void (*auth_idle)();
+	/* Not null - gets called every 5 mins when we're idle */
+
+	void (*auth_enumerate)( void(*cb_func)(const char *name,
+					       uid_t uid,
+					       gid_t gid,
+					       const char *homedir,
+					       const char *maildir,
+					       void *void_arg),
+				void *void_arg);
+	} ;
+</programlisting>
+      </example>
+    </blockquote>
+
+    <para>
+An authentication module is a shared library that defines a single function
+called
+<quote>courier_auth_<replaceable>NAME</replaceable>_init</quote>, where
+<quote>NAME</quote> is the name of the authentication module.
+The shared library does not need to export any other symbols, this is the
+only function that needs to be exported.
+The function returns a pointer to the <structname>authstaticinfo</structname>
+structure.
+For example, the relevant code from the <literal>authmysql</literal> module is:
+</para>
+
+    <blockquote>
+      <example id="authmysqlex">
+	<title>authmysql</title>
+	<programlisting>
+static struct authstaticinfo authmysql_info={
+	"authmysql",
+	auth_mysql,
+	auth_mysql_pre,
+	auth_mysql_cleanup,
+	auth_mysql_changepw,
+	auth_mysql_cleanup,
+	auth_mysql_enumerate};
+
+
+struct authstaticinfo *courier_authmysql_init()
+{
+	return &amp;authmysql_info;
+}
+</programlisting>
+      </example>
+    </blockquote>
+
+    <para>
+<function>auth_func</function> points to a function that handles an
+authentication request.  The function is invoked as follows:</para>
+
+    <blockquote>
+      <example id="auth_func">
+	<title>auth_func</title>
+	<programlisting>
+int result=auth_func(const char *service, const char *authtype,
+			const char *authdata,
+			int (*callback_func)(struct authinfo *, void *),
+			void *callback_arg);
+</programlisting>
+      </example>
+    </blockquote>
+
+    <para>
+<quote>service</quote> is the name of the service being authenticated,
+such as <quote><literal>imap</literal></quote> or
+<quote><literal>pop3</literal></quote>.
+<quote>authtype</quote> defines the authentication format,
+and <quote>authdata</quote> is the actual authentication request.</para>
+
+    <para>
+Two authentication formats are defined at this time.
+The <quote>authtype</quote> string is set to one of the following
+strings:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><quote>login</quote></term>
+	<listitem>
+	  <para>
+Tradition userid/password authentication.
+<literal>authdata</literal> points to a string that consists of:
+the userid; a newline character; the password; a final newline
+character.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><quote>cram-md5</quote>, or <quote>cram-sha1</quote></term>
+	<listitem>
+	  <para>
+Challenge/response authentication.
+<literal>authdata</literal> points to a string that consists of:
+the base64-encoded challenge; a newline character;
+the base64-encoded response string; and a final newline
+character.  Furthermore, the base64-encoded response string consists of:
+the login ID, a space character, and the response as a hexadecimal
+string (yes, base64-encoding of the response string is not strictly
+necessary).</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <note>
+      <para>
+Not all authentication modules may implement all authentication formats.
+An authentication module that does not implement a particular authentication
+format should handle it the same way as an invalid login ID.</para>
+    </note>
+
+    <para>
+The authentication function should return a negative value if the login ID
+is invalid. The authentication library will try the next authentication
+module.</para>
+
+    <para>
+The authentication function should return a positive value if the login ID
+is valid, but the password is invalid. The authentication library will not
+try any more authentication modules.</para>
+
+    <para>
+Otherwise, the authentication module should call the
+<function>callback_func</function> function, and return the same value that's
+returned by this function.</para>
+
+    <para>
+The authentication module should pass through <literal>callback_arg</literal>
+to the callback function as a second argument.
+The first argument is a pointer to the
+<structname>authinfo</structname> structure, which is described in detail
+in the
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
+manual page.
+The authentication module is responsible for allocating this structure.
+After the callback function returns this structure can be deallocated.
+The authentication module initializes the following fields:</para>
+
+    <para>
+<function>auth_pre_func</function> points to a function that obtains
+account information.  The function is invoked as follows:</para>
+
+    <blockquote>
+      <example id="auth_pre_func">
+	<title>auth_pre_func</title>
+	<programlisting>
+int auth_pre_func(const char *user, const char *service,
+                  int (*callback)(struct authinfo *, void *), void *arg);
+</programlisting>
+      </example>
+    </blockquote>
+
+    <para>
+This function does the same thing as <quote>auth_func</quote> except that
+the password is not actually verified.
+If the account exists, the callback function is invoked with the
+same callback arguments.</para>
+
+    <para>
+<function>auth_cleanup_func</function> points to a function that will be
+invoked just before the authentication module is uninstalled, giving it
+the opportunity for some last-minute cleanup.</para>
+
+    <para>
+<function>auth_idle</function> points to a function that will be
+invoked when no authentication requests are received for a couple of minutes,
+giving the authentication module an opportunity to close any database
+connections, so that they do not get shut down by the server, for inactivity,
+resulting in an error the next time an authentication request is
+received.</para>
+
+    <para>
+<function>auth_changepwd</function> points to a function that will be
+invoked to change a password on an account, as follows.</para>
+
+    <blockquote>
+      <example id="auth_changepwd">
+	<title>auth_changepwd</title>
+	<programlisting>
+int auth_changepwd(const char *service, const char *user,
+			const char *oldpw, const char *newpw);
+</programlisting>
+      </example>
+    </blockquote>
+
+    <para>
+<literal>service</literal> is the name of the service whose password is to
+be changed (such as <quote>imap</quote> or <quote>pop3</quote>).
+<function>auth_changepwd</function> should return 0 if the password was
+changed succesfully, a negative value if <literal>user</literal> is invalid
+(the next authentication module will be tried), or a positive value if
+the password change request failed (no more modules will be tried).</para>
+
+    <para>
+<function>auth_enumerate</function> points to a function that enumerates
+the list of all login IDs known to the authentication module.
+The first argument <function>auth_enumerate</function> is a callback
+function. <function>auth_enumerate</function> invokes the callback
+function once for each login ID, supplying the login ID, the userid,
+groupid, home directory and maildir as arguments.
+The last argument to the callback function is passed through from the
+second argument to <function>auth_enumerate</function>.</para>
+
+    <para>
+After enumerating all login IDs <function>auth_enumerate</function> calls
+the callback function one last time, with a NULL pointer for the login ID,
+then returns.  If an error is encountered while enumerating the login IDs,
+<function>auth_enumerate</function> terminates without invoking
+the callback function with a NULL login ID.</para>
+  </sect1>
+
+  <sect1 id="files">
+    <title>FILES</title>
+
+    <para>
+<filename> @authdaemonrc@</filename> - <command>authdaemond</command> configuration file</para>
+    <para>
+<filename> @authldaprc@</filename> - <command>authldap</command> configuration file</para>
+    <para>
+<filename> @authmysqlrc@</filename> - <command>authmysql</command> configuration file</para>
+    <para>
+<filename> @authsqliterc@</filename> - <command>authsqlite</command> configuration file</para>
+    <para>
+<filename> @authpgsqlrc@</filename> - <command>authpgsql</command> configuration file</para>
+
+  </sect1>
+
+  <sect1 id="seealso">
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="userdb.html"><citerefentry><refentrytitle>userdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink></para>
+
+  </sect1>
+
+</chapter>

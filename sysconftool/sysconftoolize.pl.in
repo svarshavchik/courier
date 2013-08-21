@@ -1,0 +1,66 @@
+#! @PERL@
+# Copyright 2000-2001 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+$| = 1;
+
+print "Checking for sysconftool: ";
+
+$aux_dir=".";
+$prefix="@prefix@";
+$datarootdir="@datarootdir@";
+
+if (open(CONF, "configure.in"))
+{
+	while (defined ($l=<CONF>))
+	{
+		next unless $l =~ /AC_CONFIG_AUX_DIR[ \t]*\((.*)\)/;
+		$aux_dir=$l;
+		last;
+	}
+	close(CONF);
+}
+
+$sysconftool="";
+
+foreach ( ($aux_dir, ".", "..", "../.."))
+{
+	next unless -f "$_/sysconftool";
+
+	$sysconftool="$_/sysconftool";
+	print "$sysconftool\n";
+	last;
+}
+
+unless ($sysconftool)
+{
+	system("@LN_S@ @datadir@/sysconftool/sysconftool .") == 0
+		|| die "$!\n";
+	print "@datadir@/sysconftool/sysconftool\n";
+}
+
+print "Checking Makefile.am: ";
+
+open (MAM, "+<Makefile.am") || die "Makefile.am: $!\n";
+
+$found=0;
+
+while (defined ($l=<MAM>))
+{
+	next unless $l =~ /^install-configure:/;
+	$found=1;
+	print "Ok\n";
+	last;
+}
+
+unless ($found)
+{
+	seek(MAM, 0, 2);
+	open(F, "@datadir@/sysconftool/sysconftoolize.am") || die "sysconftoolize.am: $!\n";
+	print MAM <F>;
+	close(F);
+	print "appended install-configure\n";
+}
+close(MAM);
+
+print "Don't forget to add AC_PROG_SYSCONFTOOL to configure.in\n";

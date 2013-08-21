@@ -1,0 +1,55 @@
+##VERSION: $Id:$
+#
+##NAME: PORT:0
+#
+# This is the filename for webmlmd's socket.  This configuration file is
+# manually parsed by webmlm, so the PORT setting cannot use any shell
+# constructs, and cannot use quotes.
+#
+# PORT's directory must either be writable by the userid that owns the
+# LISTS directories (see below), or webmlmd must be started by root.
+# Additionally, the PORT socket must be accessible by the userid that
+# executes the web cgi-bin scripts (nobody, in the default Apache
+# configuration).
+
+PORT=@localstatedir@/webmlm
+
+
+##NAME: PIDFILE:0
+#
+# The PID file.  Don't change unless you know what you're doing.
+
+PIDFILE="${PORT}.pid"
+
+
+##NAME: PREFORK:0
+#
+# Number of processes pre-forked by webmlmd to handle web requests.
+
+PREFORK=3
+
+##NAME: LOGGEROPTS:0
+#
+# Placeholder to pass any special options to the courierlogger process
+
+LOGGEROPTS=
+
+##NAME: LISTS:0
+#
+# Set LISTS to a colon separate list of directories, just like the PATH
+# variable.  Each directory in LISTS must be a directory created by couriermlm.
+#
+# All directories in LISTS must be owned by the same uid and gid, and webmlmd
+# needs to be running under the same uid and gid.  If webmlmd is started by
+# root, it will automatically drop its root privileges and set them to the
+# correct uid and gid.  NOTE -- the PORT file, and the PIDFILE will still be
+# created by the root user.
+#
+# Additionally:  the last component of each list directory must be unique.  No
+# two directories in LISTS can have the same directory name (the last component
+# of the path).
+#
+# Example:  LISTS=/home/lists/users-list:/home/lists/admin-list
+
+
+

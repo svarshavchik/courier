@@ -1,0 +1,17 @@
+See INSTALL for installation instructions.
+
+To create installable RPMs for Fedora (and possibly other RPM-based systems),
+see the Courier FAQ at the following URL:
+
+http://www.courier-mta.org/FAQ.html#rpm
+
+
+
+
+The courier-analog script generates log summaries for the Courier mail server.
+
+Courier-analog generates log summaries for incoming and outgoing SMTP
+connections, and IMAP and POP3 activity.  courier-analog can generate output
+in text or HTML format.
+
+See the installed manual page for usage instructions.

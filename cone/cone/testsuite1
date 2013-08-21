@@ -1,0 +1,66 @@
+<p>Preformatted text:</p>
+
+<pre>
+Mary had a little lamb,
+its fleece  was white as snow, and everywhere Mary
+went,		the lamb was sure to go.
+</pre>
+
+<center>&quot;Rhyme&tm;&quot;: <a href="http://www.example.com">link</a></center>
+
+<style>
+
+.h1 { text-decoration: none; }
+
+</style>
+
+
+<p>
+Mary  had a little lamb, its fleece was white as snow, and everywhere Mary
+went, the lamb was sure to go.</p>
+
+<script language=javascript>
+I am a virus
+</script>
+
+<blockquote type=CITE>
+<p>
+Mary had a little lamb, its fleece was white as snow, and everywhere Mary
+went, the lamb was sure to go.</p>
+
+<blockquote type=CITE>
+<p>
+Mary had a little lamb, its fleece was white as snow, and everywhere Mary
+went, the lamb was sure to go.</p>
+<p>
+Mary &nbsp;had a little lamb, its fleece was white as snow, and everywhere Mary
+went, the lamb was sure to go.</p>
+</blockquote>
+</blockquote>
+
+<p><img
+src='http://www.example.com'>Ok? <img src='http://www.example.com' alt='Inline image'></p>
+
+<p>Preformatted text:</p>
+
+<pre>
+Mary had a little lamb,
+its fleece  was white as snow, and everywhere Mary
+went,		the lamb was sure to go.
+</pre>
+
+<p>End of preformatted text.</p>
+
+<hr>
+
+<p>Forcible word wrap test</p>
+
+<p>
+Here we go
+1234567890123456789012345678901234567890123456789012345678901234567890123456789012
+123456789012345678901234567890123456789012345678901234567890123456789012345678901
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+1234567890123456789012345678901234567890123456789012345678901234567890123456789
+123456789012345678901234567890123456789012345678901234567890123456789012345678
+12345678901234567890123456789012345678901234567890123456789012345678901234567
+</p>

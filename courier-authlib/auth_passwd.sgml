@@ -1,0 +1,75 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-passwd">
+
+  <refmeta>
+    <refentrytitle>auth_passwd</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_passwd</refname>
+    <refpurpose>Change account's password</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_passwd</function></funcdef>
+	<paramdef>const char *<parameter>service</parameter></paramdef>
+	<paramdef>const char *<parameter>username</parameter></paramdef>
+	<paramdef>const char *<parameter>oldpassword</parameter></paramdef>
+	<paramdef>const char *<parameter>newpassword</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+If <parameter>username</parameter>'s password is
+<parameter>oldpassword</parameter>, it is replaced with
+<parameter>newpassword</parameter>.
+<parameter>service</parameter> identifies which so-called "service"'s
+password is changed; like <quote>imap</quote> or <quote>pop3</quote>.
+Some Courier authentication library's back-end module can use different
+passwords for different services.
+<parameter>service</parameter> is ignored if this is not the case.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURNS</title>
+
+    <para>
+<function>auth_passwd</function> returns 0 if the password was
+succesfully changed.
+A non-0 error code indicates a failure..</para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
+

@@ -1,0 +1,145 @@
+# /bin/sh
+#
+# This is a sample /etc/init.d file for Courier-IMAP server
+# on SuSE systems.
+#
+# description: Courier-IMAP - IMAP server
+#
+# /etc/init.d/courier-imap
+#
+### BEGIN INIT INFO
+# Provides:       cyrus courier-imap
+# Required-Start: $network $named $syslog
+# X-UnitedLinux-Should-Start: ldap ypbind
+# Required-Stop:
+# Default-Start:  3 5
+# Default-Stop:
+# Description:    start the Courier-imap mail delivery agent
+### END INIT INFO
+
+# Determine the base and follow a runlevel link name.
+base=${0##*/}
+link=${base#*[SK][0-9][0-9]}
+
+COURIER_ETC=@sysconfdir@
+COURIER_LIBEXEC=@libexecdir@
+COURIER_DATAROOT=@datarootdir@
+COURIER_DATA=@datadir@
+COURIER_BIN=@bindir@/imapd
+
+if [ ! -x $COURIER_BIN ] ; then
+        echo -n "courier-imap server not installed ! "
+        exit 5
+fi
+
+. /etc/rc.status
+rc_reset
+
+case "$1" in
+start)
+        cd /
+	. ${COURIER_ETC}/imapd
+	touch /var/lock/subsys/courier-imap
+
+	echo -n "Starting Courier-IMAP server:"
+
+	case x$IMAPDSTART in
+	x[yY]*)
+		# Start daemons.
+		${COURIER_LIBEXEC}/imapd.rc start
+		echo -n " imap"
+		;;
+	esac
+
+	. ${COURIER_ETC}/imapd-ssl
+	case x$IMAPDSSLSTART in
+	x[yY]*)
+		if test -x $COURIERTLS
+		then
+
+		# First time we start this, generate a dummy SSL certificate.
+
+			if test ! -f $TLS_CERTFILE
+			then
+				echo -n " generating-SSL-certificate..."
+				${COURIER_DATA}/mkimapdcert >/dev/null 2>&1
+			fi
+			${COURIER_LIBEXEC}/imapd-ssl.rc start
+			echo -n " imap-ssl"
+		fi
+		;;
+	esac
+
+	POP3DSTART=""
+	POP3DSSLSTART=""
+
+	if test -f ${COURIER_ETC}/pop3d
+	then
+		. ${COURIER_ETC}/pop3d
+	fi
+
+	case x$POP3DSTART in
+	x[yY]*)
+		# Start daemons.
+		${COURIER_LIBEXEC}/pop3d.rc start
+		echo -n " pop3"
+		;;
+	esac
+
+	if test -f ${COURIER_ETC}/pop3d-ssl
+	then
+		. ${COURIER_ETC}/pop3d-ssl
+	fi
+
+	case x$POP3DSSLSTART in
+	x[yY]*)
+		if test -x $COURIERTLS
+		then
+
+		# First time we start this, generate a dummy SSL certificate.
+
+			if test ! -f $TLS_CERTFILE
+			then
+				echo -n " generating-SSL-certificate..."
+				${COURIER_DATA}/mkpop3dcert >/dev/null 2>&1
+			fi
+			${COURIER_LIBEXEC}/pop3d-ssl.rc start
+			echo -n " pop3-ssl"
+		fi
+		;;
+	esac
+
+	echo ""
+	;;
+stop)
+        echo -n "Stopping Courier-IMAP server:"
+	. ${COURIER_ETC}/imapd
+	. ${COURIER_ETC}/imapd-ssl
+	${COURIER_LIBEXEC}/imapd.rc stop
+	echo -n " imap"
+	if test -x $COURIERTLS
+	then
+		${COURIER_LIBEXEC}/imapd-ssl.rc stop
+		echo -n " imap-ssl"
+	fi
+
+	if test -f ${COURIER_ETC}/pop3d
+	then
+		${COURIER_LIBEXEC}/pop3d.rc stop
+		echo -n " pop3"
+
+		if test -x $COURIERTLS
+		then
+			${COURIER_LIBEXEC}/pop3d-ssl.rc stop
+			echo -n " pop3-ssl"
+		fi
+	fi
+
+	echo ""
+	;;
+restart)
+	$0 stop
+	$0 start
+        ;;
+esac
+exit 0

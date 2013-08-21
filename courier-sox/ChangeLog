@@ -1,0 +1,157 @@
+2011-06-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-sox.spec.in: switch to systemd.
+
+2011-05-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* soxwrap/configure.in: Fix autoconf warnings.
+
+0.11
+
+2010-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* configure.in: Remove bundled libltdl, use system-installed libltdl.
+
+2009-12-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* system.in: Add noproxy 0.0.0.0 to the default config file.
+
+2009-12-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Use native dlsym(RTLD_NEXT) instead of ltdl to locate real system
+	functions.
+
+0.10
+
+2009-11-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* system (noproxy): Add "noproxy ::1", the noproxy directive for
+	the IPv6 loopback address, to the default $sysconfdir/socksrc/system
+	file.
+
+0.09
+
+2009-06-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Various compilation fixes for gcc 4.4 and libtool 2.2
+
+0.08
+
+2007-07-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* COPYING: Updated to GPL 3.
+
+2007-07-01  Mr. Sam  <sam@email-scan.com>
+
+	* courier-sox.lpspec.in: Updated PAM config file for Fedora 7.
+
+2007-06-30  Mr. Sam  <sam@email-scan.com>
+
+	* Makefile.am: Drop the automake.fix hack.
+
+2007-04-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Update man pages and documentation to Docbook XML V4.4
+
+0.07
+
+2006-10-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sockd.c (reply): Fix bug.
+
+2006-04-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sockd.c (proxycopy): Fix error recovery from a closed socket.
+
+	* all: Fix compiler warnings.
+
+2006-01-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure.in: Fix libtool 1.9 breakage.
+
+	* Makefile.am: Ditto
+
+	* courier-sox spec file (BuildRequires): Demand /usr/include/ltdl.h
+
+	* courier-sox.spec.in (Requires): Fix for RPM 4.4
+
+	* sox.c (real_select): Fix compiler warning.
+
+2006-01-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* mkbl4.in: Send progress indication to stderr.
+
+2006-01-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* mkbl4/sockd.c: Added blacklist support.
+
+2005-08-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sox.c (try_next_server_ip): Fix some IPv6-related bugs.
+
+0.06
+
+2005-07-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure.in: Update to automake 1.9, autoconf 2.59, libtool 1.5.6,
+	gettext 0.14.1.
+
+2005-07-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sox.c (parse_config_file): Fix bad handling of duplicate entries.
+
+	* cidr.h (tocidr): Fix INADDR_ANY conversion to IPv6.
+
+2005-07-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configure.in: uid and gid options to courierlogger have changed.
+
+2004-12-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sockd: A Socks 5 server.
+
+2004-11-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sox.c (read_reply_packet): Fix infinite loop if socks server
+	shuts down socket in the middle of connect.
+
+2004-11-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sox.c: allow_env and SOCKS_PROXY.  Implement /redirect=.
+
+0.03
+
+2004-07-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* connectfunc.h (INITFUNC): getaddrinfo() error path crashes, it
+	doesn't work for IPv6 either.
+
+	* sox.c (prep_connect_packet): Convert IPv4-mapped IP addresses to
+	AF_INET4 addresses - new flag /ipv4 follows hostname in socksrc.
+
+0.02
+
+2004-07-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sox.c (connect_or_bind): connect() on a state=connected socket
+	returns EISCONN; connect() on a state=connecting socket returns
+	EINPROGRESS (perl's IO::Socket does this).
+	(real_select): Guesstimate timeout remaining after a select(), and
+	continue to loop as long as there's time left.
+	(Rpoll_cpy): Ditto.
+
+2004-07-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* socks.sgml: New socks(3) man page describes the API toolkit.
+
+2004-07-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* courier-sox.spec.in (BuildPreReq): Require libtool to build.
+
+	* Makefile.am (include_HEADERS): Autogenerate socks.h from socks.h.in,
+	eliminates the need to install courier_socks_config.h
+
+2004-07-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Initial release.
+

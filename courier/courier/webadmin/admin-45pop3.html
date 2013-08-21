@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <title>@PACKAGE@ @VERSION@ - POP3</title>
+  <!--
+
+  [#SAVED=<p><span style="color: #006000">Changed saved</span></p>#]
+  [#REQUIRED=<p><font style="color: #ff0000" size="+1">ERROR: A required field has not been set.  Enter the required field below.</font></p>#]
+  [#SASL=SASL method#]
+  [#NONTLS=Without&nbsp;TLS#]
+  [#TLS=With&nbsp;TLS#]
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+<h1><tt>@PACKAGE@ @VERSION@</tt> - POP3</h1>
+@ERROR@
+
+<form method="post" action="45pop3">
+
+  <table cellspacing="16" cellpadding="0" border="0">
+    <tbody>
+      <tr>
+        <td colspan="1">@ENABLED@</td>
+        <td colspan="2">Enable POP3</td>
+      </tr>
+      <tr>
+        <td colspan="1">@ENABLED_SSL@</td>
+        <td colspan="2">Enable POP3-SSL</td>
+      </tr>
+      <tr>
+        <td colspan="1">@REQUIRE_STARTTLS@</td>
+        <td colspan="2">Require POP3 STARTTLS</td>
+      </tr>
+      <tr>
+        <td> </td>
+        <td>Max # of connections accepted:</td>
+        <td><input type="text" size="4" text="" name="MAXDAEMONS"
+          value="@MAXDAEMONS@" /></td>
+      </tr>
+      <tr>
+        <td> </td>
+        <td>Max # of connections from one IP address:</td>
+        <td><input type="text" size="4" text="" name="MAXPERIP"
+          value="@MAXPERIP@" /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+  <input type="submit" value="Save" name="Save" /></p>
+</form>
+
+<h2>Available SASL authentication methods</h2>
+
+<form method="post" action="45pop3">
+
+  <table>
+    <tbody>
+      <tr>
+        <td>@CAPA@</td>
+      </tr>
+      <tr>
+        <td><hr />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+  <input type="submit" value="Save" name="SaveCAPA" /></p>
+</form>
+
+<hr />
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

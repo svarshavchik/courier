@@ -54,3 +54,6 @@ done
 
 # Now, cd into $projdir, and run the autobloat script to rebuild the autotools
 # stuff.
+
+cd $projdir
+sh ./autobloat

@@ -1,0 +1,90 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="folder-getpath">
+    <refmeta>
+      <refentrytitle>mail::folder::getPath</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::folder::getPath</refname>
+      <refpurpose>Return the folder's server address</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+mail::folder *folder;</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>std::string pathStr=folder-&gt;<function>getPath</function></funcdef>
+          <void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function returns
+<parameter>folder</parameter>'s
+"server path".
+In general, this is the folder's location on the mail server.
+Applications should generally generally handle the path as an opaque text
+string that carries no specific interpretation.
+Valid uses of the folder's server path are limited to:</para>
+      <itemizedlist>
+         <listitem>
+            <para>
+If two <structname>mail::folder</structname> objects are linked to the same
+account and have the same path, it means that both objects refer to the same
+folder.</para>
+         </listitem>
+
+         <listitem>
+            <para>
+The server path may be used as a parameter
+<link linkend="mail-findfolder"><citerefentry>
+	    <refentrytitle>mail::account::findFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+in order to create a <structname>mail::folder</structname> object which
+refers to this specific folder.</para>
+         </listitem>
+
+         <listitem>
+            <para>
+The server path may be used as a parameter
+<link linkend="folder-isparentof"><citerefentry>
+	    <refentrytitle>mail::folder::isParentOf</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+to determine whether this folder is contained within another folder.</para>
+         </listitem>
+       </itemizedlist>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+A string that specifies the folder's address on the mail server.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-findfolder"><citerefentry>
+	    <refentrytitle>mail::account::findFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-isparentof"><citerefentry>
+	    <refentrytitle>mail::folder::isParentOf</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-getname"><citerefentry>
+	    <refentrytitle>mail::folder::getName</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

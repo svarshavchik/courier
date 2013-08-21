@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+
+  <title>NEWS</title>
+  <meta name="generator" content="Bluefish 2.2.3" />
+</head>
+
+<body>
+  <h1>Courier Authentication Library</h1>
+
+  <p>A new SQLite authentication module has been added to the
+  Courier Authentication Library. It's considered to be in
+  experimental or testing status.</p>
+
+  <h2>Debugging</h2>
+
+  <p>To generate additional debugging messages, edit the
+  authdaemond startup script (installed in /usr/local/bin by
+  default), and add the following to the script:</p>
+  <pre>
+DEBUG_LOGIN=2
+export DEBUG_LOGIN
+</pre>
+
+  <p>Debugging messages from the authentication daemon processes
+  will be sent to the syslog facility, and recorded in whatever log
+  file syslog is configured to use (usually
+  <code>/var/log/messages</code> or
+  <code>/var/log/maillog</code>).</p>
+</body>
+</html>

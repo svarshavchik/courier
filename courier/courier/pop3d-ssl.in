@@ -1,0 +1,60 @@
+#! @SHELL@
+#
+# Copyright 1998 - 2005 Double Precision, Inc.
+# See COPYING for distribution information.
+
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libexecdir=@libexecdir@
+sbindir=@sbindir@
+bindir="@bindir@"
+sysconfdir="@sysconfdir@"
+
+if test ! -f ${sysconfdir}/pop3d
+then
+	echo "${sysconfdir}/pop3d does not exist, forgot make install-configure?"
+	exit 1
+fi
+
+if test ! -f ${sysconfdir}/pop3d-ssl
+then
+	echo "${sysconfdir}/pop3d-ssl does not exist, forgot make install-configure?"
+	exit 1
+fi
+
+. @sysconfdir@/pop3d
+. @sysconfdir@/pop3d-ssl
+
+case $1 in
+start)
+	exec @SETENV@ -i PATH="$PATH" SHELL="$SHELL" \
+		@SHELL@ -c " set -a ; \
+		prefix=@prefix@ ; \
+		exec_prefix=@exec_prefix@ ; \
+		sbindir=@sbindir@ ; \
+		bindir=@bindir@ ; \
+		libexecdir=@libexecdir@ ; \
+		. @sysconfdir@/pop3d ; \
+		. @sysconfdir@/pop3d-ssl ; \
+		PROXY_HOSTNAME=$PROXY_HOSTNAME; \
+		POP3_TLS=1; \
+                POP3_STARTTLS=NO; \
+                POP3_TLS_REQUIRED=0; \
+		@MKDIR_P@ `dirname $SSLPIDFILE` ; \
+		@courierlogger@ -pid=$SSLPIDFILE -start $SSLLOGGEROPTS \
+		@sbindir@/couriertcpd -address=$SSLADDRESS \
+			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
+			$TCPDOPTS \
+			$SSLPORT $COURIERTLS -server -tcpd \
+				$libexecdir/courier/courierpop3login \
+				$libexecdir/courier/courierpop3d ${MAILDIRPATH}"
+	;;
+stop)
+	@courierlogger@ -pid=$SSLPIDFILE -stop
+	;;
+restart)
+	@courierlogger@ -pid=$SSLPIDFILE -restart
+	;;
+esac
+exit 0

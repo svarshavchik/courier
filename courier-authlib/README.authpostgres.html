@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Courier PostgreSQL authentication module</title>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink=
+"#551A8B" alink="#FF0000">
+  <h1>Courier PostgreSQL authentication module</h1>
+
+  <p>Please read <a href=
+  "README.authmysql.html">README.authmysql.html</a> since almost
+  all information there applies to postgres as well, but with
+  Postgres change the schema to:</p>
+  <pre>
+CREATE TABLE passwd (
+        id                    varchar(128) DEFAULT '' NOT NULL,
+        crypt                 varchar(128) DEFAULT '' NOT NULL,
+        clear                 varchar(128) DEFAULT '' NOT NULL,
+        name                  varchar(128) DEFAULT '' NOT NULL,
+        uid                   int DEFAULT 65534 NOT NULL,
+        gid                   int DEFAULT 65534 NOT NULL,
+        home                  varchar(255) DEFAULT '' NOT NULL,
+        maildir               varchar(255) DEFAULT '' NOT NULL,
+        defaultdelivery       varchar(255) DEFAULT '' NOT NULL,
+        quota                 varchar(255) DEFAULT '' NOT NULL,
+        CONSTRAINT id PRIMARY KEY (id)
+);
+</pre>
+</body>
+</html>

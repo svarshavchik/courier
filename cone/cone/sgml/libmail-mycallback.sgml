@@ -1,0 +1,13 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <literallayout>
+&libmail-includemail;
+
+class myCallback : public mail::callback {
+public:
+    void success(std::string msg);
+    void fail(std::string msg);
+};
+</literallayout>
+

@@ -1,0 +1,92 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<para>
+Not all servers support every one of the following
+access control list identifiers.
+See the server's documentation to check which access control list
+identifiers are implemented by the server:</para>
+
+<variablelist>
+  <varlistentry>
+    <term><quote><literal>anonymous</literal></quote>,
+or <quote><literal>anyone</literal></quote></term>
+    <listitem>
+      <para>
+This identifier refers to universal access rights given to everyone,
+including anonymous users (if supported by server).
+</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term><quote><literal>authuser</literal></quote></term>
+    <listitem>
+      <para>
+Same as <quote>anyone</quote>, except for anonymous users.
+If the server does not implement anonymous access, then
+<quote>anonymous</quote>,
+<quote>anyone</quote>, and
+<quote>authuser</quote> are equivalent.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term><quote><literal>owner</literal></quote></term>
+    <listitem>
+      <para>
+The owner of the mailbox that contains the folder.</para>
+    </listitem>
+  </varlistentry>
+
+
+  <varlistentry>
+    <term><quote><literal>administrators</literal></quote></term>
+    <listitem>
+      <para>
+Any member of a group that's defined as an administrator group, in an
+implementation-defined way.</para>
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term><quote><literal>user=</literal><replaceable>username</replaceable></quote></term>
+    <listitem>
+      <para>
+A single system user, identified by <replaceable>username</replaceable>.</para>
+
+    </listitem>
+  </varlistentry>
+
+  <varlistentry>
+    <term><quote><literal>group=</literal><replaceable>groupname</replaceable></quote></term>
+    <listitem>
+      <para>
+Any system user that's part of a group identified by
+<replaceable>groupname</replaceable>.
+Groups are created and managed by IMAP server-specific tools.
+See the server's documentation for information on creating and managing
+groups (if the groups are even implemented by the server in the first place).
+</para>
+
+    </listitem>
+  </varlistentry>
+
+
+  <varlistentry>
+    <term><quote>-<replaceable>identifier</replaceable></quote></term>
+    <listitem>
+      <para>
+An access control list identifier may be prefixed by a <quote>-</quote>,
+which refers to a <quote>negative right</quote>.
+Negative rights explicitly revoke the associated access rights from the
+<replaceable>identifier</replaceable> instead of granting the right.</para>
+
+      <para>
+Negative rights are not implemented by all servers.
+See the server's documentation to check if the server implements negative
+access rights.</para>
+
+    </listitem>
+  </varlistentry>
+</variablelist>

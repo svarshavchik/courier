@@ -1,0 +1,2378 @@
+2013-08-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cursesindexdisplay.C: [ and ] keys move cursor to next/prev
+	unread message.
+
+2013-02-20  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822: workaround for invalid utf-8 input making libidn go off the
+	rails.
+
+0.90
+
+2011-10-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/gettext.C: gettext can't deal with literal ^Ds, so provide a
+	workaround: "\\D" literal.
+
+2011-09-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/cursesindexdisplay.C (drawLine): Misformatting of the date
+	column in some locales.
+
+0.89
+
+2011-08-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix some autoconf warnings.
+
+	* unicode/unicode_linebreak.c (unicode_lb_next): Tailored line-breaking
+	rule: classify EM DASH and EN DASH as WJ, to prohibit line breaks before
+	and after.
+
+	* curses/cursesmoronize.C: Unicode keyboard shortcut: -- for an en
+	dash, and --- for an em dash.
+
+	* curses/cursesscreen.C: Since em and en dashes are single widths on
+	console fonts, manually replace en dashes with two consecutive
+	en dashes, and em dashes with three consecutive en dashes, when
+	writing text to the screen.
+
+	* curses/widechar.C (charwidth): ... and manually return 2 for the
+	en dash character, and 3 for the em dash character, so it all adds up.
+
+	* cone/htmlentity.C: On non-unicode screens replace en dashes with --
+	and em dashes with ---.
+
+2011-05-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045cdecode.c: Tolerate lowercase hexadecimal characters
+	in quoted-printable-encoded content.
+
+2011-04-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (reformat): Typo in error message.
+
+2011-04-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/cone.dist.in (TLS_STARTTLS_PROTOCOL): Provide a default
+	setting of TLS_STARTTLS_PROTOCOL for new cone installs only.
+
+0.88
+
+2011-04-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (beginReformat): Fix bug exposed by cache.H
+	bug fix.
+
+0.87
+
+2011-04-20  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/cache.H (Cache): Broken cache logic.
+
+	* cone/htmlparser.C (wordtoolong): A word whose width was larger than
+	available display width resulted in an infinite loop.
+
+	* curses/widechar.C (charwidth): Handle wcwidth() returning -1 by
+	treating it as 1, for the purposes of estimated character width.
+
+2011-04-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/cursesobject.H (c): Added #include <cstdio> for NULL.
+
+2011-04-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/htmlparser.C (htmlParser): Flag an unknown source character
+	set, so that a suitable error message shows up instead of completely
+	empty content.
+
+	* libmail/smapfetchattr.C (parseMimeHeader): Be more tolerant
+	in parsing of broken MIME headers.
+
+0.86
+
+2011-04-02  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc3676parser.c: Detect content produced by broken mail
+	software (I'm looking at you, Apple Mail), that spews out an entire
+	paragraph as a single physical line of text. When an excessively long
+	line is detected, it gets rewrapped manually.
+
+2011-03-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/cursesstatusbar.C (status): Remove unneeded full redraws.
+
+	* cone/cursesindexdisplay.C (draw): Go to parent CursesVScroll to
+	figure out the range to redisplay.
+
+2011-03-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicode.h: Added unicode_isspace().
+
+	* cone/curseseditmessage.C (processKeyInFocus): Use unicode word break
+	algorithm to identify words.
+
+	* unicode/unicode_wordbreak.c: Implementation of tr29.
+
+	* cone/htmlparser.C: Reimplemented htmlParser using unicode-based
+	wordwrapping logic.
+
+	* cone/htmlentity.C (expand): factor out main logic from operator(),
+	which invokes expand and that converts it to the requested charset.
+	This provides access to the main demoronization conversion code.
+
+	* curses/widechar.H: move widecharbuf inner class wcwidth_iter into
+	the global scope, as towidechar_wcwidth_iter.
+	(unicodewordwrapper): enable UNICODE_LB_OPT_PRBREAK and
+	UNICODE_LB_OPT_SYBREAK linebreaking options.
+
+	* unicode/unicode.h: unicode_lb_set_opts(), plus derivatives: set
+	artbirary linebreaking options. Two options that tailor the unicode
+	linebreaking algorithm.
+
+2011-03-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/curseseditmessage.C (getMarkedRegion): Incorrect range
+	calculation fixed.
+
+2011-03-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/leaf.C: Implemented -f.
+
+2011-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/widechar.H: Factored out the logic in unicodewordwrap() into
+	unicodewordwrapper, an output iterator. Replace unicodewordwrap() with
+	a convenience function.
+
+	* cone/cursesmessageflowedtext.C: Use unicodewordwrapper instead of
+	whitespacewordwrapper.
+
+	* cone/cursesmessage.C (getflowed): Convenience function for
+	retrieving the format and delsp parameters.
+	(newmsgformatter): Factor out common code for reformatting plain
+	text content as a new reply or a message forward.
+	(addHeader): Replace whitespacewordwrap with unicodewordwrap.
+
+	* cone/curseseditmessage.H: The edited text is now stored as a vector
+	of CursesFlowedLine objects.
+
+	* cone/curseseditmessage.C (getUTF8Text): Retrieve the line of text
+	in its native UTF-8.
+	(justifiable): One stop shop for checking if a given line of text
+	is allowed to be justified.
+	(get_file_helper): is now a CursesFlowedLine iterator.
+	(unicode_wordwrap_rewrapper): helper object for unicodewordwrap()
+	that saves starting positions of each line of pre-justified text
+	(unicode_wordwrap_iterator): iterates over lines of text selected
+	for rewrapping. Trims trailing whitespace. Saves the position of the
+	first character in each ilne into unicode_wordwrap_rewrapper
+	(processKeyInFocus): Replace whitespacewordwrap with unicodewordwrap.
+	(inserted): Replace whitespacewordwrap with unicodewordwrap.
+	(drawLine): Display an arrow at the end of wrapped lines.
+	(load): Receive an indication whether the loaded file contains
+	flowed text-formatted content.
+	(save): Add a flag whether or not append a space to flowed lines in the
+	saved file.
+
+	* curses/widechar.H: Removed whitespacewordwrap.
+
+2011-03-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045.c (rfc2045_isdelsp): Convenience function - check
+	if content type attribute "delsp" is set to "yes".
+
+	* cone/curseseditmessage.C: replaceTextLine() is a specialization
+	that sets the contents of text_UTF8 from either a unicode vector
+	or CursesFlowedLine (the eventual global replacement). Removed
+	yank_string_iterator, now obsoleted by cutBuffer being a list.
+	(processKeyInFocus): Reimplement text justification, now that
+	cutBuffer is a list of lines.
+	(processMacroKey): Convert the replacement string into a
+	list of CursesFlowedLine, before invoking yank(), for now.
+	(yank): Pass a list of CursesFlowedLines to yank(), instead of
+	a text string.
+	(deleteChar): Migrate CLREOL-specific logic into deleteChar().
+
+	* curses/cursesfield.C: Reimplement cutBuffer as a list of
+	CursesFlowedLine.
+
+	* curses/cursesflowedline.H: CursesFlowedLine - new abstraction
+	for a line of text and a flag whether it is wrapped to the next line.
+	Text is encoded in UTF-8.
+
+2011-02-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/widechar.H (whitespacewordwrap): Factored out most of its
+	logic into an iterator object, replaced with a shell wrapper that
+	iterates over the object.
+
+	* curses/curses.C (erase): Replace wchar_t-based logic with
+	unicode_char-based logic.
+
+	* rfc2045/rfc3676parser.c: Eventually successor to rfc2646parser.c
+
+2011-02-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/mkcommon.pm: Reduce unicode table block size to 256,
+	trading in larger table size for faster lookups in the hot code path.
+
+	* Optimize hot code path execution.
+
+2011-02-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/cursesscreen.C: Replace wget_wch() with getch() and using
+	iconv() to convert the narrow character stream to unicode.
+
+	* curses: removed last pre-unicode bits of code.
+
+	* unicode/unicode.h (mail): Added iterator-based conversion functions
+	to/from unicode chars.
+
+2011-02-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* All: more rewrite of wchar_t-based to unicode_char-based code.
+
+2011-02-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicode.c (save_unicode): Optimize buffering of
+	unicode characters.
+
+	* cone/cursesmessage.C (toMyCharset_impl): This overloaded
+	mail::iconvert::convert() returns false when the text contains invalid
+	characters in its declared character set. Report this as an error
+	at the end of the message.
+
+2011-02-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/curseseditmessage.C: Reimplemented yankHelper as
+	yank_string_iterator that does not touch the original string, but
+	converts it to unicode vectors as it iterates over the string, one
+	line at a time.
+	(setTextBeforeAfter): Set the contents of the current line from
+	two separates chunks of unicode vectors and position the cursor
+	between the two chunks.
+	(processKeyInFocus): Reimplement justify and unjustify (again) using
+	yank_string_iterators.
+	(yank): Reimplement yank() using yank_string_iterator.
+	(deleteChar): Replace direct references to text_UTF8 array with
+	replaceTextLines(). Use widecharbuf to calculate the grapheme to
+	delete.
+	(inserted): Rewrite linewrapping logic. Linewrap only before the
+	current cursor position.
+	(load): Reimplemented using get_file_helper
+
+	* curses/widechar.H (whitespacewordwrap): Alternative to
+	unicodewordwrap() that wraps on whitespace boundaries only.
+
+	* cone/curseseditmessage.C: Replace direct access to text_UTF8 with
+	calls to getText().
+	(getTextBeforeAfter): Retrieve contents of the line with the cursor.
+	Retrieve the contents before and after the cursor position, separately.
+	(replaceTextLines, replaceTextLinesImpl): Replace a range of
+	existing lines with new content, specified as a beginning and an
+	ending iterator for vector<unicode_char>. The existing lines in
+	text_UTF8 are removed, and replaced by the content defined by the
+	iterators. Specialization optimized for random access iterators, that
+	resizes text_UTF8 once, since the size of the replacement content is
+	known. Non-random access iterators use a default implementation that
+	collects iterator content into a temporary vector, then uses the
+	specialized implementation.
+	(processKeyInFocus): Rewrite ENTER to use getTextBeforeAfter() and
+	replaceTextLines().
+	(processKeyInFocus): Rewrite JUSTIFY to use getText() and
+	replaceTextLines(). Use whitespacewordwrap() to rejustify text.
+	(processKeyInFocus): Rewrite GETFILE to define a custom iterator
+	that iterates over the contents of the file, then uses
+	replaceTextLines() to load the contents of the file.
+	(processKeyInFocus): Rewrite EXTEDITOR to use getText() to retrieve
+	the contents of the message and save it in a file, then use
+	GETFILE's to read it back in!
+
+	* cone/cursesedit.C (extedited): Reposition the cursor after
+	resuming from an external editor.
+	(save): Use getText() to access message content.
+
+2011-02-20  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/curseseditmessage.C: Rewrite screen updating code to use
+	unicode-based algorithms.
+
+	* cone/cursesedit.C: Ditto.
+
+2011-02-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/cursesmultilinelabel.C: Update to unicode_chars.
+
+	* curses/cursesmoronize.C: Update moronizer to unicode_chars.
+
+	* curses/cursesstatusbar.H (CursesStatusBar): Replaced wchar_t fields
+	with ones that use unicode_chars, and rewrote all the logic,
+	accordingly.
+
+	* curses/widechar.H: Moved widecharbuf, and other stuff that deals
+	with wchar_ts into this new header file.
+
+	* curses: converted towidechar/fromwidechar to iterator-based templates.
+
+	* unicode/unicode.h: converted linebreaking C++ classes to an
+	iterator-based implementation.
+
+	* unicode/unicode.h: Enhance C++ support for tr14.
+
+2011-02-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/mycurses.H: New Curses::widechar unicode-based methods.
+
+	* curses/cursesfield.H (Curses): Replace some wchar_t-based objects with
+	unicode_char.
+
+	* cone/myserverpromptinfo.H (promptInfo): Replace wchar_t objects with
+	unicode_char.
+
+	* unicode/unicode.h: Adjust unicode_wcwidth() to return 0 for BK, CR,
+	LF, CM, NL, WJ, ZW characters.
+
+2011-02-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicode.h: Implementation of tr14, linebreaking rules.
+
+2011-02-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicodecpp.C (unicode_wcwidth): Overloaded convenience
+	method that takes a vector of unicode_chars as an argument.
+
+	* unicode/unicode_wcwidth.c (unicode_wcwidth_str): New convenience
+	function.
+
+	* curses/cursesvscroll.C (writeText): New overloaded function takes a
+	vector of unicode_chars as the argument. Will eventually replace
+	the version that takes wchar_ts.
+
+	* curses/cursesstatusbar.C (writeText): New overloaded function takes a
+	vector of unicode_chars as the argument. Will eventually replace
+	the version that takes wchar_ts.
+
+	* curses/cursesscreen.C (writeText): New overloaded function takes a
+	vector of unicode_chars as the argument. Will eventually replace
+	the version that takes wchar_ts. Temporarily duplicated code from the
+	wchar_t version. The overload method that takes a char string
+	will use the unicode_char version.
+
+	* curses/cursesmainscreen.C (writeText): New overloaded function takes a
+	vector of unicode_chars as the argument. Will eventually replace
+	the version that takes wchar_ts.
+
+	* curses/cursesfield.C (CursesField): Major rewrite that replaces
+	the internal wchar_t buffer with Curses::editablewidechar.
+
+	* curses/cursesdialog.C (writeText): New overloaded function takes a
+	vector of unicode_chars as the argument. Will eventually replace
+	the version that takes wchar_ts.
+
+	* curses/curses.C (writeText): New overloaded function takes a
+	vector of unicode_chars as the argument. Will eventually replace
+	the version that takes wchar_ts.
+	(towidechar): Eventual replacement for mbtow(). Mark mbtow() as
+	obsolete.
+	(fromwidechar): Eventual replacement for wtomb(). Mark wtomb() as
+	obsolete.
+	widechar: an object that encapsulates a vector of wchar_ts that
+	were converted from unicode_chars, in such a way that each unicode
+	grapheme, as demarcated by unicode_grapheme_break() is separately
+	converted to wchar_ts. Overloaded fromwidechar() converts widechar
+	to a vector of unicode_chars. A widechar is initialized from
+	a unicode vector.
+	(editablewidechar): An editable unicode buffer, initialized from
+	two unicode vectors: before cursor position, and after cursor
+	position. editablewidechar contains an internal widechar for the
+	"before cursor position" contents, and "after cursor position", as well
+	as a separate vector of wchar_ts that represent wchar_ts inserted at
+	cursor position, together with methods that move the accumulate
+	wchar_ts to the "before cursor position" vector. Also, the algorithm
+	for maintaining a horizontal scroll window that shows the buffer.
+
+2011-02-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicode_graphemebreak.c: unicode_grapheme_break() is an
+	implementation of TR29.
+
+	* rfc822/rfc2047.c (do_encode_words_method): Avoid splitting RFC
+	2047-encoded works in a middle of a grapheme.
+
+2011-02-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* curses/cursesscreen.C (doGetKey): Use mvget_wch() to read input.
+
+	* cone/myserverconfig.C (loadFolderIndex): Fix handling of
+	bad email message-id: headers.
+
+	* curses/curses.C (wordWrap): Fix bug in counting of wide characters.
+
+	* cone/cursesmessage.C (toMyCharset_noerror): Fix handling of
+	bad charset encoding.
+
+2011-01-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc822/rfc2047.c (rfc2047_encode_callback): Rewrite broken logic.
+
+	* unicode/unicode.c (deinit_iconv): Incomplete multibyte character
+	remaining at the end of conversion was falsely being reported as
+	a callback failure, rather than a conversion failure.
+
+	* cone/cursesmessage.C (toMyCharset): Clear errflag in case the
+	shortcut exit is taken.
+
+2011-01-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Removed the last remains of the old unicode mapping code.
+
+	* unicode/unicode.c (init_default_chset): Move cone's locale charset
+	determination logic into unicode_default_chset().
+
+	* libmail/headers.C (listitem): Fix leak.
+
+2011-01-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicode.h: Replace unicode_x_imap_modutf7 with a #define.
+	Eliminted unicode_x_smap_modutf7, replaced with
+	unicode_x_imap_modutf7, a space, and blacklisted chars.
+
+	* cone/htmlparsertest.C (main): Updated Unicode AP.
+
+	* cone/curseseditmessage.C (processKeyInFocus): Updated Unicode API.
+	(processKey): Ditto.
+	(search): Ditto.
+
+	* libmail/rfcaddr.H (emailAddress): Rewrite, to store decoded
+	name and address portion of an address as unicode chars.
+	get/set display name/addr takes a new charset parameter.
+
+	* cone/myserverconfig.C (save): Use new unicode API.
+	(loadmacros): Use new unicode API.
+
+	* cone/myfolder.C (messageEnvelopeCallback): Use new unicode API
+	(and bug fixes with folder listings of i18n names).
+	(toupper): Use new unicode API.
+
+2011-01-18  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicodecpp.C (convert_tocase): C++ binding for
+	libmail_u_convert_tocase().
+
+	* cone/configscreen.C (ConfigScreen): Use new unicode API.
+
+	* cone/addressbook.C (processKey): Use new unicode API (+minor bug fix).
+
+	* cone/cursesindexdisplay.C (drawLine): Use new unicode API.
+	(getFilterCmd): Use new unicode API.
+	(processKeyInFocus): Use new unicode API.
+	(listKeys): Use new unicode API.
+
+	* cone/curseseditmessage.C (string): Use new unicode API.
+	(processKeyInFocus): Use new unicode API.
+	(checkReplace): Use new unicode API.
+
+	* unicode/unicode.c (init_default_chset): Map GNU libc nl_langinfo()
+	return of "ANSI_X3.4*" to "US-ASCII".
+
+	* cone/leaf.C (main): Unicode API update.
+
+	* cone/init.C (init): Unicode API update.
+
+	* cone/cone.C (main): Replace defaultCharset() with
+	unicode_default_chset().
+
+2011-01-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicode_ultcase.c (unicode_tc): Convert test character
+	to lowercase first, before converting to titlecase -- UnicodeData
+	does not specify an uppercase char's titlecase, directly.
+
+	* maildir/maildirsearch.h (mail): New C++ binding method -
+	getSearchLen().
+
+	* libmail/search.C (checkNextHeader): Use getSearchLen() to
+	abort empty searches.
+	(searchEnvelope): Unicode API update.
+
+	* cone/curseseditmessage.C (processKeyInFocus): Unicode API update.
+	(load): Unicode API update.
+	(save): Unicode API update.
+
+	* cone/cursesedit.C (save): Unicode API update.
+
+	* cone/htmlparser.C (fmtline): Report conversion errors explicitly.
+
+	* cone/htmlentity.C (operator()): Return an indication that a
+	conversion error has occured.
+
+	* cone/cursesmessageflowedtext.C (rewrapFlowed): Report conversion
+	errors explicitly.
+
+	* cone/cursesmessage.C (reformat): Move the charset warning to the
+	end of the message, show only when actual conversion errors occur
+	when formatting the message for display.
+
+	* cone/cursesmessage.C: removed the remaining usage of unicode_info.
+
+	* libmail/structure.C (get): Take a charset string parameter instead
+	of unicode info. May be an empty string, for no conversion.
+
+	* cone/cursesmessageflowedtext.H (reformatter): Replaced unicode_info
+	parameters with charset strings.
+
+	* cone/cursesmessage.H (ShownPart): Replace unicode_info parameter
+	with a plain charset string.
+
+	* cone/cursesmessage.C (reformat): Temporarily disable charset
+	warning. Temporary incompatibility with the ongoing unicode rewrite.
+	(toMyCharset): Replaced unicode_info args with charset strings.
+	content_chset may be an empty string, no conversion gets performed.
+
+	* cone/filter.C (getDescription): Updated unicode API.
+
+2011-01-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/wraptext.C: Rewrite to use the updated unicode API.
+
+	* cone/htmlparser.C: Updated unicode_api. htmlParser takes plain
+	charset names, instead of unicode structure pointers.
+
+	* cone/htmlentity.C: Rewrote html entity handling from C to C++.
+
+	* unicode/unicode.h: Define C++ binding for libmail_u_convert(),
+	mail::iconvert.
+
+	* maildir/maildirsearch.h (mail): Convert the C++ binding to use
+	the unicode-aware, case-insensitive, whitespace-collapsing algorithm.
+
+	* libmail/search.H: Subclass mail::Search and the new mail::iconvert
+	wrapper into a searchengine.
+
+	* libmail/search.C (Searcher::converted): Receives MIME content body
+	that's been converted to UCS4. Feed it to the searchengine.
+	(go): Use new unicode functions to convert search strings to
+	uppercase (use ISO-8859-1 for the header name search string).
+	Really reset the mimeSearch array, in header/body/text search init.
+	(checkNextHeader): Code update. Flush any partial header line that
+	is in the buffer. Flush the UCS-4 conversion buffer. Convert the search
+	engine initialization (for the next header) to use the new searchengine
+	API, and start the conversion buffer to convert the decoded MIME
+	content body to UCS-4.
+	(searchEnvelope): Use rfc822_display_hdrvalue_tobuf() to format the
+	header being search into display form, convert it to UCS, and
+	feed it to the searchengine.
+	Removed prepSearch(), beginSearch(), and dosearch(), obsoleted by the
+	new searchengine API.
+	(search): Update to the new unicode library and searchengine API.
+	Use rfc822hdr_namecmp() to compare the header names, when searching
+	a specific header. Use rfc822_display_hdrvalue_tobuf() to format it for
+	display, before searching it. When searching the contents of MIME body,
+	feed the extracted body to the UCS conversion buffer.
+
+	* cone/cursesmessagedisplay.C (processKeyInFocus): Rewrite of the
+	search code. Remove whitespace collapsing from the search string, and
+	the text being searched, this is now handled in the searchengine API.
+
+	* cone/curseseditmessage.C (processKeyInFocus): Remove collapsing of
+	whitespace in the search string, this is now handled in the searchengine
+	API.
+	(search): Rewrite. Start of the found search string can now be obtained
+	via the searchengine API. Remove collapsing of whitespace in the text
+	being searched, now handled in the searchengine API.
+
+2011-01-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* unicode/unicode.c: New functions: libmail_u_convert_tou_tobuf,
+	libmail_u_convert_fromu_tobuf, libmail_u_convert_tocase.
+
+	* libmail/rfc2047decode.H (rfc2047): Removed unicode_info.
+
+	* libmail/nntp.C (searchMessages): Replaced c2u() with
+	libmail_u_convert_tou_init().
+
+	* libmail/mboxfolder.C (defaultName): Replaced unicode_modutf7touc()
+	and u2c() with libmail_u_convert_tobuf().
+	(createSubFolder): Replaced c2u() and unicode_uctomodutf7x() with
+	libmail_u_convert_tobuf().
+	(renameFolder): Replaced c2u() and unicode_uctomodutf7x() with
+	libmail_u_convert_tobuf().
+
+	* libmail/maildirfolder.C (folder): Replaced unicode_modutf7touc()
+	and u2c() with libmail_u_convert_tobuf().
+	(scan): Do not abort on an invalid mail folder name, isntead
+	return an error message.
+	(readFolderInfo): Report an error indication from scan().
+	(createSubFolder): Replaced c2u() and unicode_uctomodutf7x() with
+	libmail_u_convert_tobuf().
+	(renameFolder): Replaced c2u() and unicode_uctomodutf7x() with
+	libmail_u_convert_tobuf().
+
+	* libmail/maildir.C (getfilename): Do not abort on an invalid
+	mail folder name, instead return an error indication.
+	(checkNewMail): Do not abort on an invalid mail folder name,
+	instead return an error message.
+	(open): Do not abort on an invalid mail folder name, instead return
+	an error message.
+	(updateKeywords): Do not abort on an invalid mail folder name,
+	instead return an error message.
+
+	* libmail/mail.C: Removed mail::appcharset. Replaced with
+	unicode_default_chset(). Removed setAppCharset().
+	(toutf8): Replaced with a simple wrapper for
+	libmail_u_convert_toutf8().
+	(fromutf8): Replaced with a simple wrapper for
+	libmail_u_convert_fromutf8().
+	(translatePathCommon): Replaced c2u() with
+	libmail_u_convert_tou_init().
+
+	* libmail/imaplisthandler.C (translatePath): Replaced c2u() and
+	unicode_uctomodutf7() with libmail_u_convert_tobuf().
+	(translatePath): Replaced c2u() with libmail_u_convert_tou_init().
+	Replaced u2c() with libmail_u_convert_fromu_init().
+	(get_name): Replaced unicode_modutf7touc() and u2c() with
+	libmail_u_convert_tobuf().
+
+	* libmail/imapfolders.C (taggedMessage): Replaced c2u() and
+	unicode_uctomodutf7() with libmail_u_convert_toutf8() and
+	libmail_u_convert_tobuf().
+
+	* libmail/addressbookget.C (readstructure): Removed some dead code.
+
+	* libmail/addressbook.C (setIndex): Obsoleted unicode_xconvert() with
+	libmail_u_convert_tobuf().
+
+2011-01-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* all: rfc2045 library API update.
+
+0.85
+
+2010-11-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* gpglib/configure.in: Use "gpg2" if "gpg" is not found.
+
+	* Refresh autotool config scripts.
+
+2010-08-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Bind function keys to external commands. Pressing a function key
+	runs the external command which receives a copy of a message on
+	standard input.
+
+2010-08-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/curseseditmessage.C: Undefine a shortcut by pressing ^N when
+	nothing is selected.
+
+0.84
+
+2010-05-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gpglib/list.c: Handle GnuPG 2 --with-colons output format changes.
+
+	* gpglib/mimegpgfork.c: GnuPG 2 wants --batch when specifying
+	passphrase-fd.
+
+	* cone/cursesmessage.C: Strip off trailing CRs from original message
+	that's being replied or forwarded (shown as trailing ?s on every line
+	in the reply).
+
+	* tcpd/configure.in: Check if explicit linking with libgpg-error is
+	required.
+
+0.83
+
+2010-05-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/sgml/cone-folderindex.sgml (prompt): Mention the inn 2.5.x bug.
+
+2010-05-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myreferences.H (m): Fix NULL ptr deref.
+
+2010-05-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (nextLink): Fix wild pointer.
+
+	* libmail/copymessage.C (fail): Fix segfault if fetching the contents,
+	of the message being copied, fails.
+
+	* cone/cursesmessage.C (reformatAddLine): Clear the entire struct
+	to suppress warnings from valgrind.
+
+2010-05-02  Andrej Gelenberg <andrej.gelenberg@uni-dortmund.de>
+
+	* gcc 4.5 portability fixes.
+
+2010-05-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriergnutls.c (tls_connect): Fix bad call to
+	gnutls_server_name_set().
+
+0.82
+
+2010-04-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/curseseditmessage.C (getMarkedRegion): Portability fix
+	(gcc 4.4.3).
+
+2010-04-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* all: Some code cleanup.
+
+0.81
+
+2010-02-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/spellcheckerAspell.C: Do not set "lang" and "encoding" to empty
+	values.
+
+0.80
+
+2009-10-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/libmail: Link with libidn if this library is installed. Added
+	getAddrAddr() and setAddrAddr() methods to mail::emailAddress that
+	use libidn, if installed, to decode/encode the hostname portion of the
+	email address.
+
+	The GNU IDN library is now required to build Cone
+
+0.79
+
+2009-06-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* all: portability fixes for gcc 4.4.
+
+2009-05-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/myserverconfig.C (loadmacros): Fix saved macros that contain
+	8-bit text.
+
+0.78
+
+2009-04-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriergnutls.c: Fix off-by-1. Other cleanups.
+
+2009-04-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libmail/maildiradd.C: gcc 4.4 fixes.
+
+2009-02-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Updated autoconf, automake, libtool, and gettext.
+
+2008-11-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/configure.in: Update script to work with newer autoconf.
+
+	* cone/Makefile.am: Use XML catalog to locate stylesheet.
+
+	* curses/configure.in: Replace AC_CONFIG_HEADER with AM_CONFIG_HEADER
+
+2008-08-26  Alessandro Vesely <vesely@tana.it>
+
+	* tcpd/libcouriergnutls.c (tls_connect): Fix client certificate request
+	settings.
+
+0.77
+
+2008-08-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/gpg.C (GPG::select_key): When there's only one key in the
+	keyring, it was impossible to cancel it.
+
+2008-08-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriergnutls.c (set_cert): Add support for certificates
+	signed by an intermediate CA.
+
+0.76
+
+2008-07-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriertls.c: Various bug fixes.
+	(tls_cert_name): Convert subject name to rfc 2553 format.
+
+	* cone/certificates.C: Smarter parsing of cert subject lines.
+
+	* Remove SSL certificate bundle from this package. Use system-supplied
+	SSL CA bundle.
+
+	* cone/cone.dist.in: Update and improve comments. Bump TLS_TRUSTCERTS.
+
+	* Update documentation to describe SSL certificate authentication.
+	
+	* Store SSL certificates in the password file.
+
+2008-07-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gpglib/mimegpgfork.c (libmail_gpgmime_fork): Save and restore
+	SIGPIPE signal handler.
+
+	* cone/passwordlist.C: Eliminate needless saving of unmodified
+	passwords.
+	(PasswordList::remove): Ditto.
+
+	* cone/myserverconfig.C: Save and load certificate info in config
+	files.
+	(myServer::savepasswords): Do not memorize empty passwords.
+
+	* cone/myserver.C: Add a certificate ID to the list of server
+	parameters.
+
+	* cone/mainmenu.C (MainMenuScreen::MainMenuScreen): New link to the
+	"CERTIFICATES" screen.
+
+	* cone/cursesmessage.C (CursesMessage::getSendFolder): Prompting for
+	SMTP server's password was broken, fix it and add support for SSL
+	certificates.
+
+	* cone/myserverlogincallback.C: The other broken bits of userid/password
+	request callback.
+
+	* cone/curseshierarchy.C (CursesHierarchy::processKey): Enable
+	editing of pop3 maildrop accounts.
+
+	* cone/cursesedit.C (CursesEdit::markreplied): Use the server's
+	certificate, if defined, when we have to open a temporary second
+	session to mark the message as replied.
+
+	* cone/configscreen.C: Add a button to select a certificate for the
+	SMTP server.
+	(ConfigScreen::doSave): Logic to memorize SMTP server's password was
+	broken. Also: need to save memorized passwords after updating the
+	configuration.
+
+	* cone/cone.dist.in: Do not define TLS_STARTTLS_PROTOCOL, by default.
+	New description of TLS_CERTFILE.
+
+	* cone/cone.C (tryCreateAccount): Add an SSL certificate to
+	login parameters.
+	(addAccountPrompt): Add a button to select an SSL certificate for the
+	account.
+	(editAccountScreen): Ditto.
+	(main): Ignore SIGPIPE.
+	
+
+	* libmail/imap.C: Implement client SSL certs and AUTHENTICATE EXTERNAL.
+
+	* libmail/pop3.C: Ditto.
+
+	* libmail/smtp.C: Ditto.
+
+	* libmail/pop3maildrop.C: Ditto (pass through to pop3).
+
+	* libmail/nntp.C: Just pass through client SSL certs to fd::fd, for
+	now. 
+
+	* libmail/mail.H (class account::openInfo): Add certificate vector
+	to open account parameters.
+
+	* libmail/fdtls.C (fdTLS::get_tls_client_certs): Supply client SSL
+	certs to OpenSSL/GnuTLS.
+
+	* libmail/fd.C (fd::fd): Load user-specified client SSL certs into
+	the libcouriertls structure.
+
+	* tcpd/libcouriertls.h: Implement support for client SSL/TLS
+	certificates.
+
+2008-06-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc822_getaddr.c: Backslashed special characters in address names
+	weren't being dequoted correctly by rfc822_getname() and
+	rfc822_getname_orlist().
+
+2008-06-12  Fazal Majid <sourceforge@sentfrom.com>
+
+	* curses/cursesscreen.C: Change the order of includes -- OpenSolaris
+	issue
+
+0.75
+
+2008-05-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Add missing includes, fixes compilation errors w/glibc+gcc 4.3
+
+2008-03-12  Gordon Messmer <yinyang@eburg.com>
+
+	* tcpd/libcouriertls.c (tls_create): Default TLS_PROTOCOL=SSL23,
+	TLS_CIPHER_LIST=SSLv3:TLSv1:!SSLv2:HIGH:!LOW:!MEDIUM:!EXP:!NULL@STRENGTH
+
+0.74
+
+2007-11-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriergnutls.c (tls_connect): TLS_MIN_DH_BITS setting,
+	invokes gnutls_dh_set_prime_bits(). Fix some bugs.
+
+2007-11-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriergnutls.c (tls_transfer): Fix some bugs.
+
+2007-11-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriergnutls.c: Fix SSL session caching bug.
+
+0.73
+
+2007-11-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tls: Implement GnuTLS as an alternative to OpenSSL.
+
+2007-10-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tls: code cleanup.
+
+0.72
+
+2007-09-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* addressbook.C: Implement LDAP search from LDAP servers that
+	require authentication.
+
+2007-07-26  Mr. Sam  <sam@email-scan.com>
+
+	* COPYING: Updated to GPL 3
+
+0.71
+
+2007-07-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Drop the automake fixup -- too much trouble to maintain.
+
+	* gpglib/gpg.c: Fix signing of multipart messages that contain
+	8 bit content.
+
+0.70
+
+2007-04-06  Martin Michlmayr <tbm@cyrius.com>
+
+	* Several gcc 4.3 fixes.
+
+2007-04-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Update all docs to Docbook XML V4.4.  Update configure script
+	and makefile to current automake syntax.
+
+2007-02-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myserverremoteconfig.C (saveconfig2): Skip updating of the
+	remote configuration if the configuration settings are unchanged.
+
+0.69
+
+2006-11-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Fix many gcc 4.1 warnings.  Update LDAP code to OpenLDAP 2.3
+
+	* all: Rebuilt against the latest gettext, autoconf, and automake
+
+2006-10-31  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/spellcheckerAspell.C (endif): Fix wrong aspell key.
+
+2006-07-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (reply): Fix Followup-To: processing.
+
+2006-06-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/fd.C: Add missing #include <errno.h>
+
+2006-05-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Fix many compiler warnings.
+
+0.68
+
+2006-05-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesedit.H: Compilation fix.
+
+2006-04-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesindexdisplay.C: New folder index screen command,
+	"show blobs", toggles on/off removal of mailing list [blobs] in the
+	subject line, which has limited display real estate.
+
+0.67
+
+2006-02-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Implemented LDAP address books.
+
+2006-02-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myserver.H: Fix compiler error.
+
+	* cone/spellcheckerAspell.H: Ditto.
+
+2006-02-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/mymessage.C (getDefaultHeaders): "Write" from the main menu
+	populates message headers with defaults from the first defined mail
+	account.
+
+2006-02-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myserverconfig.C (save), cone/cursesmessage.C (getSendFolder):
+	When using master passwords, also save passwords for the SMTP server.
+
+2006-02-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/configure.in: Forgot to bump release to 0.66
+
+	* curses/mycurses.H: Drop redundant namespace reference.
+
+0.66
+
+2006-01-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Fix various gcc warnings.
+
+2005-11-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* htmlparser.C: Generate more readable results from <li> tags.
+
+2005-11-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gpglib/gpg.c (dosignencode): Sign the entire message in its entirety,
+	instead of signing each MIME part separately.  Some E-mail clients
+	cannot handle individually-signed multipart/alternative content.
+
+	* Toolchain update.
+
+2005-11-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045rewrite.c: Cleanup.  Remove duplicate quoted-printable
+	implementation, use one in rfc822/encode.c
+
+	* gpglib/gpg.c: Ditto.
+
+	* rfc822/encode.c (quoted_printable): encode spaces that precede a
+	newline.
+
+0.65
+
+2005-07-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/mboxmultilock.C: Fix a double-free error.
+
+2005-06-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/generic.C: Generic parser was folding headers when it
+	shouldn't, and not folding headers when it should.
+
+2005-06-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C: Find http/https/mailto URLs in text/plain
+	content, and attribute them, so that Enter activates those URLs.
+	When showing full headers, URLs in RFC 2369 headers are marked up
+	as well.
+
+	* gpglib/gpg.c:	gnupg returns non-zero exit even if succesfully
+	unencrypted, when just the signature is bad.
+ 
+
+2005-06-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: Cleaned up libtool scripts.
+
+2005-06-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Various: Enter key activates URLs in HTML mail.
+
+2005-06-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myfolder.C (markDeleted): Overload "Undelete" key to mark
+	a message that's already not deleted as unread.
+
+	* cone/cursesindexdisplay.C: Group "UNREAD" command marks msgs as
+	unread.
+
+	* cone/cursesmessagedisplay.C: "S" in message view is a shortcut
+	to save the message's contents in a file.
+
+	* cone/cursesindexdisplay.C: Folder index: "N" and "P" are aliases
+	for cursor down/up.
+
+0.64
+
+2005-02-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/addressbook.C (processKey): Import/export address book.
+
+	* libmail/addressbook.C (setIndex): Fix corruption caused by blank
+	nicknames, which now show up as (none)s in address book index.
+
+	* cone/addressbook.C (renameEntry): New function - rename address
+	book entry nickname.
+
+2005-02-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/imaphmac.C: Added SASL CRAM-SHA256 support.  Fixed
+	CRAM-SHA1 (which never worked!).
+
+2004-11-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone: Spurious "Ambiguous filename pattern" message when aborting
+	out of file selection dialog.
+
+	* cone/cursesmessagedisplay.C: Added rudimentary print command.
+
+0.63
+
+2004-11-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesedit.C: Autodetect if glob() is available, and if so
+	use it to attach multiple files and process filename patterns in
+	the file requester dialogs.
+
+2004-11-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/ctrlchandler.C: Remove spurious include of curses.h
+
+2004-10-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/Makefile.am: Refresh from Courier tree.
+
+2004-08-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc822/imapsubj.c (rfc822_coresubj_keepblobs): New function to strip
+	non-core subject appendages. Now keep [blobs] when generating
+	subjects for replies and forwards.
+
+0.62
+
+2004-08-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/init.C (init): Added textdomain() call.
+
+2004-08-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/fd.C: Implement Socks 5 proxying using the courier-sox
+	API toolkit.
+
+2004-08-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/pop3.C: Don't run out of file descriptors when downloading
+	a huge pop3 maildrop.  Download a huge pop3 maildrop 200 messages
+	at a time.
+
+	* libmail/maildiradd.C (addmessage): Fix check of tmpcreate exit code.
+	(addmessage): Fix error recovery.
+
+0.61
+
+2004-07-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesedit.C (getPostFolder): Answering "N" to "Post message"
+	prompt when posting and mailing and encrypting wasn't working right.
+
+2004-07-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessagedisplay.C (processKeyInFocus): If showing
+	a message/rfc822 attachment, the 'take addresses' command looks for
+	the addresses in the attachment, not the main message.
+
+2004-06-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* automake: mkinstalldirs script is obsolete.
+
+	* cone/cursesmessage.C (grok): Cone couldn't properly show multiply
+	nested message/rfc822 attachment, from the view attachment screen.
+	(forward): When forwarding a message/rfc822 attachment, the default
+	subject is taken from the attachment, not the whole message.
+
+2004-06-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone: Implement option to remove individual attachments from
+	messages.  Implemented using a bunch of new APIs in the
+	mail::addMessage object (copiously documented, of course).
+
+2004-06-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail: API change: replace justHeader and justContents parameters
+	to readMessageContent with a single enumerated parameter.  Add option
+	to request unfolded headers.
+
+2004-06-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* man: Move misplaced section 5 man pages to section 3.
+
+	* libmail/attachments.C: New class: mail::Attachment, for creating
+	MIME content.  A single mail::Attachment object represents a single
+	MIME entity, headers+body.  A wide variety of constructors is available
+	that create content-containing MIME objects, with the content coming
+	from a file or a memory buffer.  The transfer encoding may be specified
+	or autodetected.  Even more constructors create composite, multipart,
+	MIME objects, from other mail::Attachment classes.
+
+	* libmail/headers.C: New classes for creating various message headers.
+	mail::Header - common superclass.  Defines common methods: toString() -
+	convert to text form.  clone() create a copy of the subclassed object.
+	wrap() - protected method to word-wrap the header string.
+	mail::Header::plain - subclass that creates a plain, 7bit-only header.
+	mail::Header::encoded - subclass that creates an unstructured header,
+	with non-USASCII text encoded according to RFC 2047.
+	mail::Header::addresslist - subclass that creates a header that
+	contains addresses.
+	mail::Header::mime - a structured MIME header, such as Content-Type:
+	and Content-Disposition:
+	mail::Header::list - an object that pulls together a list of
+	headers (any combination of the above-defined subclasses), and
+	converts the whole thing to text.
+
+	* libmail/structure.H: Hide the map with the MIME header parameters
+	privately, provide the set_simple() method to initialize a parameter
+	(converting the parameter's name to uppercase).  Also provide the
+	erase() method.  New toString() method converts the parameter list
+	to text.  Updated the affected code elsewhere accordingly.
+
+	* libmail/addressbookget.C: Another gcc 3.4 fix.
+
+	* libmail/addmessage.C: New mail::addMessage::API.  New methods:
+	assembleContent(), assembleMessageRfc822(), and assembleMultipart()
+	use mail::Attachment classes to build the new message one MIME
+	section at a time.  After the new message is defined, the assemble()
+	method generates it, and uses the existing saveMessageContents()
+	which takes the message's contents in raw form.
+
+	* libmail/addressbookadd.C (go): Convert address book entry
+	generation to use the new mail::addMessage() API.
+
+	* cone/myserverremoteconfig.C (saveconfig2): Use the mail::Attachment
+	and mail::Header-based API to generate the MIME message containing
+	the remote configuration file.
+
+	* cone/cursesedit.C (attach): Use mail::mimestruct::parameterList
+	object's toString() method to convert it to text form.
+	(init): Remove extraneous whitespace from folded header lines.
+	(save): Convert Message-ID: generation to use the new mail::Header
+	classes.
+	(save): Convert Newsgroups:,Followup-To: and Subject: header
+	generation to use the new mail::Header classes.
+	(saveheaders): Convert address header generation to use the new
+	mail::Header classes.
+
+2004-06-10  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/smapfetchattr.C (go): Initialize class members earlier,
+	to prevent wild pointer dereference.
+
+2004-06-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/smapfetchattr.C (checkMimeVersion): Fixed bug parsing
+	message/rfc822 attachments that themselves do not have a Mime-Version:
+	header (mime_id is lost).
+
+2004-06-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/addressbookget.C: Another gcc 3.4 compilation fix.
+
+0.60
+
+2004-05-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (decode): Use mail::emailAddress class for
+	MIME decoding.
+
+2004-05-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/addressbook.C: Convert address book take screen to use
+	mail::emailAddress.
+
+	* libmail: subclass mail::address as mail::emailAddress, providing
+	methods to MIME encode and decode name portions of addresses.
+	Convert mail::address::fromString and mail::address::toString to
+	templates and provide definitions for both mail::address and
+	mail::emailAddress vectors.  Also redefine mail::addressbook class
+	to also use templates, and provide definitions for both mail::address
+	and mail::emailAddress-based implementations.
+
+	Change the address book format so that the address lists are saved
+	in their MIME-encoded format, so that they may be consistently
+	processed by the templated fromString/toString implementations.
+
+	* rfc2047.c (rfc2047_encode_callback): Use base64 to MIME-encode
+	instead of quoted-printable, where it's more efficient to do so.
+
+2004-05-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/rfc2047encode.C (encodeAddrName): Logic to determine whether
+	to encode is now in rfc2047_encode_str().
+
+2004-05-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/rfcaddr.C: make name and addr fields in mail::address
+	private.  Provide getName(), getAddr(), setName(), and setAddr()
+	methods.  Rename getAddress() as getCanonAddress().
+
+	* libmail/rfc2047decode.C (decode): Remove the extra unicode_info
+	parameter that designates a "native" character set, which is now
+	always the same character set that's being decoded to.  Impact on
+	folder index where subject/names will now always silently leave out
+	chars not translatable into the current charset.  Even with the
+	[charset] prefix, because folder index metadata is cached switching
+	display charsets was broken neverhteless.  Might as well give up
+	this extra complexity if it doesn't really fix anything.
+
+2004-05-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/smtp.C (smtp): Fix segfault if connect() fails immediately.
+
+2004-04-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone: Implement macro shortcuts: assign block of text to a function
+	key or a shortcut.  Auto-insert the block when the function key is
+	pressed or the shortcut text is typed.  Mark a section of text then
+	press CTRL-N to assign it to a function key or a shortcut.
+
+2004-04-27  Jim Gifford <maillist@jg555.com>
+
+	* all: various fixes for gcc 3.4
+
+2004-04-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cursesmoronize.C: 1/2, 1/4, and 3/4 must be followed by a space
+	in order for them to be replaced by their corresponding UTF-8
+	character (entering dates is annoying otherwise).
+
+0.59
+
+2004-04-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gpglib/list.c (libmail_gpg_listgroups): strip trailing spaces from
+	group name read from .gnupg/options.
+
+	* cone/myserver.C (eventloop): Fix an obscure race condition that's
+	seen with maildirs (and mailboxes), by making sure that
+	mail::account::process gets invoked at least once per main event loop.
+
+	* libmail: move several functions to the mail:: namespace,
+	and to a new misc.H.
+
+2004-04-20  Brian Candler <B.Candler@pobox.com>
+
+	* maildir/maildirgetnew.c (do_maildir_getnew): Fix infinite loop if
+	rename() syscall fails.
+
+2004-04-17  Matthias Andree <matthias.andree@gmx.de>
+
+	* libmail: Explicit conversion to FILE *(), fileno
+	may be a macro.
+
+2004-04-17  Mr. Sam  <mrsam@commodore.email-scan.com>
+
+	* cone.spec.in: Clean up sysconfdir/cone when uninstalling Cone.
+
+2004-04-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2231encode.c: clean up rfc 2231 encoding.
+	Corresponding changes in various bits of code.
+
+2004-04-14  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone.spec.in: Spec file fixes.
+
+	* cone/sgml/cone.sgml: Typo fixes.
+
+	* rfc2047.c (rfc2047_encode_callback): Fix bug introduced in 0411.
+
+2004-04-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gpglib/list.c (libmail_gpg_listgroups): New function - read
+	.gnupg/options and pick out the recipient groups.
+
+2004-04-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc822/rfc2047.c (a_rfc2047_encode_str): Improve compliance with
+	RFC 2047 for MIME-encoded recipient lists.
+	(rfc2047_encode_callback): New argument: qp_allow - function that
+	indicates acceptable characters in QP-encoded words.
+	(rfc2047_encode_str): Ditto.
+	(rfc2047_qp_allow_any, rfc2047_qp_allow_comment) 
+	(rfc2047_qp_allow_word): Possible arguments to qp_allow for various
+	situations.
+
+2004-04-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045cdecode.c (do_decode_base64): Long overdue - use
+	a precomputed base64 decoding table.
+
+	* rfc822/encode.c: Moved rfc2045/rfc2045encode.c here, renamed all
+	functions to use the libmail_ prefix.
+
+0.58
+
+2004-04-05  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail: refactor libmail to use poll() instead of select().
+
+2004-03-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (reply): Allow the default setting for
+	post-and-mail to be specified on the setup screen.
+
+	* cone/cursesmessagedisplay.C (processKeyInFocus): Implemented
+	intra-message search.
+
+2004-03-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cone.C (folderIndexScreen): Fix error recovery when message
+	copy fails.
+
+	* cone/acl.C: Technicolor for the ACL screens.
+
+2004-03-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/sgml: Document mail::ACCOUNT ACL functions.
+	Document Cone's user interface.
+
+2004-03-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/sgml: Document mail::account ACL functions.
+
+	* libmail/smapacl.C: Implement SMAP ACLs.
+
+	* cone/sgml/smap.sgml: Document SMAP implementation of access control
+	lists.
+
+	* libmail/mail.C (getmyrights): Not implemented by default.
+	(getrights): Ditto.
+	(setrights): Ditto.
+	(delrights): Ditto.
+
+	* libmail/imaplisthandler.C (get_name): Implement extended LIST
+	response.
+
+	* libmail/imapfolders.C (createSubFolder): Error handling cleanup
+	(also in several other funcs).
+	(getmyrights/getrights/setrights/delrights): Implement IMAP ACLs
+	(new module, imapacl.C/imapacl.H).
+
+	* libmail/imap.C (hasCapability): Special handling for "ACL"
+	capability.
+	(getCapability): Ditto.
+
+	* curses/cursesmultilinelabel.C: New gadget - a multiline label that
+	word-wraps to a given width (used to display folder permissions).
+
+2004-02-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* tcpd/tlspasswordcache.c (tlspassword_load): Fix memory leak.
+
+	* libmail/imapparsefmt.C (operator): Fix missing parent link.
+
+	* libmail/fd.C (socketConnect): IPv6 fix.
+
+	* cone/cone.C (main): Cleanup logout handling.
+
+	* cone/Makefile.am (libmail.a): Portability fix.
+
+2004-02-18  Mr. Sam  <mrsam@commodore.email-scan.com>
+
+	* curses/configure.in: Check for ncursesw/curses.h.
+
+2004-02-09  IKEDA Soji <nezumi@jca.apc.org>
+
+	* Big5, euc-jp, gb2312, ksx1001, shiftjis: let these functions handle
+	their own conversion errors.
+
+2004-02-07  IKEDA Soji <nezumi@jca.apc.org>
+
+	* Big5:  Add non-hanzi maps.  Add ETen extension.  Add Big5-HKSCS
+	charset.
+
+	* Gb2312: Add non-hanzi maps.
+
+	* Let iso2022-jp functions handle their own conversion errors.
+
+2004-02-02  IKEDA Soji <nezumi@jca.apc.org>
+
+	* iso2022jp.h: Maps for CJK Compatibility Ideographs has been added.
+
+	* ksx1001.c: New character sets: ISO-2022-KR, EUC-KR, CP949,
+	ISO-2022-JP-1.
+
+2004-02-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* unicode/iso88597.c: Updated from unicode.org.
+
+	* unicode/unicode_ultcasetab.c: Updated from unicode.org
+
+2004-02-01  IKEDA Soji <nezumi@jca.apc.org>
+
+	* iso2022jp.pl / iso2022jp.h: JIS X 0208 mapping has been updated
+	based on latest regional standard (JIS X 0208:1997) and some vendor 
+	standards. Errorneous (lacking or false) mappings has been fixed.
+	Support for older JIS X 0208 (JIS C 6226:1978) mapping was added.
+	JIS X 0212:1990 mapping was added.
+
+	* iso2022jp.c: Converters became (upper-)compatible with ISO-2022-JP 
+	(RFC1468 / JIS X 0208:1997 Annex 2) and ISO-2022-JP-1 (RFC2237).
+	Buffer overflow vulnerability (when Unicode character is out 
+	of BMP range) has been closed. Convert error handling was implemented.
+
+	* shiftjis.c: Broken SHIFT_JIS converters has been fixed and became 
+	(upper-)compatible with Shifted Encoding Method (JIS X 0208:1997
+	Annex 1). Buffer overflow vulnerability (when Unicode character is out 
+	of BMP range) has been closed. Convert error handling was implemented.
+
+	* eucjp.c: New converters for EUC-JP.
+
+0.57
+
+2004-01-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesedit.C (archiveSentFolder): Happy New Year!  Automatic
+	rename of last month's sent folder is broken on a year change.
+
+2003-12-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/sgml/cone-localmail.sgml: Documentation changes.  Custom
+	ncurses build not required for FC1.
+
+	* libmail/generic.C (genericReadMessageContent): Only mark the
+	message as read if not peeking (fix search header marking unread
+	messages as read).
+
+2003-12-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* unicode: Fix toupper_func/tolower_func/totitle_func for shiftjis,
+	big5, utf8, utf7, iso2022jp: function may return a NULL even when
+	requested to ignore conversion errors.
+
+2003-12-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* maildir/maildirrename.c (validrename): Rename foo to foo.bar is not
+	kosher.  Compile list of directories to rename first, sort, then
+	rename.
+
+2003-12-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/pop3.C (doNextDownload): Messages downloaded from a POP3
+	maildrop are new messages.
+
+2003-11-30  Matthias Andree <matthias.andree@gmx.de>
+
+	* libmail/pop3maildrop.C: Freebsd needs some include files here.
+
+0.56
+
+2003-11-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/sgml/index.sgml: Document the UIDL issue in the FAQ.
+
+2003-11-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/leaf.C (saveTo): Preserve mode when saving a file.
+
+2003-11-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone: Implement the pop3 maildrop mode. The pop3 maildrop mode
+	works with old POP3 servers that do not implement UIDL.
+
+	* libmail/pop3.C (stlsHandler): Fix error recovery.
+
+	* Update to automake 1.7.8, autoconf 2.57, libtool-1.5, gettext-0.12.1
+
+	* curseshierarchy.C (processKey): After deleting an account,
+	explicitly delete its newsrc file or maildir (where appropriate)
+	instead of leaving the task to myServer::loadconfig()
+	
+2003-11-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/filtereditscreen.C (filterEditScreen): Cone terminated after
+	saving a folder filter, when remote configuration was in effect.
+
+2003-11-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/curseseditmessage.C (yank): Fix autocorrect.
+	* curses/cursesfield.C (processKeyInFocus): Dottp/
+
+	* cone/myserverconfig.C: Memorized passwords may get un-memorized when
+	remote configuration file is being used, sometimes.
+
+2003-11-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cone.C (main): Fix import of custom colors from saved
+	configuration.
+
+0.55
+
+2003-10-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/nntplogin.C: New authentication logic.  Authentication
+	auto-detection didn't work with some news server.  Get rid of
+	auto-detection logic.  Now, authentication is done if the userid
+	at login time is set; if so, the password is prompted for.
+
+	* tcpd: Respect $(EXEEXT)
+
+	* libhmac: Respect $(EXEEXT) 
+
+	* rfc2045/testsuite: Fix enable-mimecharset breaking make check.
+
+2003-10-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/mbox.C (genericMarkRead): Mark the current folder as
+	dirty, after implicitly turning of the unseen flag.
+
+	* curses/cursesmoronize.C: Provide "auto-correct" type of a framework.
+
+2003-10-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* all: More Technicolor.
+
+	* maildir/maildirgetnew.c (do_maildir_getnew): Workaround for
+	filesystems that keel over if files are deleted in the directory
+	that's being read at the same time.
+
+2003-10-10  Brian Candler <B.Candler@pobox.com>
+
+	* maildir/loginexec.c (maildir_loginexec): Hook for Maildir/loginexec,
+	if exists it's executed, then removed.  Used for migration-type
+	situations. (NOT USED BY CONE)
+
+2003-09-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/gettext.C: Toggle (on the curses index screen) conflicts with
+	Tag.
+
+	* cone/cursesedit.C: Add some color to the write message screen.
+
+2003-09-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (addHeader): Add some color to the message
+	display screen.
+
+2003-09-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/nntpxpat.C (processXpatResponse): Fix: filtering in a
+	newsgroup may cause an infinite loop.
+
+2003-09-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* curses/cursesscreen.C (writeText): Use termattrs() to check if
+	the terminal can underline.  If not, replace spaces with underscores.
+
+2003-09-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/gettext.C (defaultCharsetName): Check MM_CHARSET environment
+	variable in addition to CHARSET.
+
+	* libmail/smtp.C (starttls): Re-issue EHLO after STARTTLS.
+
+	* curses/cursesscreen.C (runCommand): Correctly hand off terminal
+	stop signal to the child process.
+
+2003-09-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Makefile.am (distrelease): make distrelease make sure cone.pot is
+	up to date.
+
+	* cone/colors.C: New framework for setting colors of various things.
+	Colors are set from the setup screen.  Implemented color selection
+	for the folder listing screen.
+
+	* curses/cursesscreen.C (CursesScreen): Initialize color pairs in a
+	manner that allows arbitrary fore/bg color selection.
+
+	* curses/mycurses.H: Clean up CursesAttr: highlight/reverse/uline
+	attrs are now bools, separate fore/bg color attributes.
+
+	* all: Use consistent format for yes/no prompts.
+
+	* cone/globalkeys.C (processKey): Optional prompt - are you sure you
+	want to quit?
+
+	* cone/curseseditmessage.C (processKeyInFocus): Added ^U - invoke
+	external editor.
+
+	* all: major cleanup with how keyboard input is handled.  Should be
+	more efficient, and faster on slow machines.
+
+2003-09-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesindexdisplay.C (processKeyInFocus): Move message is
+	essentially a copy followed by an expunge.
+
+0.54
+
+2003-09-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/sgml/cone-folderindex.sgml (prompt): Document the new
+	behavior of the copy command (split into non-batch, and batch
+	versions).
+
+	* cone/sgml/cone-folderindex.sgml: To clear things up,
+	searching/marking messages with the spacebar is now called "flagging";
+	highlighting messages with a background color is called "tagging".
+
+
+2003-09-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myfolder.C (setTag): Use Tags::getTagName(); do not erase any
+	foreign keywords.
+
+	* cone/tags.C (getTagName): Formalize $LabelN convention.
+
+	* cone/myfolderfilter.C (doStep): Implement filter_step_tag in two
+	steps: first remove any existing tags, then add the new tag.
+
+	* cone/filtereditscreen.C (add): New filter option: Tag.
+
+	* cone/filter.C: Add filter_step_tag, store tag number in name_utf8.
+
+	* cone/cursesindexdisplay.C (getTag): Make this a static function,
+	accessible by Filter::editScreen().
+
+	* libmail/imapfolder.C (saveflags): Fix FETCH FLAGS.
+
+2003-08-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesindexdisplay.C: Dis-ambiguate the copy command.
+	C)opy issued from the folder index screen copies only the message
+	under the cursor.  To copy all selected messages, select C)opy from
+	the batch menu, ";".  Former clear selected option now uses "R"
+	instead of "C".  Now all batch commands are consistently issued from
+	the batch menu.
+
+	* cone: Configure tags from the setup screen, save them.
+
+	* cone/cursesmessage.C (reformat): Use tagged color for MIME section
+	separators.
+
+	* curses/cursesscreen.C (getColorCount): Return # of colors supported
+	by device.
+
+	* libmail/nntp.C: Add mail::keywords::Message to the new index array,
+	thus implementing keywords.
+
+	* libmail/nntp.H: Combine idxMsgNums and idxFlags array into
+	the new index array.
+
+	* libmail/pop3.C (pop3MessageInfo): New subclass of messageInfo for
+	POP3.  Added extra field, mail::keywords::Message, that holds
+	keywords.
+	(getFolderKeywordInfo): Get keywords.
+	(updateKeywords): Update keywords, generically.  Afterwards, take
+	a snapshot.
+	(pop3): Manually clear currentFolderIndex, to release any remaining
+	references to keywordHashtable.
+
+2003-08-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/mboxmagictag.C (mboxMagicTag): The magic mbox tag now
+	includes a list of keywords set for this message.  The mboxMagicTag
+	object now includes a mail::keywords::Message, which is initialized
+	from the magic mbox tag string.  ::toString() recreates it,
+	getKeywords() and setKeywords() access it/
+
+	* libmail/mbox.C (getFolderKeywordInfo): Retrieve keywords.
+	(updateKeywords): Update keywords using a generic implementation,
+	which marks the folder as dirty (will eventually be written out).
+
+	* libmail/generic.C: Create a generic implementation of keyword updates
+	which is going to be used by mbox, pop3, and nntp.
+
+	* maildir/maildirkeywords.h: Optimize the C++ wrapper for keyword
+	support.  Allocate a libmail_kwMessage only upon demand, and
+	autodestroy it accordingly.  Implement a C++-friendly
+	maildir_kwSave().
+
+	* libmail/generic.C: Remove genericGetFolderKeywordInfo and
+	genericSetFolderKeywordInfo - superceded by mail::keyword::Message
+	methods.  Appropriate adjustments to the rest of the code.
+
+	* cone/configscreen.C: Add SMTP tunneled over SSL option to the
+	configuration screen.
+
+2003-08-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/smap.C (processLine): Process FETCH KEYWORDS replies.
+
+	* libmail/nntpgroupopen.C (restoreKeywords): Temporary stub.
+
+	* libmail/pop3.C (restoreKeywords): Temporary stub.
+
+	* libmail/maildir.C (getFolderKeywordInfo): Now superceded, mostly,
+	by genericGetFolderKeywordInfo().
+	(updateKeywords): Partially superceded by genericSetFolderKeywordInfo.
+
+	* libmail/imapfolder.H: Convert index, which was a vector of
+	mail::messageInfo, to a vector of a new object, indexInfo, that's
+	publicly derived from mail::messageInfo, and includes an additional
+	member object, keywords, which thusly holds keywords set for the given
+	message.  Adjust a few references that need more than an implicit
+	conversion to effect the upgrade.
+
+	* libmail/imapfolder.C (installed): Make sure to clear folderFlags
+	and permanentFlags immediately after issuing a SELECT.
+	imapSELECT_FLAGS no longer needs a ptr to its imapSELECT object.
+	(saveflags): Process IMAP keywords during FETCH FLAGS.
+	(keywordAllowed): Indicate whether the given keyword is supported by
+	the IMAP server.
+	(saveFolderIndexInfo): When updating IMAP FLAGS, leave any keywords
+	intact.
+	(updateKeywords): Update KEYWORDS for multiple messages.  For IMAP
+	it's tricky, since STORE FLAGS (but not STORE +FLAGS or STORE -FLAGS)
+	would also reset any IMAP flags set for each message.  Punt by
+	converting a keyword store into a STORE -FLAGS, naming all keywords
+	used by the listed messages, then a STORE +FLAGS, naming all new
+	keywords to help.  Use a new helper object, updateImapKeywordHelper,
+	to glue the two operations together.
+
+	* libmail/imap.H: Keep track of IMAP PERMANENTFLAGS in permanentFlags,
+	added keywordHashtable for keyword support.
+
+	* libmail/imap.C (socketRead): OK [PERMANENTFLAGS] - invoke
+	setPermanentFlags(), OK [ALERT] - alert, other OKs - ignore.
+	(setPermanentFlags): Initialize mail::imap.permanentFlags (new
+	set<string>).
+
+	* libmail/generic.C (genericGetFolderKeywordInfo): Convert keyword list
+	to a set<string>.
+	(genericSetFolderKeywordInfo): Convert set<string> to a keyword list.
+
+	* cone/myfolder.C (restoreSnapshot): Restore keywords from a snapshot.
+	(saveSnapshot): Save keywords in a snapshot.
+
+2003-08-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (reply): Remove misplaced break (reply might
+	result in from/newsgroups: header not being set, in some cases).
+
+2003-08-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesindexdisplay.C (processKeyInFocus): Display tag
+	shortcuts in all their glory.
+
+	* curses/cursesstatusbar.C (draw): Ugly hack: shortcut name that
+	starts with /n is drawn with the color set to color #n.
+
+	* curses/cursesscreen.C (CursesScreen): A smarter heuristic for
+	initializing color pairs.
+
+2003-08-20  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myfolder.C (newMessagesReceivedAndFiltered): Read keywords
+	on newly-delivered mail.
+	(messageChanged): Read updated keywords.
+	(init): Initialize keywords of messages in an opened folder.
+	(setTag): Look for a $LabelN keyword in order to tag a message.
+
+	* cone/cursesindexdisplay.C (drawLine): Use $LabelN keywords to tag
+	messages, like Mozilla.  Show tagged messages with different BG color.
+
+	* curses/cursesscreen.C (CursesScreen): Change the initialization
+	function to cycle the available background colors, instead of
+	the foreground colors.
+
+	* libmail/maildir.C: Added keyword support to the maildir driver.
+	A default implementation for keyword methods is temporarily supplied
+	by the mail::account superclass.  Will be removed when keyword
+	support is added to all drivers.
+
+	* maildir/maildirkeywords4.cpp: Added C++ wrappers for some keyword-
+	related classes.
+
+2003-08-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesedit.C (save): Set the character set to US-ASCII if
+	message is 7-bit only, and the character set is a US-ASCII superset.
+
+	* cone/myserverconfig.C (getCachedFilename): Make sure newly-created
+	cache/index file is added to cacherc.
+
+2003-08-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/nntpchecknew.C (processXhdrStatus): Ignore 420 replies to
+	an XHDR.
+
+	* libmail/nntpgroupopen.C (processLISTGROUP): Ignore 420 replies to
+	an XHDR.
+
+0.53
+
+2003-08-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/base64.C (callback_func): Fix base64 encoding, affects
+	authenticated ESMTP.
+
+	* libmail/pop3.C (searchMessages): Manually disable inefficient POP3
+	search types.
+
+2003-07-31  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/nntp.C (searchMessages): Disable unreasonable searches.
+
+	* cone/myserver.C (serverLogout): Make sure all background processing
+	stops before the account is closed.
+
+	* cone/sgml/cone-filters.sgml (killfile): Document searching
+	and filtering.
+
+2003-07-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/maildirfolder.C (moveMessagesTo): Implement native message
+	move.
+
+	* cone/sgml: Document new libmail functions that move messages.
+
+	* libmail/nntpxpat.C (done): Fix NNTP XPAT lo-hi search.
+
+	* libmail/smapstatus.C (processLine): Fix unsolicited msgs in SMAP
+	STATUS.
+
+	* libmail/smapsearch.C (processLine): Fix unsolicited msgs in SMAP
+	SEARCH.
+
+	* libmail/smaplist.C (processLine): Fix unsolicited msgs in SMAP LIST.
+
+	* libmail/smapcopy.C (processLine): Fix SMAP MOVE.
+
+	* cone/myfolderfilter.C (doStep2): Implement MOVE filter.
+
+	* libmail/mail.H: Added mail::account::moveMessagesTo(), implemented
+	natively by SMAP, and manually in all other situations (copy, followed
+	by remove).
+
+	* libmail/imapfolder.C (moveMessagesTo): Use SMAP MOVE to move messages
+	via SMAP, use generic implementation in all other cases.
+
+	* libmail/smapcopy.C (go): Implement SMAP MOVE.
+
+	* cone/myfolder.C (resort): Fix an obscure race condition.  If
+	the sorting order is changed to threading while Cone is reading
+	headers of messages that's just been added to the mailbox, and are
+	not yet part of the sorted folder index, the thread sort will
+	re-sort the entire folder index, including the new messages.
+	The consequences are undefined.  Change resort() to only rethread
+	the existing messages, by simply looking at the size of the
+	sorted_index array.  Consequently, in newMessagesReceived(), which
+	gets invoked after the headers are read, and the messages may be
+	shown in the index now, manually updated sorted_index() so that
+	resort() can now rethread the entire index.
+
+	There might be other execution paths that result in rethreading
+	occuring while new messages are being processed.  This is the Right
+	Thing To Do in any case.
+
+	* cone/myfolder.C: (init): Implemented folder filtering on the
+	initial folder open.  "Move messages" does not yet work.  Filtering
+	of new messages received while the folder is open does not yet work.
+
+2003-07-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Save/load filters automatically, as a folder parameter.
+
+2003-07-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/filtereditscreen.C, cone/filter.C: new screen for entering
+	folder filters.  Nothing's actually so far, just a new screen
+	(and copy/move options are stubbed out), and the filter is not
+	saved.
+
+	* cone/cone.C (folderIndexScreen): Clean up message copying code.
+	Rip it out of CursesHierarchy (and the CopyInProgress class).  Replace
+	it with a general flag that, if set, disables folder open and replaces
+	it with a stub that terminates the current event loop, and returning
+	to the caller with a saved pointer to which folder was selected.
+
+	Now, the command to copy messages terminates the folder index event
+	loop.  The parent function, after closing the screen, saves the
+	UIDs of selected messages, then manually invokes openHierarchyScreen
+	with the magic flag set.  When openHierarchyScreen returns, it checks
+	if the folder has been selected.  If so, the messages are copied,
+	and the original folder index screen is reopened.
+
+2003-07-23  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/searchprompt.C: Moved all search criteria prompting into
+	a separate class.
+
+	* libmail/search.C (searchParams): Implement serialize/deserialize
+	of the searchParams object (to be tested).
+
+	* libmail/search.H: Implement search_range.
+
+	* cone/sgml/smap.sgml: Document updated SEARCH command.
+
+	* cone/myserver.C (eventloop): Memorize typeahead keystrokes while
+	a server request is pending.
+
+	* cone/myfolder.C (newMessagesReceived): Get rid of a duplicate
+	call to saveFolderIndex().
+
+2003-07-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/search.C: Fix SEARCH NOT [STATUS].
+
+	* libmail/search.H: Replace broaden flag with a tristate flag:
+	search all, search marked, search unmarked.
+
+	* libmail/nntpxpat.C: Use XPAT to search NetNews folders.
+
+2003-07-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/sgml/index.sgml: Properly generate a link to the Sourceforge
+	logo, and remove the hack in the Makefile
+
+2003-07-19  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/maildir.C (open): Create courierimapkeywords directory,
+	for compatibility.
+
+	* cone/sgml/smap.sgml: Add KEYWORDS extension.
+
+	* cone/sgml/mailtoolman.sgml: Typo.
+
+2003-07-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myserverconfig.C: save and restore default watch intervals,
+	watch database's contents.
+	(loadFolderIndex): Invoke myFolder::Index::checkwatch() after
+	restoring a folder index record.
+
+	* cone/myfolder.H: Keep a watchList, the watch database, in the
+	folder object.
+
+	* cone/myfolder.C (messageEnvelopeCallback): Remove the last bits
+	of references-related processing in messageEnvelopeCallback, and
+	have it invoke messageReferencesCallback instead; so that all
+	References:-related processing is now handled in
+	messageReferencesCallback.  Invoke myFolder::Index::checkwatch(),
+	just in case.
+	(messageReferencesCallback): Check the watched list of all
+	message IDs in the references header, and compute the watch level
+	for this message.  If messageReferencesCallback() is called with
+	the rest of the envelope already set up,
+	call myFolder::Index::checkwatch().
+	(checkwatch): If this message is not currently being watched,
+	supposedly, check the watch database, because it might've just been
+	updated.
+
+	* Implement thread watching.  Save watched message IDs in the
+	folder cache file.  Watch threads for up to X days, and Y levels
+	of replies.  Mark Yth level of reply with a different character,
+	as a prompt to renew the thread, if it's still on topic.  Setup screen
+	defines the default X and Y.
+
+2003-07-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc822/imaprefs.c (rfc822_threadmsgrefs): New function takes
+	an array of References: headers, instead of a single References:
+	string.
+
+	* cone/myreferences.C: We're going to be working with message IDs more.
+	Instead of storing a message id and a references header for every
+	message in the folder's index, store all known message Id in a
+	myMessageIds object.  Each message id is represented by a messageId
+	object,	that refers to the actual string in myMessageIds, which is
+	reference-counted.  Therefore, even if the underlying std::string
+	implementation does not use reference-counted strings, we do, and
+	we'll be very efficient in doing so.
+
+	* cone/myfolder.H: Replace Index::messageid with a myMessageId object,
+	and Index::references with a vector<myMessageId>.  Corresponding
+	changes to myfolder.C
+
+	* cone/myfolder.C (resort): Feed Index::references to the new
+	rfc822_threadmsgrefs function.  Should speed up threading.
+
+0.52
+
+2003-07-06  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesattachmentdisplay.C (download): Report an error if
+	unable to open a file for saving an attachment.
+
+2003-07-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/imap.C (disconnect): Correctly report SSL-related errors
+	on a failed connection attempt.
+
+2003-07-02  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesedit.C (postpone): Fix encryption error recovery path.
+
+2003-07-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myfolder.C (resort_layout): Fix threading of large folders.
+
+2003-06-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cursesmessage.C (reply): Post-and-mail option put recipient's
+	address into the Cc: header, instead of the To: header.
+
+	* cone/cursesindexdisplay.C (draw): Number of messages on the right
+	margin of the title bar, folder name has all the space on the left
+	margin of the title bar, now.
+
+2003-06-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/imapfolders.C (go): Fix APPEND date format.
+
+2003-06-26  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/Makefile.am (libmail.a): Speed up script that creates libmail.a
+
+	* cone/cursesmessage.C (reply): Fix reply-to selecting wrong
+	addresses to reply to.
+
+	* Makefile.am: Forgot to have mailtool installed to bindir.
+
+	* cone/cone.C (main): Add undocumented -C option that dumps the
+	config file in a readable format.
+
+	* cone/sgml: Tweak screen dumps to fit within alloted screen width;
+	other minor tweaks.
+
+	* cone/cursesindexdisplay.C (processKeyInFocus): Cursor left/right
+	keys move the cursor to the previos/next tagged message. Very useful
+	after a search.
+
+	* cone/cursesmessage.C (reformat): Abbreviated headers use locale
+	strings in the Date: header.  Clean up RFC 2047 decoding (do not
+	decode RFC 2047-encoded strings when showing full headers, only
+	do the decoding where it's appropriate).
+
+2003-06-25  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Try to figure out whether locale uses a 12 or a 24 hour clock;
+	adjust dates in the folder's index accordingly.
+
+	* cone/cursesmessage.C (grok): When selecting to view a specific
+	attachment, other message/rfc822 attachments in the original message
+	were also shown.
+
+2003-06-24  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/smapadd.C (fillWriteBuffer): Progress report indication.
+
+	* libmail/fd.C (debug_io): Fix broken cerr flushing in gcc 3.2.2
+
+	* cone/curseshierarchy.C (processKey): ^R on folder listing screen
+	resets memorized headers for the highlighted folder.
+
+2003-06-22  Mr. Sam  <mrsam@courier-mta.com>
+
+	* rfc2045/rfc2045reply.c (mkforward): Fix MIME decoding of forwarded
+	text.
+
+	* cone.spec.in: Compile against latest Rawhide curses build.
+	... not (just leave a placeholder).
+
+2003-06-21  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/spellcheckerAspell.C: New aspell API (0.50+) support.
+2003-06-20  Matthias Andree <ma@dt.e-technik.uni-dortmund.de>
+
+	* libmail/sync.C (getFolderFromPath): Remove EPROTO usage.
+
+	* libmail/smtp.C: Add include signal.h
+
+	* libmail/smapadd.C: Add include sys/types.h, sys/stat.h
+
+	* libmail/mboxgetmessage.C: Add include sys/types.h, sys/stat.h
+	
+
+2003-06-18  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/fd.C (establishtls): Fix incorrect callback usage when
+	SSL negotiation fails.
+
+	* libmail/generic.C (genericBuildEnvelope): Fix correct capture of
+	Cc: and Bcc: headers in manually-parsed message envelope.
+
+2003-06-17  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/cone.C (main): mail::account::resume() after ^Z.
+
+	* cone/encryptionmenu.C (editkey_s): mail::account::resume() after
+	running GnuPG.
+
+	* libmail: Added mail::account::resume, invoked after resuming from
+	a suspend, to prevent bogus timeouts.
+
+	* cone/encryptionmenu.C (EncryptionMenu): Fix bad keyboard shortcut
+	for "EDIT KEY".
+
+2003-06-16  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/Makefile.am (onlinehelp): Rename help file to cone.hlp
+
+	* cone/encryptionmenu.C: Direct implementation of generating,
+	deleting, and signing keys, via gpglib.
+
+2003-06-15  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gpglib/genkey.c (mkcmdbuf): Deal with empty name.
+
+	* cone/mainmenu.C: Separate menu handling code into new MenuScreen
+	superclass.
+
+	* cone/gpg.C: Sort keys by address.
+
+2003-06-13  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cursesattachmentdisplay.C (open): Implement key import.
+
+	* curses/cursesstatusbar.C (resetRow): Fix display of excessively
+	long status message.
+
+	* gpglib/export.c (libmail_gpg_exportkey): Fix bug that exports all
+	keys, not just the selected key.
+
+	* cursesmessage.C (bool): Do not autoopen inline attachments that run
+	an external filter.  Require an explicit selection.
+
+2003-06-12  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gpg.C (draw): Fix keylist display, add title.
+
+	* gpglib/gpg.c (dogpgsign): Fix occasional invalid signature when
+	signing 8-bit content (bug in conversion to quoted-printable).
+
+	* tcpd/tlspasswordcache.c (tlspassword_save): Use EIO instead of
+	EPROTO (which is not defined everywhere).
+
+	* tcpd/configure.in: More thorough check for OpenSSL 0.9.7.
+
+2003-06-11  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone: Added basic GnuPG support.
+
+	* gpglib/gpglib.h: Added errstatus to libmail_gpg_info
+
+	* libmail/fdtls.C: Fix compile without OpenSSL.
+
+	* htmlparser.C: Indent <TABLE> tags.
+
+2003-06-09  Mr. Sam  <mrsam@courier-mta.com>
+
+	* savedialog.H/opendialog.H: fix error recovery if server connection
+	breaks while the dialog is shown.
+
+2003-06-08  Mr. Sam  <mrsam@courier-mta.com>
+
+	* myserver.C (disconnected): Suppress disconnect error message on
+	intentional disconnects.
+
+2003-06-07  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/sync.H: Redefine iterator in a manner that, hopefully,
+	older gcc's will understand.
+
+	* libmail: removed the name parameter from mail::folder::getSubFolders
+	and mail::folder::getParentFolder.  mail::folder::getName() will now
+	always return the folder's native name.  Made according changes to
+	Cone mainline (removing the additional prompt to <U>se/<T>oplevel
+	folder).  Documented getParentFolder().
+
+	* libmail/smtp.C (pipelinedResponse): Fix wild ptr dereference.
+
+	* curses/configure.in: Add AC_GNU_SOURCE (RH 7.3)
+
+2003-06-04  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Added master passwords.
+
+	* libmail/smapadd.C (fillWriteBuffer): Keep long SMAP uploads from
+	timing out.
+
+2003-06-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/maildir.C (handler): Fix maildir breakage on platforms
+	that do not have FAM.
+
+0.51
+
+2003-06-03  Mr. Sam  <mrsam@courier-mta.com>
+
+	* sgml/index.sgml: Fix typo.
+
+2003-06-01  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cursesedit.C: Prompt before memorizing new custom headers, making
+	it optional, instead of automatic.
+
+2003-05-31  Mr. Sam  <mrsam@courier-mta.com>
+
+	* configscreen.C (doSave): Only call setDictionary() for
+	non-empty dictionary names.
+
+	* myserverconfig.C (loadconfig): Only call setDictionary() for
+	non-empty dictionary names.
+
+	* leaf.C (main): Only call setDictionary() for non-empty dictionary
+	names.
+
+	* configure.in: Fix online help in development builds.
+
+2003-05-30  Mr. Sam  <mrsam@courier-mta.com>
+
+	* cone/myfolder.C: Implement threaded folder display.
+
+	* myserverconfig.C (getConfigDir): Prepend curdir if -c option
+	specified an absolute path (fixes address book bug).
+
+	* cone/sgml/smap.sgml: LOGOUT instead of QUIT.
+
+2003-05-29  Mr. Sam  <mrsam@courier-mta.com>
+
+	* gettext.C (defaultCharsetName): Fix CHARSET initialization.
+
+	* spellcheckerNone.C (setDictionary): stub setDictionary(), so that
+	spellcheckerNone.C actually compiles.
+
+	* libmail: added references to mail::envelope, added
+	messageReferencesCallback() to mail::callback::message.  Documentation
+	updated, Cone updated to save the threading information (other than
+	that nothing's done with threading just yet).
+
+2003-05-28  Mr. Sam  <mrsam@courier-mta.com>
+
+	* libmail/objectmonitor.H: Fix definition of mail::obj.
+
+	* libmail/mail.H: More portable definition of LIBMAIL_THROW_DEBUG
+
+	* configure.in: Fix --with-certdb default.
+
+	* curses/cursesmainscreen.H: A friend declaration makes old gcc
+	happy.
+
+	* sgml/index.sgml: Typos.
+
+	* cone/configure.in: Fix search for xml-config.
+
+0.50
+
+2003-05-27  Mr. Sam  <mrsam@courier-mta.com>
+
+	* Initial release.
+
+2002-10-13  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): New variable.
+
+2002-07-08  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Add intl.
+	* configure.in (AC_OUTPUT): Add intl/Makefile.
+
+2002-07-08  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Add m4.
+	(ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): New variable.
+	* configure.in (AC_OUTPUT): Add po/Makefile.in, m4/Makefile.
+

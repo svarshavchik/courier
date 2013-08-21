@@ -1,0 +1,115 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-createfolder">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::createFolder</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::createFolder</refname>
+      <refpurpose>Create a new folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+mail::folder *folder;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::folder *f=mail-&gt;<function>createFolder</function></funcdef>
+	  <paramdef>const mail::folder *<parameter>parentFolder</parameter></paramdef>
+	  <paramdef>std::string <parameter>name</parameter></paramdef>
+	  <paramdef>bool <parameter>createDirectory</parameter></paramdef>
+	</funcprototype>
+
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>createFolder</function></funcdef>
+	  <paramdef>const mail::folder *<parameter>folder</parameter></paramdef>
+	  <paramdef>bool <parameter>createDirectory</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+
+      &libmail-accterrmsg;
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+Most mail accounts support the ability to create and delete folders, which
+are arranged in a tree-like hierarchy.
+<function>mail::ACCOUNT::createFolder</function> creates a new folder.
+There are two versions of this function.</para>
+
+      <para>
+The first version creates a subfolder of an existing folder,
+<parameter>parentFolder</parameter>.
+<parameter>name</parameter> is the new folder's name, in the application's
+character set.
+If the folder is succesfully created a <structname>mail::folder</structname>
+object is returned that represents the newly-created folder (the application
+is responsible for destroying the new <structname>mail::folder</structname>
+object).</para>
+
+      <para>
+The second version creates a new folder that's specified by an existing
+<structname>mail::folder</structname> object (which is usually created by
+<link linkend="account-getfolderfromstring"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromString</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> or
+<link linkend="account-getfolderfrompath"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromPath</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>).</para>
+
+      <note>
+	<para>
+<parameter>createDirectory</parameter> should be set to <literal>true</literal>
+to create a new folder directory, and
+<literal>false</literal> for a regular folder.
+See
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for more information.</para>
+      </note>
+
+      &libmail-foldername;
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      <para>
+This first
+<function>mail::ACCOUNT::createFolder</function>
+function returns a NULL pointer if it cannot create the new folder, for
+some reason; the second
+<function>mail::ACCOUNT::createFolder</function> function returns
+<literal>false</literal> if it fails.</para>
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="account-getfolderfrompath"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromPath</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderfromstring"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderFromString</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-createsubfolder"><citerefentry>
+	    <refentrytitle>mail::folder::createSubFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-setappcharset"><citerefentry>
+            <refentrytitle>mail::setAppCharset</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

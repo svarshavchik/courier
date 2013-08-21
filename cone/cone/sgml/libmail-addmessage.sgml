@@ -1,0 +1,19 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+      <para>
+<parameter>message</parameter>'s
+<function>getMessageContents</function>
+specifies the contents of the message, which should be a valid, MIME-formatted
+message.
+<function>getMessageContents</function>
+does not have to return the entire contents of the message at once.
+<function>addMessage</function> calls
+<function>getMessageContents</function>
+repeatedly.
+<function>getMessageContents</function>
+should return the next portion of the message with each call.
+<function>getMessageContents</function>
+should return
+an empty string, after providing the entire message contents are provided.
+<function>getMessageContents</function>
+will be called repeatedly until it returns an empty string.</para>

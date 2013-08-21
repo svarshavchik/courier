@@ -1,0 +1,260 @@
+##VERSION: $Id: authpgsqlrc 17 2011-04-04 02:07:37Z mrsam $
+#
+# Copyright 2000-2004 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# Do not alter lines that begin with ##, they are used when upgrading
+# this configuration.
+#
+# authpgsqlrc created from authpgsqlrc.dist by sysconftool
+#
+# DO NOT INSTALL THIS FILE with world read permissions.  This file
+# might contain the PostgreSQL admin password!
+#
+# Each line in this file must follow the following format:
+#
+# field[spaces|tabs]value
+#
+# That is, the name of the field, followed by spaces or tabs, followed by
+# field value.  Trailing spaces are prohibited.
+
+
+##NAME: LOCATION:0
+#
+# The server hostname, port, userid, and password used to log in.
+#
+# To connect to a filesystem socket, delete PGSQL_HOST, and set PGSQL_PORT to
+# the socket's last component.  So, if your pg socket is /tmp/.s.PGSQL.5400
+# set PGSQL_PORT to 5400.
+
+PGSQL_HOST		pgsql.example.com
+PGSQL_PORT		5400
+PGSQL_USERNAME		admin
+PGSQL_PASSWORD		admin
+
+
+##NAME: PGSQL_OPT:0
+#
+# PGSQL_OPT specifies the connection debug options to PQsetdbLogin().
+# Don't bother with this setting unless you know what you're doing
+#
+# PGSQL_OPT		
+
+##NAME: PGSQL_DATABASE:0
+#
+# The name of the PostgreSQL database we will open:
+
+PGSQL_DATABASE		template1
+
+##NAME: PGSQL_CHARACTER_SET:0
+#
+# Optionally install a character set mapping. Restart authdaemond, send a test
+# query using authtest and check for error messages in syslog/maillog.
+#
+# PGSQL_CHARACTER_SET	UTF8
+
+##NAME: PGSQL_USER_TABLE:0
+#
+# The name of the table containing your user data.  See README.authmysqlrc
+# for the required fields in this table (both MySQL and Postgress use the
+# same suggested layout.
+
+PGSQL_USER_TABLE	passwd
+
+##NAME: PGSQL_CRYPT_PWFIELD:0
+#
+# Either PGSQL_CRYPT_PWFIELD or PGSQL_CLEAR_PWFIELD must be defined.  Both
+# are OK too. crypted passwords go into PGSQL_CRYPT_PWFIELD, cleartext
+# passwords go into PGSQL_CLEAR_PWFIELD.  Cleartext passwords allow
+# CRAM-MD5 authentication to be implemented.
+
+PGSQL_CRYPT_PWFIELD	crypt
+
+##NAME: PGSQL_CLEAR_PWFIELD:0
+#
+#
+# PGSQL_CLEAR_PWFIELD	clear
+
+##NAME: PGSQL_DEFAULT_DOMAIN:0
+#
+# If DEFAULT_DOMAIN is defined, and someone tries to log in as 'user',
+# we will look up 'user@DEFAULT_DOMAIN' instead.
+#
+#
+# DEFAULT_DOMAIN		example.com
+
+##NAME: PGSQL_UID_FIELD:0
+#
+# Other fields in the mysql table:
+#
+# PGSQL_UID_FIELD - contains the numerical userid of the account
+#
+PGSQL_UID_FIELD		uid
+
+##NAME: PGSQL_GID_FIELD:0
+#
+# Numerical groupid of the account
+
+PGSQL_GID_FIELD		gid
+
+##NAME: PGSQL_LOGIN_FIELD:0
+#
+# The login id, default is id.  Basically the query is:
+#
+#  SELECT PGSQL_UID_FIELD, PGSQL_GID_FIELD, ... WHERE id='loginid'
+#
+
+PGSQL_LOGIN_FIELD	id
+
+##NAME: PGSQL_HOME_FIELD:0
+#
+
+PGSQL_HOME_FIELD	home
+
+##NAME: PGSQL_NAME_FIELD:0
+#
+# The user's name (optional)
+
+PGSQL_NAME_FIELD	name
+
+##NAME: PGSQL_MAILDIR_FIELD:0
+#
+# This is an optional field, and can be used to specify an arbitrary
+# location of the maildir for the account, which normally defaults to
+# $HOME/Maildir (where $HOME is read from PGSQL_HOME_FIELD).
+#
+# You still need to provide a PGSQL_HOME_FIELD, even if you uncomment this
+# out.
+#
+# PGSQL_MAILDIR_FIELD	maildir
+
+##NAME: PGSQL_DEFAULTDELIVERY:0
+#
+# Courier mail server only: optional field specifies custom mail delivery
+# instructions for this account (if defined) -- essentially overrides
+# DEFAULTDELIVERY from ${sysconfdir}/courierd
+#
+# PGSQL_DEFAULTDELIVERY defaultDelivery
+
+##NAME: PGSQL_QUOTA_FIELD:0
+#
+# Define PGSQL_QUOTA_FIELD to be the name of the field that can optionally
+# specify a maildir quota.  See README.maildirquota for more information 
+#
+# PGSQL_QUOTA_FIELD	quota
+
+##NAME: PGSQL_AUXOPTIONS:0
+#
+# Auxiliary options.  The PGSQL_AUXOPTIONS field should be a char field that
+# contains a single string consisting of comma-separated "ATTRIBUTE=NAME"
+# pairs.  These names are additional attributes that define various per-account
+# "options", as given in  INSTALL's description of the "Account OPTIONS"
+# setting.
+#
+# PGSQL_AUXOPTIONS_FIELD	auxoptions
+#
+# You might want to try something like this, if you'd like to use a bunch
+# of individual fields, instead of a single text blob:
+#
+# PGSQL_AUXOPTIONS_FIELD	'disableimap=' || disableimap || ',disablepop3=' || disablepop3 || ',disablewebmail=' || disablewebmail || ',sharedgroup=' || sharedgroup
+#
+# This will let you define fields called "disableimap", etc, with the end result
+# being something that the OPTIONS parser understands.
+
+##NAME: PGSQL_WHERE_CLAUSE:0
+#
+# This is optional, PGSQL_WHERE_CLAUSE can be basically set to an arbitrary
+# fixed string that is appended to the WHERE clause of our query
+#
+# PGSQL_WHERE_CLAUSE	server='mailhost.example.com'
+
+##NAME: PGSQL_SELECT_CLAUSE:0
+#
+# (EXPERIMENTAL)
+# This is optional, PGSQL_SELECT_CLAUSE can be set when you have a database,
+# which is structuraly different from proposed. The fixed string will
+# be used to do a SELECT operation on database, which should return fields
+# in order specified bellow:
+#
+# username, cryptpw, clearpw, uid, gid, home, maildir, quota, fullname, options
+#
+# Enabling this option causes ignorance of any other field-related
+# options, excluding default domain.
+#
+# There are two variables, which you can use. Substitution will be made
+# for them, so you can put entered username (local part) and domain name
+# in the right place of your query. These variables are:
+#	 	$(local_part), $(domain), and $(service)
+#
+# If a $(domain) is empty (not given by the remote user) the default domain
+# name is used in its place.
+#
+# $(service) will expand out to the service being authenticated: imap, imaps,
+# pop3 or pop3s.  Courier mail server only: service will also expand out to
+# "courier", when searching for local mail account's location.  In this case,
+# if the "maildir" field is not empty it will be used in place of
+# DEFAULTDELIVERY.  Courier mail server will also use esmtp when doing
+# authenticated ESMTP.
+#
+# This example is a little bit modified adaptation of vmail-sql
+# database scheme:
+#
+# PGSQL_SELECT_CLAUSE	SELECT popbox.local_part,			\
+#			'{MD5}' || popbox.password_hash,		\
+#			popbox.clearpw,					\
+#			domain.uid,					\
+#			domain.gid,					\
+#			domain.path || '/' || popbox.mbox_name),	\
+#			'',						\
+#			domain.quota,					\
+#			'',						\
+#			FROM popbox, domain				\
+#			WHERE popbox.local_part = '$(local_part)'	\
+#			AND popbox.domain_name = '$(domain)'		\
+#			AND popbox.domain_name = domain.domain_name
+
+
+##NAME: PGSQL_ENUMERATE_CLAUSE:1
+#
+# {EXPERIMENTAL}
+# Optional custom SQL query used to enumerate accounts for authenumerate,
+# in order to compile a list of accounts for shared folders.  The query
+# should return the following fields: name, uid, gid, homedir, maildir, options
+#
+# Example:
+# PGSQL_ENUMERATE_CLAUSE	SELECT popbox.local_part || '@' || popbox.domain_name,	\
+#			domain.uid,					\
+#			domain.gid,					\
+#			domain.path || '/' || popbox.mbox_name,		\
+#			'',						\
+#			'sharedgroup=' || sharedgroup			\
+#			FROM popbox, domain				\
+#			WHERE popbox.local_part = '$(local_part)'	\
+#			AND popbox.domain_name = '$(domain)'		\
+#			AND popbox.domain_name = domain.domain_name
+
+
+##NAME: PGSQL_CHPASS_CLAUSE:0
+#
+# (EXPERIMENTAL)
+# This is optional, PGSQL_CHPASS_CLAUSE can be set when you have a database,
+# which is structuraly different from proposed. The fixed string will
+# be used to do an UPDATE operation on database. In other words, it is
+# used, when changing password.
+#
+# There are four variables, which you can use. Substitution will be made
+# for them, so you can put entered username (local part) and domain name
+# in the right place of your query. There variables are:
+# 	$(local_part) , $(domain) , $(newpass) , $(newpass_crypt)
+#
+# If a $(domain) is empty (not given by the remote user) the default domain
+# name is used in its place.
+# $(newpass) contains plain password
+# $(newpass_crypt) contains its crypted form
+#
+# PGSQL_CHPASS_CLAUSE	UPDATE	popbox					\
+#			SET	clearpw='$(newpass)',			\
+#				password_hash='$(newpass_crypt)'	\
+#			WHERE	local_part='$(local_part)'		\
+#			AND	domain_name='$(domain)'
+#

@@ -1,0 +1,92 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-movemessagesto">
+    <refmeta>
+      <refentrytitle>mail::account::moveMessagesTo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::copyMessagesTo</refname>
+      <refpurpose>Move messages to another folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallback;
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>moveMessagesTo</function></funcdef>
+	  <paramdef>const std::vector&lt;size_t&gt; &amp;<parameter>msgList</parameter></paramdef>
+	  <paramdef>mail::folder *<parameter>copyTo</parameter></paramdef>
+
+	  <paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::moveMessagesTo</function> moves messages from the
+currently-open folder to another folder. &libmail-msglist;</para>
+
+    <para>
+This is similar to
+<link linkend="mail-copymessagesto"><citerefentry>
+	    <refentrytitle>mail::account::copyMessagesTo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>, except that
+the messages are removed from the original folder.
+The application can expect that the
+<function>mail::account::messagesRemoved</function> function in the
+currently opened folder's <structname>mail::callback::folder</structname>
+object will be invoked one or more times, as necessary, to reflect the
+removal of the listed messages from the currently open folder.</para>
+
+      <para>
+<parameter>copyTo</parameter> is a pointer to a
+<structname>mail::folder</structname> object, representing the folder where
+messages are moved to.
+<parameter>copyTo</parameter> may be a folder in another mail account,
+in which case this function transparently copies the indicated messages
+using
+<link linkend="mail-removemessages"><citerefentry>
+	  <refentrytitle>mail::account::removeMessages</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>.
+Only <link linkend="smap1">SMAP</link> and maildir-based mail accounts can
+move messages directly between folders; for all other
+accounts the copy/delete implementation will be used automatically.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-concurrency;
+
+    <note>
+      <para>
+If this request is interrupted, for some reason, it is possible that some
+or all messages have already been
+copied to the destination folder, but not yet
+removed from the original folder.</para>
+    </note>
+
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-copymessagesto"><citerefentry>
+	    <refentrytitle>mail::account::copyMessagesTo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-removemessages"><citerefentry>
+	  <refentrytitle>mail::account::removeMessages</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

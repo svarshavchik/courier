@@ -1,0 +1,31 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <note>
+    <para>
+The
+<function>folderCallback.success</function> method
+receives a (possibly empty) vector of pointers to
+<structname>mail::folder</structname> objects.
+These objects will be destroyed when
+<function>folderCallback.success</function> terminates.
+The application must use
+<link linkend="folder-clone"><citerefentry>
+	      <refentrytitle>mail::folder::clone</refentrytitle>
+	      <manvolnum>3x</manvolnum></citerefentry></link>
+to create copies of
+<structname>mail::folder</structname> objects it wants to
+use later.</para>
+      </note>
+
+  <note>
+    <para>
+Both
+<function>folderCallback.success</function> and
+<function>myCallback.success</function> method will be invoked if this
+request succeeds.
+<function>folderCallback.success</function> will be invoked before
+<function>myCallback.success</function> (since by definition this indicates
+that the request has been completed).</para>
+  </note>
+

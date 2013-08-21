@@ -1,0 +1,16 @@
+#! @SHELL@
+#
+# Copyright 1998 - 2005 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# This is a sample script to start Courier, reading the configuration from
+# ${sysconfdir}/courierd
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+libexecdir="@libexecdir@"
+
+cd ${prefix}
+
+@SETENV@ -i @SHELL@ -c "set -a ; . ${sysconfdir}/courierd; ( ${libexecdir}/courier/courierd & )"

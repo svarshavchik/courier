@@ -1,0 +1,445 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1999 - 2011 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>sendmail</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>sendmail</refname>
+    <refpurpose>Send an E-mail message</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">sendmail</command>
+      <arg rep="repeat" choice="opt"><replaceable>option</replaceable></arg>
+      <arg choice="opt" rep="norepeat">--</arg>
+      <arg rep="repeat" choice="opt"><replaceable>address</replaceable></arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">rmail</command>
+      <arg choice="opt" rep="norepeat">-f <replaceable>sender</replaceable></arg>
+      <arg choice="req" rep="norepeat"><replaceable>address</replaceable></arg>
+      <arg rep="repeat" choice="opt"><replaceable>address</replaceable></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+The <command moreinfo="none">sendmail</command> command reads an E-mail message and delivers
+the
+message to its recipients. This <command moreinfo="none">sendmail</command> command is part of the
+Courier mail server, although it attempts to emulate the behavior of the
+original
+<ulink url="http://www.sendmail.org/"><application moreinfo="none">sendmail</application></ulink>
+MTA. Applications written for
+<application moreinfo="none">Sendmail</application> should be able to use
+<application moreinfo="none">Courier</application> mail server's
+<command moreinfo="none">sendmail</command>.
+This
+<command moreinfo="none">sendmail</command> wrapper understands most command line arguments
+used by
+sendmail 8.9. Certain sendmail-specific arguments that make no sense for
+Courier, (like -o), are silently ignored.</para>
+
+    <para>
+This <command moreinfo="none">sendmail</command> always behaves like the real sendmail with the
+<option>-oi</option> and <option>-t</option> options. This is how most
+applications expect it to work.  Some applications might run sendmail without
+the <option>-oi</option> and <option>-t</option> options, and expect
+sendmail's legacy
+behavior when those options are not used.  Those application may have problems
+with this sendmail wrapper.</para>
+
+    <para>
+<command moreinfo="none">sendmail</command> reads the message from standard input, rewrites its
+headers appropriately and delivers it to the specified recipients.</para>
+
+    <para>
+If at least one E-mail address is specified on the command line,
+<command moreinfo="none">sendmail</command> delivers the message to those recipients only.
+If no
+addresses are specified on the command line, <command moreinfo="none">sendmail</command>
+reads the
+message and builds the recipient list from the <literal moreinfo="none">To:</literal>,
+<literal moreinfo="none">Cc:</literal> and <literal moreinfo="none">Bcc:</literal> headers.</para>
+
+    <para>
+<command moreinfo="none">sendmail</command> always removes all <literal moreinfo="none">Bcc:</literal>
+headers before sending the message.</para>
+
+    <para>
+Some of the functionality described below is actually implemented by other
+Courier modules that <command moreinfo="none">sendmail</command> runs automatically.
+This process is
+transparent to the end user, or the application.</para>
+
+    <refsect2>
+
+      <title>OPTIONS</title>
+      <variablelist>
+	<varlistentry>
+	  <term><option>-f <replaceable>address</replaceable></option></term>
+	  <listitem>
+	    <para>
+Sets the <literal moreinfo="none">From:</literal> address. This is just
+the E-mail address only, not the name.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-F "<replaceable>name</replaceable>"</option></term>
+	  <listitem>
+	    <para>
+Sets the name to put in the <literal moreinfo="none">From:</literal> header.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-N <replaceable>options</replaceable></option></term>
+	  <listitem>
+	    <para>
+Sets delivery status notification
+options. <replaceable>options</replaceable> is a comma-separated list of one or more of the
+following keywords: <literal moreinfo="none">never</literal>, <literal moreinfo="none">success</literal>,
+<literal moreinfo="none">fail</literal>, <literal moreinfo="none">delay</literal>. If not specified, the
+<option>-N</option> option
+defaults to either "<literal moreinfo="none">delay, fail</literal>", or just
+"<literal moreinfo="none">fail</literal>", depending on systemwide options set by the
+administrator. The "<literal moreinfo="none">success</literal>" keyword sends a return receipt
+to the sender when the message is succesfully received by each recipient.
+"<literal moreinfo="none">fail</literal>" sends a notice if the message could not be delivered
+for some reason. "<literal moreinfo="none">delay</literal>" sends a notice if the message
+remains undeliverable for a period of time (but has not yet completely
+failed). "<literal moreinfo="none">never</literal>" means do not send any notices for any
+reason, but see BUGS below.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-n</option></term>
+	  <listitem>
+	    <para>
+Do not actually deliver the message, but copy it to
+standard output, after rewriting all the headers.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-o, -t, -q</option></term>
+	  <listitem>
+	    <para>
+These sendmail-specific options are ignored,
+because this is not the real sendmail.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-R full</option></term>
+	  <listitem>
+	    <para>
+Requests that delivery status notifications
+include the original message, in its entirety.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-R hdrs</option></term>
+	  <listitem>
+	    <para>
+Requests that delivery status notifications
+include just the headers of the original message.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-V "<replaceable>envid</replaceable>"</option></term>
+	  <listitem>
+	    <para>
+Specifies the original envelope id to
+be returned in delivery status notifications. Of interest only to mail
+robots.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-S "<replaceable>level</replaceable>"</option></term>
+	  <listitem>
+	    <para>
+Specify <replaceable>level</replaceable> as a minimum
+security level for delivering this message. This is a Courier-specific
+extension that uses a Courier-specific SMTP extension. <replaceable>level</replaceable> is
+either "NONE" or "STARTTLS". "NONE" specifies the normal security level
+(none at all); "STARTTLS" specifies that SSL/TLS must be used when
+transmitting this message to a remote mail relay, and the remote mail
+relay must supply a certificate that's signed by a private certificate authority
+that's configured in Courier. See Courier installation notes for more
+information.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-bcc</option></term>
+	  <listitem>
+	    <para>
+Read <literal moreinfo="none">Bcc:</literal> headers only. Normally, if no
+recipients are specified, <command moreinfo="none">sendmail</command> obtains the list of
+recipients by reading the <literal moreinfo="none">To:</literal>, <literal moreinfo="none">Cc:</literal> and
+<literal moreinfo="none">Bcc:</literal> headers (<literal moreinfo="none">Bcc:</literal> headers are always
+removed).
+The <literal moreinfo="none">-bcc</literal> option ignores <literal moreinfo="none">To:</literal> and
+<literal moreinfo="none">Cc:</literal>
+headers for this purpose. This option is ignored if an explicit address
+list is specified on the <command moreinfo="none">sendmail</command> command line.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-bs</option></term>
+	  <listitem>
+	    <para>
+Talk ESMTP on standard input.  This option is
+actually implemented by running Courier's ESMTP server, which takes over
+and provides a complete ESMTP implementation.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>-verp</option></term>
+	  <listitem>
+	    <para>
+Use a <literal moreinfo="none">VERP</literal> for this message.
+</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
+    <refsect2>
+      <title>RETURN ADDRESS</title>
+
+      <para>
+The return address is the E-mail address where delivery status
+notifications (non-delivery notices, or return receipts) are sent for this
+message.</para>
+
+      <para>
+<command moreinfo="none">sendmail</command> constructs the envelope sender (the return address),
+<literal moreinfo="none">userid@host</literal> as follows, unless the <option>-bs</option>
+option was
+specified. If the <option>-bs</option> option is specified the envelope sender is
+specified via ESMTP commands, of course.</para>
+
+      <para>
+If the <option>-f</option> option was specified, the address specified by the
+<option>-f</option> option is used.</para>
+
+      <para>
+Otherwise, the <replaceable>userid</replaceable> portion of the return address is set to
+the contents of the first environment variable that's defined from the
+following list: <envar>MAILSUSER</envar>, <envar>MAILUSER</envar>,
+<envar>LOGNAME</envar>, <envar>LOGUSER</envar>. If none of these environment
+variables are defined, the system account name is used.</para>
+
+      <para>
+The <replaceable>host</replaceable> portion of the return address is set to the contents
+of the <envar>MAILSHOST</envar> environment variable. If
+<envar>MAILSHOST</envar>
+is not defined, <envar>MAILHOST</envar> will be used. If neither variable is
+set, the configured machine name is used.</para>
+
+      <para>
+The return address is then subject to the address rewriting rules for the
+"local" Courier module (the "esmtp" module when the <option>-bs</option> flag is
+specified).</para>
+
+<para>
+Finally, if the <option>-verp</option> option was specified, the return address
+is VERPed.</para>
+    </refsect2>
+
+    <refsect2>
+      <title>Variable Envelope Return Paths (VERPs)</title>
+
+      <para>
+A VERP is a return address which contains the recipient address encoded in
+it. Not all MTAs support
+<ulink url="http://www.rfc-editor.org/rfc/rfc1894.txt">RFC 1894</ulink>-based
+delivery status notifications. VERPs permit
+mailing list software to identify non-deliverable addresses even in the
+absence of a machine-readable DSN.</para>
+
+      <para>
+This option exists mainly to support Courier's own mailing list manager. At
+this time, it's the only software in the world that knows how to use this
+option.
+The <ulink url="http://www.qmail.org/"><application moreinfo="none">Qmail</application></ulink>
+server has very
+similar functionality, for it's own mailing list manager.
+However,
+there are many functional differences between the two mail servers, so
+<application moreinfo="none">Courier</application> mail server's
+and <application moreinfo="none">Qmail</application>'s
+mailing list managers are not interchangeable.</para>
+
+      <para>
+Except for this detail,
+Courier's implementation of a VERP is very similar to
+Qmail's. When a message from <replaceable>user@domain.com</replaceable> is addressed to
+address X, then return address will be set to <replaceable>user-Y@domain.com</replaceable>,
+where Y is defined as follows:</para>
+
+<para>
+1. The last @ character in X is changed to the = character.</para>
+
+<para>
+2. The remaining characters in X are copied verbatim to Y, except for some
+special characters like @, +, %, :, and !.</para>
+
+<para>
+3. These special characters are replaced with the character +, followed by
+a two-character hexadecimal ASCII code for the special character.</para>
+
+<para>
+Using <option>-verp</option> for a message to multiple recipients results in
+Courier generating and transmitting one copy of the message separately to
+every recipient. That's because the return address for every recipient is
+different, requiring a separate message to be sent.</para>
+
+<para>
+Except in one case.</para>
+
+<para>
+The one exception is when a VERPed message is sent from one Courier server
+to another Courier server via ESMTP. An ESMTP extension will be used to send
+one message, preserving the VERP status of the message. This ESMTP extension
+is described in the document,
+<filename moreinfo="none">draft-varshavchik-verp-smtpext</filename>,
+a copy of which is included in Courier's source code.</para>
+
+    </refsect2>
+
+    <refsect2>
+      <title>SENDER ADDRESS</title>
+
+      <para>
+<command moreinfo="none">sendmail</command> sets the contents of the
+<literal moreinfo="none">From:</literal> header as
+follows. Note that this is not the same as the return address of the
+message.</para>
+
+<para>
+If the <option>-bs</option> option is specified, none of the following will be
+applicable. All environment variables are ignored when the <option>-bs</option>
+option is used.</para>
+
+<para>
+If the <literal moreinfo="none">From:</literal> header is present in the message, but the
+environment variable <envar>MAILUSER</envar> is set, the userid portion of the
+<literal moreinfo="none">From:</literal> header is replaced by the contents of
+<envar>MAILUSER</envar>.</para>
+
+<para>
+If the <literal moreinfo="none">From:</literal> header is present in the message, but the
+<envar>MAILHOST</envar> environment variable is set, the contents of
+<envar>MAILHOST</envar> replaces the host portion of the
+<literal moreinfo="none">From:</literal> header.</para>
+
+<para>
+If the <literal moreinfo="none">From:</literal> header is present in the message,
+but either the
+<option>-F</option> option was specified, or the <envar>MAILNAME</envar> or the
+<envar>NAME</envar> environment variable is set,  the contents of the -F option,
+or the environment variable, will replace the sender's name in the
+<literal moreinfo="none">From:</literal> header.</para>
+
+<para>
+If the <literal moreinfo="none">From:</literal> header is not present in the message, one is
+constructed as follows. The sender's name is set by the -F option. If the -F
+option was not specified, the contents of the <envar>MAILNAME</envar> or the
+<envar>NAME</envar> environment variable is used. If neither variable is used,
+the name is looked up from the system account file. The userid portion of the
+address is set by the contents of any one of the following environment
+variables: <envar>MAILUSER</envar>, <envar>LOGNAME</envar>,
+<envar>USER</envar>. If none of these variables
+are set, the system userid is used. The host portion of the address is set by
+the contents of the <envar>MAILHOST</envar> environment variable. If it is not
+set, the system name of the server is used.</para>
+</refsect2>
+
+    <refsect2>
+      <title>EXIT CODE</title>
+
+      <para>
+<command moreinfo="none">sendmail</command> exits with exit status of zero if the message was
+succesfully scheduled for a delivery. If there was a problem accepting the
+message for delivery, <command moreinfo="none">sendmail</command> displays an error message and
+exits with a non-zero status. The exit status will always be zero when the
+<option>-bs</option> option is used,
+unless a serious system problem occurs.</para>
+    </refsect2>
+
+    <refsect2>
+      <title>RMAIL</title>
+
+      <para>
+If called as <command moreinfo="none">rmail</command>, only a subset of these options are
+available, namely <option>-f</option>, <option>-verp</option>,
+<option>-N</option>, <option>-R</option>, <option>-V</option>,
+<option>-o</option>, and <option>-t</option>. Other options are not
+allowed. Additionally, recipient addresses must be explicitly specified on the
+command line. The <command moreinfo="none">rmail</command> alias is intended to be used for
+receiving mail via UUCP. You must install compatible UUCP software separately,
+and set it up so that it looks for <command moreinfo="none">rmail</command> in Courier's
+installation directory.</para>
+
+      <para>
+When invoked as <command moreinfo="none">rmail</command> this wrapper will refuse to run unless
+it is invoked by the <literal moreinfo="none">uucp</literal> user. Additionally, the
+<envar>UU_MACHINE</envar> and <envar>UU_USER</envar> environment
+variables must be
+defined.  Also, header and address rewriting described in previous paragraphs
+do not take place; instead, UUCP-specific header and address rewriting rules
+will apply.  See the
+<ulink url="courieruucp.html"><citerefentry><refentrytitle>courieruucp</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+manual page for more information.</para>
+
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+There are still some mail gateways out there that do not impl ement
+delivery status notifications according to RFC 1894. This means that you may
+get a delivery notice even if <option>-N never</option> keyword was
+specified.</para>
+
+    <para>
+Header rewriting rules are similar, but not identical, to Qmail's. The
+precedence of the various environment variables, plus the situations where
+they're used, are different from Qmail's and may produce different
+results.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="courieruucp.html"><citerefentry><refentrytitle>courieruucp</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+<ulink url="mailq.html"><citerefentry><refentrytitle>mailq</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="cancelmsg.html"><citerefentry><refentrytitle>cancelmsg</refentrytitle><manvolnum>1</manvolnum></citerefentry></ulink>,
+<ulink url="http://www.sendmail.org">http://www.sendmail.org</ulink>,
+<ulink url="http://www.qmail.org">http://www.qmail.org</ulink>.</para>
+  </refsect1>
+</refentry>

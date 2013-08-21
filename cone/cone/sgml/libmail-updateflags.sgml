@@ -1,0 +1,22 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+<parameter>msgInfo</parameter> does NOT specify the new value of the status
+flags, only which status flags should be updated.
+For example, setting
+<parameter>msgInfo</parameter>.<structfield>marked</structfield>
+to true indicates that the messages' <structfield>marked</structfield> status
+flag will be set to the value specified by
+<parameter>doFlip</parameter> and
+<parameter>enableDisable</parameter>.</para>
+
+      <para>
+Setting <parameter>doFlip</parameter> to <literal>true</literal> "flips"
+the selected status flags (each message's flag will be set to false if
+the status flag was originally
+true, and set to true if the status flag was originalfalse).
+If <parameter>doFlip</parameter> is false, then the selected
+status flags are set to the value of <parameter>enableDisable</parameter>
+<parameter>enableDisable</parameter> is ignored when
+Setting <parameter>doFlip</parameter> is true.</para>

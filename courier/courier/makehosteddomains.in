@@ -1,0 +1,15 @@
+#! @SHELL@
+#
+# Copyright 2000 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+bindir="@bindir@"
+
+umask 022
+exec ${bindir}/makedat \
+	-src=${sysconfdir}/hosteddomains \
+	-file=${sysconfdir}/hosteddomains.dat \
+	-tmp=${sysconfdir}/hosteddomains.tmp

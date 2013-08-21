@@ -1,0 +1,58 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-isremoteurl">
+    <refmeta>
+      <refentrytitle>mail::account::isRemoteUrl</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::isRemoteUrl</refname>
+      <refpurpose>Determine whether the account is a remote account</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includemail;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool flag=<function>mail::account::isRemoteUrl</function></funcdef>
+	  <paramdef>std::string <parameter>url</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::account::isRemoteUrl</function> returns <literal>true</literal>
+if <parameter>url</parameter> identifies a mail account on a remote server
+(as opposed to a local mail account) that requires a network connection.
+<function>mail::account::isRemoteUrl</function> returns <literal>true</literal>
+if <parameter>url</parameter> begins with
+<literal>imap</literal>,
+<literal>imaps</literal>,
+<literal>nntp</literal>,
+<literal>nntps</literal>,
+<literal>pop3</literal>,
+<literal>pop3s</literal>,
+<literal>smtp</literal>, or
+<literal>smtps</literal>.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-open"><citerefentry>
+	    <refentrytitle>mail::account::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+
+  </refentry>

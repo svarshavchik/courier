@@ -1,0 +1,85 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>preline</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>preline</refname>
+    <refpurpose>Prepend legacy mbox headers</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">@bindir@/preline</command>
+      <arg choice="req" rep="norepeat"><replaceable>program</replaceable></arg>
+      <arg rep="repeat" choice="opt">arg</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">preline</command> is a wrapper for <command moreinfo="none">program</command>.
+<command moreinfo="none">preline</command> is usually invoked from
+<filename moreinfo="none">$HOME/.courier</filename>.
+<command moreinfo="none">preline</command> runs <command moreinfo="none">program</command>,
+together with any additional arguments
+specified on the command line.
+<command moreinfo="none">program</command> then receives the message being delivered, with
+some additional headers.
+The additional headers come from the <envar>UFLINE</envar>,
+<envar>DTLINE</envar>, and <envar>RPLINE</envar> environment variables.
+These environment
+variables are initialized by <command moreinfo="none">courierdeliver</command>, which reads
+and executes
+commands from <command moreinfo="none">$HOME/.courier</command>.
+These environment variables contain
+additional headers that should be added to every message that's delivered to a
+local mailbox.</para>
+
+    <para>
+<command moreinfo="none">preline</command> must be used if <command moreinfo="none">program</command>,
+that is executed from
+<filename moreinfo="none">$HOME/.courier</filename> to deliver mail,
+does not recognize these environment variables.
+<envar>UFLINE</envar> contains the <literal moreinfo="none">From_</literal> line,
+<envar>DTLINE</envar> contains the
+<literal moreinfo="none">Delivered-To:</literal> header, and <envar>RPLINE</envar> contains the
+<literal moreinfo="none">Return-Path:</literal> header. If these headers are not present in
+the message
+that the program reads, you may end up with excessive resources being consumed
+by mail loops or by malfunctioning software which expects to see
+<literal moreinfo="none">From_</literal> lines in all messages scheduled for local delivery
+(such as <command moreinfo="none">procmail</command>).</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>EXAMPLE</title>
+    <informalexample>
+      <programlisting format="linespecific">
+| @bindir@/preline /usr/bin/procmail
+</programlisting>
+    </informalexample>
+
+    <para>
+This is the normal way to arrange for <command moreinfo="none">procmail</command> to handle
+local mail delivery.</para>
+
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="courierpop3d.html"><citerefentry><refentrytitle>courierpop3d</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="authlib/authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>7</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+</refentry>

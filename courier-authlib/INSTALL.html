@@ -1,0 +1,498 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+
+  <title>INSTALL</title>
+  <!-- Copyright 2004-2012 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+</head>
+
+<body>
+  <h1>Table of Contents</h1>
+
+  <p>In this document (see INSTALL.html for the formatted version
+  of this INSTALL file):</p>
+
+  <ul>
+    <li><a onclick="" href="#Requirements">Requirements</a></li>
+
+    <li><a onclick="" href="#Installation">Installation
+    overview</a></li>
+
+    <li><a onclick="" href="#deps">Dependencies</a></li>
+
+    <li><a onclick="" href="#What">What gets installed</a></li>
+
+    <li><a onclick="" href="#manpage">For more information</a></li>
+
+    <li><a onclick="" href="#Starting">Starting and stopping the
+    authentication daemon</a></li>
+
+    <li><a onclick="" href="#Building">Building RPMs</a></li>
+
+    <li><a onclick="" href="#Guidelines">Guidelines for using other
+    package managers</a></li>
+  </ul>
+
+  <h2><a name="Requirements" id=
+  "Requirements">Requirements</a></h2>
+
+  <p>See the README file for a general description of this library.
+  The following software should be installed before building the
+  Courier authentication library:</p>
+
+  <ul>
+    <li>A modern version of gcc (<a onclick="" href=
+    "http://www.gnu.org/software/gcc/">http://www.gnu.org/software/gcc/</a>)</li>
+
+    <li>The GNU linker (<a onclick="" href=
+    "http://www.gnu.org/software/binutils/">http://www.gnu.org/software/binutils/</a>)</li>
+
+    <li>Libtool (<a onclick="" href=
+    "http://www.gnu.org/software/libtool/">http://www.gnu.org/software/libtool/</a>).
+    Additional, libtool's <tt>libltdl</tt> library, and its
+    development files, must be installed. On some platforms this is
+    a separate package. On Fedora, this is the
+    <tt>libtool-ltdl-devel</tt> package, for example.</li>
+
+    <li>GNU make (<a onclick="" href=
+    "http://www.gnu.org/software/make/">http://www.gnu.org/software/make/</a>)</li>
+
+    <li>The "<code>expect</code>" command. <code>expect</code> is
+    usually included with most systems. <code>Expect</code> can be
+    downloaded from <code>http://expect.nist.gov/</code> if it's
+    not installed on your system. This utility is used to change
+    system login passwords, by scripting the <code>passwd</code>
+    command. If you do not have <code>expect</code> installed you
+    will not be able to change system login passwords. However
+    non-system authentication modules (LDAP, PostgreSQL, and
+    others) will work.</li>
+  </ul>
+
+  <p>Courier-authlib uses Libtool to build shared libraries.
+  Libtool must be installed, together with its <tt>libltdl</tt>
+  library and its header files.</p>
+
+  <p>On non-Linux platforms the GNU linker is also required.
+  Courier-authlib's build script uses some GNU linker-specific
+  options. It's possible to manually specify the native linker's
+  equivalent options manually, if they exist. If the native linker
+  does not have the equivalent options, the GNU linker will have to
+  be installed.</p>
+
+  <p>On the other hand, GNU make will be required in almost every
+  case. SYSV-derived make variants (probably) will not work.</p>
+
+  <p>The same line of logic also applies to gcc. So, strictly
+  speaking, only a basic C compiler, GNU make and libtool, are
+  really needed to build courier-authlib. Still, try the following
+  before giving up if problems occur when building this
+  package:</p>
+
+  <ol>
+    <li>Install a recent version of the GNU linker</li>
+
+    <li>Install the current version of Libtool</li>
+
+    <li>Install the current version of gcc</li>
+  </ol>
+
+  <h2><a name="Installation" id="Installation">Installation
+  overview</a></h2>
+
+  <p>The following sequence of commands should be sufficient to
+  install courier-authlib in most cases:</p>
+  <pre>
+./configure [options] [variable=value]*...
+make
+make install
+make install-migrate      # Only if upgrading from pre-authlib Courier packages
+make install-configure
+</pre>
+
+  <blockquote>
+    <p><strong>NOTE:</strong> On the BSD family, GNU make is
+    usually the 'gmake' command. Use the 'gmake' command, instead
+    of 'make'.</p>
+  </blockquote>
+
+  <blockquote>
+    <p><strong>NOTE:</strong> It might appear that the
+    <code>configure</code> script is stuck in an infinite loop.
+    This is only an optical illusion. The <code>configure</code>
+    script takes several minutes to complete. The Courier
+    authentication library consists of many small modules, each
+    with its own configuration script; and all configuration
+    scripts are built from the same template. When they are
+    invoked, one at a time, an illusion of an infinite loop
+    appears.</p>
+  </blockquote>
+
+  <p>Courier-authlib is a requirement starting with the following
+  Courier package versions: Courier 0.48, Courier-IMAP 4.0,
+  SqWebMail 5.0. When upgrading from earlier versions of these
+  packages, install the Courier-authlib package first, then upgrade
+  the existing package.</p>
+
+  <p>The '<code>make install-migrate</code>' command imports the
+  authentication configuration from earlier versions of these
+  packages. '<code>make install-migrate</code>' is not needed
+  otherwise.</p>
+
+  <p>The '<code>make install-migrate</code>' command searches all
+  the known default installation directories for Courier,
+  Courier-IMAP, and SqWebMail, and imports the older configuration
+  files. If the older versions of these packages are installed in
+  some unusual, non-standard, directories, the <code>make
+  install-migrate</code> command won't find them. Instead, copy
+  those configuration files (<code>authdaemonrc</code>,
+  <code>authldaprc</code>, <code>authmysqlprc</code>,
+  <code>authpgsqlprc</code>, and <code>userdb</code>) by hand.
+  <strong>DO NOT COPY</strong> <code>authdaemonrc.dist</code>,
+  <code>authldaprc.dist</code>, <code>authmysqlprc.dist</code>, and
+  <code>authpgsqlprc.dist</code>.</p>
+
+  <p>After finishing '<code>make install-migrate</code>', the rest
+  of the installation steps, and after upgrading Courier,
+  Courier-IMAP, or SqWebMail to the new versions, to avoid future
+  confusion the old copies of these configuration files (including
+  the <code>.dist</code> files), should be removed from
+  Courier/Courier-IMAP/SqWebMail's configuration directory. They
+  now live in Courier-authlib's configuration directory
+  (<code>/usr/local/etc/authlib</code>, or whatever was specified
+  to the <code>configure</code> script).</p>
+
+  <p>The '<code>make install-configure</code>' command is required;
+  it installs and updates the configuration files; this command
+  must be executed when installing Courier-authlib for the first
+  time, and when upgrading from an older version.</p>
+
+  <h3>Configuration options</h3>
+
+  <p>The configure script takes the usual <code>autoconf</code>
+  options: <code>--prefix</code>, <code>--bindir</code>, and the
+  rest of the usual toolchain options. The default installation
+  directories should be sufficient, though.</p>
+
+  <p><strong>DO NOT USE</strong> the <code>--disable-static</code>,
+  or <code>--enable-static=no</code> option. Both static and shared
+  library options must be enabled for courier-authlib to build
+  properly (but see "Post-installation cleanup" below).</p>
+
+  <h4><code>--without-stdheaderdir</code></h4>
+
+  <p>The default configuration installs development files in
+  <code>/usr/local/include</code> (see "What gets installed",
+  below). This directory is usually in the compiler's search path
+  for header files. This option must be specified if the compiler
+  does NOT search for header files in
+  <code>/usr/local/include</code> by default.</p>
+
+  <p>This option must also be specified if other configuration
+  options (such as <code>--prefix</code> or
+  <code>--includedir</code>) specify a different installation
+  directory, and the new directory is also not searched by the
+  compiler, by default</p>
+
+  <h4><code>--with-mailuser=<em>userid</em>,
+  --with-mailgroup=<em>groupid</em></code></h4>
+
+  <p>"userid" is a reserved system username, "groupid" is a
+  reserved system groupname. These two options should be used
+  before installing Courier for the first time. These options are
+  not required before installing Courier-IMAP or SqWebMail.</p>
+
+  <p>These options specify the user/group that will own the
+  configuration files, and the socket that authentication daemon
+  process listens on. This is a key part of Courier's security
+  model.</p>
+
+  <p>These options should not be necessary if upgrading from an
+  earlier version of Courier and/or this authentication library.
+  The default userid and groupid are computed as follows:</p>
+
+  <ul>
+    <li>If an earlier version of the Courier authentication library
+    is already installed in the same directory, the userid and the
+    groupid is the same as the earlier version, otherwise:</li>
+
+    <li>If an earlier version of the Courier package is installed
+    (only the Courier package, the Courier-IMAP and SqWebMail
+    packages do not carry this information), the userid and the
+    groupid is the same as the ones used to configure Courier,
+    otherwise:</li>
+
+    <li>The userid is the first userid from the following list
+    which exists in the system: courier, daemon, adm, bin, root;
+    and the groupid is the first groupid from the following list
+    which exists in the system: courier, daemon, adm, sys,
+    root.</li>
+  </ul>
+
+  <p>When installing Courier authentication library for the first
+  time, it is highly recommended to create a "courier" userid and
+  groupid, so that specifying these options will not be
+  necessary.</p>
+
+  <p>This configure script descends from the old authentication
+  library that was included in the older Courier, Courier-IMAP, and
+  SqWebMail packages. As such, it also has many other undocumented
+  options that manually disable specific authentication
+  modules.</p>
+
+  <p><strong>These options are no longer officially
+  documented.</strong> Individual modules can be disabled after
+  installation, by editing the <code>authdaemonrc</code>
+  configuration file.</p>
+
+  <h4><code>VARIABLE=</code><em><code>value</code></em></h4>
+
+  <p>Environment variables may be set either before running the
+  configure script, or by providing the environment variables as
+  parameters to the configure script. Example:</p>
+
+  <blockquote>
+    <pre>
+./configure --with-mailuser=mail --with-mailgroup=mail \
+     CC=/opt/fsf/bin/gcc LDFLAGS=-L/opt/fsf/lib \
+     MAKE=gmake
+</pre>
+  </blockquote>
+
+  <p>The <code>CC</code> environment variable specifies the name of
+  the C compiler that will be used to compile the authentication
+  library. For some reason, on this oddball system some system
+  libraries are installed in <code>/opt/fsf/lib</code>, and the
+  compiler doesn't search this directory by default. Therefore, the
+  compiler needs the "<code>-L/opt/fsf/lib</code>" to properly link
+  all programs, and this option is specified in the
+  <code>LDFLAGS</code> environment variable.</p>
+
+  <p>Another possibility is to add the <code>/opt/fsf/bin</code>
+  directory to the <code>PATH</code> environment variable, prior to
+  running the <code>configure</code> script. The
+  <code>configure</code> script searches for all needed software in
+  the current <code>PATH</code>. Explicitly pointing configure to
+  something, like <code>CC</code>, is only needed if the program is
+  not already in the default PATH.</p>
+
+  <p>Finally, Courier authentication library must be built with GNU
+  make. On this example system the <code>make</code> command is the
+  old SysV-derived make, which will not work. GNU make is installed
+  here as the "<code>gmake</code>" command. The
+  <code>configure</code> script will ordinarily find the
+  <code>make</code> command and be happy with it, by mistake.
+  Explicitly setting <code>MAKE</code> to <code>gmake</code> fixes
+  that (and the human operator also needs to invoke the
+  <code>gmake</code> command also).</p>
+
+  <h2><a name="deps" id="Dependencies">Dependencies</a></h2>
+
+  <p>On a minimum, bare-bones system, the Courier authentication
+  library builds support for garden-variety authentication against
+  system accounts (from the system's password file,
+  <code>/etc/passwd</code>).</p>
+
+  <p>If the <code>configure</code> script detects that certain
+  optional software components are installed, additional
+  authentication modules will be built and installed. This chapter
+  describes what needs to be installed in order to build the
+  optional authentication modules.</p>
+
+  <blockquote>
+    <p><strong>NOTE:</strong> In all cases, it is not sufficient to
+    install the runtime support libraries for the following
+    components. In order to build the authentication modules the
+    <strong>DEVELOPMENT LIBRARIES</strong> for the following
+    software packages must be installed. The development libraries
+    are usually a separate package, that must be installed in
+    addition to the package that adds alleged support for the
+    following software libraries.</p>
+  </blockquote>
+
+  <ul>
+    <li><strong>GDBM or Berkeley DB library</strong> - The
+    <code>userdb</code> authentication module will be built if
+    either library is installed. The <code>userdb</code>
+    authentication module includes Perl scripts that maintain a
+    list of available accounts in plain text files. A Perl script
+    then compiles the account list into a binary database, either
+    GDBM or DB, which is then used to look up account
+    information.</li>
+
+    <li><strong>OpenLDAP</strong> - The LDAP authentication modules
+    requires OpenLDAP client libraries to be installed. Sometimes
+    there's some confusion when commercial LDAP servers are used,
+    which come with their own development toolkits, which use a
+    different API than OpenLDAP. Even if a commercial LDAP server
+    is used to provide LDAP services, OpenLDAP is still required to
+    enable LDAP services in Courier.</li>
+
+    <li><strong>MySQL</strong>, <strong>PostgreSQL</strong>, and
+    <strong>SQLite</strong> - The MySQL, PostgreSQL, and SQLite
+    authentication modules require, obviously,
+    MySQL/PostgreSQL/SQLite development libraries.<br /></li>
+  </ul>
+
+  <h2><a name="What" id="What">What gets installed</a></h2>
+
+  <ul>
+    <li><code>/usr/local/etc/authlib</code> - the configuration
+    files.</li>
+
+    <li><code>/usr/local/sbin</code> - the authdaemond startup
+    script; several utility programs (courierlogger, authconfig,
+    authtest, authenumerate); and userdb scripts.</li>
+
+    <li><code>/usr/local/lib/courier-authlib</code> - various
+    authentication modules, as shared libraries.</li>
+
+    <li><code>/usr/local/libexec/courier-authlib</code> - some
+    miscellaneous stuff.</li>
+
+    <li><code>/usr/local/var/authdaemon</code> - a subdirectory
+    that contains the filesystem socket which authdaemond listens
+    on.</li>
+
+    <li><code>/usr/local/include</code> - a header file that
+    Courier packages will use to build against
+    courier-authlib.</li>
+  </ul>
+
+  <p>Toolchain options to the <code>configure</code> script may be
+  used to select alternative installation directories for these
+  components.</p>
+
+  <h3>Post-installation cleanup</h3>
+
+  <p>On most systems, after running <code>make
+  install-configure</code> all static libraries can be removed from
+  the <code>/usr/local/lib/courier-authlib</code> directory:</p>
+
+  <p><code>rm -rf /usr/local/lib/courier-authlib/*.a</code></p>
+
+  <p>The Courier authentication library uses only the shared
+  libraries. The static versions of the shared libraries are not
+  used. They are installed by default, via libtool, but are not
+  really needed. On most platforms the libtool files, "*.la" can
+  also be removed. Do not remove any soft links.</p>
+
+  <h2><a name="manpage" id="manpage">For more information</a></h2>
+
+  <p>Following "<code>make install</code>", see the <a href=
+  "README_authlib.html"><code>README_authlib.html</code></a> file
+  for details on setting up the authentication modules. The
+  <code>README_authlib.html</code> file gets assembled as part of
+  the build process.</p>
+
+  <p>Before proceding to install any other packages, be sure to
+  verify that the authentication library is working by running the
+  <code>authtest</code> command, as documented in the
+  <code>README_authlib.html</code> file.</p>
+
+  <h2><a name="Starting" id="Starting">Starting and stopping the
+  authentication daemon</a></h2>
+
+  <p>The following command must be added to your system startup
+  script, in order to initialize the authentication library when
+  booting:</p>
+  <pre>
+/usr/local/sbin/authdaemond start
+</pre>
+
+  <p>Similarly, the authentication library can be stopped by the
+  "<code>authdaemond stop</code>" command. After editing the
+  <code>authdaemonrc</code> configuration file use
+  "<code>authdaemond restart</code>" command to reconfigure the
+  daemon process. Systems that use SYSV-derived initscripts can use
+  the "<code>courier-authlib.sysvinit</code>" script, which gets
+  built in the source directory, to start and stop
+  <code>authdaemond</code> when the system boots or halts.</p>
+
+  <h2><a name="Building" id="Building">Building RPMs</a></h2>
+
+  <p>See <a onclick=
+  ""><code>http://www.courier-mta.org/FAQ.html#rpm</code></a> for
+  instructions on building binary RPMs from the source tarball.
+  Those instructions will work for this package.</p>
+
+  <blockquote>
+    <p><strong>NOTE:</strong></p>
+
+    <p>RPM will refuse to build the Courier authentication library
+    unless all prerequisite development libraries for LDAP, MySQL,
+    PostgreSQL, and SQLite are installed. <strong>Do not try to
+    hack the RPM build script to ignore these
+    dependencies!</strong> For simplicity's and maintainability
+    sake the RPM build script creates all available authentication
+    modules. All extra authentication modules will be built as
+    <em>optional</em> subpackages. They do not have to be installed
+    at runtime. Install the LDAP, MySQL, PostgreSQL, and SQLite
+    development libraries only for the duration of building binary
+    RPMs. They can be uninstalled afterwards.</p>
+  </blockquote>
+
+  <h2><a name="Guidelines" id="Guidelines">Guidelines for using
+  other package managers</a></h2>
+
+  <p>The recommended way to build packages can be inferred from the
+  RPM build script. It is summarized here for convenience:</p>
+
+  <ul>
+    <li>Decide whether or not Courier-specific userid and groupid
+    needs to be created, and, if so, make the necessary
+    arrangements.</li>
+
+    <li>Ensure that all prerequisite development libraries are
+    available.</li>
+
+    <li>Run the <code>configure</code> script, run
+    <code>make</code>, then <code>make install</code> as
+    usual.</li>
+
+    <li>Copy the "<code>sysconftool</code>" script somewhere into
+    the installation tree. A good place would be
+    <code>%libexecdir%/courier-authlib</code>. This is the
+    '<code>make install-upgrade</code>' command. Don't run this at
+    build time. Instead, arrange for the package installation
+    script to run the "<code>sysconftool
+    %sysconfdir%/authlib/*.dist</code>" after the package is
+    installed <strong>OR UPGRADED</strong>.</li>
+
+    <li>The "<code>authdaemond</code>",
+    "<code>authenumerate</code>", and "<code>authtest</code>"
+    commands can be renamed, to avoid name clashes.</li>
+
+    <li>Remove all static libraries from
+    <code>%libdir%/courier-authlib</code>.</li>
+  </ul>
+
+  <p>Now, create the installable packages, as follows:</p>
+
+  <ul>
+    <li><code>%libdir%/courier-authlib/libauthldap*</code> goes
+    into the LDAP subpackage.</li>
+
+    <li><code>%libdir%/courier-authlib/libauthmysql*</code> goes
+    into the MySQL subpackage.</li>
+
+    <li><code>%libdir%/courier-authlib/libauthsqlite*</code> goes
+    into the SQLite subpackage.</li>
+
+    <li><code>%libdir%/courier-authlib/libauthpgsql*</code> goes
+    into the PostgreSQL subpackage.</li>
+
+    <li><code>%libdir%/courier-authlib/libauthuserdb*</code> goes
+    into the userdb subpackage.</li>
+
+    <li>Everything else can go into the main package. Optionally,
+    the <code>courierauthconfig</code> binary, stuff in
+    <code>%includedir%</code>, and in <code>%mandir%/man3</code>,
+    can go into a devel subpackage.</li>
+  </ul>
+</body>
+</html>

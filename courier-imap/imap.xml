@@ -1,0 +1,711 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY ci "<application>Courier</application> IMAP server">
+
+<!ENTITY maildirs_label "How the &ci; stores its mail, and works with your mail server">
+
+<!ENTITY features_label "The &ci; - Feature Summary">
+
+<!ENTITY download_label "Download the &ci;">
+
+<!ENTITY documentation_label "Documentation">
+
+<!ENTITY tutorial_setup_label "Tutorial: troubleshooting &imap; server configuration">
+<!ENTITY imap "<acronym>IMAP</acronym>">
+
+]>
+
+<book id="index2">
+  <title>The <application>Courier</application> IMAP server</title>
+
+  <para>Copyright 1999-2008, Double Precision, Inc.
+  This software is distributed under the terms of the GNU General
+  Public License. See COPYING for additional
+  information.</para>
+
+  <para id="g-a-start-1"></para>
+
+  <para>The &ci; is a fast, scalable, enterprise &imap; server that
+  uses Maildirs. Many E-mail service providers use the &ci; to
+  easy handle hundreds of thousands of mail accounts. With its
+  built-in &imap; and <acronym>POP3</acronym> aggregation proxy, the &ci; has practically
+  infinite horizontal scalability. In a proxy configuration, a pool of
+  Courier servers service initial &imap; and <acronym>POP3</acronym> connections from clients.
+  They wait to receive the client's log in request, look up the server that
+  actually holds this mail account's mailbox, and establish a proxy connection
+  to the server, all in a single, seamless process.  Mail accounts can be
+  moved between different servers, to achieve optimum resource usage.</para>
+  
+  <para>The only practical limitation on the &ci; is available network
+  and I/O bandwidth. If you are new to the &ci;, this may sound a bit
+  intimidating. But you do not need to tackle everything at once.  Start by
+  taking small, easy steps. Your first step will be to set up a small
+  the &ci; server, using it like any other traditional &imap; service, on a
+  single server. After you gain experience and become comfortable with
+  Courier, you can then begin exploring its advanced features.</para>
+
+  <para>
+This is the same &imap; server that's included in the
+<ulink url="http://www.courier-mta.org/">Courier mail
+  server</ulink>, but configured as a standalone &imap; server that can
+  be used with other mail servers - such as Qmail, Exim, or Postfix
+  - that deliver to maildirs. If you already have Courier installed,
+you do not need
+  to download this version. If you install this version, you must
+  remove it if you later install the entire Courier server.</para>
+
+  <para id="g-a-end-1"></para>
+
+  <para>The following pages provide additional background and supporting
+  documentation.  You can jump anytime to the download page
+  using the top menu bar.</para>
+
+  <itemizedlist>
+    <listitem>
+      <simpara>
+<link linkend="maildirs">&maildirs_label;</link></simpara>
+    </listitem>
+
+    <listitem>
+      <simpara>
+<link linkend="features">&features_label;</link></simpara>
+    </listitem>
+  </itemizedlist>
+
+  <section id="maildirs">
+    <title>&maildirs_label;</title>
+
+    <para>
+&imap; servers provide access to existing mail, in existing mailboxes.
+&imap; servers are not involved in the mail delivery process.
+You'll still need to have your mail server software receive mail via
+SMTP and place it in recipients' mailboxes.</para>
+
+    <para>
+It does not matter to the &ci; which mail server you use: Sendmail, Postfix,
+or something else, as long as the mail gets delivered to the correct
+mailbox.
+The &ci; just reads mail from existing mail accounts, without needing to know
+how it gets there.</para>
+
+    <para>
+The &ci; uses "maildirs" to store its mail.
+Please note that this &imap; server does NOT use traditional
+mailbox files (<filename>/var/spool/mail</filename>, and derivatives), it was
+written and optimized for the specific purpose of providing &imap;
+access to Maildirs.
+Consult your mail server's documentation for help on how to get it to
+deliver mail in the "maildir" format.</para>
+
+    <para>"Maildir" is a
+<ulink url="http://www.courier-mta.org/maildir.html">directory-based mail
+  storage format</ulink> originally introduced in the Qmail mail
+  server, and adopted as an alternative mail storage format by both
+  <ulink url="http://www.exim.org/">Exim</ulink> and
+  <ulink url="http://www.postfix.org/">Postfix</ulink>.
+  The &ci; is a popular combination with Qmail, Exim, and Postfix servers that are
+  configured to use maildirs. The primary advantage of maildirs is
+  that multiple applications can access the same Maildir
+  simultaneously without requiring any kind of locking whatsoever.
+  <ulink url="http://www.courier-mta.org/mbox-vs-maildir/">Maildir is a faster
+  and more efficient way to store mail</ulink>. It works particularly
+  well over NFS, which has a long history of locking-related
+  woes.</para>
+
+    <para>The &ci; implements several extensions to the basic
+  Maildir mail storage format in order to support some additional
+  features, such as folders and "soft" quotas. This is done in a
+  way that's backwards compatible with the standard Maildir users
+  (although, of course, they will ignore the additional features).
+  Other software that understands and uses the same Maildir
+  extensions is <ulink url="http://www.courier-mta.org/sqwebmail/">SqWebMail</ulink>, and
+  <ulink url="http://www.courier-mta.org/maildrop/">maildrop</ulink>.</para>
+  </section>
+
+  <section id="features">
+    <title>&features_label;</title>
+
+    <itemizedlist>
+      <listitem><simpara>Extremely small footprint. On x86, the &ci;'s main
+    daemon is a fraction of the size of the UW-IMAP server, and has
+    <ulink url="http://www.courier-mta.org/mbox-vs-maildir/">a greatly reduced
+    memory footprint</ulink>.</simpara></listitem>
+
+      <listitem><simpara>Uses the <ulink url="http://www.courier-mta.org/authlib/">Courier Authentication
+    Library</ulink> for authenticating mail accounts.</simpara></listitem>
+
+      <listitem><simpara>Ability to restrict the maximum number of &imap; logins, and
+    the maximum number of logins from the same IP address. This
+    will prevent denial-of-service attacks where the attacker
+    attempts to overload the server with multiple login
+    connections.</simpara></listitem>
+
+      <listitem><simpara>Shared folders. With additional server-side setup, folders
+    can be shared between groups of accounts.</simpara></listitem>
+
+      <listitem><simpara>&imap; over <acronym>SSL</acronym>. If <ulink url="http://www.openssl.org/"><application>OpenSSL</application></ulink>
+or <ulink url="http://www.gnutls.org/"><application>GnuTLS</application></ulink>
+ is
+    installed, the &ci; will, optionally, accept &imap;
+    connections over <acronym>SSL</acronym>. The &imap; STARTTLS extension is also
+    implemented.</simpara></listitem>
+
+      <listitem><simpara>Authentication using <acronym>SSL</acronym> certificates.</simpara></listitem>
+
+      <listitem><simpara>IPv6 support, if available.</simpara></listitem>
+
+      <listitem><simpara>&imap; extensions that implement server-side sorting. This
+    can be optionally disabled in environments that have limited
+    resources.</simpara></listitem>
+
+      <listitem><simpara>The &ci; implements many popular &imap; protocol
+    extensions that provide value-added functionality with most
+    popular &imap; clients.</simpara></listitem>
+
+      <listitem><simpara>Sorting and searching in non-English
+    character sets. Download the source code to obtain a
+    list of currently supported character sets.</simpara></listitem>
+
+      <listitem><simpara>A compatible <acronym>POP3</acronym> server is also included in the
+    &ci; package, that uses the same authentication
+    modules. The <acronym>POP3</acronym> server can only access the INBOX, and cannot
+    access any folders.</simpara></listitem>
+
+      <listitem><simpara>An experimental mail access protocol, <link linkend="smap">SMAP</link>.</simpara></listitem>
+
+      <listitem><simpara>&imap;/<acronym>POP3</acronym> proxying. It is possible to distribute all
+    mailboxes between multiple servers. A separate server (or a
+    pool of servers) accepts all &imap;/<acronym>POP3</acronym> connections, then
+    connects to the right server based on the mailbox the
+    connecting client is logging into.</simpara></listitem>
+    </itemizedlist>
+  </section>
+
+  <section id="download">
+
+    <title>&download_label;</title>
+
+    <para>
+Before downloading the &ci;, you MUST download and install
+the <ulink url="http://www.courier-mta.org/authlib/">Courier
+Authentication Library</ulink>.
+This library is standalone module that maps login IDs and passwords to
+their mailboxes.
+Use the tools in the <filename>courier-authlib</filename> package to check
+if the authentication library is working, recognizes the login passwords,
+and displays the correct mailbox location.
+Until you get the authentication library working first, you will not
+be able to use the &ci;.</para>
+
+    <para>Download the &ci; from: <ulink url="http://www.courier-mta.org/download.php#imap">http://www.courier-mta.org/download.php#imap</ulink>, then
+read its <filename>INSTALL</filename> file for more instructions.</para>
+
+    <section>
+      <title>Source Code Repository</title>
+	  <para>
+See
+<ulink url="http://www.courier-mta.org/status.html">http://www.courier-mta.org/status.html</ulink>
+  for more information.</para>
+    </section>
+
+    <section>
+      <title>Building RPMs</title>
+
+      <para>
+It is possible to create binary RPM packages directly from the
+source code tarball. Follow the instructions in the
+<ulink url="http://www.courier-mta.org/FAQ.html#rpm">Courier FAQ</ulink>
+for building the RPM packages as a non-root user.</para>
+
+      <note>
+	<para>
+The binary RPM will not install if you have another &imap;
+  or a <acronym>POP3</acronym> server installed. The binary RPM installs its own
+  <filename>/etc/pam.d/imap</filename> and <filename>/etc/pam.d/pop3</filename>
+  configuration files, which are likely to conflict with the PAM
+  configuration file from another &imap; or <acronym>POP3</acronym> server. If you
+  previously installed another &imap; or a <acronym>POP3</acronym> server without using
+  RPM, the &ci; will successfully install and immediately
+  overwrite your existing <filename>/etc/pam.d/imap</filename> and
+  <filename>/etc/pam.d/pop3</filename> files.</para>
+      </note>
+    </section>
+  </section>
+
+  <section id="documentation">
+    <title>&documentation_label;</title>
+
+    <para>The following documentation is included in the the <application>Courier</application> IMAP server's
+  source code. It is presented here for your convenience.</para>
+
+    <itemizedlist>
+
+    <listitem><simpara><ulink url="INSTALL.html">INSTALL: Installation and some
+    general documentation</ulink></simpara></listitem>
+
+    <listitem><simpara><ulink url="README.proxy.html">README.proxy: Configuring and
+    using the &imap;/<acronym>POP3</acronym> aggregator proxy</ulink></simpara></listitem>
+
+    <listitem><simpara><ulink url="http://www.courier-mta.org/FAQ.html" target="_blank">Courier FAQ</ulink></simpara></listitem>
+
+    <listitem><simpara><ulink url="README.html">imap/README: Hints on configuring
+    &imap; clients</ulink></simpara></listitem>
+
+    <listitem><simpara><ulink url="README.maildirquota.html">README.maildirquota:
+    Enhancements by the &ci; to the traditional Maildir
+    format</ulink>, <ulink url="README.sharedfolders.html">README.sharedfolders: How
+    the &ci; implements shared folders</ulink>, and <ulink url="README.imapkeywords.html">README.imapkeywords: How
+    the &ci; implements keywords</ulink>. These documents describe
+    how &ci; implements various features that are not a
+    part of the traditional maildir mailbox.</simpara></listitem>
+
+      <listitem><simpara><link linkend="tutorial.setup">&tutorial_setup_label;</link></simpara></listitem>
+    <listitem><simpara><ulink url="BUGS.html">BUGS: known bugs</ulink>.</simpara></listitem>
+    </itemizedlist>
+  </section>
+
+  <section id="tutorial.setup">
+
+    <title>&tutorial_setup_label;</title>
+
+    <para>
+This tutorial provides basic directions for troubleshooting the &ci; configuration.
+This information should also work with other &imap;
+servers, but the examples reflect output from the &ci;.</para>
+
+    <para>
+The starting point: the &ci; has just been installed, you start your favorite
+&imap; mail reader, enter what you think is the correct server configuration,
+and it does not work. Either your mail software hangs, shows nothing at all,
+or complains with an error message.</para>
+
+    <para>
+There can be many possible reasons, but all of them can be reduced into
+two categories: a problem with the &imap; server's configuration, or
+a problem with the mail software's configuration. It may very well be that
+the server is running properly, however the &imap; configuration in many
+mail readers often has confusing configuration options, and the correct
+settings may not be obvious.</para>
+
+    <para>
+This tutorial provides step-by-step directions for verifying the &ci;'s basic
+operation. The following directions should establish whether the server is
+running correctly, and if not, what the problem might be.</para>
+
+    <section id="tutorial.setup.telnet">
+      <title>Connecting to the &ci; server</title>
+
+      <para>
+The first step is to check if the &ci; is accepting connections. Open a terminal
+window and type:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>telnet <replaceable>hostname</replaceable> 143
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+Replace <replaceable>hostname</replaceable> with the &imap; server's
+<acronym>DNS</acronym> name. This expected results would look like this:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>$ telnet imap.example.com 143
+Trying 10.0.0.12...
+Connected to imap.example.com.
+Escape character is '^]'.
+* OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THRE
+AD=REFERENCES SORT QUOTA IDLE AUTH=CRAM-MD5 SMAP1 KEYWORDS ACL ACL2=UNION STARTT
+LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.  
+See COPYING for distribution information.
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+This shows that the &imap; server is running and accepting connections.
+Your &imap; server may give a slightly difference response. If, on the other
+hand, the connection fails:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>$ telnet imap.example.com 143
+Trying 10.0.0.12...
+telnet: connect to address 10.0.0.12: Connection refused
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+There are many reasons for a failed connection, but the two most common
+are:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+The &imap; server is not running. Log on to the server and check if the
+process is running:</para>
+	  <blockquote>
+	    <informalexample>
+	      <programlisting># ps -ef | grep imap
+root     30440 30439  0 Jul16 ?        00:00:00 /usr/lib/courier-imap/libexec/co
+uriertcpd -address=0 -maxprocs=40 -maxperip=10 -nodnslookup -noidentlookup 143 /
+usr/lib/courier-imap/sbin/imaplogin /usr/lib/courier-imap/bin/imapd Maildir
+</programlisting>
+	    </informalexample>
+	  </blockquote>
+
+	  <para>
+Note that without active &imap; connections only the
+<quote>couriertcpd</quote> process is running. Different &imap; servers will
+use different process names. Another (and even better) way is to check if
+anything is listening on port 143:</para>
+
+	  <blockquote>
+	    <informalexample>
+	      <programlisting># /sbin/fuser -n tcp 143
+143/tcp:             30440
+</programlisting>
+	    </informalexample>
+	  </blockquote>
+
+	  <para>
+This indicates that process 30440 has port 143 open. This is a fairly
+good indication that the &imap; server is running.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+If the <application>telnet</application> connection fails, but the &imap;
+server seems to be running, this is usually because of a firewall getting
+in the way. Investigate any firewall settings on the &imap; server's host,
+and any intervening network devices, and make any necessary adjustments
+to open up port 143.</para>
+	</listitem>
+      </itemizedlist>
+    </section>
+
+    <section id="tutorial.setup.login">
+      <title>Logging in</title>
+
+      <para>
+Establishing a successful connection to the &imap; server does not eliminate
+all potential sources of configuration errors. The next step is to
+proceed and attempt to log in:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>$ telnet imap.example.com 143
+Trying 10.0.0.12...
+Connected to imap.example.com.
+Escape character is '^]'.
+* OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THRE
+AD=REFERENCES SORT QUOTA IDLE AUTH=CRAM-MD5 SMAP1 KEYWORDS ACL ACL2=UNION STARTT
+LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.  
+See COPYING for distribution information.
+0 login testuser testpass
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+&imap; commands begin with an arbitrary label. This example uses the label
+<quote>0</quote>.
+Use the command <quote><command>0 login <replaceable>username</replaceable>
+<replaceable>password</replaceable></command></quote>
+to check if the &imap; server
+can process a login request and open the mailbox. A succesful login looks
+like this:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>...
+0 login testuser testpass
+0 OK LOGIN Ok.
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+Other &imap; servers may respond with a slightly different message after the
+<quote><literal>OK</literal></quote>.
+An error message should be self-evident:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>...
+0 login testuser testpass
+0 NO Login failed.
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+There are many reasons for a login failure message from the &ci;.
+The most common reasons are:</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+<application>courier-authlib</application> isn't running. Check that
+its processes are running. The installation instructions for
+<application>courier-authlib</application> contain directions for checking
+that it's properly configured.
+See <application>courier-authlib</application>'s <filename>INSTALL</filename>
+file for more information.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+The password is wrong, or the login ID does not exist.</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+The login account's entry specifies the login ID's home directory, and the
+login ID's numeric system <replaceable>uid</replaceable> and
+<replaceable>gid</replaceable>, but that information is incorrect or doesn't
+match the login ID's actual home directory or 
+<replaceable>uid</replaceable>/<replaceable>gid</replaceable>.
+It may not exist at all.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>
+The actual error message should provide some indication as to what the
+problem is. Also, look in syslog for any additional diagnostic information.
+After making the necessary corrections, repeat the manual login process and
+check that the login command succeeds.</para>
+
+      <note>
+	<para>
+Some &imap; servers may be configured to accept encrypted connections only,
+and all login commands will fail, unless they are encrypted.
+If this is the case, no further progress can be made in troubleshooting
+&imap; login problems, unless the &imap; server is temporarily reconfigured
+to allow unencrypted logins.</para>
+      </note>
+    </section>
+
+    <section id="tutorial.setup.inbox">
+      <title>Opening the incoming mail folder</title>
+
+      <para>
+Other configuration problems may still exist even if the login
+command succeeds. The next step is to try to open the incoming mail
+folder:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>...
+0 login testuser testpass
+0 OK LOGIN Ok.
+0 select inbox
+* FLAGS (\Draft \Answered \Flagged \Deleted \Seen \Recent)
+* OK [PERMANENTFLAGS (\* \Draft \Answered \Flagged \Deleted \Seen)] Limited
+* 0 EXISTS
+* 0 RECENT
+* OK [UIDVALIDITY 1129891669] Ok
+* OK [MYRIGHTS "acdilrsw"] ACL
+0 OK [READ-WRITE] Ok
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+The command <quote>0 select inbox</quote> opens the incoming mail folder.
+The above example shows a typical successful response from the &ci;.
+The actual responses from different &imap; servers vary slight, the
+above is a general example.
+An obvious error message from the &ci; in response to this command indicates a
+corrupt
+mailbox. The most common reason is that the mailbox's system
+<replaceable>uid</replaceable> and
+<replaceable>gid</replaceable> is wrong and does not match the
+login ID's record in <application>courier-authlib</application></para>
+    </section>
+
+    <section id="tutorial.setup.folders">
+      <title>Obtaining a list of all mail folders</title>
+
+      <para>
+One last thing to check is to retrieve the list of existing &imap;
+folders:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>...
+0 LIST "" "*"
+* LIST (\Unmarked \HasChildren) "." "INBOX"
+* LIST (\HasChildren) "." "INBOX.Sent"
+* LIST (\HasNoChildren) "." "INBOX.Drafts"
+...
+0 OK LIST completed
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+The command <quote><command>0 LIST "" "*"</command></quote> retrieves the
+list of all folder names. The actual response to the command, of course,
+varies with different servers.</para>
+
+      <para>
+The &ci; places virtual shared folders in a separate namespace.
+This <command>LIST</command> command will not show virtual shared folders.
+A slightly different command is required:</para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>...
+0 LIST "" "#shared.*"
+* LIST (\HasNoChildren) "." "#shared.postmaster.Calendar"
+* LIST (\Noselect \HasChildren) "." "#shared.postmaster"
+0 OK LIST completed
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+The command <quote><command>0 LIST "" "#shared.*"</command></quote> retrieves
+the names of folders in the <quote><literal>#shared</literal></quote>
+namespace. Use this command to check if virtual shared folders are properly
+set up and which ones are visible to the login ID.
+Setting up the &ci; virtual shared folders is a somewhat complicated process.
+Running this command shows which virtual shared folders are accessible.
+If no actual <quote><literal>#shared</literal></quote> folders appear in
+response to this command, it means that no virtual shared folders are
+accessible by this login ID.</para>
+    </section>
+
+    <section id="tutorial.setup.conclusion">
+      <title>Conclusion</title>
+
+      <para>
+If the above commands produce the expected responses from the &imap; server,
+that indicates that the &imap; server's major functions are properly working.
+Any problems with &imap; mail reader is probably due to a configuration
+issue with the mail reader, and the &imap; mail reader's forums or newsgroups
+will probably be the best place to ask for assistance with properly configuring
+the software.</para>
+    </section>
+  </section>
+
+  <section id="links">
+    <title>Links</title>
+
+    <para>Subscribe to the <ulink url="http://lists.sourceforge.net/mailman/listinfo/courier-imap">courier-imap</ulink>
+  mailing list from its page,
+  or send a message to
+  &lt;<emphasis>courier-imap-request</emphasis><emphasis>@lists.sourceforge.net</emphasis>&gt;
+  and put "subscribe" in the subject line.</para>
+
+  <para>This mailing list does not accept mail from non-subscribers.
+  You must subscribe to the list before sending any messages.</para>
+
+    <para><ulink url="http://manpages.courier-mta.org">Linux manual pages</ulink></para>
+
+    <para><ulink url="http://www.pipeline.com.au/staff/mbowe/isp/postfix-server.htm" shape="rect">Using
+  Postfix with Courier-IMAP</ulink></para>
+
+    <para>The book <ulink url="http://www.samspublishing.com/catalog/product.asp?product_id={DEAB7C16-7768-4A60-991B-05F85BECE45F}">
+  Postfix</ulink> talks about configuring the Postfix mail server to
+  deliver to Maildirs, for the <application>Courier</application> IMAP server.</para>
+
+    <para><ulink url="http://karmak.org/2003/courier-imap/">Step-by-step
+  instructions</ulink> w/ screenshots for getting Mozilla 1.2.1,
+  Outlook 2000, and Outlook Express 6 to work with
+  the <application>Courier</application> IMAP server.</para>
+
+    <para><ulink url="http://www.skander.net/docs/email/">Courier-IMAP + Maildrop +
+  QMail with Virtual Domains HOWTO</ulink> - self explanatory.</para>
+
+    <para><ulink url="http://www.sxpress.com/~henry/qmail-pop-imap-web-howto.htm">Install
+  and Test Qmail with POP, &imap; and WebMail</ulink> - a step by step
+  tutorial on setting up a turn-key mail server.</para>
+
+    <para><ulink url="http://www.gallowglass.org">http://www.gallowglass.org</ulink> - how
+  to setup your own private CA and then generate signed <acronym>SSL</acronym> certs
+  for POP and &imap; over <acronym>SSL</acronym>.</para>
+
+    <para><ulink url="http://matt.simerson.net/computing/mail/qmail/qmail.toaster.shtml">
+  Qmail FreeBSD toaster</ulink> - another step by step tutorial, this
+  one is based on FreeBSD.</para>
+
+    <para><ulink url="http://www.linuxdoc.org/HOWTO/Qmail-VMailMgr-Courier-imap-HOWTO.html">
+  Qmail VMailMgr and Courier-IMAP HOWTO</ulink> - extensive
+  documentation on integrating the <application>Courier</application> IMAP server with the Qmail mail
+  server and the VMailMgr virtual domain manager.</para>
+
+    <para>A patch to use DRAC with the <application>Courier</application> IMAP server is available at
+  <ulink url="http://aelyn.hell-city.org/courier-imap-popd-drac.patch">http://aelyn.hell-city.org/courier-imap-popd-drac.patch</ulink>.</para>
+
+    <para>SecurityFocus's article titled "<ulink url="http://www.securityfocus.com/focus/linux/articles/clear2.html">Clear
+  Text Communication: Slaying the Beast Part II</ulink>" talks about
+  general issues concerning E-mail and security. the <application>Courier</application> IMAP server is
+  briefly mentioned in this article.</para>
+
+    <para>A patch that logs additional accounting information to syslog:
+  <ulink url="ftp://ftp.aerasec.de/pub/linux/courier-imap/">ftp://ftp.aerasec.de/pub/linux/courier-imap/</ulink>.</para>
+  </section>
+
+  <section id="smap">
+    <title>SMAP</title>
+
+    <para>The &ci; optionally implements an
+  experimental mail access protocol, dubbed "Simple Mail Access
+  Protocol". SMAP is an experiment to provide enhanced mail
+  processing beyond what's currently possible with &imap;.</para>
+
+  <para>SMAP is <emphasis>disabled by default</emphasis>,
+and must be explicitly
+  enabled in the configuration file. SMAP's purpose is to prototype
+  and develop advanced mail access functionality that's not
+  possible with &imap;. Specifically:</para>
+
+  <itemizedlist>
+    <listitem><simpara>SMAP requires approximately 25% less bandwidth than &imap; to
+    download large MIME attachments through low-bandwidth links.
+    SMAP servers unwrap base64-encoded MIME attachments and send
+    the raw, binary content to the client, eliminating the 25%
+    base64 penalty. A similar optimization is also defined by an
+    unofficial &imap; extension, but it is also a fairly new
+    extension, and does not have wide client/server support.</simpara></listitem>
+
+    <listitem><simpara>SMAP allows a single transaction to save a new message in
+    the "Sent" folder, and mail it to its designated recipients.
+    &imap; clients need to transmit the message a second time, using
+    SMTP, requiring twice as much bandwidth and time as SMAP to do
+    the same thing.</simpara></listitem>
+
+    <listitem><simpara>SMAP folder names use the full UTF-8 character set; unlike
+    &imap; no restrictions are placed on which characters may be
+    included in folder names.</simpara></listitem>
+
+    <listitem><simpara>SMAP implements both the "mark/expunge" paradigm as &imap;,
+    and a simpler "delete" process.</simpara></listitem>
+
+    <listitem><simpara>An SMAP client does not need to download the entire index
+    of folder's contents when reopening a previously seen folder.
+    When reopening a folder, the client receives a much shorter
+    list of changes to the folder's contents since the last time
+    the client had the folder opened. This is done by the client
+    and server saving an index of folder's contents. After
+    reopening the folder the server only needs to send a list of
+    changes between the saved folder index, and the current folder
+    index.</simpara></listitem>
+
+    <listitem><simpara>Additional internationalization features are included in
+    the design (but not yet used by the Courier
+    implementation).</simpara></listitem>
+  </itemizedlist>
+
+    <para>SMAP is disabled by default. Uncomment the
+  <literal>SMAP_CAPABILITY</literal> setting in the <filename>imapd</filename>
+  configuration file in order to enable SMAP. The <ulink url="http://www.courier-mta.org/cone/index.html">Cone</ulink> mail client supports SMAP.</para>
+  </section>
+</book>
+

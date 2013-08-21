@@ -1,0 +1,93 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-checknewmail">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::checkNewMail</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::checkNewMail</refname>
+      <refpurpose>Check for new mail in the current folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>checkNewMail</function></funcdef>
+	  <void />
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This method returns an indication whether the current open folder was changed.
+The name is slightly misleading;
+<function>mail::ACCOUNT::checkNewMail</function> also indicates whether
+messages have been removed from the folder, and whether the status of any
+message has changed.</para>
+
+      <para>
+Most mail servers allow multiple applications to use the same folder.
+Therefore, changes to the folder's contents may occur at any time.
+This method should be used prior to starting any operation that intends to
+use an existing message.
+If
+<function>mail::ACCOUNT::checkNewMail</function> returns true, the application
+should then use
+<link linkend="account-getfolderindexsize"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexSize</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> and
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> to read the
+current folder index, and compare the current list of message UIDs against
+the previously obtained list in order to determine which messages were
+added or removed from the folder.</para>
+
+    </refsect1>
+
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+This function returns <literal>true</literal> if there were any changes
+to the folder's contents after the folder was opened, or since the previous
+call to <function>mail::ACCOUNT::checkNewMail</function>.</para>
+
+      <note>
+	<para>
+Calling
+<link linkend="account-updatefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::updateFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-updatefolderindexflags"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::updateFolderIndexFlags</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>, and all other
+methods that modify the contents of the current folder will usually result
+in the next
+call to <function>mail::ACCOUNT::checkNewMail</function> returning
+<literal>true</literal>.</para>
+</note>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="account-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

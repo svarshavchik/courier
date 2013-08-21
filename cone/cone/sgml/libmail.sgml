@@ -1,0 +1,452 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<part id="libmail">
+  <title>&libname; reference </title>
+
+  <partintro>
+    <para>
+&libname; is a C++ E-mail access library, which
+provides a high-level API for accessing E-mail messages
+stored on POP3 and IMAP servers, or
+in local mail folders; and for sending
+mail via ESMTP, or the local <command>sendmail</command> command.
+&libname; also serves as a platform for development
+of a new experimental network mail access protocol,
+<link linkend="smap1">SMAP</link>, that offers additional
+capabilities not available in IMAP and POP3.</para>
+
+    <para>
+If available, SSL/TLS is used automatically (when it is supported by the
+remote server); as such, applications must also link to
+either GnuTLS or OpenSSL libraries (depending on what &libname; was compiled
+against) in
+addition to linking with <filename>libmail.a</filename>.</para>
+
+    <para>
+&libname; is currently in active development.
+Right now the primary development focus is on the Linux platform and the
+gcc compiler.
+&libname; will probably build on other POSIX
+platforms; any errors are likely to be minor, and trivial to resolve.
+A large portion of
+&libname;'s code base is imported from a related
+project that is known to be stable on all modern operating systems.</para>
+
+    <para>
+At this time, &libname; is built as part of the
+<link linkend="cone00index">&app;</link> mail client, which has some
+additional dependencies, namely: curses,
+<ulink url="http://xmlsoft.org">libxml2</ulink>, and
+<ulink url="http://www.openssl.org">OpenSSL</ulink> or
+<ulink url="http://www.gnutls.org">GnuTLS</ulink>.
+&libname; itself only needs OpenSSL or GnuTLS, but for now
+the only way to build &libname; is by building
+&app; with the <literal>--with-devel</literal> option.</para>
+  </partintro>
+
+  <chapter id="cppnamespace">
+    <title>C/C++ namespace</title>
+
+    <para>
+&libname; is partially based on libraries used
+in implementing the
+<ulink url="http://www.courier-mta.org">Courier mail server</ulink>.
+As such, the library contains both C and C++ code; although the
+published
+API consists of C++ objects only.
+&libname; uses C++ objects declared in the
+<literal>mail</literal> namespace.
+Applications that use
+&libname;
+should refrain from declaring any objects in the
+<literal>mail</literal> namespace.
+At this time, applications should also refrain from declaring any C functions
+whose name begin with the following prefixes (these prefixes are reserved
+at this time):</para>
+
+    <itemizedlist>
+      <listitem><simpara>base64</simpara></listitem>
+
+      <listitem><simpara>hmac</simpara></listitem>
+
+      <listitem><simpara>libmail</simpara></listitem>
+
+      <listitem><simpara>ll_</simpara></listitem>
+
+      <listitem><simpara>maildir</simpara></listitem>
+
+      <listitem><simpara>md5</simpara></listitem>
+
+      <listitem><simpara>rfc2045</simpara></listitem>
+
+      <listitem><simpara>rfc2047</simpara></listitem>
+
+      <listitem><simpara>rfc2231</simpara></listitem>
+
+      <listitem><simpara>rfc2646</simpara></listitem>
+
+      <listitem><simpara>rfc822</simpara></listitem>
+
+      <listitem><simpara>sha1</simpara></listitem>
+
+      <listitem><simpara>tls</simpara></listitem>
+
+      <listitem><simpara>unicode</simpara></listitem>
+
+    </itemizedlist>
+
+  </chapter>
+
+  <chapter id="libmailapi">
+    <title>&libname; APIs</title>
+    <para>
+The
+&libname; library provides two
+alternative interfaces: called the
+<quote>native</quote> and the
+<quote>synchronous</quote> interfaces
+(API).
+The native API is based on two
+fundamental objects:
+<structname>mail::account</structname> - an
+<quote>account</quote>; and
+<structname>mail::folder</structname> - a
+<quote>folder</quote>.
+The syncronous API uses
+<structname>mail::ACCOUNT</structname> objects instead of
+<structname>mail::account</structname> objects; the synchronous API also
+uses
+<structname>mail::folder</structname> objects, but they are used in a different
+manner: instead of invoking
+<structname>mail::folder</structname>'s methods, the synchronous API provides
+additional
+<structname>mail::ACCOUNT</structname> methods that take a
+<structname>mail::folder</structname> object as an
+additional parameter.</para>
+
+    <para>
+Both APIs fulfill the same function, but
+use fundamentally different approaches.
+The synchronous, <structname>mail::ACCOUNT</structname>-based API, is a
+traditional, function-oriented interface: each function completes its given
+task, and returns.
+The native, <structname>mail::account</structname>-based API uses an
+event-driven paradigm.
+<structname>mail::account</structname> (and
+<structname>mail::folder</structname>)
+methods receive a
+<structname>mail::callback</structname> object, or one of its subclasses,
+as an extra parameter.
+The methods always return immediately, without waiting for the
+requested operation to complete.
+The
+<structname>mail::callback</structname> object has two methods:
+<function>success</function> and <function>fail</function>.
+One of these methods will be invoked when the original
+task is completed.</para>
+
+    <note>
+      <para>
+In some cases it's possible that the requested task can be completed
+immediately, but this mechanism is still used:
+the callback method will be invoked before
+the original method returns to the application, instead of afterwards.</para>
+    </note>
+
+    <para>
+The native API is designed for interactive, event-driven
+applications.
+The application's main event loop should
+invoke the
+<link linkend="mail-process"><citerefentry>
+	  <refentrytitle>mail::account::process</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link> method.
+This method checks all pending requests, and invokes the completed requests'
+callback methods.</para>
+
+    <para>
+The native API is not convenient for
+single-purpose command line based mail processing tools .
+That's the purpose of the alternative
+<structname>mail::ACCOUNT</structname>-based API.
+The
+<structname>mail::ACCOUNT</structname> synchronous
+API is designed specifically for single-purpose command line tools.
+It should NOT be used by interactive, event-driven applications.
+This is because open mail accounts usually require some sort of periodic,
+regularly-scheduled processing (such as checking for new mail).
+This processing is automatically handled by
+<link linkend="mail-process"><citerefentry>
+	  <refentrytitle>mail::account::process</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>.
+An interactive application that uses the synchronous API will exhibit
+random failures because it will be
+regularly disconnected from mail servers, for inactivity, when no mail
+processing occurs for a significant period of time.</para>
+
+    <note>
+      <para>
+The synchronous API is really nothing more than
+a small wrapper around the native API.
+<structname>mail::ACCOUNT</structname> methods closely parallel their
+equivalent
+<structname>mail::account</structname>-based methods.
+A given
+<structname>mail::ACCOUNT</structname> method is implemented by
+creating a callback object, invoking the corresponding
+<structname>mail::account</structname> (or
+<structname>mail::folder</structname>) method, then repeatedly calling
+<link linkend="mail-process"><citerefentry>
+	  <refentrytitle>mail::account::process</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>, until
+the callback object is invoked.</para>
+    </note>
+  </chapter>
+
+  <reference label="A" id="synchronous">
+    <refmeta>
+      <refmiscinfo class='software'>
+	<productname>leaf</productname>
+      </refmiscinfo>
+
+      <refmiscinfo class='manual'>
+	<productname>leaf</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <title><structname>mail::ACCOUNT</structname> Synchronous API reference</title>
+    <partintro>
+      <para>
+A <structname>mail::ACCOUNT</structname> object represents a "mail account".
+An account is
+a collection of folders (<structname>mail::folder</structname> objects).
+The folders are arranged in a hierarchy, top to bottom.
+A folder must be "opened", before messages in the folder can be read.
+One folder, per account, can be opened at a time.
+Opening another folder closes the previous folder.
+<structname>mail::ACCOUNT</structname> objects contain methods for
+enumerating and navigating the <structname>mail::folder</structname> objects,
+and for accessing messages in the currently-open folder.</para>
+
+    </partintro>
+    &account-libmail-addmessage;
+    &account-checknewmail;
+    &account-copymessagesto;
+    &account-createfolder;
+    &account-deletefolder;
+    &account-delrights;
+    &account-getfolderindexinfo;
+    &account-getfolderindexsize;
+    &account-getfolderfrompath;
+    &account-getfolderfromstring;
+    &account-getfolderkeywordinfo;
+    &account-getmessagecontent;
+    &account-getmessagecontentdecoded;
+    &account-getmessageenvelope;
+    &account-getmessagestructure;
+    &account-getmyrights;
+    &account-getparentfolder;
+    &account-getrights;
+    &account-getsubfolders;
+    &account-gettoplevelfolders;
+    &account-login;
+    &account-logout;
+    &account-movemessagesto;
+    &account-openfolder;
+    &account-readfolderinfo;
+    &account-removemessages;
+    &account-renamefolder;
+    &account-savefolderindexinfo;
+    &account-searchmessages;
+    &account-send;
+    &account-setrights;
+    &account-translatepath;
+    &account-updatefolderindexflags;
+    &account-updatefolderindexinfo;
+    &account-updatekeywords;
+  </reference>
+
+  <reference label="B" id="native">
+    <title><structname>mail::account</structname> Native API reference</title>
+    <partintro>
+      <para>
+A <structname>mail::account</structname> object represents a "mail account".
+An account is
+a collection of folders (<structname>mail::folder</structname> objects).
+The folders are arranged in a hierarchy, top to bottom.
+A folder must be "opened", before messages in the folder can be read.
+One folder, per account, can be opened at a time.
+Opening another folder closes the previous folder.
+<structname>mail::account</structname> objects contain methods for
+enumerating and navigating the <structname>mail::folder</structname> objects,
+and for accessing messages in the currently-open folder.</para>
+
+      <para>
+Most of the following <structname>mail::account</structname> methods are
+asynchronous.
+They do not wait for the requested action to complete.
+They accept a <structname>mail::callback</structname>, or one of its
+subclasses, as an argument.
+A completed request results in invoking either the
+<function>success</function> or the <function>fail</function> method of
+the <structname>mail::callback</structname> object.
+The <structname>mail::account</structname> methods return immediately even
+if the request cannot be completed immediately.
+The <link linkend="mail-process"><citerefentry>
+	    <refentrytitle>mail::account::process</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> method handles
+outstanding requests, and it will invoke the
+<function>success</function> or the <function>fail</function> method when
+the request is finally completed.</para>
+  </partintro>
+
+    &mail-checknewmail;
+    &mail-copymessages;
+    &mail-findfolder;
+    &mail-folderfromstring;
+    &mail-getfolderindexinfo;
+    &mail-getfolderindexsize;
+    &mail-getfolderkeywordinfo;
+    &mail-getsendfolder;
+    &mail-hascapability;
+    &mail-isremoteurl;
+    &mail-logout;
+    &mail-movemessages;
+    &mail-open;
+    &mail-poll;
+    &mail-process;
+    &mail-readmsgattr;
+    &mail-readmsgcontent;
+    &mail-readmsgcontentdecoded;
+    &mail-readtoplevel;
+    &mail-removemessages;
+    &mail-resume;
+    &mail-savefolderindexinfo;
+    &mail-searchmessages;
+    &mail-translatepath;
+    &mail-updatefolderindexflags;
+    &mail-updatefolderindexinfo;
+    &mail-updatekeywords;
+    &mail-updatenotify;
+  </reference>
+
+  <reference label="C" id="libmail-misc">
+    <title>Miscellaneous functions</title>
+    <partintro>
+      <para>
+The following miscellaneous functions are defined in the
+<structname>mail</structname> namespace.</para>
+    </partintro>
+    &mail-homedir;
+    &mail-hostname;
+    &mail-loginurlencode;
+    &mail-loginurldecode;
+    &mail-setappcharset;
+    &mail-upper;
+  </reference>
+
+  <reference label="D" id="libmail-folder">
+    <title><structname>mail::folder</structname> Native API reference</title>
+    <partintro>
+      <para>
+A <structname>mail::folder</structname> object represents
+a folder that contains messages and/or other folders.
+The folders are arranged in a top-to-bottom hierarchy.
+<link linkend="mail-readtoplevel"><citerefentry>
+	    <refentrytitle>mail::account::readTopLevelFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+enumerates <structname>mail::folder</structname> objects at the top of the
+folder hierarchy.
+<link linkend="folder-readsubfolders"><citerefentry>
+	    <refentrytitle>mail::folder::readSubFolders</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+enumerates each <structname>mail::folder</structname> object's
+subfolders.</para>
+
+      <para>
+Like <structname>mail::account</structname>'s methods,
+<structname>mail::folder</structname>'s methods receive a
+<structname>mail::callback</structname> object, and invoke its
+<function>success</function> or <function>fail</function> method when the
+request is processed.
+<structname>mail::folder</structname>'s methods return immediately, even
+if the request cannot be processed right away, and the
+<link linkend="mail-process"><citerefentry>
+	    <refentrytitle>mail::account::process</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> method will
+invoke
+<function>success</function> or <function>fail</function> method at some
+later point in time.</para>
+    </partintro>
+
+    &folder-libmail-addmessage;
+    &folder-clone;
+    &folder-create;
+    &folder-createsubfolder;
+    &folder-delrights;
+    &folder-destroy;
+    &folder-getmyrights;
+    &folder-getname;
+    &folder-getparentfolder;
+    &folder-getpath;
+    &folder-getrights;
+    &folder-hasmessages;
+    &folder-hassubfolders;
+    &folder-isparentof;
+    &folder-open;
+    &folder-readfolderinfo;
+    &folder-readsubfolders;
+    &folder-renamefolder;
+    &folder-setrights;
+    &folder-tostring;
+  </reference>
+
+    <reference label="E" id="mail-headers">
+      <title>Creating headers</title>
+      <partintro>
+	<para>
+The <structname>mail::Header</structname> family of classes provide a
+convenient way for creating E-mail headers.
+The usual approach is to instantiate a
+<link linkend="header-list"><citerefentry>
+	    <refentrytitle>mail::Header::list</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> object, then
+use the <quote>&lt;&lt;</quote> operator repeatedly with any combination of
+<link linkend="header-addresslist"><citerefentry>
+	    <refentrytitle>mail::Header::addresslist</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-encoded"><citerefentry>
+	    <refentrytitle>mail::Header::encoded</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="header-mime"><citerefentry>
+	    <refentrytitle>mail::Header::mime</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> and
+<link linkend="header-plain"><citerefentry>
+	    <refentrytitle>mail::Header::plain</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> objects, which
+format different kinds of E-mail headers.
+Finally,
+<link linkend="header-list"><citerefentry>
+	    <refentrytitle>mail::Header::list</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+<literal>std::string</literal> converts the headers to text, and returns
+a single string containing nicely-formatted headers.</para>
+      </partintro>
+      &header-addresslist;
+      &header-encoded;
+      &header-list;
+      &header-mime;
+      &header-plain;
+    </reference>
+  <reference label="X" id="misc">
+    <title>Extra/Miscellaneous objects/methods</title>
+
+      &libmail-address;
+      &libmail-attachments;
+      &libmail-emailaddress;
+      &libmail-envelope;
+      &libmail-mimestruct;
+  </reference>
+
+</part>

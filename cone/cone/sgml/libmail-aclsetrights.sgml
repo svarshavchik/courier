@@ -1,0 +1,16 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+    <para>
+This function
+changes <parameter>folder</parameter>'s access control list entry for
+<replaceable>identifier</replaceable>.
+Any existing access rights for <replaceable>identifier</replaceable>
+are replaced by <replaceable>rights</replaceable>.
+If the access control list does not have an entry
+for <replaceable>identifier</replaceable>, one is created.
+With some servers, setting <replaceable>identifier</replaceable>'s rights
+to an empty string automatically removes <replaceable>identifier</replaceable>
+from the access control list.</para>
+
+

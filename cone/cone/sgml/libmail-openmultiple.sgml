@@ -1,0 +1,53 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <note>
+	<para>
+Different <structname>mail::account</structname>
+or <structname>mail::ACCOUNT</structname>
+objects may each
+have a folder opened, at the same time.
+It is possible to create multiple <structname>mail::account</structname>
+or <structname>mail::ACCOUNT</structname>
+objects that refer to the same actual mail account.
+Whether it is possible to access the same account multiple times,
+using different objects, and whether
+each object may have the same folder opened depends on the account type
+and/or the remote server.</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+Whether it's possible to open the same remote IMAP or POP3 account
+more than once depends on the remote IMAP/POP3 server.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+Whether it's possible to open the same folder on a remote IMAP server account
+more than once depends on the remote IMAP/POP3 server.
+Most IMAP servers allow the same account to be opened more than once, as
+long as the different login sessions do not try to open the same folder.
+Some IMAP servers allow the same folder to be opened simultaneously by
+multiple sessions.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+It is generally possible to open the same local mail folder simultaneously,
+via multiple <structname>mail::account</structname> objects, as long as
+only one pending request is issued at a time.
+Concurrent access to local maildirs generally works well, however simultaneous
+access to
+the same mbox folder may be rather slow, due to the overhead of locking
+and rescanning of the folder by each <structname>mail::account</structname>
+object.</para>
+	  </listitem>
+	</itemizedlist>
+      </note>
+
+      <para>
+Any previously-opened folder is closed before the an attempt to open this
+folder is made.
+If the new folder cannot be opened, the previous folder is still considered
+closed.</para>

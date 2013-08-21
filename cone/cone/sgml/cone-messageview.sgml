@@ -1,0 +1,260 @@
+<!-- Copyright 2002-2005 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<chapter id="cone03messageview">
+  <title>Message View Screen</title>
+
+  <para>
+Highlighting a message in the folder index screen and pressing
+<keycap>ENTER</keycap> displays the contents of the message.
+Cursor up/down keys, <keycap>PgUp</keycap> and <keycap>PgDn</keycap> scroll
+the message vertically.</para>
+
+  <section>
+    <title>Message View Screen</title>
+
+    <programlisting>
+::B::
+ INBOX: 30 of 42  (NEW)               CONE                                   0%
+       From: customer_service@domain.com
+         To: jack@example.com
+    Subject: bw1234567
+ Message-ID: &lt;1234567.1043529357882.JavaMail.cservice@entp.domain.com&gt;
+       Date: Sat, 25 Jan 2003 16:15:57 -0500
+----------------------------------------------------------------------------
+As a valued customer, your needs are always our first priority. Thank you 
+for contacting Domain.com regarding our customer communication efforts. We
+have processed your request to remove you from future communications. Please
+note that this may take up to 45 days to complete.
+
+Please understand that not all advertisements appearing on or delivered to
+your e-mail address, mobile phone, or device are authorized by Domain.com.
+You may resume the receipt of solicitations at anytime by visiting our Web
+site using the links provided above.
+
+For Domain.com customers:
+For Consumer Accounts, go to domain.com/privacy/consumer_opt.jhtml
+For Business Accounts, go to domain.com/privacy/business_opt.jhtml
+::B::
+
+ / Search        D Delete        H Full Hdrs     L Folder List   N Next
+ B Blind Fwd     F Fwd           I Index         M Main Menu    ^O mOre
+</programlisting>
+
+    <para>
+The following keys are available from this screen:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><keycap>|</keycap></term>
+	  <listitem>
+	    <para>
+This option is usually used as a rough mechanism for printing a message.
+It runs an external command, and supplies the formatted version of the message
+to the external command, as standard input.
+Pressing <keycap>|</keycap> prompts for the command to invoke, which
+defaults to <quote>lpr</quote>.
+The command is started, and the formatted version of the currently displayed
+message is provided to the external command on standard input.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><keycap>/</keycap></term>
+	  <listitem>
+	    <para>
+This option
+Prompts for search text, then searches the currently shown message for
+the first occurence of the entered text.
+The search begins starting with the first line shown on the screen.
+To search the entire message, make sure that the beginning of the message
+is shown on the screen.</para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term><keycap>B</keycap></term>
+	<listitem>
+	  &cone-blindfwd;
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term><keycap>S</keycap></term>
+	  <listitem>
+	    <para>
+Save the message's contents into a file.
+Pressing <keycap>S</keycap> prompts for a filename where
+the message's raw, unformatted contents are saved.</para>
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term><keycap>D</keycap></term>
+	<listitem>
+	  <para>
+Mark this message as deleted, then advance to the next message in the
+folder.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>F</keycap></term>
+	<listitem>
+	  &cone-fwd;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>F<replaceable>n</replaceable></keycap></term>
+
+	<listitem>
+	  <para>
+	    Run the external command that's assigned to this function key.
+	    The external command receives a copy of the shown message on
+	    its standard input. An external command must be previously assigned
+	    to this function key on the
+	    <link linkend="cone02folderindex">Folder Index</link> screen, where
+	    this is described in greater detail, in the
+	    <link linkend="coneextcmd"><quote>External commands</quote></link>
+	    section.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>H</keycap></term>
+	<listitem>
+	  <para>
+Toggle between displaying abbreviated mail headers, and all mail
+headers.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>I</keycap> or <keycap>&lt;</keycap></term>
+	<listitem>
+	  <para>
+Return to the folder index screen.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>L</keycap></term>
+	<listitem>
+	  &cone-list;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>M</keycap></term>
+	<listitem>
+	  &cone-mainmenu;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>N</keycap></term>
+	<listitem>
+	  <para>
+Advance to the next message in the folder.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>P</keycap></term>
+	<listitem>
+	  <para>
+Advance to the previous message in the folder.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>R</keycap></term>
+	<listitem>
+	  &cone-reply;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>SPACE</keycap></term>
+	<listitem>
+	  <para>
+Show the next page, like <keycap>PgDn</keycap>.
+If the last page is already shown,
+advance to the next unread message in the folder.</para>
+	</listitem>
+      </varlistentry>
+
+	<varlistentry>
+	  <term><keycap>Enter</keycap></term>
+	  <listitem>
+	    <para>
+When &app; displays an <acronym>HTML</acronym> message with external links,
+and one or more links are visible, the cursor is turned on and placed on the
+first shown link.
+Cursor up/down keys advances the cursor to the previos/next
+<acronym>HTML</acronym> link, and
+<keycap>Enter</keycap> activates the link.</para>
+
+	    <note>
+	      <para>
+&app; knows how process <quote>mailto:</quote>,
+<quote>http:</quote>, and
+<quote>https:</quote> <acronym>URL</acronym>s.
+See the
+<link linkend="cone"><citerefentry><refentrytitle>cone</refentrytitle>
+          <manvolnum>1</manvolnum></citerefentry></link>
+manual page for more information.</para>
+	    </note>
+
+	    <para>
+&app; also tries to detect links in plain, non-HTML, mail.
+&app;'s ability to correctly detect the start and the end of a link may not
+work 100% of the time with non-HTML mail.</para>
+
+	    <note>
+	      <para>
+Many mailing lists add links to various administrative functions
+(such as unsubscribing or searching the list's archives) to
+the headers of the mailing list's messages.
+Press <keycap>H</keycap> to display full message headers and access those
+links.</para>
+	    </note>
+
+	  </listitem>
+	</varlistentry>
+
+      <varlistentry>
+	<term><keycap>T</keycap></term>
+	<listitem>
+	  <para>
+This options shows a list of E-mail addresses from the message, and
+offers a quick option to add the addresses to the addressbook.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>U</keycap></term>
+	<listitem>
+	  <para>
+Remove the deleted mark from this message,
+then advance to the next message in the folder.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>V</keycap></term>
+	<listitem>
+	  &cone-viewatt;
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><keycap>W</keycap></term>
+	<listitem>
+	  &cone-write;
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+</chapter>

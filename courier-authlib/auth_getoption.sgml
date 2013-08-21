@@ -1,0 +1,97 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-getoption">
+
+  <refmeta>
+    <refentrytitle>auth_getoption</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_getoption</refname>
+    <refpurpose>Search an option string</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>char *value=<function>auth_getoption</function></funcdef>
+	<paramdef>const char *<parameter>options</parameter></paramdef>
+	<paramdef>const char *<parameter>keyword</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+This is a convenience function for parsing account options, as received
+by the callback function invoked by
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+and
+<ulink url="auth_passwd.html"><citerefentry><refentrytitle>auth_passwd</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+    <para>
+<parameter>options</parameter> is the
+<structfield>options</structfield> field from
+<structname>authinfo</structname> (which can be <literal>NULL</literal>).
+As described in
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
+(and the others), it is a comma-separated list of
+<quote><replaceable>keyword</replaceable>=<replaceable>value</replaceable></quote>
+pairs.</para>
+
+    <para>
+<function>auth_getoption</function> searches
+<parameter>options</parameter> for a
+<parameter>keyword</parameter>.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURNS</title>
+
+    <para>
+If
+<parameter>options</parameter> does not have the
+<parameter>keyword</parameter>,
+<function>auth_getoption</function> returns <literal>NULL</literal> with
+<varname>errno</varname> set to <literal>ENOENT</literal>.
+Otherwise
+<function>auth_getoption</function> allocates a buffer for
+<replaceable>value</replaceable>, and returns it.
+It is the caller's responsibility to
+<citerefentry><refentrytitle>free</refentrytitle><manvolnum>3</manvolnum></citerefentry>
+the returned buffer.</para>
+    <para>
+<function>auth_getoption</function> returns <literal>NULL</literal> with
+<varname>errno</varname> set to <literal>ENOMEM</literal> if it cannot
+allocate a buffer.</para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
+

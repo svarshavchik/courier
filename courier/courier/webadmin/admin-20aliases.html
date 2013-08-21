@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <meta name="Author" content="Sam Varshavchik" />
+  <title>@PACKAGE@ @VERSION@ - Aliases, role accounts, forwarding, and
+  virtual domain accounts</title>
+  <!--
+
+  [#ALIASNAME=Alias#]
+  [#RECIP=Recipient(s)#]
+  [#REMOVERECIP=- remove#]
+  [#ADDRECIP=Add recipient:#]
+  [#SAVE=Save#]
+
+  [#BADCHARS=<p><font style="color: #ff0000" size="+1">ERROR: Invalid character in E-mail name/address/domain</font></p>#]
+  [#DUPEALIAS=<p><span style="color: #ff0000">Duplicate address not added</span></p>#]
+
+  [#VDOMAIN=Virtual domain#]
+  [#VACCOUNT=Local mail account#]
+
+  [#VCATCHALL=Forward all local addresses in this domain to this account#]
+  [#VNOCATCHALL=Owner of this account controls mail delivery by creating <tt>.courier</tt> files (system accounts only).#]
+  [#VSAVE=Save#]
+
+  [#VLOCALERR=<p><font style="color: #ff0000" size="+1">ERROR: This domain is already set up as a local or a locally-hosted domain.  You must remove this domain from the <a href="00machine">local domain setup</a> screen before configuring it as a virtual domain</font></p>#]
+  [#VREMOVE=- remove#]
+
+  [#___#]
+  -->
+</head>
+
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#0000ee"
+alink="#ff0000">
+ <!-- Copyright 2001 Double Precision, Inc.  See COPYING for -->
+ <!-- distribution information. -->
+
+
+
+<h1><tt>@PACKAGE@ @VERSION@</tt> - Aliases, role accounts, forwarding, and
+virtual domain accounts</h1>
+@ERROR@
+
+<h2>Aliases</h2>
+
+<p>Mail to the following aliases/role accounts will be forward to the
+following recipients</p>
+@ALIASLIST@
+
+<form method="post" action="20aliases">
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td align="right">Create new alias:</td>
+        <td><tt><input type="text" size="20" name="alias" /></tt></td>
+      </tr>
+      <tr>
+        <td align="right">Recipient:</td>
+        <td><tt><input type="text" size="20" name="addr" /></tt></td>
+      </tr>
+      <tr>
+        <td> </td>
+        <td>
+          <input type="submit" value="Save" name="AddAlias" /></td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+<hr>
+
+<h2>Virtual domain accounts</h2>
+
+<p>This option delivers all mail for a non-local domain into a local mail
+account.</p>
+@VALIASLIST@
+
+<h3>Set up new virtual domain account:</h3>
+
+<form method="post" action="20aliases">
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td align="right">Domain:</td>
+        <td><tt><input type="text" size="20" name="vdomain" /></tt></td>
+      </tr>
+      <tr>
+        <td align="right">Account:</td>
+        <td><tt><input type="text" size="20" name="vaccount" /></tt></td>
+      </tr>
+      <tr>
+        <td> </td>
+        <td>
+          <input type="submit" value="Save" name="vadd" /></td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+<hr />
+
+<p><a href="@MAINMENU@">Main Menu</a></p>
+</body>
+</html>

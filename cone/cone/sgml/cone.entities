@@ -1,0 +1,31 @@
+<!ENTITY app "<application>Cone</application>">
+<!ENTITY cone-write SYSTEM "cone-write.sgml">
+<!ENTITY cone-blindfwd SYSTEM "cone-blindfwd.sgml">
+<!ENTITY cone-fwd SYSTEM "cone-fwd.sgml">
+<!ENTITY cone-list SYSTEM "cone-list.sgml">
+<!ENTITY cone-localmail SYSTEM "cone-localmail.sgml">
+<!ENTITY cone-search SYSTEM "cone-search.sgml">
+<!ENTITY cone-setup SYSTEM "cone-setup.sgml">
+<!ENTITY cone-stop SYSTEM "cone-stop.sgml">
+
+<!ENTITY cone-index SYSTEM "index.sgml">
+<!ENTITY cone-folderlist SYSTEM "cone-folderlist.sgml">
+<!ENTITY cone-folderindex SYSTEM "cone-folderindex.sgml">
+<!ENTITY cone-messageview SYSTEM "cone-messageview.sgml">
+<!ENTITY cone-writemessage SYSTEM "cone-writemessage.sgml">
+<!ENTITY cone-reply SYSTEM "cone-reply.sgml">
+<!ENTITY cone-mainmenu SYSTEM "cone-mainmenu.sgml">
+<!ENTITY cone-viewatt SYSTEM "cone-viewatt.sgml">
+<!ENTITY cone-newaccount SYSTEM "cone-newaccount.sgml">
+<!ENTITY cone-remoteconfig SYSTEM "cone-remoteconfig.sgml">
+<!ENTITY cone-gpg SYSTEM "cone-gpg.sgml">
+<!ENTITY cone-masterpassword SYSTEM "cone-masterpassword.sgml">
+<!ENTITY cone-certificates SYSTEM "cone-certificates.sgml">
+<!ENTITY cone-encryption SYSTEM "cone-encryption.sgml">
+<!ENTITY cone-filters SYSTEM "cone-filters.sgml">
+<!ENTITY cone-addressbook SYSTEM "cone-addressbook.sgml">
+<!ENTITY cone-ldapaddressbook SYSTEM "cone-ldapaddressbook.sgml">
+
+<!ENTITY coneman SYSTEM "coneman.sgml">
+<!ENTITY leafman SYSTEM "leafman.sgml">
+<!ENTITY mailtoolman SYSTEM "mailtoolman.sgml">

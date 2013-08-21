@@ -1,0 +1,64 @@
+<!-- Copyright 2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getfolderkeywordinfo">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getFolderKeywordInfo</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getFolderKeywordInfo</refname>
+      <refpurpose>Return message keywords</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+
+mail::ACCOUNT *mail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>bool ok=mail-&gt;<function>getFolderKeywordInfo</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	  <paramdef>std::set&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<function>mail::ACCOUNT::getFolderKeywordInfo</function>
+retrieves the current keywords for message
+#<parameter>messagenum</parameter> and
+places them into <parameter>keywords</parameter> (removing any existing
+contents).
+If the message does not have any keywords set, <parameter>keywords</parameter>
+will be an empty set.
+&libmail-amsgnum;</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+    <para>
+This function returns immediately.</para>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="account-getfolderindexsize"><citerefentry>
+            <refentrytitle>mail::ACCOUNT::getFolderIndexSize</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-getfolderindexinfo"><citerefentry>
+            <refentrytitle>mail::ACCOUNT::getFolderIndexInfo</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="account-updatekeywords"><citerefentry>
+            <refentrytitle>mail::ACCOUNT::updateKeywords</refentrytitle>
+            <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

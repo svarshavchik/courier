@@ -1,0 +1,13 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <note>
+	<para>
+This request should not be used with accounts on IMAP servers that do
+not implement the
+<ulink url="http://www.rfc-editor.org/rfc/rfc2359.txt">UIDPLUS</ulink>
+IMAP extension.
+<quote>UIDPLUS</quote> is required to directly support this functionality.
+An alternative, much slower, fallback implementation will be used with
+IMAP servers that do not implement this protocol extension.</para>
+      </note>

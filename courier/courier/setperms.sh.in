@@ -1,0 +1,53 @@
+#! @SHELL@
+#
+# Copyright 1998 - 2004 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# setperms automatically generated from setperms.in
+
+${MAKE} install-perms || exit 1
+cd ../courier
+
+./perms.sh >install-perms-list.dat || exit 1
+
+@PERL@ -e '
+
+	$root="'$1'";
+	$testmode=@testmode@;
+
+	while (<>)
+	{
+		chomp;
+		($FILE, $MODE, $USERID, $GROUPID, $SPECIAL)=split (/[ \t]+/);
+
+		next if $FILE eq "";
+		$FILE="$root$FILE";
+
+		print "chown $USERID $FILE\n";
+		print "chgrp $GROUPID $FILE\n";
+		print "chmod $MODE $FILE\n";
+
+		next if -l $FILE;
+
+		if (-w "/etc")
+		{
+			$uid=getpwnam($USERID);
+			die "$USERID: not found.\n"
+				unless defined $uid;
+
+			$gid=getgrnam($GROUPID);
+			die "$GROUPID: not found.\n"
+				unless defined $gid;
+
+			chown ($uid, $gid, $FILE) || die "chown $FILE: $!\n";
+		}
+
+		if ( $testmode == 0)
+		{
+			$MODE= oct($MODE);
+			chmod ($MODE, $FILE) || die "chmod $FILE: $!\n";
+		}
+	}
+	exit (0);
+' <install-perms-list.dat
+rm -f install-perms-list.dat

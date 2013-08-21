@@ -1,0 +1,92 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+ [
+
+<!ENTITY authcallback SYSTEM "authcallback.sgml">
+<!ENTITY optionlist SYSTEM "optionlist.sgml">
+
+]>
+
+  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-login">
+
+  <refmeta>
+    <refentrytitle>auth_login</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_login</refname>
+    <refpurpose>Validate a userid and password</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_login</function></funcdef>
+	<paramdef>const char *<parameter>service</parameter></paramdef>
+	<paramdef>const char *<parameter>userid</parameter></paramdef>
+	<paramdef>const char *<parameter>password</parameter></paramdef>
+
+	<paramdef>int <parameter>(*callback_func)</parameter><funcparams>struct authinfo *, void *</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<function>auth_login</function> verifies whether
+<replaceable>userid</replaceable> exists, and whether it's
+<replaceable>password</replaceable> is correct.
+<parameter>service</parameter> specifies which so-called "service" is
+being authenticated; like <quote>imap</quote> or <quote>pop3</quote>.
+<parameter>service</parameter> may or may not be used by the Courier
+authentication library's configured back-end module.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURNS</title>
+
+    <para>
+<function>callback_func</function> will be invoked if
+<function>auth_login</function>
+succeeds, and <function>callback_func</function>'s return value becomes
+the return value from <function>auth_login</function> (which should be 0, by convention).
+<function>callback_func</function> will not be invoked if an error occurs,
+which is reported by a non-zero return value from <function>auth_login</function>.
+By convention, a positive return value indicates an internal, temporary
+failure, such as the authentication daemon process not running; a negative
+return value indicates that this request was processed, but it failed.</para>
+
+    &authcallback;
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_passwd.html"><citerefentry><refentrytitle>auth_passwd</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getoption.html"><citerefentry><refentrytitle>auth_getoption</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
+

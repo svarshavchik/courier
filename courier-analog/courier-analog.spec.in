@@ -1,0 +1,45 @@
+#
+# Copyright 2004-2013 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+Summary: Courier log analyzer
+Name: courier-analog
+Version: @VERSION@
+Release: 1
+License: GPL
+Group: Applications/System
+URL: http://www.courier-mta.org
+Source0: %{name}-%{version}.tar.bz2
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildPreReq: perl
+BuildArch: noarch
+
+%description
+The courier-analog script generates log summaries for the Courier mail server.
+
+%prep
+%setup -q
+%configure
+
+%build
+%{__make}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/*
+%{_mandir}/*/*
+
+%doc AUTHORS ChangeLog NEWS README COPYING courier-analog.html manpage.css
+
+%changelog
+* Sun Sep  5 2004 Mr. Sam <sam@email-scan.com> - analog-1
+- Initial build.
+

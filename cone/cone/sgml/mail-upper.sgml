@@ -1,0 +1,44 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-upper">
+    <refmeta>
+      <refentrytitle>mail::upper</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::upper</refname>
+      <refpurpose>Convert text string to uppercase</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+      &libmail-includemail;
+</literallayout>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef><function>mail::upper</function></funcdef>
+	  <paramdef>std::string &amp;<parameter>word</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function replaces lowercase <literal>ISO-8859-1</literal> characters in
+<parameter>word</parameter> with their uppercase equivalents.</para>
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      <para>
+Lowercase <literal>ISO-8859-1</literal> text in
+<parameter>word</parameter> is converted to uppercase.</para>
+    </refsect1>
+  </refentry>

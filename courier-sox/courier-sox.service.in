@@ -1,0 +1,15 @@
+[Unit]
+Description=Courier SOCKS 5 proxy
+Wants=network.target
+Wants=courier-authlib.service
+After=network.target
+After=courier-authlib.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=forking
+RemainAfterExit=true
+ExecStart=@sbindir@/sockd start
+ExecStop=@sbindir@/sockd stop

@@ -1,0 +1,20 @@
+This README clarifies PAM (Pluggable Authentication Modules) support in
+SqWebMail.
+
+The configure script automatically enables PAM support if it detects
+that PAM authentication is available on your system.  Don't be fooled, you
+still need to perform some local setup in order to get PAM authentication
+working.  Specifically, you will need to define how the PAM module will
+authenticate userids and passwords for the "webmail" service.  SqWebMail
+merely requests authentications for this service, and it is up to you to
+tell your PAM library how it should handle it.
+
+The exact procedure for doing so should be found in your system administration
+manual.  For Red Hat Linux, you can simply create a file called
+/etc/pam.d/webmail, and initialize it to contain the following directives:
+
+#%PAM-1.0
+auth       required     /lib/security/pam_pwdb.so shadow nullok
+account    required     /lib/security/pam_pwdb.so
+
+If you install using the source RPM, this will be taken care of automatically.

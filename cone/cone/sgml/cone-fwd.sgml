@@ -1,0 +1,9 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+	  <para>
+Forwards the current message.
+&app; opens a screen where a new message may be written.
+The current message is either saved as an attachment to the new message, or is
+quoted in the new message's text (&app; prompts to choose one or the other before
+opening the new message screen).</para>

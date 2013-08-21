@@ -1,0 +1,218 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="cone">
+    <refmeta>
+      <refentrytitle>cone</refentrytitle>
+      <manvolnum>1</manvolnum>
+
+      <refmiscinfo class='software'>
+	<productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>cone</refname>
+      <refpurpose>Read and send E-mail messages</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <cmdsynopsis>
+	<command>cone</command>
+	<arg choice='opt'>-r</arg>
+	<arg choice='opt'>-c <replaceable>directory</replaceable></arg>
+      </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+&app; is a console newsreader and E-mail.
+It is an interactive program for reading and sending E-mail messages.
+&app; is designed to be intuitive and easy to learn.
+Starting &app; for the first time displays two links: one for the
+default system mailbox, and a second link to a quick online tutorial.
+The online tutorial provides a brief overview of using &app; for
+reading and sending E-mail.</para>
+
+      &cone-stop;
+
+      <para>
+The <option>-c</option> option names a directory where &app; saves its
+configuration files, and defaults to <filename>$HOME/.cone</filename>.
+The configuration directory will be created, if necessary.</para>
+
+      <para>
+The <option>-r</option> option recovers a backup copy of &app;'s configuration
+file.
+This option is primarily used when remote configuration is enabled, but
+the folder that contains &app;'s configuration on a remote server was deleted,
+or is not available.
+In all cases, &app; makes a daily local configuration file backup.
+The <option>-r</option> option searches for local configuration file
+backups, and offers an option to restore the backup copy.</para>
+
+      <refsect2>
+	&cone-localmail;
+      </refsect2>
+
+      <refsect2>
+	<title>Viewing MIME attachments</title>
+
+	<para>
+&app; displays text and simple HTML content by itself.
+Other kinds of attachments may be viewed by using a helper script.
+&app; invokes a helper script to open a MIME attachment.
+The helper script's name is <quote><replaceable>TYPE</replaceable>.<replaceable>SUBTYPE</replaceable>.filter</quote>,
+where <quote>TYPE</quote> and <quote>SUBTYPE</quote> corresponds to the
+MIME type and subtype, accordingly.
+&app; looks for helper scripts in
+<filename>$HOME/.cone</filename> (or the directory specified by
+<option>-c</option>) and in
+<filename>@datadir@/cone</filename>.</para>
+
+	<para>
+For example, a helper script named <quote>IMAGE.GIF.filter</quote>, if
+installed, is invoked to process <literal>image/gif</literal> MIME
+attachments.</para>
+
+	<refsect3>
+	  <title>Helper scripts</title>
+
+	  <para>
+&app; runs each helper script twice:</para>
+
+	  <informalexample>
+	    <programlisting>
+TYPE.SUBTYPE.filter check <replaceable>type/subtype</replaceable>
+</programlisting>
+	  </informalexample>
+
+	  <para>
+When the first argument is <quote>check</quote>, the helper script should
+terminate with a zero exit code if it is willing to process an attachment
+whose MIME type is specified by the second argument.
+A script or a program that's has multiple <quote>TYPE.SUBTYPE.filter</quote>
+links may use the second argument to identify the attachment's mime type.
+If the helper script is unable to process the attachment, at this time,
+it should terminate with a non-zero exit code.</para>
+
+	  <para>
+The default helper script for image attachments terminates with a non-zero
+exit code if the <envar>DISPLAY</envar> environment variable is not
+initialized.
+When invoked from an X-Windows terminal, image attachments will be
+automatically displayed; and image attachments are ignored otherwise on
+non-graphical consoles.</para>
+
+	  <informalexample>
+	    <programlisting>
+TYPE.SUBTYPE.filter filter <replaceable>type/subtype</replaceable> <replaceable>filename</replaceable>
+</programlisting>
+	  </informalexample>
+
+	  <para>
+If the helper script initially terminates with a zero exit code, it will
+be invoked again after the MIME attachment is
+downloaded and decoded.
+The first argument will be <quote>filter</quote>,
+and the attachment's filename is specified by the third argument.</para>
+
+	  <note>
+	    <para>
+This is a temporary file, whose extension will not necessary be the
+file extension associated with this MIME type.</para>
+	  </note>
+
+	  <para>
+The helper script should read and process the file specified by the third
+argument.
+&app; interprets
+anything the helper script writes to standard output as HTML.</para>
+
+	  <note>
+	    <para>
+&app; waits until the helper script terminates before displaying the rest
+of the message.
+Most helper scripts should run in the background.
+However, note that &app; removes the temporary file when the original
+message is closed; the temporary file may be removed any time after the
+helper script terminates.
+The helper script should make its own private copy of the file, if
+necessary.</para>
+	  </note>
+	</refsect3>
+      </refsect2>
+
+    <refsect2>
+      <title>Activating <acronym>URL</acronym>s</title>
+
+      <para>
+&app; has limited ability to activate <acronym>URL</acronym>s in
+<acronym>HTML</acronym> messages.
+&app; handles <quote>mailto:</quote>
+<acronym>URL</acronym>s by itself.
+For other
+<acronym>URL</acronym>s
+&app; runs <filename>@datadir@/cone/<replaceable>method</replaceable>.handler</filename>
+with the
+<acronym>URL</acronym> passed as an argument.</para>
+
+      <para>
+&app;
+installs <filename>http.handler</filename>
+(hard linked to <filename>https.handler</filename>).
+This script checks if <filename>firefox</filename> or
+<filename>mozilla</filename> binaries are found in the current
+<envar>PATH</envar>, and runs them.</para>
+
+      <note>
+	<para>
+&app; also looks
+<filename><replaceable>method</replaceable>.handler</filename> in
+<filename>$HOME/.cone</filename> (or the directory specified by
+<option>-c</option>) in addition to
+<filename>@datadir@/cone</filename>.</para>
+      </note>
+
+    </refsect2>
+    </refsect1>
+
+    <refsect1>
+      <title>FILES</title>
+
+      <variablelist>
+	<varlistentry>
+	  <term><filename>$HOME/.cone</filename></term>
+	  <listitem>
+	    <para>
+Configuration files, and other application data.
+May be modified by the <option>-c</option> option.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>
+<filename>@datadir@/cone/IMAGE.GIF.filter</filename>,
+<filename>@datadir@/cone/IMAGE.JPEG.filter</filename>,
+<filename>@datadir@/cone/IMAGE.PNG.filter</filename>,
+<filename>@datadir@/cone/APPLICATION.PDF.filter</filename></term>
+	  <listitem>
+	    <para>
+Default helper scripts distributed with &app;.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect1>
+
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mailtool"><citerefentry><refentrytitle>mailtool</refentrytitle>
+	  <manvolnum>1</manvolnum></citerefentry></link>,
+<citerefentry><refentrytitle>sendmail</refentrytitle>
+	  <manvolnum>8</manvolnum></citerefentry>.</para>
+    </refsect1>
+  </refentry>

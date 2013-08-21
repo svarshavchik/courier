@@ -1,0 +1,32 @@
+#! @SHELL@
+#
+#
+# Copyright 2003, Double Precision Inc.
+#
+# See COPYING for distribution information.
+#
+
+PHASE="$1"
+MIMETYPE="$2"     # If you need it
+
+if test "$PHASE" = "check"
+then
+    if test "$DISPLAY" = ""
+	then
+	exit 1
+    fi
+
+    if test -x @XPDF@
+	then
+	exit 0
+    fi
+    exit 1
+fi
+
+if test "$PHASE" = "filter"
+    then
+	FILENAME="$3"
+
+	( @XPDF@ "$FILENAME" & ) >/dev/null 2>&1
+	exit 0
+fi

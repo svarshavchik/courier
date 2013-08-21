@@ -1,0 +1,623 @@
+<!-- Copyright 2002-2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+<refentry id="mail-open">
+  <refmeta>
+    <refentrytitle>mail::account::open</refentrytitle>
+    <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mail::account::open</refname>
+    <refpurpose>Open a new mail account</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    &libmail-mycallback;
+    <literallayout>
+
+class myDisconnectCallback : public mail::callback::disconnect {
+public:
+    void disconnected(const char *msg);
+    void servererror(const char *msg);
+};
+
+#include &lt;libmail/logininfo.H&gt;
+
+class myPromptCallback : public mail::loginCallback {
+public:
+   void loginPrompt(mail::loginCallback::callbackType, std::string);
+};
+
+void myPromptCallback::loginPrompt(mail::loginCallback::callbackType cbType,
+                                   string prompt)
+{
+    struct termios ti, ti2;
+
+    cout &lt;&lt; prompt &lt;&lt; flush;
+
+    tcgetattr(0, &amp;ti);
+
+    ti2=ti;
+
+    if (cbType == PASSWORD)
+    {
+        ti2.c_lflag &amp;= ~ECHO;
+        tcsetattr(0, TCSAFLUSH, &amp;ti2);
+    }
+
+    std::string reply;
+
+    if (getline(cin, reply).fail())
+    {
+       callbackCancel();
+       return;
+    }
+
+    if (cbType != USERID)  // It's PASSWORD
+        tcsetattr(0, TCSAFLUSH, &amp;ti);
+
+    callback(reply);
+}
+
+mail::account::openInfo accountOpenInfo;
+myPromptCallback passwdCallback;
+
+    accountOpenInfo.url="imap://john@imap.example.com/novalidate-cert";
+    accountOpenInfo.pwd="secret";
+    accountOpenInfo.certificates.push_back(pemCertStr);
+    accountOpenInfo.extraString=""; // Used by nntp:, nntps:, pop3maildrop: and pop3maildrops:
+    accountOpenInfo.loginCallbackObj= &amp;passwdCallback;
+
+
+</literallayout>
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>mail::account *account=<function>mail::account::open</function></funcdef>
+	<paramdef><parameter>accountOpenInfo</parameter></paramdef>
+	<paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+	<paramdef>myDisconnectCallback &amp;<parameter>disconnectCallback</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>USAGE</title>
+
+    <para>
+<function>mail::account::open</function> opens a mail account on a server.
+<parameter class='function'>url</parameter> identifies the account.
+<parameter class='function'>url</parameter> should contain a text string
+that identifies one of the following types of accounts:
+
+<variablelist>
+	<varlistentry><term>imap://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+An <ulink url="http://www.rfc-editor.org/rfc/rfc3501.txt">IMAP</ulink>
+or an <link linkend="smap1">SMAP</link>
+account on <replaceable>server</replaceable>.
+The colon and <replaceable>port</replaceable> are optional; defaulting
+to the standard IMAP port 143.
+A slash, followed by a slash-separated list of
+<link linkend="mail-open-options">additional options</link> may
+follow.</para>
+	    <para>
+<replaceable>user</replaceable> identifies the account login id.
+<replaceable>user</replaceable> may contain any characters except
+<literal>/</literal>,
+<literal>@</literal>,
+<literal>%</literal>, and
+<literal>:</literal>.
+These characters may be specified by using <literal>%</literal>, followed
+by a two-digit uppercase hexadecimal ASCII code for the character.</para>
+
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>pop3://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+A POP3 account on <replaceable>server</replaceable>.
+The colon and <replaceable>port</replaceable> are optional; defaulting
+to the standard POP3 port 110.
+A slash, followed by a slash-separated list of
+<link linkend="mail-open-options">additional options</link>
+may
+follow.</para>
+	    <para>
+<replaceable>user</replaceable> identifies the account login id.
+<replaceable>user</replaceable> may contain any characters except
+<literal>/</literal>,
+<literal>@</literal>,
+<literal>%</literal>, and
+<literal>:</literal>.
+These characters may be specified by using <literal>%</literal> followed
+by a two-digit uppercase hexadecimal ASCII code for the character.</para>
+
+	    <note>
+	      <para>
+The POP3 server must support the <literal>UIDL</literal> command, which
+is implemented by all modern POP3 servers.
+Some very old POP3 servers may not support this command, in which case
+use a <literal>pop3maildrop</literal> URL instead.</para>
+	    </note>
+
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>pop3maildrop://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Like <quote>pop3</quote>, except that messages are downloaded,
+then deleted, from the POP3
+server.
+Use <quote>pop3maildrop</quote> maildrop when the remote server does not
+implement the <literal>UIDL</literal> command.</para>
+
+	    <para>
+<parameter>extraString</parameter> must be initialized to the name of a
+maildir where messages from the POP3 server will be downloaded to.
+If the maildir does not exist, it will be automatically created.</para>
+	  </listitem>
+	</varlistentry>
+
+
+	<varlistentry><term>nntp://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Access Usenet newsgroups via nntp on <replaceable>server</replaceable>.
+The colon and <replaceable>port</replaceable> are optional; defaulting
+to the standard NNTP port 119.
+A slash, followed by a slash-separated list of
+<link linkend="mail-open-options">additional options</link>
+may
+follow.</para>
+
+	    <para>
+<parameter>extraString</parameter> must be initialized to the name of a
+file where the list of subscribed newsgroups, and read articles, will be
+saved.</para>
+
+	    <note>
+	      <para>
+&libname; uses a slightly expanded version of the traditional
+<filename>.newsrc</filename> format, containing some extra header
+information.</para>
+	    </note>
+	    <para>
+<replaceable>user</replaceable>
+and <replaceable>pwd</replaceable>
+should be specified if the NNTP server requires authentication.
+Otherwise these parameters may be omitted.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>imaps://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Like "imap", but use encryption to connect to the IMAP/SMAP server, and use
+the default <literal>imaps</literal> port (usually 993).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>pop3s://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Like <quote>pop3</quote>,
+but use encryption to connect to the POP3 server, and use
+the default <literal>pop3s</literal> port (usually 995).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>pop3maildrops://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Like <quote>pop3maildrop</quote>,
+but use encryption to connect to the POP3 server, and use
+the default <literal>pop3s</literal> port (usually 995).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>nntps://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Like "nntp", but use encryption to connect to the NNTP server, and use
+the default <literal>nntps</literal> port (usually 563).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>maildir:<optional>path</optional></term>
+
+	  <listitem>
+	    <para>
+Mail in a local maildir.
+<optional>path</optional> specifies the path to the maildir-type mailbox.
+<optional>path</optional> may be a relative path, anchored at the home
+directory (NOT the process's current directory).
+<literal>"maildir:Maildir"</literal> is the usual way to open
+<filename>$HOME/Maildir</filename>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>mail:<optional>path</optional></term>
+
+	  <listitem>
+	    <para>
+Open mail in a local mailbox.
+<optional>path</optional> specifies the path to a file or a directory
+containing mbox-type mailboxes.
+<optional>path</optional> may be a relative path, anchored at the home
+directory (NOT the process's current directory).
+<optional>path</optional> may refer to a directory, in which case the
+directory's contents are read as mbox-type folders.
+<literal>"maildir:Mail"</literal> is the usual way to open mail in
+<filename>$HOME/Mail</filename>.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>inbox:<optional>path</optional></term>
+
+	  <listitem>
+	    <para>
+Open mail in a local mailbox.
+This is the same as <literal>"mail:<optional>path</optional>"</literal>,
+with the additional inclusion of the default system mailbox
+(usually in <filename>/var/spool/mail</filename>), represented by the
+special folder named
+<literal>INBOX</literal>.</para>
+
+	    <note>
+	      <para>
+The default system mailbox is implemented by creating
+<filename>$HOME/Inbox</filename>, and automatically copying all mail from
+the default system mailbox to <filename>$HOME/Inbox</filename> (which is
+represented as the <literal>INBOX</literal>).
+This is done in order to avoid having to rewrite the default system mailbox
+file "in place", due to restricted permissions on the spool directory.
+Updating the default system mailbox in place may result in corruption if
+the process is interrupted while the update is in progress.
+Copying mail from the default system mailbox to
+<filename>$HOME/Inbox</filename>
+allows safe access to new messages.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>smtp://<optional><replaceable>user</replaceable>@</optional><replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Create an account object for sending mail.
+The created <structname>mail::account</structname>'s
+<link linkend="mail-getsendfolder"><citerefentry>
+		  <refentrytitle>mail::account::getSendFolder</refentrytitle>
+		  <manvolnum>3x</manvolnum></citerefentry></link>
+method will create a special
+<structname>mail::folder</structname> object.
+Adding a message to this "folder" will E-mail this message
+via SMTP.</para>
+
+	    <para>
+The colon and <replaceable>port</replaceable> are optional; defaulting
+to the standard SMTP port 25.
+Sometimes it is useful to specify port 587, where the message submission
+protocol is available (the message submission protocol is almost identical
+to SMTP, with the most notable difference is that authentication is required).
+A slash, followed by a slash-separated list of
+<link linkend="mail-open-options">additional options</link>
+may follow.</para>
+	    <para>
+<optional>user</optional>@ is optional, and enables authenticated
+SMTP.
+<optional>user</optional> identifies the authentication id.
+<optional>user</optional> may contain any characters except
+<literal>/</literal>,
+<literal>@</literal>,
+<literal>%</literal>, and
+<literal>:</literal>.
+These characters may be specified by using <literal>%</literal> followed
+by a two-digit uppercase hexadecimal ASCII code for the character.</para>
+
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>smtps://<optional><replaceable>user</replaceable>@</optional><replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
+	  <listitem>
+	    <para>
+Like "smtp", but use encryption to connect to the SMTP server, and use
+the default <literal>smtps</literal> port (usually 465).</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry><term>sendmail://localhost</term>
+	  <listitem>
+	    <para>
+Like "smtp", but use the local <command>sendmail</command> command to send
+mail.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+</para>
+
+    <para>
+There are several alternative ways to provide a login passwords for
+<parameter class='function'>url</parameter>s that require login information.
+<parameter class='function'>pwd</parameter> should be set if the
+login password is known in advance.
+If the login password is not known,
+<parameter>loginCallbackObj</parameter> needs to be initialized
+to a non-NULL pointer.
+<parameter>loginCallbackObj</parameter> may be set to NULL
+if
+<parameter>pwd</parameter> specifies a password.</para>
+
+    <para>
+<parameter>certificates</parameter> is a vector of strings that optionally
+contain <acronym>SSL</acronym> certificates.
+The application can optionally authenticate using an
+<acronym>SSL</acronym> instead of a userid/password.
+Both the userid/password and SSL certificates may be defined. If the
+server does not accept an SSL certificate, the userid/password gets used
+as a fallback option. <acronym>SSL</acronym> certificate authentication is
+implemented for IMAP and POP3 accounts, and for SMTP accounts
+(see the USAGE section).</para>
+
+    <para>
+If defined, the each string in the <parameter>certificates</parameter>
+array contains a single string that contains a PEM-formatted SSL certificate
+and its corresponding key. The certificate string should contain
+a <quote>-----BEGIN CERTIFICATE-----</quote> section followed by
+a <quote>-----BEGIN RSA PRIVATE KEY-----</quote> or a
+<quote>-----BEGIN DH PRIVATE KEY-----</quote> section.
+If the certificate supplies an intermediate authority certificate, the
+additional <quote>-----BEGIN CERTIFICATE-----</quote> section follows the
+key.</para>
+
+    <note>
+      <para>
+Passphrase-protected keys are not supported.</para>
+    </note>
+
+    <para>
+<parameter>certificates</parameter> is a vector, and multiple certificates
+may be placed in the vector. The certificate gets selected from the
+available multiple choices based on the peer's acceptable certificate
+authorities.</para>
+
+    <note>
+      <para>
+If more than one certificate is signed by the peer's certificate authorities,
+the actual certificate gets chosen at random.</para>
+    </note>
+
+    <para>
+<parameter>loginCallbackObj</parameter>'s
+<function>loginPrompt</function> method will be invoked to obtain the
+login password, if one is needed.
+If
+<parameter class='function'>url</parameter> does not specify the login ID
+either, <function>loginPrompt</function> will be invoked twice: once to
+obtain the login ID, the second time to obtain the login password.</para>
+
+    <para>
+If <parameter>loginCallbackObj</parameter> is not NULL, the object must not
+be destroyed until the login request ultimately succeeds, or fails.</para>
+
+    <para>
+The application's implementation of the
+<parameter>loginCallbackObj</parameter>'s
+<function>loginPrompt</function> method
+obtains the account's login id or password, and
+invokes the <function>mail::loginCallback::callback</function> method.
+<function>loginPrompt</function> receives two parameters:
+<parameter>callbackType</parameter> is either <literal>USERID</literal>
+or <literal>PASSWORD</literal>,
+and it indicates whether the application needs to
+return the login id, or the password; and a suggested prompt.</para>
+
+    <para>
+<function>loginPrompt</function> can call
+<function>mail::loginCallback::callbackCancel</function> to indicate that
+the login process should be aborted.
+Note that the act of invoking
+<function>callbackCancel</function> does not officially fail the login
+request; the application is subsequently notified, in the usual manner,
+that the login request failed.</para>
+
+    <note>
+      <para>
+<function>loginPrompt</function> is invoked from within
+&libname;; as such no
+&libname; calls can be made
+(except for
+<function>mail::loginCallback::callback</function> or
+<function>mail::loginCallback::callbackCancel</function>).
+Note that all
+&libname; processing is halted
+until 
+<function>loginPrompt</function> terminates.
+If the password is already known,
+<function>loginPrompt</function> may invoke
+<function>mail::loginCallback::callback</function> immediately.
+This is also the only option with the <link linkend="synchronous">Synchronous
+API</link>, since
+<link linkend="account-login"><citerefentry>
+	    <refentrytitle>mail::ACCOUNT::login</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+does not return control to the application until the login process
+completes.</para>
+
+      <para>
+Applications that use the asynchronous
+<link linkend="native">Native API</link> have another option.
+<function>loginPrompt</function> gets invoked by
+<link linkend="mail-process"><citerefentry>
+	    <refentrytitle>mail::account::process</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+<function>loginPrompt</function> may terminate without invoking
+<function>mail::loginCallback::callback</function>.
+The application may then prompt for the requested information after
+<link linkend="mail-process"><citerefentry>
+	    <refentrytitle>mail::account::process</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link> returns,
+and invoke either 
+<function>mail::loginCallback::callback</function> or
+<function>mail::loginCallback::callbackCancel</function>, at some point
+later down the road, which will result in the eventual completion of the
+login request.
+Note that the login request may fail before the application calls
+<function>mail::loginCallback::callback</function> or
+<function>mail::loginCallback::callbackCancel</function>.
+This can occur if the server closed the login connection before the
+application supplied the login id or password.</para>
+    </note>
+
+    <refsect2 id="mail-open-options">
+      <title>Account Options</title>
+      <para>
+The following options may be appended to
+<parameter class='function'>url</parameter> for some account types.
+Multiple options may be listed in any order:
+
+<variablelist>
+	  <varlistentry><term><literal>/cram</literal></term>
+	    <listitem>
+	      &libmail-cram;
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry><term><literal>/debugio</literal></term>
+	    <listitem>
+	      <para>
+Enable a debugging option that logs all network traffic for this account
+to standard error.</para>
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><literal>/imap</literal></term>
+
+	    <listitem>
+	      &libmail-imap;
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
+	    <term><literal>/notls</literal></term>
+
+	    <listitem>
+	      &libmail-nossl;
+	    </listitem>
+	  </varlistentry>
+
+	  <varlistentry><term><literal>/novalidate-cert</literal></term>
+
+	    <listitem>
+	      &libmail-novalidatecert;
+	    </listitem>
+	  </varlistentry>
+	  &libmail-timeouts;
+
+	</variablelist>
+</para>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURN CODES AND CALLBACKS</title>
+    <para>
+<function>mail::account::open</function> allocates and returns a
+<structname>mail::account</structname> object.
+However, the mail account
+may not be fully open, and ready for business.
+Like most other functions the application must wait until the
+<parameter class='function'>callback</parameter>'s
+<function>success</function> or
+<function>fail</function> method is invoked.</para>
+
+    &libmail-waitcallback;
+
+    <para>
+<function>mail::account::open</function> returns
+a <literal>NULL</literal> pointer
+in the event of an immediate failure, in addition to invoking the
+<function>fail</function> method.
+<function>mail::account::open</function> may also invoke the
+<function>success</function> method before it returns, however in most cases
+the
+<function>success</function> method will be invoked by
+<link linkend="mail-process"><function>mail::account::process</function></link>()
+at a later time.</para>
+
+    <para>
+The application may not destroy the
+<parameter class='function'>callback</parameter> object until
+either method is invoked.</para>
+
+    <para>
+The <parameter class='function'>disconnectCallback</parameter>'s
+<function>disconnected</function> method will be invoked whenever the
+connection to the mail server terminates.
+The
+<function>disconnected</function> method
+may or may not be invoked if
+the initial connection to the server fails (applications should not
+rely on either behavior).
+The
+<function>disconnected</function> method will be invoked when the account
+is closed even for account types that do not normally use a network
+connection (such as a local mail account).</para>
+
+    <para>
+The <parameter class='function'>disconnectCallback</parameter>'s
+<function>servererror</function> method may be invoked at any time,
+whenever
+an error is reported by the server that's not directly caused by the
+currently requested mail operation, and the error is not severe enough to
+result in a disconnection from the server.
+<function>servererror</function> should display the error message in a
+highly visible manner.</para>
+
+    <para>
+Applications are responsible for destroying
+<structname>mail::account</structname>
+objects after they are no longer needed.</para>
+
+    <para>
+The <parameter class='function'>disconnectCallback</parameter> object may not
+be destroyed until after the <structname>mail::account</structname> object is
+destroyed.</para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<link linkend="mail-getsendfolder"><citerefentry>
+	  <refentrytitle>mail::account::getSendFolder</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-isremoteurl"><citerefentry>
+	  <refentrytitle>mail::account::isRemoteUrl</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-loginurlencode"><citerefentry>
+	  <refentrytitle>mail::loginUrlEncode</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-process"><citerefentry>
+	  <refentrytitle>mail::account::process</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-readtoplevel"><citerefentry>
+	  <refentrytitle>mail::account::readTopLevelFolders</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-setappcharset"><citerefentry>
+	  <refentrytitle>mail::setAppCharset</refentrytitle>
+	  <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+  </refsect1>
+</refentry>
+
+<!--
+Local variables:
+sgml-doctype: "book.sgml"
+End:
+-->

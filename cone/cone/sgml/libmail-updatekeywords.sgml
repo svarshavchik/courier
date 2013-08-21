@@ -1,0 +1,104 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+    <para>
+When <parameter>setOrChange</parameter> is <literal>false</literal>,
+<parameter>changeTo</parameter> is ignored, and any existing keywords set
+for each message in <parameter>msgList</parameter> are completely replaced by
+<parameter>keywords</parameter>.
+When <parameter>setOrChange</parameter> is <literal>true</literal>
+<parameter>changeTo</parameter> selects whether
+<parameter>keywords</parameter> are added to the existing set of keywords
+that are already set for each message (<parameter>changeTo</parameter>
+is <literal>true</literal>), or removed from the existing set of keywords
+(<parameter>changeTo</parameter> is <literal>false</literal>).</para>
+
+    <refsect2>
+  <title>Keywords</title>
+
+  <para>
+Keywords are application-defined flags, or markers, that are associated
+which each message in a folder.
+Keywords names are arbitrary, and are subject to certain restrictions.
+&libname; does not place any special meaning on any particular keyword
+name.
+&libname;'s sole involvement is to store the save the list of keywords set
+for a given message, and then retrieve it upon demand.</para>
+
+  <para>
+Which characters may be included in a keyword name depends on the underlying
+account type.
+Applications that expect to use any supported account type should limit
+themselves to the lowest common denominator: case insensitive
+<literal>us-ascii</literal> character set; no whitespace or any of the
+following characters: commas; apostrophes; quotes; backslashes;
+forward slashes; opening/closing braces, brackets, and parenthesis;
+question marks; asterisks; percent signs.
+In all cases, keyword names may not include any control characters.
+Unless keywords are permanently saved, and remain available after the
+folder is closed, and subsequently reopened.
+When the folder is reopened at some point later, all keywords will remain
+set for their corresponding messages (unless they were modified by another
+process).</para>
+
+  <itemizedlist>
+    <listitem>
+      <para>
+Temporary folders do not implement keywords.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+IMAP accounts have case-insensitive keywords in the
+<literal>us-ascii</literal> character set.
+Keyword names may not contain: apostrophes; quotes; backslashes;
+forward slashes; opening/closing braces, brackets, and parenthesis;
+question marks; asterisks; and percent signs.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+<link linkend="smap1">SMAP</link>
+accounts have case-sensitive keywords that use the
+<literal>UTF-8</literal> character set.
+Keyword names may not contain commas.</para>
+
+      <note>
+	<para>
+IMAP restrictions also apply if the same account is accessible via IMAP.</para>
+      </note>
+    </listitem>
+
+    <listitem>
+      <para>
+Maildir accounts have case-sensitive keywords that use the
+<literal>UTF-8</literal> character set.</para>
+      <note>
+	<para>
+IMAP and/or SMAP restrictions also apply if the maildir is
+also accessible via IMAP or SMAP.</para>
+      </note>
+    </listitem>
+
+    <listitem>
+      <para>
+Mbox accounts have case-sensitive keywords that use the
+<literal>UTF-8</literal> character set.</para>
+    </listitem>
+
+    <listitem>
+      <para>
+NNTP and POP3 accounts have case-sensitive keywords that use the
+<literal>UTF-8</literal> character set.
+Keywords are not saved.
+When the folder is closed, all set keywords are lost.
+Snapshots may be used to obtain permanent keyword storage for NNTP
+and POP3 accounts.
+See
+<link linkend="folder-open"><citerefentry>
+	    <refentrytitle>mail::folder::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>
+for more information.</para>
+     </listitem>
+   </itemizedlist>
+ </refsect2>

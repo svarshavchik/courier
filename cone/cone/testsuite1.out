@@ -1,0 +1,44 @@
+Preformatted text:
+
+Mary had a little lamb,
+its fleece  was white as snow, and everywhere Mary
+went,		the lamb was sure to go.
+
+                 "Rhyme&tm;": <URL:http://www.example.com>link
+
+Mary had a little lamb, its fleece was white as snow, and everywhere Mary went, 
+the lamb was sure to go.
+
+> Mary had a little lamb, its fleece was white as snow, and everywhere Mary 
+> went, the lamb was sure to go.
+> 
+>> Mary had a little lamb, its fleece was white as snow, and everywhere Mary 
+>> went, the lamb was sure to go.
+>> 
+>> Mary  had a little lamb, its fleece was white as snow, and everywhere Mary 
+>> went, the lamb was sure to go.
+
+[IMAGE]Ok? [Inline image]
+
+Preformatted text:
+
+Mary had a little lamb,
+its fleece  was white as snow, and everywhere Mary
+went,		the lamb was sure to go.
+
+End of preformatted text.
+_______________________________________________________________________________
+
+Forcible word wrap test
+
+Here we go 
+1234567890123456789012345678901234567890123456789012345678901234567890123456789
+012 
+1234567890123456789012345678901234567890123456789012345678901234567890123456789
+01 
+1234567890123456789012345678901234567890123456789012345678901234567890123456789
+0 
+1234567890123456789012345678901234567890123456789012345678901234567890123456789 
+123456789012345678901234567890123456789012345678901234567890123456789012345678 
+12345678901234567890123456789012345678901234567890123456789012345678901234567 
+

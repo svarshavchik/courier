@@ -1,0 +1,39 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+		<para>
+Do not open the account unless the server supports secure password
+authentication.
+Secure password authentication verifies the account's password using
+a challenge/response authentication
+mechanism (where the label "<literal>cram</literal>" comes from).
+The actual password is never actually transmitted to the server,
+and therefore cannot be intercepted
+while in transit over an untrusted network.</para>
+
+		<para>
+Secure password authentication is not supported by all servers.  This
+option may not work with some servers.
+This option does not enable secure password authentication, it only mandates
+its use.
+If the server supports secure password authentication, it will be used
+even without the <literal>/cram</literal> option.
+Traditional userid/password authentication will be used only if the
+server does not implement secure password authentication.
+The <literal>/cram</literal> option makes secure password authentication
+mandatory.</para>
+
+		<para>
+The <literal>/cram</literal> option is marginally
+useful even with encrypted server
+connections.
+The secure password authentication never sends the explicit
+password to the server.
+Encryption makes it theoretically impossible to recover the password from
+an encrypted data connection; but with secure authentication the password
+is never sent over the connection in the first place (the password's validity
+is certified by exchanging certain mathematical calculations between the
+server and the client).
+If the server is compromised, the compromised server will not receive the
+account password (unless the password is recovered from the server in other
+ways).</para>

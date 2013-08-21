@@ -1,0 +1,91 @@
+<!-- Copyright 2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-updatekeywords">
+    <refmeta>
+      <refentrytitle>mail::account::updateKeywords</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::updateKeywords</refname>
+      <refpurpose>Update message keywords</refpurpose>
+    </refnamediv>
+
+  <refsynopsisdiv>
+    &libmail-mycallback;
+    <literallayout>
+mail::account *account;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>account-&gt;<function>updateKeywords</function></funcdef>
+	<paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	<paramdef>const std::set&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	<paramdef>bool <parameter>setOrChange</parameter></paramdef>
+	<paramdef>bool <parameter>changeTo</parameter></paramdef>
+	<paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>account-&gt;<function>updateKeywords</function></funcdef>
+	<paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	<paramdef>const std::list&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	<paramdef>bool <parameter>setOrChange</parameter></paramdef>
+	<paramdef>bool <parameter>changeTo</parameter></paramdef>
+	<paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>account-&gt;<function>updateKeywords</function></funcdef>
+	<paramdef>const std::vector&lt;size_t&gt; <parameter>msgList</parameter></paramdef>
+	<paramdef>const std::vector&lt;std::string&gt; &amp;<parameter>keywords</parameter></paramdef>
+	<paramdef>bool <parameter>setOrChange</parameter></paramdef>
+	<paramdef>bool <parameter>changeTo</parameter></paramdef>
+	<paramdef>myCallback &amp;<parameter>callback</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function updates the set of keywords of one or more messages.
+<parameter>keywords</parameter> may also be specified as a list, or a vector
+(and duplicate occurences of a keyword are automatically removed).
+&libmail-msglist;</para>
+
+&libmail-updatekeywords;
+    </refsect1>
+  <refsect1>
+    <title>Return Codes</title>
+
+    &libmail-waitcallback;
+    &libmail-updatestatus;
+
+  </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-savefolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::saveFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderindexinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderIndexInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-getfolderkeywordinfo"><citerefentry>
+	    <refentrytitle>mail::account::getFolderKeywordInfo</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="folder-open"><citerefentry>
+	    <refentrytitle>mail::folder::open</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

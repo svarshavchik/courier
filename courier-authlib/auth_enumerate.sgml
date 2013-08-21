@@ -1,0 +1,112 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-enumerate">
+
+  <refmeta>
+    <refentrytitle>auth_enumerate</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_enumerate</refname>
+    <refpurpose>Obtain list of accounts</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef><function>auth_enumerate</function></funcdef>
+	<paramdef>int <parameter>(*callback_func)</parameter>
+              <funcparams>const char *, uid_t, gid_t, const char *, const char *, const char *, void *</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<function>auth_enumerate</function> enumerates all of the available accounts.
+<function>auth_enumerate</function> repeatedly calls
+<function>callback_func</function>, once for each account.
+<function>callback_func</function> receives the following arguments:</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+Account name.</para>
+      </listitem>
+      <listitem>
+	<para>
+Account's numeric userid.</para>
+      </listitem>
+      <listitem>
+	<para>
+Account's numeric groupid.</para>
+      </listitem>
+      <listitem>
+	<para>
+Account's home directory.</para>
+      </listitem>
+      <listitem>
+	<para>
+Account's mailbox (if defined, may be <literal>NULL</literal>, which
+indicates the default mailbox location).</para>
+      </listitem>
+      <listitem>
+	<para>
+Account's options string (if defined, may be <literal>NULL</literal>)</para>
+      </listitem>
+      <listitem>
+	<para>
+<parameter>callback_arg</parameter>, verbatim.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+After invoking <function>callback_func</function> for the last account,
+<function>auth_enumerate</function> invokes <function>callback_func</function>
+one more time with all parameters set to <literal>NULL</literal> or 0.</para>
+
+    <para>
+If <function>auth_enumerate</function> encounters an error it will terminate
+without calling <function>callback_func</function> with all
+<literal>NULL</literal> or 0 parameters.
+This can be used to determine whether a partial list of accounts was
+received.</para>
+
+    <note>
+      <para>
+Some back-end Courier authentication modules do not implement account
+enumeration, so this function may not be available in all
+configurations.</para>
+    </note>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+ 
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_passwd.html"><citerefentry><refentrytitle>auth_passwd</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
+

@@ -1,0 +1,125 @@
+#!@SHELL@
+#
+# This is a sample /etc/init.d file for Courier-IMAP
+#
+# chkconfig: 2345 80 30
+# description: Courier-IMAP - IMAP server
+#
+#
+#
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+sbindir=@sbindir@
+datarootdir=@datarootdir@
+
+case "$1" in
+start)
+        cd /
+	. @sysconfdir@/imapd
+	touch /var/lock/subsys/courier-imap
+
+	echo -n "Starting Courier-IMAP server:"
+
+	case x$IMAPDSTART in
+	x[yY]*)
+		# Start daemons.
+		@libexecdir@/imapd.rc start
+		echo -n " imap"
+		;;
+	esac
+
+	. @sysconfdir@/imapd-ssl
+	case x$IMAPDSSLSTART in
+	x[yY]*)
+		if test -x $COURIERTLS
+		then
+
+		# First time we start this, generate a dummy SSL certificate.
+
+			if test ! -f $TLS_CERTFILE
+			then
+				echo -n " generating-SSL-certificate..."
+				@datadir@/mkimapdcert >/dev/null 2>&1
+			fi
+			@libexecdir@/imapd-ssl.rc start
+			echo -n " imap-ssl"
+		fi
+		;;
+	esac
+
+	POP3DSTART=""
+	POP3DSSLSTART=""
+
+	if test -f @sysconfdir@/pop3d
+	then
+		. @sysconfdir@/pop3d
+	fi
+
+	case x$POP3DSTART in
+	x[yY]*)
+		# Start daemons.
+		@libexecdir@/pop3d.rc start
+		echo -n " pop3"
+		;;
+	esac
+
+	if test -f @sysconfdir@/pop3d-ssl
+	then
+		. @sysconfdir@/pop3d-ssl
+	fi
+
+	case x$POP3DSSLSTART in
+	x[yY]*)
+		if test -x $COURIERTLS
+		then
+
+		# First time we start this, generate a dummy SSL certificate.
+
+			if test ! -f $TLS_CERTFILE
+			then
+				echo -n " generating-SSL-certificate..."
+				@datadir@/mkpop3dcert >/dev/null 2>&1
+			fi
+			@libexecdir@/pop3d-ssl.rc start
+			echo -n " pop3-ssl"
+		fi
+		;;
+	esac
+
+	echo ""
+	;;
+stop)
+        echo -n "Stopping Courier-IMAP server:"
+	. @sysconfdir@/imapd
+	. @sysconfdir@/imapd-ssl
+	@libexecdir@/imapd.rc stop
+	echo -n " imap"
+	if test -x $COURIERTLS
+	then
+		@libexecdir@/imapd-ssl.rc stop
+		echo -n " imap-ssl"
+	fi
+
+	if test -f @sysconfdir@/pop3d
+	then
+		@libexecdir@/pop3d.rc stop
+		echo -n " pop3"
+
+		if test -x $COURIERTLS
+		then
+			@libexecdir@/pop3d-ssl.rc stop
+			echo -n " pop3-ssl"
+		fi
+	fi
+
+	echo ""
+	rm -f /var/lock/subsys/courier-imap
+	;;
+restart)
+	$0 stop
+	$0 start
+        ;;
+esac
+exit 0

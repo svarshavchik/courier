@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="Bluefish 1.0.7"/>
+  <link rel="stylesheet" type="text/css" href=
+  "[@LISTURL@]/style.css" />
+
+  <title>Courier Mailing List Manager</title>
+</head>
+
+<body>
+  [@ADMINUPDATE@]
+
+  <h1>[@LISTNAME@] - mailing list configuration</h1>
+
+  <p><a href="[@LISTURL@]/admin/gosublist">View list
+  subscribers</a>[@MODURL:There_are_@_message(s)_in_the_moderation_queue@]</p>
+
+  <form action="[@LISTURL@]/admin" method="post">
+    <table class="configtbl">
+      <tbody>
+        <tr class="oddrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td colspan="2">Mailing list type:
+          [@OPTPOST:Anyone_can_post:Only_subscribers_can_post:Moderated_list,_for_subscribers_only@]</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td colspan="2">Mailing list name: [@OPTLISTNAME@]</td>
+        </tr>
+
+        <tr class="oddrow" valign="top">
+          <td>[@OPTSUBSCRIBE@]</td>
+
+          <td colspan="2">Subscription requests must be approved by
+          moderator/list owner</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>[@OPTSIMPLECONFIRM@]</td>
+
+          <td colspan="2">Require explicit "yes" in subject of
+          confirmation request acknowledgements</td>
+        </tr>
+
+        <tr class="oddrow" valign="top">
+          <td>[@OPTCASESENSITIVE@]</td>
+
+          <td colspan="2">E-mail addresses are case-sensitive</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>[@OPTNOBOZOS@]</td>
+
+          <td colspan="2">Try to detect and block misdirected
+          administrative requests</td>
+        </tr>
+
+        <tr class="oddrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Wait for subscription confirmation acknowledgements
+          (# of hours):</td>
+
+          <td>[@OPTPURGECMD@]&nbsp;(6-720)</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Add list identification keyword to the subject
+          line:</td>
+
+          <td>[@OPTKEYWORD@]</td>
+        </tr>
+
+        <tr class="oddrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Mailing list archives are visible to:</td>
+
+          <td>[@OPTPOSTARCHIVE:everyone:subscribers_only@]</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Report new and unsubscribed E-mail addresses to:</td>
+
+          <td>[@OPTREPORTADDR@]</td>
+        </tr>
+
+        <tr class="oddrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>List digest directory:</td>
+
+          <td>[@OPTDIGEST@]</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Headers to add to all list messages:</td>
+
+          <td>[@OPTHEADERADD@]</td>
+        </tr>
+
+        <tr class="addrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Headers to delete from all list messages
+          (“<code>Name:</code>” one per line):</td>
+
+          <td>[@OPTHEADERDEL@]</td>
+        </tr>
+      </tbody>
+    </table>
+    <hr />
+
+    <h2>Subscription and bounce processing</h2>
+
+    <table class="configtbl">
+      <tbody>
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Sender's name for couriermlm-generated messages:</td>
+
+          <td>[@OPTNAME@]</td>
+        </tr>
+
+        <tr class="oddrow" valign="top">
+          <td>[@OPTNODSN@]</td>
+
+          <td colspan="2">Suppress bounces for confirmation
+          requests and help messages</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Send probe messages to bouncing addresses after (# of
+          days):</td>
+
+          <td>[@OPTSTARTPROBE@]&nbsp;(3-30)</td>
+        </tr>
+
+        <tr class="oddrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Maximum # of bounce probes sent at once:</td>
+
+          <td>[@OPTMAXBOUNCES@]&nbsp;(10-50)</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Wait for bounce address probe to bounce for (# of
+          days):</td>
+
+          <td>[@OPTPURGEBOUNCE@]&nbsp;(5-30)</td>
+        </tr>
+      </tbody>
+    </table>
+    <hr />
+
+    <h2>Moderation configuration</h2>
+
+    <table class="configtbl">
+      <tbody>
+        <tr class="oddrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Maximum # of moderation notices sent at once:</td>
+
+          <td>[@OPTMAXMODNOTICES@]&nbsp;(5-99)</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Resend moderation reminders after (# of hours):</td>
+
+          <td>[@OPTREMODERATE@]&nbsp;(12-48)</td>
+        </tr>
+      </tbody>
+    </table>
+    <hr />
+
+    <h2>Mailing list archives</h2>
+
+    <table class="configtbl">
+      <tbody>
+        <tr class="oddrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Maximum response size to fetch requests (Kb):</td>
+
+          <td>[@OPTMAXFETCHSIZE@]&nbsp;(100-9999)</td>
+        </tr>
+
+        <tr class="evenrow" valign="top">
+          <td>&nbsp;</td>
+
+          <td>Purge archived list messages after (# of days):</td>
+
+          <td>[@OPTPURGEARCHIVE@]&nbsp;(2-9999)</td>
+        </tr>
+      </tbody>
+    </table><br />
+    <input type="submit" name="update" value="Update" />
+  </form>
+  <hr />
+  <a href="[@LISTURL@]/index">Back to list information screen</a>
+</body>
+</html>

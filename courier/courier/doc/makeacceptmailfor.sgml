@@ -1,0 +1,55 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>makeacceptmailfor</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>makeacceptmailfor</refname>
+    <refpurpose>Create @sysconfdir@/esmtpacceptmailfor.dat</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command moreinfo="none">makeacceptmailfor</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command moreinfo="none">makeacceptmailfor</command> reads
+<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dir</filename> and creates
+<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dat</filename> which is a binary
+database file.
+<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dat</filename> is a list of domains
+that the <application moreinfo="none">Courier</application> mail server
+accepts mail for, via ESMTP.
+<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dir</filename> is a
+subdirectory containing one or more files. Each file in this subdirectory is
+plain text file, containing a list of mail domains, one per line, in
+lowercase. All files in the subdirectory are concatenated, and the binary
+database file is created from the result.</para>
+
+    <para>
+The <command moreinfo="none">makeacceptmailfor</command> can be executed while the
+<application moreinfo="none">Courier</application> mail server is
+running, and any changes take effect immediately. However, only one instance of
+<command moreinfo="none">makeacceptmailfor</command> can be executed at the same time.</para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+<ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+  </refsect1>
+
+</refentry>

@@ -1,0 +1,109 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2004-2008 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="authpasswd">
+
+  <refmeta>
+    <refentrytitle>authpasswd</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>authpasswd</refname>
+    <refpurpose>Generate login passwords</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>authpasswd</command>
+      <arg choice='opt'>method</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+<command>authpasswd</command> is a helper utility that generates encrypted
+passwords for the
+Courier authentication library.
+The Courier authentication library is capable of using several different
+encryption methods for storing passwords.
+<command>authpasswd</command> issues a password prompt.
+Enter the same password twice (for verification purposes).
+<command>authpasswd</command> computes and prints the encrypted password.
+The encrypted password can be inserted verbatim into the appropriate
+account record that's processed by the authentication library's
+<literal>authmysql</literal>,
+<literal>authpgsql</literal>,
+<literal>authsqlite</literal>,
+or <literal>authldap</literal> module.</para>
+
+    <para>
+<replaceable>method</replaceable> may be set to one of the following
+literals:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>crypt</term>
+	<listitem>
+	  <para>
+Use the traditional <acronym>DES</acronym>-based encrypted password.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>md5</term>
+	<listitem>
+	  <para>
+Compute a base64-encoded <acronym>MD5</acronym> password hash.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>md5raw</term>
+	<listitem>
+	  <para>
+Compute a hexadecimal-encoded <acronym>MD5</acronym> password hash.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>sha1</term>
+	<listitem>
+	  <para>
+Compute a <acronym>SHA1</acronym> password hash.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>ssha</term>
+	<listitem>
+	  <para>
+Compute a salted <acronym>SHA1</acronym> password hash.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>sha256</term>
+	<listitem>
+	  <para>
+Compute a <acronym>SHA256</acronym> password hash.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+If not specified,
+<replaceable>method</replaceable> defaults to the
+modified-<acronym>MD5</acronym> password encryption algorithm that's used
+in Linux (note that this is different from the <quote>md5</quote> password
+hash method).</para>
+  </refsect1>
+
+</refentry>
+

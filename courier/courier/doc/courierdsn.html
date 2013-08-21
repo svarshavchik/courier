@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="Bluefish 1.0.7"/>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+
+  <title>Delivery Status Notifications in The Courier mail server</title>
+  <!-- Copyright 2000-2002 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h1>Delivery Status Notifications in The <em>Courier</em> mail server</h1>
+
+  <p>Here is a sample delivery status notification message from
+  The <em>Courier</em> mail server. Notice that both "relay" and "failure" notifications for
+  the same message are consolidated as one notice. The <em>Courier</em> mail server offers
+  complete support for the DSN SMTP extensions, as specified by RFC
+  1894.</p>
+  <pre>
+Return-Path: 
+Received: from localhost (localhost [127.0.0.1]) (RFC1894)
+  by relay1.example.com; Mon, 05 Jul 1999 14:55:42 -0400
+From: "Courier mail server at relay1.example.com" &lt;@&gt;
+To: perftest1@relay1.example.com
+Subject: NOTICE: mail delivery status.
+Mime-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+    boundary="=_courier_0"
+Content-Transfer-Encoding: 8bit
+Message-ID: &lt;courier.3780FFAE.000062AE@relay1.example.com&gt;
+Date: Mon, 05 Jul 1999 14:55:42 -0400
+
+This is a MIME-formatted message.  If you see this text it means that your
+E-mail software does not support MIME-formatted messages.
+
+--=_courier_0
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+
+
+This is a delivery status notification from relay1.example.com,
+running the Courier mail server, version 0.10.
+
+The original message was received on Mon, 05 Jul 1999 14:55:26 -0400
+from localhost (localhost [127.0.0.1])
+
+---------------------------------------------------------------------------
+
+                   MESSAGE DELIVERED TO A MAIL GATEWAY
+
+You requested a delivery acknowledgement (a return receipt) for the
+following recipients of your E-mail message.  Unfortunately, your message
+has been transferred to a remote mail system running older software that
+that is not be capable of generating standard delivery acknowledgements.
+
+Unless your message is eventually returned undeliverable, you may not
+receive any further delivery notices for the following addresses:
+
+&lt;test2@relay2.example.com&gt;:
+    [127.0.0.1]:
+&lt;&lt;&lt; 250 ok 931200942 qp 25258
+
+---------------------------------------------------------------------------
+
+                           UNDELIVERABLE MAIL
+
+Your message to the following recipients cannot be delivered:
+
+&lt;nosuchuser@relay2.example.com&gt;:
+    [127.0.0.1]:
+&gt;&gt;&gt; RCPT TO:&lt;nosuchuser@relay2.example.com&gt;
+&lt;&lt;&lt; 550 Sorry, no mailbox here by that name. (#5.1.1)
+
+---------------------------------------------------------------------------
+
+If your message was also sent to additional recipients, their delivery
+status is not included in this report.  You may or may not receive
+other delivery status notifications for additional recipients.
+
+The original message follows as a separate attachment.
+
+
+--=_courier_0
+Content-Type: message/delivery-status
+Content-Transfer-Encoding: 7bit
+
+Reporting-MTA: dns; relay1.example.com
+Arrival-Date: Mon, 05 Jul 1999 14:55:26 -0400
+Received-From-MTA: unknown; localhost (uid 501)
+
+Final-Receipient: rfc822; nosuchuser@relay2.example.com
+Action: failed
+Status: 5.0.0
+Remote-MTA: dns; [127.0.0.1]
+Diagnostic-Code: smtp; 550 Sorry, no mailbox here by that name. (#5.1.1)
+
+Final-Receipient: rfc822; test2@relay2.example.com
+Action: relayed
+Status: 2.0.0
+Remote-MTA: dns; [127.0.0.1]
+Diagnostic-Code: smtp; 250 ok 931200942 qp 25258
+
+--=_courier_0
+Content-Type: message/rfc822
+Content-Transfer-Encoding: 8bit
+
+Received: from localhost (localhost [127.0.0.1]) (uid 501)
+  by relay1.example.com; Mon, 05 Jul 1999 14:55:26 -0400
+From: "test daemon" &lt;perftest1@example.com&gt;
+To: perftest1@example.com
+Subject: 8bit test
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Message-ID: &lt;courier.3780FF9E.00006296@relay1.example.com&gt;
+Date: Mon, 05 Jul 1999 14:55:26 -0400
+
+¡
+test 0
+
+--=_courier_0--
+</pre>
+</body>
+</html>

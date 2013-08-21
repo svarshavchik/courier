@@ -1,0 +1,14 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <note>
+	<para>
+The application must not destroy
+<parameter>folderCallback</parameter> until this request
+fails or succeeds.
+<parameter>folderCallback</parameter>'s
+<function>success</function> method is invoked just before
+the
+<parameter>callback</parameter>'s
+<function>success</function> method.</para>
+      </note>

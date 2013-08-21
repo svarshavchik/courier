@@ -1,0 +1,35 @@
+<!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <para>
+Most IMAP servers have restrictions on which combinations of access rights
+are valid for which folders.
+See the IMAP server's documentation to check for any access rights
+restrictions.
+The most common restriction is that the
+<quote>e</quote>,
+<quote>t</quote>, and
+<quote>x</quote>
+access rights must either be set together, as a group, or not.
+The server will reject or ignore an attempt to set prohibited combinations
+of access rights for a given folder.</para>
+
+      <para>
+Some IMAP servers implement an extended form of the access control list
+protocol which makes it possible to obtain the server's restrictions.
+When an attempt to set an invalid access right combination is rejected,
+<replaceable>errorIdentifier</replaceable> will be set to indicate which
+identifier's access right combination was rejected (usually it will be
+set to the same value as <replaceable>identifier</replaceable>.</para>
+
+      <para>
+<replaceable>errorRights</replaceable> will be set to an array of strings,
+each strings consisting of one or more access rights.
+The first array element, <replaceable>errorRights</replaceable>[0] will
+contain the minimum access rights required for this folder
+(which may be an empty string if the folder does not require any
+minimum access rights for the identifier).
+Each remaining string lists an optional access right allowed for this folder.
+If a string contains more than one access right, it means that these
+access rights must be added or removed from the access control list together,
+as a group.</para>

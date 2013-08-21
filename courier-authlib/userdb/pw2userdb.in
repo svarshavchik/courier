@@ -1,0 +1,70 @@
+#! @PERL@
+#
+#  Convert /etc/passwd and /etc/shadow to userdb format.
+#
+#
+# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+use Getopt::Long;
+
+#
+#  Some undocumented options here (for vchkpw2userdb)
+#
+
+die "Invalid options.\n" unless
+	GetOptions("passwd=s" => \$passwd, "shadow=s" => \$shadow,
+		"noshadow" => \$noshadow, "nouid" => \$nouid,
+		"domain=s" => \$domain, "vpopuid" => \$vpopuid );
+
+($dummy, $dummy, $fixed_uid, $fixed_gid)=getpwnam("vpopmail")
+	if $vpopuid;
+
+$passwd="/etc/passwd" unless $passwd =~ /./;
+$shadow="/etc/shadow" unless $shadow =~ /./;
+
+$domain="" unless $domain =~ /./;
+$domain="\@$domain" if $domain =~ /./;
+
+open(PASSWD, $passwd) || die "$!\n";
+
+while (<PASSWD>)
+{
+	chop if /\n$/;
+	next if /^#/;
+	($acct,$passwd,$uid,$gid,$name,$home,$shell)=split( /:/ );
+
+	($uid,$gid)=($fixed_uid,$fixed_gid) if $vpopuid;
+
+	$PASSWORD{$acct}=$passwd if $passwd ne "x";
+	$UID{$acct}=$uid;
+	$GID{$acct}=$gid;
+	$HOME{$acct}=$home;
+	$SHELL{$acct}=$shell;
+
+	$name =~ s/\|/./g;	# Just in case
+	$GECOS{$acct}=$name;
+}
+close (PASSWD);
+
+if ( -f $shadow && ! $noshadow)
+{
+	open (SHADOW, $shadow) || die "$!\n";
+	while (<SHADOW>)
+	{
+		next if /^#/;
+		($acct,$passwd,$dummy)=split(/:/);
+		$PASSWORD{$acct}=$passwd;
+	}
+	close (SHADOW);
+}
+
+while ( defined ($key=each %UID))
+{
+	print "$key$domain\tuid=$UID{$key}|gid=$GID{$key}|home=$HOME{$key}" .
+		( $SHELL{$key} =~ /./ ? "|shell=$SHELL{$key}":"") .
+		( $PASSWORD{$key} =~ /./ ? "|systempw=$PASSWORD{$key}":"") .
+		( $GECOS{$key} =~ /./ ? "|gecos=$GECOS{$key}":"") .
+		"\n";
+	print "$UID{$key}=\t$key\n" unless $nouid;
+}

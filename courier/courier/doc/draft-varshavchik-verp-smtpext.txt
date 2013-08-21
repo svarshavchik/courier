@@ -1,0 +1,618 @@
+
+
+
+
+
+
+1. Abstract
+
+   This document describes an extension to the SMTP service [1], called
+   Variable Envelope Return Path (VERP).  The VERP extension implements
+   a way of automatically identifying undeliverable mail recipients,
+   even when non-delivery reports originate from mail systems that do
+   not implement delivery status notifications, as specified in [2] and
+   [3].
+
+2. Introduction
+
+   All E-mail software can expect to deal with undeliverable mail.  [2]
+   and [3] specify a machine-readable format for delivery status
+   notifications (DSNs, or non-delivery reports).  DSNs allow
+   undeliverable mail to be handled in a totally automatic fashion,
+   without requiring manual intervention.  For example, mailing list
+   managers can automatically identify addresses that are no longer
+   deliverable, and remove them from the mailing list.
+
+   Although [2] and [3] are now widely implemented, there are still many
+   systems that do not use them.  This makes it impractical to
+   completely rely on DSNs for automatic mailing list management.
+   Undeliverable addresses accumulate quickly even from a very small
+   percentage of non-DSN systems.  This results in a non-trivial amount
+   of manual work to identify undeliverable addresses and purge them
+   from the mailing list.
+
+   Mailing list software began to use VERPs (the acronym stands for
+   Variable Envelope Return Path) after DSNs were found to be
+   impractical for totally automatic mailing list management.  VERPs are
+   an alternative way to handle non-delivery notices.  The advantage of
+   VERPs is that they can be made to work automatically, even when non-
+   delivery notices are not in the format specified by [2].
+
+   Unfortunately, VERPs require much more bandwidth and network
+   resources than DSNs because VERPs cannot be used to send one copy of
+   a mailing list message addressed to all the recipients in the same E-
+   mail domain.
+
+   This SMTP service extension allows E-mail software to send a single
+   VERP message to all addresses in the same mail domain, for as long as
+   mail servers, which relay the message, support the VERP SMTP
+   extension.
+
+   The VERP message may be eventually relayed to a mail server that does
+   not support this extension.  Separate messages - with variable
+   envelope return paths - will be sent when this happens.
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 1]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+   So the worst case scenario results in the same situation where
+   traditional VERPs are used right from the start.  The best case
+   scenario results in significant savings of network resources and
+   bandwidth, from eliminating hundreds (or more) copies of the same
+   message.
+
+   Essentially, the VERP extension postpones the generation of multiple
+   messages with different return paths as much as possible, until it is
+   absolutely required.
+
+2.1 VERP overview
+
+   The traditional VERP message encodes the recipient address as a
+   portion of the return address.  When undeliverable mail comes back,
+   the mail software decodes the return address (now the recipient
+   address) and obtains the address responsible for the non-delivery
+   notice.
+
+   For example: mail sent by a mailing list manager to the address
+   <john@example.org> carries a return address of <mlist-return-
+   john=example.org@domain.com>.  The mailing list software at
+   domain.com handles all mail with the local portion of the address
+   starting with "mlist-return-".  If a non-delivery notice is generated
+   because the address is not deliverable, the mailing list software
+   takes the address where the non-delivery report was sent, retrieves
+   the remaining portion of the local address, "john=example.org", and
+   determines that the undeliverable address was <john@example.org>.
+
+   This does not rely on RFC 1894, and will work for all non-delivery
+   notices.
+
+3. Framework for the VERP SMTP transport extension
+
+   This SMTP transport extension [1] is laid out as follows.
+
+      (1) The name of the SMTP transport extension defined here is
+          Variable Envelope Return Path.
+
+      (2) The EHLO keyword associated with this extension is VERP.
+
+      (3) The VERP EHLO keyword takes no parameters.
+
+      (4) One optional ESMTP keyword VERP is associated with the MAIL
+          FROM command. This parameter takes no values.
+
+      (5) No additional ESMTP verbs are defined by this extension.
+
+      (6) The next section specifies how support for this extension
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 2]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+          affects the behavior of a server and client SMTP.
+
+4. The VERP SMTP extension
+
+   When a VERP keyword is present in the MAIL FROM command, [4], some
+   additional restrictions are imposed on the RFC 822 address [5],
+   specified by that MAIL FROM command, and on all RFC 822 addresses in
+   the subsequent RCPT TO commands that refer to the same message (that
+   is, until the next DATA, RSET, or QUIT command).  The term "VERP
+   message" refers to any E-mail message whose MAIL FROM command
+   includes the VERP keyword.  The term "VERP-compliant server" refers
+   to any E-mail server that supports the Variable Envelope Return Path
+   SMTP extension.  When a VERP keyword is present in the MAIL FROM
+   command:
+
+       (1) The address specified by the MAIL FROM verb MUST contain at
+           least one @ character.
+
+       (2) The address in every RCPT TO verb referring to the same
+           message MUST contain at least one @ character.
+
+       (3) The domain portion of the address in the MAIL FROM and RCPT
+           TO verbs MUST be compliant with the definition of <domain> in
+           [6].  That is, it MUST contain only letters, digits, hyphens,
+           and periods.  The domain portion of the address is the one
+           that follows the last @ character.
+
+4.1 Delivery failures
+
+   When a VERP-compliant server is unable to deliver a VERP message to
+   one or more recipients, the VERP server MUST do one of the following:
+
+        1) Return an RFC 1891 delivery status notification to the return
+           address, or:
+
+        2) Transmit a separate non-delivery notice for each failed
+           recipient.  The return address for each non-delivery notice
+           MUST be the address that’s formed by applying the procedure
+           described in section 7 of this document to the return address
+           of the message and the failed recipient’s address.  If more
+           than one recipient was undeliverable a separate notice MUST
+           be sent for each undeliverable address.
+
+5. Final delivery
+
+   Section 4.3.1 of [5] specifies that the mail server performing final
+   delivery of a message will generate a Return-Path: header containing
+   the return address of the message.
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 3]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+   This return address MUST be formed by applying the procedure
+   described in section 7 of this document to the return address and the
+   recipient’s address.
+
+   This also applies if the mail server invokes some other external
+   process to handle final delivery, instead of placing the message into
+   the recipient’s mailbox. In all cases, the return address specified
+   by the mail server to any external environment or process MUST be
+   derived by applying the procedure in section 7 to the return address
+   and the recipient’s address.
+
+6. Relaying
+
+   When a VERP-compliant server determines that a recipient of a VERP
+   message is not a local mailbox, and the message must be relayed to
+   another server, the VERP-compliant server MUST:
+
+       (1) If the VERP-compliant server’s local policies require the
+           return and/or recipient addresses are to be rewritten, the
+           VERP-compliant server MUST make sure that delivery notices
+           MUST NOT be sent to a rewritten return address, or reflect a
+           rewritten recipient address, unless separate arrangements are
+           made with the sender of the VERP message.  This is because
+           the sender expects to be able to resolve non-delivery notices
+           to some recipient address it knows about (irrespective
+           whether the addresses are resolved from a VERP, or from a
+           delivery status notification in the format specified by [2]).
+           When local policies of the relaying server require the
+           recipient or the sender address to be rewritten, the sender
+           will obviously be not aware of this rewriting or expansion.
+           If a subsequent delivery failure results in a non-delivery
+           notice being sent to a VERP containing the rewritten address,
+           the sender will not be able to associate the address encoded
+           in the VERP with any recipient address it has on file.
+
+           A suggested way to handle this situation is to set specify a
+           delivery status notification of "NEVER" - as specified by [3]
+           - for any recipient address generated by local aliasing or
+           rewriting, and treat the original address as being either
+           delivered or relayed, resulting in a "delivered" or "relayed"
+           delivery status notification if the original recipient
+           address specified a "SUCCESS" notification.
+
+           Note that this clause does not prohibit the relaying server
+           to have an established agreement with the sender to act as a
+           mailing list exploder, as long as this agreement is handled
+           in a transparent way.  For example, the relaying server can
+           set its own return address on all VERP messages it exploded,
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 4]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+           and handle non-delivery notices all by itself.
+
+       (2) If the VERP-compliant server determines that the remote
+           server is also a VERP compliant server, the VERP keyword MUST
+           be included in the MAIL FROM command used to relay the VERP
+           message to the remote server.
+
+       (3) If the remote server is not a VERP compliant server, The VERP
+           compliant server SHOULD send a separate copy of the message
+           for every recipient.  The return address of each copy of the
+           message MUST be formed by applying the procedure described in
+           section 7 of this document to the original return address,
+           and the address of each individual recipient.  Although the
+           message SHOULD NOT be returned as undeliverable, if it is
+           then the rules defined in section 4.1 MUST be applied.
+
+           These rules also apply if the SMTP-compliant server
+           determines that the VERP message must be forwarded via some
+           other protocol to a non-SMTP gateway, unless the non-SMTP
+           protocol has equivalent features that are completely
+           identical in function to Variable Envelope Return Path SMTP
+           service extension (including any translations of E-mail
+           addresses to and from the non-RFC822 format).
+
+7. Variable envelope return path encoding
+
+   This encoding method starts with a return address and one recipient
+   address.  As mentioned previously, both addresses MUST be valid
+   RFC822 addresses, [5], and MUST contain at least one @ character.
+   The portion of each address following the last @ character MUST be
+   compliant with [6], or must be an explict network address literal,
+   for example: john43@[192.68.0.4].
+
+   Let "sdomain" represent the portion of the return address that
+   follows the last @ character.
+
+   Let "slocal" represent the portion of the return address that
+   precedes the last @ character.
+
+   Let "rdomain" represent the portion of the recipient address that
+   follows the last @ character.
+
+   Let "rlocal" represent the portion of the recipient address that
+   precedes the last @ character.
+
+   To encode the recipient address within the envelope sender address,
+   create an address of the following form:
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 5]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+          slocal-encodedrlocal=encodedrdomain@sdomain
+
+   Where "encodedrlocal" and "encodedrdomain" are formed by taking
+   rlocal and rdomain, respectively, and encoding each one as follows:
+
+        1) Each @, :, %, !, -, [, ], and + character in rlocal is
+           replaced by a single ’+’ character followed by two uppercase
+           hexadecimal characters whose value is the ASCII code of the
+           replaced character.
+
+           Taking into account poorly-written mail relays that ignore
+           case-sensitivity, both uppercase and lowercase hexadecimal
+           characters SHOULD be recognized when decoding envelope return
+           paths.
+
+        2) All other characters are unchanged.  Other characters MAY,
+           but SHOULD NOT be also encoded in the same fashion.
+
+   This can be represented using BNF as follows:
+
+     encodedverp: slocal "-" encodedrlocal "=" encodedrdomain "@" sdomain
+
+     encodedrlocal: * (char-literal / char-encoded )
+
+     encodedrdomain: * (char-literal / char-encoded )
+
+     char-literal: any character valid in an RFC821 address [4],
+                   except @, :, %, !, [, ], -, and +
+
+     char-encoded: "+" hexdigit hexdigit
+
+     hexdigit: ("0" / "1" / "2" / "3" / "4" / "5" / "6" / "7" / "8" /
+                "9" / "A" / "B" / "C" / "D" / "E" / "F" /
+                      "a" / "b" / "c" / "d" / "e" / "f")
+
+8. Variable envelope return path decoding
+
+   Non-delivery notices for VERP messages will be sent to either the
+   original address, <slocal@sdomain>, or to the VERP-encoded address,
+   <slocal-encodedrlocal=encodedrdomain@sdomain>.
+
+   Messages sent to <slocal@sdomain> will be RFC 1891-compliant delivery
+   status notifications.  These messages will be machine-readable, and
+   the mail software will be able to identify failed addresses from the
+   RFC 1891 delivery report.
+
+   Non-delivery notices will also be sent to the VERP-encoded address,
+   and the mail software will be able to reconstruct the failed address
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 6]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+   from the VERP-encoded address by simply reversing the steps used in
+   encoding:
+
+        1) Extract encodedrlocal and rdomain from the recipient address.
+           There will be at least one = character in the encoded portion
+           of the return address.  encodedrlocal is everything up to the
+           last = character.  Everything following the last = character
+           is encodedrdomain.
+
+        2) Replacing all occurrences of "+" followed by two hexadecimal
+           digits in encodedrlocal and encodedrdomain with the
+           equivalent ASCII character.
+
+        3) Using the decoded rlocal, @, then rdomain.
+
+9. Examples
+
+   Suppose that a VERP-compliant server named "example.com" receives a
+   message via the following SMTP conversation (for brevity, non-
+   relevant headers have been omitted):
+
+       220 example.com ESMTP
+       EHLO domain.com
+       250-example.com ESMTP
+       250-SIZE
+       250-DSN
+       250-VERP
+       250 HELP
+       MAIL FROM:<itny-out@domain.com> VERP SIZE=100
+       250 Ok
+       RCPT TO:<alex@example.com>
+       250 Ok
+       RCPT TO:<node42!ann@old.example.com>
+       250 Ok
+       RCPT TO:<tom@old.example.com>
+       250 Ok
+       RCPT TO:<lisa@new.example.com>
+       250 Ok
+       RCPT TO:<dave+priority@new.example.com>
+       250 Ok
+       DATA
+       354 Ok
+       From: "John" <john@domain.com>
+       Date: Thu, 16 Jan 1997 14:49:31 -0500 (EST)
+       Subject: Meeting canceled.
+
+       Today’s 2pm meeting has been rescheduled for tomorrow, 9am, due
+       to a scheduling conflict.
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 7]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+       .
+
+   The message is delivered to the local mailbox for <alex@example.com>.
+   The message looks like this:
+
+       Return-Path: <itny-out-alex=example.com@domain.com>
+       From: "John" <john@domain.com>
+       Date: Thu, 16 Jan 1997 14:49:31 -0500 (EST)
+       Subject: Meeting canceled.
+
+       Today’s 2pm meeting has been rescheduled for tomorrow, 9am, due
+       to a scheduling conflict.
+
+   The VERP-compliant server at example.com connects to the mail server
+   for old.example.com.  old.example.com does not support the Variable
+   Envelope Return Path extension.  Therefore, old.example.com receives
+   two messages.  The SMTP conversation for the first message is as
+   follows:
+
+       220 old.example.com ESMTP
+       EHLO example.com
+       250-old.example.com ESMTP
+       250-SIZE
+       250-DSN
+       250 HELP
+       MAIL FROM:<itny-out-node42+21ann=old.example.com@domain.com>
+       250 Ok
+       RCPT TO:<node42!ann@old.example.com>
+       250 Ok
+       DATA
+       354 Ok
+       From: "John" <john@domain.com>
+       Date: Thu, 16 Jan 1997 14:49:31 -0500 (EST)
+       Subject: Meeting canceled.
+
+       Today’s 2pm meeting has been rescheduled for tomorrow, 9am, due
+       to a scheduling conflict.
+       .
+
+   The SMTP conversation for the second message is as follows:
+
+       MAIL FROM:<itny-out-tom=old.example.com@domain.com>
+       250 Ok
+       RCPT TO:<tom@old.example.com>
+       250 Ok
+       DATA
+       354 Ok
+       From: "John" <john@domain.com>
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 8]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+       Date: Thu, 16 Jan 1997 14:49:31 -0500 (EST)
+       Subject: Meeting canceled.
+
+       Today’s 2pm meeting has been rescheduled for tomorrow, 9am, due
+       to a scheduling conflict.
+       .
+
+   example.com connects to new.example.com and determines that
+   new.example.com runs a modern ESMTP server that supports the VERP
+   keyword. The SMTP conversation then goes like this:
+
+       220 new.example.com ESMTP
+       EHLO example.com
+       250-new.example.com ESMTP
+       250-SIZE
+       250-DSN
+       250-VERP
+       250 HELP
+       MAIL FROM:<itny-out@domain.com> VERP SIZE=100
+       250 Ok
+       RCPT TO:<lisa@new.example.com>
+       250 Ok
+       RCPT TO:<dave+priority@new.example.com>
+       250 Ok
+       DATA
+       354 Ok
+       From: "John" <john@domain.com>
+       Date: Thu, 16 Jan 1997 14:49:31 -0500 (EST)
+       Subject: Meeting canceled.
+
+       Today’s 2pm meeting has been rescheduled for tomorrow, 9am, due
+       to a scheduling conflict.
+       .
+
+10. Security concerns
+
+   All the usual security considerations applicable to SMTP are also
+   applicable to this extension.  Relay of VERP messages to non-VERP
+   servers requires a single message with many recipients to be exploded
+   into many messages with one recipient.  In all cases, however, there
+   will never be any additional overhead beyond the resources that are
+   required when VERPs are manually implemented by the mail sender,
+   instead of the VERP SMTP extension.
+
+   Mail systems which support the VERP extension SHOULD have adequate
+   security measures, including blocks against unauthorized access and
+   relaying.
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                  [Page 9]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+10.1 Vacation programs, and other autoresponders
+
+   "Vacation" type autoresponders are often used in practice.  A
+   vacation autoresponder is a program that automatically replies to
+   every message, informing the sender that the recipient is on
+   vacation, or is generally unavailable at this time.
+
+   Vacation autoresponders MUST NOT generate autoresponses to mailing
+   list messages, but people often forget to do set them up to do so.
+   Because autoresponses are sent to the same address that’s used to
+   receive non-delivery reports, malfunctioning autoresponders result in
+   the recipient being removed from mailing lists.
+
+   Advanced autoresponders send automatic replies in the format
+   specified by [2], as a "delayed" notification.  DSN-aware software
+   will not remove addresses from mailing lists due to delayed
+   notifications.
+
+   Section 5 of this document specifies that the mail server MUST
+   replace the original return address with a VERP-modified address when
+   delivering the message to a mailbox or an external process.
+
+   Therefore it is possible that RFC 1891 reports may also be sent to a
+   VERP-encoded address, as specified by sections 5 and 7 of this
+   document.  Mail software SHOULD ignore any RFC 1891 "delayed" or
+   "success" reports that sent to a VERP-encoded address.  If it is a
+   "failed" report, note that the VERP address will be more reliable
+   than the address specified in the report itself.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                 [Page 10]
+
+VERP SMTP Extension          S. Varshavchik                 XXX XX, XXXX
+
+
+11. References
+
+       [1] Klensin, J., Freed, N., Rose, M., Stefferud, E., Crocker, D.
+           "SMTP Service Extensions", RFC 1425, United Nations
+           University, Innosoft International, Inc., Dover Beach
+           Consulting, Inc., Network Management Associates, Inc., The
+           Branch Office, February 1993
+
+       [2] Moore, K., and G. Vaudreuil, "An Extensible Message Format
+           for Delivery Status Notifications", RFC 1894, University of
+           Tennessee, Octel Network Services, January 1996.
+
+       [3] Moore, K. "SMTP Service Extension for Delivery Status
+           Notifications", RFC 1891, University of Tennessee, January
+           1996.
+
+       [4] Postel, J., "Simple Mail Transfer Protocol", STD 10, RFC 821,
+           USC/Information Sciences Institute, August 1982.
+
+       [5] Crocker, D., "Standard for the Format of ARPA Internet Text
+           Messages", STD 11, RFC 822, UDEL, August 1982.
+
+       [6] Mockapetris, P., "Domain Names - Implementation and
+           Specification", RFC 1035, ISI, November 1987
+
+12. Author’s address
+
+   Sam Varshavchik
+   Double Precision, Inc.
+   402 Main Street Suite 100-241
+   Metuchen, NJ 08840
+   <mrsam@courier-mta.com>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+S. Varshavchik            Expires XXX XX, XXXX                 [Page 11]

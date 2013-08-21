@@ -1,0 +1,63 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="account-getfolderfrompath">
+    <refmeta>
+      <refentrytitle>mail::ACCOUNT::getFolderFromPath</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::ACCOUNT::getFolderFromPath</refname>
+      <refpurpose>A direct short-cut to a folder</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+&libmail-includesynch;
+mail::ACCOUNT *mail;
+mail::folder *folder;
+
+std::string folderPath=folder-&gt;getPath();
+
+...
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>mail::folder *f=mail-&gt;<function>getFolderFromPath</function></funcdef>
+	  <paramdef>std::string <parameter>folderPath</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function is the
+<structname>mail::ACCOUNT</structname> equivalent of
+<link linkend="mail-findfolder"><citerefentry>
+	    <refentrytitle>mail::account::findFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.
+See the description of this function for more information.</para>
+    </refsect1>
+
+    <refsect1>
+      <title>RETURN CODES AND CALLBACKS</title>
+
+      <para>
+This function returns a NULL pointer if it cannot allocate memory for the
+new <structname>mail::folder</structname> object.</para>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+
+      <para>
+<link linkend="mail-findfolder"><citerefentry>
+	    <refentrytitle>mail::account::findFolder</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1>
+  </refentry>

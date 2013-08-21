@@ -1,0 +1,33 @@
++folderListing~Folder Listing Screen Colors:
+fl_accountName~Account Name:
+fl_accountType~Account Type:
+fl_folderName~Folder Name:
+fl_folderDirName~Directory Name:
+fl_messageCount~Message Count:
++messageDisplay~Message Display Colors:
+md_quote1~Quote Level 1:
+md_quote2~Quote Level 2:
+md_quote3~Quote Level 3:
+md_quote4~Quote Level 4:
+md_headerName~Header Name:
+md_headerContents~Header Contents:
+md_formatWarning~Format warnings:
++writeMessage~Write Message Colors:
+wm_headerName~Header Name:
++perms~Folder Permissions Screen Colors:
+perms_user~User Permissions:
+perms_group~Group Permissions:
+perms_owner~Owner Permissions:
+perms_admins~Administrator Permissions:
+perms_other~Other Permissions:
+perms_rights~Edit Individual Permissions:
++miscColors~Miscellaneous Colors:
+misc_promptColor~Prompt:
+misc_inputField~Prompt Field:
+misc_buttonColor~Action Button:
+misc_menuTitle~Menu Title:
+misc_menuOption~Menu Option:
+misc_titleBar~Title Line:
+misc_statusBar~Status Line:
+misc_hotKey~Hot Key:
+misc_hotKeyDescr~Hot Key Description:

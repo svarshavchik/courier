@@ -1,0 +1,29 @@
+<!-- Copyright 3 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+    <note>
+  <para>
+Efficient searching is implemented for local mail, and IMAP/SMAP
+mailboxes only.
+NetNews servers' searching capabilities are very limited, and POP3 servers
+have no search facilities whatsoever.
+In all cases, searching for message status flags is supported, since
+message status flags are always cached locally.</para>
+
+      <para>
+Only message headers of NetNews folders may be searched, and only English
+characters can be used as a search string.
+Some older NetNews servers may not have any searching ability whatsoever.
+Searching of message contents is not supported.
+Searching by message size, or message's date is not supported either.</para>
+
+      <para>
+Searching of POP3 folders is also not very efficient, although the search
+text is not limited to English characters only.
+POP3 folder search is accomplished by downloading the complete headers of
+each message, and searching it manually.
+Downloaded headers are not cached.
+The headers are also downloaded when searching by message's date.
+Searching by message size, or message's date is not supported for POP3
+folders.</para>
+    </note>

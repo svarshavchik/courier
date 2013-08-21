@@ -1,0 +1,68 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+  <refentry id="mail-readmsgcontentdecoded">
+    <refmeta>
+      <refentrytitle>mail::account::readMessageContentDecoded</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::account::readMessageContentDecoded</refname>
+      <refpurpose>Read decoded message contents</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      &libmail-mycallbackmessage;
+
+      <literallayout>
+mail::account *account;
+</literallayout>
+
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>account-&gt;<function>readMessageContentDecoded</function></funcdef>
+	  <paramdef>size_t <parameter>messageNum</parameter></paramdef>
+	  <paramdef>bool <parameter>peek</parameter></paramdef>
+	  <paramdef>mail::mimestruct &amp;<parameter>msgInfo</parameter></paramdef>
+	  <paramdef>bool <parameter>justHeader</parameter></paramdef>
+	  <paramdef>bool <parameter>justContents</parameter></paramdef>
+	  <paramdef>myCallbackMessage &amp;<parameter>callback</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+This function is similar to
+<link linkend="mail-readmsgcontent"><citerefentry>
+	    <refentrytitle>mail::account::readMessageContent</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>, with one
+difference:
+<literal>quoted-printable</literal> and
+<literal>base64</literal> MIME content is automatically decoded.
+The <function>mail::callback::message::messageTextCallback</function>
+function receives the decoded, binary, content.</para>
+
+    </refsect1>
+    <refsect1>
+      <title>Return Codes</title>
+
+      &libmail-waitcallback;
+      &libmail-concurrency;
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="mail-readmsgattr"><citerefentry>
+	    <refentrytitle>mail::account::readMessageAttributes</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="mail-readmsgcontent"><citerefentry>
+	    <refentrytitle>mail::account::readMessageContent</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>

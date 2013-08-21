@@ -1,0 +1,17 @@
+<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+
+      <note>
+	<para>
+The application is notified about when a message's status changes by
+by invoking the
+<function>messageChanged</function> callback method of the currently
+opened folder's
+<structname>mail::folderCallback</structname> object.
+Depending on the mail server, the
+<function>messageChanged</function> method may be
+invoked as part of processing this request,
+or some time later after this request is completed,
+and <parameter>callback</parameter>'s <function>success</function>
+method was invoked.</para>
+      </note>

@@ -1,0 +1,160 @@
+<!-- Copyright 2002-2004 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+  <refentry id="address">
+    <refmeta>
+      <refentrytitle>mail::address</refentrytitle>
+      <manvolnum>3x</manvolnum>
+      <refmiscinfo class='software'>
+        <productname class='copyright'>Cone</productname>
+      </refmiscinfo>
+    </refmeta>
+
+    <refnamediv>
+      <refname>mail::address</refname>
+      <refpurpose>An E-mail address</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <literallayout>
+#include &lt;libmail/rfcaddr.H&gt;
+
+mail::address address("John Smith", "johnsmith@example.com");
+
+std::string addr=address.getAddr();
+std::string name=address.getName();
+
+address.setAddr(addr);
+address.setName(name);
+
+std::string str=address.toString();
+
+std::vector&lt;mail::address&gt; addressList;
+
+std::string header= mail::address::toString("From: ", addressList,
+                                            size_t width=76);
+
+size_t errorIndex;
+
+bool error=mail::address::fromString(std::string addresses,
+                                     addressList,
+                                     errorIndex);
+
+std::string stdAddr=address.getCanonAddress();
+
+mail::address addr1, addr2;
+
+bool same= addr1 == addr2;
+bool notsame= addr1 != addr2;
+</literallayout>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>USAGE</title>
+
+      <para>
+<structname>mail::address</structname> represents a single E-mail address.
+An E-mail address consists of the recipient's name, and the actual address
+in the format of
+<replaceable>user</replaceable>@<replaceable>domain</replaceable>.
+The name and the address components may be accessed or changed by
+<function>getName()</function>,
+<function>getAddr()</function>,
+<function>setName()</function> and
+<function>setAddr()</function> methods.</para>
+
+    <note>
+      <para>
+<structname>mail::emailAddress</structname> would be a more appropriate
+class for most situations.
+The name component used by
+<function>getName()</function> and
+<function>setName()</function> methods is the Internet-format, MIME-encoded
+name.
+<structname>mail::emailAddress</structname> is a subclass of
+<structname>mail::address</structname>, and provides more convenient methods
+for working with the name component of an E-mail address.</para>
+
+      <para>
+The <function>toString</function> and
+<function>fromString</function> methods, defined below, will take a vector
+of either
+<structname>mail::emailAddress</structname> or
+<structname>mail::address</structname> objects, and in all other ways
+both classes are freely interchangable, and may be converted to one
+another.</para>
+</note>
+
+      <para>
+The <function>toString</function> method converts an address to a text string
+formatted as "<literal>name &lt;user@domain&gt;</literal>".
+A second <function>toString</function> function creates an E-mail header
+that contains a comma-separated list of E-mail addresses.
+The first parameter must be the header's name (with a trailing space
+character); the second parameter is a reference to a vector of
+<structname>mail::address</structname> objects.
+An optional third parameter sets the maximum line width; the text string
+returned by <function>toString</function> will have newline characters,
+if necessary to make sure that each line is shorter than the specified
+maximum.</para>
+
+      <para>
+<function>fromString</function> does the opposite: it converts the contents
+of an E-mail
+header to an array of <structname>mail::address</structname> objects.
+The first parameter is the E-mail header's contents
+(<emphasis>without</emphasis> <literal>Header-Name:</literal>).
+The second parameter is a reference to a vector of
+<structname>mail::address</structname> objects.
+<function>fromString</function> returns false if a fatal error has occured
+(out of memory, or something else).
+<parameter>errorIndex</parameter> is normally set to
+<literal>string::npos</literal>.
+If the header cannot be parsed;
+<parameter>errorIndex</parameter> is set to the index of the character
+in <parameter>addresses</parameter> where a syntax error was
+found (the header is still parsed, and any recognizable addresses are
+still saved in
+<parameter>addressList</parameter>).</para>
+
+      <para>
+<parameter>addressList</parameter> should be empty.
+Otherwise the addresses are appended to
+<parameter>addressList</parameter>'s existing contents.</para>
+
+      <refsect2>
+	<title>Comparing addresses</title>
+
+	<para>
+The <replaceable>domain</replaceable> part of an E-mail address is
+case insensitive, however the
+<replaceable>user</replaceable> part of an E-mail address is not case
+insensitive.
+It is up to each individual <replaceable>domain</replaceable> whether or
+not the
+<replaceable>user</replaceable> part is case sensitive, or not.
+Since it is not possible to determine whether
+<replaceable>user</replaceable> is case sensitive; the
+<function>getCanonAddress</function> method returns the E-mail address as
+<replaceable>user</replaceable>@<replaceable>domain</replaceable>, with
+only the
+<replaceable>domain</replaceable> part converted to lowercase.</para>
+
+	<para>
+The object also defines the equality and non-equality operators, which
+compare the address portion of two
+<structname>mail::address</structname> objects (the name portions are
+ignored), with the
+<replaceable>domain</replaceable> part of each domain being case
+insensitive</para>
+      </refsect2>
+    </refsect1>
+    <refsect1>
+      <title>SEE ALSO</title>
+      <para>
+<link linkend="emailaddress"><citerefentry>
+	    <refentrytitle>mail::emailAddress</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>,
+<link linkend="envelope"><citerefentry>
+	    <refentrytitle>mail::envelope</refentrytitle>
+	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
+    </refsect1> 
+  </refentry>
