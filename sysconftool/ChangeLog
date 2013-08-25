@@ -1,3 +1,11 @@
+0.17
+
+2013-08-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* sysconftoolize.pl: Add --copy option to sysconftoolize.
+
+	* Migrated to git repo.
+
 0.16
 
 2011-04-05  Sam Varshavchik  <mrsam@courier-mta.com>

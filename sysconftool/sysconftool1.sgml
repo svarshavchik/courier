@@ -157,11 +157,18 @@ nothing is lost.  However, the next upgrade will see
 is to run the
 <command>sysconftoolize</command> script from the application's source
 directory.
-<command>sysconftoolize</command> copies the <command>sysconftool</command>
-script to the
+<command>sysconftoolize</command> creates a symbolic link to the
+<command>sysconftool</command>
+script from the
 current directory, and appends a default <literal>install-configure</literal>
 rule to
-<filename>Makefile.am</filename>. After running
+<filename>Makefile.am</filename>. <command>sysconftoolize</command> with the
+<option>--copy</option> option copies the script, instead of creating a
+symbolic link.
+    </para>
+
+    <para>
+After running
 <command>sysconftoolize</command> the macro
 <literal>AC_PROG_SYSCONFTOOL</literal> must be manually added to
 <filename>configure.in</filename>, and <filename>Makefile.am</filename> must be modified as

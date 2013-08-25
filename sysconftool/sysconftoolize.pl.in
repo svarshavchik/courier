@@ -1,27 +1,36 @@
 #! @PERL@
-# Copyright 2000-2001 Double Precision, Inc.  See COPYING for
+# Copyright 2000-2013 Double Precision, Inc.  See COPYING for
 # distribution information.
 
+use strict;
+use warnings;
+use Getopt::Long;
+
+my $copy;
+
+exit 1 unless GetOptions("copy" => \$copy );
 $| = 1;
 
 print "Checking for sysconftool: ";
 
-$aux_dir=".";
-$prefix="@prefix@";
-$datarootdir="@datarootdir@";
+my $aux_dir=".";
+my $prefix="@prefix@";
+my $datarootdir="@datarootdir@";
 
-if (open(CONF, "configure.in"))
+if (open(CONF, "configure.in") || open(CONF, "configure.ac"))
 {
-	while (defined ($l=<CONF>))
-	{
-		next unless $l =~ /AC_CONFIG_AUX_DIR[ \t]*\((.*)\)/;
-		$aux_dir=$l;
-		last;
-	}
-	close(CONF);
+    my $l;
+
+    while (defined ($l=<CONF>))
+    {
+	next unless $l =~ /AC_CONFIG_AUX_DIR[ \t]*\((.*)\)/;
+	$aux_dir=$l;
+	last;
+    }
+    close(CONF);
 }
 
-$sysconftool="";
+my $sysconftool="";
 
 foreach ( ($aux_dir, ".", "..", "../.."))
 {
@@ -34,7 +43,7 @@ foreach ( ($aux_dir, ".", "..", "../.."))
 
 unless ($sysconftool)
 {
-	system("@LN_S@ @datadir@/sysconftool/sysconftool .") == 0
+	system(($copy ? "cp -p":"@LN_S@") . " @datadir@/sysconftool/sysconftool .") == 0
 		|| die "$!\n";
 	print "@datadir@/sysconftool/sysconftool\n";
 }
@@ -43,7 +52,8 @@ print "Checking Makefile.am: ";
 
 open (MAM, "+<Makefile.am") || die "Makefile.am: $!\n";
 
-$found=0;
+my $found=0;
+my $l;
 
 while (defined ($l=<MAM>))
 {
