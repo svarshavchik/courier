@@ -36,7 +36,7 @@ nohtmlinfiles=  aliases.html \
 		rpm.html \
 		status.html \
 		structures.html \
-		svn.html
+		repo.html
 
 nohtmlin=$(miscfiles) $(nohtmlinfiles)
 

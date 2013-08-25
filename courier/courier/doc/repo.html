@@ -8,22 +8,23 @@
   <meta name="MSSmartTagsPreventParsing" content="TRUE" />
   <meta name="author" content="Sam Varshavchik" />
 
-  <title>The Courier mail server - Subversion repository</title>
+  <title>The Courier mail server - Git repository</title>
   <link rel="icon" href="icon.gif" type="image/gif" />
 </head>
 
 <body>
-  <!-- Copyright 2000-2011 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2000-2013 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 
   <h1>Subversion repository</h1>
 
   <p>The following applies for the entire the <em>Courier</em> mail
   server source code distribution, and sub-modules (the
-  <em>Courier</em> IMAP server, sqwebmail, maildrop).</p>
+  <em>Courier</em> IMAP server, sqwebmail, maildrop, as well as
+  Cone, and a few other minor subprojects).</p>
 
-  <p>In order to build from the Subversion repository, you must
-  have the following additional software installed:</p>
+  <p>In order to build from the Git repository, you must have the
+  following additional software installed:</p>
 
   <ol>
     <li><a target="_blank" href=
@@ -72,75 +73,41 @@
   <p>These additional dependencies are only required if building
   from Subversion, and not the packaged tarballs.</p>
 
-  <p>Subversion trunks:</p>
+  <p>The source code is divided into two Git repositories:</p>
 
   <ul>
-    <li>
-      <p><code>svn checkout
-      svn://svn.code.sf.net/p/courier/code/trunk/courier/</code> -
-      Entire Courier server</p>
-    </li>
+    <li><tt><a href=
+    "https://sourceforge.net/p/courier/courier.git/ci/master/tree/">
+    git://git.code.sf.net/p/courier/courier.git</a></tt> - the top
+    level directory consists of subdirectories, one for each
+    project (courier, cone, courier-imap, etc...).</li>
 
-    <li>
-      <p><code>svn checkout
-      svn://svn.code.sf.net/p/courier/code/trunk/courier-imap/</code>
-      - The Courier-IMAP server</p>
-    </li>
-
-    <li>
-      <p><code>svn checkout
-      svn://svn.code.sf.net/p/courier/code/trunk/sqwebmail/</code>
-      - The SqWebMail mail server</p>
-    </li>
-
-    <li>
-      <p><code>svn checkout
-      svn://svn.code.sf.net/p/courier/code/trunk/maildrop/</code> -
-      maildrop</p>
-    </li>
-
-    <li>
-      <p><code>svn checkout
-      svn://svn.code.sf.net/p/courier/code/trunk/sox/</code> - The
-      Socks 5 proxy server</p>
-    </li>
-
-    <li>
-      <p><code>svn checkout
-      svn://svn.code.sf.net/p/courier/code/trunk/sysconftool/</code>
-      - Sysconftool</p>
-    </li>
-
-    <li>
-      <p><code>svn checkout
-      svn://svn.code.sf.net/p/courier/code/trunk/cone/</code> -
-      Cone mail client</p>
-    </li>
+    <li><tt><a href=
+    "https://sourceforge.net/p/courier/courier-libs.git/ci/master/tree/">
+    git://git.code.sf.net/p/courier/courier-libs.git</a></tt> -
+    shared modules and libraries. After cloning the main
+    repository, follow the instructions in the <tt>README</tt> file
+    to clone the shared module repository, and finish the
+    setup.</li>
   </ul>
-
-  <p>Run "<code>svn checkout</code> <em>URL</em>" to check out each
-  package.</p>
 
   <p>NOTE: Automatically-generated <code>configure</code> and
   <code>Makefile</code>, <code>libtool</code>, and
   <code>sysconftool</code> scripts are NOT stored in the
-  repository, and you must build them yourself. Fortunately, it's
-  very easy to do this. Simply run the following command after
-  checking out any one of these modules:</p>
-  <pre>
-    sh autobloat
-</pre>
+  repository, and you must build them yourself. The <tt>README</tt>
+  file+script takes care of rebuilding it, by running the
+  <code>autobloat</code> script.</p>
 
   <p>The <code>autobloat</code> script automatically runs
   <code>automake</code>, <code>autoconf</code>,
   <code>libtool</code>, <code>sysconftool</code>, from the current
   directory.</p>
 
-  <p>NOTE: The "courier" module is the entire mail server. The
-  other modules extract selected portions, with a different
-  top-level makefile that builds a standalone package. You only
-  need to obtain the <code>courier</code> module, to get the source
-  code for the <em>Courier</em> mail server. See <a href=
-  "intro.html">Introduction</a> for more information.</p>
+  <p>NOTE: The "courier" module/directory is the entire mail server
+  that includes all components (imap, maildrop, sqwebmail, etc...).
+  The other top-level directories ("courier-imap", "sqwebmail",
+  ...), after being combined with the second, shared module
+  repository, end up building just the individual component. See
+  <a href="intro.html">Introduction</a> for more information.</p>
 </body>
 </html>
