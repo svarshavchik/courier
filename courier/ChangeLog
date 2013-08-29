@@ -1,3 +1,12 @@
+2013-08-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: pattern searches are now specified in UTF-8. maildrop
+	MIME-decodes the search pattern, and transcodes it to the UTF-8
+	character set, for searching purposes.
+
+	* sqwebmail: update its maildrop rule generator to support UTF-8-able
+	maildrop.
+
 2013-07-04  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildir/maildirmake.c (main): Add -F option to maildirmake,

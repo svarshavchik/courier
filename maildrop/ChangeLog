@@ -1,3 +1,9 @@
+2013-08-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: pattern searches are now specified in UTF-8. maildrop
+	MIME-decodes the search pattern, and transcodes it to the UTF-8
+	character set, for searching purposes.
+
 2012-12-04  Alessandro Vesely <vesely@tana.it>
 
 	* rfc2045/makemime.c (openfile_or_pipe): Do not dup stdin filedesc,
