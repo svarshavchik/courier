@@ -79,8 +79,8 @@ int rc;
 	return rc;
 }
 
-int auth_get_cram(const char *authtype, char *authdata,
-		  struct cram_callback_info *craminfo)
+static int do_auth_get_cram(const char *authtype, char *authdata,
+			    struct cram_callback_info *craminfo, int logerr)
 {
 int	i;
 int	challenge_l;
@@ -90,7 +90,10 @@ int	response_l;
 		(craminfo->challenge=strtok(authdata, "\n")) == 0 ||
 		(craminfo->response=strtok(0, "\n")) == 0)
 	{
-		DPRINTF("Unsupported authentication type: %s", authtype);
+		if (logerr)
+		{
+			DPRINTF("Unsupported authentication type: %s", authtype);
+		}
 		errno=EPERM;
 		return (-1);
 	}
@@ -99,15 +102,21 @@ int	response_l;
 		if (strcmp(hmac_list[i]->hh_name, authtype+5) == 0)
 			break;
 
-	DPRINTF("cram: challenge=%s, response=%s", craminfo->challenge,
-		craminfo->response);
+	if (logerr)
+	{
+		DPRINTF("cram: challenge=%s, response=%s", craminfo->challenge,
+			craminfo->response);
+	}
 
 	if (hmac_list[i] == 0
 		|| (challenge_l=authsasl_frombase64(craminfo->challenge)) < 0
 		|| (response_l=authsasl_frombase64(craminfo->response)) < 0)
 	{
-		DPRINTF("cram: invalid base64 encoding, or unknown method: %s",
-			authtype);
+		if (logerr)
+		{
+			DPRINTF("cram: invalid base64 encoding, or unknown method: %s",
+				authtype);
+		}
 		errno=EACCES;
 		return (-1);
 	}
@@ -122,7 +131,10 @@ int	response_l;
 
 	if (i == 0)
 	{
-		DPRINTF("cram: invalid base64 encoding");
+		if (logerr)
+		{
+			DPRINTF("cram: invalid base64 encoding");
+		}
 		errno=EACCES;
 		return (-1);
 	}
@@ -137,9 +149,12 @@ int	response_l;
 	craminfo->challenge[challenge_l]=0;
 	craminfo->response[response_l]=0;
 
-	/* we rely on DPRINTF doing a "safe" print here */
-	DPRINTF("cram: decoded challenge/response, username '%s'",
-		craminfo->user);
+	if (logerr)
+	{
+		/* we rely on DPRINTF doing a "safe" print here */
+		DPRINTF("cram: decoded challenge/response, username '%s'",
+			craminfo->user);
+	}
 	return (0);
 }
 
@@ -190,4 +205,16 @@ int	rc;
 	if (rc)	return (rc);
 
 	return (*cci->callback_func)(a, cci->callback_arg);
+}
+
+int auth_get_cram(const char *authtype, char *authdata,
+		  struct cram_callback_info *craminfo)
+{
+	return do_auth_get_cram(authtype, authdata, craminfo, 1);
+}
+
+int auth_get_cram_silent(const char *authtype, char *authdata,
+			 struct cram_callback_info *craminfo)
+{
+	return do_auth_get_cram(authtype, authdata, craminfo, 0);
 }

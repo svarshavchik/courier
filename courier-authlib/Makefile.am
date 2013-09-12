@@ -321,8 +321,8 @@ libcourierauthsasl_la_SOURCES=\
 	authsasl.c courierauthsasl.h \
 	authsaslcram.c authsasllogin.c authsaslplain.c \
 	authsaslfrombase64.c authsasltobase64.c
-libcourierauthsasl_la_LIBADD=libcourierauth.la
-libcourierauthsasl_la_LDFLAGS=-export-symbols-regex '^auth_sasl|auth_sasl_ex$$' -avoid-version
+libcourierauthsasl_la_LIBADD=libcourierauthcommon.la libcourierauth.la
+libcourierauthsasl_la_LDFLAGS=-export-symbols-regex '^auth_sasl|auth_sasl_ex|auth_sasl_extract_userid$$' -avoid-version
 
 libcourierauthsaslclient_la_SOURCES=courierauthsaslclient.h \
 	authsaslclient.c authsaslclient.h authsaslclientcram.c \

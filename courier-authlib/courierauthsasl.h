@@ -2,7 +2,7 @@
 #define	courierauthsasl_h
 
 /*
-** Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
+** Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
 
@@ -62,6 +62,15 @@ int auth_sasl_ex(const char *method,
 		 void *callback_arg,
 		 char **authtype_ptr,
 		 char **authdata_ptr);
+
+	/*
+	** Given authtype and authdata, return the userid in the authentication
+	** request. Returns a malloced buffer.
+	*/
+char *auth_sasl_extract_userid(const char *authtype,
+			       const char *authdata);
+
+
 
 	/* INTERNAL FUNCTIONS BELOW */
 

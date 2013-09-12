@@ -1,12 +1,13 @@
 
 /*
-** Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
+** Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
 
 #include	"courier_auth_config.h"
 #include	"courierauthsasl.h"
 #include	"authsaslclient.h"
+#include	"cramlib.h"
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	<string.h>
@@ -138,4 +139,48 @@ int auth_sasl_ex(const char *method,
 	}
 
 	return 0;
+}
+
+char *auth_sasl_extract_userid(const char *authtype,
+			       const char *authdata)
+{
+	struct	cram_callback_info	cci;
+	char *p;
+	char *t;
+	char *d;
+
+	if (strcmp(authtype, AUTHTYPE_LOGIN) == 0)
+	{
+		char *q;
+
+		p=strdup(authdata);
+
+		if (!p)
+			return NULL;
+
+		q=strchr(p, '\n');
+		if (q) *q=0;
+		return p;
+	}
+
+	if ((t=strdup(authtype)) == NULL)
+		return NULL;
+
+	if ((d=strdup(authdata)) == NULL)
+	{
+		free(t);
+		return NULL;
+	}
+
+	if (auth_get_cram_silent(t, d, &cci))
+	{
+		free(d);
+		free(t);
+		return (NULL);
+	}
+
+	p=strdup(cci.user);
+	free(d);
+	free(t);
+	return p;
 }

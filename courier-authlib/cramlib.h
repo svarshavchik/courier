@@ -30,6 +30,12 @@ int auth_get_cram(const char *authtype,			/* authtype */
 
 		  struct cram_callback_info *craminfo);
 		/* Initializes craminfo */
+
+/* auth_get_cram_silent() is auth_get_cram(), but without logging */
+
+int auth_get_cram_silent(const char *authtype, char *authdata,
+			 struct cram_callback_info *craminfo);
+
 /*
 ** auth_verify_cram attempts to verify the secret cookie.
 */
