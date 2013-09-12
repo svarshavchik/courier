@@ -14,7 +14,6 @@ miscfiles=japanese_flag.png chinese_flag.png bg.gif icon.gif manpage.css \
 		style.css frame.js
 
 nohtmlinfiles=  aliases.html \
-		changelog.html \
 		courierd.html \
 		courierdsn.html \
 		documentation.html \
