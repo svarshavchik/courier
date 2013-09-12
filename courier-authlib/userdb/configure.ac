@@ -61,27 +61,27 @@ AC_SUBST(tmpdir)
 AC_ARG_WITH(makedatprog, [ ], makedat="$withval", makedat="$bindir/makedat")
 AC_SUBST(makedat)
 
-if test -d ${srcdir}/../md5
+if test -d ${srcdir}/../libs/md5
 then
 	AC_DEFINE_UNQUOTED(HAVE_MD5,1,[ Whether libmd5.a is present ])
-	MD5LIB=../md5/libmd5.la
+	MD5LIB=../libs/md5/libmd5.la
 else
 	MD5LIB=""
 fi
 AC_SUBST(MD5LIB)
 
-if test -d ${srcdir}/../sha1
+if test -d ${srcdir}/../libs/sha1
 then
-	SHA1LIB=../sha1/libsha1.la
+	SHA1LIB=../libs/sha1/libsha1.la
 else
 	SHA1LIB=""
 fi
 AC_SUBST(SHA1LIB)
 
-if test -d ${srcdir}/../libhmac
+if test -d ${srcdir}/../libs/libhmac
 then
 	AC_DEFINE_UNQUOTED(HAVE_HMAC,1, [ Whether libhmac.a is present ])
-	HMACLIB=../libhmac/libhmac.la
+	HMACLIB=../libs/libhmac/libhmac.la
 else
 	HMACLIB=""
 fi
