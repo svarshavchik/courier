@@ -1278,7 +1278,7 @@ int	authenticated=0;
 		char	*buf=strcpy(courier_malloc(strlen(line)+1), line);
 		char	*authtype;
 		char	*authdata;
-		char    fakecmd[5];
+		char    fakecmd[80];
 
 		        strcpy(fakecmd, "AUTH");
 
@@ -1330,11 +1330,22 @@ int	authenticated=0;
 						    auth_callback_func,
 						    authmethod);
 
+				if (rc)
+				{
+					char *p=auth_sasl_extract_userid(authtype, authdata);
+
+					if (p)
+					{
+						strcat(fakecmd, " ");
+						strncat(fakecmd, p,
+							sizeof(fakecmd)
+							-strlen(fakecmd)-1);
+						free(p);
+					}
+					strcpy(authuserbuf, "");
+				}
 				free(authtype);
 				free(authdata);
-
-				if (rc)
-					strcpy(authuserbuf, "");
 			}
 
 			if (authuserbuf[0] == 0)

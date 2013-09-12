@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 0.71.20130828, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 0.71.20130829, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -108,9 +108,9 @@ AC_ARG_WITH(courierlogger, [], : ,
 			   [
 			   ac_configure_args="$ac_configure_args --with-courierlogger=$authsbindir/courierlogger"])
 
-if test `$COURIERAUTHCONFIG --version=0.62.4.20091218` = "no"
+if test `$COURIERAUTHCONFIG --version=0.65.0.20130910` = "no"
 then
-	AC_MSG_ERROR(Courier authentication library version 0.63 is required.)
+	AC_MSG_ERROR(Courier authentication library version 0.66 is required.)
 fi
 
 dnl Check whether we should use gdbm, or db.
