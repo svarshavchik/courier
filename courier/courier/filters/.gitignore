@@ -16,3 +16,8 @@
 /filterctl
 /filtersocketdir.h
 /pidfile.h
+/ratefilter
+/ratefilter.8
+/ratefilter.8.in
+/ratefilter.html
+/ratefilter.html.in

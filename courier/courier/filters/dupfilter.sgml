@@ -19,11 +19,11 @@
 
     <cmdsynopsis sepchar=" ">
       <command moreinfo="none">filterctl</command>
-      <group choice="opt" rep="norepeat">
+      <group choice="req" rep="norepeat">
 	<arg choice="opt" rep="norepeat">start</arg>
 	<arg choice="opt" rep="norepeat">stop</arg>
       </group>
-      <arg choice="opt" rep="norepeat">dupfilter</arg>
+      <arg choice="plain" rep="norepeat">dupfilter</arg>
     </cmdsynopsis>
   </refsynopsisdiv>
 

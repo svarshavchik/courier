@@ -10,14 +10,14 @@ CLEANFILES=$(htmldoc_DATA) $(man_MANS) filtersocketdir.h filteractivedir.h \
 piddir=@piddir@
 
 htmldocdir=@datadir@/htmldoc
-htmldoc_DATA=courierfilter.html courierperlfilter.html dupfilter.html
+htmldoc_DATA=courierfilter.html courierperlfilter.html dupfilter.html ratefilter.html
 
 databindir=$(datadir)
 databin_SCRIPTS=filterctl
 sbin_PROGRAMS=courierfilter
 
 filterbindir=$(libexecdir)/filters
-filterbin_PROGRAMS=dupfilter
+filterbin_PROGRAMS=dupfilter ratefilter
 
 filtersocketdir=$(localstatedir)/filters
 allfiltersocketdir=$(localstatedir)/allfilters
@@ -36,6 +36,12 @@ dupfilter_LDADD=libfilter/libfilter.a ../../libs/md5/libmd5.la \
 	../../libs/liblock/liblock.la \
 	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
 	`cat ../../libs/threadlib/libthread.dep` @NETLIBS@
+
+ratefilter_SOURCES=ratefilter.C
+ratefilter_DEPENDENCIES=libfilter/libfilter.a ../../afx/libafx.a \
+	../libs/libcommon.la ../libs/libcourier.la
+ratefilter_LDADD=libfilter/libfilter.a ../../afx/libafx.a \
+	../libs/libcommon.la ../libs/libcourier.la @NETLIBS@
 
 courierfilter_SOURCES=courierfilter.c
 courierfilter_DEPENDENCIES=../libs/libcommon.la ../libs/libcourier.la \
@@ -73,7 +79,9 @@ install-data-hook:
 	for f in $(htmldoc_DATA); do chmod 444 $(DESTDIR)$(htmldocdir)/$$f ; done
 	test `id -u` = 0 || exit 0; for f in $(htmldoc_DATA); do chown bin $(DESTDIR)$(htmldocdir)/$$f ; chgrp bin $(DESTDIR)$(htmldocdir)/$$f ; done
 	chmod 755 $(DESTDIR)$(filterbindir)/dupfilter
+	chmod 755 $(DESTDIR)$(filterbindir)/ratefilter
 	test `id -u` = 0 || exit 0; chown @mailuser@ $(DESTDIR)$(filterbindir)/dupfilter; chgrp @mailgroup@ $(DESTDIR)$(filterbindir)/dupfilter
+	test `id -u` = 0 || exit 0; chown @mailuser@ $(DESTDIR)$(filterbindir)/ratefilter; chgrp @mailgroup@ $(DESTDIR)$(filterbindir)/ratefilter
 
 install-perms:
 	@$(MAKE) install-perms-recursive
@@ -86,6 +94,7 @@ install-perms-recursive:
 install-perms-local:
 	@echo "$(filterbindir) 755 bin bin" >>permissions.dat
 	@echo "$(filterbindir)/dupfilter 755 @mailuser@ @mailgroup@" >>permissions.dat
+	@echo "$(filterbindir)/ratefilter 755 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filtersocketdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(allfiltersocketdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filterconfdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
@@ -95,6 +104,7 @@ install-perms-local:
 	@echo "$(sbindir)/courierfilter 500 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(man8dir)/courierfilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/dupfilter.8 644 bin bin man" >>permissions.dat
+	@echo "$(man8dir)/ratefilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/courierperlfilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/filterctl.8 644 bin bin man" >>permissions.dat
 	@for f in $(htmldoc_DATA); do echo "$(htmldocdir)/$$f 644 bin bin doc" >>permissions.dat ; done
@@ -109,7 +119,7 @@ filteractivedir.h: config.status
 pidfile.h: config.status
 	echo '#define PIDFILE "$(piddir)/courierfilter.pid"' >pidfile.h
 
-man_MANS=courierfilter.8 dupfilter.8 courierperlfilter.8
+man_MANS=courierfilter.8 dupfilter.8 ratefilter.8 courierperlfilter.8
 BUILT_SOURCES=$(man_MANS) $(htmldoc_DATA) \
 	filtersocketdir.h filteractivedir.h pidfile.h
 
@@ -119,7 +129,8 @@ uninstall-local:
 
 EXTRA_DIST=testsuite testsuite.txt \
 	courierfilter.8.in dupfilter.8.in courierperlfilter.8.in \
-	courierfilter.html.in courierperlfilter.html.in dupfilter.html.in
+	courierfilter.html.in courierperlfilter.html.in dupfilter.html.in \
+	ratefilter.8.in ratefilter.html.in
 
 if HAVE_SGML
 courierfilter.html.in: courierfilter.sgml ../../libs/docbook/sgml2html
@@ -143,6 +154,13 @@ dupfilter.8.in: dupfilter.sgml ../../libs/docbook/sgml2man
 	../../libs/docbook/sgml2man dupfilter.sgml dupfilter.8.in
 	mv dupfilter.8 dupfilter.8.in
 
+ratefilter.html.in: ratefilter.sgml ../../libs/docbook/sgml2html
+	../../libs/docbook/sgml2html ratefilter.sgml ratefilter.html.in
+
+ratefilter.8.in: ratefilter.sgml ../../libs/docbook/sgml2man
+	../../libs/docbook/sgml2man ratefilter.sgml ratefilter.8.in
+	mv ratefilter.8 ratefilter.8.in
+
 endif
 
 courierfilter.html: courierfilter.html.in
@@ -161,6 +179,12 @@ dupfilter.html: dupfilter.html.in
 	./config.status --file=$@
 
 dupfilter.8: dupfilter.8.in
+	./config.status --file=$@
+
+ratefilter.html: ratefilter.html.in
+	./config.status --file=$@
+
+ratefilter.8: ratefilter.8.in
 	./config.status --file=$@
 
 check-am:

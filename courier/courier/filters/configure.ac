@@ -15,6 +15,7 @@ AM_CONFIG_HEADER(config.h)
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AM_PROG_LIBTOOL
@@ -102,8 +103,10 @@ AC_SUBST(mailgroup)
 if test x$GCC = xyes
 then
 	CFLAGS="-Wall $CFLAGS"
+	CXXFLAGS="-Wall $CXXFLAGS"
 fi
 CFLAGS="-I.. -I$srcdir/.. -I$srcdir/../libs -I$srcdir/../.. -I../.. -I$srcdir../../libs -I../../libs -I$srcdir/../../libs $CFLAGS"
+CXXFLAGS="-I.. -I$srcdir/.. -I$srcdir/../libs -I$srcdir/../.. -I../.. -I$srcdir../../libs -I../../libs -I$srcdir/../../libs $CXXFLAGS"
 
 INSTALL_SCRIPT='${INSTALL} -m 500'
 

@@ -308,6 +308,7 @@ Optional filters.</para>
 <ulink url="localmailfilter.html"><citerefentry><refentrytitle>localmailfilter</refentrytitle><manvolnum>7</manvolnum></citerefentry></ulink>,
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
 <ulink url="dupfilter.html"><citerefentry><refentrytitle>dupfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="ratefilter.html"><citerefentry><refentrytitle>ratefilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
 <ulink url="courierperlfilter.html"><citerefentry><refentrytitle>courierperlfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
 
   </refsect1>

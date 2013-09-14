@@ -1,0 +1,151 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 2013 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>ratefilter</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>ratefilter</refname>
+    <refpurpose>Rate-limiting mail filter</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+
+    <cmdsynopsis sepchar=" ">
+      <command>filterctl</command>
+      <group choice="req" rep="norepeat">
+	<arg choice="opt" rep="norepeat">start</arg>
+	<arg choice="opt" rep="norepeat">stop</arg>
+      </group>
+      <arg choice='plain'>ratefilter</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+      Enable this filter to enforce a maximum number of messages accepted
+      from the same sender.
+    </para>
+
+    <para>
+      <command>ratefilter</command> uses the following configuration files.
+      Changes to
+      the following files do not take effect until the filter has been stopped
+      and restarted.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term><filename>@sysconfdir@/filters/ratefilter-interval</filename></term>
+	<listitem>
+	  <para>
+	    This file contains a single numerical value that sets the
+	    rate limiting time interval setting, in seconds.
+	    The default value is sixty seconds. Sixty seconds is also the
+	    minimum acceptable interval.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename>@sysconfdir@/filters/ratefilter-maxrcpts</filename></term>
+	<listitem>
+	  <para>
+	    This file contains a single numerical value that sets how many
+	    receipients the same sender can send mail to, within the
+	    controlling time interval. The default value is 100 recipients.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename>@sysconfdir@/filters/ratefilter-minuid</filename></term>
+	<listitem>
+	  <para>
+	    When <command>ratefilter</command> is enabled for locally
+	    originating mail, this sets the minimum system userid that has
+	    rate limiting enforced. The default value is 100. Mail sent by
+	    processes with lower uids are not subject to rate limiting.
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename>@sysconfdir@/filters/ratefilter-mode</filename></term>
+	<listitem>
+	  <para>
+	    If this file exists and contains the word "all",
+	    <command>ratefilter</command> creates its listening
+	    socket in <filename>@localstatedir@/allfilters</filename>,
+	    otherwise the socket gets
+	    created in <filename>@localstatedir@/filters</filename>, see
+	    <ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+	    for more information.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      The <filename>enablefiltering</filename> settings controls whether local
+      or <literal>ESMTP</literal> mail is subject to rate limiting, see 
+      <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+      for more information.
+    </para>
+
+    <para>
+      In this context, <quote>local</quote> mail refers to mail that gets sent
+      when a process executes the
+      <ulink url="sendmail.html"><citerefentry><refentrytitle>sendmail</refentrytitle><manvolnum>1</manvolnum></citerefentry></ulink>
+      command. This does not include mail sent via connection to local port
+      25, this is considered <literal>ESMTP</literal> mail.
+    </para>
+
+    <para>
+      Local mail gets rate limited based on the sending process's userid.
+      Each numerical userid gets treated as an individual sender.
+      <literal>ESMTP</literal> mail's sender is taken from the authenticated
+      <literal>ESMTP</literal>'s userid. Non-authenticated
+      <literal>ESMTP</literal> mail is not subject to rate limiting.
+    </para>
+
+    <para>
+      Rate limiting is implemented by dividing chronological time into
+      intervals that are half the time interval given in the
+      <filename>ratefilter-interval</filename> setting. For example, with
+      the default interval of sixty seconds, chronological time
+      gets divided into thirty second intervals.
+    </para>
+
+    <para>
+      <command>ratefilter</command> counts
+      the number of receipients in each message (and not just
+      the number of messages) from each sender, in each time interval.
+    </para>
+
+    <para>
+      <command>ratefilter</command> rejects the message when
+      the total number of recipients from all messages from the same
+      sender in the current and the previous time interval exceeds the
+      <filename>ratefilter-maxrcpts</filename> setting. The rejected message's
+      number of recipients also get counted, for the purpose of rejecting
+      future messages.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>
