@@ -13,7 +13,6 @@ cd ../courier
 @PERL@ -e '
 
 	$root="'$1'";
-	$testmode=@testmode@;
 
 	while (<>)
 	{
@@ -42,11 +41,8 @@ cd ../courier
 			chown ($uid, $gid, $FILE) || die "chown $FILE: $!\n";
 		}
 
-		if ( $testmode == 0)
-		{
-			$MODE= oct($MODE);
-			chmod ($MODE, $FILE) || die "chmod $FILE: $!\n";
-		}
+		$MODE= oct($MODE);
+		chmod ($MODE, $FILE) || die "chmod $FILE: $!\n";
 	}
 	exit (0);
 ' <install-perms-list.dat
