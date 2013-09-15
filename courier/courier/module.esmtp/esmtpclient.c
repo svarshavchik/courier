@@ -399,6 +399,8 @@ static void talking(struct moduledel *del, struct ctlfile *ctf)
 static void smtp_error(struct moduledel *del, struct ctlfile *ctf,
 		       const char *msg, int errcode);
 
+static void report_broken_starttls();
+
 /* Attempt to deliver a message */
 
 static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
@@ -672,7 +674,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 							  p->hostname,
 							  0))
 					{
-						;
+						report_broken_starttls();
 					}
 					else if (authclient(del, ctf, auth_key))
 					{
@@ -1597,9 +1599,6 @@ static int starttls(struct moduledel *del, struct ctlfile *ctf,
 			soft_error(del, ctf, "Remote mail server disconnected after receiving the STARTTLS command");
 			close(pipefd[0]);
 			close(pipefd[1]);
-
-			report_broken_starttls();
-
 			return (1);
 		}
 
@@ -1610,8 +1609,6 @@ static int starttls(struct moduledel *del, struct ctlfile *ctf,
 			smtp_msg(del, ctf);
 			close(pipefd[0]);
 			close(pipefd[1]);
-
-			report_broken_starttls();
 
 			while (!ISFINALLINE(p))
 			{
@@ -1731,7 +1728,6 @@ static int starttls(struct moduledel *del, struct ctlfile *ctf,
 	{
 		char tmperrbuf[sizeof(cinfo.errmsg)+10];
 
-		report_broken_starttls();
 		talking(del, ctf);
 		sent(del, ctf, "STARTTLS");
 
