@@ -1280,12 +1280,20 @@ int	authenticated=0;
 		char	*authdata;
 		char    fakecmd[80];
 
-		        strcpy(fakecmd, "AUTH");
+		        strcpy(fakecmd, "AUTH ");
 
 			starttls=0;
 			(void)strtok(buf, " \t\r\n");
 			authmethod=strtok(0, " \t\r\n");
+
+			strncat(fakecmd, authmethod, 20);
 			initreply=strtok(0, " \t\r\n");
+
+			if (initreply)
+			{
+				strcat(fakecmd, " ");
+				strncat(fakecmd, initreply, 20);
+			}
 
 			if (tls && (q=getenv("ESMTPAUTH_TLS")) != 0 && *q)
 				;
