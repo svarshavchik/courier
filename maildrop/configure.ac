@@ -1,10 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright 1998 - 2012 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(maildrop,2.6.0.20130829, [courier-maildrop@lists.sourceforge.net])
+AC_INIT(maildrop,2.7.0, [courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
