@@ -646,9 +646,8 @@ upload-beta:
 upload-dist:
 	test -z "$(SFPASSWD)" && exit 1; exit 0
 	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	git tag -s @PACKAGE@/@VERSION@/`date +%Y%m%d%H%M%S` -m 'Tag version @VERSION@'
+	set -e; v="@PACKAGE@/@VERSION@/`date +%Y%m%d%H%M%S`"; git tag -s $$v -m 'Tag version @VERSION@'; cd libs; git tag -s $$v -m 'Tag version @VERSION@'
 	socksify ~/src/sftools/release.pl mrsam $(SFPASSWD) courier authlib @VERSION@ @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
-	socksify ssh grace.speakeasy.net rm -f courier-mta.org/courier-authlib.beta
 
 HTMLDOCFILES=$(HTMLFILES) README.authdebug.html README_authlib.html \
 	$(man3:%.3=%.html) $(man1:%.1=%.html) userdb/userdb.html userdb/makeuserdb.html userdb/userdbpw.html
