@@ -19,6 +19,7 @@ nohtmlinfiles=  aliases.html \
 		documentation.html \
 		esmtp.html \
 		FAQ.html \
+		socks.html \
 		footer.html \
 		header.html \
 		index.html \

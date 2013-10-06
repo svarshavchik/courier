@@ -604,8 +604,8 @@
 
   <ol>
     <li>
-      <strong>The <em>Courier</em> mail server Authentication
-      Library</strong>
+      <p><strong>The <em>Courier</em> mail server Authentication
+      Library</strong></p>
 
       <p>The <code>courier-authlib</code> package must be installed
       and configured prior to installing the <em>Courier</em> mail
@@ -615,7 +615,7 @@
     </li>
 
     <li>
-      <strong>A C++ compiler</strong>
+      <p><strong>A C++ compiler</strong></p>
 
       <p>The <em>Courier</em> mail server is primarily developed
       and built with gcc. Other C++ compiler may or may not work.
@@ -628,7 +628,7 @@
     </li>
 
     <li>
-      <strong>PCRE</strong>
+      <p><strong>PCRE</strong></p>
 
       <p>The PCRE library (<a href=
       "http://www.pcre.org">http:/www.pcre.org</a>) is
@@ -636,7 +636,7 @@
     </li>
 
     <li>
-      <strong>GNU IDN library</strong>
+      <p><strong>GNU IDN library</strong></p>
 
       <p>This library (<a href=
       "http://www.gnu.org/software/libidn/">http://www.gnu.org/software/libidn/</a>)
@@ -644,7 +644,7 @@
     </li>
 
     <li>
-      <strong>GNU make</strong>
+      <p><strong>GNU make</strong></p>
 
       <p>On the BSD platform family GNU make is usually installed
       as gmake. Simply replace 'make' with 'gmake' in the following
@@ -653,23 +653,24 @@
     </li>
 
     <li>
-      <strong>Perl 5</strong>
+      <p><strong>Perl 5</strong></p>
 
       <p>A recent version of Perl needs to be installed.</p>
     </li>
 
     <li>
-      <strong>GDBM or Berkeley DB library</strong>
+      <p><strong>GDBM or Berkeley DB library</strong></p>
 
       <p>Either library must be installed.</p>
     </li>
 
     <li>
-      <strong><a target="_blank" href=
+      <p><strong><a target="_blank" href=
       "http://oss.sgi.com/projects/fam/">FAM, the File Alteration
-      Monitor</a>, or its modern Linux-specific replacement
-      <strong><a href="http://www.gnome.org/~veillard/gamin/"
-      target="_blank">Gamin</a></strong></strong>
+      Monitor</a></strong>, or its modern Linux-specific
+      replacement <strong><a href=
+      "http://www.gnome.org/~veillard/gamin/" target=
+      "_blank">Gamin</a></strong></p>
 
       <p>FAM (<code>http://oss.sgi.com/projects/fam/</code>) or
       <a href="http://www.gnome.org/~veillard/gamin/" target=
@@ -681,14 +682,14 @@
     </li>
 
     <li>
-      <strong>OpenSSL</strong> or <strong>GnuTLS</strong>
+      <p><strong>OpenSSL</strong> or <strong>GnuTLS</strong></p>
 
       <p>Support for SSL/TLS requires OpenSSL/GnuTLS. If OpenSSL or
       GnuTLS is not installed, SSL/TLS features are disabled.</p>
     </li>
 
     <li>
-      <strong>OpenLDAP</strong>
+      <p><strong>OpenLDAP</strong></p>
 
       <p>Support for LDAP directory services requires OpenLDAP
       client libraries to be installed. If OpenLDAP is not
@@ -714,8 +715,8 @@
     </li>
 
     <li>
-      <strong>mgetty+sendfax, groff or troff (not tested),
-      ghostscript, and NetPBM</strong>
+      <p><strong>mgetty+sendfax, groff or troff (not tested),
+      ghostscript, and NetPBM</strong></p>
 
       <p>This optional software is required to send E-mail messages
       via fax. The <em>Courier</em> mail server will compile and
@@ -971,9 +972,10 @@
 
   <p>The <em>Courier</em> mail server has the ability to send
   outgoing SMTP mail through a Socks 5 proxy. The Socks 5 proxy
-  option requires a separate module to be installed before
-  installing the <em>Courier</em> mail server. Download the Socks 5
-  proxy client library from <a target="_blank" href=
+  option requires a separate module, the <a href="socks.html">Socks
+  5 client/server proxy</a> to be installed before installing the
+  <em>Courier</em> mail server. Download the Socks 5 proxy client
+  library from <a target="_blank" href=
   "http://www.courier-mta.org/download.php#sox">http://www.courier-mta.org/download.php#sox</a>
   and follow its installation instructions. Binary RPMs can be
   built from the source code tarball by following the procedure
@@ -2916,8 +2918,8 @@ esmtp session required        pam_permit.so
       or GnuTLS from <a target="_blank" href=
       "http://www.gnutls.org"><code>http://www.gnutls.org</code></a>.</p>
 
-      <p>Follow OpenSSL's or GnuTLS's installation instructions, then
-      build the <em>Courier</em> mail server.</p>
+      <p>Follow OpenSSL's or GnuTLS's installation instructions,
+      then build the <em>Courier</em> mail server.</p>
 
       <blockquote>
         <p><b>NOTE:</b> Most systems already have an available
@@ -2998,28 +3000,25 @@ esmtp session required        pam_permit.so
   else the <em>Courier</em> mail server will bounce the
   recipient.</p>
 
-  <p>The configuration script checks for the system's list of trusted
-    certificate authorities, and initializes TLS_TRUSTCERTS in the
-    <code>courierd</code> configuration file, during installation.
-    When the <em>Courier</em> connects to a remote server, setting
-    ESMTP_TLS_VERIFY_DOMAIN to 1 in the
-    <code>courierd</code> configuration file (usually
-    <code>/usr/lib/courier/etc/courierd</code> or
-    <code>/etc/courierd</code>)
-    enables certificate verifications. However, many mail servers on the
-    Internet use self-signed certificates, so this is generally of little
-    use.
-  </p>
+  <p>The configuration script checks for the system's list of
+  trusted certificate authorities, and initializes TLS_TRUSTCERTS
+  in the <code>courierd</code> configuration file, during
+  installation. When the <em>Courier</em> connects to a remote
+  server, setting ESMTP_TLS_VERIFY_DOMAIN to 1 in the
+  <code>courierd</code> configuration file (usually
+  <code>/usr/lib/courier/etc/courierd</code> or
+  <code>/etc/courierd</code>) enables certificate verifications.
+  However, many mail servers on the Internet use self-signed
+  certificates, so this is generally of little use.</p>
 
   <h2><a name="esmtpsmarthost" id="esmtpsmarthost">OPTIONAL:
   Configure ESMTP smarthosting</a></h2>
 
-  <p>
-    Initialize the <code>esmtproutes</code> configuration
-    file if all outgoing mail need to be forwarded to your Internet provider's
-    mail server, or some other "smarthost". See
-    <a href="courier.html"><code>courier(8)</code></a> for more information:
-  </p>
+  <p>Initialize the <code>esmtproutes</code> configuration file if
+  all outgoing mail need to be forwarded to your Internet
+  provider's mail server, or some other "smarthost". See <a href=
+  "courier.html"><code>courier(8)</code></a> for more
+  information:</p>
 
   <blockquote>
     <pre>
@@ -3027,9 +3026,7 @@ esmtp session required        pam_permit.so
 </pre>
   </blockquote>
 
-  <p>
-    This forwards all mail to <code>relay.example.com</code>
-  </p>
+  <p>This forwards all mail to <code>relay.example.com</code></p>
 
   <blockquote>
     <pre>
@@ -3037,9 +3034,8 @@ esmtp session required        pam_permit.so
 </pre>
   </blockquote>
 
-  <p>
-    This forwards all mail to <code>relay.example.com</code> on port 587.
-  </p>
+  <p>This forwards all mail to <code>relay.example.com</code> on
+  port 587.</p>
 
   <blockquote>
     <pre>
@@ -3047,15 +3043,11 @@ esmtp session required        pam_permit.so
 </pre>
   </blockquote>
 
-  <p>
-    This forwards all mail to <code>relay.example.com</code> on port 465,
-    using encrypted <code>SMTP</code>.
-  </p>
+  <p>This forwards all mail to <code>relay.example.com</code> on
+  port 465, using encrypted <code>SMTP</code>.</p>
 
-  <p>
-    If the smarthost requires authentication, initialize the
-    <code>esmtpauthclient</code> configuration file:
-  </p>
+  <p>If the smarthost requires authentication, initialize the
+  <code>esmtpauthclient</code> configuration file:</p>
 
   <blockquote>
     <pre>
@@ -3063,11 +3055,10 @@ relay.example.com,587 john@example.com snerkle
 </pre>
   </blockquote>
 
-  <para>
-    When the <em>Courier</em> mail server connects to
-    <code>relay.example.com</code> on port 587, it will authentication using
-    the userid of "john@example.com" and password "snerkle".
-  </para>
+  <p>When the <em>Courier</em> mail server connects to
+  <code>relay.example.com</code> on port 587, it will
+  authentication using the userid of "john@example.com" and
+  password "snerkle".</p>
 
   <h2><a name="esmtpsecurity" id="esmtpsecurity">OPTIONAL:
   Configure the SECURITY ESMTP extension</a></h2>

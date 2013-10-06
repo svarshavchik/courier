@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+
+  <title>Courier Socks 5 proxy client/server</title>
+  <!-- Copyright 2013 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+  <link rel="icon" href="icon.gif" type="image/gif" />
+</head>
+
+<body>
+  <h1><em>Courier</em> Socks 5 proxy client/server</h1>
+
+  <p>This package implements a Sock5 proxy client/server, as
+  defined in <a href="http://www.ietf.org/rfc/rfc1928.txt">RFC
+  1928</a> and <a href="http://www.ietf.org/rfc/rfc1929.txt">RFC
+  1929</a>.</p>
+
+  <ul>
+    <li>
+      <p>Access control: define IP address ranges allowed to proxy
+      through the server.</p>
+    </li>
+
+    <li>
+      <p>Access control: import list of banned IP address range, in
+      the P2P file format.</p>
+    </li>
+
+    <li>
+      <p>A "socksify" application wrapper script, that uses shared
+      library tricks to try to redirect network connections from
+      standalone application through the Socks 5 proxy server.</p>
+    </li>
+  </ul>
+
+  <p>This proxy library was originally written for the <a href=
+  "/"><em>Courier</em> mail server</a>, but it can be used
+  independently, as a generic proxy client or server library. The
+  <a href="/authlib"><em>Courier</em> authentication library</a>
+  must be installed first, even if authentication is not needed,
+  because the Socks 5 client/server uses some scripts and tools
+  from that package. Additionally, the <code>Net::CIDR</code> Perl
+  module is also required.</p>
+
+  <p><a href="/download.php#authlib">Download the <em>Courier</em>
+  authentication library</a></p>
+
+  <p><a href="/download.php#sox">Download the <em>Courier</em>
+  Socks 5 library</a></p>
+
+  <p><a href="/links.html">Links</a></p>
+
+  <p><a href="/repo.html">Git repository</a></p>
+</body>
+</html>
