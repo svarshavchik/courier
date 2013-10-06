@@ -1,12 +1,12 @@
 #
-# Copyright 2004-2010 Double Precision, Inc.
+# Copyright 2004-2013 Double Precision, Inc.
 # See COPYING for distribution information.
 #
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-sox],[0.11.20111230],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.12],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AM_CONFIG_HEADER([courier_socks_config.h])

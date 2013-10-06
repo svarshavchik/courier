@@ -1,6 +1,6 @@
 /*
 **
-** Copyright 2004-2009 Double Precision, Inc.
+** Copyright 2004-2013 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -48,6 +48,7 @@
 #include <signal.h>
 #include <ctype.h>
 #include <pwd.h>
+#include <grp.h>
 #include <gdbm.h>
 #include <courierauth.h>
 #include	"printaddr.h"
@@ -387,7 +388,7 @@ static char *authenticate(struct conninfo *ci)
 		fprintf(stderr, "ERR: ");
 		printaddr(stderr, &ci->clientaddr);
 		fprintf(stderr, " - received unknown protocol version: %d\n",
-			(int)(unsigned char)buf[1]);
+			(int)(unsigned char)buf[0]);
 		fflush(stderr);
 		exit(0);
 	}
@@ -2342,6 +2343,33 @@ static void parseuidgid(FILE *fp, const char *fn, void *voidarg)
 
 			config_uid=pw->pw_uid;
 			config_gid=pw->pw_gid;
+		}
+
+		if (strcmp(p, "group") == 0)
+		{
+			struct group *gr;
+
+			p=strtok(NULL, " \t\r");
+
+			if (p == NULL)
+			{
+				fprintf(stderr,
+					"%s(%d): Invalid group command\n",
+					fn, linenum);
+				fflush(stderr);
+				continue;
+			}
+
+			if ((gr=getgrnam(p)) == NULL)
+			{
+				fprintf(stderr,
+					"%s(%d): Invalid group: %s\n",
+					fn, linenum, p);
+				fflush(stderr);
+				exit(1);
+			}
+
+			config_gid=gr->gr_gid;
 		}
 	}
 }

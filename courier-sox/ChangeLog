@@ -1,3 +1,9 @@
+0.12
+
+2013-10-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Implement "group" directive in socksrc.
+
 2011-06-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier-sox.spec.in: switch to systemd.

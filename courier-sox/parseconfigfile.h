@@ -106,4 +106,5 @@ static void parseconfigfile(void *voidarg)
 	strcmp((c), "anonproxy") == 0 || \
 	strcmp((c), "debug") == 0 || \
 	strcmp((c), "user") == 0 || \
+	strcmp((c), "group") == 0 || \
 	strcmp((c), "prefork") == 0)

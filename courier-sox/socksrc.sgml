@@ -307,6 +307,18 @@ to <filename>@sysconfdir@/socksrc</filename>.</para>
 	</varlistentry>
 
 	<varlistentry>
+	  <term>group <replaceable>groupname</replaceable></term>
+
+	  <listitem>
+	    <para>
+	      Run the Socks server as group <quote>groupname</quote>.
+	      If not specified, the <option>user</option>'s group
+	      gets used. The <option>group</option> option must appear
+	      after the <option>user</option> option.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
 	  <term>debug <replaceable>n</replaceable></term>
 
 	  <listitem>

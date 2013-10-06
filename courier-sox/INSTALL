@@ -3,8 +3,7 @@ You need to install the following software before building this package
 
 GNU make (gmake)
 GNU libtool
-Courier Authentication Library (http://www.courier-mta.org/authlib), version
-0.51, or higher.
+Courier Authentication Library (http://www.courier-mta.org/authlib).
 Net::CIDR Perl module from www.cpan.org (required for blacklist support)
 
 This package uses the GNU toolchain, and uses the typical installation
@@ -34,18 +33,19 @@ If you don't need authentication, you still need to have courier-authlib
 installed on a machine that's running the server daemon, sockd.  You don't
 need to actually start the courier-authlib daemon process.
 
-NOTE: courier-authlib version 0.51, or higher, is required.
-
 NOTE: The Courier authentication library communicates authentication requests
 through a filesystem socket that's created in a directory without global
 access rights (the default location is /usr/local/var/spool/authdaemon,
 or /var/spool/authdaemon).  Only the userid that's reserved by courier-authlib
 can access this directory (typically "courier" or "daemon").
 
-The server daemon therefore has to be run as the same userid, in order
-for authentication to work.  Add the "user" statement to the socksrc
+The server daemon therefore has to be run as a userid or groupid that has
+permissions to access the filesystem socket. With courier-authlib's default
+configuration, add "user nobody" and "group daemon" to the socksrc
 configuration file or directory (see the socksrc man page for more
-information).
+information). Running sockd as user nobody and group daemon should be
+sufficient, as the courier-authlib socket's default permissions are
+accessible to the daemon group.
 
 The other alternative is to manually change the permissions on the socket
 directory to 755.  Note that the courier-authlib daemon provides access to
