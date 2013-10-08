@@ -7,7 +7,7 @@ htmldocdir=@datadir@/htmldoc
 
 CLEANFILES=permissions.dat
 
-miscfiles=japanese_flag.png chinese_flag.png bg.gif icon.gif manpage.css \
+miscfiles=japanese_flag.png bg.gif icon.gif manpage.css \
 		draft-varshavchik-exdata-smtpext.txt \
 		draft-varshavchik-verp-smtpext.txt \
 		draft-varshavchik-security-smtpext.txt \
