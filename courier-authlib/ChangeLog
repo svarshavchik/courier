@@ -1,3 +1,15 @@
+2013-10-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Makefile.am: run sysconftool on authsqliterc, in install-configure.
+	Remove .la files for authentication modules, keep then for actual
+	API libraries. Install them in the -devel RPM package.
+
+	* userdb/Makefile.am: Stub for the pw2userdb(8) man page.
+
+	* courier-authlib.service.in: Added Install target.
+
+0.66
+
 2013-03-02  Eray Aslan <eray.aslan@caf.com.tr>
 
 	* sqlite fixes.

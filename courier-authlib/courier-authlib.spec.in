@@ -54,13 +54,6 @@ Requires(post):     /sbin/chkconfig
 Requires(preun):    /sbin/chkconfig
 %endif
 
-# Provides by symlinks in this release, for compatibility with 0.60,
-# will be removed in 0.62. This is temporary hack:
-
-%define dummysuffix %(test "%{_lib}" = "lib64" && echo '()(64bit)')
-
-Provides: libcourierauth.so.0%{dummysuffix} libcourierauthsasl.so.0%{dummysuffix} libcourierauthsaslclient.so.0%{dummysuffix} libcourierauthcommon.so.0%{dummysuffix}
-
 ################################################################################
 
 %description
@@ -214,6 +207,24 @@ done
 for f in $RPM_BUILD_ROOT%{_libdir}/courier-authlib/*
 do
 	fn=`basename $f`
+
+	# Remove *.la for authentication modules, keep the ones
+	# for client libraries. Do this before we sort them into buckets,
+	# below.
+
+	case "$fn" in
+	*.la)
+		case "$fn" in
+		libcourierauth*)
+			;;
+		*)
+			rm -f "$f"
+			;;
+		esac
+		continue
+		;;
+	esac
+
 	case "$fn" in
 	libauthpipe*)
 		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.pipe
@@ -318,6 +329,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/courierauthconfig
 %{_includedir}/*
 %{_mandir}/man3/*
+%{_libdir}/courier-authlib/*.la
 %doc authlib.html auth_*.html
 
 %files -f configfiles.ldap ldap

@@ -442,8 +442,6 @@ install-exec-hook:
 				$(DESTDIR)$(sbindir)/userdbpw ; \
 		$(INSTALL_SCRIPT) userdb-test-cram-md5.pl \
 				$(DESTDIR)$(sbindir)/userdb-test-cram-md5
-	for f in $(pkglib_LTLIBRARIES); do . ./$$f; rm -f $(DESTDIR)$(pkglibdir)/$$dlname.0 $(DESTDIR)$(pkglibdir)/$$dlname.0.0; ln -s $$dlname $(DESTDIR)$(pkglibdir)/$$dlname.0; done
-
 
 uninstall-hook: uninstall-authldaprc uninstall-authdaemonrc uninstall-authmysqlrc uninstall-authpgsqlrc uninstall-authsqliterc
 	rm -f $(DESTDIR)$(pkglibexecdir)/authdaemond
@@ -454,7 +452,6 @@ uninstall-hook: uninstall-authldaprc uninstall-authdaemonrc uninstall-authmysqlr
 				$(DESTDIR)$(sbindir)/userdb \
 				$(DESTDIR)$(sbindir)/userdbpw \
 				$(DESTDIR)$(sbindir)/userdb-test-cram-md5
-	for f in $(pkglib_LTLIBRARIES); do . ./$$f; rm -f $(DESTDIR)$(pkglibdir)/$$dlname.0; done
 
 authlib.html: authlib.html.in
 	$(SHELL) ./config.status --file=authlib.html
@@ -553,6 +550,7 @@ install-configure:
 	test -f $(DESTDIR)@authmysqlrc@.dist && @SYSCONFTOOL@ $(DESTDIR)@authmysqlrc@.dist || true
 	test -f $(DESTDIR)@authpgsqlrc@.dist && @SYSCONFTOOL@ $(DESTDIR)@authpgsqlrc@.dist || true
 	test -f $(DESTDIR)@authldaprc@.dist && @SYSCONFTOOL@ $(DESTDIR)@authldaprc@.dist || true
+	test -f $(DESTDIR)@authsqliterc@.dist && @SYSCONFTOOL@ $(DESTDIR)@authsqliterc@.dist || true
 
 # For maintainer's use only
 

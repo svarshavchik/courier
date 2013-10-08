@@ -18,10 +18,10 @@ userdbpw_SOURCES=userdbpw.c
 userdbpw_LDADD=libuserdb.la @HMACLIB@ @MD5LIB@ @SHA1LIB@ @CRYPTLIBS@
 userdbpw_LDFLAGS=-static
 
-man8=makeuserdb.8 userdb.8 userdbpw.8
+man8=makeuserdb.8 userdb.8 userdbpw.8 pw2userdb.8
 man_MANS=$(man8)
 
-CLEANFILES=$(man8) $(noinst_DATA) dummy
+CLEANFILES=$(man8) $(noinst_DATA) dummy pw2userdb.8
 
 makeuserdb.html: makeuserdb.html.in
 	./config.status --file=$@
@@ -40,6 +40,9 @@ userdbpw.html: userdbpw.html.in
 
 userdbpw.8: userdbpw.8.in
 	./config.status --file=$@
+
+pw2userdb.8: makeuserdb.8
+	echo ".so man8/makeuserdb.8" >pw2userdb.8
 
 if HAVE_SGML
 makeuserdb.html.in: makeuserdb.sgml ../libs/docbook/sgml2html
