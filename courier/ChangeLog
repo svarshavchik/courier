@@ -1,3 +1,15 @@
+2013-10-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/tcpd/libcouriertls.c (tls_create): Add TLSv1_1_method() and
+	TLSv1_2 method(), based on patch by Rob Austein <sra@hactrn.net>.
+
+	* courier/module.esmtp/esmtpd.dist.in,
+          courier/module.esmtp/esmtpd-ssl.dist.in,
+          courier/courierd.dist.in,
+          libs/imap/pop3d-ssl.dist.in,
+          libs/imap/imapd-ssl.dist.in: Fix up differences in the
+	documentation of TLS options in various config files.
+
 0.72
 
 2013-08-28  Sam Varshavchik  <mrsam@courier-mta.com>

@@ -6,7 +6,7 @@
 # Do not alter lines that begin with ##, they are used when upgrading
 # this configuration.
 #
-#  Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for
+#  Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 #  distribution information.
 #
 #  This configuration file sets various options for Courier's esmtpd server.
@@ -123,6 +123,16 @@ COURIERTLS=@bindir@/couriertls
 #
 # ESMTP_TLS_REQUIRED=1
 
+##NAME: TLS_PRIORITY:0
+#
+# GnuTLS setting only
+#
+# Set TLS protocol priority settings (GnuTLS only)
+#
+# DEFAULT: NORMAL:-CTYPE-OPENPGP
+#
+# TLS_PRIORITY="NORMAL:-CTYPE-OPENPGP"
+
 ##NAME: TLS_PROTOCOL:0
 # 
 # TLS_PROTOCOL sets the protocol version.  The possible versions are:
@@ -130,18 +140,12 @@ COURIERTLS=@bindir@/couriertls
 # OpenSSL:
 #
 # SSL3 - SSLv3
-# SSL23 - either SSLv2 or SSLv3 (also TLS1, it seems)
+# SSL23 - all protocols (including TLS 1.x protocols)
 # TLS1 - TLS1
+# TLSv1.1 - TLS1.1
+# TLSv1.2 - TLS1.2
 #
-# GnuTLS:
-#
-# SSL3 - SSLv3
-# TLS1 - TLS 1.0
-# TLS1_1 TLS 1.1
-#
-# When compiled against GnuTLS, multiple protocols can be selected as follows:
-#
-# TLS_PROTOCOL="TLS1_1:TLS1:SSL3"
+# Leave it unset to use any protocol except SSL 2.
 
 ##NAME: TLS_CIPHER_LIST:0
 #
@@ -169,6 +173,9 @@ COURIERTLS=@bindir@/couriertls
 # LOW -- all ciphers that use fewer than a 128 bit key size, the NULL cipher
 #        is not included
 # ALL -- all ciphers except the NULL cipher
+#
+# See GnuTLS documentation, gnutls_priority_init(3) for additional
+# documentation.
 
 ##NAME: TLS_KX_LIST:0
 #

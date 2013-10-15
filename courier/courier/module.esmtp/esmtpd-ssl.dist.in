@@ -5,7 +5,7 @@
 # Do not alter lines that begin with ##, they are used when upgrading
 # this configuration.
 #
-#  Copyright 2000-2008 Double Precision, Inc.  See COPYING for
+#  Copyright 2000-2013 Double Precision, Inc.  See COPYING for
 #  distribution information.
 #
 #  This configuration file sets various options for the Courier-SMTP server
@@ -142,6 +142,8 @@ COURIERTLS=@bindir@/couriertls
 
 ##NAME: TLS_PRIORITY:0
 #
+# GnuTLS setting only
+#
 # Set TLS protocol priority settings (GnuTLS only)
 #
 # DEFAULT: NORMAL:-CTYPE-OPENPGP
@@ -155,13 +157,12 @@ COURIERTLS=@bindir@/couriertls
 # OpenSSL:
 #
 # SSL3 - SSLv3
-# SSL23 - either SSLv2 or SSLv3 (also TLS1, it seems)
+# SSL23 - all protocols (including TLS 1.x protocols)
 # TLS1 - TLS1
+# TLSv1.1 - TLS1.1
+# TLSv1.2 - TLS1.2
 #
-# Note that this setting, with OpenSSL, is modified by the TLS_CIPHER_LIST
-# setting, below.
-#
-# SSL23 (OpenSSL)
+# Leave it unset to use any protocol except SSL 2.
 
 ##NAME: TLS_CIPHER_LIST:0
 #
@@ -173,7 +174,25 @@ COURIERTLS=@bindir@/couriertls
 #
 # TLS_CIPHER_LIST="SSLv3:TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
 #
+# GnuTLS:
 #
+# TLS_CIPHER_LIST="HIGH:MEDIUM"
+#
+# The actual list of available ciphers depend on the options GnuTLS was
+# compiled against. The possible ciphers are:
+#
+# AES256, 3DES, AES128, ARC128, ARC40, RC2, DES, NULL
+#
+# Also, the following aliases:
+#
+# HIGH -- all ciphers that use more than a 128 bit key size
+# MEDIUM -- all ciphers that use a 128 bit key size
+# LOW -- all ciphers that use fewer than a 128 bit key size, the NULL cipher
+#        is not included
+# ALL -- all ciphers except the NULL cipher
+#
+# See GnuTLS documentation, gnutls_priority_init(3) for additional
+# documentation.
 
 ##NAME: TLS_MIN_DH_BITS:0
 #
