@@ -23,7 +23,6 @@ nohtmlinfiles=  aliases.html \
 		footer.html \
 		header.html \
 		index.html \
-		index2.html \
 		install.html \
 		intro.html \
 		layout.html \

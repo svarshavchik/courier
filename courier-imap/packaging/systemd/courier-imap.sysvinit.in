@@ -22,6 +22,14 @@ start)
 
 	echo -n "Starting Courier-IMAP server:"
 
+	# Only if it doesn't exist, let the cron job take care of refreshing it.
+	if test ! -f @certsdir@/dhparams.pem
+	then
+	    ${sbindir}/mkdhparams
+
+	    echo -n " dhparams"
+	fi
+
 	case x$IMAPDSTART in
 	x[yY]*)
 		# Start daemons.

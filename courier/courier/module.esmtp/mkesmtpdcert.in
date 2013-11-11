@@ -30,6 +30,9 @@ cleanup() {
 }
 
 cd @mydatadir@
+umask 077
+BITS="$BITS"
+set -e
 
 if test "@ssllib@" = "openssl"
 then
@@ -43,17 +46,22 @@ then
 	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/esmtpd.pem || cleanup
 	rm -f @mydatadir@/esmtpd.rand
 else
+	if test "$BITS" = ""
+	then
+		BITS="high"
+	fi
+
 	cp /dev/null @mydatadir@/esmtpd.key
 	chmod 600 @mydatadir@/esmtpd.key
 	cp /dev/null @mydatadir@/esmtpd.cert
 	chmod 600 @mydatadir@/esmtpd.cert
 
-	@CERTTOOL@ --generate-privkey --outfile esmtpd.key
+	@CERTTOOL@ --generate-privkey --sec-param=$BITS --outfile esmtpd.key
 	@CERTTOOL@ --generate-self-signed --load-privkey esmtpd.key --outfile esmtpd.cert --template @sysconfdir@/esmtpd.cnf
-	@CERTTOOL@ --generate-dh-params >>esmtpd.cert
 
 	cp /dev/null @mydatadir@/esmtpd.pem
 	chmod 600 @mydatadir@/esmtpd.pem
+	chown @mailuser@ @mydatadir@/esmtpd.pem
 	cat esmtpd.key esmtpd.cert >esmtpd.pem
 	rm -f esmtpd.key esmtpd.cert
 fi

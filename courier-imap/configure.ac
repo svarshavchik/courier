@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 4.14, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 4.14.20131110, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
@@ -143,6 +143,11 @@ eval "libexecdir=$libexecdir"
 eval "localstatedir=$localstatedir"
 eval "datarootdir=$datarootdir"
 eval "datadir=$datadir"
+
+AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
+certsdir="$withval", certsdir="$datadir")
+
+AC_SUBST(certsdir)
 
 dnl Check whether we should use gdbm, or db.
 

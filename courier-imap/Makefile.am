@@ -17,7 +17,7 @@ SUBDIRS=libs/numlib libs/bdbobj libs/gdbmobj libs/soxwrap \
 sbin_SCRIPTS=sharedindexinstall sharedindexsplit
 CLEANFILES=$(databin_SCRIPTS) $(man_MANS) $(sysconf_DATA) $(sbin_SCRIPTS)
 databindir=$(datadir)
-databin_SCRIPTS=mkimapdcert mkpop3dcert
+databin_SCRIPTS=mkimapdcert mkpop3dcert mkdhparams
 
 binPROGRAMS=imapd pop3d maildirmake maildiracl deliverquota maildirkw
 sbinPROGRAMS=imaplogin pop3login
@@ -29,7 +29,7 @@ libexec_PROGRAMS=@libexecPROGRAMS_exec@
 
 EXTRA_PROGRAMS=
 
-man_MANS=couriertcpd.1 deliverquota.8 maildirmake.1 maildiracl.1 imapd.8 mkimapdcert.8 mkpop3dcert.8 maildirkw.1
+man_MANS=couriertcpd.1 deliverquota.8 maildirmake.1 maildiracl.1 imapd.8 mkdhparams.8 mkimapdcert.8 mkpop3dcert.8 maildirkw.1
 EXTRA_DIST=README README.cygwin\
 	COPYING.GPL NEWS.html $(TEMPLFILES) pgpkeys.txt
 
@@ -108,11 +108,17 @@ maildirkw.1: libs/maildir/maildirkw.1
 imapd.8: libs/imap/imapd.8
 	cp libs/imap/imapd.8 .
 
+mkdhparams: libs/imap/mkdhparams
+	cp libs/imap/mkdhparams .
+
 mkimapdcert: libs/imap/mkimapdcert
 	cp libs/imap/mkimapdcert .
 
 mkpop3dcert: libs/imap/mkpop3dcert
 	cp libs/imap/mkpop3dcert .
+
+mkdhparams.8: libs/imap/mkdhparams.8
+	cp -f libs/imap/mkdhparams.8 .
 
 mkimapdcert.8: libs/imap/mkimapdcert.8
 	cp -f libs/imap/mkimapdcert.8 .
@@ -135,7 +141,7 @@ install-exec-local:
 	test ! -x libs/tcpd/couriertls || $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) \
 		libs/tcpd/couriertls $(DESTDIR)$(bindir)/couriertls
 	$(mkinstalldirs) $(DESTDIR)$(sbindir)
-	for f in mkimapdcert mkpop3dcert ; \
+	for f in mkimapdcert mkpop3dcert mkdhparams; \
 		do rm -f $(DESTDIR)$(sbindir)/$$f ; \
 		$(LN_S) $(databindir)/$$f $(DESTDIR)$(sbindir)/$$f ; done
 	$(mkinstalldirs) $(DESTDIR)$(localstatedir)
@@ -160,7 +166,7 @@ install-data-local: install-man
 	@echo "Do not forget to run make install-configure"
 
 uninstall-local:
-	for f in mkimapdcert mkpop3dcert ; \
+	for f in mkimapdcert mkpop3dcert mkdhparams; \
 		do rm -f $(DESTDIR)$(sbindir)/$$f ; done
 	rm -f $(DESTDIR)$(bindir)/couriertls
 

@@ -147,6 +147,9 @@ install -Dm 744 packaging/systemd/courier-imap.sysvinit $RPM_BUILD_ROOT/%{initdi
 %endif
 %endif
 
+%{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
+%{__ln_s} %{_sbindir}/mkdhparams $RPM_BUILD_ROOT/etc/cron.monthly/courier-imap-mkdhparams
+
 #
 # Fix imapd.dist
 #
@@ -309,6 +312,7 @@ fi
 
 %files
 %defattr(-, bin, bin)
+/etc/cron.monthly/*
 %attr(644, root, root) %config(noreplace) %{pamconfdir}/imap
 %attr(644, root, root) %config(noreplace) %{pamconfdir}/pop3
 

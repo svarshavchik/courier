@@ -31,6 +31,14 @@ start)
 
         echo -n "Starting Courier mail server:"
 
+	# Only if it doesn't exist, let the cron job take care of refreshing it.
+	if test ! -f ${datadir}/dhparams.pem
+	then
+	    ${sbindir}/mkdhparams
+
+	    echo -n " dhparams"
+	fi
+
 	# First time after install create aliases.dat and makesmtpaccess.dat
 
 	test -f ${sysconfdir}/aliases.dat || ${sbindir}/makealiases

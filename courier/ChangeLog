@@ -1,3 +1,27 @@
+2013-11-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/tcpd/libcouriergnutls.c, libs/tcpd/libcouriertls.c: remove the
+	TLS_DHCERTFILE setting, and use TLS_CERTFILE for all functionality.
+	Read DH parameters from TLS_CERTFILE, or from the new TLS_DHPARAMS
+	environment variable.
+
+	* mkdhparams: New script that generates DH parameters into a standalone
+	file.
+
+	* Remove TLS_DHCERTFILE setting from imapd-ssl, pop3d-ssl, esmtpd and
+	esmtpd-ssl. Add TLS_DHPARAMS, and read the DH parameters from the
+	separate file. If the separate file doesn't exist, read it from
+	TLS_CERTFILE, to allow for some existing configuration to continue to
+	work.
+
+	* Update imapd.cnf.openssl, pop3d.cnf.openssl, esmtpd.cnf.openssl,
+	set default number of bits for RSA keys to 4096.
+
+	* courier.spec.in: Drop %attr for symlinks, to silence rpm warnings.
+	Install a link in cron.weekly to run mkdhparams weekly.
+
+	* courier.sysvinit: Run mkdhparams from the startup script.
+
 2013-10-14  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/tcpd/libcouriertls.c (tls_create): Add TLSv1_1_method() and

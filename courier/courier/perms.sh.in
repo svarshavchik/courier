@@ -115,6 +115,8 @@ PERMS="
 @datadir@			755	x	bin	bin
 @datadir@/courierctl.start	555
 
+@datadir@/mkdhparams		755
+@sbindir@/mkdhparams		755
 @datadir@/mkimapdcert		755
 @sbindir@/mkimapdcert		755
 @datadir@/mkpop3dcert		755

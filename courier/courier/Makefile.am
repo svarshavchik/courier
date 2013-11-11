@@ -11,7 +11,7 @@
 
 
 CLEANFILES=$(BUILT_SOURCES) modules.lst.la makedat \
-	mkimapdcert mkpop3dcert webgpg modules.ctl \
+	mkimapdcert mkpop3dcert mkdhparams webgpg modules.ctl \
 	pop3d.authpam imapd.authpam webmail.authpam imapd.cnf pop3d.cnf \
 	imapd.dist imapd-ssl.dist pop3d.dist pop3d-ssl.dist \
 	qutoawarnmsg.example quotawarnmsg.example \
@@ -69,7 +69,7 @@ sysconf_DATA=pop3d.authpam imapd.authpam webmail.authpam imapd.cnf pop3d.cnf \
 
 databindir=$(datadir)
 databin_SCRIPTS=courierctl.start makedat makealiases makehosteddomains \
-	pop3d pop3d-ssl	mkimapdcert mkpop3dcert
+	pop3d pop3d-ssl	mkimapdcert mkpop3dcert mkdhparams
 
 mlmdatadir=$(datadir)/couriermlm
 mlmdata_DATA=\
@@ -434,6 +434,9 @@ libexecdir.h: config.status
 bindir.h: config.status
 	echo "#define BINDIR \"$(bindir)\"" >bindir.h
 
+mkdhparams: ../libs/imap/mkdhparams
+	cp -f ../libs/imap/mkdhparams .
+
 mkimapdcert: ../libs/imap/mkimapdcert
 	cp -f ../libs/imap/mkimapdcert .
 
@@ -560,6 +563,8 @@ install-exec-hook:
 	$(LN_S) $(datadir)/imapd $(DESTDIR)$(sbindir)/imapd
 	rm -f $(DESTDIR)$(sbindir)/imapd-ssl
 	$(LN_S) $(datadir)/imapd-ssl $(DESTDIR)$(sbindir)/imapd-ssl
+	rm -f $(DESTDIR)$(sbindir)/mkdhparams
+	$(LN_S) $(datadir)/mkdhparams $(DESTDIR)$(sbindir)/mkdhparams
 	rm -f $(DESTDIR)$(sbindir)/mkimapdcert
 	$(LN_S) $(datadir)/mkimapdcert $(DESTDIR)$(sbindir)/mkimapdcert
 	rm -f $(DESTDIR)$(sbindir)/mkpop3dcert
@@ -614,6 +619,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(sbindir)/imapd-ssl
 	rm -f $(DESTDIR)$(datadir)/imapd
 	rm -f $(DESTDIR)$(datadir)/imapd-ssl
+	rm -f $(DESTDIR)$(sbindir)/mkdhparams
 	rm -f $(DESTDIR)$(sbindir)/mkimapdcert
 	rm -f $(DESTDIR)$(sbindir)/mkpop3dcert
 	rm -f $(DESTDIR)$(sysconfdir)/maildrop

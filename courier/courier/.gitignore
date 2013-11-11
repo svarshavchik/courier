@@ -46,6 +46,7 @@
 /makehosteddomains
 /makemime
 /mimegpg
+/mkdhparams
 /mkimapdcert
 /mkmodules.sh
 /mkpop3dcert

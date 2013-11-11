@@ -86,9 +86,19 @@
 
   <h2><a name="upgrading" id="upgrading">UPGRADING</a></h2>
 
+  <h3>Upgrading from Courier-IMAP 4.14, and earlier</h3>
+
+  <p>Version 4.15 removes the TLS_DHCERTFILE parameter from imap,
+  and pop3d configuration files. DH parameters, and DH parameters
+  only, get read from the new TLS_DHPARAMS file (and the other
+  functionaly of TLS_DHCERTFILE, for DSA certificates, is merged
+  into TLS_CERTFILE). The default startup script in the package is
+  updated to run the new mkdhparams script, that creates a new
+  TLS_DHPARAMS file.</p>
+
   <h3>Upgrading from Courier-IMAP 4.9.3, and earlier</h3>
 
-  <p>In 5.0.0, the IMAP server resets the epoch for an internal
+  <p>In 4.10.0, the IMAP server resets the epoch for an internal
   sequence number generator for new mailboxes. This is an internal
   attribute of individual IMAP folders, that's defined by the IMAP
   specification. Each folder in a mailbox carries an individual
@@ -445,6 +455,13 @@ $ @defaultprefix@/libexec/imapd.rc stop
   existing <code>imapd.pem</code> certificate, in order to allow
   precompiled packages to simply call <code>mkimapdcert</code>
   after installation, without worry.</p>
+
+  <h4>Monthly cron job to generate DH parameters</h4>
+
+  <p>A monthly cron job should be created to run the
+  <code>mkdhparams</code> script, in order to periodically generate
+  a new set of DH parameters. DH parameters are used to set up
+  encrypted connections.</p>
 
   <h4>The bundled POP3 server</h4>
 

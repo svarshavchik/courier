@@ -213,16 +213,6 @@ TLS_CERTS=X509
 # TLS_TIMEOUT is currently not implemented, and reserved for future use.
 # This is supposed to be an inactivity timeout, but its not yet implemented.
 
-##NAME: TLS_DHCERTFILE:0
-#
-# TLS_DHCERTFILE - PEM file that stores a Diffie-Hellman -based certificate.
-# When OpenSSL is compiled to use Diffie-Hellman ciphers instead of RSA
-# you must generate a DH pair that will be used.  In most situations the
-# DH pair is to be treated as confidential, and the file specified by
-# TLS_DHCERTFILE must not be world-readable.
-#
-# TLS_DHCERTFILE=
-
 ##NAME: TLS_CERTFILE:0
 #
 # TLS_CERTFILE - certificate to use.  TLS_CERTFILE is required for SSL/TLS
@@ -256,6 +246,12 @@ TLS_CERTS=X509
 # This is an experimental feature.
 
 TLS_CERTFILE=@mydatadir@/esmtpd.pem
+
+##NAME: TLS_DHPARAMS:0
+#
+# TLS_DHPARAMS - DH parameter file.
+#
+TLS_DHPARAMS=@mydatadir@/dhparams.pem
 
 ##NAME: TLS_TRUSTCERTS:0
 #

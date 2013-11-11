@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2012 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 # distribution information.
 #
 
@@ -399,7 +399,7 @@ $exec_prefix="%{_exec_prefix}";
 while (<>)
 {
 	chop if /\n$/;
-	($file,$mode,$uid,$gid,$special)=split(/ +/);
+	my ($file,$mode,$uid,$gid,$special)=split(/ +/);
 	$file=$prefix if $file eq "$prefix/.";
 
 	next if $special eq "doc";
@@ -419,11 +419,14 @@ while (<>)
 	$special="%config" if $special eq "config";
 	$special="%dir" if ! -l "$buildroot/$file" && -d "$buildroot/$file";
 
-	$file .= "*" if $special eq "man";	# For brp-compress
+	my $islink = -l "$ENV{RPM_BUILD_ROOT}/$file";
+
+	$file .= ".*" if $special eq "man";	# For brp-compress
 
 	$special="" unless $special =~ /%/;
 
-	$special="%attr($mode, $uid, $gid) $special";
+	$special="%attr($mode, $uid, $gid) $special" unless $islink;
+
 	print "$special $file\n";
 }
 
@@ -557,6 +560,12 @@ libs/maildir/maildirmake $RPM_BUILD_ROOT/etc/skel/Maildir
 %{__mkdir_p} $RPM_BUILD_ROOT%{initdir}
 %{__cp} courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 %endif
+
+# Weekly script to generate DH parameters
+
+%{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
+%{__ln_s} %{_sbindir}/mkdhparams $RPM_BUILD_ROOT/etc/cron.monthly/courier-mkdhparams
+echo "/etc/cron.monthly/courier-mkdhparams" >>filelist
 
 #
 # Make up some /etc/profile.d scripts
