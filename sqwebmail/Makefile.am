@@ -162,6 +162,13 @@ release:
 	$(MAKE) sqwebmail.spec sqwebmail.lpspec
 	$(MAKE) dist
 
+WWW=$$HOME/www/www.courier-mta.org
+
+htmldoc:
+	for f in index.html links.html screenshots.html download.html; do xsltproc --nonet $(WWW)/xsl/sqwebmail.xsl html/$$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/sqwebmail/$$f; done
+	cp html/*.gif html/*.js html/*.css $(WWW)/sqwebmail
+	cp html/images/*.png $(WWW)/sqwebmail/images
+
 if HAVE_HTMLPAGES
 NEWS_SOURCE=html/index2.html
 

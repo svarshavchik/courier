@@ -14,8 +14,10 @@ SUBDIRS=libs/numlib libs/liblock libs/unicode libs/rfc822 libs/rfc2045 @DBSUBDIR
 
 DIST_SUBDIRS=libs/numlib libs/liblock libs/unicode libs/rfc822 libs/rfc2045 libs/gdbmobj libs/bdbobj libs/makedat libs/maildir libs/maildrop
 
+HTMLWWW=index.html documentation.html download.html links.html
 EXTRA_DIST=README.html INSTALL.html UPGRADE.html README.postfix\
-	maildroptips.txt COPYING.GPL manpage.css pgpkeys.txt
+	maildroptips.txt COPYING.GPL manpage.css $(HTMLWWW)
+
 
 if HAVE_SGML
 manpage.css: libs/docbook/manpage.css
@@ -280,7 +282,7 @@ id=$(dollar)Id
 
 WWW=$$HOME/www/www.courier-mta.org
 
-htmldoc: $(DELIVERQUOTAHTMLSOURCE) $(htmldataclean) libs/maildrop/maildroptips.html
+htmldoc: $(DELIVERQUOTAHTMLSOURCE) $(htmldataclean) libs/maildrop/maildroptips.html $(HTMLWWW)
 	for f in $^; do xsltproc --nonet $(WWW)/xsl/maildrop.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/maildrop/`basename $$f`; done
 	cp manpage.css html
 

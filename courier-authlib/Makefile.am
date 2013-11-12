@@ -430,7 +430,7 @@ install-exec-hook:
 	-chown @mailuser@ $(DESTDIR)@authdaemonvar@
 	-chgrp @mailgroup@ $(DESTDIR)@authdaemonvar@
 	test "@LIBAUTHUSERDB@" = "" && exit 0 ;\
-		$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) makedat/makedatprog \
+		$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) libs/makedat/makedatprog \
 				$(DESTDIR)$(pkglibexecdir)/makedatprog ; \
 		$(INSTALL_SCRIPT) userdb/pw2userdb \
 				$(DESTDIR)$(sbindir)/pw2userdb ; \
@@ -651,4 +651,4 @@ HTMLDOCFILES=$(HTMLFILES) README.authdebug.html README_authlib.html \
 	$(man3:%.3=%.html) $(man1:%.1=%.html) userdb/userdb.html userdb/makeuserdb.html userdb/userdbpw.html
 
 htmldoc: $(HTMLDOCFILES)
-	for f in $^; do d=`basename $$f`; test "$$d" = "README.html" && d="index2.html"; tidy -i -q --tidy-mark no --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml <$$f >$$f.tmp ; xsltproc --nonet $$HOME/www/www.courier-mta.org/xsl/authlib.xsl $$f.tmp | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$HOME/www/www.courier-mta.org/authlib/$$d; rm -f $$f.tmp; done
+	for f in $^; do d=`basename $$f`; test "$$d" = "README.html" && d="index.html"; tidy -i -q --tidy-mark no --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml <$$f >$$f.tmp ; xsltproc --nonet $$HOME/www/www.courier-mta.org/xsl/authlib.xsl $$f.tmp | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$HOME/www/www.courier-mta.org/authlib/$$d; rm -f $$f.tmp; done

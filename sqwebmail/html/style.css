@@ -4,6 +4,11 @@ a { color: #0000FF; }
 a:visited { color: #FF0000; }
 a:hover { color: #000000 }
 
+.button { color: #000000 }
+.button a { padding-left: 2pt; padding-right: 2pt }
+.button a:link,.button a:visited { color: #000080; text-decoration: none }
+.button a:hover { background-color: #ffff00; text-decoration: none; color: #000000 }
+
 h1 { font-family: arial,helvetica,sans serif; font-size: 200% }
 h2 { font-family: arial,helvetica,sans serif; font-size: 150% }
 

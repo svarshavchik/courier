@@ -1,75 +1,95 @@
-<?php
-
-$server_name=$_SERVER['SERVER_NAME'];
-
-$uri=$_SERVER['REQUEST_URI'];
-
-if (strlen($uri) == 0)
-{
-  $uri="/";
-}
-
-if (strlen($server_name) != 0)
-{
-  $uri="//" . $server_name . $uri;
-
-  if (strlen($_SERVER['HTTPS']) != 0)
-  {
-     $uri="https:" . $uri;
-  }
-  else
-  {
-     $uri="http:" . $uri;
-  }
-}
-
-$pos=strrpos($uri, "/");
-
-if ($pos != false && substr($uri, $pos) == "/index.html")
-{
-   $uri=substr($uri, 0, $pos);
-   $filename="";              /* chop off /index.html and redirect here */
-}
-else
-{
-   $filename=$_SERVER['QUERY_STRING'];
-
-   if (strpos($filename, "/") != false)
-   {
-      $filename="";
-   }
-
-   if (!$filename)
-   {
-      readfile("index2.html");
-      return;
-   }
-
-   if ($pos != false)
-   {
-     $uri=substr($uri, 0, $pos);
-   }
-}
-
-header("Location: $uri/$filename\n");
-echo "";
-
-$lt=chr(0x3e);
-$gt=chr(0x3c);
-
-echo "${lt}html${gt}${lt}body${gt}This page has moved to ${lt}a href='$uri/$filename'${gt}$uri/$filename${lt}/a${gt}${lt}/body${gt}${lt}/html${gt}\n";
-return;
-
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0"?>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Document moved</title>
+  <title>SqWebMail</title>
+  <!-- $Id: index2.html,v 1.2 2007/03/31 22:00:20 mrsam Exp $-->
 </head>
 
 <body>
-  <p>This page has moved. <a href="index2.html">Click here</a></p>
+  <table xmlns="">
+    <tbody>
+      <tr>
+        <td width="100%"></td>
+
+        <td>
+          <script type="text/javascript">
+//<![CDATA[
+          <!--
+          google_ad_client = "ca-pub-3196826191648604";
+          /* courier */
+          google_ad_slot = "7190527827";
+          google_ad_width = 728;
+          google_ad_height = 90;
+          -->
+          //]]>
+          </script><script type="text/javascript" src=
+          "http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <h1>SqWebMail</h1>
+
+  <p>SqWebMail is the webmail module that's bundled with the
+  <a href="http://www.courier-mta.org" target="_blank" shape=
+  "rect"><i>Courier</i> mail server</a>. SqWebMail can also be
+  packaged separately, and used with any other mail server that
+  uses maildirs. NOTE: SqWebMail <b>DOES NOT</b> support
+  traditional Mailbox files, only Maildirs.</p>
+
+  <h2 style="margin: 0px; padding: 0px">Features</h2>
+
+  <table border="0">
+    <tbody>
+      <tr>
+        <td rowspan="1" colspan="1">
+          <ul>
+            <li>SqWebMail is very fast, and light. It accesses
+            maildirs directly, and does not use an IMAP
+            server.</li>
+
+            <li>Dynamically-generated HTML is stored in external
+            files. Many (but not all) display elements can be
+            customized without changing the program code.</li>
+
+            <li>Hierarchical mail folders, and shared folders.</li>
+
+            <li>Virtual accounts or system accounts. Virtual
+            accounts may be managed via LDAP, MySQL, PostgresSQL,
+            or flat files compiled into a GBDM/DB database.</li>
+
+            <li>Address books.</li>
+          </ul>
+        </td>
+
+        <td rowspan="1" colspan="1">
+          <ul>
+            <li>Extensive MIME support; defanged HTML mail; flowed
+            text format; DSNs; and digests.</li>
+
+            <li>Javascript and cookies are not required. (There is
+            some Javascript and cookie usage for some value-added
+            stuff, such as print preview).</li>
+
+            <li>Spell checking with <code>ispell</code>.</li>
+
+            <li>Mail filtering with <a href=
+            "http://www.courier-mta.org/maildrop/" target="_blank"
+            shape="rect">Maildrop</a>.</li>
+
+            <li>Encryption and digital signatures with
+            <code>GnuPG</code>.</li>
+
+            <li>Calendaring.</li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 </html>

@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>maildrop - mail delivery agent with filtering
+  abilities</title>
+</head>
+
+<body>
+  <!-- $Id: index2.html,v 1.1 2007/03/31 22:02:48 mrsam Exp $ -->
+  <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+  <h1>maildrop - mail delivery agent with filtering abilities</h1>
+
+  <p>Copyright 1998-2013, Double Precision Inc.</p>
+
+  <p>This program is distributed under the terms of the GNU General
+  Public License. See <code>COPYING</code> for additional
+  information.</p>
+
+  <h2>Introduction</h2>
+
+  <p><em>maildrop</em> is the mail filter/mail delivery agent
+  that's used by the <a href="http://www.courier-mta.org" target=
+  "_blank" shape="rect"><i>Courier</i> Mail Server</a>. You do not
+  need to download <em>maildrop</em> from here if you already have
+  the <i>Courier</i> mail server installed. This is a standalone
+  build of the <em>maildrop</em> mail filter that can be used with
+  other mail servers.</p>
+
+  <p><em>maildrop</em> is a replacement for your local mail
+  delivery agent. <em>maildrop</em> reads a mail message from
+  standard input, then delivers the message to your mailbox.
+  <em>maildrop</em> knows how to deliver mail to mbox-style
+  mailboxes, and maildirs. "maildir" is a mailbox format used by
+  the <i>Courier</i> mail server and <a href="http://www.qmail.org"
+  target="_blank" shape="rect">Qmail</a>.</p>
+
+  <p><em>maildrop</em> optionally reads instructions from a file,
+  which describe how to filter incoming mail. These instructions
+  can direct <em>maildrop</em> to deliver the message to an
+  alternate mailbox, or forward it somewhere else. Unlike procmail,
+  <em>maildrop</em> uses a structured filtering language.</p>
+
+  <p><em>maildrop</em> is written in C++, and is significantly
+  larger than procmail. However, it uses resources much more
+  efficiently. Unlike procmail, <em>maildrop</em> will not read a
+  10 megabyte mail message into memory. Large messages are saved in
+  a temporary file, and are filtered from the temporary file. If
+  the standard input to <em>maildrop</em> is a file, and not a
+  pipe, a temporary file will not be necessary.</p>
+
+  <p><em>maildrop</em> checks the mail delivery instruction syntax
+  from the filter file, before attempting to deliver a message.
+  Unlike procmail, if the filter file contains syntax errors,
+  <em>maildrop</em> terminates without delivering the message. The
+  user can fix the typo without causing any mail to be lost.</p>
+</body>
+</html>

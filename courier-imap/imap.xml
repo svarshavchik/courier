@@ -198,7 +198,7 @@ and displays the correct mailbox location.
 Until you get the authentication library working first, you will not
 be able to use the &ci;.</para>
 
-    <para>Download the &ci; from: <ulink url="http://www.courier-mta.org/download.php#imap">http://www.courier-mta.org/download.php#imap</ulink>, then
+    <para>Download the &ci; from: <ulink url="http://www.courier-mta.org/download.html#imap">http://www.courier-mta.org/download.html#imap</ulink>, then
 read its <filename>INSTALL</filename> file for more instructions.</para>
 
     <section>

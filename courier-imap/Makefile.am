@@ -187,7 +187,7 @@ dist-hook: courier-imap.spec courier-imap.lpspec
 if HAVE_HTML
 
 README: html/main.html
-	$(HTML2TXT) $(srcdir)/html/index2.html >README
+	$(HTML2TXT) $(srcdir)/html/index.html >README
 endif
 
 distrelease:
@@ -325,7 +325,6 @@ htmldoc: INSTALL.html libs/imap/README.html libs/maildir/README.maildirquota.htm
 	rm -rf doc
 	mkdir doc
 	xsltproc -o doc/ $(srcdir)/imap.xsl $(srcdir)/imap.xml
-	mv doc/index.html doc/index2.html
 	for f in doc/*.html; do \
 		echo $$f; \
 		tidy -i -asxml --doctype transitional \

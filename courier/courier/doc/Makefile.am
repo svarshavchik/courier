@@ -17,18 +17,16 @@ nohtmlinfiles=  aliases.html \
 		courierd.html \
 		courierdsn.html \
 		documentation.html \
+		download.html \
 		esmtp.html \
 		FAQ.html \
 		socks.html \
-		footer.html \
-		header.html \
 		index.html \
 		install.html \
 		intro.html \
 		layout.html \
 		links.html \
 		local.html \
-		main.html \
 		menu.html \
 		modules.html \
 		queue.html \
@@ -633,6 +631,6 @@ id=$(dollar)Id
 WWW=$$HOME/www/www.courier-mta.org
 
 htmldoc: $(htmldocfiles)
-	for f in $(htmldocfiles); do test "$$f" = "footer.html" && continue; test "$$f" = "menu.html" && continue; test "$$f" = "header.html" && continue; test "$$f" = "index.html" && continue; test "$$f" = "main.html" && continue; b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; echo $$f; xsltproc --nonet $(WWW)/xsl/courier.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$d; done
-	for f in index.html main.html header.html footer.html menu.html; do  b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' <$$f >$$d; done
+	for f in $(htmldocfiles); do test "$$f" = "menu.html" && continue; b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; echo $$f; xsltproc --nonet $(WWW)/xsl/courier.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$d; done
+	for f in menu.html; do  b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' <$$f >$$d; done
 	cp $(miscfiles) $(WWW)

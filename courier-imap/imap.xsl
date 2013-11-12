@@ -17,10 +17,9 @@
 <xsl:template name="user.head.content">
 
    <meta name="MSSmartTagsPreventParsing" content="TRUE" />
-   <link rel="icon" href="icon.gif" type="image/gif" />
     <xsl:comment>
 
-Copyright 2007-2008 Double Precision, Inc.  See COPYING for distribution
+Copyright 2007-2013 Double Precision, Inc.  See COPYING for distribution
 information.
 
 </xsl:comment>
