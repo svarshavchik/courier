@@ -379,8 +379,13 @@ int     submit_errcode;
 	** real and effective GIDs, otherwise maildrop filtering will fail,
 	** because the real gid won't be trusted.
 	*/
-	setgid(MAILGID);
-	setuid(getuid());
+	if (setgid(MAILGID) < 0 ||
+	    setuid(getuid()) < 0)
+	{
+		perror("setuid/setgid");
+		exit(EX_NOPERM);
+	}
+
 	signal(SIGCHLD, SIG_DFL);
 	signal(SIGPIPE, SIG_IGN);
 	argn=1;

@@ -104,7 +104,8 @@ int	niov=0;
 	iov[niov++].iov_len=strlen(logbuf);
 	iov[niov].iov_base=(caddr_t)"\n";
 	iov[niov++].iov_len=1;
-	writev(2, iov, niov);
+	if (writev(2, iov, niov) < 0)
+		;
 }
 
 #if	HAVE_SYSLOG_H

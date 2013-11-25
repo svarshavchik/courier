@@ -30,7 +30,13 @@ int main()
 	}
 
 	if (isroot)
-		setuid(0);
+	{
+		if (setuid(0))
+		{
+			printf("Content-Type: text/plain\n\nsetuid failed\n");
+			exit(0);
+		}
+	}
 	else
 	{
 		g=getgrnam(MAILGROUP);
@@ -41,7 +47,11 @@ int main()
 			exit(0);
 		}
 
-		setgid(g->gr_gid);
+		if (setgid(g->gr_gid) < 0)
+		{
+			printf("Content-Type: text/plain\n\nsetgid failed\n");
+			exit(0);
+		}
 
 		p=getpwnam(MAILUSER);
 		if (!p)
@@ -50,7 +60,11 @@ int main()
 			       MAILUSER);
 			exit(0);
 		}
-		setuid(p->pw_uid);
+		if (setuid(p->pw_uid) < 0)
+		{
+			printf("Content-Type: text/plain\n\nsetuid failed\n");
+			exit(0);
+		}
 	}
 
 	execl(INSTDIR "/webadmin.pl", INSTDIR "/webadmin.pl", (char *)0);
