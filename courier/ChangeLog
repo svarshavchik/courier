@@ -1,3 +1,14 @@
+0.73
+
+2013-11-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/imap/pop3login.c (starttls): Clear input buffer after STARTTLS.
+
+	* libs/imap/imaplogin.c (starttls): Clear input buffer after STARTTLS.
+
+	* Fix various compiler warnings about unchecked results from setuid
+	and setgid calls.
+
 2013-11-10  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/tcpd/libcouriergnutls.c, libs/tcpd/libcouriertls.c: remove the

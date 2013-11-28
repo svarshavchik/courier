@@ -170,7 +170,7 @@ htmldoc:
 	cp html/images/*.png $(WWW)/sqwebmail/images
 
 if HAVE_HTMLPAGES
-NEWS_SOURCE=html/index2.html
+NEWS_SOURCE=html/index.html
 
 NEWS: $(NEWS_SOURCE)
 	$(HTML2TXT) $(NEWS_SOURCE) >NEWS
