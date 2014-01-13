@@ -1,3 +1,7 @@
+2014-01-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Factored out the unicode library into a separate package.
+
 2013-10-08  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Makefile.am: run sysconftool on authsqliterc, in install-configure.

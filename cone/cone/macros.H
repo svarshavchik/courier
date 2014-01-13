@@ -12,7 +12,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 /*
 ** Memorized shortcuts and external filters

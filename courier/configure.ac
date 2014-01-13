@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 0.73.1, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 0.73.1.20140112, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -192,6 +192,16 @@ AC_SUBST(LIBDB)
 AC_SUBST(LIBGDBM)
 AC_SUBST(dblibrary)
 
+save_LIBS="$LIBS"
+LIBS="-lunicode"
+AC_LINK_IFELSE(
+[AC_LANG_PROGRAM([
+#include <unicode.h>
+],[
+	unicode_default_chset();
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+LIBS="$save_LIBS"
+
 dnl
 dnl Need to settle on our uid/gids here
 dnl
@@ -322,6 +332,6 @@ AC_ARG_WITH(repository, [], REPOSITORY="$withval")
 AC_SUBST(REPOSITORY)
 
 echo $real_configure_args >configure.args
-AC_CONFIG_SUBDIRS(afx libs/gdbmobj libs/bdbobj libs/cgi libs/http11 libs/numlib libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/unicode libs/rfc822 libs/rfc1035 libs/rfc2045 libs/liblock libs/maildir libs/waitlib libs/threadlib libs/makedat libs/tcpd libs/rootcerts libs/imap libs/maildrop libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail webadmin courier)
+AC_CONFIG_SUBDIRS(afx libs/gdbmobj libs/bdbobj libs/cgi libs/http11 libs/numlib libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/liblock libs/maildir libs/waitlib libs/threadlib libs/makedat libs/tcpd libs/rootcerts libs/imap libs/maildrop libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail webadmin courier)
 
 AC_OUTPUT(Makefile courier.spec courier.lpspec courier.service dbobj.h dbobj.config courier.sysvinit)

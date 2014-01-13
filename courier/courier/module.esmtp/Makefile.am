@@ -64,7 +64,6 @@ courieresmtp_DEPENDENCIES=../../courier/libs/libmodule.la \
 			../../libs/tcpd/libspipe.la \
 			../../libs/md5/libmd5.la \
 			../../libs/random128/librandom128.la \
-			../../libs/unicode/libunicode.la \
 			../../libs/soxwrap/libsoxwrap.a \
 			../../libs/soxwrap/soxlibs.dep
 
@@ -84,7 +83,7 @@ commonLDADD=../../courier/libs/libmodule.la librewrite.la \
 			../../libs/md5/libmd5.la \
 			../../libs/random128/librandom128.la \
 			../../libs/soxwrap/libsoxwrap.a \
-			../../libs/unicode/libunicode.la \
+			-lunicode \
 			`cat ../../libs/soxwrap/soxlibs.dep` \
 			@NETLIBS@ $(ldaddlibdl) $(DEBUGLIB)
 

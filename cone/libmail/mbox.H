@@ -9,7 +9,7 @@
 #include "libmail_config.h"
 #include "mail.H"
 
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "maildir/maildirkeywords.h"
 
 #include <time.h>

@@ -3,7 +3,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(sqwebmail, 5.7.2, [courier-sqwebmail@lists.sourceforge.net])
+AC_INIT(sqwebmail, 5.7.2.20140112, [courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
@@ -144,6 +144,16 @@ AC_SUBST(USE_GDBM)
 AC_SUBST(USE_DB)
 AC_SUBST(dblibrary)
 	
+save_LIBS="$LIBS"
+LIBS="-lunicode"
+AC_LINK_IFELSE(
+[AC_LANG_PROGRAM([
+#include <unicode.h>
+],[
+	unicode_default_chset();
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+LIBS="$save_LIBS"
+
 dnl Checks for header files.
 
 AC_CHECK_HEADER([pcre.h],
@@ -299,7 +309,7 @@ AC_SUBST(REPOSITORY)
 
 AC_CONFIG_SUBDIRS(libs/numlib libs/bdbobj libs/gdbmobj libs/md5 libs/sha1
 	libs/random128 libs/libhmac libs/liblock
-	libs/rfc822 libs/rfc2045 libs/unicode libs/maildir libs/soxwrap
+	libs/rfc822 libs/rfc2045 libs/maildir libs/soxwrap
 	libs/http11 libs/cgi libs/ldapaddressbook
 	libs/gpglib libs/pcp libs/sqwebmail)
 AC_OUTPUT(Makefile dbobj.h dbobj.config sqwebmail.spec sqwebmail.lpspec sqwebmaild.rc)

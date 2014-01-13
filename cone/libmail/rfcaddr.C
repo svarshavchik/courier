@@ -11,7 +11,7 @@
 #include "rfc2047encode.H"
 #include "rfc2047decode.H"
 #include "rfc822/rfc822.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include <iostream>
 #include <algorithm>
@@ -162,7 +162,7 @@ string mail::address::getCanonAddress() const
 	if (n < a.size())
 	{
 		a=a.substr(0, n) +
-			mail::iconvert::convert_tocase(a.substr(n),
+			unicode::iconvert::convert_tocase(a.substr(n),
 						       "iso-8859-1",
 						       unicode_lc);
 	}
@@ -299,7 +299,7 @@ std::string mail::emailAddress::setDisplayName(const std::string &s,
 {
 	std::vector<unicode_char> ucbuf;
 
-	if (!mail::iconvert::convert(s, charset, ucbuf))
+	if (!unicode::iconvert::convert(s, charset, ucbuf))
 		return "Encoding error";
 
 	decodedName=ucbuf;
@@ -314,7 +314,7 @@ std::string mail::emailAddress::setDisplayAddr(const std::string &s,
 {
 	std::vector<unicode_char> ucbuf;
 
-	if (!mail::iconvert::convert(s, charset, ucbuf))
+	if (!unicode::iconvert::convert(s, charset, ucbuf))
 		return "Encoding error";
 
 #if LIBIDN
@@ -334,7 +334,7 @@ std::string mail::emailAddress::setDisplayAddr(const std::string &s,
 	// Assume non-latin usernames are simply UTF-8 */
 
 	std::string name_portion=
-		mail::iconvert::convert(std::vector<unicode_char>(ucbuf.begin(),
+		unicode::iconvert::convert(std::vector<unicode_char>(ucbuf.begin(),
 								  b),
 					"utf-8");
 
@@ -392,7 +392,7 @@ void mail::emailAddress::decode()
 {
 	std::vector<unicode_char> ucname, ucaddr;
 
-	mail::iconvert::convert(mail::rfc2047::decoder().decode(name,
+	unicode::iconvert::convert(mail::rfc2047::decoder().decode(name,
 								"utf-8"),
 				"utf-8", ucname);
 

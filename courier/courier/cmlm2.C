@@ -8,7 +8,7 @@
 #include	"liblock/config.h"
 #include	"liblock/liblock.h"
 #include	"rfc822/rfc2047.h"
-#include	"unicode/unicode.h"
+#include	<unicode.h>
 #include	<fcntl.h>
 #include	<unistd.h>
 #include	<string.h>
@@ -244,9 +244,9 @@ int cmdset(const std::vector<std::string> &argv, bool autoencode)
 			if (h_name != "NAME=")
 			{
 				std::string conv_p=
-					mail::iconvert::convert(w,
-								unicode_default_chset(),
-								"utf-8");
+					unicode::iconvert::convert(w,
+								   unicode_default_chset(),
+								   "utf-8");
 
 				n=std::string(b,p) + conv_p;
 			}

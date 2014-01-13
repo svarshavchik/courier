@@ -8,7 +8,7 @@
 #define gettext_H
 
 #include "config.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include <libintl.h>
 #include <locale.h>

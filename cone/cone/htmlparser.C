@@ -644,7 +644,7 @@ void htmlParser::fmtline(const enhanced_char *cb,
 
 	bool errflag;
 
-	std::string line(mail::iconvert::convert(s, txtCharset, errflag));
+	std::string line(unicode::iconvert::convert(s, txtCharset, errflag));
 
 	if (errflag)
 		conversionErrorFlag=true;

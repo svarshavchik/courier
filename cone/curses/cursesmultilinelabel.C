@@ -12,7 +12,7 @@ CursesMultilineLabel::CursesMultilineLabel(CursesContainer *parent,
 					   Curses::CursesAttr attributeArg)
 	: Curses(parent), width(0), attribute(attributeArg)
 {
-	mail::iconvert::convert(textArg, unicode_default_chset(), text);
+	unicode::iconvert::convert(textArg, unicode_default_chset(), text);
 }
 
 void CursesMultilineLabel::init()
@@ -53,7 +53,7 @@ void CursesMultilineLabel::setText(std::string newText)
 {
 	erase();
 	text.clear();
-	mail::iconvert::convert(newText, unicode_default_chset(), text);
+	unicode::iconvert::convert(newText, unicode_default_chset(), text);
 	init();
 	draw();
 }

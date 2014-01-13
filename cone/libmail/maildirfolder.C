@@ -6,7 +6,7 @@
 #include "libmail_config.h"
 #include "maildir/config.h"
 #include "maildir/maildirmisc.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "maildirfolder.H"
 #include "maildiradd.H"
 #include "mbox.H"
@@ -58,7 +58,7 @@ mail::maildir::folder::folder(mail::maildir *maildirArg,
 	// Convert the name of the folder from modified UTF-7
 	// (Courier compatibility) to the current charset.
 
-	char *s=libmail_u_convert_tobuf(name.c_str(),
+	char *s=unicode_convert_tobuf(name.c_str(),
 					unicode_x_imap_modutf7,
 					unicode_default_chset(),
 					NULL);
@@ -544,7 +544,7 @@ void mail::maildir::folder::createSubFolder(string name, bool isDirectory,
 	// to modified UTF-7 (Courier-IMAP compatibility), with the following
 	// blacklisted characters:
 
-	char *p=libmail_u_convert_tobuf(name.c_str(), unicode_default_chset(),
+	char *p=unicode_convert_tobuf(name.c_str(), unicode_default_chset(),
 					unicode_x_imap_modutf7 " ./~:", NULL);
 
 	if (!p)
@@ -729,7 +729,7 @@ void mail::maildir::folder::renameFolder(const mail::folder *newParent,
 	// to modified UTF-7 (Courier-IMAP compatibility), with the following
 	// blacklisted characters:
 
-	char *s=libmail_u_convert_tobuf(newName.c_str(),
+	char *s=unicode_convert_tobuf(newName.c_str(),
 					unicode_default_chset(),
 					unicode_x_imap_modutf7 " ./~:", NULL);
 

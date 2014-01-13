@@ -434,7 +434,7 @@ void CursesFileReq::doresized()
 
 	std::vector<unicode_char> directoryW;
 
-	mail::iconvert::convert(currentDir, unicode_default_chset(),
+	unicode::iconvert::convert(currentDir, unicode_default_chset(),
 				directoryW);
 
 	size_t directoryW_size;
@@ -515,7 +515,7 @@ void CursesFileReq::doresized()
 				  replVector.begin(), replVector.end());
 	}
 
-	directoryName.setText(mail::iconvert::convert(directoryW,
+	directoryName.setText(unicode::iconvert::convert(directoryW,
 						      unicode_default_chset()));
 }
 

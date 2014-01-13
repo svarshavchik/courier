@@ -18,7 +18,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #if HAVE_DIRENT_H
 # include <dirent.h>
@@ -76,7 +76,7 @@ string mail::mbox::folder::defaultName(string path)
 
 	path=string(c, e);
 
-	char *p=libmail_u_convert_tobuf(path.c_str(),
+	char *p=unicode_convert_tobuf(path.c_str(),
 					unicode_x_imap_modutf7,
 					unicode_default_chset(),
 					NULL);
@@ -450,7 +450,7 @@ void mail::mbox::folder::createSubFolder(string name,
 {
 	string fpath;
 
-	char *p=libmail_u_convert_tobuf(name.c_str(), unicode_default_chset(),
+	char *p=unicode_convert_tobuf(name.c_str(), unicode_default_chset(),
 					unicode_x_imap_modutf7 " ./~:", NULL);
 
 	if (!p)
@@ -706,7 +706,7 @@ void mail::mbox::folder::renameFolder(const mail::folder *newParent,
 	// to modified UTF-7 (Courier-IMAP compatibility), with the following
 	// blacklisted characters:
 
-	string nameutf7=mail::iconvert::convert(newName,
+	string nameutf7=unicode::iconvert::convert(newName,
 						unicode_default_chset(),
 						unicode_x_imap_modutf7 " ./~:");
 

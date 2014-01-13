@@ -8,7 +8,7 @@
 #include "filter.H"
 #include "gettext.H"
 #include "tags.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include <sstream>
 
 using namespace std;
@@ -209,7 +209,7 @@ string Filter::Step::getDescription() const
 				if (chset.size() == 0)
 					chset="iso-8859-1";
 
-				std::string srch(mail::iconvert::convert
+				std::string srch(unicode::iconvert::convert
 						 (searchType.param2,
 						  chset,
 						  unicode_default_chset()));

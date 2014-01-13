@@ -4,7 +4,7 @@
 
 AUTOMAKE_OPTIONS=dist-bzip2
 
-SUBDIRS=libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/unicode libs/rfc822 libs/random128 libs/liblock liblog
+SUBDIRS=libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog
 
 AM_CPPFLAGS=-I liblock $(LTDLINCL)
 
@@ -638,7 +638,6 @@ bump.rpm.release: @PACKAGE@.spec @PACKAGE@.lpspec
 upload-beta:
 	test -z "$(SFPASSWD)" && exit 1; exit 0
 	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	socksify ssh grace.speakeasy.net echo @PACKAGE@-@VERSION@.tar.bz2 `ls -l @PACKAGE@-@VERSION@.tar.bz2 | awk ' { print $$5 } '` \>courier-mta.org/@PACKAGE@.beta
 	~/src/sftools/release.pl mrsam $(SFPASSWD) courier authlib-devel `echo @VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
 
 upload-dist:

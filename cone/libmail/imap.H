@@ -18,7 +18,7 @@
 #include	<queue>
 
 #include "imapfolders.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "maildir/maildirkeywords.h"
 #include "fd.H"
 

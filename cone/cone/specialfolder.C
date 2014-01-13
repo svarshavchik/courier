@@ -16,7 +16,7 @@
 
 #include "libmail/mail.H"
 #include "libmail/objectmonitor.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include "libmail/mail.H"
 
@@ -210,7 +210,7 @@ mail::folder *SpecialFolder::Info::getFolder(myServer *&s)
 		return NULL;
 	}
 
-	string nameStr(mail::iconvert::convert(nameUTF8, "utf-8",
+	string nameStr(unicode::iconvert::convert(nameUTF8, "utf-8",
 					       unicode_default_chset()));
 
 	{

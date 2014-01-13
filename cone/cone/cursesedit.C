@@ -38,7 +38,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "rfc822/rfc822.h"
 #include "rfc822/encode.h"
 #include "rfc2045/rfc2045.h"
@@ -3530,7 +3530,7 @@ bool CursesEdit::save(SaveSink &sink,
 	for (size_t lineNum=0, nLines=message.numLines();
 	     lineNum < nLines; lineNum++)
 	{
-		std::string s=mail::iconvert::convert
+		std::string s=unicode::iconvert::convert
 			(message.getUTF8Text(lineNum, true),
 			 "utf-8",
 			 unicode_default_chset());

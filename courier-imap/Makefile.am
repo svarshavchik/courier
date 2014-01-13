@@ -9,7 +9,7 @@ TEMPLFILES=packaging/suse/courier-imap.init.in \
 	packaging/suse/pop3.pam
 
 SUBDIRS=libs/numlib libs/bdbobj libs/gdbmobj libs/soxwrap \
-	libs/unicode libs/rfc822 libs/rfc2045 \
+	libs/rfc822 libs/rfc2045 \
 	libs/md5 libs/sha1 libs/random128 libs/rfc1035 libs/liblock \
 	libs/maildir libs/makedat libs/libhmac \
 	libs/waitlib libs/tcpd libs/rootcerts libs/imap

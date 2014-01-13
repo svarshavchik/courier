@@ -7,7 +7,7 @@
 #include "config.h"
 #include "encryptionmenu.H"
 
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include "gettext.H"
 #include "init.H"
@@ -171,7 +171,7 @@ void EncryptionMenu::delkey_s()
 
 	vector<unicode_char> ka;
 
-	mail::iconvert::convert((string)prompt, unicode_default_chset(), ka);
+	unicode::iconvert::convert((string)prompt, unicode_default_chset(), ka);
 
 	if (ka.size() > 0 &&
 	    (key_PRIVATEKEY == ka[0]))

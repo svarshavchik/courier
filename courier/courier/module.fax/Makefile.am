@@ -79,10 +79,9 @@ courierfax_DEPENDENCIES=@courierdir@/courier/libs/libmodule.la \
 		@courierdir@/libs/rfc822/librfc822.la \
 		@courierdir@/libs/gpglib/libgpg.la \
 		@courierdir@/libs/numlib/libnumlib.la \
-		@courierdir@/libs/unicode/libunicode.la \
 		@courierdir@/libs/waitlib/libwaitlib.a
 
-courierfax_LDADD=$(courierfax_DEPENDENCIES) # -lefence
+courierfax_LDADD=$(courierfax_DEPENDENCIES) -lunicode # -lefence
 
 htmldocdir=@datadir@/htmldoc
 htmldoc_DATA=courierfax.html

@@ -25,6 +25,7 @@ BuildRequires: %(which gpg 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo 
 BuildRequires: courier-authlib-devel >= 0.55
 BuildRequires: openldap-devel /etc/mime.types
 BuildRequires: libidn-devel
+BuildRequires: courier-unicode-devel
 
 %{?repository: Repository(pgpkeys.txt): http://download.lpmtool.com/@REPOSITORY@/sqwebmail}
 

@@ -13,7 +13,7 @@
 
 #include "rfc822/rfc2047.h"
 #include "rfc2045/rfc2045.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include <errno.h>
 
@@ -162,7 +162,7 @@ string mail::mimestruct::parameterList::get(string name,
 		{
 			bool err;
 
-			string s=mail::iconvert::convert(stringRet,
+			string s=unicode::iconvert::convert(stringRet,
 							 &charsetStr[0],
 							 chset,
 							 err);

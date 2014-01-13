@@ -9,7 +9,7 @@
 #include "nntpcommand.H"
 #include "gettext.H"
 #include "curseseditmessage.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "libmail/mail.H"
 #include "libmail/misc.H"
 #include "libmail/logininfo.H"
@@ -457,7 +457,7 @@ void ConfigScreen::init()
 
 				bool err;
 
-				nameStr=mail::iconvert::convert(cpy,
+				nameStr=unicode::iconvert::convert(cpy,
 								unicode_default_chset(),
 								err);
 

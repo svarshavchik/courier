@@ -18,7 +18,7 @@
 #include "curses/cursesfield.H"
 #include "curses/cursesfilereq.H"
 #include "curses/curseskeyhandler.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "spellchecker.H"
 #include "curseseditmessage.H"
 #include "myserver.H"
@@ -562,7 +562,7 @@ int main(int argc, char **argv)
 
 		ucbuf.push_back(8594);
 
-		std::string s(mail::iconvert::convert(ucbuf,
+		std::string s(unicode::iconvert::convert(ucbuf,
 						      unicode_default_chset(),
 						      errflag));
 
@@ -573,7 +573,7 @@ int main(int argc, char **argv)
 
 		ucbuf[0]=8592;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(),
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(),
 					  errflag);
 
 		if (s.size() > 0 && !errflag)
@@ -583,7 +583,7 @@ int main(int argc, char **argv)
 
 		ucbuf[0]=8617;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(),
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(),
 					  errflag);
 
 		if (s.size() > 0 && !errflag)

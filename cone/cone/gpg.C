@@ -60,14 +60,14 @@ void GPG::Key::getDescription(std::vector<std::string> &descrArray,
 
 		if (p == std::string::npos)
 		{
-			mail::iconvert::convert(keyDescr,
+			unicode::iconvert::convert(keyDescr,
 						unicode_default_chset(),
 						unicode_buf);
 			keyDescr="";
 		}
 		else
 		{
-			mail::iconvert::convert(keyDescr.substr(0, p),
+			unicode::iconvert::convert(keyDescr.substr(0, p),
 						unicode_default_chset(),
 						unicode_buf);
 			keyDescr=keyDescr.substr(p+1);
@@ -90,7 +90,7 @@ void GPG::Key::getDescription(std::vector<std::string> &descrArray,
 			     b(wrapped_text.begin()),
 			     e(wrapped_text.end()); b != e; ++b)
 		{
-			descrArray.push_back(mail::iconvert
+			descrArray.push_back(unicode::iconvert
 					     ::convert(*b,
 						       unicode_default_chset())
 					     );
@@ -545,7 +545,7 @@ void GPG::dialog::Keylist::drawKey(size_t n)
 
 	if (n < parent->keys.size())
 	{
-		mail::iconvert::convert(parent->keys[n].shortname,
+		unicode::iconvert::convert(parent->keys[n].shortname,
 					unicode_default_chset(),
 					line);
 		line.insert(line.begin(), ' ');
@@ -558,7 +558,7 @@ void GPG::dialog::Keylist::drawKey(size_t n)
 	{
 		std::vector<unicode_char> uc;
 
-		mail::iconvert::convert(std::string(ucheck),
+		unicode::iconvert::convert(std::string(ucheck),
 					unicode_default_chset(), uc);
 
 		if (uc.size() > 0)
@@ -723,7 +723,7 @@ void GPG::dialog::init(std::string titleArg)
 {
 	keylist.setRow(11);
 
-	mail::iconvert::convert(titleArg, unicode_default_chset(), utitle);
+	unicode::iconvert::convert(titleArg, unicode_default_chset(), utitle);
 }
 
 GPG::dialog::~dialog()

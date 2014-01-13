@@ -8,7 +8,7 @@
 #include "imapfolders.H"
 #include "smaplist.H"
 #include "misc.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -77,7 +77,7 @@ string mail::imap::translatePath(string path)
 {
 	if (!smap)
 	{
-		char *p=libmail_u_convert_tobuf(path.c_str(),
+		char *p=unicode_convert_tobuf(path.c_str(),
 						unicode_default_chset(),
 						unicode_x_imap_modutf7, NULL);
 
@@ -120,19 +120,19 @@ string mail::imap::translatePath(string path)
 
 		unicode_char *uc;
 		size_t ucsize;
-		libmail_u_convert_handle_t h;
+		unicode_convert_handle_t h;
 
-		if ((h=libmail_u_convert_tou_init(unicode_default_chset(),
+		if ((h=unicode_convert_tou_init(unicode_default_chset(),
 						  &uc, &ucsize, 1)) == NULL)
 		{
 			uc=NULL;
 		}
 		else
 		{
-			libmail_u_convert(h, component.c_str(),
+			unicode_convert(h, component.c_str(),
 					  component.size());
 
-			if (libmail_u_convert_deinit(h, NULL))
+			if (unicode_convert_deinit(h, NULL))
 				uc=NULL;
 		}
 
@@ -197,11 +197,11 @@ string mail::imap::translatePath(string path)
 		char *p;
 		size_t psize;
 
-		if ((h=libmail_u_convert_fromu_init("utf-8", &p, &psize, 1))
+		if ((h=unicode_convert_fromu_init("utf-8", &p, &psize, 1))
 		    != NULL)
 		{
-			libmail_u_convert_uc(h, &ucvec[0], ucvec.size());
-			if (libmail_u_convert_deinit(h, NULL))
+			unicode_convert_uc(h, &ucvec[0], ucvec.size());
+			if (unicode_convert_deinit(h, NULL))
 				p=NULL;
 		}
 
@@ -434,7 +434,7 @@ void mail::imapLIST::get_name(mail::imap &imapAccount, Token t)
 			if (pfixLength <= nameVal.length())
 				nameVal.erase(0, pfixLength);
 		}
-		char *p=libmail_u_convert_tobuf(nameVal.c_str(),
+		char *p=unicode_convert_tobuf(nameVal.c_str(),
 						unicode_x_imap_modutf7,
 						unicode_default_chset(),
 						NULL);

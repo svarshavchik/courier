@@ -8,7 +8,7 @@
 #define widechar_H
 
 #include "../curses/curses_config.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include <string.h>
 
 #include <wchar.h>
@@ -194,7 +194,7 @@ public:
 	{
 		std::string s;
 
-		mail::iconvert::fromu::convert(b, e,
+		unicode::iconvert::fromu::convert(b, e,
 					       unicode_default_chset(), s);
 
 		std::vector<wchar_t> wc;
@@ -203,7 +203,7 @@ public:
 
 		s=fromwidechar(wc.begin(), wc.end());
 
-		mail::iconvert::tou::convert(s.begin(), s.end(),
+		unicode::iconvert::tou::convert(s.begin(), s.end(),
 					     unicode_default_chset(),
 					     ustring);
 		resetgraphemes();
@@ -428,7 +428,7 @@ public:
 		std::vector<wchar_t> wsegment;
 
 		{
-			std::string s=mail::iconvert
+			std::string s=unicode::iconvert
 				::convert(segment, unicode_default_chset());
 
 			towidechar(s.begin(), s.end(), wsegment);
@@ -518,7 +518,7 @@ template<typename output_sink_t,
 	// an iterator copies the state from the original iterator into the
 	// new one.
 
-	class buffer : public mail::linebreakc_callback_save_buf {
+	class buffer : public unicode::linebreakc_callback_save_buf {
 
 	public:
 		std::vector<unicode_char> segment; // Current word

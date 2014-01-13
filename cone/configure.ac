@@ -5,7 +5,7 @@ dnl Process this file with autoconf to produce a configure script.
 # See COPYING for distribution information.
 #
 AC_PREREQ(2.59)
-AC_INIT(cone,0.90.20130220,[courier-cone@lists.sourceforge.net])
+AC_INIT(cone,0.90.20140112,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AM_CONFIG_HEADER(config.h)
@@ -32,6 +32,17 @@ AC_USE_SYSTEM_EXTENSIONS
 AM_PROG_LIBTOOL
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 dnl Checks for libraries.
+
+save_LIBS="$LIBS"
+LIBS="-lunicode"
+AC_LINK_IFELSE(
+[AC_LANG_PROGRAM([
+#include <unicode.h>
+],[
+	unicode_default_chset();
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+LIBS="$save_LIBS"
+
 dnl Replace `main' with a function in -lefence:
 
 AM_CONDITIONAL(HAVE_SGML, test -d "$srcdir/docbook")

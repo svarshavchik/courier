@@ -248,7 +248,15 @@
   <h2><a name="upgrade" id="upgrade">Upgrading an existing
   installation</a></h2>
 
-  <h3>Upgrading from the <em>Courier</em> mail server 0.72, or higher</h3>
+  <h3>Upgrading from the <em>Courier</em> mail server 0.73.1, or earlier</h3>
+
+  <p>
+    The unicode library in <em>Courier</em> is now a separate package.
+    <a href="http://www.courier-mta.org/download.html#unicode">Download the
+      Courier Unicode Library</a> before updating to 0.74, or later.
+  </p>
+
+  <h3>Upgrading from the <em>Courier</em> mail server 0.72, or earlier</h3>
 
   <p>
     Version 0.73 removes the TLS_DHCERTFILE parameter from esmtpd, esmtpd-ssl,
@@ -614,6 +622,16 @@
   install the <em>Courier</em> mail server:</p>
 
   <ol>
+    <li>
+      <p><strong>The <em>Courier</em> Unicode Library</strong></p>
+
+      <p>The <code>courier-unicode</code> package must be installed
+      and configured prior to installing the <em>Courier</em> mail
+      server. Download the <code>courier-unicode</code> package
+      from <a target="_blank" href=
+      "http://www.courier-mta.org/unicode/"><code>http://www.courier-mta.org/unicode/</code></a>.</p>
+    </li>
+
     <li>
       <p><strong>The <em>Courier</em> mail server Authentication
       Library</strong></p>

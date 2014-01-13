@@ -6,7 +6,7 @@
 #include "libmail_config.h"
 #include "misc.H"
 #include "addressbookget.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include <ctype.h>
 #include <sstream>
 

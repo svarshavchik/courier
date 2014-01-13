@@ -50,10 +50,9 @@ courierdeliver_DEPENDENCIES=librewrite.la \
 		../../libs/rfc822/librfc822.la \
 		../../libs/liblock/liblock.la \
 		../../libs/waitlib/libwaitlib.a \
-		../../libs/numlib/libnumlib.la \
-		../../libs/unicode/libunicode.la
+		../../libs/numlib/libnumlib.la
 
-courierdeliver_LDADD=$(courierdeliver_DEPENDENCIES)
+courierdeliver_LDADD=$(courierdeliver_DEPENDENCIES) -lunicode
 
 preline_SOURCES=preline.c
 

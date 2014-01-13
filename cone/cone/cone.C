@@ -24,7 +24,7 @@
 #include "curses/curseslabel.H"
 #include "curses/cursesfield.H"
 #include "curses/cursesfilereq.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include "liblock/config.h"
 #include "liblock/liblock.h"
@@ -1199,7 +1199,7 @@ int main(int argc, char *argv[])
 
 		std::string s;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() > 0 && !err)
 			ucplus=urarr=ucbuf[0];
@@ -1211,7 +1211,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=8592;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() > 0 && !err)
 			ularr=ucbuf[0];
@@ -1220,7 +1220,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=8226;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() > 0 && !err)
 			ucasterisk=ucbuf[0];
@@ -1229,7 +1229,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=8617;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() > 0 && !err)
 			ucwrap=ucbuf[0];
@@ -1238,7 +1238,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=8730;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() > 0 && !err)
 			strncat(ucheck, s.c_str(), sizeof(ucheck)-1);
@@ -1247,7 +1247,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=215;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() > 0 && !err)
 			strncat(udelete, s.c_str(), sizeof(udelete)-1);
@@ -1256,7 +1256,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=9830;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() > 0 && !err)
 			strncat(unew, s.c_str(), sizeof(unew)-1);
@@ -1267,7 +1267,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=0x2500;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() == 0 || err)
 			ucbuf[0]='_';
@@ -1275,7 +1275,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=0x2502;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() == 0 || err)
 			ucbuf[0]='|';
@@ -1283,7 +1283,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=0x2514;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() == 0 || err)
 			ucbuf[0]='|';
@@ -1291,7 +1291,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=0x251C;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() == 0 || err)
 			ucbuf[0]='|';
@@ -1301,7 +1301,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=0x2261;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() == 0 || err)
 			ucbuf[0]='o';
@@ -1309,7 +1309,7 @@ int main(int argc, char *argv[])
 
 		ucbuf[0]=0x2022;
 
-		s=mail::iconvert::convert(ucbuf, unicode_default_chset(), err);
+		s=unicode::iconvert::convert(ucbuf, unicode_default_chset(), err);
 
 		if (s.size() == 0 || err)
 			ucbuf[0]='*';

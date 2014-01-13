@@ -8,7 +8,7 @@
 #define curses_H
 
 #include "../curses/curses_config.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include <string.h>
 
 #include <wchar.h>

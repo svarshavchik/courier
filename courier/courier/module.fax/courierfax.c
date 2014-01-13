@@ -13,7 +13,7 @@
 #include	"comfax.h"
 #include	"rfc822/rfc822.h"
 #include	"waitlib/waitlib.h"
-#include	"unicode/unicode.h"
+#include	<unicode.h>
 #include	"numlib/numlib.h"
 #include	<stdlib.h>
 #include	<locale.h>

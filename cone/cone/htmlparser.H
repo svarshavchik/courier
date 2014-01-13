@@ -18,7 +18,7 @@
 #include <map>
 
 #include <iostream>
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -81,7 +81,7 @@ class htmlParser {
 	// a linebreaking value comes back from linebreak_callback_base,
 	// pop the pair off the list, and there you go.
 
-	class linebuf_calc_linebreak : public mail::linebreak_callback_base {
+	class linebuf_calc_linebreak : public unicode::linebreak_callback_base {
 
 		std::list< std::pair<unicode_char, textAttributes > > queue;
 
@@ -97,7 +97,7 @@ class htmlParser {
 
 		virtual void operator()(int, unicode_char, textAttributes)=0;
 
-		virtual int operator()(int v)
+		virtual int callback(int v)
 		{
 			std::pair<unicode_char, textAttributes>
 				&p=queue.front();
@@ -175,14 +175,14 @@ class htmlParser {
 
 	linebuf currentLine;
 
-	class converter : public mail::iconvert::tou {
+	class converter : public unicode::iconvert::tou {
 
 		htmlParser *parser;
 
 	public:
 		converter(htmlParser *parserArg);
 		~converter();
-		using mail::iconvert::tou::operator();
+		using unicode::iconvert::tou::operator();
 
 	private:
 		int converted(const unicode_char *, size_t);

@@ -188,14 +188,14 @@ class searchOneMessage {
 
 	bool searchFlag;
 
-	class Searcher : public mail::Search, public mail::iconvert {
+	class Searcher : public mail::Search, public unicode::iconvert {
 
 		int converted(const char *str, size_t n);
 
 	public:
 		using mail::Search::operator bool;
 		using mail::Search::operator !;
-		using mail::iconvert::operator();
+		using unicode::iconvert::operator();
 	};
 
 	Searcher searchEngine;

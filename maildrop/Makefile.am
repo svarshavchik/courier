@@ -10,9 +10,9 @@ DISTCHECK_CONFIGURE_FLAGS=--enable-maildirquota --enable-userdb
 
 HTML2TXT=`which lynx 2>/dev/null && echo "lynx -dump -nolist" && exit; echo "links -dump -no-numbering -no-references"`
 
-SUBDIRS=libs/numlib libs/liblock libs/unicode libs/rfc822 libs/rfc2045 @DBSUBDIR@ libs/makedat libs/maildir libs/maildrop
+SUBDIRS=libs/numlib libs/liblock libs/rfc822 libs/rfc2045 @DBSUBDIR@ libs/makedat libs/maildir libs/maildrop
 
-DIST_SUBDIRS=libs/numlib libs/liblock libs/unicode libs/rfc822 libs/rfc2045 libs/gdbmobj libs/bdbobj libs/makedat libs/maildir libs/maildrop
+DIST_SUBDIRS=libs/numlib libs/liblock libs/rfc822 libs/rfc2045 libs/gdbmobj libs/bdbobj libs/makedat libs/maildir libs/maildrop
 
 HTMLWWW=index.html documentation.html download.html links.html
 EXTRA_DIST=README.html INSTALL.html UPGRADE.html README.postfix\

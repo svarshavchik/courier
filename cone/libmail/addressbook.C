@@ -142,7 +142,7 @@ void mail::addressbook::setIndex(size_t messageNumber,
 				if (newEntry.nickname.size() == 0)
 					newEntry.nickname="(none)";
 
-				char *p=libmail_u_convert_tobuf(newEntry
+				char *p=unicode_convert_tobuf(newEntry
 								.nickname
 								.c_str(),
 								"utf-8",

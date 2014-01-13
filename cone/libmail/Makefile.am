@@ -126,7 +126,7 @@ mailtool_DEPENDENCIES=libmail.la \
 	../libs/rfc822/librfc822.la ../libs/rfc822/libencode.la \
 	../libs/maildir/libmaildir.la \
 	@LIBCOURIERTLS@ \
-	../libs/liblock/liblock.la ../libs/unicode/libunicode.la \
+	../libs/liblock/liblock.la \
 	../libs/libhmac/libhmac.la ../libs/md5/libmd5.la ../libs/sha1/libsha1.la \
 	../libs/numlib/libnumlib.la ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a \
 	../libs/soxwrap/soxlibs.dep
@@ -134,8 +134,8 @@ mailtool_DEPENDENCIES=libmail.la \
 mailtool_LDADD=libmail.la ../libs/rfc2045/librfc2045.la \
 	../libs/rfc822/librfc822.la ../libs/rfc822/libencode.la \
 	../libs/maildir/libmaildir.la \
-	@LIBCOURIERTLS@ \
-	../libs/liblock/liblock.la ../libs/unicode/libunicode.la \
+	@LIBCOURIERTLS@ -lunicode \
+	../libs/liblock/liblock.la \
 	../libs/libhmac/libhmac.la ../libs/md5/libmd5.la ../libs/sha1/libsha1.la \
 	../libs/numlib/libnumlib.la ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a \
 	`cat ../libs/maildir/maildir.libdeps ../libs/soxwrap/soxlibs.dep`

@@ -45,6 +45,7 @@ BuildRequires: zlib-devel /usr/include/fam.h perl
 BuildRequires: libstdc++-devel gcc-c++
 BuildRequires: openldap-devel
 BuildRequires: libidn-devel
+BuildRequires: courier-unicode-devel
 
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 

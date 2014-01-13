@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.66.1],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.66.1.20140114],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -122,6 +122,16 @@ fi
 
 LIBS="$saveLIBS"
 AC_SUBST(NETLIBS)
+
+save_LIBS="$LIBS"
+LIBS="-lunicode"
+AC_LINK_IFELSE(
+[AC_LANG_PROGRAM([
+#include <unicode.h>
+],[
+	unicode_default_chset();
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+LIBS="$save_LIBS"
 
 dnl #########################################################################
 

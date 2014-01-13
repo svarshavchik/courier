@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <pwd.h>
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include "curses/cursesscreen.H"
 #include "curses/cursesbutton.H"
@@ -1157,7 +1157,7 @@ bool AddressBookIndexScreen::processKey(const Curses::Key &key)
 			if (name.size() == 0)
 				name=v[0].getAddr();
 
-			name=mail::iconvert
+			name=unicode::iconvert
 				::convert_tocase(Gettext::toutf8(name),
 						 "utf-8",
 						 unicode_lc);

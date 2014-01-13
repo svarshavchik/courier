@@ -1266,7 +1266,7 @@ void myServer::config::save()
 			}
 			else
 			{
-				std::string s(mail::iconvert::convert
+				std::string s(unicode::iconvert::convert
 					      (mb->first.n, "utf-8"));
 
 				s=mail::rfc2047::encode(s, "utf-8");
@@ -2330,7 +2330,7 @@ void myServer::config::loadmacros(Macros *mp, xmlDocPtr docPtr)
 
 				std::vector<unicode_char> v;
 
-				if (!mail::iconvert::convert(macroName,
+				if (!unicode::iconvert::convert(macroName,
 							     "utf-8",
 							     v))
 					continue;

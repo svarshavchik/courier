@@ -2,7 +2,7 @@
 #define htmlentity_h
 
 #include "config.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include <string>
 #include <vector>
 #include <map>

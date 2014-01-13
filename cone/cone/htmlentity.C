@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 
 struct unicodeEntity {
@@ -89,7 +89,7 @@ Demoronize::Demoronize(const std::string &chsetArg,
 
 			uc.push_back(unicodeEntityList[i].iso10646);
 
-			std::string s(mail::iconvert::convert(uc, chsetArg,
+			std::string s(unicode::iconvert::convert(uc, chsetArg,
 							      errflag));
 
 			if (dodemoronize == maximum)
@@ -126,7 +126,7 @@ std::string Demoronize::operator()(const std::vector<unicode_char> &uc,
 {
 	std::vector<unicode_char> buffer;
 
-	return mail::iconvert::convert(expand(uc, buffer), chset, err);
+	return unicode::iconvert::convert(expand(uc, buffer), chset, err);
 }
 
 const std::vector<unicode_char> &

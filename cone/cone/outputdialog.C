@@ -111,7 +111,7 @@ void OutputDialog::outputLine(std::string s)
 
 		std::vector<unicode_char> uline;
 
-		mail::iconvert::convert(s,
+		unicode::iconvert::convert(s,
 					unicode_default_chset(),
 					uline);
 
@@ -123,7 +123,7 @@ void OutputDialog::outputLine(std::string s)
 			     b=ulines.begin(),
 			     e=ulines.end(); b != e; ++b)
 		{
-			addStrings.push_back(mail::iconvert::convert(*b,
+			addStrings.push_back(unicode::iconvert::convert(*b,
 								     unicode_default_chset()));
 		}
 

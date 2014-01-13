@@ -56,6 +56,7 @@ BuildRequires: %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && ex
 BuildRequires: openldap-devel courier-authlib-devel >= 0.55
 BuildRequires: /etc/mime.types
 BuildRequires: libidn-devel
+BuildRequires: courier-unicode-devel
 
 %description
 SqWebMail is a Webmail CGI for Maildir mailboxes.

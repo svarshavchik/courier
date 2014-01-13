@@ -8,6 +8,7 @@ Release: 1
 Source: maildrop-@VERSION@.tar.bz2
 BuildRequires: /usr/include/fam.h gdbm-devel pcre-devel
 BuildRequires: libidn-devel
+BuildRequires: courier-unicode-devel
 License: GPLv3
 Url: http://www.courier-mta.org/maildrop/
 %{?repository: Repository(pgpkeys.txt): http://www.lpmtool.com/repositories/@REPOSITORY@/maildrop}

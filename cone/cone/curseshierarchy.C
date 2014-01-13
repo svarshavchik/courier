@@ -196,7 +196,7 @@ bool CursesHierarchy::drawErase(Hierarchy::Folder *folder, bool doErase)
 
 			buf.push_back(*pfix);
 
-			render1=mail::iconvert::convert(buf,
+			render1=unicode::iconvert::convert(buf,
 							unicode_default_chset()
 							);
 			render1 += " ";
@@ -237,8 +237,8 @@ bool CursesHierarchy::drawErase(string render1,
 {
 	vector<unicode_char> w1, w2;
 
-	mail::iconvert::convert(render1, unicode_default_chset(), w1);
-	mail::iconvert::convert(render2, unicode_default_chset(), w2);
+	unicode::iconvert::convert(render1, unicode_default_chset(), w1);
+	unicode::iconvert::convert(render2, unicode_default_chset(), w2);
 
 	widecharbuf wcbuf1, wcbuf2;
 
@@ -1350,7 +1350,7 @@ bool CursesHierarchy::processKey(const Curses::Key &key)
 
 		vector<unicode_char> ka;
 
-		mail::iconvert::convert((string)prompt,
+		unicode::iconvert::convert((string)prompt,
 					unicode_default_chset(), ka);
 
 		if (ka.size() == 0)
@@ -1912,7 +1912,7 @@ bool CursesHierarchy::processKey(const Curses::Key &key)
 
 			vector<unicode_char> ka;
 
-			mail::iconvert::convert(((string)prompt),
+			unicode::iconvert::convert(((string)prompt),
 						unicode_default_chset(),
 						ka);
 

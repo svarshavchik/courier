@@ -26,7 +26,7 @@
 #include "libmail/smtpinfo.H"
 #include "rfc822/rfc822.h"
 #include "rfc822/rfc2047.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "gettext.H"
 #include "globalkeys.H"
 #include "macros.H"
@@ -245,7 +245,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 	{
 		std::vector<unicode_char> status;
 
-		mail::iconvert::convert(i.status_code == 'D' ? udelete:
+		unicode::iconvert::convert(i.status_code == 'D' ? udelete:
 					i.status_code == 'R' ? _("R"):
 					i.status_code == 'N' ? unew:_(" "),
 					unicode_default_chset(),
@@ -262,7 +262,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 	{
 		std::vector<unicode_char> status;
 
-		mail::iconvert::convert(ucheck, unicode_default_chset(),
+		unicode::iconvert::convert(ucheck, unicode_default_chset(),
 					status);
 		writeText(status, row, 1, attr);
 	}
@@ -276,7 +276,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 		std::vector<unicode_char> messageNumWC;
 
-		mail::iconvert::convert(s.str(), unicode_default_chset(),
+		unicode::iconvert::convert(s.str(), unicode_default_chset(),
 					messageNumWC);
 
 		writeText(messageNumWC, row, 2, attr);
@@ -310,8 +310,8 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 		std::vector<unicode_char> fmt1, fmt2;
 
-		mail::iconvert::convert(buffer, unicode_default_chset(), fmt1);
-		mail::iconvert::convert(buffer2, unicode_default_chset(), fmt2);
+		unicode::iconvert::convert(buffer, unicode_default_chset(), fmt1);
+		unicode::iconvert::convert(buffer2, unicode_default_chset(), fmt2);
 
 		{
 			widecharbuf wc1, wc2;
@@ -363,7 +363,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 	{
 		std::vector<unicode_char> nameU;
 
-		mail::iconvert::convert(i.name_utf8, "utf-8", nameU);
+		unicode::iconvert::convert(i.name_utf8, "utf-8", nameU);
 
 		std::string sizeStr=MessageSize(i.messageSize);
 
@@ -372,7 +372,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 		std::vector<unicode_char> sizeU;
 
-		mail::iconvert::convert(sizeStr, unicode_default_chset(),
+		unicode::iconvert::convert(sizeStr, unicode_default_chset(),
 					sizeU);
 
 		widecharbuf wcname, wcsize;
@@ -459,7 +459,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 		std::vector<unicode_char> subject;
 
-		mail::iconvert::convert(subjectStr, "utf-8", subject);
+		unicode::iconvert::convert(subjectStr, "utf-8", subject);
 
 		std::vector<unicode_char> thread_pad;
 
@@ -675,7 +675,7 @@ bool CursesIndexDisplay::FilterMessageCallback::getFilterCmd(int n,
 		bool err;
 
 		std::string locale_str=
-			mail::iconvert::convert(cmd_utf8,
+			unicode::iconvert::convert(cmd_utf8,
 						"utf-8",
 						unicode_default_chset(),
 						err);
@@ -1369,7 +1369,7 @@ bool CursesIndexDisplay::processKeyInFocus(const Curses::Key &key)
 			bool err;
 
 			std::string s=
-				mail::iconvert::convert(p->second.first,
+				unicode::iconvert::convert(p->second.first,
 							"utf-8",
 							unicode_default_chset(),
 							err);
@@ -1422,20 +1422,20 @@ bool CursesIndexDisplay::processKeyInFocus(const Curses::Key &key)
 				return true;
 
 			name_utf8=
-				mail::iconvert::convert(s,
+				unicode::iconvert::convert(s,
 							unicode_default_chset(),
 							"utf-8");
 		}
 
 		{
 			std::string name_locale_str=
-				mail::iconvert::convert(name_utf8,
+				unicode::iconvert::convert(name_utf8,
 							"utf-8",
 							unicode_default_chset()
 							);
 
 			std::string cmd_locale_str=
-				mail::iconvert::convert(cmd_utf8,
+				unicode::iconvert::convert(cmd_utf8,
 							"utf-8",
 							unicode_default_chset()
 							);
@@ -1453,7 +1453,7 @@ bool CursesIndexDisplay::processKeyInFocus(const Curses::Key &key)
 				return true;
 
 			cmd_utf8=
-				mail::iconvert::convert(s,
+				unicode::iconvert::convert(s,
 							unicode_default_chset(),
 							"utf-8");
 		}
@@ -1539,7 +1539,7 @@ bool CursesIndexDisplay::getTag(std::string promptStr, size_t &tagNum)
 
 	std::vector<unicode_char> ka;
 
-	mail::iconvert::convert( ((std::string)info), unicode_default_chset(),
+	unicode::iconvert::convert( ((std::string)info), unicode_default_chset(),
 				 ka);
 	if (ka.size() == 0)
 		return false;
@@ -1662,7 +1662,7 @@ bool CursesIndexDisplay::searchPromptBroadenNarrow(mail::ptr<myFolder> &folder,
 
 	std::vector<unicode_char> ka;
 
-	mail::iconvert::convert( ((std::string)prompt), unicode_default_chset(),
+	unicode::iconvert::convert( ((std::string)prompt), unicode_default_chset(),
 				 ka);
 
 	if (ka.size() == 0)
@@ -1828,7 +1828,7 @@ bool CursesIndexDisplay::watchPrompt(unsigned &nDays, unsigned &nLevels)
 
 		std::vector<unicode_char> ka;
 
-		mail::iconvert::convert( ((std::string)prompt),
+		unicode::iconvert::convert( ((std::string)prompt),
 					 unicode_default_chset(),
 					 ka);
 
@@ -1948,7 +1948,7 @@ bool CursesIndexDisplay::processKey(const Curses::Key &key)
 
 			std::vector<unicode_char> ka;
 
-			mail::iconvert::convert( ((std::string)prompt),
+			unicode::iconvert::convert( ((std::string)prompt),
 						 unicode_default_chset(),
 						 ka);
 
@@ -2027,7 +2027,7 @@ void CursesIndexDisplay::listExternalFilterKeys(std::vector< std::pair<std::stri
 		std::string name;
 		bool err;
 
-		name=mail::iconvert::convert(b->second.first,
+		name=unicode::iconvert::convert(b->second.first,
 					     "utf-8",
 					     unicode_default_chset(), err);
 

@@ -15,7 +15,7 @@
 #include "myserverpromptinfo.H"
 #include "macros.H"
 #include "maildir/maildirsearch.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "opendialog.H"
 #include "libmail/mail.H"
 
@@ -174,7 +174,7 @@ void CursesEditMessage::getText(size_t line,
 
 	const CursesFlowedLine &l=text_UTF8[line];
 
-	mail::iconvert::convert(l.text, "utf-8", textRef);
+	unicode::iconvert::convert(l.text, "utf-8", textRef);
 	flowedRet=l.flowed;
 }
 
@@ -249,7 +249,7 @@ void CursesEditMessage::getTextBeforeAfter(std::vector<unicode_char> &before,
 		getText(cursorRow, line);
 
 		flowed=line.flowed;
-		mail::iconvert::convert(line.text, "utf-8", before);
+		unicode::iconvert::convert(line.text, "utf-8", before);
 	}
 
 	// Find character cursor is at.
@@ -602,7 +602,7 @@ class CursesEditMessage::get_file_helper
 
 		std::vector<unicode_char> uline;
 
-		mail::iconvert::convert(linetxt,
+		unicode::iconvert::convert(linetxt,
 					unicode_default_chset(),
 					uline);
 
@@ -1117,7 +1117,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 		{
 			std::vector<unicode_char> ubuf;
 
-			mail::iconvert::convert(defaultSearchStr,
+			unicode::iconvert::convert(defaultSearchStr,
 						unicode_default_chset(),
 						ubuf);
 
@@ -1164,7 +1164,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 		{
 			std::vector<unicode_char> ubuf;
 
-			if (mail::iconvert::convert(defaultReplaceStr,
+			if (unicode::iconvert::convert(defaultReplaceStr,
 						    unicode_default_chset(),
 						    ubuf))
 			{
@@ -1178,7 +1178,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 				bool err;
 
-				std::string r(mail::iconvert::convert
+				std::string r(unicode::iconvert::convert
 					      (uc, unicode_default_chset(),
 					       err));
 
@@ -1189,7 +1189,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 				if (uc.size() != 0)
 					uc[0]=unicode_tc(uc[0]);
 
-				r=mail::iconvert::convert
+				r=unicode::iconvert::convert
 					(uc, unicode_default_chset(), err);
 
 				if (!err)
@@ -1234,7 +1234,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 			{
 				std::vector<unicode_char> ubuf;
 
-				if (mail::iconvert::
+				if (unicode::iconvert::
 				    convert(CursesField::cutBuffer.front().text,
 					    "utf-8", ubuf))
 				{
@@ -1377,7 +1377,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 			size_t i;
 
 			{
-				mail::wordbreakscan scanner;
+				unicode::wordbreakscan scanner;
 
 				for (size_t j=pos; j<currentLine.size(); ++j)
 					if (scanner << currentLine[j])
@@ -1404,7 +1404,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 					    currentLine.begin()+i);
 				word.push_back(0);
 
-				word_c=mail::iconvert::convert(word, "utf-8");
+				word_c=unicode::iconvert::convert(word, "utf-8");
 			}
 
 			bool found_flag;
@@ -1459,7 +1459,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 
 			if (doReplace &&
-			    mail::iconvert::convert(word_c, "utf-8",
+			    unicode::iconvert::convert(word_c, "utf-8",
 						    uc))
 			{
 				modified();
@@ -1641,7 +1641,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 				std::vector<unicode_char> v;
 
-				mail::iconvert::convert(((std::string)
+				unicode::iconvert::convert(((std::string)
 							 macroNamePrompt),
 							unicode_default_chset(),
 							v);
@@ -1712,7 +1712,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 			if (i < row2)
 				u.push_back('\n');
 
-			cutText += mail::iconvert::convert(u, "utf-8");
+			cutText += unicode::iconvert::convert(u, "utf-8");
 		}
 
 		std::map<Macros::name, std::string>::iterator p=
@@ -1897,7 +1897,7 @@ bool CursesEditMessage::checkReplace(bool &doReplace, std::string &replaceWord,
 		    response.value.size() == 0)
 			continue;
 
-		replaceWord=mail::iconvert::convert(std::string(response),
+		replaceWord=unicode::iconvert::convert(std::string(response),
 						    unicode_default_chset(),
 						    "utf-8");
 		break;
@@ -1940,7 +1940,7 @@ bool CursesEditMessage::ReplacePrompt::listKeys( std::vector< std::pair<std::str
 	{
 		bool errflag;
 
-		std::string s=mail::iconvert::convert(wordlist[i], "utf-8",
+		std::string s=unicode::iconvert::convert(wordlist[i], "utf-8",
 						      unicode_default_chset(),
 						      errflag);
 
@@ -2356,7 +2356,7 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 			{
 				getText(i, line1);
 
-				mail::iconvert::convert(line1.text, "utf-8", u);
+				unicode::iconvert::convert(line1.text, "utf-8", u);
 
 				if (i == row2)
 					u.erase(u.begin() + pos2, u.end());
@@ -2364,7 +2364,7 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 				if (i == row1)
 					u.erase(u.begin(), u.begin() + pos1);
 
-				line1.text=mail::iconvert::convert(u, "utf-8");
+				line1.text=unicode::iconvert::convert(u, "utf-8");
 
 				if (is_clreol_key)
 				{
@@ -2386,8 +2386,8 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 			getText(row1, line1);
 			getText(row2, line2);
 
-			mail::iconvert::convert(line1.text, "utf-8", uline1);
-			mail::iconvert::convert(line2.text, "utf-8", uline2);
+			unicode::iconvert::convert(line1.text, "utf-8", uline1);
+			unicode::iconvert::convert(line2.text, "utf-8", uline2);
 
 			line1.flowed=line2.flowed;
 
@@ -2400,7 +2400,7 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 			uline1.insert(uline1.end(),
 				      uline2.begin() + pos2, uline2.end());
 
-			line1.text=mail::iconvert::convert(uline1, "utf-8");
+			line1.text=unicode::iconvert::convert(uline1, "utf-8");
 
 			replaceTextLines(row1, row2+1-row1,
 					 &line1, &line1+1);
@@ -2452,7 +2452,7 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 
 		getText(save_row+1, l);
 
-		mail::iconvert::convert(l.text, "utf-8", after);
+		unicode::iconvert::convert(l.text, "utf-8", after);
 
 		replaceTextLines(save_row+1, 1, &l, &l);
 
@@ -2508,7 +2508,7 @@ void CursesEditMessage::inserted()
 		current_buffer.get_contents(before, after);
 
 		before.clear();
-		mail::iconvert::convert(lastLine->text, "utf-8", before);
+		unicode::iconvert::convert(lastLine->text, "utf-8", before);
 
 		setTextBeforeAfter(before, after, wrappedLine);
 		cursorLineHorizShift=0;
@@ -2782,9 +2782,9 @@ void CursesEditMessage::enterKey()
 
 	CursesFlowedLine newlines[2];
 
-	newlines[0]=CursesFlowedLine(mail::iconvert::convert(currentLine,
+	newlines[0]=CursesFlowedLine(unicode::iconvert::convert(currentLine,
 							     "utf-8"), false);
-	newlines[1]=CursesFlowedLine(mail::iconvert::convert(nextLine, "utf-8"),
+	newlines[1]=CursesFlowedLine(unicode::iconvert::convert(nextLine, "utf-8"),
 				     flowed);
 
 	replaceTextLines(cursorRow, 1, newlines, newlines+2);
@@ -2804,7 +2804,7 @@ void CursesEditMessage::drawLine(size_t lineNum)
 
 		getText(lineNum, line);
 
-		mail::iconvert::convert(line.text, "utf-8", chars);
+		unicode::iconvert::convert(line.text, "utf-8", chars);
 		wrapped=line.flowed;
 	}
 
@@ -3072,7 +3072,7 @@ void CursesEditMessage::save(std::ostream &o, bool isflowed)
 {
 	for (size_t i=0, n=numLines(); i<n; ++i)
 	{
-		o << mail::iconvert::convert(getUTF8Text(i, isflowed), "utf-8",
+		o << unicode::iconvert::convert(getUTF8Text(i, isflowed), "utf-8",
 					     unicode_default_chset())
 		  << std::endl;
 	}

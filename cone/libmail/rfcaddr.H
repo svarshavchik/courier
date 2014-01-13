@@ -7,7 +7,7 @@
 #define libmail_rfcaddr_h
 
 #include "libmail_config.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "namespace.H"
 
 #include <stdlib.h>
@@ -106,13 +106,13 @@ public:
 	std::string getDisplayName(const std::string &charset,
 				   bool &errflag) const
 	{
-		return mail::iconvert::convert(decodedName, charset, errflag);
+		return unicode::iconvert::convert(decodedName, charset, errflag);
 	}
 
 	std::string getDisplayAddr(const std::string &charset,
 				   bool &errflag) const
 	{
-		return mail::iconvert::convert(decodedAddr, charset, errflag);
+		return unicode::iconvert::convert(decodedAddr, charset, errflag);
 	}
 
 	std::string getDisplayName(const std::string &charset) const

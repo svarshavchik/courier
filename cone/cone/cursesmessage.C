@@ -1104,7 +1104,7 @@ bool CursesMessage::reformat()
 
 				std::vector<unicode_char> umsg;
 
-				mail::iconvert::convert(msg,
+				unicode::iconvert::convert(msg,
 							unicode_default_chset(),
 							umsg);
 
@@ -1142,7 +1142,7 @@ bool CursesMessage::reformat()
 
 				reformatAddLine((std::string)attr +
 
-						mail::iconvert::convert(uc,
+						unicode::iconvert::convert(uc,
 									unicode_default_chset()),
 						CursesMessage::LineIndex
 						::ATTRIBUTES);
@@ -1241,7 +1241,7 @@ void CursesMessage::getDescriptionOf(mail::mimestruct *mime,
 	{
 		std::vector<unicode_char> nameu;
 
-		mail::iconvert::convert(name, unicode_default_chset(), nameu);
+		unicode::iconvert::convert(name, unicode_default_chset(), nameu);
 
 		widecharbuf wc;
 
@@ -1253,7 +1253,7 @@ void CursesMessage::getDescriptionOf(mail::mimestruct *mime,
 		{
 			nameu=wc.get_unicode_fixedwidth(37, 0);
 			nameu.insert(nameu.end(), 3, '.');
-			name=mail::iconvert::convert(nameu,
+			name=unicode::iconvert::convert(nameu,
 						     unicode_default_chset());
 		}
 	}
@@ -1331,7 +1331,7 @@ bool CursesMessage::toMyCharset_impl(const std::string &content_chset,
 
 	std::vector<unicode_char> ucbuf;
 
-	if (!mail::iconvert::convert(line, content_chset, ucbuf))
+	if (!unicode::iconvert::convert(line, content_chset, ucbuf))
 		tounicode_error=true;
 
 	line=(*currentDemoronizer)(ucbuf, errflag);
@@ -1353,7 +1353,7 @@ bool CursesMessage::reformatLine(std::string line)
 
 		std::vector<unicode_char> uline;
 
-		mail::iconvert::convert(line,
+		unicode::iconvert::convert(line,
 					unicode_default_chset(),
 					uline);
 
@@ -1366,7 +1366,7 @@ bool CursesMessage::reformatLine(std::string line)
 			     b=ulines.begin(),
 			     e=ulines.end(); b != e; ++b)
 		{
-			lines.push_back(mail::iconvert::convert(*b,
+			lines.push_back(unicode::iconvert::convert(*b,
 								unicode_default_chset()));
 		}
 
@@ -1541,7 +1541,7 @@ static void decode(const std::vector<mail::address> &addrs,
 
 		std::vector<unicode_char> s_wc;
 
-		mail::iconvert::convert(s, unicode_default_chset(), s_wc);
+		unicode::iconvert::convert(s, unicode_default_chset(), s_wc);
 
 		size_t addr_width;
 
@@ -1561,7 +1561,7 @@ static void decode(const std::vector<mail::address> &addrs,
 			current_line.insert(current_line.end(),
 					    comma.begin(), comma.end());
 
-			lines.push_back(mail::iconvert::convert(current_line,
+			lines.push_back(unicode::iconvert::convert(current_line,
 								unicode_default_chset()));
 
 			current_line.clear();
@@ -1586,7 +1586,7 @@ static void decode(const std::vector<mail::address> &addrs,
 		b++;
 	}
 	if (current_line.size() > 0)
-		lines.push_back(mail::iconvert::convert(current_line,
+		lines.push_back(unicode::iconvert::convert(current_line,
 							unicode_default_chset())
 				);
 }
@@ -1601,7 +1601,7 @@ bool CursesMessage::reformatEnvelopeAddresses(std::string hdrName,
 	{
 		std::vector<unicode_char> l;
 
-		mail::iconvert::convert(hdrName, unicode_default_chset(), l);
+		unicode::iconvert::convert(hdrName, unicode_default_chset(), l);
 
 		widecharbuf wc;
 
@@ -1611,7 +1611,7 @@ bool CursesMessage::reformatEnvelopeAddresses(std::string hdrName,
 
 		l.clear();
 		wc.tounicode(l);
-		hdrName=mail::iconvert::convert(l, unicode_default_chset());
+		hdrName=unicode::iconvert::convert(l, unicode_default_chset());
 	}
 
 	decode(addresses,
@@ -1680,7 +1680,7 @@ bool CursesMessage::addHeader(std::string name, std::string value,
 
 	std::vector<unicode_char> name_u;
 
-	mail::iconvert::convert(name, unicode_default_chset(), name_u);
+	unicode::iconvert::convert(name, unicode_default_chset(), name_u);
 
 	size_t name_width;
 
@@ -1713,7 +1713,7 @@ bool CursesMessage::addHeader(std::string name, std::string value,
 
 		std::vector<unicode_char> value_u;
 
-		mail::iconvert::convert(value, unicode_default_chset(),
+		unicode::iconvert::convert(value, unicode_default_chset(),
 					value_u);
 
 		unicodewordwrap(value_u.begin(), value_u.end(),
@@ -1726,7 +1726,7 @@ bool CursesMessage::addHeader(std::string name, std::string value,
 			     b(wrapped_header.begin()),
 			     e(wrapped_header.end()); b != e; ++b)
 		{
-			msg.push_back(mail::iconvert::convert(*b,
+			msg.push_back(unicode::iconvert::convert(*b,
 							      unicode_default_chset()));
 		}
 	}
@@ -1873,7 +1873,7 @@ void CursesMessage::drawLine(size_t lineNum,
 
 		std::vector<unicode_char> ul;
 
-		mail::iconvert::convert(lineb->second,
+		unicode::iconvert::convert(lineb->second,
 					unicode_default_chset(), ul);
 
 		size_t n;
@@ -2081,7 +2081,7 @@ class CursesMessage::newmsgformatter : public mail::textplainparser {
 					       line.front() == '>')))
 				r->o << ' ';
 
-			r->o << mail::iconvert::convert(line, r->my_chset);
+			r->o << unicode::iconvert::convert(line, r->my_chset);
 			return *this;
 		}
 	};
@@ -3308,7 +3308,7 @@ bool CursesMessage::getSendInfo2(std::string promptStr,
 		{
 			std::vector<unicode_char> ka;
 
-			mail::iconvert::convert((std::string)promptDSN,
+			unicode::iconvert::convert((std::string)promptDSN,
 						unicode_default_chset(),
 						ka);
 
@@ -3338,7 +3338,7 @@ bool CursesMessage::getSendInfo2(std::string promptStr,
 	{
 		std::vector<unicode_char> ka;
 
-		mail::iconvert::convert((std::string)promptDSN,
+		unicode::iconvert::convert((std::string)promptDSN,
 					unicode_default_chset(),
 					ka);
 
@@ -3357,7 +3357,7 @@ bool CursesMessage::getSendInfo2(std::string promptStr,
 	{
 		std::vector<unicode_char> ka;
 
-		mail::iconvert::convert((std::string)promptDSN,
+		unicode::iconvert::convert((std::string)promptDSN,
 					unicode_default_chset(),
 					ka);
 

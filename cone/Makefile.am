@@ -1,9 +1,9 @@
 #
-# Copyright 2003-2009, Double Precision Inc.
+# Copyright 2003-2014, Double Precision Inc.
 #
 # See COPYING for distribution information.
 #
-SUBDIRS=libs/unicode libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone
+SUBDIRS=libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone
 
 sysconf_DATA=cone.dist
 

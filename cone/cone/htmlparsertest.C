@@ -7,7 +7,7 @@
 #include "config.h"
 #include "htmlparser.H"
 #include "htmlentity.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include <iomanip>
 
 /*
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 			uc.push_back(unicodeEntityList[i].iso10646);
 
 			std::string p=
-				mail::iconvert::convert(uc, "utf-8");
+				unicode::iconvert::convert(uc, "utf-8");
 
 			if (p.size())
 			{

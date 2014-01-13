@@ -28,18 +28,18 @@ CursesField::CursesField(CursesContainer *parent,
 	  isUnderlined(true)
 {
 	if (yesKeys.size() == 0)
-		mail::iconvert::convert(std::string("yY"),
+		unicode::iconvert::convert(std::string("yY"),
 					unicode_default_chset(),
 					yesKeys);
 
 	if (noKeys.size() == 0)
-		mail::iconvert::convert(std::string("nN"),
+		unicode::iconvert::convert(std::string("nN"),
 					unicode_default_chset(),
 					yesKeys);
 
 	std::vector<unicode_char> utext;
 
-	mail::iconvert::convert(initValue, unicode_default_chset(), utext);
+	unicode::iconvert::convert(initValue, unicode_default_chset(), utext);
 
 	text.set_contents(utext, std::vector<unicode_char>());
 
@@ -84,7 +84,7 @@ void CursesField::setText(std::string textArg)
 {
 	std::vector<unicode_char> utext;
 
-	mail::iconvert::convert(textArg, unicode_default_chset(), utext);
+	unicode::iconvert::convert(textArg, unicode_default_chset(), utext);
 
 	text.set_contents(utext, std::vector<unicode_char>());
 
@@ -101,7 +101,7 @@ std::string CursesField::getText() const
 
 	b.insert(b.end(), a.begin(), a.end());
 
-	return mail::iconvert::convert(b, unicode_default_chset());
+	return unicode::iconvert::convert(b, unicode_default_chset());
 }
 
 int CursesField::getWidth() const
@@ -392,7 +392,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 		if (!(key.plain() && key.ukey == yankKey))
 		{
 			cutBuffer.clear();
-			cutBuffer.push_back(CursesFlowedLine(mail::iconvert
+			cutBuffer.push_back(CursesFlowedLine(unicode::iconvert
 							     ::convert(cut_text,
 								       "utf-8"),
 							     false));
@@ -528,7 +528,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 		std::vector<unicode_char> ucut;
 
 		if (!cutBuffer.empty())
-			mail::iconvert::convert(cutBuffer.front().text,
+			unicode::iconvert::convert(cutBuffer.front().text,
 						"utf-8",
 						ucut);
 
@@ -617,7 +617,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 					--i;
 				}
 
-				std::string s(mail::iconvert::convert
+				std::string s(unicode::iconvert::convert
 					      (repl_c, unicode_default_chset()));
 
 				std::vector<wchar_t> wc;

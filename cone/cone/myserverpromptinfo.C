@@ -95,7 +95,7 @@ unicode_char myServer::promptInfo::firstChar()
 {
 	std::vector<unicode_char> buf;
 
-	mail::iconvert::convert(value, unicode_default_chset(), buf);
+	unicode::iconvert::convert(value, unicode_default_chset(), buf);
 
 	if (buf.empty())
 		buf.push_back(0);

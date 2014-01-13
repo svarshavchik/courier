@@ -665,7 +665,7 @@ string mail::smapHandler::words2path(vector<const char *> &w)
 		if (path.size() > 0)
 			path += "/";
 
-		path += mail::iconvert::convert(*b, "utf-8",
+		path += unicode::iconvert::convert(*b, "utf-8",
 						unicode_x_imap_modutf7 " /");
 
 		b++;
@@ -691,7 +691,7 @@ void mail::smapHandler::path2words(string path, vector<string> &words)
 		if (b != e)
 			b++;
 
-		words.push_back(mail::iconvert::convert(component,
+		words.push_back(unicode::iconvert::convert(component,
 							unicode_x_imap_modutf7,
 							"utf-8"));
 	}

@@ -95,7 +95,7 @@ bool CursesStatusBar::progressWanted()
 void CursesStatusBar::progress(std::string progress)
 {
 	progressText.clear();
-	mail::iconvert::convert(progress,
+	unicode::iconvert::convert(progress,
 				unicode_default_chset(),
 				progressText);
 
@@ -320,10 +320,10 @@ static void createShortcuts(size_t &max_sc_nlen, size_t &max_sc_dlen,
 		std::vector<unicode_char> first_w;
 		std::vector<unicode_char> second_w;
 
-		mail::iconvert::convert(b->first, unicode_default_chset(),
+		unicode::iconvert::convert(b->first, unicode_default_chset(),
 					first_w);
 
-		mail::iconvert::convert(b->second, unicode_default_chset(),
+		unicode::iconvert::convert(b->second, unicode_default_chset(),
 					second_w);
 
 		b++;
@@ -379,10 +379,10 @@ void CursesStatusBar::rebuildShortcuts()
 	if (shortcut_next_descr.size() == 0)
 		shortcut_next_descr="...mOre";
 
-	mail::iconvert::convert(shortcut_next_key, unicode_default_chset(),
+	unicode::iconvert::convert(shortcut_next_key, unicode_default_chset(),
 				nextpage_n);
 
-	mail::iconvert::convert(shortcut_next_descr, unicode_default_chset(),
+	unicode::iconvert::convert(shortcut_next_descr, unicode_default_chset(),
 				nextpage_d);
 
 	{
@@ -515,7 +515,7 @@ void CursesStatusBar::status(std::string text, statusLevel level)
 	{
 		std::vector<unicode_char> uc;
 
-		mail::iconvert::convert(text, unicode_default_chset(), uc);
+		unicode::iconvert::convert(text, unicode_default_chset(), uc);
 
 		extendedErrorMsg.clear();
 
@@ -542,7 +542,7 @@ void CursesStatusBar::status(std::string text, statusLevel level)
 		{
 			std::vector<unicode_char> statusLine;
 
-			mail::iconvert::convert(extendedErrorPrompt,
+			unicode::iconvert::convert(extendedErrorPrompt,
 						unicode_default_chset(),
 						statusLine);
 
@@ -657,7 +657,7 @@ CursesField *CursesStatusBar::createPrompt(std::string prompt, std::string initv
 	{
 		std::vector<unicode_char> uc;
 
-		mail::iconvert::convert(prompt, unicode_default_chset(), uc);
+		unicode::iconvert::convert(prompt, unicode_default_chset(), uc);
 
 		widecharbuf wc;
 

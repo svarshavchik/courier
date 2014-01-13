@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <sstream>
 #include <algorithm>
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "libmail/mail.H"
 #include <errno.h>
 #include <cstring>
@@ -349,13 +349,13 @@ const char *Gettext::keyname(const char *k)
 
 std::string Gettext::toutf8(std::string str)
 {
-	return mail::iconvert::convert(str, unicode_default_chset(),
+	return unicode::iconvert::convert(str, unicode_default_chset(),
 				       "utf-8");
 }
 
 std::string Gettext::fromutf8(std::string str)
 {
-	return mail::iconvert::convert(str, "utf-8",
+	return unicode::iconvert::convert(str, "utf-8",
 				       unicode_default_chset());
 }
 
@@ -408,7 +408,7 @@ void Gettext::Key::init()
 
 	n.erase(q, b);
 
-	mail::iconvert::convert(n, unicode_default_chset(), keys);
+	unicode::iconvert::convert(n, unicode_default_chset(), keys);
 }
 
 bool Gettext::Key::operator==(unicode_char k)

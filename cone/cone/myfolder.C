@@ -16,7 +16,7 @@
 #include "rfc822/rfc822.h"
 #include "rfc2045/rfc2045.h"
 #include "libmail/rfc2047decode.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "libmail/envelope.H"
 #include "libmail/rfcaddr.H"
 #include "libmail/autodecoder.H"
@@ -1995,7 +1995,7 @@ void myFolder::FolderIndexUpdate
 		{
 			vector<unicode_char> uc;
 
-			if (!mail::iconvert::convert(i.subject_utf8,
+			if (!unicode::iconvert::convert(i.subject_utf8,
 						     "utf-8", uc))
 				err=true;
 		}
@@ -2240,10 +2240,10 @@ myFolder::Index::~Index()
 
 void myFolder::Index::toupper()
 {
-	upperSubject_utf8=mail::iconvert::convert_tocase(subject_utf8,
+	upperSubject_utf8=unicode::iconvert::convert_tocase(subject_utf8,
 							 "utf-8",
 							 unicode_uc);
-	upperName_utf8=mail::iconvert::convert_tocase(name_utf8,
+	upperName_utf8=unicode::iconvert::convert_tocase(name_utf8,
 						      "utf-8",
 						      unicode_uc);
 }

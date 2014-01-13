@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 4.15, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 4.15.20140112, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
@@ -111,21 +111,15 @@ fi
 courierlogger=$authsbindir/courierlogger$EXEEXT
 AC_SUBST(courierlogger)
 
-AC_ARG_ENABLE(unicode,
-	[],
-	[
-	unicode="$enableval"
-
-	if test "$unicode" != "yes"
-	then
-		AC_MSG_ERROR(This option is no longer supported)
-	fi
-	],
-	[
-	ac_configure_args="$ac_configure_args --enable-unicode"
-	unicode="yes"
-	]
-)
+save_LIBS="$LIBS"
+LIBS="-lunicode"
+AC_LINK_IFELSE(
+[AC_LANG_PROGRAM([
+#include <unicode.h>
+],[
+	unicode_default_chset();
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+LIBS="$save_LIBS"
 
 if test x$prefix = xNONE
 then
@@ -233,7 +227,7 @@ AC_ARG_WITH(mailuser, [], , ac_configure_args="$ac_configure_args --with-mailuse
 
 
 AC_CONFIG_SUBDIRS(libs/numlib libs/bdbobj libs/gdbmobj libs/soxwrap \
-	libs/unicode libs/rfc822 libs/rfc1035 libs/rfc2045 \
+	libs/rfc822 libs/rfc1035 libs/rfc2045 \
 	libs/md5 libs/sha1 libs/random128 libs/liblock \
 	libs/maildir libs/makedat libs/libhmac \
 	libs/waitlib libs/tcpd libs/rootcerts libs/imap)

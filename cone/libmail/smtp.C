@@ -12,7 +12,7 @@
 #include "base64.H"
 #include "smtpfolder.H"
 #include "tcpd/spipe.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "libcouriertls.h"
 
 #include <errno.h>
@@ -572,7 +572,7 @@ void mail::smtp::ehloResponse(int n, string s)
 
 		// Put capability to uppercase
 
-		line=mail::iconvert::convert_tocase(line.substr(p),
+		line=unicode::iconvert::convert_tocase(line.substr(p),
 						    "iso-8859-1",
 						    unicode_uc);
 

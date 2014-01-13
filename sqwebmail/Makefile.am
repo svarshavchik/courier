@@ -13,7 +13,7 @@ DISTCHECK_CONFIGURE_FLAGS=--enable-cgibindir=$$dc_install_base/cgi-bin --enable-
 HTML2TXT=links -dump -no-numbering --no-references
 
 SUBDIRS=libs/numlib libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 \
-	libs/random128 libs/libhmac libs/unicode libs/rfc822 libs/rfc2045 \
+	libs/random128 libs/libhmac libs/rfc822 libs/rfc2045 \
 	libs/liblock libs/maildir libs/soxwrap libs/cgi \
 	libs/http11 libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail
 

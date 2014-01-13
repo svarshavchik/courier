@@ -46,7 +46,7 @@ int Curses::getColorCount()
 
 
 CursesScreen::KeyReader::KeyReader()
-	: h(iconv_open(libmail_u_ucs4_native, unicode_default_chset())),
+	: h(iconv_open(unicode_u_ucs4_native, unicode_default_chset())),
 	  winput_cnt(0)
 {
 	if (h == (iconv_t)-1)
@@ -214,7 +214,7 @@ bool CursesScreen::writeText(const char *ctext, int row, int col,
 {
 	std::vector<unicode_char> ubuf;
 
-	mail::iconvert::convert(ctext, unicode_default_chset(), ubuf);
+	unicode::iconvert::convert(ctext, unicode_default_chset(), ubuf);
 
 	return writeText(ubuf, row, col, attr);
 }
@@ -447,7 +447,7 @@ bool CursesScreen::writeText(const std::vector<unicode_char> &utext,
 	{
 		std::string s;
 
-		mail::iconvert::fromu::convert(writetext_iter_helper(uptr),
+		unicode::iconvert::fromu::convert(writetext_iter_helper(uptr),
 					       writetext_iter_helper(uptr+ucnt),
 					       unicode_default_chset(), s);
 

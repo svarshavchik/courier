@@ -18,7 +18,7 @@
 #include <pwd.h>
 #include <arpa/inet.h>
 #include "rfc822/rfc822.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "maildir/maildiraclt.h"
 #include "misc.H"
 #include <fstream>
@@ -670,7 +670,7 @@ string toutf8(string s)
 {
 	string u;
 
-	char *p=libmail_u_convert_toutf8(s.c_str(),
+	char *p=unicode_convert_toutf8(s.c_str(),
 					 unicode_default_chset(), NULL);
 
 	try {
@@ -687,7 +687,7 @@ string fromutf8(string s)
 {
 	string u;
 
-	char *p=libmail_u_convert_fromutf8(s.c_str(), unicode_default_chset(),
+	char *p=unicode_convert_fromutf8(s.c_str(), unicode_default_chset(),
 					   NULL);
 
 	try {
@@ -732,19 +732,19 @@ string mail::mbox::translatePathCommon(string path,
 
 		unicode_char *uc;
 		size_t ucsize;
-		libmail_u_convert_handle_t h;
+		unicode_convert_handle_t h;
 
-		if ((h=libmail_u_convert_tou_init(unicode_default_chset(),
+		if ((h=unicode_convert_tou_init(unicode_default_chset(),
 						  &uc, &ucsize, 1)) == NULL)
 		{
 			uc=NULL;
 		}
 		else
 		{
-			libmail_u_convert(h, component.c_str(),
+			unicode_convert(h, component.c_str(),
 					  component.size());
 
-			if (libmail_u_convert_deinit(h, NULL))
+			if (unicode_convert_deinit(h, NULL))
 				uc=NULL;
 		}
 
@@ -806,7 +806,7 @@ string mail::mbox::translatePathCommon(string path,
 		}
 
 		free(uc);
-		std::string p(mail::iconvert::convert(ucvec,
+		std::string p(unicode::iconvert::convert(ucvec,
 						      std::string(unicode_x_imap_modutf7 " ")
 						      + verbotten));
 

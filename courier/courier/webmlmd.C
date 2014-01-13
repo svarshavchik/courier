@@ -9,7 +9,7 @@
 #include	"rfc822/rfc822.h"
 #include	"rfc822/rfc2047.h"
 #include	"numlib/numlib.h"
-#include	"unicode/unicode.h"
+#include	<unicode.h>
 #include	"datadir.h"
 
 #include	<stdio.h>
@@ -88,7 +88,7 @@ std::string toutf8str(std::wstring w)
 
 	u.push_back(0);
 
-	return mail::iconvert::convert(u, "utf-8");
+	return unicode::iconvert::convert(u, "utf-8");
 }
 
 // First component of PATH_INFO is the mailing list name
@@ -297,7 +297,7 @@ std::wstring getwoption(std::string dir, std::string option)
 
 	std::vector<unicode_char> u;
 
-	mail::iconvert::convert(s, "utf-8", u);
+	unicode::iconvert::convert(s, "utf-8", u);
 
 	std::wstring w(u.begin(), u.end());
 	return w;
@@ -676,7 +676,7 @@ HANDLER("OPTNAME", emit_name)
 	{
 		std::vector<unicode_char> u;
 
-		mail::iconvert::convert(p, "utf-8", u);
+		unicode::iconvert::convert(p, "utf-8", u);
 
 		emit_input("optname", std::wstring(u.begin(), u.end()), 32, 255,
 			   "");

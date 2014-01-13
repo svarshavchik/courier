@@ -16,7 +16,7 @@
 #include "objectmonitor.H"
 #include "libcouriertls.h"
 #include "expungelist.H"
-#include <unicode/unicode.h>
+#include <unicode.h>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -1101,16 +1101,16 @@ void mail::nntp::searchMessages(const searchParams &searchInfo,
 	{
 		unicode_char *uc;
 		size_t ucsize;
-		libmail_u_convert_handle_t
-			h(libmail_u_convert_tou_init(searchInfo.charset.c_str(),
+		unicode_convert_handle_t
+			h(unicode_convert_tou_init(searchInfo.charset.c_str(),
 						     &uc, &ucsize, 0));
 
 		if (h)
 		{
-			libmail_u_convert(h, searchInfo.param2.c_str(),
+			unicode_convert(h, searchInfo.param2.c_str(),
 					  searchInfo.param2.size());
 
-			if (libmail_u_convert_deinit(h, NULL))
+			if (unicode_convert_deinit(h, NULL))
 				uc=NULL;
 		}
 		else
@@ -1135,13 +1135,13 @@ void mail::nntp::searchMessages(const searchParams &searchInfo,
 				char *p;
 				size_t psize;
 
-				h=libmail_u_convert_fromu_init("iso-8859-1",
+				h=unicode_convert_fromu_init("iso-8859-1",
 							       &p, &psize, 1);
 
 				if (h)
 				{
-					libmail_u_convert_uc(h, uc, ucsize);
-					if (libmail_u_convert_deinit(h, NULL))
+					unicode_convert_uc(h, uc, ucsize);
+					if (unicode_convert_deinit(h, NULL))
 						p=NULL;
 				}
 				else

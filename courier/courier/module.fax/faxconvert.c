@@ -21,7 +21,7 @@
 #include "rfc2045/rfc2045charset.h"
 #include "numlib/numlib.h"
 #include "gpglib/gpglib.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -602,7 +602,7 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 
 			vector<unicode_char> &s=args["subject"];
 
-			string ss=mail::iconvert::convert(s, "utf-8");
+			string ss=unicode::iconvert::convert(s, "utf-8");
 
 			if (ss.size() > 0)
 			{

@@ -22,7 +22,7 @@
 #include "curses/cursesfilereq.H"
 #include "curses/cursesmoronize.H"
 
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "gettext.H"
 #include "messagesize.H"
 #include <string>
@@ -106,7 +106,7 @@ void init()
 
 		vector<unicode_char> dummy;
 
-		if (!mail::iconvert::convert("", chset, dummy))
+		if (!unicode::iconvert::convert("", chset, dummy))
 		{
 			cerr << (string)
 				(Gettext(_("ERROR: Your display appears to be set to the %1% character set.\n"
@@ -139,7 +139,7 @@ void init()
 
 			bool err;
 			string s=
-				mail::iconvert::convert(uc,
+				unicode::iconvert::convert(uc,
 							unicode_default_chset(),
 							err);
 
@@ -161,9 +161,9 @@ void init()
 
 	CursesStatusBar::shortcut_next_keycode=TOKEYCODE(key_MORE);
 
-	mail::iconvert::convert(std::string(_("yY")),
+	unicode::iconvert::convert(std::string(_("yY")),
 				unicode_default_chset(), CursesField::yesKeys);
-	mail::iconvert::convert(std::string(_("nN")),
+	unicode::iconvert::convert(std::string(_("nN")),
 				unicode_default_chset(), CursesField::noKeys);
 	CursesField::yankKey=TOKEYCODE(key_YANK);
 	CursesField::clrEolKey=TOKEYCODE(key_CLREOL);

@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(maildrop,2.7.1, [courier-maildrop@lists.sourceforge.net])
+AC_INIT(maildrop,2.7.1.20140112, [courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
@@ -127,6 +127,16 @@ AC_SUBST(DBSUBDIR)
 
 LIBS="$saveLIBS"
 
+save_LIBS="$LIBS"
+LIBS="-lunicode"
+AC_LINK_IFELSE(
+[AC_LANG_PROGRAM([
+#include <unicode.h>
+],[
+	unicode_default_chset();
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+LIBS="$save_LIBS"
+
 AC_ARG_WITH(plentyofbeer,
 [  --enable-sendmail=prog       set sendmail location
   --enable-trusted-users='...' specify users allowed to use the -d option
@@ -180,7 +190,7 @@ AC_ARG_WITH(version, [], :,
 
 AC_SUBST(REPOSITORY)
 
-AC_CONFIG_SUBDIRS(libs/numlib libs/liblock libs/rfc822 libs/rfc2045 libs/gdbmobj libs/bdbobj libs/makedat libs/unicode libs/maildir libs/maildrop)
+AC_CONFIG_SUBDIRS(libs/numlib libs/liblock libs/rfc822 libs/rfc2045 libs/gdbmobj libs/bdbobj libs/makedat libs/maildir libs/maildrop)
 
 AC_OUTPUT(Makefile dbobj.h dbobj.config maildrop.spec maildrop.lpspec
 		    README.html INSTALL.html)

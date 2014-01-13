@@ -23,7 +23,7 @@ void widecharbuf::init_string(const std::string &str)
 {
 	std::vector<unicode_char> uc;
 
-	mail::iconvert::convert(str, unicode_default_chset(), uc);
+	unicode::iconvert::convert(str, unicode_default_chset(), uc);
 
 	init_unicode(uc.begin(), uc.end());
 }
@@ -38,7 +38,7 @@ widecharbuf::get_string_truncated(size_t maxwidth, ssize_t col) const
 
 	ret.second=tempret.second;
 
-	mail::iconvert::fromu::convert(tempret.first, unicode_default_chset(),
+	unicode::iconvert::fromu::convert(tempret.first, unicode_default_chset(),
 				       ret.first);
 	return ret;
 }
@@ -46,7 +46,7 @@ widecharbuf::get_string_truncated(size_t maxwidth, ssize_t col) const
 std::string widecharbuf::get_substring(size_t first_grapheme,
 				       size_t grapheme_cnt) const
 {
-	return mail::iconvert::fromu
+	return unicode::iconvert::fromu
 		::convert(get_unicode_substring(first_grapheme,
 						grapheme_cnt),
 			  unicode_default_chset());
@@ -93,7 +93,7 @@ widecharbuf::get_unicode_truncated(size_t maxwidth, ssize_t col) const
 
 	std::string s;
 
-	mail::iconvert::fromu::convert(ustring.begin(),
+	unicode::iconvert::fromu::convert(ustring.begin(),
 				       ustring.begin()+cnt,
 				       unicode_default_chset(),
 				       s);
@@ -207,7 +207,7 @@ size_t widecharbuf::grapheme_t::wcwidth(ssize_t col) const
 {
 	std::string s;
 
-	mail::iconvert::fromu::convert(uptr, uptr+cnt,
+	unicode::iconvert::fromu::convert(uptr, uptr+cnt,
 				       unicode_default_chset(), s);
 
 	return towidechar(s.begin(), s.end(), towidechar_wcwidth_iter(col));
@@ -492,7 +492,7 @@ size_t editablewidechar::adjust_shift_pos(size_t &shiftoffset,
 
 CursesFlowedLine::CursesFlowedLine(const std::vector<unicode_char> &textArg,
 				   bool flowedArg)
-	: text(mail::iconvert::convert(textArg, "utf-8")), flowed(flowedArg)
+	: text(unicode::iconvert::convert(textArg, "utf-8")), flowed(flowedArg)
 {
 }
 

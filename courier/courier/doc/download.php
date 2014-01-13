@@ -8,9 +8,8 @@ echo ">";
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Courier Mail Server - latest releases</title>
-  <!-- $Id$ -->
-  <!-- Copyright 2000-2013 Double Precision, Inc.  See COPYING for -->
+  <title>Courier Mail Server - latest releases</title><!-- $Id$ -->
+  <!-- Copyright 2000-2014 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
   <link rel="icon" href="icon.gif" type="image/gif" />
   <style type="text/css">
@@ -52,96 +51,96 @@ body div.main { height: 100%; width: 100%; overflow: auto;
 
 <body>
   <?php
-                 /*<![CDATA[*/
+                     /*<![CDATA[*/
 
-                 $dir=".";
+                     $dir=".";
 
-                 $filename="$dir/download.lst";
+                     $filename="$dir/download.lst";
 
-                 $old_err=error_reporting(60);
-                         $fp=fopen($filename, "r");
-                         if (! $fp)
-                         {
-                                 $filename="/var/www/download.lst";
-                                 $fp=fopen($filename, "r");
-                         }
-                         error_reporting($old_err);
-                         if (! $fp)
-                         {
-                                 echo "Unable to read configuration file.\n";
-                                 exit();
-                         }
-                         while (!feof($fp))
-                         {
-                                 $line=fgets($fp, 4096);
-                                 if (strlen($line) == 0)
-                                 {
-                                         continue;
-                                 }
+                     $old_err=error_reporting(60);
+                             $fp=fopen($filename, "r");
+                             if (! $fp)
+                             {
+                                     $filename="/var/www/download.lst";
+                                     $fp=fopen($filename, "r");
+                             }
+                             error_reporting($old_err);
+                             if (! $fp)
+                             {
+                                     echo "Unable to read configuration file.\n";
+                                     exit();
+                             }
+                             while (!feof($fp))
+                             {
+                                     $line=fgets($fp, 4096);
+                                     if (strlen($line) == 0)
+                                     {
+                                             continue;
+                                     }
 
-                                 list($package, $version_s, $date_s, $filename_s, $size_s)
-                                 =split( "[ \t\n]", $line);
-                                 
-                                 $Version[$package]=$version_s;
-                                 $Date[$package]=$date_s;
-                                 $Filename[$package]=$filename_s;
-                                 $Size[$package]=$size_s;
-                         }
-                         fclose($fp);
+                                     list($package, $version_s, $date_s, $filename_s, $size_s)
+                                     =split( "[ \t\n]", $line);
+                                     
+                                     $Version[$package]=$version_s;
+                                     $Date[$package]=$date_s;
+                                     $Filename[$package]=$filename_s;
+                                     $Size[$package]=$size_s;
+                             }
+                             fclose($fp);
 
-                         function download_link($package, $version,
-                                                $date, $filename, $size)
-                         {
-                                 $httpurl="https://sourceforge.net/projects/courier/files/";
+                             function download_link($package, $version,
+                                                    $date, $filename, $size)
+                             {
+                                     $httpurl="https://sourceforge.net/projects/courier/files/";
 
-                                 print "<tr><th>Date</th><th>Version</th><th>Filename</th><th>Size</th></tr>";
-                                 print "<tr><td>$date</td><td>$version</td>";
-                                 print "<td><a href='$httpurl$package/$version/$filename/download'>$filename</a><br />";
-                                 print "<span class='siglink'>(<a href='$httpurl$package/$version/$filename.sig/download'>PGP signature</a>)</span>";
+                                     print "<tr><th>Date</th><th>Version</th><th>Filename</th><th>Size</th></tr>";
+                                     print "<tr><td>$date</td><td>$version</td>";
+                                     print "<td><a href='$httpurl$package/$version/$filename/download'>$filename</a><br />";
+                                     print "<span class='siglink'>(<a href='$httpurl$package/$version/$filename.sig/download'>PGP signature</a>)</span>";
 
-                                 print "</td><td>$size</td></tr>";
+                                     print "</td><td>$size</td></tr>";
 
-                         }
+                             }
 
-                         function download_version($package, $changelog)
-                         {
-                                 global $Version, $Date, $Filename, $Size;
+                             function download_version($package, $changelog)
+                             {
+                                     global $Version, $Date, $Filename, $Size;
 
-                                 $has_devel=0;
+                                     $has_devel=0;
 
-                                 $packagedevel = $package . "-devel";
+                                     $packagedevel = $package . "-devel";
 
-                                 if (array_key_exists($packagedevel, $Version))
-                                 {
-                                         $has_devel=1;
-                                 }
+                                     if (array_key_exists($packagedevel, $Version))
+                                     {
+                                             $has_devel=1;
+                                     }
 
-                                 print "<table class='downloadbox'>";
-                                 print "<tbody>";
-                                 print "<tr><th colspan='4'>Current release</th></tr>";
+                                     print "<table class='downloadbox'>";
+                                     print "<tbody>";
+                                     print "<tr><th colspan='4'>Current release</th></tr>";
 
-                                 download_link($package,
-                                               $Version[$package],
-                                               $Date[$package],
-                                               $Filename[$package],
-                                               $Size[$package]);
+                                     download_link($package,
+                                                   $Version[$package],
+                                                   $Date[$package],
+                                                   $Filename[$package],
+                                                   $Size[$package]);
 
-                                 if ($has_devel)
-                                 {
-                                         print "<tr><td colspan='4'><hr/></td></tr>";
-                                         print "<tr><th colspan='4'>Latest development release (<a href='$changelog'>changelog</a>)</th></tr>";
-                                         download_link($packagedevel,
-                                                       $Version[$packagedevel],
-                                                       $Date[$packagedevel],
-                                                       $Filename[$packagedevel],
-                                                       $Size[$packagedevel]);
-                                 }
+                                     if ($has_devel)
+                                     {
+                                             print "<tr><td colspan='4'><hr/></td></tr>";
+                                             print "<tr><th colspan='4'>Latest development release (<a href='$changelog'>changelog</a>)</th></tr>";
+                                             download_link($packagedevel,
+                                                           $Version[$packagedevel],
+                                                           $Date[$packagedevel],
+                                                           $Filename[$packagedevel],
+                                                           $Size[$packagedevel]);
+                                     }
 
-                                 print "</tbody></table>";
+                                     print "</tbody></table>";
 
-                         }
-                         /*]]>*/
-                         ?>
+                             }
+                             /*]]>*/
+                             ?>
 
   <div class='main'>
     <h1>Courier Mail Server - latest releases</h1>
@@ -155,9 +154,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
 
     <h2><a name="courier" id="courier">Package:
     Courier</a></h2><?php
-                                 download_version("courier",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier/ChangeLog");
-                                 ?>
+                                         download_version("courier",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier/ChangeLog");
+                                         ?>
 
     <p>This package includes the entire source code for the
     <a href="http://www.courier-mta.org">Courier mail server</a> -
@@ -173,10 +172,10 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     <h2><a name="authlib" id="authlib">Package: Courier
     authentication library</a></h2><?php
 
-                                 download_version("authlib",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-authlib/ChangeLog");
+                                         download_version("authlib",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-authlib/ChangeLog");
 
-                                 ?>
+                                         ?>
 
     <p>The Courier Authentication Library is a generic
     authentication API that encapsulates the process of validating
@@ -194,11 +193,26 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     older/other releases</a>)</font></p>
     <hr />
 
+    <h2><a name="unicode" id="unicode">Package: Courier Unicode
+    Library</a></h2><?php
+                                         download_version("courier-unicode",
+                                                          "http://sourceforge.net/p/courier/courier-libs.git/ci/master/tree/unicode/ChangeLog");
+                                         ?>
+
+    <p>The <a href="http://www.courier-mta.org/unicode/">Courier
+    Unicode Library</a> is used by most other Courier packages, and
+    needs to be installed in order to use them or build them.</p>
+
+    <p><font size="-1">(<a href=
+    "http://sourceforge.net/project/showfiles.php?group_id=5404">Download
+    older/other releases</a>)</font></p>
+    <hr />
+
     <h2><a name="analog" id="analog">Package:
     Courier-analog</a></h2><?php
-                                 download_version("analog",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-analog/ChangeLog");
-                                 ?>
+                                         download_version("analog",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-analog/ChangeLog");
+                                         ?>
 
     <p>This is an optional package, the Courier log analyzer.
     Courier-analog generates log summaries for incoming and
@@ -213,9 +227,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     <h2><a name="imap" id="imap">Package:
     Courier-IMAP</a></h2><?php
 
-                                 download_version("imap",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-imap/ChangeLog");
-                                 ?>
+                                         download_version("imap",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-imap/ChangeLog");
+                                         ?>
 
     <p>This package contains the standalone Courier IMAP server,
     which is used to provide IMAP access to local mailboxes.
@@ -233,9 +247,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     <h2><a name="sqwebmail" id="sqwebmail">Package:
     SqWebMail</a></h2><?php
 
-                                 download_version("webmail",
-                                                  "http://sourceforge.net/p/courier/courier-libs.git/ci/master/tree/sqwebmail/ChangeLog");
-                                 ?>
+                                         download_version("webmail",
+                                                          "http://sourceforge.net/p/courier/courier-libs.git/ci/master/tree/sqwebmail/ChangeLog");
+                                         ?>
 
     <p>This package contains the SqWebMail webmail CGI. This CGI is
     used by the Courier mail server to provide webmail access to
@@ -252,9 +266,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
 
     <h2><a name="maildrop" id="maildrop">Package:
     maildrop</a></h2><?php
-                                 download_version("maildrop",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/maildrop/ChangeLog");
-                                 ?>
+                                         download_version("maildrop",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/maildrop/ChangeLog");
+                                         ?>
 
     <p>This package contains the maildrop delivery agent/mail
     filter. This mail filter module is included in the Courier mail
@@ -271,9 +285,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     <hr />
 
     <h2><a name="sox" id="sox">Package: courier-sox</a></h2><?php
-                                 download_version("sox",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-sox/ChangeLog");
-                                 ?>
+                                         download_version("sox",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/courier-sox/ChangeLog");
+                                         ?>
 
     <p>This package contains the Courier Socks 5 Proxy client
     library, which allows Courier to send outgoing mail using a
@@ -287,9 +301,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     <hr />
 
     <h2><a name="cone" id="cone">Package: Cone</a></h2><?php
-                                 download_version("cone",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/cone/ChangeLog");
-                                 ?>
+                                         download_version("cone",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/cone/ChangeLog");
+                                         ?>
 
     <p>This package contains <span style=
     "font-family: serif; font-style: italic">Cone</span>, a
@@ -307,9 +321,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
 
     <h2><a name="sysconftool" id="sysconftool">Package:
     sysconftool</a></h2><?php
-                                 download_version("sysconftool",
-                                                  "http://sourceforge.net/p/courier/courier.git/ci/master/tree/sysconftool/ChangeLog");
-                                 ?>
+                                         download_version("sysconftool",
+                                                          "http://sourceforge.net/p/courier/courier.git/ci/master/tree/sysconftool/ChangeLog");
+                                         ?>
 
     <p>The sysconftool utility contains an additional autoconf
     macro used by Courier to install configuration files. You only

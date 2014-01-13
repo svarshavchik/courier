@@ -99,7 +99,7 @@ leaf_SOURCES=\
 
 htmlparsertest_SOURCES=htmlparsertest.C htmlparser.C htmlparser.H \
 			htmlentity.C htmlentity.h
-htmlparsertest_LDADD=../curses/libcurses.a ../libs/unicode/libunicode.la
+htmlparsertest_LDADD=../curses/libcurses.a -lunicode
 
 check-am:
 	./htmlparsertest <$(srcdir)/testsuite1 | cmp -s - $(srcdir)/testsuite1.out
@@ -119,7 +119,6 @@ noinst_DATA += html/index.html html/manpage.css man/.timestamp
 
 LAMAILLIBS=../libmail/libmail.la ../libs/maildir/libmaildir.la \
 	../libs/rfc2045/librfc2045.la \
-	../libs/unicode/libunicode.la \
 	../libs/tcpd/libspipe.la @LIBCOURIERTLS@ \
 	../libs/rfc822/librfc822.la ../libs/rfc822/libencode.la \
 	../libs/liblock/liblock.la \
@@ -127,7 +126,7 @@ LAMAILLIBS=../libmail/libmail.la ../libs/maildir/libmaildir.la \
 	../libs/numlib/libnumlib.la
 
 libmail_la_SOURCES=
-libmail_la_LIBADD=$(LAMAILLIBS)
+libmail_la_LIBADD=$(LAMAILLIBS) -lunicode
 libmail_la_DEPENDENCIES=$(LAMAILLIBS)
 libmail_la_LDFLAGS=-static -rpath $(libdir)
 
@@ -174,13 +173,13 @@ cone_LDADD=@SPELL_OBJ@ $(SPELL_LIB) ../libs/tcpd/libtlsclient.la \
 
 leaf_DEPENDENCIES=../curses/libcurses.a dummyspellchecker.a @SPELL_OBJ@ \
 	../libmail/objectmonitor.o \
-	../libs/unicode/libunicode.la ../libs/maildir/libmaildir.la
+	../libs/maildir/libmaildir.la
 
 leaf_LDADD=@SPELL_OBJ@ $(SPELL_LIB) ../curses/libcurses.a \
 	../libs/maildir/libmaildir.la \
 	../libmail/objectmonitor.o \
 	`cat ../curses/curseslib` \
-	 @LIBINTL@ ../libs/unicode/libunicode.la
+	 @LIBINTL@ -lunicode
 
 pwtest_SOURCES=pwtest.c
 pwtest_DEPENDENCIES=../libs/tcpd/libtlsclient.la \

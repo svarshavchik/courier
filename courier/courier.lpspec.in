@@ -34,6 +34,7 @@ BuildRequires:    expect
 BuildRequires:    gdbm-devel
 BuildRequires:    pam-devel
 BuildRequires:	  libidn-devel
+BuildRequires:    courier-unicode-devel
 %if %with_fam
 BuildRequires:      /usr/include/fam.h
 %endif

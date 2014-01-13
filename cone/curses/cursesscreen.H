@@ -8,7 +8,7 @@
 #define cursesscreen_H
 
 #include "../curses/curses_config.h"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "cursescontainer.H"
 
 #if HAVE_NCURSESW_CURSES_H

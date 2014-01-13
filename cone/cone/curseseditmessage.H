@@ -15,7 +15,7 @@
 #include "curses/curseskeyhandler.H"
 #include "curses/cursesflowedline.H"
 #include "libmail/objectmonitor.H"
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "spellcheckerbase.H"
 #include <time.h>
 

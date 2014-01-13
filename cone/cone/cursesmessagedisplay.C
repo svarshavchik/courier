@@ -923,7 +923,7 @@ bool CursesMessageDisplay::processKeyInFocus(const Curses::Key &key)
 			unicode_char *uc;
 			size_t ucsize;
 
-			if (libmail_u_convert_tou_tobuf(s.c_str(),
+			if (unicode_convert_tou_tobuf(s.c_str(),
 							s.size(),
 							"utf-8",
 							&uc,

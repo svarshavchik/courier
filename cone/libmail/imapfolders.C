@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <sstream>
-#include "unicode/unicode.h"
+#include <unicode.h>
 #include "rfc822/rfc822.h"
 #include "maildir/maildiraclt.h"
 
@@ -427,7 +427,7 @@ bool mail::imapCREATE::taggedMessage(mail::imap &imapAccount, string msgname,
 		// The folder name should be utf7-encoded
 
 		{
-			char *p=libmail_u_convert_toutf8(encodedname.c_str(),
+			char *p=unicode_convert_toutf8(encodedname.c_str(),
 							 unicode_default_chset(),
 							 NULL);
 
@@ -443,7 +443,7 @@ bool mail::imapCREATE::taggedMessage(mail::imap &imapAccount, string msgname,
 			free(p);
 
 
-			p=libmail_u_convert_tobuf(encodedname.c_str(),
+			p=unicode_convert_tobuf(encodedname.c_str(),
 						  unicode_default_chset(),
 						  unicode_x_imap_modutf7,
 						  NULL);
