@@ -1,3 +1,8 @@
+2014-01-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/maildrop/search.C (search_cb): Fix logged patterns getting
+	garbled, in log output.
+
 2014-01-12  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Factored out the unicode library into a separate package.
