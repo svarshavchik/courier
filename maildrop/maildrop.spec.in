@@ -74,12 +74,11 @@ mkdir -p $RPM_BUILD_ROOT
 %{__make} install DESTDIR=$RPM_BUILD_ROOT MAILDROPUID='' MAILDROPGID=''
 
 mkdir htmldoc
-cp $RPM_BUILD_ROOT%{_datadir}/maildrop/html/* htmldoc
-rm -rf $RPM_BUILD_ROOT%{_datadir}/maildrop/html
+cp $RPM_BUILD_ROOT%{_docdir}/*/html/* htmldoc
+rm -rf $RPM_BUILD_ROOT%{_docdir}/*/html
 
 %files
 %defattr(-, bin, bin)
-%{_datadir}/maildrop
 
 %doc htmldoc/*
 

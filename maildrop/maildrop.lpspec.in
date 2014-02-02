@@ -63,12 +63,11 @@ utilities.
 %{__make} install DESTDIR=$__installdir MAILDROPUID='' MAILDROPGID=''
 
 mkdir htmldoc
-cp $__installdir%{_datadir}/maildrop/html/* htmldoc
-rm -rf $__installdir%{_datadir}/maildrop/html
+cp $__installdir%{_docdir}/*/html/* htmldoc
+rm -rf $__installdir%{_docdir}/*/html
 
 %files
 %defattr(-, bin, bin)
-%{_datadir}/maildrop
 
 %doc htmldoc/*
 

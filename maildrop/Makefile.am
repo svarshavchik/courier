@@ -25,7 +25,7 @@ manpage.css: libs/docbook/manpage.css
 endif
 
 scriptdir=$(pkgdatadir)/scripts
-htmldir=$(pkgdatadir)/html
+htmldir=$(docdir)/html
 
 DELIVERQUOTAHTMLSOURCE=maildirquota.html deliverquota.html
 
@@ -56,9 +56,17 @@ MAILDROPHTML=lockmail.html maildiracl.html maildirkw.html \
 	maildropfilter.html maildropgdbm.html maildrop.html mailbot.html \
 	makemime.html reformail.html reformime.html
 
+if HAVE_DBLIBRARY
+MAILDROPHTML += makedat.html
+endif
+
 MAILDROPMAN=lockmail.1 maildirmake.1 maildrop.1 mailbot.1 maildropex.7 \
 	maildir.5 \
 	maildropfilter.7 maildropgdbm.7 makemime.1 reformail.1 reformime.1
+
+if HAVE_DBLIBRARY
+MAILDROPMAN += makedat.1
+endif
 
 EXTRA_LTLIBRARIES=librfc822.la librfc2045.la
 
@@ -72,12 +80,21 @@ sysinclude_DATA=@DEVEL_INCLUDES@
 lib_LTLIBRARIES=@DEVEL_LIBS@
 
 htmldataclean=$(DELIVERQUOTAHTML) \
-	$(MAILDROPHTML) rfc822.html rfc2045.html makedat.html
+	$(MAILDROPHTML) rfc822.html rfc2045.html
 
 html_DATA=$(htmldataclean) manpage.css
 
+if !HAVE_DBLIBRARY
+html_DATA += makedat.html
+endif
+
 man_MANS=$(DELIVERQUOTAMAN) \
 	$(MAILDROPMAN) $(DEVEL_MAN)
+
+if !HAVE_DBLIBRARY
+man_MANS += makedat.1
+endif
+
 DISTCLEANFILES=$(htmldataclean) $(man_MANS)
 
 librfc822_la_SOURCES=
