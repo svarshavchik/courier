@@ -1,3 +1,7 @@
+2014-02-15 "Alexei Batyr'" <lehel@pcmag.ru>
+
+	* Fix wrong path in libs/sqwebmail/Makefile.
+
 2014-01-15  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/maildrop/search.C (search_cb): Fix logged patterns getting
