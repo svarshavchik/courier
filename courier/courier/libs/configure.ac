@@ -12,7 +12,7 @@ AM_INIT_AUTOMAKE([foreign no-define])
 AC_CONFIG_SRCDIR(aliases.h)
 >confdefs.h # Kill PACKAGE_ macros.
 
-AM_CONFIG_HEADER(courier_lib_config.h)
+AC_CONFIG_HEADERS(courier_lib_config.h)
 
 dnl Checks for programs.
 

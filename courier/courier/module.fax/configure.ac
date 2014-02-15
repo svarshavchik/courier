@@ -10,7 +10,7 @@ AC_INIT(module.fax, 0.10, [courier-users@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(faxconvert.c)
 AM_INIT_AUTOMAKE([foreign no-define])
 LPATH="$PATH:/usr/local/bin"
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 
 dnl Checks for programs.

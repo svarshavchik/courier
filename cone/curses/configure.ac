@@ -9,7 +9,7 @@ AC_PREREQ(2.59)
 AC_INIT(curses, 0.11, courier-cone@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(mycurses.H)
 AC_CONFIG_AUX_DIR(..)
-AM_CONFIG_HEADER(curses_config.h)
+AC_CONFIG_HEADERS(curses_config.h)
 AM_INIT_AUTOMAKE
 >confdefs.h
 

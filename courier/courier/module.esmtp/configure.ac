@@ -10,7 +10,7 @@ AC_INIT(module.esmtp, 0.11, [courier-users@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(Makefile.am)
 AM_INIT_AUTOMAKE([foreign no-define])
 LPATH="$PATH:/usr/local/bin"
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 dnl Checks for programs.
 AC_PROG_MAKE_SET

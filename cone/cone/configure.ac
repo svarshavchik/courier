@@ -9,7 +9,7 @@ AC_INIT(cone,0.90, [courier-cone@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(cone.C)
 AC_CONFIG_AUX_DIR(..)
 AC_CANONICAL_TARGET
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
 
 ALL_LINGUAS=

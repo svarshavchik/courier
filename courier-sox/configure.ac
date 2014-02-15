@@ -9,7 +9,7 @@ AC_PREREQ(2.63)
 AC_INIT([courier-sox],[0.12],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
-AM_CONFIG_HEADER([courier_socks_config.h])
+AC_CONFIG_HEADERS([courier_socks_config.h])
 AC_USE_SYSTEM_EXTENSIONS
 
 LT_CONFIG_LTDL_DIR([libltdl])

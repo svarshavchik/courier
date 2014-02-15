@@ -11,7 +11,7 @@ AC_CONFIG_SRCDIR(submit.C)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([foreign])
 LPATH="$PATH:/usr/local/bin"
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 dnl Checks for programs.
 AC_PROG_MAKE_SET

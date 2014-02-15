@@ -8,7 +8,7 @@ AC_PREREQ(2.59)
 AC_INIT(cone,0.90.20140112,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
 
 ALL_LINGUAS=

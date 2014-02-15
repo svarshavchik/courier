@@ -10,7 +10,7 @@ AC_INIT([courier-authlib],[0.66.1.20140114],[courier-users@lists.sourceforge.net
 AC_CONFIG_SRCDIR([courierauth.h])
 
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER([courier_auth_config.h])
+AC_CONFIG_HEADERS([courier_auth_config.h])
 >confdefs.h  # Kill PACKAGE_ macros
 
 LPATH="$PATH:/usr/local/bin"

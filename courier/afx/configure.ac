@@ -6,7 +6,7 @@ dnl distribution information.
 AC_INIT(afx,1.60, [courier-users@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(afx.h)
 AM_INIT_AUTOMAKE([foreign no-define])
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 dnl Checks for programs.
 AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
