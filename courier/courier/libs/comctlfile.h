@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2005 Double Precision, Inc.
+** Copyright 1998 - 2014 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -115,6 +115,7 @@ time_t ctlfile_getnextattempt(struct ctlfile *);
 #define COMCTLFILE_SECURITY	'U'
 #define COMCTLFILE_MSGSOURCE	'u'
 #define COMCTLFILE_TRACK	'T'
+#define COMCTLFILE_ENVVAR	'O'
 
 /*
 ** HACK ALERT:  We want to log the last line of SMTP replies,

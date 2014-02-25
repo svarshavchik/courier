@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2004 Double Precision, Inc.
+** Copyright 1998 - 2014 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 #include	"config.h"
@@ -11,7 +11,7 @@
 #include	"filtersocketdir.h"
 #include	"filteractivedir.h"
 #include	"pidfile.h"
-
+#include	"sysconfdir.h"
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
@@ -390,6 +390,7 @@ int main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "start") == 0)
 		{
+			setenv("sysconfdir", SYSCONFDIR, 1);
 			return (start());
 		}
 		if (strcmp(argv[1], "restart") == 0)

@@ -18,7 +18,7 @@
   <refsynopsisdiv>
 
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">filterctl</command>
+      <command>filterctl</command>
       <group choice="opt" rep="norepeat">
 	<arg choice="opt" rep="norepeat">start</arg>
 	<arg choice="opt" rep="norepeat">stop</arg>
@@ -37,20 +37,20 @@ code is repeatedly called to accept or reject incoming messages, one by one.
 Perl filtering is relatively time consuming (compared to filtering in C or
 C++), and excessive delays in mail filters result in incoming mail being
 deferred (rejected with a temporary error code).  Therefore the
-<command moreinfo="none">perlfilter</command> wrapper can create multiple
-<command moreinfo="none">perlfilter</command>
+<command>perlfilter</command> wrapper can create multiple
+<command>perlfilter</command>
 processes, so that multiple processes are used to filter incoming mail.</para>
 
     <para>
-<command moreinfo="none">perlfilter</command> requires Perl 5.004 or higher. The best way to
+<command>perlfilter</command> requires Perl 5.10 or higher. The best way to
 create a Perl filter is to start with the sample filter,
-<filename moreinfo="none">@datadir@/perlfilter-example.pl</filename>. This filter reject messages that
+<filename>@datadir@/perlfilter-example.pl</filename>. This filter reject messages that
 contain an excessively long Date: header (designed to crash certain
 poorly-written mail clients). Use it as a basis for writing your own filter.
 You can install your filter in any convenient location, then initialize the
-<filename moreinfo="none">@sysconfdir@/filters/perlfilter</filename> configuration file, as described
-below. Run <command moreinfo="none">filterctl start perlfilter</command> to activate filtering (if
-necessary, run <command moreinfo="none">courierfilter start</command> to start the mail filtering
+<filename>@sysconfdir@/filters/perlfilter</filename> configuration file, as described
+below. Run <command>filterctl start perlfilter</command> to activate filtering (if
+necessary, run <command>courierfilter start</command> to start the mail filtering
 subsystem).</para>
 
     <refsect2>
@@ -59,7 +59,7 @@ subsystem).</para>
       <para>
 Most of the ugly details of connecting the Perl script to Courier's mail
 filtering engine is taken care of by the sample
-<filename moreinfo="none">perlfilter-example.pl</filename> script. One big no-no: the script MAY NOT
+<filename>perlfilter-example.pl</filename> script. One big no-no: the script MAY NOT
 change the current directory. Anything else goes, for the most part.  Loading
 other modules and classes, pretty much anything else you can do with Perl, is
 allowed.</para>
@@ -68,16 +68,16 @@ allowed.</para>
 The Perl script, just like any other mail filtering module, receives a
 pointer to a data file and one or more control files, each time a message is
 submitted to Courier for delivery. The sample script calls the
-<function moreinfo="none">filterdata</function>() function to process the data file. The data file
-contains the actual message. The <function moreinfo="none">filtercontrol</function>() function is
+<function>filterdata</function>() function to process the data file. The data file
+contains the actual message. The <function>filtercontrol</function>() function is
 called to process each control file.  The control file contains recipient and
 message metadata.  There may be more than one control file for each message.
-The example script includes an implementation of <function moreinfo="none">filterdata</function>()
+The example script includes an implementation of <function>filterdata</function>()
 that blocks messages with corrupted headers. The example script doesn't do
-anything interesting with <function moreinfo="none">filtercontrol</function>().</para>
+anything interesting with <function>filtercontrol</function>().</para>
 
       <para>
-<function moreinfo="none">filterdata</function>() and <function moreinfo="none">filtercontrol</function>() must return an
+<function>filterdata</function>() and <function>filtercontrol</function>() must return an
 empty string if no serious objections are raised for this message. Any other
 return string is interpreted as an SMTP-style error code that is used to
 reject the message.  Care must be taken that any error messages are formatted
@@ -92,45 +92,45 @@ message may not actually come in via SMTP).</para>
 
 <para>
 A lot of the Perl glue code is based on examples from the
-<literal moreinfo="none">perlembed</literal> manual page, and other sources.</para>
+<literal>perlembed</literal> manual page, and other sources.</para>
   </refsect1>
 
   <refsect1>
     <title>FILES</title>
 
     <para>
-<command moreinfo="none">perlfilter</command> uses the following configuration files. Changes to
+<command>perlfilter</command> uses the following configuration files. Changes to
 the following files do not take effect until the filter has been stopped and
 restarted.</para>
 
     <variablelist>
       <varlistentry>
-	<term><filename moreinfo="none">@sysconfdir@/filters/perlfilter-mode</filename></term>
+	<term><filename>@sysconfdir@/filters/perlfilter-mode</filename></term>
 	<listitem>
 	  <para>
 If this file exists
-and contains the word "all", <command moreinfo="none">perlfilter</command> will create its
-socket in <filename moreinfo="none">@localstatedir@/allfilters</filename>, otherwise the socket
-will be created in <filename moreinfo="none">@localstatedir@/filters</filename>, see
+and contains the word "all", <command>perlfilter</command> will create its
+socket in <filename>@localstatedir@/allfilters</filename>, otherwise the socket
+will be created in <filename>@localstatedir@/filters</filename>, see
 <ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
 for more information.</para>
 	</listitem>
       </varlistentry>
 
       <varlistentry>
-	<term><filename moreinfo="none">@sysconfdir@/filters/perlfilter-numprocs</filename></term>
+	<term><filename>@sysconfdir@/filters/perlfilter-numprocs</filename></term>
 	<listitem>
 	  <para>
-This file contains a number that sets how many <command moreinfo="none">perlfilter</command>
+This file contains a number that sets how many <command>perlfilter</command>
 processes are
 created. The default is 5 processes. There's always an extra
-<command moreinfo="none">perlfilter</command> process that's used to clean up crashed child
+<command>perlfilter</command> process that's used to clean up crashed child
 processes.</para>
 	</listitem>
       </varlistentry>
 
       <varlistentry>
-	<term><filename moreinfo="none">@sysconfdir@/filters/perlfilter</filename></term>
+	<term><filename>@sysconfdir@/filters/perlfilter</filename></term>
 	<listitem>
 	  <para>
 This file MUST exist and
@@ -140,12 +140,24 @@ to load.</para>
       </varlistentry>
 
       <varlistentry>
-	<term><filename moreinfo="none">@datadir@/perlfilter-example.pl</filename></term>
+	<term><filename>@datadir@/perlfilter-example.pl</filename></term>
 	<listitem>
 	  <para>
-This is a sample Perl
-script of the kind that <filename moreinfo="none">@sysconfdir@/filters/perlfilter</filename>
-points to.  Use it as an example of writing your own Perl filters.</para>
+	    This is a sample Perl
+	    script of the kind that
+	    <filename>@sysconfdir@/filters/perlfilter</filename>
+	    points to.  Use it as an example of writing your own Perl
+	    filters.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename>@datadir@/perlfilter-ratelimit.pl</filename></term>
+	<listitem>
+	  <para>
+	    This is a complete Perl-based filter than implements basic
+	    rate-limiting
+	    features.</para>
 	</listitem>
       </varlistentry>
     </variablelist>

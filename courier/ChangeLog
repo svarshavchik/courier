@@ -1,3 +1,19 @@
+2014-02-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/filters/courierfilter.c (main): Set sysconfdir environment
+	variable for processes start by courierfilter.
+
+	* courier/filters/perlfilter/perlfilter.c (perlfilter): Fix logging
+	of error messages.
+
+	* courier/libs/comctlfile.h (COMCTLFILE_ENVVAR): New record type.
+
+	* courier/submit2.C (closectl): Write RELAYCLIENT and TCPREMOTEIP
+	in control files.
+
+	* courier/filters/perlfilter/perlfilter-ratelimit.pl: Rate limiting
+	filter.
+
 2014-02-15 "Alexei Batyr'" <lehel@pcmag.ru>
 
 	* Fix wrong path in libs/sqwebmail/Makefile.

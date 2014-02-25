@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2012 Double Precision, Inc.
+** Copyright 1998 - 2014 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -104,6 +104,12 @@ void SubmitFile::closectl()
 {
 	const char *p=config_get_local_vhost();
 
+	static const char *env_vars[]={
+		"RELAYCLIENT",
+		"TCPREMOTEIP",
+		0,
+	};
+
 	if (p && *p)
 		ctlfile << COMCTLFILE_VHOST << p << std::endl;
 
@@ -118,6 +124,15 @@ void SubmitFile::closectl()
 
 	if (authname)
 		ctlfile << COMCTLFILE_AUTHNAME << authname << std::endl;
+
+	for (size_t i=0; env_vars[i]; ++i)
+	{
+		const char *p=getenv(env_vars[i]);
+
+		if (p)
+			ctlfile << COMCTLFILE_ENVVAR << env_vars[i] << "="
+				<< p << std::endl;
+	}
 
 	ctlfile << COMCTLFILE_MSGSOURCE << msgsource << std::endl
 		<< COMCTLFILE_EXPIRES << submit_time + queuetime << std::endl

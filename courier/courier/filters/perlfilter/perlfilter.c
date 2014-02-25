@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2002 Double Precision, Inc.
+** Copyright 2000-2014 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 #include	<stdio.h>
@@ -87,7 +87,8 @@ PerlInterpreter *my_perl;
 #endif
 		{
 			clog_open_syslog("perlfilter");
-			clog_msg_str("ERR: eval error: ");
+			clog_msg_start_err();
+			clog_msg_str("eval error: ");
 
 #ifdef	ERRSV
 			clog_msg_str(SvPV(ERRSV,PL_na));
