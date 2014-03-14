@@ -95,6 +95,10 @@
 /mimegpg.1
 /mimegpg.html
 /mkcourier.pl
+/mkdhparams.8
+/mkdhparams.8.in
+/mkdhparams.html
+/mkdhparams.html.in
 /mkesmtpdcert.8
 /mkesmtpdcert.8.in
 /mkesmtpdcert.html

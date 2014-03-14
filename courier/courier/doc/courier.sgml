@@ -3146,6 +3146,12 @@ stop does not work.</para>
 	  <manvolnum>8</manvolnum>
 	</citerefentry>
 </ulink>,
+<ulink url="mkdhparams.html">
+<citerefentry>
+	  <refentrytitle>mkdhparams</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+</ulink>,
 <ulink url="mkesmtpdcert.html">
 <citerefentry>
 	  <refentrytitle>mkesmtpdcert</refentrytitle>

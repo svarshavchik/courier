@@ -1,0 +1,43 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
+
+  <refmeta>
+    <refentrytitle>mkdhparams</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>mkdhparams</refname>
+    <refpurpose>Create new DH parameters for the Courier Mail Server</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command>@sbindir@/mkdhparams</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+      This script is intended to be executed from a cron job, monthly.
+      If the file <filename>@sysconfdir@/dhparams.pem</filename> is older than
+      25 days, the script creates a new file. This file contains pregenerated
+      DH parameters for the Courier Mail Server.
+    </para>
+
+    <para>
+      The <envar>DH_BITS</envar> environment variable, if set controls the
+      length of the generated DH parameters. It gets passed, verbatim, to
+      either the <command>dhparam</command> OpenSSL command, or the
+      <option>--sec-param</option> option to GnuTLS's
+      <command>certtool</command>. The default value is 768 for OpenSSL,
+      and <quote>high</quote> for GnuTLS.
+    </para>
+  </refsect1>
+</refentry>

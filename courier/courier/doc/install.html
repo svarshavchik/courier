@@ -1452,6 +1452,20 @@
     </li>
 
     <li>
+      <code>--with-certsdir=<em>pathname</em></code>
+
+      <p>
+	Set up configuration files and scripts that reference the server's
+	SSL certificates to use the <em>pathname</em> directory, instead of
+	the directory specified by the <code>--datadir</code> option.
+	Scripts that create temporary self-signed certificates to be used for
+	testing (<command>mkimapdcert</command>, <command>mkpop3dcert</command>,
+	et. al.) install the generated certificate in this directory, and it's
+	referenced from the corresponding configuration files.
+      </p>
+    </li>
+
+    <li>
       <code>--with-waitfunc=wait, --with-waitfunc=wait3</code>
 
       <p>Specify the system call to use to asynchronously reap

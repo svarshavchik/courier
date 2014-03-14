@@ -74,6 +74,7 @@ htmlin=\
 		makepercentrelay.html \
 		makesmtpaccess.html \
 		mimegpg.html \
+		mkdhparams.html \
 		mkesmtpdcert.html \
 		mkimapdcert.html \
 		mkpop3dcert.html \
@@ -246,7 +247,7 @@ man7=localmailfilter.7 maildirquota.7 maildropgdbm.7 maildropfilter.7 \
 man8=aliaslookup.8 courier.8 courierldapaliasd.8 courierpop3d.8 \
 	deliverquota.8 \
 	esmtpd.8 makeacceptmailfor.8 makehosteddomains.8\
-	mkesmtpdcert.8 mkimapdcert.8 mkpop3dcert.8 \
+	mkesmtpdcert.8 mkdhparams.8 mkimapdcert.8 mkpop3dcert.8 \
 	makealiases.8 makepercentrelay.8 makesmtpaccess.8 \
 	pop3d.8 pop3d-ssl.8 submit.8 imapd.8
 
@@ -270,6 +271,7 @@ BUILT_SOURCES= \
 	makehosteddomains.html.in makehosteddomains.8.in \
 	makepercentrelay.html.in makepercentrelay.8.in \
 	makesmtpaccess.html.in makesmtpaccess.8.in \
+	mkdhparams.html.in mkdhparams.8.in \
 	mkesmtpdcert.html.in mkesmtpdcert.8.in \
 	pop3d.html.in pop3d.8.in \
 	preline.html.in preline.1.in \
@@ -384,6 +386,13 @@ pop3d.html.in: pop3d.sgml ../../libs/docbook/sgml2html
 pop3d.8.in: pop3d.sgml ../../libs/docbook/sgml2man
 	../../libs/docbook/sgml2man pop3d.sgml pop3d.8.in
 	mv pop3d.8 pop3d.8.in
+
+mkdhparams.html.in: mkdhparams.sgml ../../libs/docbook/sgml2html
+	../../libs/docbook/sgml2html mkdhparams.sgml mkdhparams.html.in
+
+mkdhparams.8.in: mkdhparams.sgml ../../libs/docbook/sgml2man
+	../../libs/docbook/sgml2man mkdhparams.sgml mkdhparams.8.in
+	mv mkdhparams.8 mkdhparams.8.in
 
 mkesmtpdcert.html.in: mkesmtpdcert.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html mkesmtpdcert.sgml mkesmtpdcert.html.in
@@ -506,6 +515,12 @@ pop3d.html: pop3d.html.in
 	./config.status --file=$@
 
 pop3d.8: pop3d.8.in
+	./config.status --file=$@
+
+mkdhparams.html: mkdhparams.html.in
+	./config.status --file=$@
+
+mkdhparams.8: mkdhparams.8.in
 	./config.status --file=$@
 
 mkesmtpdcert.html: mkesmtpdcert.html.in
