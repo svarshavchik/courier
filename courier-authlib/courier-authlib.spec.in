@@ -48,8 +48,9 @@ BuildRequires:      redhat-rpm-config
 %endif
 
 %if %using_systemd
-Requires(post):     /bin/systemctl
-Requires(preun):    /bin/systemctl
+Requires(post):     systemd
+Requires(preun):    systemd
+Requires(postun):    systemd
 %else
 Requires(post):     /sbin/chkconfig
 Requires(preun):    /sbin/chkconfig
@@ -275,9 +276,7 @@ then
         /sbin/chkconfig --del courier-authlib
         /bin/systemctl stop courier-authlib.service || :
 fi
-
-/bin/systemctl daemon-reload || :
-/bin/systemctl enable courier-authlib.service &> /dev/null || :
+%systemd_post courier-authlib.service
 %else
 /sbin/chkconfig --del courier-authlib
 /sbin/chkconfig --add courier-authlib
@@ -291,8 +290,7 @@ fi
 if test "$1" = "0"
 then
 %if %using_systemd
-        /bin/systemctl stop courier-authlib.service
-        /bin/systemctl disable courier-authlib.service
+%systemd_preun courier-authlib.service
 %else
         /sbin/chkconfig --del courier-authlib
 %endif
@@ -300,7 +298,7 @@ fi
 
 %postun
 %if %using_systemd
-/bin/systemctl daemon-reload || :
+%systemd_postun_with_restart courier-authlib.service
 %endif
 
 %clean

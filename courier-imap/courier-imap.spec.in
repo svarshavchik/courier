@@ -41,7 +41,9 @@ Requires(preun): /sbin/chkconfig
 Requires(postun): /sbin/chkconfig
 %else
 %if %using_systemd
-Requires: /bin/systemctl
+Requires(post):   systemd
+Requires(postun):   systemd
+Requires(preun):  systemd
 %endif
 %endif
 Requires: courier-authlib >= 0.60.6.20080629
@@ -275,21 +277,19 @@ then
 	/bin/systemctl stop courier-imap.service || :
 fi
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist` >/dev/null
-/bin/systemctl daemon-reload &> /dev/null || :
-/bin/systemctl enable courier-imap.service &> /dev/null || :
+%systemd_post courier-imap.service
 %else
 /sbin/chkconfig --del courier-imap
 /sbin/chkconfig --add courier-imap
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist` >/dev/null
-%endif	
+%endif
 %preun
 %if %using_systemd
 if test "$1" = "0"
 then
 	rm -f %{_localstatedir}/couriersslcache
-	/bin/systemctl stop courier-imap.service
-	/bin/systemctl disable courier-imap.service
 fi
+%systemd_preun courier-imap.service
 %else
 if test "$1" = "0"
 then
@@ -304,11 +304,7 @@ fi
 %endif
 %postun
 %if %using_systemd
-/bin/systemctl daemon-reload &> /dev/null || :
-if test "$1" != "0"
-then
-   /bin/systemctl try-restart courier-imap.service
-fi
+%systemd_postun_with_restart courier-imap.service
 %endif
 
 %files

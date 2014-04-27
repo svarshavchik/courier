@@ -1,5 +1,7 @@
 2014-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
+	* courier.spec.in: Update to use systemd macros.
+
 	* Check for NULL return value from crypt().
 
 2014-01-12  Sam Varshavchik  <mrsam@courier-mta.com>

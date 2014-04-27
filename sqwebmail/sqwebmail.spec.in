@@ -42,8 +42,11 @@ Group: Applications/Mail
 Source: http://download.sourceforge.net/courier/@PACKAGE@-@VERSION@.tar.bz2
 Url: http://www.courier-mta.org/sqwebmail
 BuildRoot: %{_tmppath}/sqwebmail-install
-Requires: /bin/systemctl /etc/cron.hourly expect
+Requires: /etc/cron.hourly expect
 Requires: %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
+Requires(post):   systemd
+Requires(postun): systemd
+Requires(preun):  systemd
 
 %if %is_not_mandrake
 Requires: %{cgibindir}
@@ -195,6 +198,11 @@ echo '%attr(-, '"$mailuser, $mailgroup" ') %{_libexecdir}' >>filelist
 ) || exit 1
 
 ls $RPM_BUILD_ROOT%{scriptdir} | grep -v ldapsearch | sed 's:^:%attr(555, root, root) %{scriptdir}/:' >>filelist
+
+# Weird rpm bug.
+echo '%{cgibindir}/*' >>filelist
+echo '%{imagedir}' >>filelist
+
 %post
 
 test -d %{htmldir}/en || ln -fs en-us %{htmldir}/en
@@ -207,27 +215,17 @@ fi
 
 %{scriptdir}/sysconftool %{_sysconfdir}/*.dist >/dev/null
 
-/bin/systemctl daemon-reload || :
-/bin/systemctl enable sqwebmail.service &> /dev/null || :
+%systemd_post sqwebmail.service
 
 %preun
 
-if test "$1" = 0
-then
-	/bin/systemctl stop sqwebmail.service
-	/bin/systemctl disable sqwebmail.service
-
-fi
+%systemd_preun sqwebmail.service
 
 %postun
 test -d %{htmldir}/en || %{__rm} -f %{htmldir}/en
 
-/bin/systemctl daemon-reload || :
+%systemd_postun_with_restart sqwebmail.service
 
-if test "$1" != 0
-then
-	/bin/systemctl try-restart sqwebmail.service || :
-fi
 %files -f filelist
 %defattr(-, root, bin)
 %dir %{_prefix}
@@ -239,8 +237,6 @@ fi
 %dir %{_sysconfdir}
 %{_sysconfdir}/*.dist
 
-%{cgibindir}/*
-%{imagedir}
 %{_sbindir}
 %{_mandir}
 

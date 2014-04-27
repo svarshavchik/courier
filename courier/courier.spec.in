@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for
 # distribution information.
 #
 
@@ -42,7 +42,7 @@
 
 %{expand:%%define manpagedir %(if test -d %{_prefix}/share/man ; then echo %{_prefix}/share/man ; else echo %{_prefix}/man ; fi)}
 
-%{expand:%%define apachedir %(if test -d /home/httpd ; then echo /home/httpd ; else echo /var/www ; fi)}
+%{expand:%%define apacheinstdir %(if test -d /home/httpd ; then echo /home/httpd ; else echo /var/www ; fi)}
 
 %define	_prefix				/usr/lib/courier
 %define _localstatedir			/var/spool/courier
@@ -54,9 +54,8 @@
 # Change the following if your DocumentRoot and cgibindir differ.  This is
 # the default redhat build:
 
-%define	_cgibindir			%{apachedir}/cgi-bin
-%define _documentrootdir		%{apachedir}/html
-%define _imageurl			/webmail
+%define	apache_cgibindir		%{apacheinstdir}/cgi-bin
+%define apache_documentroot		%{apacheinstdir}/html
 
 # -----------------------------------------------------------------------------
 
@@ -76,8 +75,9 @@ Provides:         config(courier) = %{version}-%{release}
 AutoProv:         no
 
 %if %using_systemd
-Requires(post):   /bin/systemctl
-Requires(preun):  /bin/systemctl
+Requires(post):   systemd
+Requires(postun):   systemd
+Requires(preun):  systemd
 %define initscript_courier %{nil}
 %else
 Requires(post):   /sbin/chkconfig
@@ -165,17 +165,17 @@ Requires: courier = @VERSION@ fileutils
 %package webmail
 Summary: Courier @VERSION@ Integrated HTTP (webmail) server
 Group: Applications/Mail
-Requires: courier = @VERSION@ %{_documentrootdir} /etc/cron.hourly %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2) expect fileutils
+Requires: courier = @VERSION@ %{apache_documentroot} /etc/cron.hourly %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2) expect fileutils
 %if %is_not_mandrake
-Requires: %{_cgibindir}
+Requires: %{apache_cgibindir}
 %endif
 
 %package webadmin
 Summary: Courier @VERSION@ web-based administration tool
 Group: Applications/Mail
-Requires: courier = @VERSION@ %{_documentrootdir}
+Requires: courier = @VERSION@ %{apache_documentroot}
 %if %is_not_mandrake
-Requires: %{_cgibindir}
+Requires: %{apache_cgibindir}
 %endif
 
 %package mlm
@@ -186,9 +186,9 @@ Requires: courier = @VERSION@
 %package mlm-web
 Summary: Courier @VERSION@ Integrated web-based mailing list interface
 Group: Applications/Mail
-Requires: courier-mlm = @VERSION@ %{_documentrootdir}
+Requires: courier-mlm = @VERSION@ %{apache_documentroot}
 %if %is_not_mandrake
-Requires: %{_cgibindir}
+Requires: %{apache_cgibindir}
 %endif
 
 %package maildrop
@@ -479,13 +479,13 @@ echo "%attr(755, root, bin) %{_sbindir}/webmaild" >>filelist.webmail
 # and adds everything except the executable, webmail, to filelist.webmail.
 # Here's why, we move the webmail binary directly into the cgibindir.
 
-%{__mkdir_p} $RPM_BUILD_ROOT%{_cgibindir}
+%{__mkdir_p} $RPM_BUILD_ROOT%{apache_cgibindir}
 %{__cp} $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
-	$RPM_BUILD_ROOT%{_cgibindir}/webmail
+	$RPM_BUILD_ROOT%{apache_cgibindir}/webmail
 %{__cp} $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
-	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
+	$RPM_BUILD_ROOT%{apache_cgibindir}/webadmin
 %{__cp} $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmlm \
-	$RPM_BUILD_ROOT%{_cgibindir}/webmlm
+	$RPM_BUILD_ROOT%{apache_cgibindir}/webmlm
 rm -rf $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail
 
 # Remove the webadmin wrapper from filelist (but keep all html and pl files
@@ -496,8 +496,8 @@ rm -rf $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail
 
 # For the same reason we delete all images from filelist.webmail:
 
-%{__mkdir_p} $RPM_BUILD_ROOT%{_documentrootdir}
-%{__mv} $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
+%{__mkdir_p} $RPM_BUILD_ROOT%{apache_documentroot}
+%{__mv} $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{apache_documentroot}/webmail
 
 # Do we need to install a cron job to clean out webmail's cache?
 
@@ -670,9 +670,25 @@ done
 
 %{__cp} sysconftool $RPM_BUILD_ROOT%{_datadir}/sysconftool
 
+cat <<ZZ >>filelist.webmail
+%%attr(555, root, bin) %{apache_cgibindir}/webmail
+%%attr(644, root, root) %%config(noreplace) /etc/pam.d/webmail
+%%attr(644, root, root) %%config(noreplace) /etc/pam.d/calendar
+%%attr(755, bin, bin) %%dir %{apache_documentroot}/webmail
+%%attr(444, bin, bin) %{apache_documentroot}/webmail/*
+%%attr(444, bin, bin) %{_datadir}/configlist.webmail
+ZZ
+
+echo %{apache_cgibindir}/webmlm >>filelist.webmlm
+echo '%%attr(644, root, root) %{_sysconfdir}/webmlmrc.dist' >>filelist.webmlm
+
+echo '%%attr(4511, root, bin) %{apache_cgibindir}/webadmin' >filelist.webadmin
+
+
 # -----------------------------------------------------------------------------
 
 %post
+
 %if %using_systemd
 if test -f %{initdir}/courier
 then
@@ -690,9 +706,17 @@ else
 	chown --reference=%{_sysconfdir} %{_sysconfdir}/userdb
 fi
 
+
+# Somehow the systemd macro ends up corrupting with_fax
+
+%if %with_fax
+%define with_fax_flag 1
+%else
+%define with_fax_flag 0
+%endif
+
 %if %using_systemd
-/bin/systemctl daemon-reload || :
-/bin/systemctl enable courier.service &> /dev/null || :
+%systemd_post courier.service
 %else
 /sbin/chkconfig --del courier
 /sbin/chkconfig --add courier
@@ -722,7 +746,7 @@ fi
 %endif
 
 %if %using_systemd
-/bin/systemctl daemon-reload || :
+%systemd_postun_with_restart
 %endif
 
 if test "$1" != 0
@@ -843,19 +867,10 @@ fi
 %attr(444, bin, bin) %{_datadir}/configlist.imap
 
 %files webmail -f filelist.webmail
-%attr(555, root, bin) %{_cgibindir}/webmail
-%attr(644, root, root) %config(noreplace) /etc/pam.d/webmail
-%attr(644, root, root) %config(noreplace) /etc/pam.d/calendar
-%attr(755, bin, bin) %dir %{_documentrootdir}/webmail
-%attr(444, bin, bin) %{_documentrootdir}/webmail/*
-%attr(444, bin, bin) %{_datadir}/configlist.webmail
 
 %files mlm-web -f filelist.webmlm
-%{_cgibindir}/webmlm
-%attr(644, root, root) %{_sysconfdir}/webmlmrc.dist
 
-%files webadmin
-%attr(4511, root, bin) %{_cgibindir}/webadmin
+%files webadmin -f filelist.webadmin
 
 %files maildrop -f filelist.maildrop
 
@@ -867,7 +882,7 @@ fi
 
 %files pgsql -f filelist.pgsql
 
-%if %with_fax
+%if %with_fax_flag
 %files fax -f filelist.fax
 %attr(-, root, root) /etc/mgetty+sendfax/new_fax
 %endif
