@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2012 Double Precision, Inc.
+** Copyright 1998 - 2014 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -1063,7 +1063,12 @@ int	authenticated=0;
 		if (p && *p && config_has_vhost(p))
 			config_set_local_vhost(p);
 
-		clog_open_syslog("courieresmtpd");
+		p=getenv("SYSLOGNAME");
+
+		if (!p || !*p)
+			p="courieresmtpd";
+
+		clog_open_syslog(p);
 
 		if ((p=getenv("ESMTP_TLS")) && atoi(p))
 		{

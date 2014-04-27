@@ -25,6 +25,12 @@ PATH=@SHELLPATH@
 
 SHELL=@SHELL@
 
+##NAME: SYSLOGNAME:0
+#
+# Name that courieresmtpd uses to log to syslog
+#
+# SYSLOGNAME=courieresmtpd
+
 ##NAME: ULIMIT:0
 #
 #  Sets the maximum size of courieresmtpd's data segment

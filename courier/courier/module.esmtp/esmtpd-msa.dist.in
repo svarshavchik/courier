@@ -123,6 +123,12 @@ ACCESSFILE=${sysconfdir}/smtpaccess
 
 ESMTPDSTART=NO
 
+##NAME: SYSLOGNAME:0
+#
+# Name that courieresmtpd uses to log to syslog
+#
+# SYSLOGNAME=courieresmtpd
+
 ##NAME: CUSTOM:1
 #
 # Here, you can stick it any additional esmtpd settings that you want to

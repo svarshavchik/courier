@@ -1,3 +1,8 @@
+2014-04-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/courieresmtpd.c (main): Use the SYSLOGNAME
+	environment variable to open syslog.
+
 2014-02-24  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/filters/courierfilter.c (main): Set sysconfdir environment

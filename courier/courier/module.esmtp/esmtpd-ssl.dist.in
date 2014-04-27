@@ -298,6 +298,12 @@ TLS_VERIFYPEER=NONE
 # field. The certificate's emailaddress subject must match exactly the login
 # ID in the courier-authlib database.
 
+##NAME: SYSLOGNAME:0
+#
+# Name that courieresmtpd uses to log to syslog
+#
+# SYSLOGNAME=courieresmtpd
+
 ##NAME: MAXDAEMONS:0
 #
 #  Maximum number of daemons started
