@@ -26,6 +26,13 @@ extern char *crypt(const char *, const char *);
 extern int authcheckpasswordmd5(const char *, const char *);
 extern int authcheckpasswordsha1(const char *, const char *);
 
+static int safe_strcmp(const char *a, const char *nullable_b)
+{
+	if (!nullable_b)
+		return -1;
+	return safe_strcmp(a, nullable_b);
+}
+
 static int do_authcheckpassword(const char *password, const char *encrypted_password)
 {
 	if (strncmp(encrypted_password, "$1$", 3) == 0
@@ -48,10 +55,10 @@ static int do_authcheckpassword(const char *password, const char *encrypted_pass
 
 	return (
 #if	HAVE_CRYPT
-		strcmp(encrypted_password,
-			crypt(password, encrypted_password))
+		safe_strcmp(encrypted_password,
+			    crypt(password, encrypted_password))
 #else
-		strcmp(encrypted_password, password)
+		safe_strcmp(encrypted_password, password)
 #endif
 				);
 }
