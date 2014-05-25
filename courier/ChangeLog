@@ -1,3 +1,13 @@
+2014-05-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/webmlmd.H (webmlmd): Compilation portability fix.
+
+2014-05-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* pop3login.c (login_callback): Log logins when running in proxy mode.
+
+	* imaplogin.c (login_callback): Log logins when running in proxy mode.
+
 2014-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier.spec.in: Update to use systemd macros.
