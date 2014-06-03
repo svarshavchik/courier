@@ -193,9 +193,11 @@ public:
 	void init_unicode(iter_type b, iter_type e)
 	{
 		std::string s;
+		bool ignore;
 
 		unicode::iconvert::fromu::convert(b, e,
-					       unicode_default_chset(), s);
+						  unicode_default_chset(), s,
+						  ignore);
 
 		std::vector<wchar_t> wc;
 

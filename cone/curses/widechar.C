@@ -38,8 +38,10 @@ widecharbuf::get_string_truncated(size_t maxwidth, ssize_t col) const
 
 	ret.second=tempret.second;
 
-	unicode::iconvert::fromu::convert(tempret.first, unicode_default_chset(),
-				       ret.first);
+	ret.first=unicode::iconvert::fromu::convert(tempret.first,
+						    unicode_default_chset())
+		.first;
+
 	return ret;
 }
 
@@ -49,7 +51,7 @@ std::string widecharbuf::get_substring(size_t first_grapheme,
 	return unicode::iconvert::fromu
 		::convert(get_unicode_substring(first_grapheme,
 						grapheme_cnt),
-			  unicode_default_chset());
+			  unicode_default_chset()).first;
 }
 
 std::vector<unicode_char>
@@ -92,11 +94,12 @@ widecharbuf::get_unicode_truncated(size_t maxwidth, ssize_t col) const
 	}
 
 	std::string s;
+	bool ignore;
 
 	unicode::iconvert::fromu::convert(ustring.begin(),
 				       ustring.begin()+cnt,
 				       unicode_default_chset(),
-				       s);
+					  s, ignore);
 	return std::make_pair(std::vector<unicode_char>
 			      (ustring.begin(), ustring.begin()+cnt), width);
 }
@@ -206,9 +209,10 @@ size_t widecharbuf::charwidth(wchar_t ch, ssize_t atcol)
 size_t widecharbuf::grapheme_t::wcwidth(ssize_t col) const
 {
 	std::string s;
+	bool ignore;
 
 	unicode::iconvert::fromu::convert(uptr, uptr+cnt,
-				       unicode_default_chset(), s);
+					  unicode_default_chset(), s, ignore);
 
 	return towidechar(s.begin(), s.end(), towidechar_wcwidth_iter(col));
 }

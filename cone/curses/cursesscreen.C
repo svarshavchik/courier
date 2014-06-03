@@ -446,10 +446,12 @@ bool CursesScreen::writeText(const std::vector<unicode_char> &utext,
 
 	{
 		std::string s;
+		bool ignore;
 
 		unicode::iconvert::fromu::convert(writetext_iter_helper(uptr),
 					       writetext_iter_helper(uptr+ucnt),
-					       unicode_default_chset(), s);
+						  unicode_default_chset(), s,
+						  ignore);
 
 		towidechar(s.begin(), s.end(), text_buf);
 	}
