@@ -1,3 +1,10 @@
+2014-06-18  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: -d option changes groupid only when effective group id
+	is root. Addresses Debian bug 564601.
+
+	* mailbot: Add -T replydraft/-l options.
+
 2014-02-02  Osamu Aoki <osamu_aoki_home@nifty.com>
 
 	* Makefile.am: install makedat.1 and makedat.html
