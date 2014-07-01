@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.66.1.20140114],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.66.1.20140701],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -946,7 +946,7 @@ AC_ARG_WITH(repository, [], REPOSITORY="$withval")
 AC_SUBST(REPOSITORY)
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/libs/docbook)
-AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/unicode libs/rfc822 libs/random128 libs/liblock liblog)
+AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
 
 AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h authmigrate courier-authlib.spec courier-authlib.lpspec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)
 AC_OUTPUT

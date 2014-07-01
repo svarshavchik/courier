@@ -1,3 +1,12 @@
+2014-06-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/gpglib/Makefile.am: Fix -lunicode linkage.
+
+	* libs/rfc2045/Makefile.am: Fix -lunicode linkage.
+
+	* libs/rfc2045/rfc2045decodemsgtoutf8.c (rfc2045_decodemsgtoutf8):
+	recognize "message" MIME content type, in addition to "text".
+
 2014-06-18  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: -d option changes groupid only when effective group id
