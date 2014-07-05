@@ -30,7 +30,7 @@ static int safe_strcmp(const char *a, const char *nullable_b)
 {
 	if (!nullable_b)
 		return -1;
-	return safe_strcmp(a, nullable_b);
+	return strcmp(a, nullable_b);
 }
 
 static int do_authcheckpassword(const char *password, const char *encrypted_password)

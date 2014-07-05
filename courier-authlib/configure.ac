@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
-dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.66.1.20140701],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.66.1.20140704],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 

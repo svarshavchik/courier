@@ -1,3 +1,7 @@
+2014-07-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* checkpassword.c (safe_strcmp): Fix bug introduced in 2014-04-27.
+
 2014-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier.spec.in: Update to use systemd macros.
