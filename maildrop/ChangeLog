@@ -1,3 +1,14 @@
+2014-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* gpglib, rfc2045: fix makefiles.
+
+	* maildrop: fix parsing of headers added by the -A option.
+
+2014-07-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* liblock, couriertls: fix compilation for OpenBSD -- based on a
+	patch from Giovanni Bechis <giovanni@paclan.it>.
+
 2014-06-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/gpglib/Makefile.am: Fix -lunicode linkage.

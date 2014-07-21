@@ -1,3 +1,8 @@
+2014-07-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* liblock, couriertls: fix compilation for OpenBSD -- based on a
+	patch from Giovanni Bechis <giovanni@paclan.it>.
+
 2014-07-04  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* checkpassword.c (safe_strcmp): Fix bug introduced in 2014-04-27.
