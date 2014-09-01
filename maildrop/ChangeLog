@@ -1,3 +1,5 @@
+2.7.2
+
 2014-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* gpglib, rfc2045: fix makefiles.

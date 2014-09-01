@@ -1,3 +1,10 @@
+0.73.2
+
+2014-09-01  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriergnutls.c: remove any slashes from the server
+	hostname.
+
 2014-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* gpglib, rfc2045: fix makefiles.
@@ -17,6 +24,8 @@
 
 	* libs/rfc2045/rfc2045decodemsgtoutf8.c (rfc2045_decodemsgtoutf8):
 	recognize "message" MIME content type, in addition to "text".
+
+0.73.1
 
 2014-05-24  Sam Varshavchik  <mrsam@courier-mta.com>
 
