@@ -93,9 +93,9 @@ courieresmtp_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
 courieresmtpd_DEPENDENCIES=$(courieresmtp_DEPENDENCIES) \
 				../../libs/tcpd/libspipe.la
-courieresmtpd_LDADD=$(commonLDADD) ../../libs/tcpd/libspipe.la
-courieresmtpd_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags` \
-		-lcourierauthsasl -lcourierauth
+courieresmtpd_LDADD=$(commonLDADD) ../../libs/tcpd/libspipe.la \
+			-lcourierauthsasl -lcourierauth
+courieresmtpd_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
 addcr_SOURCES=addcr.c
 
