@@ -9,6 +9,9 @@
 	may take several minutes to generate DH parameters for the first
 	time.
 
+	* imap: try to print a message on stderr if the alarm() call, that
+	detects FAM library breakage, goes off.
+
 2014-09-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/rfc1035 - fix SPF lookup bug.
