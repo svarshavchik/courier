@@ -1,3 +1,14 @@
+2014-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mkesmtpdcert: do not put DH parameters in the test cert. DH
+	parameters are now in DH_PARAMS
+
+	* mkdhparams: default to 2048 DH params for OpenSSL.
+
+	* courier.service: bump up startup timeout, initial service start
+	may take several minutes to generate DH parameters for the first
+	time.
+
 2014-09-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/rfc1035 - fix SPF lookup bug.

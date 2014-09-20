@@ -59,6 +59,12 @@ start)
 
 		# First time we start this, generate a dummy SSL certificate.
 
+		  	if test ! -f $TLS_DHPARAMS
+			then
+				echo " dhparams"
+				${COURIER_DATA}/mkdhparams
+			fi
+
 			if test ! -f $TLS_CERTFILE
 			then
 				echo -n " generating-SSL-certificate..."

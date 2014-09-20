@@ -248,24 +248,25 @@
   <h2><a name="upgrade" id="upgrade">Upgrading an existing
   installation</a></h2>
 
-  <h3>Upgrading from the <em>Courier</em> mail server 0.73.1, or earlier</h3>
+  <h3>Upgrading from the <em>Courier</em> mail server 0.73.1, or
+  earlier</h3>
 
-  <p>
-    The unicode library in <em>Courier</em> is now a separate package.
-    <a href="http://www.courier-mta.org/download.html#unicode">Download the
-      Courier Unicode Library</a> before updating to 0.74, or later.
-  </p>
+  <p>The unicode library in <em>Courier</em> is now a separate
+  package. <a href=
+  "http://www.courier-mta.org/download.html#unicode">Download the
+  Courier Unicode Library</a> before updating to 0.74, or
+  later.</p>
 
-  <h3>Upgrading from the <em>Courier</em> mail server 0.72, or earlier</h3>
+  <h3>Upgrading from the <em>Courier</em> mail server 0.72, or
+  earlier</h3>
 
-  <p>
-    Version 0.73 removes the TLS_DHCERTFILE parameter from esmtpd, esmtpd-ssl,
-    imap, and pop3d configuration files. DH parameters, and DH parameters only,
-    get read from the new TLS_DHPARAMS file (and the other functionaly of
-    TLS_DHCERTFILE, for DSA certificates, is merged into TLS_CERTFILE).
-    The default startup script in the package is updated to run the new
-    mkdhparams script, that creates a new TLS_DHPARAMS file.
-  </p>
+  <p>Version 0.73 removes the TLS_DHCERTFILE parameter from esmtpd,
+  esmtpd-ssl, imap, and pop3d configuration files. DH parameters,
+  and DH parameters only, get read from the new TLS_DHPARAMS file
+  (and the other functionaly of TLS_DHCERTFILE, for DSA
+  certificates, is merged into TLS_CERTFILE). The default startup
+  script in the package is updated to run the new mkdhparams
+  script, that creates a new TLS_DHPARAMS file.</p>
 
   <h3>Upgrading from the <em>Courier</em> mail server 0.66.3, or
   earlier</h3>
@@ -1454,15 +1455,14 @@
     <li>
       <code>--with-certsdir=<em>pathname</em></code>
 
-      <p>
-	Set up configuration files and scripts that reference the server's
-	SSL certificates to use the <em>pathname</em> directory, instead of
-	the directory specified by the <code>--datadir</code> option.
-	Scripts that create temporary self-signed certificates to be used for
-	testing (<command>mkimapdcert</command>, <command>mkpop3dcert</command>,
-	et. al.) install the generated certificate in this directory, and it's
-	referenced from the corresponding configuration files.
-      </p>
+      <p>Set up configuration files and scripts that reference the
+      server's SSL certificates to use the <em>pathname</em>
+      directory, instead of the directory specified by the
+      <code>--datadir</code> option. Scripts that create temporary
+      self-signed certificates to be used for testing
+      (<code>mkimapdcert</code>, <code>mkpop3dcert</code>, et. al.)
+      install the generated certificate in this directory, and it's
+      referenced from the corresponding configuration files.</p>
     </li>
 
     <li>
@@ -1975,10 +1975,9 @@ esmtp session required        pam_permit.so
     going to be used.</li>
 
     <li>A monthly job should be created to run the
-      <code>mkdhparams</code>
-      script, in order to periodically generate a new set of DH parameters.
-      DH parameters are used to set up encrypted connections.
-    </li>
+    <code>mkdhparams</code> script, in order to periodically
+    generate a new set of DH parameters. DH parameters are used to
+    set up encrypted connections.</li>
   </ul>
 
   <h2><a name="checks" id="checks">Post-installation
@@ -4998,13 +4997,13 @@ start)
 
         echo -n "Starting the Courier mail server:"
 
-	# Only if it doesn't exist, let the cron job take care of refreshing it.
-	if test ! -f ${datadir}/dhparams.pem
-	then
-	    ${sbindir}/mkdhparams
+        # Only if it doesn't exist, let the cron job take care of refreshing it.
+        if test ! -f ${datadir}/dhparams.pem
+        then
+            ${sbindir}/mkdhparams
 
-	    echo -n " dhparams"
-	fi
+            echo -n " dhparams"
+        fi
 
         # First time after install create aliases.dat and makesmtpaccess.dat
 

@@ -9,8 +9,11 @@ After=courier-authlib.service
 WantedBy=mail-transfer-agent.target
 WantedBy=multi-user.target
 
+# First start could take several minutes, to generate the DH param file
 [Service]
 Type=forking
 RemainAfterExit=true
 ExecStart=@datadir@/courier.sysvinit start
 ExecStop=@datadir@/courier.sysvinit stop
+TimeoutStartSec=1200
+TimeoutStopSec=60

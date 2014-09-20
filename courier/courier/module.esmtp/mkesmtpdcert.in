@@ -42,7 +42,6 @@ then
 	dd if=@RANDOMV@ of=@mydatadir@/esmtpd.rand count=1 2>/dev/null
 	@OPENSSL@ req -new -x509 -days 365 -nodes \
 		  -config @sysconfdir@/esmtpd.cnf -out @mydatadir@/esmtpd.pem -keyout @mydatadir@/esmtpd.pem || cleanup
-	@OPENSSL@ gendh -rand @mydatadir@/esmtpd.rand 512 >>@mydatadir@/esmtpd.pem || cleanup
 	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/esmtpd.pem || cleanup
 	rm -f @mydatadir@/esmtpd.rand
 else
