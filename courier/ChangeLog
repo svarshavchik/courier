@@ -1,3 +1,8 @@
+2014-09-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriertls.c (tls_create): Initialize temporary ecdh
+	parameters.
+
 2014-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* mkesmtpdcert: do not put DH parameters in the test cert. DH
