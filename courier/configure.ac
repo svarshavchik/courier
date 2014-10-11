@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 0.73.2.20140921, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 0.73.2.20141011, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -334,4 +334,4 @@ AC_SUBST(REPOSITORY)
 echo $real_configure_args >configure.args
 AC_CONFIG_SUBDIRS(afx libs/gdbmobj libs/bdbobj libs/cgi libs/http11 libs/numlib libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/liblock libs/maildir libs/waitlib libs/threadlib libs/makedat libs/tcpd libs/rootcerts libs/imap libs/maildrop libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail webadmin courier)
 
-AC_OUTPUT(Makefile courier.spec courier.lpspec courier.service dbobj.h dbobj.config courier.sysvinit)
+AC_OUTPUT(Makefile courier.spec courier.service dbobj.h dbobj.config courier.sysvinit)

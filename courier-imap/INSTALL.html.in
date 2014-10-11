@@ -12,7 +12,7 @@
 
 <body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink=
 "#551A8B" alink="#FF0000">
-  <!-- Copyright 1998 - 2011 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 
   <h1>Courier-IMAP</h1>
@@ -92,9 +92,9 @@
   and pop3d configuration files. DH parameters, and DH parameters
   only, get read from the new TLS_DHPARAMS file (and the other
   functionaly of TLS_DHCERTFILE, for DSA certificates, is merged
-  into TLS_CERTFILE). The default startup script in the package is
-  updated to run the new mkdhparams script, that creates a new
-  TLS_DHPARAMS file.</p>
+  into TLS_CERTFILE). After upgrading, run the
+  <code>mkdhparams</code> script to create a new TLS_DHPARAMS
+  file.</p>
 
   <h3>Upgrading from Courier-IMAP 4.9.3, and earlier</h3>
 
@@ -399,10 +399,8 @@ $ @defaultprefix@/libexec/imapd.rc stop
   or GnuTLS from <a target="_blank" href=
   "http://www.gnutls.org"><code>http://www.gnutls.org</code></a>.</p>
 
-  <p>OpenSSL's support is well-tested, the GnuTLS version is a
-  relatively new addition, and is considered experimental. Follow
-  OpenSSL's or GnuTLS's installation instructions, then build
-  Courier-IMAP.</p>
+  <p>Follow OpenSSL's or GnuTLS's installation instructions, then
+  build Courier-IMAP.</p>
 
   <blockquote>
     <p><b>NOTE:</b> Most systems already have an available OpenSSL
@@ -456,12 +454,16 @@ $ @defaultprefix@/libexec/imapd.rc stop
   precompiled packages to simply call <code>mkimapdcert</code>
   after installation, without worry.</p>
 
-  <h4>Monthly cron job to generate DH parameters</h4>
+  <h4>Initial parameters, and a monthly cron job to generate DH
+  parameters</h4>
 
-  <p>A monthly cron job should be created to run the
+  <p>Run the <code>mkdhparams</code> script to create a DH
+  parameter file. A monthly cron job should be created to run the
   <code>mkdhparams</code> script, in order to periodically generate
-  a new set of DH parameters. DH parameters are used to set up
-  encrypted connections.</p>
+  a new set of DH parameters. <code>mkdhparams</code> checks if the
+  DH parameter file's timestamp is older than 25 days, and creates
+  a new file if it is. DH parameters are used to set up encrypted
+  connections.</p>
 
   <h4>The bundled POP3 server</h4>
 

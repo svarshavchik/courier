@@ -15,5 +15,3 @@ Type=forking
 RemainAfterExit=true
 ExecStart=@datadir@/courier.sysvinit start
 ExecStop=@datadir@/courier.sysvinit stop
-TimeoutStartSec=1200
-TimeoutStopSec=60

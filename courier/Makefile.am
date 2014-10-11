@@ -82,8 +82,8 @@ all-gmake-check:
 dist-hook:
 	test -f $(srcdir)/rpm.release && cp $(srcdir)/rpm.release $(distdir) ; \
 		exit 0
-	$(MAKE) -$(MAKEFLAGS) courier.spec courier.lpspec
-	cp courier.spec courier.lpspec $(distdir)
+	$(MAKE) -$(MAKEFLAGS) courier.spec
+	cp courier.spec $(distdir)
 
 release: dist
 
@@ -92,8 +92,8 @@ distrelease:
 	$(MAKE) rpm
 	$(MAKE)
 	$(MAKE)
-	rm -f INSTALL courier.spec courier.lpspec
-	$(MAKE) INSTALL courier.spec courier.lpspec
+	rm -f INSTALL courier.spec
+	$(MAKE) INSTALL courier.spec
 	$(MAKE) dist
 
 rpm: rpm-build
@@ -152,7 +152,7 @@ dorpm:
 		--define '__spec_prep_pre %{___build_pre}' \
 		$(RPMFLAGS) @PACKAGE@-@VERSION@.tar.bz2
 
-bump.rpm.release: courier.spec courier.lpspec
+bump.rpm.release: courier.spec
 	VERSION="x"; \
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
 	NEXT_RELEASE=0; \
@@ -162,11 +162,7 @@ bump.rpm.release: courier.spec courier.lpspec
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/rpm.release; \
 	sed 's/^Release: .*/Release: '$$RELEASE'%{?dist}%{courier_release}/' \
 		<courier.spec >courier.spec.new; \
-	mv courier.spec.new courier.spec; \
-	sed 's/^Release: .*/Release: '$$RELEASE'/' \
-		<courier.lpspec >courier.lpspec.new; \
-	mv courier.lpspec.new courier.lpspec
-
+	mv courier.spec.new courier.spec
 
 install-configure:
 	@$(MAKE) install-perms

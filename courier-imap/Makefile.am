@@ -177,12 +177,12 @@ INSTALL.txt: INSTALL.html
 # For maintainer's use only
 #
 
-dist-hook: courier-imap.spec courier-imap.lpspec
+dist-hook: courier-imap.spec
 	test -f $(srcdir)/rpm.release && cp $(srcdir)/rpm.release $(distdir) \
 		; exit 0
 	rm -f $(distdir)/INSTALL
 	$(HTML2TXT) INSTALL.html >$(distdir)/INSTALL
-	cp $(srcdir)/courier-imap.spec $(srcdir)/courier-imap.lpspec $(distdir)
+	cp $(srcdir)/courier-imap.spec $(distdir)
 
 if HAVE_HTML
 
@@ -202,7 +202,7 @@ release: dist
 rpm: build-rpm
 
 build-rpm:
-	$(MAKE) courier-imap.spec courier-imap.lpspec
+	$(MAKE) courier-imap.spec
 	$(MAKE) bump.rpm.release
 	$(MAKE) dist
 	rm -rf rpm/BUILD/*
@@ -241,7 +241,7 @@ publish:
 	rm -rf lpmtmp
 	lpm --sync repository && rsync -a -v --delete-after repository/. headache:lpmtool.com/www/repositories/courier-imap
 
-bump.rpm.release: @PACKAGE@.spec @PACKAGE@.lpspec
+bump.rpm.release: @PACKAGE@.spec
 	VERSION="x"; \
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
 	NEXT_RELEASE=0; \
@@ -251,10 +251,7 @@ bump.rpm.release: @PACKAGE@.spec @PACKAGE@.lpspec
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/rpm.release; \
 	sed 's/^Release: .*/Release: '$$RELEASE'%{courier_release}/' \
 		courier-imap.spec >courier-imap.spec.new ; \
-	mv courier-imap.spec.new courier-imap.spec ; \
-	sed 's/^Release: .*/Release: '$$RELEASE'/' \
-		courier-imap.lpspec >courier-imap.lpspec.new
-	mv courier-imap.lpspec.new courier-imap.lpspec
+	mv courier-imap.spec.new courier-imap.spec
 
 all-recursive: all-make-check
 

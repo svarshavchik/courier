@@ -562,7 +562,25 @@ libs/maildir/maildirmake $RPM_BUILD_ROOT/etc/skel/Maildir
 %{__cp} courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 %endif
 
-# Weekly script to generate DH parameters
+# Create an initial default DH paramter file, and install a
+# monthly script to generate DH parameters
+
+cat >$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist <<ZZ
+This file contains default DH parameters for initial use on a new
+installation. The startup script copies this file to dhparams.pem,
+unless it already exists.
+
+ZZ
+
+sed 's/^chown/echo/' <libs/imap/mkdhparams >libs/imap/mkdhparams.tmp
+TLS_DHPARAMS=$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp %{__spec_rmbuild_shell} libs/imap/mkdhparams.tmp
+rm -f libs/imap/mkdhparams.tmp
+cat $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp >>$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist
+rm -f $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp
+courier/courier-config | grep '^mail' >uidgid
+. ./uidgid
+rm -f uidgid
+echo "%attr(600, $mailuser, $mailgroup) %{_datadir}/dhparams.pem.dist" >>filelist
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
 %{__ln_s} %{_sbindir}/mkdhparams $RPM_BUILD_ROOT/etc/cron.monthly/courier-mkdhparams

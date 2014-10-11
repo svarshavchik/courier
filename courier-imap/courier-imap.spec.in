@@ -150,6 +150,19 @@ install -Dm 744 packaging/systemd/courier-imap.sysvinit $RPM_BUILD_ROOT/%{initdi
 %endif
 %endif
 
+cat >$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist <<ZZ
+This file contains default DH parameters for initial use on a new
+installation. The startup script copies this file to dhparams.pem,
+unless it already exists.
+
+ZZ
+
+sed 's/^chown/echo/' <libs/imap/mkdhparams >libs/imap/mkdhparams.tmp
+TLS_DHPARAMS=$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp %{__spec_rmbuild_shell} libs/imap/mkdhparams.tmp
+rm -f libs/imap/mkdhparams.tmp
+cat $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp >>$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist
+rm -f $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp
+
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
 %{__ln_s} %{_sbindir}/mkdhparams $RPM_BUILD_ROOT/etc/cron.monthly/courier-imap-mkdhparams
 
@@ -340,7 +353,12 @@ fi
 %{_bindir}
 %{_sbindir}
 %{_mandir}
-%{_datadir}
+%dir %{_datadir}
+%{_datadir}/configlist
+%{_datadir}/courier-imap.sysvinit
+%{_datadir}/mk*
+%{_datadir}/sysconftool
+%attr(600, root, root) %{_datadir}/dhparams.pem.dist
 
 %doc NEWS AUTHORS COPYING libs/imap/BUGS README README.imap README.maildirquota
 %doc README.sharedfolders

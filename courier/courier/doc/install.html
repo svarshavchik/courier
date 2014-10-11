@@ -264,9 +264,9 @@
   esmtpd-ssl, imap, and pop3d configuration files. DH parameters,
   and DH parameters only, get read from the new TLS_DHPARAMS file
   (and the other functionaly of TLS_DHCERTFILE, for DSA
-  certificates, is merged into TLS_CERTFILE). The default startup
-  script in the package is updated to run the new mkdhparams
-  script, that creates a new TLS_DHPARAMS file.</p>
+  certificates, is merged into TLS_CERTFILE). After upgrading, run
+  the <code>mkdhparams</code> script to create a new TLS_DHPARAMS
+  file.</p>
 
   <h3>Upgrading from the <em>Courier</em> mail server 0.66.3, or
   earlier</h3>
@@ -1974,7 +1974,8 @@ esmtp session required        pam_permit.so
     The <code>cron</code> job can be omitted if webmail is not
     going to be used.</li>
 
-    <li>A monthly job should be created to run the
+    <li>Run the <code>mkdhparams</code> script to create the DH
+    parameter file. A monthly job should also be created to run the
     <code>mkdhparams</code> script, in order to periodically
     generate a new set of DH parameters. DH parameters are used to
     set up encrypted connections.</li>
@@ -4997,12 +4998,11 @@ start)
 
         echo -n "Starting the Courier mail server:"
 
-        # Only if it doesn't exist, let the cron job take care of refreshing it.
+        # Use default DH parameter file, if it does not exist.
+
         if test ! -f ${datadir}/dhparams.pem
         then
-            ${sbindir}/mkdhparams
-
-            echo -n " dhparams"
+            ln ${datadir}/dhparams.pem.dist ${datadir}/dhparams.pem
         fi
 
         # First time after install create aliases.dat and makesmtpaccess.dat

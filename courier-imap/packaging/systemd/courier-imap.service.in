@@ -15,5 +15,3 @@ Type=forking
 RemainAfterExit=true
 ExecStart=@datadir@/courier-imap.sysvinit start
 ExecStop=@datadir@/courier-imap.sysvinit stop
-TimeoutStartSec=1200
-TimeoutStopSec=60
