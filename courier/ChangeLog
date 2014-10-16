@@ -1,3 +1,8 @@
+2014-10-15  Rob Austein <sra@hactrn.net>
+
+	* libs/tcpd/libcouriertls.c (tls_create): Set SSL_OP_NOSSLv3 flag,
+	to disable SSL3 support.
+
 2014-10-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* mkdhparams: TLS_DHPARAMS environmnt variable overrides default
