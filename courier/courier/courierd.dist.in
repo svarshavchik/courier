@@ -255,6 +255,24 @@ ESMTP_TLS_VERIFY_DOMAIN=0
 # DEFAULT: NORMAL:-CTYPE-OPENPGP
 #
 # TLS_PRIORITY="NORMAL:-CTYPE-OPENPGP"
+#
+# This setting is also used to select the available ciphers.
+#
+# The actual list of available ciphers depend on the options GnuTLS was
+# compiled against. The possible ciphers are:
+#
+# AES256, 3DES, AES128, ARC128, ARC40, RC2, DES, NULL
+#
+# Also, the following aliases:
+#
+# HIGH -- all ciphers that use more than a 128 bit key size
+# MEDIUM -- all ciphers that use a 128 bit key size
+# LOW -- all ciphers that use fewer than a 128 bit key size, the NULL cipher
+#        is not included
+# ALL -- all ciphers except the NULL cipher
+#
+# See GnuTLS documentation, gnutls_priority_init(3) for additional
+# documentation.
 
 ##NAME: TLS_PROTOCOL:0
 # 
@@ -264,7 +282,7 @@ ESMTP_TLS_VERIFY_DOMAIN=0
 #
 # SSL3 - SSLv3
 # SSL23 - all protocols (including TLS 1.x protocols)
-# TLS1 - TLS1
+# TLSv1 - TLS1
 # TLSv1.1 - TLS1.1
 # TLSv1.2 - TLS1.2
 #

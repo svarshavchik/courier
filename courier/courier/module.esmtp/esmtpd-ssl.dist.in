@@ -149,34 +149,8 @@ COURIERTLS=@bindir@/couriertls
 # DEFAULT: NORMAL:-CTYPE-OPENPGP
 #
 # TLS_PRIORITY="NORMAL:-CTYPE-OPENPGP"
-
-##NAME: TLS_PROTOCOL:0
-# 
-# TLS_PROTOCOL sets the protocol version.  The possible versions are:
 #
-# OpenSSL:
-#
-# SSL3 - SSLv3
-# SSL23 - all protocols (including TLS 1.x protocols)
-# TLS1 - TLS1
-# TLSv1.1 - TLS1.1
-# TLSv1.2 - TLS1.2
-#
-# Leave it unset to use any protocol except SSL 2.
-
-##NAME: TLS_CIPHER_LIST:0
-#
-# TLS_CIPHER_LIST optionally sets the list of ciphers to be used by the
-# OpenSSL library.  In most situations you can leave TLS_CIPHER_LIST
-# undefined
-#
-# OpenSSL:
-#
-# TLS_CIPHER_LIST="SSLv3:TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
-#
-# GnuTLS:
-#
-# TLS_CIPHER_LIST="HIGH:MEDIUM"
+# This setting is also used to select the available ciphers.
 #
 # The actual list of available ciphers depend on the options GnuTLS was
 # compiled against. The possible ciphers are:
@@ -193,6 +167,30 @@ COURIERTLS=@bindir@/couriertls
 #
 # See GnuTLS documentation, gnutls_priority_init(3) for additional
 # documentation.
+
+##NAME: TLS_PROTOCOL:0
+# 
+# TLS_PROTOCOL sets the protocol version.  The possible versions are:
+#
+# OpenSSL:
+#
+# SSL3 - SSLv3
+# SSL23 - all protocols (including TLS 1.x protocols)
+# TLSv1 - TLS1
+# TLSv1.1 - TLS1.1
+# TLSv1.2 - TLS1.2
+#
+# Leave it unset to use any protocol except SSL 2.
+
+##NAME: TLS_CIPHER_LIST:0
+#
+# TLS_CIPHER_LIST optionally sets the list of ciphers to be used by the
+# OpenSSL library.  In most situations you can leave TLS_CIPHER_LIST
+# undefined
+#
+# OpenSSL:
+#
+# TLS_CIPHER_LIST="SSLv3:TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
 
 ##NAME: TLS_MIN_DH_BITS:0
 #

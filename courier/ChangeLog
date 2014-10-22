@@ -1,3 +1,7 @@
+2014-10-21  坂元 英紀 <hs@on-sky.net>
+
+	* Update comments in *ssl config files.
+
 2014-10-15  Rob Austein <sra@hactrn.net>
 
 	* libs/tcpd/libcouriertls.c (tls_create): Set SSL_OP_NOSSLv3 flag,
