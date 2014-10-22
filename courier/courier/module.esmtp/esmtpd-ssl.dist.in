@@ -180,7 +180,10 @@ COURIERTLS=@bindir@/couriertls
 # TLSv1.1 - TLS1.1
 # TLSv1.2 - TLS1.2
 #
-# Leave it unset to use any protocol except SSL 2.
+# SSL3+, TLSv1+, TLSv1.1+, and TLSv1.2+ - the corresponding protocol, and all
+# higher protocols.
+#
+# The default value is TLSv1+
 
 ##NAME: TLS_CIPHER_LIST:0
 #

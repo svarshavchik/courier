@@ -1,3 +1,8 @@
+2014-10-21  Bernard Quatermass <bqcourier@quatermass.co.uk>
+
+	* tcpd/libcouriertls.c: add parsing options for different protocol
+	combination.
+
 2014-10-21  坂元 英紀 <hs@on-sky.net>
 
 	* Update comments in *ssl config files.
