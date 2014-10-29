@@ -16,6 +16,7 @@ DIST_SUBDIRS=libs/numlib libs/liblock libs/rfc822 libs/rfc2045 libs/gdbmobj libs
 
 HTMLWWW=index.html documentation.html download.html links.html
 EXTRA_DIST=README.html INSTALL.html UPGRADE.html README.postfix\
+	README.dovecotauth \
 	maildroptips.txt COPYING.GPL manpage.css $(HTMLWWW)
 
 

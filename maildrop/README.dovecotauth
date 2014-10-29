@@ -1,0 +1,45 @@
+Dovecot Authentication extension for maildrop
+=============================================
+** Copyright 2009 Marko Njezic
+** Licensed under the same terms as Courier Authlib AND/OR Courier Maildrop.
+
+Use --enable-dovecotauth to run maildrop's configure script to enable this
+extension.
+
+In order to use it you'll need to specify additional option "-t" that will point 
+to the location of Dovecot's auth master socket when starting maildrop in 
+delivery mode. For example:
+
+maildrop -d USER -t /var/run/dovecot/auth-master
+
+By specifying "-t" option, maildrop will first try user lookup against Dovecot's 
+database. If user is not found, maildrop will fallback to local user database 
+(i.e. passwd), as usual. Lookups against Courier Authlib will not be done when 
+"-t" option is specified. If you want to perform such lookup when both 
+extensions are compiled, simply remove "-t" option and maildrop will behave as 
+usual.
+
+One significant difference compared to Courier Authlib extension is that Dovecot 
+Authentication extension will never return uid/gid that's equal to zero. If such 
+value was returned from database, maildrop will exit with temporary failure. 
+This was done in order to prevent accidental mistakes. If you really want to 
+deliver as/to root, you'll have to start maildrop without "-t" option and let 
+it directly query system user database on its own.
+
+Make sure that correct permissions are set on Dovecot's auth master socket so 
+that maildrop can communicate with it. Also, depending on what type of users are 
+being served from Dovecot's database, if user lookup returns local user 
+accounts, you may end up with problems when maildrop tries to write mails to the 
+spool directory if wrong permission are set on it, since maildrop will reset its 
+permissions (uid/gid) to the values returned from user database. This behavior 
+is the same as the behavior of lookups against Courier Authlib, since they also 
+reset maildrop's permissions. When you want maildrop to deliver to the local 
+users, it's best to let it directly query system user database on its own, 
+since then it can apply its own "RESET_GID" magic, which will hopefully result 
+in "correct" permissions that will allow maildrop to write to the spool 
+directory.
+
+And last but not least, I hope that you'll find this extension useful. 
+Especially if you already have an existing user database in Dovecot, but would 
+like to use maildrop (with its powerful "xfilter" command) to deliver e-mails, 
+without setting up another authentication user database, like Courier Authlib.

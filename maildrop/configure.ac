@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(maildrop,2.7.2, [courier-maildrop@lists.sourceforge.net])
+AC_INIT(maildrop,2.7.2.20141028, [courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
@@ -159,7 +159,8 @@ AC_ARG_WITH(plentyofbeer,
   --enable-restrict-trusted=1  restrict -d for trusted users only
   --enable-keep-fromline=(1|0) preserve the original From_ line in messages
   --enable-syslog=1            log fatal errors to syslog
-  --enable-authlib-tempreject=(1|0) whether authlib errors cause temprejects])
+  --enable-authlib-tempreject=(1|0) whether authlib errors cause temprejects]
+  --enable-dovecotauth         Enable Dovecot authentication)
 
 AC_ARG_WITH(etcdir,    [  --with-etcdir=dir            Instead of /etc, use this. ],
 	[ withetcdir=$withval], [ withetcdir="/etc" ])
