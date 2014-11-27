@@ -1,3 +1,7 @@
+2014-11-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc1035: add support for SPF records with multiple strings.
+
 2014-10-21  Bernard Quatermass <bqcourier@quatermass.co.uk>
 
 	* tcpd/libcouriertls.c: add parsing options for different protocol
