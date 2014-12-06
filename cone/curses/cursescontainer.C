@@ -10,7 +10,7 @@
 using namespace std;
 
 CursesContainer::CursesContainer(CursesContainer *parent)
-	: Curses(parent), drawIndex(0)
+	: Curses(parent)
 {
 }
 

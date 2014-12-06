@@ -31,8 +31,6 @@ class CursesContainer : public Curses {
 
 	std::vector<Child> children;
 
-	std::vector<Child>::iterator drawIndex;
-
 public:
 	friend class Curses;
 
