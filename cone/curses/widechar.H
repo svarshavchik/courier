@@ -539,6 +539,8 @@ template<typename output_sink_t,
 			: cnt(0),
 			  collector(out_iter, towidth, delsp),
 			  rewrapper(rewrapperArg) {}
+
+		virtual ~buffer() {}
 	};
 
 	mutable buffer *buf;

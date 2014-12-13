@@ -1,3 +1,9 @@
+0.74.0
+
+2014-12-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update autotools
+
 2014-11-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rfc1035: add support for SPF records with multiple strings.
