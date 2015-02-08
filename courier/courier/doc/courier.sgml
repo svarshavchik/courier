@@ -1,5 +1,5 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<!-- Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for -->
+<!-- Copyright 1998 - 2015 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
 <refentry>
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
@@ -1446,10 +1446,14 @@ If the domain "<literal>example.com</literal>" appears in
 named "<literal>user@example.com</literal>" instead.</para>
 
 	    <para>
-The contents of the <filename>hosteddomains</filename> configuration file is a
-list of domains, one per line, in lowercase.  You must run the
-<command>makehosteddomains</command> command for any changes to take
-effect.</para>
+	      The contents of the <filename>hosteddomains</filename>
+	      configuration file is a list of domains, one per line,
+	      in lowercase.  You must run the
+	      <command>makehosteddomains</command> command, followed by
+	      <command>courier restart</command> (this restarts the server)
+	      for any changes to take
+	      effect.
+	    </para>
 
 	    <para>
 Additionally, <filename>hosteddomains</filename> can specify simple domain
