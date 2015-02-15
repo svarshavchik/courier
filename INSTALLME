@@ -16,10 +16,10 @@
 #
 # For example:
 #
-# sh README courier http://www.example.com/courier-libs.git
+# sh INSTALLME courier http://www.example.com/courier-libs.git
 #
 # The URL for the shared library module is purposefully not given in this
-# README in case it changes in the future. If you're reading this README,
+# INSTALLME in case it changes in the future. If you're reading this INSTALLME,
 # you should already know what it is.
 #
 # What this script does is as follows:
