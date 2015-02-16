@@ -1,3 +1,7 @@
+2015-02-16  "Hanno Böck" <hanno@hboeck.de>
+
+	* Fix compilation warning, testsuite.
+
 2.8.0
 
 2014-12-13  Sam Varshavchik  <mrsam@courier-mta.com>
@@ -231,7 +235,7 @@
 	* rfc2045/rfc2045decodemsgtoutf8.c (rfc2045_decodemsgtoutf8): Add a
 	pass-through opaque pointer, closure.
 
-	* rfc2045/rfc2045decodemimesectionu.c (rfc2045_decodetextmimesection): 
+	* rfc2045/rfc2045decodemimesectionu.c (rfc2045_decodetextmimesection):
 	Total rewrite that uses iconv, rather the built-in libunicode.
 
 2010-12-09  Sam Varshavchik  <mrsam@courier-mta.com>
@@ -542,7 +546,7 @@
 
 2006-09-19  Mr. Sam  <mrsam@courier-mta.com>
 
-	* liblock/lockmail.c (main): Save the hide of some knucklehead who 
+	* liblock/lockmail.c (main): Save the hide of some knucklehead who
 	changed the ownership and permissions of how lockmail gets installed
 	by my Makefile.  Max Vozeler <max@decl.org> via Debian's maildrop
 	maintainer.
@@ -610,7 +614,7 @@
 	+ "w" account option dropped.
 	+ During a transitional period, setting MAILDROP_OLD_REGEXP
 	reverts to the old pattern matching engine.
-	
+
 2005-08-04  Mr. Sam  <mrsam@courier-mta.com>
 
 	* maildrop/mailbot.c (check_dsn): Do not autoreply to messages
@@ -931,7 +935,7 @@
 	     changes.
 
 2002-06-09  Christian Kratzer <ck@cksoft.de>
-	
+
 	* maildrop/mdldap.c: Check ldap_get_values() exit code.
 
 2002-05-16  Mr. Sam  <sam@email-scan.com>
@@ -950,7 +954,7 @@
 
 	* maildrop/formatmbox.C (GetFromLine): Do not write a newline before
 	every From_ line...
-	
+
 	* maildrop/deliver.C (delivery): ... only for 2nd and subsequent msgs.
 
 
@@ -963,7 +967,7 @@
 	* rfc822.c (rfc822_prname_orlist): Dequote quoted-strings.
 
 1.3.8
-	
+
 2002-03-18  Mr. Sam  <mrsam@courier-mta.com>
 
 	* rfc2045/reformime: Fix handling of unencoded nulls in text/plain
@@ -1065,7 +1069,7 @@
 	dereference.  Problem noted by James Knight <jknight@fuhm.net>
 
 	Updated configure.in/Makefile.am to automake 1.4p5 and autoconf 2.13
-	
+
 2001-08-02  Mr. Sam  <mrsam@courier-mta.com>
 
 	* Resync with the Courier tree.  Changes: Net::CIDR support in makedat
@@ -1096,7 +1100,7 @@
 
 2001-06-06  Mr. Sam  <mrsam@courier-mta.com>
 
-	* liblock/lockdaemon.c: fix several improper tests for failed fopen(). 
+	* liblock/lockdaemon.c: fix several improper tests for failed fopen().
 
 2001-05-26  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -1129,7 +1133,7 @@
 	<iomanip.h> -> <iomanip>
 	<sstream.h> -> <sstream>
 	<strstream.h> -> <strstream>
-	
+
 	* rfc822.c (rfc822t_alloc): Explicitly cast arg to (void *).
 
 	* Cosmetic fixes.  Replace // with /* */ comments in some .c files
@@ -1146,7 +1150,7 @@
 
 	* Added /usr/local/bin to AC_PATH macros in all configure.in scripts.
 
-	
+
 	* maildrop/main.C (run): Disable pw lookup for delivery mode in the
 	Courier build -- we'll import it from the environment.  Import
 	MAILDROPDEFAULT from environment as DEFAULT.  This should not affect
@@ -1175,13 +1179,13 @@
 	tweak arg to putc, in order to prevent a fake EOF indication?
 
 1.3.1
-	
+
 2001-03-03  Mr. Sam  <mrsam@courier-mta.com>
 
 	* maildrop/configure.in: Changed mailing list address.
 
 1.3.0
-	
+
 2001-01-20  Mr. Sam  <mrsam@courier-mta.com>
 
 	* Applied LDAP patch (Terry Katz)

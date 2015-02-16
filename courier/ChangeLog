@@ -1,3 +1,7 @@
+2015-02-16  "Hanno Böck" <hanno@hboeck.de>
+
+	* Fix compilation warning, testsuite.
+
 0.74.0
 
 2014-12-13  Sam Varshavchik  <mrsam@courier-mta.com>
@@ -1187,7 +1191,7 @@
 	* rfc2045/rfc2045decodemsgtoutf8.c (rfc2045_decodemsgtoutf8): Add a
 	pass-through opaque pointer, closure.
 
-	* rfc2045/rfc2045decodemimesectionu.c (rfc2045_decodetextmimesection): 
+	* rfc2045/rfc2045decodemimesectionu.c (rfc2045_decodetextmimesection):
 	Total rewrite that uses iconv, rather the built-in libunicode.
 
 	* webmail/images/sqwebmail.css: Additional style sheets for search
@@ -1956,7 +1960,7 @@
 
 	* tcpd/tlsclient.c (couriertls_export_subject_environment): Export
 	parsed Subject: fields to the environment.
-	
+
 2008-06-21  Mr. Sam  <mrsam@courier-mta.com>
 
 	* Optimize IMAP keyword implementation. Faster results in exchange
@@ -2105,7 +2109,7 @@
 
 2007-10-14  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier/sendmail.c: Get rid of the hard 30 minute timeout. 
+	* courier/sendmail.c: Get rid of the hard 30 minute timeout.
 
 	* courier/submit.h (class SubmitFile): Keep track of all files
 	(control and data) that were opened.
@@ -2232,14 +2236,14 @@
 
 2007-07-04  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier/webmlmd.C: fix compiler errors on some platforms. 
+	* courier/webmlmd.C: fix compiler errors on some platforms.
 
 2007-07-01  Mr. Sam  <mrsam@courier-mta.com>
 
 	* gpglib/gpg.c: Fix signing of multipart messages that contain
 	8 bit content.
 
-	* courier: Updated PAM config files for Fedora 7 
+	* courier: Updated PAM config files for Fedora 7
 
 	* courier/courier.c: "courier show all" and "courier clear all"
 	commands.
@@ -2408,7 +2412,7 @@
 
 	+ couriermlm cleanup/rewrite
 
-	* courier/idxheaderhtml.tmpl: mailing list index now uses UTF-8 
+	* courier/idxheaderhtml.tmpl: mailing list index now uses UTF-8
 
 	* courier/idxheadertxt.tmpl: Ditto.  **NOTE** must fix idxheaderhtml
 	and idxheadertxt files in existing mailing lists!
@@ -2505,7 +2509,7 @@
 
 2006-12-30 Flavio Stanchina <flavio.stanchina@ies.it>
 
-	* courier/doc/couriermlm.sgml:  Added NODSN option in couriermlm. 
+	* courier/doc/couriermlm.sgml:  Added NODSN option in couriermlm.
 
 2006-12-30  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -2541,7 +2545,7 @@
 	* courier/module.dsn/dsn.c: Coding style fixes
 
 	* doc/links.html: fix link to the sqwebmail list
-	
+
 2006-10-28  Mr. Sam  <mrsam@courier-mta.com>
 
 	* Ported the code to gcc 4.1.1 and openldap 2.3.
@@ -2571,7 +2575,7 @@
 
 2006-09-19  Mr. Sam  <mrsam@courier-mta.com>
 
-	* liblock/lockmail.c (main): Save the hide of some knucklehead who 
+	* liblock/lockmail.c (main): Save the hide of some knucklehead who
 	changed the ownership and permissions of how lockmail gets installed
 	by my Makefile.  Max Vozeler <max@decl.org> via Debian's maildrop
 	maintainer.
@@ -2585,7 +2589,7 @@
 	* folder.c (folder_list): Forbit rename folder if new folder name
 	contains a dot.
 
-	* mailfilter.c (mailfilter_submit): Quietly prune trailing ':' from 
+	* mailfilter.c (mailfilter_submit): Quietly prune trailing ':' from
 	the tail end of a header name.
 
 2006-09-05  Pawel Tecza <p.tecza@net.icm.edu.pl>
@@ -2626,7 +2630,7 @@
 
 2006-07-22  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier.spec: Improved RH/Fedora initscript 
+	* courier.spec: Improved RH/Fedora initscript
 
 2006-07-22  Pawel Tecza <p.tecza@net.icm.edu.pl>
 
@@ -2656,11 +2660,11 @@
 
 2006-07-09  Mr. Sam  <mrsam@courier-mta.com>
 
-	* images/sqwebmail.css: tweak background colors of quoted text. 
+	* images/sqwebmail.css: tweak background colors of quoted text.
 
 2006-07-07  Peter Bieringer <pb@bieringer.de>
 
-	* images/sqwebmail.css: some stylsheet tweaks, and other fixes. 
+	* images/sqwebmail.css: some stylsheet tweaks, and other fixes.
 
 2006-07-07  Marcin Semeniuk <m.semeniuk@net.icm.edu.pl>
 
@@ -2760,7 +2764,7 @@
 
 2006-05-12  Pawel Tecza <p.tecza@net.icm.edu.pl>
 
-	* mailfilter: Implemented "Purge" option. 
+	* mailfilter: Implemented "Purge" option.
 
 2006-05-03  Hatuka*nezumi - IKEDA Soji <nezumi@jca.apc.org>
 
@@ -2807,7 +2811,7 @@
 
 2006-03-27  Alessandro Vesely <vesely@tana.it>
 
-	* ldapaddressbook: Fix compilation on Solaris with LDAP 
+	* ldapaddressbook: Fix compilation on Solaris with LDAP
 
 2006-03-26  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -2935,7 +2939,7 @@
 	* ldapaddressbook/abookread.c: the dropped LDAP address book params
 	are set to empty strings; the format of the address book configuration
 	file has not changed.
-	
+
 	* ldapaddressbook/configure.in: "undocumented" backdoor:
 	--without-ldapaddressbook disables the LDAP address book wrapper.
 
@@ -2964,7 +2968,7 @@
 
 	* pcp/pcpd.c: Ditto.
 
-	* pcp/pcpdir.c: Ditto. 
+	* pcp/pcpdir.c: Ditto.
 
 	* rfc1035/rfc1035udp.c: Ditto.
 
@@ -3182,7 +3186,7 @@
 
 2005-06-29  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier.spec.in: Add --cache-file option to the configure script. 
+	* courier.spec.in: Add --cache-file option to the configure script.
 
 	* courier/doc/links.html: Link to German translation of couriermlm
 	templates.
@@ -3350,12 +3354,12 @@
 
 	* courier/module.local/deliver.c (main): Delivered-To: loop detected
 	results in an EX_SOFTWARE exit code.
-	
+
 	* courier/module.local/deliver.c (docommand): If a program forked from
 	a .courier file exits with EX_SOFTWARE, change it to EX_NOPERM.  Bottom
 	line: courierdeliver terminates with EX_SOFTWARE only if a
 	Delivered-To: loop was detected.
-	
+
 	* courier/module.local/localmail.c (wait_delivery): Fix a memory
 	leak.  If courierdeliver terminates with EX_SOFTWARE, record this is
 	as a COMCTLFILE_DELFAILED_NOTRACK.
@@ -3530,7 +3534,7 @@
 
 2004-11-03  Mr. Sam  <mrsam@courier-mta.com>
 
-	* Makefile.am (SUBDIRS): Ok, only build in bdbobj/gdbmobj according 
+	* Makefile.am (SUBDIRS): Ok, only build in bdbobj/gdbmobj according
 	to what autoconf finds.
 
 2004-10-30  Mr. Sam  <mrsam@courier-mta.com>
@@ -3968,7 +3972,7 @@
 	(rfc2047_encode_callback): New argument: qp_allow - function that
 	indicates acceptable characters in QP-encoded words.
 	(rfc2047_encode_str): Ditto.
-	(rfc2047_qp_allow_any, rfc2047_qp_allow_comment) 
+	(rfc2047_qp_allow_any, rfc2047_qp_allow_comment)
 	(rfc2047_qp_allow_word): Possible arguments to qp_allow for various
 	situations.
 
@@ -4219,19 +4223,19 @@
 2004-02-01  IKEDA Soji <nezumi@jca.apc.org>
 
 	* iso2022jp.pl / iso2022jp.h: JIS X 0208 mapping has been updated
-	based on latest regional standard (JIS X 0208:1997) and some vendor 
+	based on latest regional standard (JIS X 0208:1997) and some vendor
 	standards. Errorneous (lacking or false) mappings has been fixed.
 	Support for older JIS X 0208 (JIS C 6226:1978) mapping was added.
 	JIS X 0212:1990 mapping was added.
 
-	* iso2022jp.c: Converters became (upper-)compatible with ISO-2022-JP 
+	* iso2022jp.c: Converters became (upper-)compatible with ISO-2022-JP
 	(RFC1468 / JIS X 0208:1997 Annex 2) and ISO-2022-JP-1 (RFC2237).
-	Buffer overflow vulnerability (when Unicode character is out 
+	Buffer overflow vulnerability (when Unicode character is out
 	of BMP range) has been closed. Convert error handling was implemented.
 
-	* shiftjis.c: Broken SHIFT_JIS converters has been fixed and became 
+	* shiftjis.c: Broken SHIFT_JIS converters has been fixed and became
 	(upper-)compatible with Shifted Encoding Method (JIS X 0208:1997
-	Annex 1). Buffer overflow vulnerability (when Unicode character is out 
+	Annex 1). Buffer overflow vulnerability (when Unicode character is out
 	of BMP range) has been closed. Convert error handling was implemented.
 
 	* eucjp.c: New converters for EUC-JP.
@@ -4322,7 +4326,7 @@
 2004-01-13  Michael Bowe <mbowe@pipeline.com.au>
 
 	* authvchkpw update.
-	
+
 2004-01-12  Mr. Sam  <mrsam@courier-mta.com>
 
 	* mailboxlist.c (list_newshared_shortcut): Fix list #shared.%.%, for
@@ -4339,7 +4343,7 @@
 2004-01-10  Michael Bowe <mbowe@pipeline.com.au>
 
 	* authvchkpw update.
-	
+
 2004-01-10  Mr. Sam  <mrsam@courier-mta.com>
 
 	* imap: Implement virtual shared folders + ACL.
@@ -4555,7 +4559,7 @@
 
 	* authlib: Respect $(EXEEXT)
 
-	* libhmac: Respect $(EXEEXT) 
+	* libhmac: Respect $(EXEEXT)
 
 	* rfc2045/testsuite: Fix enable-mimecharset breaking make check.
 
@@ -4629,7 +4633,7 @@
 	* imapd.c (store_mailbox): Optimize APPEND performance.  Based on a
 	patch by Anssi Raittila <Anssi.Raittila@tecnomen.fi>.
 
-	* courier/module.local/localmail.c (wait_delivery): Log the error 
+	* courier/module.local/localmail.c (wait_delivery): Log the error
 	message from submit when an internal forward fails.
 
 2003-09-28  courier@asfast.net
@@ -5070,7 +5074,7 @@
 2003-06-18  Mr. Sam  <mrsam@courier-mta.com>
 
 	* http11/contentlanguage.c (http11_content_charset): Fix return code
-	
+
 2003-06-17  Mr. Sam  <mrsam@courier-mta.com>
 
 	* webadmin: handle new defaultDelivery setting for LDAP, MySQL,
@@ -5125,7 +5129,7 @@
 	* webmail/folder.c: HTML output cleanup.
 
 	* webmail/sqwebmail.css: cleanup.
-	
+
 2003-06-13  Mr. Sam  <mrsam@courier-mta.com>
 
 	* gpglib/export.c (libmail_gpg_exportkey): Fix bug that exports all
@@ -5154,7 +5158,7 @@
 	that support utf-8 will receive all content in utf-8.  Supress
 	charset conversion warning for utf-8 browsers.
 
-	* http11/contentlanguage.c (http11_content_charset): Allow a 
+	* http11/contentlanguage.c (http11_content_charset): Allow a
 	comma-separated list in {templatedir}/CHARSET, select the first
 	charset found in the Accept-Charset: HTTP header.
 
@@ -5201,7 +5205,7 @@
 	* Added experimental SMAP protocol.
 
 	* rfc2045/rfc2045header.c: eat leading space when folding header lines.
-	
+
 2003-05-26  Mr. Sam  <mrsam@courier-mta.com>
 
 	* courier/ldapaliasdrc.c (readconfigfile): Fix file descriptor leak
@@ -5216,7 +5220,7 @@
 
 	* rootcerts/configure.in: Allow custom rootcertdir.
 
-	* courier.spec.in: Enable UTF-8 when building RPMs. 
+	* courier.spec.in: Enable UTF-8 when building RPMs.
 
 	* webmail/folder.c (folder_contents): Temporarily reset LC_CTYPE while
 	we're usign wcwidth().
@@ -5224,7 +5228,7 @@
 2003-05-15  "Hatuka*nezumi \(IKEDA Soji\)" <nezumi@jca.apc.org>
 
 	* webmail/folder.c (truncate_at): take into account double-width chars.
-	
+
 2003-05-15  Mr. Sam  <mrsam@courier-mta.com>
 
 	* webmail/folder.c (truncate_at): use wcwidth(), if available.
@@ -5238,7 +5242,7 @@
 	an EISDIR, even though we should <sigh>...
 
 2003-05-14  Stefan Hornburg <racke@linuxia.de>
-	
+
 	* userdb/makeuserdb.sgml: Fix command names.
 
 2003-05-14  Mr. Sam  <mrsam@courier-mta.com>
@@ -5255,7 +5259,7 @@
 	base64-encoded text/plain and text/html content.
 
 0.42.1
-	
+
 2003-05-12  Mr. Sam  <mrsam@courier-mta.com>
 
 	* courier/cmlmbounce.C (getbounceaddr): Fix bounces.
@@ -5485,7 +5489,7 @@
 	newline.
 
 	* configure.in: Conditionally probe if SA_NOCLDWAIT could be used.
-	
+
 	* rfc2045/pcpd.c (start): Use SA_NOCLDWAIT, if blessed by configure.
 
 	* courier/ldapaliasd.c (loop): Use SA_NOCLDWAIT, if blessed.
@@ -5572,7 +5576,7 @@
 	* configure.in: Fix search path for binaries.
 
 0.41
-	
+
 2003-01-26  Mr. Sam  <mrsam@courier-mta.com>
 
 	* folder.c (download_func): Fix platforms with broken putchar()s.
@@ -5819,7 +5823,7 @@
 	DEBUG_LOGIN_ENV is not set.
 
 2002-10-14  Olivier Girondel <olivier.girondel@cw.com>
-	
+
 	* authlib/authldaplib.c (authldap_read_config): LDAP_FILTER fix.
 
 2002-10-14  Mr. Sam  <mrsam@courier-mta.com>
@@ -5835,7 +5839,7 @@
 
 2002-10-10  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier/module.local/deliver.c: Implemented --with-dirsync 
+	* courier/module.local/deliver.c: Implemented --with-dirsync
 
 	* courier/module.local/deliver.c: Use new dotlocking code for
 	delivery to mboxes.
@@ -5866,7 +5870,7 @@
 	* maildrop/maildir.C (MaildirSave): ditto.
 
 	* imap/imapd.c: ditto
-	
+
 2002-09-30  Ragnar Kurm <ragnar@uninet.ee>
 
 	* imap/pop3: Added DEBUG_LOGIN_ENV to imap and pop3 config files that
@@ -5889,7 +5893,7 @@
 	* imapd.c (do_imap_command): Handle IDLE in authenticated state as,
 	essentially, a NOOP.  Enable IDLE in the default CAPABILITIES
 	string (but keep the same version string, so sysconftool will not
-	touch an existing CAPABILITIES setting on an upgrade).	
+	touch an existing CAPABILITIES setting on an upgrade).
 
 2002-09-25  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -5938,7 +5942,7 @@
 
 2002-09-06  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier/doc/links.html: Started a section on virus scanners. 
+	* courier/doc/links.html: Started a section on virus scanners.
 
 
 2002-09-05  Mr. Sam  <mrsam@courier-mta.com>
@@ -5952,7 +5956,7 @@
 
 2002-08-29  "Binand Raj S." <binand@gmx.net>
 
-	* courier/module.esmtp/courieresmtpd.c:  Fix EXDATA detection. 
+	* courier/module.esmtp/courieresmtpd.c:  Fix EXDATA detection.
 
 2002-08-28  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -6062,7 +6066,7 @@
 
 2002-07-24  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier/cmlmbounce.C: Ignore case of bounce tokens. 
+	* courier/cmlmbounce.C: Ignore case of bounce tokens.
 
 2002-07-15  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -6168,7 +6172,7 @@
 	SSL/TLS session cache file.
 
 0.39.1
-	
+
 2002-06-27  Mr. Sam  <mrsam@courier-mta.com>
 
 	* authlib/authldaplib.c: Fix null ptr deref in new LDAP_MAILROOT
@@ -6353,7 +6357,7 @@
 
 2002-05-07  Keith T. Garner <kgarner@kgarner.com>
 
-	* authlib: Additional LDAP authentication filter. 
+	* authlib: Additional LDAP authentication filter.
 
 2002-05-07  John Morrissey <jwm@horde.net>
 
@@ -6391,7 +6395,7 @@
 
 	* maildrop/formatmbox.C (GetFromLine): Do not write a newline before
 	every From_ line...
-	
+
 	* maildrop/deliver.C (delivery): ... only for 2nd and subsequent msgs.
 
 2002-04-07  Mr. Sam  <mrsam@courier-mta.com>
@@ -6451,7 +6455,7 @@
 
 2002-03-22  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier/doc/FAQ.html: Added Tru64 gmake check failure. 
+	* courier/doc/FAQ.html: Added Tru64 gmake check failure.
 
 2002-03-21  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -6652,7 +6656,7 @@
 	* authlib/configure.in: Link against $CRYPTLIBS when probing for
 	open_smtp_relay()
 
-	* rfc2045/reformime.sgml: Documented the -m and -D options. 
+	* rfc2045/reformime.sgml: Documented the -m and -D options.
 
 	* Perl 5.6.1 fixes.
 
@@ -6712,7 +6716,7 @@
 	file keyword (mainly for BOFHBADMIME).  Added the corresponding
 	webadmin screen.
 
-	* courier/imapd-ssl.rc.in, courier/imapd.rc.in: cleanup. 
+	* courier/imapd-ssl.rc.in, courier/imapd.rc.in: cleanup.
 
 	* courier/module.esmtp/esmtpd.in: cleanup.
 
@@ -6747,7 +6751,7 @@
 	queue control files, which can result in corrupted memory, and
 	server restart.  Problem noted by Nat Sakimura <sakimura@marimba.org>
 0.37.1
-	
+
 2002-01-17  Mr. Sam  <mrsam@courier-mta.com>
 
 	* courier/submit2.C: Message encapsulation incorrectly set transfer
