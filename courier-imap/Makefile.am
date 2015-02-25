@@ -19,7 +19,8 @@ CLEANFILES=$(databin_SCRIPTS) $(man_MANS) $(sysconf_DATA) $(sbin_SCRIPTS)
 databindir=$(datadir)
 databin_SCRIPTS=mkimapdcert mkpop3dcert mkdhparams
 
-binPROGRAMS=imapd pop3d maildirmake maildiracl deliverquota maildirkw
+binPROGRAMS=imapd pop3d maildirmake maildiracl deliverquota maildirkw \
+	makeimapaccess makedat
 sbinPROGRAMS=imaplogin pop3login
 libexecPROGRAMS=makedatprog couriertcpd
 
@@ -29,7 +30,7 @@ libexec_PROGRAMS=@libexecPROGRAMS_exec@
 
 EXTRA_PROGRAMS=
 
-man_MANS=couriertcpd.1 deliverquota.8 maildirmake.1 maildiracl.1 imapd.8 mkdhparams.8 mkimapdcert.8 mkpop3dcert.8 maildirkw.1
+man_MANS=couriertcpd.1 deliverquota.8 maildirmake.1 maildiracl.1 imapd.8 mkdhparams.8 mkimapdcert.8 mkpop3dcert.8 maildirkw.1 makeimapaccess.8
 EXTRA_DIST=README README.cygwin\
 	COPYING.GPL NEWS.html $(TEMPLFILES) pgpkeys.txt
 
@@ -42,14 +43,14 @@ HTML2TXT=links -dump -no-numbering -no-references
 NEWS: NEWS.html
 	$(HTML2TXT) NEWS.html >NEWS
 
-imaplogin$(EXEEXT): libs/imap/imaplogin$(EXEEXT)
-	cp libs/imap/imaplogin$(EXEEXT) .
+imaplogin: libs/imap/imaplogin
+	cp libs/imap/imaplogin .
 
-maildirkw$(EXEEXT): libs/maildir/maildirkw$(EXEEXT)
-	cp libs/maildir/maildirkw$(EXEEXT) .
+maildirkw: libs/maildir/maildirkw
+	cp libs/maildir/maildirkw .
 
-imapd$(EXEEXT): libs/imap/imapd$(EXEEXT)
-	cp libs/imap/imapd$(EXEEXT) .
+imapd: libs/imap/imapd
+	cp libs/imap/imapd .
 
 sharedindexinstall: libs/maildir/sharedindexinstall
 	cp libs/maildir/sharedindexinstall .
@@ -57,26 +58,29 @@ sharedindexinstall: libs/maildir/sharedindexinstall
 sharedindexsplit: libs/maildir/sharedindexsplit
 	cp libs/maildir/sharedindexsplit .
 
-pop3login$(EXEEXT): libs/imap/pop3login$(EXEEXT)
-	cp libs/imap/pop3login$(EXEEXT) .
+pop3login: libs/imap/pop3login
+	cp libs/imap/pop3login .
 
-pop3d$(EXEEXT): libs/imap/pop3d$(EXEEXT)
-	cp libs/imap/pop3d$(EXEEXT) .
+pop3d: libs/imap/pop3d
+	cp libs/imap/pop3d .
 
-makedatprog$(EXEEXT): libs/makedat/makedatprog$(EXEEXT)
-	cp libs/makedat/makedatprog$(EXEEXT) .
+makedat: libs/makedat/makedat
+	cp libs/makedat/makedat .
 
-couriertcpd$(EXEEXT): libs/tcpd/couriertcpd$(EXEEXT)
-	cp libs/tcpd/couriertcpd$(EXEEXT) .
+makedatprog: libs/makedat/makedatprog
+	cp libs/makedat/makedatprog .
 
-maildirmake$(EXEEXT): libs/maildir/maildirmake$(EXEEXT)
-	cp libs/maildir/maildirmake$(EXEEXT) .
+couriertcpd: libs/tcpd/couriertcpd
+	cp libs/tcpd/couriertcpd .
 
-maildiracl$(EXEEXT): libs/maildir/maildiracl$(EXEEXT)
-	cp libs/maildir/maildiracl$(EXEEXT) .
+maildirmake: libs/maildir/maildirmake
+	cp libs/maildir/maildirmake .
 
-deliverquota$(EXEEXT): libs/maildir/deliverquota$(EXEEXT)
-	cp libs/maildir/deliverquota$(EXEEXT) .
+maildiracl: libs/maildir/maildiracl
+	cp libs/maildir/maildiracl .
+
+deliverquota: libs/maildir/deliverquota
+	cp libs/maildir/deliverquota .
 
 pop3d.dist: libs/imap/pop3d.dist
 	cp libs/imap/pop3d.dist .
@@ -123,6 +127,9 @@ mkdhparams.8: libs/imap/mkdhparams.8
 mkimapdcert.8: libs/imap/mkimapdcert.8
 	cp -f libs/imap/mkimapdcert.8 .
 
+makeimapaccess.8: libs/imap/makeimapaccess.8
+	cp -f libs/imap/makeimapaccess.8 .
+
 mkpop3dcert.8: libs/imap/mkpop3dcert.8
 	cp -f libs/imap/mkpop3dcert.8 .
 
@@ -151,6 +158,8 @@ install-exec-hook:
 	mkdir -p $(DESTDIR)$(sysconfdir)/shared
 	chmod 755 $(DESTDIR)$(sysconfdir)/shared
 	mkdir -p $(DESTDIR)$(sysconfdir)/shared.tmp
+	chmod 755 $(DESTDIR)$(sysconfdir)/shared.tmp
+	mkdir -p $(DESTDIR)$(sysconfdir)/imapaccess
 	chmod 755 $(DESTDIR)$(sysconfdir)/shared.tmp
 
 install-data-local: install-man

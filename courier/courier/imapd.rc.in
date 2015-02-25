@@ -1,6 +1,6 @@
 #! @SHELL@
 #
-# Copyright 1998 - 2005 Double Precision, Inc.
+# Copyright 1998 - 2015 Double Precision, Inc.
 # See COPYING for distribution information.
 
 
@@ -27,6 +27,10 @@ fi
 case $1 in
 start)
 	umask $IMAP_UMASK
+	if test ! -f "${IMAPACCESSFILE}.dat"
+	then
+		$sbindir/makeimapaccess
+	fi
 	@ULIMIT@ $IMAP_ULIMITD
 	@SETENV@ -i @SHELL@ -c " set -a ; \
 				prefix=@prefix@ ; \
@@ -42,6 +46,7 @@ start)
 		@courierlogger@ -pid=$PIDFILE -start $LOGGEROPTS \
 		@sbindir@/couriertcpd -address=$ADDRESS \
 			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
+			-access=$IMAPACCESSFILE.dat \
 			$TCPDOPTS \
 			$PORT @libexecdir@/courier/imaplogin \
 				@bindir@/imapd ${MAILDIRPATH}"

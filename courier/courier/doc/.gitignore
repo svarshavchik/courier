@@ -81,6 +81,8 @@
 /makehosteddomains.8.in
 /makehosteddomains.html
 /makehosteddomains.html.in
+/makeimapaccess.8
+/makeimapaccess.html
 /makemime.1
 /makemime.html
 /makepercentrelay.8

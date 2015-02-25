@@ -17,11 +17,11 @@
 
   <refsynopsisdiv>
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">makesmtpaccess</command>
+      <command>makesmtpaccess</command>
     </cmdsynopsis>
 
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">makesmtpaccess-msa</command>
+      <command>makesmtpaccess-msa</command>
     </cmdsynopsis>
   </refsynopsisdiv>
 
@@ -29,43 +29,43 @@
     <title>DESCRIPTION</title>
 
     <para>
-<command moreinfo="none">makesmtpaccess</command> rebuilds the contents of the
-<filename moreinfo="none">@sysconfdir@/smtpaccess.dat</filename> database from the contents of
+<command>makesmtpaccess</command> rebuilds the contents of the
+<filename>@sysconfdir@/smtpaccess.dat</filename> database from the contents of
 the
-files in the <filename moreinfo="none">@sysconfdir@/smtpaccess</filename> directory. When the
-<command moreinfo="none">esmtpd</command> script starts <command moreinfo="none">couriertcpd</command>, the
+files in the <filename>@sysconfdir@/smtpaccess</filename> directory. When the
+<command>esmtpd</command> script starts <command>couriertcpd</command>, the
 script
-specifies <filename moreinfo="none">@sysconfdir@/smtpaccess.dat</filename> file to control
+specifies <filename>@sysconfdir@/smtpaccess.dat</filename> file to control
 access to
-the <application moreinfo="none">Courier</application> mail server's
-ESMTP daemon. The <command moreinfo="none">makesmtpaccess</command> script
+the <application>Courier</application> mail server's
+ESMTP daemon. The <command>makesmtpaccess</command> script
 must be
-run before any changes in the <filename moreinfo="none">@sysconfdir@/smtpaccess</filename>
+run before any changes in the <filename>@sysconfdir@/smtpaccess</filename>
 directory take effect.</para>
 
     <para>
 The
 <ulink url="couriertcpd.html"><citerefentry><refentrytitle>couriertcpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> manual page
-describes the general format of the access file.</para>
+describes the general format of access files.</para>
 
     <para>
 The default
-<application moreinfo="none">Courier</application>
+<application>Courier</application>
 mail server configuration uses the same access file,
-<filename moreinfo="none">@sysconfdir@/smtpaccess.dat</filename> for both the regular ESMTP server,
+<filename>@sysconfdir@/smtpaccess.dat</filename> for both the regular ESMTP server,
 and the message submission server on port 587
 (<ulink url="http://www.rfc-editor.org/rfc/rfc2476.txt">RFC 2476</ulink>).
 It is possible to
 use different access files. To do so, create a different access file, edit
-<filename moreinfo="none">@sysconfdir@/esmtpd-msa</filename>, and set
+<filename>@sysconfdir@/esmtpd-msa</filename>, and set
 <envar>ACCESSFILE</envar> to the
 filename of the access file directory (the directory containing the plain text
-files, not the .dat file).  Then, use <command moreinfo="none">makesmtpaccess-msa</command>
+files, not the .dat file).  Then, use <command>makesmtpaccess-msa</command>
 instead
-of <command moreinfo="none">makesmtpaccess</command> to build the .dat file.</para>
+of <command>makesmtpaccess</command> to build the .dat file.</para>
 
     <refsect2>
-      <title>The <filename moreinfo="none">smtpaccess</filename> configuration file</title>
+      <title>The <filename>smtpaccess</filename> configuration file</title>
 
       <para>
 The
@@ -78,7 +78,7 @@ Also, the generic format of the access file allows arbitrary environment
 variables to be set based on the connection's remote IP address.</para>
 
 <para>
-The <application moreinfo="none">Courier</application>
+The <application>Courier</application>
 mail server's ESMTPD server understands the following environment variables,
 which may be set in the access file:</para>
 
@@ -91,7 +91,7 @@ If this variable is set to a non-empty value,
 all mail will be rejected for this connection.  The
 contents of the environment variable will be used as the error
 message.
-This is not the same as the <command moreinfo="none">couriertcpd</command> access file
+This is not the same as the <command>couriertcpd</command> access file
 setting that immediately drops the connection.
 The incoming connection is accepted, but every message will be rejected.</para>
 	  </listitem>
@@ -129,8 +129,8 @@ automatically sets <envar>RELAYCLIENT</envar>.</para>
 
       <para>
 The following options are typically set globally in the
-<filename moreinfo="none">esmtpd</filename> configuration file, but may be overriden
-in the <filename moreinfo="none">smtpaccess</filename> configuration file:</para>
+<filename>esmtpd</filename> configuration file, but may be overriden
+in the <filename>smtpaccess</filename> configuration file:</para>
 
       <variablelist>
 	<varlistentry>
@@ -138,13 +138,13 @@ in the <filename moreinfo="none">smtpaccess</filename> configuration file:</para
 	  <listitem>
 	    <para>
 Do not check the return address's domain in DNS if this environment
-variable is set to <literal moreinfo="none">0</literal>.
+variable is set to <literal>0</literal>.
 The default value of <envar>BOFHCHECKDNS</envar> is 1.</para>
 
 	    <note>
 	      <para>
 Turning off the DNS check disables a number of options in the
-<filename moreinfo="none">bofh</filename> configuration file.
+<filename>bofh</filename> configuration file.
 See
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> for more information.</para>
 	    </note>
@@ -156,7 +156,7 @@ See
 	  <term>BOFHCHECKHELO</term>
 	  <listitem>
 	    <para>
-Set this variable to <literal moreinfo="none">1</literal> to check the
+Set this variable to <literal>1</literal> to check the
 <replaceable>hostname</replaceable> argument to the
 ESMTP HELO/EHLO command, as follows:</para>
 
@@ -170,8 +170,8 @@ is the same as the connecting ESMTP client's IP address, is valid.</para>
 	      <listitem>
 		<para>
 Otherwise <replaceable>hostname</replaceable> should be a valid DNS name
-with <literal moreinfo="none">MX</literal> and/or
-<literal moreinfo="none">A</literal> records, with at least one record matching the
+with <literal>MX</literal> and/or
+<literal>A</literal> records, with at least one record matching the
 connecting ESMTP client's IP address.</para>
 	      </listitem>
 
@@ -191,8 +191,8 @@ checked.</para>
 	  <term>BOFHNOEXPN</term>
 	  <listitem>
 	    <para>
-Disable the <literal moreinfo="none">EXPN</literal> command if this environment variable
-is set to <literal moreinfo="none">1</literal>.</para>
+Disable the <literal>EXPN</literal> command if this environment variable
+is set to <literal>1</literal>.</para>
 	  </listitem>
 	</varlistentry>
 
@@ -200,8 +200,8 @@ is set to <literal moreinfo="none">1</literal>.</para>
 	  <term>BOFHNOVRFY</term>
 	  <listitem>
 	    <para>
-Disable the <literal moreinfo="none">VRFY</literal> command if this environment variable
-is set to <literal moreinfo="none">1</literal>.</para>
+Disable the <literal>VRFY</literal> command if this environment variable
+is set to <literal>1</literal>.</para>
 	  </listitem>
 	</varlistentry>
       </variablelist>

@@ -7,11 +7,10 @@ htmldocdir=@datadir@/htmldoc
 
 CLEANFILES=permissions.dat
 
-miscfiles=japanese_flag.png bg.gif icon.gif manpage.css \
+miscfiles=japanese_flag.png icon.gif bg.png manpage.css \
 		draft-varshavchik-exdata-smtpext.txt \
 		draft-varshavchik-verp-smtpext.txt \
-		draft-varshavchik-security-smtpext.txt \
-		style.css frame.js
+		draft-varshavchik-security-smtpext.txt
 
 nohtmlinfiles=  aliases.html \
 		courierd.html \
@@ -23,7 +22,6 @@ nohtmlinfiles=  aliases.html \
 		socks.html \
 		index.html \
 		install.html \
-		intro.html \
 		layout.html \
 		links.html \
 		local.html \
@@ -70,6 +68,7 @@ htmlin=\
 		makealiases.html \
 		makedat.html \
 		makehosteddomains.html \
+		makeimapaccess.html \
 		makemime.html \
 		makepercentrelay.html \
 		makesmtpaccess.html \
@@ -133,6 +132,9 @@ maildirquota.html: $(srcdir)/../../libs/maildir/maildirquota.html
 maildirquota.7: $(srcdir)/../../libs/maildir/maildirquota.7
 	cp -f $(srcdir)/../../libs/maildir/maildirquota.7 .
 
+makeimapaccess.8: ../../libs/imap/makeimapaccess.8
+	cp -f ../../libs/imap/makeimapaccess.8 .
+
 deliverquota.html: ../../libs/maildir/deliverquota.html
 	cp -f ../../libs/maildir/deliverquota.html .
 
@@ -193,6 +195,9 @@ reformail.html: ../../libs/maildrop/reformail.html
 reformail.1: ../../libs/maildrop/reformail.1
 	cp -f $(srcdir)/../../libs/maildrop/reformail.1 .
 
+makeimapaccess.html: ../../libs/imap/makeimapaccess.html
+	cp -f ../../libs/imap/makeimapaccess.html .
+
 makemime.html: ../../libs/rfc2045/makemime.html
 	cp -f $(srcdir)/../../libs/rfc2045/makemime.html .
 
@@ -245,7 +250,7 @@ man5=dot-courier.5 maildir.5
 man7=localmailfilter.7 maildirquota.7 maildropgdbm.7 maildropfilter.7 \
 	maildropex.7
 man8=aliaslookup.8 courier.8 courierldapaliasd.8 courierpop3d.8 \
-	deliverquota.8 \
+	deliverquota.8 makeimapaccess.8 \
 	esmtpd.8 makeacceptmailfor.8 makehosteddomains.8\
 	mkesmtpdcert.8 mkdhparams.8 mkimapdcert.8 mkpop3dcert.8 \
 	makealiases.8 makepercentrelay.8 makesmtpaccess.8 \
@@ -646,6 +651,6 @@ id=$(dollar)Id
 WWW=$$HOME/www/www.courier-mta.org
 
 htmldoc: $(htmldocfiles)
-	for f in $(htmldocfiles); do test "$$f" = "menu.html" && continue; b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; echo $$f; xsltproc --nonet $(WWW)/xsl/courier.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$d; done
+	for f in $(htmldocfiles); do test "$$f" = "menu.html" && continue; b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; echo $$f; xsltproc --nonet courier.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$d; done
 	for f in menu.html; do  b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' <$$f >$$d; done
 	cp $(miscfiles) $(WWW)

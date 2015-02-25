@@ -1,3 +1,4 @@
+/INSTALL
 /INSTALL.html
 /INSTALL.txt
 /NEWS
@@ -25,6 +26,9 @@
 /maildirmake
 /maildirmake.1
 /makedatprog
+/makedat
+/makeimapaccess
+/makeimapaccess.8
 /mkdhparams
 /mkdhparams.8
 /mkimapdcert

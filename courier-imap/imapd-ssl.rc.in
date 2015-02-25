@@ -1,6 +1,6 @@
 #! @SHELL@
 #
-# Copyright 1998 - 2005 Double Precision, Inc.
+# Copyright 1998 - 2015 Double Precision, Inc.
 # See COPYING for distribution information.
 
 
@@ -32,6 +32,10 @@ start)
 		rm -f $TLS_CACHEFILE
 	fi
 
+	if test ! -f "${IMAPACCESSFILE}.dat"
+	then
+		@bindir@/makeimapaccess
+	fi
 	umask $IMAP_UMASK
 	@ULIMIT@ $IMAP_ULIMITD
 	@SETENV@ -i @SHELL@ -c " set -a ;
@@ -47,6 +51,7 @@ start)
 		@courierlogger@ -pid=$SSLPIDFILE -start $SSLLOGGEROPTS \
 		@libexecdir@/couriertcpd -address=$SSLADDRESS \
 			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
+			-access=$IMAPACCESSFILE.dat \
 			$TCPDOPTS \
 			$SSLPORT $COURIERTLS -server -tcpd \
 				@sbindir@/imaplogin \

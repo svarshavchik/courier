@@ -1,6 +1,6 @@
 #! @SHELL@
 #
-# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2015 Double Precision, Inc.  See COPYING for
 # distribution information.
 #
 # setperms automatically generated from setperms.in
@@ -23,6 +23,7 @@ PERMS="
 @sysconfdir@/aliases	750
 @sysconfdir@/enablefiltering	644	config
 @sysconfdir@/maildrop	644	config
+@sysconfdir@/imapaccess	755
 @sysconfdir@/smtpaccess	755
 @sysconfdir@/shared	755
 @sysconfdir@/shared.tmp	755
@@ -106,6 +107,8 @@ PERMS="
 @sbindir@/makealiases		550
 @datadir@/makehosteddomains	555
 @sbindir@/makehosteddomains	555
+@datadir@/makeimapaccess	555
+@sbindir@/makeimapaccess	555
 @datadir@/pop3d			755
 @sbindir@/pop3d			755
 @datadir@/pop3d-ssl		755

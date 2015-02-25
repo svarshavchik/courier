@@ -1,0 +1,24 @@
+#! @SHELL@
+#
+# Copyright 2015 Double Precision, Inc.  See COPYING for
+# distribution information.
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+localstatedir="@localstatedir@"
+bindir="@bindir@"
+sbindir="@sbindir@"
+libexecdir="@libexecdir@"
+
+. ${sysconfdir}/imapd
+. ${sysconfdir}/imapd-ssl
+
+umask 022
+${bindir}/makedat \
+	-src=${IMAPACCESSFILE} \
+	-file=${IMAPACCESSFILE}.dat \
+	-tmp=${IMAPACCESSFILE}.tmp -cidr || exit 1
+
+${sbindir}/couriertcpd -pid=$PIDFILE -restart
+${sbindir}/couriertcpd -pid=$SSLPIDFILE -restart

@@ -278,12 +278,12 @@ int main()
 
 AC_CACHE_CHECK([for socklen_t],
 	courier_cv_hassocklen_t,
- 
+
 AC_COMPILE_IFELSE([
 AC_LANG_SOURCE( [
 #include <sys/types.h>
 #include <sys/socket.h>
- 
+
 socklen_t sl_t;
 ],[
 	accept(0, 0, &sl_t);
@@ -291,9 +291,9 @@ socklen_t sl_t;
 	courier_cv_hassocklen_t=yes,
 	courier_cv_hassocklen_t=no)
 )
- 
+
 socklen_t="int"
- 
+
 if test $courier_cv_hassocklen_t = yes
 then
 	:
@@ -498,5 +498,6 @@ AC_OUTPUT(Makefile courier.h \
 	imapd-ssl.rc \
 	makealiases \
 	makehosteddomains \
+	makeimapaccess \
 	mkmodules.sh perms.sh setperms.sh \
 	perftest1 webmaild webmlmrc.dist webmlmd.rc)

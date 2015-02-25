@@ -1,3 +1,7 @@
+2015-02-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add the makeimapaccess script.
+
 2015-02-16  "Hanno Böck" <hanno@hboeck.de>
 
 	* Fix compilation warning, testsuite.

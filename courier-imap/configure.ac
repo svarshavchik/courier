@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 4.16.0, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 4.16.0.20150224, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -278,7 +278,7 @@ AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
 		      certsdir="$withval", certsdir=$datadir)
 
 AC_CONFIG_FILES(Makefile dbobj.h dbobj.config imapd.rc imapd-ssl.rc
-		pop3d.rc pop3d-ssl.rc
+		pop3d.rc pop3d-ssl.rc makeimapaccess
 		courier-imap.spec
 		INSTALL.html
 		packaging/suse/courier-imap.init

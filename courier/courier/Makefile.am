@@ -69,6 +69,7 @@ sysconf_DATA=pop3d.authpam imapd.authpam webmail.authpam imapd.cnf pop3d.cnf \
 
 databindir=$(datadir)
 databin_SCRIPTS=courierctl.start makedat makealiases makehosteddomains \
+	makeimapaccess \
 	pop3d pop3d-ssl	mkimapdcert mkpop3dcert mkdhparams
 
 mlmdatadir=$(datadir)/couriermlm
@@ -569,7 +570,7 @@ install-exec-hook:
 	$(LN_S) $(datadir)/mkpop3dcert $(DESTDIR)$(sbindir)/mkpop3dcert
 	rm -f $(DESTDIR)$(bindir)/makedat
 	$(LN_S) $(datadir)/makedat $(DESTDIR)$(bindir)/makedat
-	for f in makealiases makehosteddomains pop3d pop3d-ssl \
+	for f in makealiases makehosteddomains makeimapaccess pop3d pop3d-ssl \
 		; do rm -f $(DESTDIR)$(sbindir)/$$f ; \
 		$(LN_S) $(datadir)/$$f $(DESTDIR)$(sbindir)/$$f ; done
 	rm -f $(DESTDIR)$(sbindir)/webgpg ; $(LN_S) $(datadir)/sqwebmail/webgpg $(DESTDIR)$(sbindir)/webgpg
@@ -583,6 +584,7 @@ install-exec-hook:
 install-data-hook:
 	-$(mkinstalldirs) $(DESTDIR)$(sysconfdir)/aliases
 	-$(mkinstalldirs) $(DESTDIR)$(sysconfdir)/smtpaccess
+	-$(mkinstalldirs) $(DESTDIR)$(sysconfdir)/imapaccess
 	-$(mkinstalldirs) $(DESTDIR)$(sysconfdir)/aliasdir
 	echo @MAILDROP@ >$(DESTDIR)$(sysconfdir)/maildrop
 	test -f $(DESTDIR)$(sysconfdir)/enablefiltering && exit 0; \
@@ -607,7 +609,7 @@ install-permissions: perms.sh
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/makedat
-	for f in makealiases makehosteddomains webgpg pop3d pop3d-ssl \
+	for f in makealiases makehosteddomains makeimapaccess webgpg pop3d pop3d-ssl \
 		; do rm -f $(DESTDIR)$(sbindir)/$$f \
 		; done
 	rm -f $(DESTDIR)$(sysconfdir)/aliases/system
