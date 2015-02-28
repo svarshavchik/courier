@@ -3,6 +3,7 @@
 /authdaemondprog
 /authdaemonrc
 /authdaemonrc.h
+/authdaemonrc.in
 /authdaemontest
 /authenumerate
 /auth_enumerate.3

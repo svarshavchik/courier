@@ -41,7 +41,7 @@
 UNDERLINE_HACK=0
 
 ##NAME: TLS_PROTOCOL:0
-# 
+#
 # TLS_PROTOCOL sets the protocol version.  The possible versions are:
 #
 # OpenSSL:
@@ -61,7 +61,7 @@ UNDERLINE_HACK=0
 # TLS_PROTOCOL="TLS1_1:TLS1:SSL3"
 
 ##NAME: TLS_STARTTLS_PROTOCOL:0
- 
+
 # TLS_STARTTLS_PROTOCOL is used instead of TLS_PROTOCOL for the IMAP STARTTLS
 # extension, as opposed to IMAP over SSL on port 993.
 #
@@ -204,4 +204,3 @@ TLS_CACHESIZE=524288
 #
 # Additional site-specific initialization code may be placed below
 #
-

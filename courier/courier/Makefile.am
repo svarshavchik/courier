@@ -25,6 +25,17 @@ BUILT_SOURCES=prefix.h exec_prefix.h sysconfdir.h localstatedir.h \
 	libexecdir.h bindir.h sbindir.h datadir.h filtersocketdir.h \
 	uidgid.h configargs.h sort.h
 
+if HAVE_SGML
+
+GITFILES=courierd.dist.in ldapaliasrc.dist webmlmrc.dist.in
+
+BUILT_SOURCES += $(GITFILES)
+
+$(GITFILES): %: %.git
+	perl -p -e 's/\$$Id:[^\$$]*/\$$Id: '"`git log --pretty=format:\"%H\" -n 1 -- $<`-`date +%Y%m%d%H%M%S`/" <$< >$@.tmp
+	mv -f $@.tmp $@
+endif
+
 extrapkglib=makedatprog courierpop3login pcpd
 pkglibexecdir=$(libexecdir)/courier
 pkglibexec_PROGRAMS=aliasexp aliascombine aliascreate \

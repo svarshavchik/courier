@@ -287,6 +287,17 @@ AC_TRY_COMPILE([
 
 AC_SUBST(LDAPSEARCH)
 
+# This gets built by the make rule, and is not in the git repo
+
+for f in cone.dist.in
+do
+    if test ! -f "$srcdir/$f"
+    then
+	cp -p "$srcdir/$f.git" "$srcdir/$f"
+	touch "$srcdir/$f.git"
+    fi
+done
+
 CFLAGS="-I../libs -I${srcdir}/../libs $CFLAGS"
 CXXFLAGS="-I../libs -I${srcdir}/../libs $CXXFLAGS"
 AC_OUTPUT(Makefile cone.dist cone.sh IMAGE.filter APPLICATION.PDF.filter http.handler po/Makefile.in intl/Makefile)

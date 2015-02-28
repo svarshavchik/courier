@@ -7,6 +7,7 @@
 /buildversion.H
 /cone
 /cone.dist
+/cone.dist.in
 /cone.sh
 /help.txt
 /helpfile.H

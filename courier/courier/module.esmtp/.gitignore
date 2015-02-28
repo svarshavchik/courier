@@ -4,10 +4,13 @@
 /esmtp.authpam
 /esmtpd
 /esmtpd-msa.dist
+/esmtpd-msa.dist.in
 /esmtpd-ssl
 /esmtpd-ssl.dist
+/esmtpd-ssl.dist.in
 /esmtpd.cnf
 /esmtpd.dist
+/esmtpd.dist.in
 /libexecdir.h
 /localstatedir.h
 /makeacceptmailfor

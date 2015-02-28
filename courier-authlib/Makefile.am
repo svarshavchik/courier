@@ -460,6 +460,15 @@ authlib.3: authlib.3.in
 	$(SHELL) ./config.status --file=authlib.3
 
 if HAVE_SGML
+
+GITFILES=authdaemonrc.in
+
+BUILT_SOURCES += $(GITFILES)
+
+$(GITFILES): %: %.git
+	perl -p -e 's/\$$Id:[^\$$]*/\$$Id: '"`git log --pretty=format:\"%H\" -n 1 -- $<`-`date +%Y%m%d%H%M%S`/" <$< >$@.tmp
+	mv -f $@.tmp $@
+
 authpasswd.html: authpasswd.sgml libs/docbook/sgml2html
 	libs/docbook/sgml2html authpasswd.sgml authpasswd.html
 

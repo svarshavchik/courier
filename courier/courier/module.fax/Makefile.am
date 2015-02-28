@@ -89,6 +89,14 @@ man_MANS=courierfax.8
 
 if HAVE_SGML
 
+GITFILES=faxrc.dist faxnotifyrc.dist faxcoverpage.tr.dist
+
+BUILT_SOURCES += $(GITFILES)
+
+$(GITFILES): %: %.git
+	perl -p -e 's/\$$Id:[^\$$]*/\$$Id: '"`git log --pretty=format:\"%H\" -n 1 -- $<`-`date +%Y%m%d%H%M%S`/" <$< >$@.tmp
+	mv -f $@.tmp $@
+
 courierfax.html.in: courierfax.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courierfax.sgml courierfax.html.in
 

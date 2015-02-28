@@ -34,26 +34,7 @@ set -e
 cd $projdir
 git clone $gitrepo libs
 
-# 2) Set up the filters for both repositories
-
-for dir in libs ../..
-do
-    cd $dir
-
-    git config --add filter.keywords.clean 'perl -pe "s/\\\$Id:[^\\\$]*\\\$/\\\$Id:\\\$/"'
-    git config --add filter.keywords.smudge 'perl -pe "s/\\\$Id:\\\$/\\\$Id: `git log --pretty=format:\"%ai %H\" -n 1 -- %f`\\\$/"'
-
-    # Apply the filters manually
-
-    git ls-files '*.in' '*.dist' | while read F
-    do
-	rm $F
-	git checkout -- $F
-    done
-done
-
-# Now, cd into $projdir, and run the autobloat script to rebuild the autotools
+# Now, run the autobloat script to rebuild the autotools
 # stuff.
 
-cd $projdir
 sh ./autobloat

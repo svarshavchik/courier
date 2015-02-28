@@ -6,6 +6,9 @@
 /courierfax.html
 /courierfax.html.in
 /coverpage
+/faxcoverpage.tr.dist
+/faxnotifyrc.dist
+/faxrc.dist
 /faxtmpdir.h
 /filterbindir.h
 /image-gif.filter

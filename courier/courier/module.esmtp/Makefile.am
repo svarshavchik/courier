@@ -11,6 +11,17 @@ DISTCLEANFILES=esmtp.authpam imapd.cnf esmtpd.cnf
 
 BUILT_SOURCES=localstatedir.h libexecdir.h
 
+if HAVE_SGML
+
+GITFILES=esmtpd.dist.in esmtpd-ssl.dist.in esmtpd-msa.dist.in
+
+BUILT_SOURCES += $(GITFILES)
+
+$(GITFILES): %: %.git
+	perl -p -e 's/\$$Id:[^\$$]*/\$$Id: '"`git log --pretty=format:\"%H\" -n 1 -- $<`-`date +%Y%m%d%H%M%S`/" <$< >$@.tmp
+	mv -f $@.tmp $@
+endif
+
 moduledir=$(libexecdir)/courier/modules/esmtp
 
 databindir=$(datadir)

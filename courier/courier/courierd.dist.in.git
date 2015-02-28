@@ -275,7 +275,7 @@ ESMTP_TLS_VERIFY_DOMAIN=0
 # documentation.
 
 ##NAME: TLS_PROTOCOL:0
-# 
+#
 # TLS_PROTOCOL sets the protocol version.  The possible versions are:
 #
 # OpenSSL:
@@ -404,4 +404,3 @@ TLS_TRUSTCERTS=@cacerts@
 # SMTP SSL certificates for authentication and relaying privileges.
 
 TLS_VERIFYPEER=NONE
-

@@ -149,6 +149,17 @@ SPELLSRC=spellcheckerAspell.C spellcheckerAspell.H \
 
 BUILT_SOURCES=helpfile.H buildversion.H colors_inc.h
 
+if HAVE_SGML
+
+GITFILES=cone.dist.in
+
+BUILT_SOURCES += $(GITFILES)
+
+$(GITFILES): %: %.git
+	perl -p -e 's/\$$Id:[^\$$]*/\$$Id: '"`git log --pretty=format:\"%H\" -n 1 -- $<`-`date +%Y%m%d%H%M%S`/" <$< >$@.tmp
+	mv -f $@.tmp $@
+endif
+
 helpfile.H: config.status
 	h='#define HELPFILE "${pkgdatadir}/cone.hlp"'; echo "$$h" | cmp -s - helpfile.H && exit 0; echo "$$h" >helpfile.H
 

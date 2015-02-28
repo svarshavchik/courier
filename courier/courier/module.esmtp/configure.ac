@@ -129,12 +129,12 @@ AC_SYS_LARGEFILE
 
 AC_CACHE_CHECK([for socklen_t],
 	esmtp_cv_hassocklen_t,
- 
+
 AC_COMPILE_IFELSE([
 AC_LANG_SOURCE( [
 #include <sys/types.h>
 #include <sys/socket.h>
- 
+
 socklen_t sl_t;
 ],[
 	accept(0, 0, &sl_t);
@@ -142,9 +142,9 @@ socklen_t sl_t;
 	esmtp_cv_hassocklen_t=yes,
 	esmtp_cv_hassocklen_t=no)
 )
- 
+
 socklen_t="int"
- 
+
 if test $esmtp_cv_hassocklen_t = yes
 then
 	:
@@ -332,6 +332,19 @@ then
 	ssllib="gnutls"
 fi
 AC_SUBST(ssllib)
+
+AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
+
+# This gets built by the make rule, and is not in the git repo
+
+for f in esmtpd.dist.in esmtpd-ssl.dist.in esmtpd-msa.dist.in
+do
+    if test ! -f "$srcdir/$f"
+    then
+	cp -p "$srcdir/$f.git" "$srcdir/$f"
+	touch "$srcdir/$f.git"
+    fi
+done
 
 AC_OUTPUT(Makefile esmtpd esmtpd-ssl \
 	esmtpd.dist esmtpd-msa.dist esmtpd-ssl.dist  \

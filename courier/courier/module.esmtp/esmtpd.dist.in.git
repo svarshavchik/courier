@@ -140,7 +140,7 @@ COURIERTLS=@bindir@/couriertls
 # TLS_PRIORITY="NORMAL:-CTYPE-OPENPGP"
 
 ##NAME: TLS_PROTOCOL:0
-# 
+#
 # TLS_PROTOCOL sets the protocol version.  The possible versions are:
 #
 # OpenSSL:

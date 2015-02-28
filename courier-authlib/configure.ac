@@ -946,6 +946,18 @@ AC_ARG_WITH(repository, [], REPOSITORY="$withval")
 AC_SUBST(REPOSITORY)
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/libs/docbook)
+
+# This gets built by the make rule, and is not in the git repo
+
+for f in authdaemonrc.in
+do
+    if test ! -f "$srcdir/$f"
+    then
+	cp -p "$srcdir/$f.git" "$srcdir/$f"
+	touch "$srcdir/$f.git"
+    fi
+done
+
 AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
 
 AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h authmigrate courier-authlib.spec courier-authlib.lpspec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)

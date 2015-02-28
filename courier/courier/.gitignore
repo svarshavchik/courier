@@ -11,6 +11,7 @@
 /courierctl.start
 /courierd
 /courierd.dist
+/courierd.dist.in
 /courierldapaliasd
 /couriermlm
 /courierpop3d
@@ -31,6 +32,7 @@
 /imapd.dist
 /imapd.rc
 /imaplogin
+/ldapaliasrc.dist
 /libexecdir.h
 /localstatedir.h
 /lockmail
@@ -87,3 +89,4 @@
 /webmlmd.rc
 /webmlmdhandlerslist.H
 /webmlmrc.dist
+/webmlmrc.dist.in

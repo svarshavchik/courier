@@ -488,6 +488,19 @@ AC_SUBST(EXTRAWEBMAIL)
 . ../libs/rootcerts/rootcertsdir.cnf
 AC_SUBST(cacerts)
 
+AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../libs/docbook)
+
+# This gets built by the make rule, and is not in the git repo
+
+for f in courierd.dist.in webmlmrc.dist.in
+do
+    if test ! -f "$srcdir/$f"
+    then
+	cp -p "$srcdir/$f.git" "$srcdir/$f"
+	touch "$srcdir/$f.git"
+    fi
+done
+
 AC_OUTPUT(Makefile courier.h \
 	courierctl.start \
 	courierd.dist \
