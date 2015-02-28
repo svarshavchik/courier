@@ -38,7 +38,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "rfc822/rfc822.h"
 #include "rfc822/encode.h"
 #include "rfc2045/rfc2045.h"

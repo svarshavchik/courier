@@ -5,7 +5,7 @@ dnl Process this file with autoconf to produce a configure script.
 # See COPYING for distribution information.
 #
 AC_PREREQ(2.59)
-AC_INIT(cone,0.91.1,[courier-cone@lists.sourceforge.net])
+AC_INIT(cone,0.91.1.20150228,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)
@@ -34,13 +34,13 @@ AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 dnl Checks for libraries.
 
 save_LIBS="$LIBS"
-LIBS="-lunicode"
+LIBS="-lcourier-unicode"
 AC_LINK_IFELSE(
 [AC_LANG_PROGRAM([
-#include <unicode.h>
+#include <courier-unicode.h>
 ],[
 	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
 LIBS="$save_LIBS"
 
 dnl Replace `main' with a function in -lefence:

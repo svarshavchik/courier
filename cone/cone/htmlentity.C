@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unicode.h>
+#include <courier-unicode.h>
 
 
 struct unicodeEntity {

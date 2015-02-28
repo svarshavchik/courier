@@ -9,7 +9,7 @@
 #include "nntpcommand.H"
 #include "gettext.H"
 #include "curseseditmessage.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "libmail/mail.H"
 #include "libmail/misc.H"
 #include "libmail/logininfo.H"

@@ -22,7 +22,7 @@
 #include "curses/cursesfilereq.H"
 #include "curses/cursesmoronize.H"
 
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "gettext.H"
 #include "messagesize.H"
 #include <string>

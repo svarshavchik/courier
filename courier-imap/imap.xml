@@ -19,7 +19,7 @@
 <book id="index2">
   <title>The <application>Courier</application> IMAP server</title>
 
-  <para>Copyright 1999-2008, Double Precision, Inc.
+  <para>Copyright 1999-2015, Double Precision, Inc.
   This software is distributed under the terms of the GNU General
   Public License. See COPYING for additional
   information.</para>
@@ -36,7 +36,7 @@
   actually holds this mail account's mailbox, and establish a proxy connection
   to the server, all in a single, seamless process.  Mail accounts can be
   moved between different servers, to achieve optimum resource usage.</para>
-  
+
   <para>The only practical limitation on the &ci; is available network
   and I/O bandwidth. If you are new to the &ci;, this may sound a bit
   intimidating. But you do not need to tackle everything at once.  Start by
@@ -319,7 +319,7 @@ Connected to imap.example.com.
 Escape character is '^]'.
 * OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THRE
 AD=REFERENCES SORT QUOTA IDLE AUTH=CRAM-MD5 SMAP1 KEYWORDS ACL ACL2=UNION STARTT
-LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.  
+LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.
 See COPYING for distribution information.
 </programlisting>
 	</informalexample>
@@ -404,7 +404,7 @@ Connected to imap.example.com.
 Escape character is '^]'.
 * OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THRE
 AD=REFERENCES SORT QUOTA IDLE AUTH=CRAM-MD5 SMAP1 KEYWORDS ACL ACL2=UNION STARTT
-LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.  
+LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.
 See COPYING for distribution information.
 0 login testuser testpass
 </programlisting>
@@ -468,7 +468,7 @@ The password is wrong, or the login ID does not exist.</para>
 The login account's entry specifies the login ID's home directory, and the
 login ID's numeric system <replaceable>uid</replaceable> and
 <replaceable>gid</replaceable>, but that information is incorrect or doesn't
-match the login ID's actual home directory or 
+match the login ID's actual home directory or
 <replaceable>uid</replaceable>/<replaceable>gid</replaceable>.
 It may not exist at all.</para>
 	</listitem>
@@ -708,4 +708,3 @@ and must be explicitly
   configuration file in order to enable SMAP. The <ulink url="http://www.courier-mta.org/cone/index.html">Cone</ulink> mail client supports SMAP.</para>
   </section>
 </book>
-

@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.66.1.20140704],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.66.1.20150228],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -124,13 +124,13 @@ LIBS="$saveLIBS"
 AC_SUBST(NETLIBS)
 
 save_LIBS="$LIBS"
-LIBS="-lunicode"
+LIBS="-lcourier-unicode"
 AC_LINK_IFELSE(
 [AC_LANG_PROGRAM([
-#include <unicode.h>
+#include <courier-unicode.h>
 ],[
 	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
 LIBS="$save_LIBS"
 
 dnl #########################################################################
@@ -625,7 +625,7 @@ AC_ARG_WITH(authsqlite,
 
 AC_ARG_WITH(sqlite-libs,
 [ --with-sqlite-libs=DIR		Look for sqlite libs in this dir ],
-        
+
 	SQLITE_LIBS="-lsqlite3"
 )
 AC_ARG_WITH(sqlite-includes,
@@ -919,12 +919,12 @@ AC_ARG_WITH(stdheaderdir,
 
 AC_CACHE_CHECK([for socklen_t],
 	authlib_cv_hassocklen_t,
- 
+
 AC_COMPILE_IFELSE([
 AC_LANG_SOURCE( [
 #include <sys/types.h>
 #include <sys/socket.h>
- 
+
 socklen_t sl_t;
 ],[
 	accept(0, 0, &sl_t);
@@ -932,9 +932,9 @@ socklen_t sl_t;
 	authlib_cv_hassocklen_t=yes,
 	authlib_cv_hassocklen_t=no)
 )
- 
+
 socklen_t="int"
- 
+
 if test $authlib_cv_hassocklen_t = yes
 then
 	:
@@ -950,4 +950,3 @@ AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/
 
 AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h authmigrate courier-authlib.spec courier-authlib.lpspec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)
 AC_OUTPUT
-

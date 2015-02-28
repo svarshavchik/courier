@@ -18,7 +18,7 @@
 #include <map>
 
 #include <iostream>
-#include <unicode.h>
+#include <courier-unicode.h>
 
 /////////////////////////////////////////////////////////////////////////
 //

@@ -99,7 +99,7 @@ leaf_SOURCES=\
 
 htmlparsertest_SOURCES=htmlparsertest.C htmlparser.C htmlparser.H \
 			htmlentity.C htmlentity.h
-htmlparsertest_LDADD=../curses/libcurses.a -lunicode
+htmlparsertest_LDADD=../curses/libcurses.a -lcourier-unicode
 
 check-am:
 	./htmlparsertest <$(srcdir)/testsuite1 | cmp -s - $(srcdir)/testsuite1.out
@@ -126,7 +126,7 @@ LAMAILLIBS=../libmail/libmail.la ../libs/maildir/libmaildir.la \
 	../libs/numlib/libnumlib.la
 
 libmail_la_SOURCES=
-libmail_la_LIBADD=$(LAMAILLIBS) -lunicode
+libmail_la_LIBADD=$(LAMAILLIBS) -lcourier-unicode
 libmail_la_DEPENDENCIES=$(LAMAILLIBS)
 libmail_la_LDFLAGS=-static -rpath $(libdir)
 
@@ -179,7 +179,7 @@ leaf_LDADD=@SPELL_OBJ@ $(SPELL_LIB) ../curses/libcurses.a \
 	../libs/maildir/libmaildir.la \
 	../libmail/objectmonitor.o \
 	`cat ../curses/curseslib` \
-	 @LIBINTL@ -lunicode
+	 @LIBINTL@ -lcourier-unicode
 
 pwtest_SOURCES=pwtest.c
 pwtest_DEPENDENCIES=../libs/tcpd/libtlsclient.la \

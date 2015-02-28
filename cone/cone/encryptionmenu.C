@@ -7,7 +7,7 @@
 #include "config.h"
 #include "encryptionmenu.H"
 
-#include <unicode.h>
+#include <courier-unicode.h>
 
 #include "gettext.H"
 #include "init.H"

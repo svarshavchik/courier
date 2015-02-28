@@ -20,7 +20,7 @@
 #include <map>
 #include <fstream>
 
-#include <unicode.h>
+#include <courier-unicode.h>
 
 #include "libmail/objectmonitor.H"
 

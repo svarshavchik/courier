@@ -8,7 +8,7 @@
 #include "filter.H"
 #include "gettext.H"
 #include "tags.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include <sstream>
 
 using namespace std;

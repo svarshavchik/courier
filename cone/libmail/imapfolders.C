@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <sstream>
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "rfc822/rfc822.h"
 #include "maildir/maildiraclt.h"
 

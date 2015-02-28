@@ -13,7 +13,7 @@
 
 #include "rfc822/rfc2047.h"
 #include "rfc2045/rfc2045.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 
 #include <errno.h>
 

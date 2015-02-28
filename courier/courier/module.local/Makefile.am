@@ -52,7 +52,7 @@ courierdeliver_DEPENDENCIES=librewrite.la \
 		../../libs/waitlib/libwaitlib.a \
 		../../libs/numlib/libnumlib.la
 
-courierdeliver_LDADD=$(courierdeliver_DEPENDENCIES) -lunicode
+courierdeliver_LDADD=$(courierdeliver_DEPENDENCIES) -lcourier-unicode
 
 preline_SOURCES=preline.c
 

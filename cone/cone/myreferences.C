@@ -14,7 +14,7 @@
 #include "rfc822/rfc822.h"
 #include "rfc2045/rfc2045.h"
 #include "libmail/rfc2047decode.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "libmail/envelope.H"
 
 using namespace std;

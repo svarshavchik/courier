@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 0.74.1.20150224, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 0.74.1.20150228, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -193,13 +193,13 @@ AC_SUBST(LIBGDBM)
 AC_SUBST(dblibrary)
 
 save_LIBS="$LIBS"
-LIBS="-lunicode"
+LIBS="-lcourier-unicode"
 AC_LINK_IFELSE(
 [AC_LANG_PROGRAM([
-#include <unicode.h>
+#include <courier-unicode.h>
 ],[
 	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
 LIBS="$save_LIBS"
 
 dnl

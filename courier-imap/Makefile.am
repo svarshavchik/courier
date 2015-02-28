@@ -327,7 +327,7 @@ id=$(dollar)Id
 WWW=$$HOME/www/www.courier-mta.org
 
 htmldoc: INSTALL.html libs/imap/README.html libs/maildir/README.maildirquota.html libs/maildir/README.sharedfolders.html libs/maildir/README.imapkeywords.html libs/imap/BUGS.html libs/imap/README.proxy.html libs/imap/README.html
-	for f in $^; do xsltproc --nonet $(WWW)/xsl/imap.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/imap/`basename $$f`; done
+	for f in $^; do xsltproc --nonet $(srcdir)/imap-format.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/imap/`basename $$f`; done
 	rm -rf doc
 	mkdir doc
 	xsltproc -o doc/ $(srcdir)/imap.xsl $(srcdir)/imap.xml
@@ -338,10 +338,11 @@ htmldoc: INSTALL.html libs/imap/README.html libs/maildir/README.maildirquota.htm
 			-q --tidy-mark no $$f >$$f.tmp; \
 		xsltproc --nonet $(WWW)/xsl/postproc.xsl \
 			$$f.tmp > $$f.tmp2; \
-		xsltproc --nonet $(WWW)/xsl/imap.xsl \
+		xsltproc --nonet $(srcdir)/imap-format.xsl \
 			 $$f.tmp2 >$$f; \
 		rm -f $$f.tmp*; done
 	mv -f doc/*.html $(WWW)/imap
+	cp -f courier-imap.png bg.png $(WWW)/imap
 	rm -rf doc
 
 AUTOMAKE_OPTIONS=dist-bzip2

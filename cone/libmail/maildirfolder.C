@@ -6,7 +6,7 @@
 #include "libmail_config.h"
 #include "maildir/config.h"
 #include "maildir/maildirmisc.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "maildirfolder.H"
 #include "maildiradd.H"
 #include "mbox.H"

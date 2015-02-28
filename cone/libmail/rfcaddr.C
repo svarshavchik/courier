@@ -11,7 +11,7 @@
 #include "rfc2047encode.H"
 #include "rfc2047decode.H"
 #include "rfc822/rfc822.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 
 #include <iostream>
 #include <algorithm>

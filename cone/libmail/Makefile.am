@@ -134,7 +134,7 @@ mailtool_DEPENDENCIES=libmail.la \
 mailtool_LDADD=libmail.la ../libs/rfc2045/librfc2045.la \
 	../libs/rfc822/librfc822.la ../libs/rfc822/libencode.la \
 	../libs/maildir/libmaildir.la \
-	@LIBCOURIERTLS@ -lunicode \
+	@LIBCOURIERTLS@ -lcourier-unicode \
 	../libs/liblock/liblock.la \
 	../libs/libhmac/libhmac.la ../libs/md5/libmd5.la ../libs/sha1/libsha1.la \
 	../libs/numlib/libnumlib.la ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a \

@@ -26,7 +26,7 @@
 #include "libmail/smtpinfo.H"
 #include "rfc822/rfc822.h"
 #include "rfc822/rfc2047.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "gettext.H"
 #include "globalkeys.H"
 #include "macros.H"

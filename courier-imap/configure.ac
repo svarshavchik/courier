@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 4.16.0.20150224, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 4.16.0.20150228, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -112,13 +112,13 @@ courierlogger=$authsbindir/courierlogger$EXEEXT
 AC_SUBST(courierlogger)
 
 save_LIBS="$LIBS"
-LIBS="-lunicode"
+LIBS="-lcourier-unicode"
 AC_LINK_IFELSE(
 [AC_LANG_PROGRAM([
-#include <unicode.h>
+#include <courier-unicode.h>
 ],[
 	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
 LIBS="$save_LIBS"
 
 if test x$prefix = xNONE

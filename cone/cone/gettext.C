@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <sstream>
 #include <algorithm>
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "libmail/mail.H"
 #include <errno.h>
 #include <cstring>

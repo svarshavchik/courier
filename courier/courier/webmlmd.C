@@ -9,7 +9,7 @@
 #include	"rfc822/rfc822.h"
 #include	"rfc822/rfc2047.h"
 #include	"numlib/numlib.h"
-#include	<unicode.h>
+#include	<courier-unicode.h>
 #include	"datadir.h"
 
 #include	<stdio.h>
@@ -1037,7 +1037,7 @@ static void adminrequest(std::string admin_path)
 			}
 
 			cgi_put("msgname", filename.c_str());
-				
+
 		}
 
 		webmlmd::showhtmlform("webmlmlistadminmod.tmpl.html", parms);

@@ -18,7 +18,7 @@
 #include <pwd.h>
 #include <arpa/inet.h>
 #include "rfc822/rfc822.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "maildir/maildiraclt.h"
 #include "misc.H"
 #include <fstream>

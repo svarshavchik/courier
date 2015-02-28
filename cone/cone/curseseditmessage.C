@@ -15,7 +15,7 @@
 #include "myserverpromptinfo.H"
 #include "macros.H"
 #include "maildir/maildirsearch.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "opendialog.H"
 #include "libmail/mail.H"
 

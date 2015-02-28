@@ -16,7 +16,7 @@
 #include "objectmonitor.H"
 #include "libcouriertls.h"
 #include "expungelist.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include <sstream>
 #include <iostream>
 #include <iomanip>

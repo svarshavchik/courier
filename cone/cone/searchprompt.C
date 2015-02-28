@@ -9,7 +9,7 @@
 #include "gettext.H"
 #include "myserver.H"
 #include "myserverpromptinfo.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include <time.h>
 
 extern Gettext::Key key_ALL;

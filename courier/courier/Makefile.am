@@ -153,7 +153,7 @@ COURIERLDADD=libs/libmodule.la `cat modules.lst.la` \
 	libs/libcommon.la \
 	libs/libcourier.la \
 	../libs/rfc822/librfc822.la @dblibrary@ ../libs/numlib/libnumlib.la \
-	-lunicode
+	-lcourier-unicode
 
 modules.lst.la: create-modules.lst
 	@:
@@ -228,7 +228,7 @@ submitmkdir_LDADD=libs/libcourier.la
 sendmail_SOURCES=sendmail.c sendmail-esmtpd-wrapper.c
 sendmail_DEPENDENCIES=libs/libcommon.la libs/libcourier.la ../libs/rfc822/librfc822.la\
 	../libs/numlib/libnumlib.la
-sendmail_LDADD=$(sendmail_DEPENDENCIES) -lunicode
+sendmail_LDADD=$(sendmail_DEPENDENCIES) -lcourier-unicode
 
 # makedat - generic GDBM file create tool
 
@@ -332,7 +332,7 @@ couriermlm_DEPENDENCIES=../afx/libafx.a ../libs/rfc2045/librfc2045.la \
         ../libs/rfc822/librfc822.la \
 	../libs/liblock/liblock.la ../libs/random128/librandom128.la ../libs/md5/libmd5.la \
 	../libs/numlib/libnumlib.la @dblibrary@
-couriermlm_LDADD=$(couriermlm_DEPENDENCIES) -lunicode
+couriermlm_LDADD=$(couriermlm_DEPENDENCIES) -lcourier-unicode
 
 # webmlm
 
@@ -356,7 +356,7 @@ webmlmd_DEPENDENCIES=../libs/sqwebmail/libwebmail.la \
 			../libs/rfc822/librfc822.la ../libs/numlib/libnumlib.la \
 			../libs/liblock/liblock.la \
 			@dblibrary@
-webmlmd_LDADD=$(webmlmd_DEPENDENCIES) -lunicode @NETLIBS@
+webmlmd_LDADD=$(webmlmd_DEPENDENCIES) -lcourier-unicode @NETLIBS@
 
 BUILT_SOURCES += webmlmdhandlerslist.H
 
@@ -377,7 +377,7 @@ update-handler-list:
 dotforward_SOURCES=dotforward.c
 dotforward_DEPENDENCIES=../libs/rfc822/librfc822.la libs/libcourier.la \
 			@dblibrary@
-dotforward_LDADD=$(dotforward_DEPENDENCIES) -lunicode
+dotforward_LDADD=$(dotforward_DEPENDENCIES) -lcourier-unicode
 
 # courier - start, stop, restart courier
 

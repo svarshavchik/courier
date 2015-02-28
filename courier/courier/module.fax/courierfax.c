@@ -13,7 +13,7 @@
 #include	"comfax.h"
 #include	"rfc822/rfc822.h"
 #include	"waitlib/waitlib.h"
-#include	<unicode.h>
+#include	<courier-unicode.h>
 #include	"numlib/numlib.h"
 #include	<stdlib.h>
 #include	<locale.h>
@@ -631,4 +631,3 @@ static int faxsend_cleanup(int errcode, char *errmsg, void *vp)
 			      COMCTLFILE_DELFAIL_NOTRACK), 0);
 	return (-1);
 }
-

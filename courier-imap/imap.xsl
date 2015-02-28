@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<xsl:stylesheet  
+<xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <xsl:include href="/usr/share/sgml/docbook/xsl-stylesheets/xhtml/chunk.xsl"/>
@@ -19,7 +19,7 @@
    <meta name="MSSmartTagsPreventParsing" content="TRUE" />
     <xsl:comment>
 
-Copyright 2007-2013 Double Precision, Inc.  See COPYING for distribution
+Copyright 2007-2015 Double Precision, Inc.  See COPYING for distribution
 information.
 
 </xsl:comment>

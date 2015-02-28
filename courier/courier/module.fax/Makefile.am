@@ -81,7 +81,7 @@ courierfax_DEPENDENCIES=@courierdir@/courier/libs/libmodule.la \
 		@courierdir@/libs/numlib/libnumlib.la \
 		@courierdir@/libs/waitlib/libwaitlib.a
 
-courierfax_LDADD=$(courierfax_DEPENDENCIES) -lunicode # -lefence
+courierfax_LDADD=$(courierfax_DEPENDENCIES) -lcourier-unicode # -lefence
 
 htmldocdir=@datadir@/htmldoc
 htmldoc_DATA=courierfax.html

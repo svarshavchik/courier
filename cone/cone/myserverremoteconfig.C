@@ -17,7 +17,7 @@
 #include "searchcallback.H"
 #include "errno.h"
 #include "rfc822/encode.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 
 using namespace std;
 

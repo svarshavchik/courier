@@ -3,7 +3,7 @@ dnl Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(sqwebmail, 5.8.1, [courier-sqwebmail@lists.sourceforge.net])
+AC_INIT(sqwebmail, 5.8.1.20150228, [courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -143,15 +143,15 @@ fi
 AC_SUBST(USE_GDBM)
 AC_SUBST(USE_DB)
 AC_SUBST(dblibrary)
-	
+
 save_LIBS="$LIBS"
-LIBS="-lunicode"
+LIBS="-lcourier-unicode"
 AC_LINK_IFELSE(
 [AC_LANG_PROGRAM([
-#include <unicode.h>
+#include <courier-unicode.h>
 ],[
 	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
+])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
 LIBS="$save_LIBS"
 
 dnl Checks for header files.
@@ -253,7 +253,7 @@ AC_ARG_WITH(plenty-of-beer, [
   --enable-autorenamesent  Enable Autorename Sent folder periodically (default)
   --disable-autorenamesent Disable Autorename Sent folder periodically
   --enable-https          Generate https:// URLs for all accesses
-  --enable-https=login    Use https:// URLs for password transmission only 
+  --enable-https=login    Use https:// URLs for password transmission only
   --enable-hardtimeout=7200  Hard session timeout (2hrs default)
   --enable-softtimeout=1200  Inactivity timeout (20 min default)
   --enable-autopurge=7       Automatically purge deleted messages (days).

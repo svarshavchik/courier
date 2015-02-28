@@ -16,7 +16,7 @@
 
 #include "libmail/mail.H"
 #include "libmail/objectmonitor.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 
 #include "libmail/mail.H"
 

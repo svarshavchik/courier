@@ -7,7 +7,7 @@
 #define libmail_rfcaddr_h
 
 #include "libmail_config.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "namespace.H"
 
 #include <stdlib.h>

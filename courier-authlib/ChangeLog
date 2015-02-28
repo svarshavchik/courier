@@ -1,3 +1,7 @@
+2015-02-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update to courier-unicode 1.2.
+
 2014-07-13  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* liblock, couriertls: fix compilation for OpenBSD -- based on a
@@ -246,7 +250,7 @@
 
 2008-05-08  Mr. Sam  <sam@email-scan.com>
 
-	* Makefile: Drop the unmaintained authvchkpw module. 
+	* Makefile: Drop the unmaintained authvchkpw module.
 
 2008-05-04  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -324,12 +328,12 @@
 0.59.3
 
 2007-04-22  Bill Shupp <hostmaster@shupp.org>
-	
+
 	* Implement CRAM authentication in the vchpw module.
 
 2007-04-22  Mr. Sam  <mrsam@courier-mta.com>
 
-	* courier-authlib.spec.in: spec files requires redhat-rpm-config 
+	* courier-authlib.spec.in: spec files requires redhat-rpm-config
 
 2007-04-15  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -340,7 +344,7 @@
 	* authpipe.c (auth_pipe_pre): Fix leak when authpipe module is
 	enabled, but the actual authpipe script/external prog is not
 	installed.
-	
+
 	* authpipe.c (auth_pipe_chgpwd): Pedantic resource cleanup,
 	after fork() fails.
 
@@ -513,17 +517,17 @@
 
 2005-07-02  Mr. Sam  <mrsam@courier-mta.com>
 
-	* liblog/logger.c: Added -droproot option to courierlogger. 
+	* liblog/logger.c: Added -droproot option to courierlogger.
 
 	* liblock/lockdaemon.c: Try to recover if upgraded daemon process runs
 	under a different uid.
 
 2005-07-01  Brian Candler <B.Candler@pobox.com>
- 
+
 	* Changed -uid and -gid options to -user and -group for consistency
 	  with couriertcpd. Change them to affect courierlogger itself,
 	  after it has spawned any child.
- 
+
 	* Optional default domain for authentication requests.
 
 2005-07-02  Mr. Sam  <mrsam@courier-mta.com>
@@ -688,7 +692,7 @@
 
 2004-11-03  Mr. Sam  <mrsam@courier-mta.com>
 
-	* Makefile.am (SUBDIRS): Ok, only build in bdbobj/gdbmobj according 
+	* Makefile.am (SUBDIRS): Ok, only build in bdbobj/gdbmobj according
 	to what autoconf finds.
 
 	* authldaplib.c (auth_ldap_do3): Fix LDAP driver.
@@ -724,5 +728,3 @@
 
 	* Merged authuserdb with authcram.  Fixed CRAM password changes.
 	Do not reset the environment before exec-ing userdb and makeuserdb.
-
-

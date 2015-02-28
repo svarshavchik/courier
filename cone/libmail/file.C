@@ -5,7 +5,7 @@
 */
 #include "libmail_config.h"
 #include "file.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include <ctype.h>
 
 using namespace std;

@@ -12,7 +12,7 @@
 #include "base64.H"
 #include "smtpfolder.H"
 #include "tcpd/spipe.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "libcouriertls.h"
 
 #include <errno.h>

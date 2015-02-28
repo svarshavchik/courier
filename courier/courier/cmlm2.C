@@ -8,7 +8,7 @@
 #include	"liblock/config.h"
 #include	"liblock/liblock.h"
 #include	"rfc822/rfc2047.h"
-#include	<unicode.h>
+#include	<courier-unicode.h>
 #include	<fcntl.h>
 #include	<unistd.h>
 #include	<string.h>

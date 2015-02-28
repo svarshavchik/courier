@@ -18,7 +18,7 @@
 #include "curses/cursesfield.H"
 #include "curses/cursesfilereq.H"
 #include "curses/curseskeyhandler.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "spellchecker.H"
 #include "curseseditmessage.H"
 #include "myserver.H"

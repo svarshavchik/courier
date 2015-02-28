@@ -83,7 +83,7 @@ commonLDADD=../../courier/libs/libmodule.la librewrite.la \
 			../../libs/md5/libmd5.la \
 			../../libs/random128/librandom128.la \
 			../../libs/soxwrap/libsoxwrap.a \
-			-lunicode \
+			-lcourier-unicode \
 			`cat ../../libs/soxwrap/soxlibs.dep` \
 			@NETLIBS@ $(ldaddlibdl) $(DEBUGLIB)
 

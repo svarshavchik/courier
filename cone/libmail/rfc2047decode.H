@@ -7,7 +7,7 @@
 #define libmail_rfc2047_decode_h
 
 #include "libmail_config.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "rfcaddr.H"
 
 #include <vector>

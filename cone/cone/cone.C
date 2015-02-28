@@ -24,7 +24,7 @@
 #include "curses/curseslabel.H"
 #include "curses/cursesfield.H"
 #include "curses/cursesfilereq.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 
 #include "liblock/config.h"
 #include "liblock/liblock.h"

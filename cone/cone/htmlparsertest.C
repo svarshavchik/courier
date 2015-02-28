@@ -7,7 +7,7 @@
 #include "config.h"
 #include "htmlparser.H"
 #include "htmlentity.h"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include <iomanip>
 
 /*

@@ -6,7 +6,7 @@
 #include "libmail_config.h"
 #include "mimetypes.H"
 #include "namespace.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include <fstream>
 #include <cctype>
 #include <cstring>

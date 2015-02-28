@@ -18,7 +18,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
-#include <unicode.h>
+#include <courier-unicode.h>
 
 #if HAVE_DIRENT_H
 # include <dirent.h>

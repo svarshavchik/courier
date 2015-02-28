@@ -1,3 +1,7 @@
+2015-02-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update to courier-unicode 1.2.
+
 0.91
 
 2014-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
@@ -822,7 +826,7 @@
 	* cone/cone.dist.in: Update and improve comments. Bump TLS_TRUSTCERTS.
 
 	* Update documentation to describe SSL certificate authentication.
-	
+
 	* Store SSL certificates in the password file.
 
 2008-07-06  Mr. Sam  <mrsam@courier-mta.com>
@@ -873,7 +877,7 @@
 	account.
 	(editAccountScreen): Ditto.
 	(main): Ignore SIGPIPE.
-	
+
 
 	* libmail/imap.C: Implement client SSL certs and AUTHENTICATE EXTERNAL.
 
@@ -884,7 +888,7 @@
 	* libmail/pop3maildrop.C: Ditto (pass through to pop3).
 
 	* libmail/nntp.C: Just pass through client SSL certs to fd::fd, for
-	now. 
+	now.
 
 	* libmail/mail.H (class account::openInfo): Add certificate vector
 	to open account parameters.
@@ -1094,7 +1098,7 @@
 
 	* gpglib/gpg.c:	gnupg returns non-zero exit even if succesfully
 	unencrypted, when just the signature is bad.
- 
+
 
 2005-06-18  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -1413,7 +1417,7 @@
 	(rfc2047_encode_callback): New argument: qp_allow - function that
 	indicates acceptable characters in QP-encoded words.
 	(rfc2047_encode_str): Ditto.
-	(rfc2047_qp_allow_any, rfc2047_qp_allow_comment) 
+	(rfc2047_qp_allow_any, rfc2047_qp_allow_comment)
 	(rfc2047_qp_allow_word): Possible arguments to qp_allow for various
 	situations.
 
@@ -1526,19 +1530,19 @@
 2004-02-01  IKEDA Soji <nezumi@jca.apc.org>
 
 	* iso2022jp.pl / iso2022jp.h: JIS X 0208 mapping has been updated
-	based on latest regional standard (JIS X 0208:1997) and some vendor 
+	based on latest regional standard (JIS X 0208:1997) and some vendor
 	standards. Errorneous (lacking or false) mappings has been fixed.
 	Support for older JIS X 0208 (JIS C 6226:1978) mapping was added.
 	JIS X 0212:1990 mapping was added.
 
-	* iso2022jp.c: Converters became (upper-)compatible with ISO-2022-JP 
+	* iso2022jp.c: Converters became (upper-)compatible with ISO-2022-JP
 	(RFC1468 / JIS X 0208:1997 Annex 2) and ISO-2022-JP-1 (RFC2237).
-	Buffer overflow vulnerability (when Unicode character is out 
+	Buffer overflow vulnerability (when Unicode character is out
 	of BMP range) has been closed. Convert error handling was implemented.
 
-	* shiftjis.c: Broken SHIFT_JIS converters has been fixed and became 
+	* shiftjis.c: Broken SHIFT_JIS converters has been fixed and became
 	(upper-)compatible with Shifted Encoding Method (JIS X 0208:1997
-	Annex 1). Buffer overflow vulnerability (when Unicode character is out 
+	Annex 1). Buffer overflow vulnerability (when Unicode character is out
 	of BMP range) has been closed. Convert error handling was implemented.
 
 	* eucjp.c: New converters for EUC-JP.
@@ -1602,7 +1606,7 @@
 	* curseshierarchy.C (processKey): After deleting an account,
 	explicitly delete its newsrc file or maildir (where appropriate)
 	instead of leaving the task to myServer::loadconfig()
-	
+
 2003-11-12  Mr. Sam  <mrsam@courier-mta.com>
 
 	* cone/filtereditscreen.C (filterEditScreen): Cone terminated after
@@ -1632,7 +1636,7 @@
 
 	* tcpd: Respect $(EXEEXT)
 
-	* libhmac: Respect $(EXEEXT) 
+	* libhmac: Respect $(EXEEXT)
 
 	* rfc2045/testsuite: Fix enable-mimecharset breaking make check.
 
@@ -2199,7 +2203,7 @@
 	* libmail/smapadd.C: Add include sys/types.h, sys/stat.h
 
 	* libmail/mboxgetmessage.C: Add include sys/types.h, sys/stat.h
-	
+
 
 2003-06-18  Mr. Sam  <mrsam@courier-mta.com>
 
@@ -2391,4 +2395,3 @@
 	(ACLOCAL_AMFLAGS): New variable.
 	(EXTRA_DIST): New variable.
 	* configure.in (AC_OUTPUT): Add po/Makefile.in, m4/Makefile.
-

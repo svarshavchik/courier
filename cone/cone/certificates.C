@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <pwd.h>
-#include <unicode.h>
+#include <courier-unicode.h>
 #include "tcpd/libcouriertls.h"
 
 #include "curses/cursesscreen.H"

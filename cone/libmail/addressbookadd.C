@@ -11,7 +11,7 @@
 #include "envelope.H"
 #include "rfcaddr.H"
 #include "misc.H"
-#include <unicode.h>
+#include <courier-unicode.h>
 #include <ctype.h>
 #include <vector>
 #include <errno.h>
