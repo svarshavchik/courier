@@ -93,13 +93,6 @@ if (x != myname)
 	<xsl:text> | </xsl:text>
 
 	<xsl:element name="a">
-	  <xsl:attribute name="href">http://courier.wiki.sourceforge.net/</xsl:attribute>
-	  <xsl:text>Wiki</xsl:text>
-	</xsl:element>
-
-	<xsl:text> | </xsl:text>
-
-	<xsl:element name="a">
 	  <xsl:attribute name="href">links.html</xsl:attribute>
 	  <xsl:text>Links</xsl:text>
 	</xsl:element>
