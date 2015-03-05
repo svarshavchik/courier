@@ -318,7 +318,7 @@ LIBMAIL_START
 class imapSYNCHRONIZE : public imapCommandHandler {
 
 	mail::callback &callback;
- 
+
 	size_t fetchedCounter;
 
 	size_t newExists;
@@ -1312,7 +1312,7 @@ void mail::imapFOLDER_COUNT::get_fetch_item(mail::imap &imapAccount, Token t)
 		// Getting the References: header.
 		return;
 	}
-			
+
 	error(imapAccount);
 }
 
@@ -1492,7 +1492,7 @@ static bool fillenvelope(mail::imapparsefmt &imapenvelope,
 	vector<mail::imapparsefmt *>::iterator b=imapenvelope.children.begin();
 
 
-	envelope.date=rfc822_parsedt((*b)->value.c_str()); b++;
+	rfc822_parsedate_chk((*b)->value.c_str(), &envelope.date); b++;
 
 	envelope.subject= (*b)->value; b++;
 
@@ -1518,7 +1518,7 @@ void mail::imapFOLDER_COUNT::get_internaldate(mail::imap &imapAccount, Token t)
 
 	if (imapAccount.currentFetch)
 	{
-		// Make IMAP date presentable for rfc822_parsedt() by
+		// Make IMAP date presentable for rfc822_parsedate_chk() by
 		// replacing dd-mmm-yyyy with dd mmm yyyy
 
 		string d=t.text;
@@ -1532,9 +1532,9 @@ void mail::imapFOLDER_COUNT::get_internaldate(mail::imap &imapAccount, Token t)
 		while ((n=d.find('-')) < spacepos)
 			d[n]=' ';
 
-		time_t tm=rfc822_parsedt(d.c_str());
+		time_t tm;
 
-		if (tm)
+		if (rfc822_parsedate_chk(d.c_str(), &tm) == 0)
 			imapAccount.currentFetch
 				->messageArrivalDateCallback(count-1, tm);
 	}
@@ -2363,7 +2363,7 @@ void mail::imap::updateFolderIndexFlags(const vector<size_t> &messages,
 	const char *plusminus=NULL;
 
 	string name="";
-	
+
 #define DOFLAG(MARK, field, n)  if ( flags.field ) { plusminus=MARK; name += " " n; }
 #define FLAG "+-"
 #define NOTFLAG "-+"
@@ -2791,7 +2791,7 @@ void mail::imap::moveMessagesTo(const vector<size_t> &messages,
 						   callback, "MOVE"));
 		return;
 	}
-	
+
 	generic::genericMoveMessages(this, messages, copyTo, callback);
 }
 
@@ -3095,7 +3095,7 @@ void mail::imap::searchMessages(const class mail::searchParams &searchInfo,
 		break;
 
 		// Header match
-		
+
 	case searchParams::from:
 		cmd += " FROM "; hasParam2=true; param2=searchInfo.param2;
 		break;
@@ -3141,7 +3141,7 @@ void mail::imap::searchMessages(const class mail::searchParams &searchInfo,
 	case searchParams::before:
 		cmd += " BEFORE "; hasParam2=true; param2=searchInfo.param2;
 		break;
-	case searchParams::on:    
+	case searchParams::on:
 		cmd += " ON "; hasParam2=true; param2=searchInfo.param2;
 		break;
 	case searchParams::since:

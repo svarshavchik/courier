@@ -53,7 +53,7 @@ class mail::generic::Attributes : public mail::callback::message,
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
-			    
+
 			    size_t messagesCompleted,
 			    size_t messagesEstimatedTotal);
 
@@ -280,7 +280,7 @@ void mail::generic::Attributes::fail(string msg)
 
 void mail::generic::Attributes::reportProgress(size_t bytesCompleted,
 					       size_t bytesEstimatedTotal,
-			    
+
 					       size_t messagesCompleted,
 					       size_t messagesEstimatedTotal)
 {
@@ -342,9 +342,9 @@ void mail::generic::Attributes::messageTextCallback(size_t dummy,
 			while (n > 0)
 				if (value[--n] == ';')
 				{
-					arrivalDate=
-						rfc822_parsedt(value.c_str()
-							       + n + 1);
+					rfc822_parsedate_chk(value.c_str()
+							     + n + 1,
+							     &arrivalDate);
 					break;
 				}
 		}
@@ -369,28 +369,28 @@ void mail::generic::genericBuildEnvelope(string header, string value,
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.sender, 
+		mail::address::fromString(value, envelope.sender,
 					  dummy);
 	}
 	else if (strcasecmp(header.c_str(), "Reply-To") == 0)
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.replyto, 
+		mail::address::fromString(value, envelope.replyto,
 					  dummy);
 	}
 	else if (strcasecmp(header.c_str(), "To") == 0)
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.to, 
+		mail::address::fromString(value, envelope.to,
 					  dummy);
 	}
 	else if (strcasecmp(header.c_str(), "Cc") == 0)
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.cc, 
+		mail::address::fromString(value, envelope.cc,
 					  dummy);
 	}
 	else if (strcasecmp(header.c_str(), "Bcc") == 0)
@@ -414,7 +414,7 @@ void mail::generic::genericBuildEnvelope(string header, string value,
 	}
 	else if (strcasecmp(header.c_str(), "Date") == 0)
 	{
-		envelope.date=rfc822_parsedt(value.c_str());
+		rfc822_parsedate_chk(value.c_str(), &envelope.date);
 	}
 	else if (strcasecmp(header.c_str(), "References") == 0)
 	{
@@ -602,7 +602,7 @@ class mail::generic::ReadMultiple : public mail::callback::message,
 
 	mail::ptr<mail::account> account;
 	mail::generic *generic;
-				      
+
 	bool peek;
 	enum mail::readMode readType;
 
@@ -1244,7 +1244,7 @@ void mail::generic::genericReadMessageContent(mail::account *account,
 		while (b != e)
 		{
 			size_t n= *b++;
-			
+
 			r->messageq.push( make_pair(n, account->
 						    getFolderIndexInfo(n).uid)
 					  );
@@ -1993,5 +1993,3 @@ void mail::generic::genericUpdateKeywords(const vector<size_t> &messages,
 
 	return cb.success("Ok.");
 }
-
-

@@ -58,7 +58,7 @@ static const struct {
 	{mail::searchParams::smaller,	"smaller"},
 	{mail::searchParams::replied,	NULL},
 };
-	
+
 mail::searchParams::searchParams(string s)
 	: searchNot(false), criteria(replied),
 	  scope(search_all), rangeLo(0), rangeHi(0)
@@ -435,9 +435,8 @@ void mail::searchOneMessage::go()
 
 			searchInfo.param2 += " 00:00:00 -0000";
 
-			cmpDate=rfc822_parsedt(searchInfo.param2.c_str());
-
-			if (cmpDate == 0)
+			if (rfc822_parsedate_chk(searchInfo.param2.c_str(),
+						 &cmpDate))
 			{
 				my_callback.fail("Invalid date specified");
 				return;
@@ -1194,5 +1193,3 @@ void mail::searchMessages::search(mail::searchCallback
 		callbackArg.fail("Exception occured trying to start a search.");
 	}
 }
-
-

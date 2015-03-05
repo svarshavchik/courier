@@ -444,9 +444,10 @@ bool mail::smapHandler::processLine(imap &imapAccount,
 
 				if (strncasecmp( *b, "INTERNALDATE=", 13) == 0)
 				{
-					time_t n= rfc822_parsedt(*b + 13);
+					time_t n;
 
-					if (n)
+					if (rfc822_parsedate_chk(*b + 13,
+								 &n) == 0)
 						fetchedInternalDate(msgNum, n);
 				}
 			}
@@ -720,7 +721,7 @@ mail::smapFOLDER::~smapFOLDER()
 void mail::smapFOLDER::existsMore(mail::imap &imapAccount, size_t n)
 {
 	size_t o=index.size();
-	
+
 	imapFOLDERinfo::indexInfo newInfo;
 	newInfo.unread=true;
 

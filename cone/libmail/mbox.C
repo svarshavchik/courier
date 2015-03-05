@@ -1039,9 +1039,7 @@ static time_t fromCtime(string hdr)
 
 	sprintf(tempbuf, "15 %s %d 12:00:00", mon, y);
 
-	tv=rfc822_parsedt(tempbuf);
-
-	if (tv == 0)
+	if (rfc822_parsedate_chk(tempbuf, &tv))
 		return 0;
 
 	tmptr=localtime(&tv);
@@ -1051,9 +1049,7 @@ static time_t fromCtime(string hdr)
 
 	sprintf(tempbuf, "%d %s %d 00:00:00", dom, mon, y);
 
-	tv=rfc822_parsedt(tempbuf);
-
-	if (tv == 0)
+	if (rfc822_parsedate_chk(tempbuf, &tv))
 		return 0;
 
 	tmptr=localtime(&tv);

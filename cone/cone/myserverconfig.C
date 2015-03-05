@@ -515,7 +515,7 @@ void myServer::saveconfig(bool saveRemote, // true: both local and remote save
 				saveError(tmpConfigFilename);
 				return;
 			}
-			
+
 			errmsg=remoteConfigAccount
 				->saveconfig(tmpConfigFilename,
 					     remoteMacroName);
@@ -1052,7 +1052,7 @@ void myServer::config::save()
 
 
 	f=xmlNewNode(NULL, (xmlChar *)"DICTIONARY");
-		
+
 	if (!f || !xmlSetProp(f, (xmlChar *)"NAME",
 			      (xmlChar *)
 			      spellCheckerBase->dictionaryName.c_str())
@@ -1252,7 +1252,7 @@ void myServer::config::save()
 
 				std::string s=o.str();
 
-				
+
 
 				if (!xmlSetProp(n,
 						(xmlChar *)"FK",
@@ -1407,7 +1407,7 @@ static std::string getTextNode(xmlNodePtr node)
 	return mail::rfc2047::decoder()
 		.decode(s, unicode_default_chset());
 }
-		
+
 bool myServer::loadconfig()
 {
 	std::string configFile=getConfigFilename();
@@ -2811,8 +2811,10 @@ bool myServer::loadFolderIndex(std::string filename,
 					}
 				}
 
-				i.arrivalDate=rfc822_parsedt(arrival.c_str());
-				i.messageDate=rfc822_parsedt(sent.c_str());
+				rfc822_parsedate_chk(arrival.c_str(),
+						     &i.arrivalDate);
+				rfc822_parsedate_chk(sent.c_str(),
+						     &i.messageDate);
 				i.messageid=messageId(folder->msgIds,
 						      messageid);
 
