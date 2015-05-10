@@ -1,3 +1,15 @@
+2015-05-09  "Jö Fahlke" <jorrit@jorrit.de>
+
+	* maildrop: Don't include matched subpatterns in foreach.
+
+0.74.2
+
+2015-04-25  Giovanni Bechis <giovanni@openbsd.org>
+
+	* maildircache.c: fix use after free.
+
+	* mkdhparams: make compatible with libressl
+
 2015-03-04  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* imap: Handle 01-Jan-1970 for date-based searches.

@@ -63,7 +63,7 @@ AC_ARG_WITH(softlinkdir, [  --with-softlinks=dir:link,dir:link...   specify soft
 
 version=`cat ../version`
 
-COPYRIGHT="Courier $version Copyright 1999-2012 Double Precision, Inc."
+COPYRIGHT="Courier $version Copyright 1999-2015 Double Precision, Inc."
 AC_SUBST(COPYRIGHT)
 
 dnl Check whether we should use gdbm, or db.
