@@ -287,7 +287,7 @@ request is a single line terminated by newline.
     </screen>
     <para>
     In the case of success, return the complete set of
-    account parameters in the same format as PRE, ending with a period on 
+    account parameters in the same format as PRE, ending with a period on
     a line of its own. In the case of failure (e.g. username does not exist,
     password wrong, unsupported authentication type), return
     <literal>FAIL</literal><emphasis><literal>&lt;newline&gt;</literal></emphasis>.
@@ -313,7 +313,7 @@ request is a single line terminated by newline.
       <para>Request a password change for the given account: validate that
       the oldpassword is correct, and if so, change it to the newpassword.
       </para>
-      <para>Reply: the string
+      <para>Reply: the string <literal>OK</literal><emphasis><literal>&lt;newline&gt;</literal></emphasis>
       for success, or <literal>FAIL</literal><emphasis><literal>&lt;newline&gt;</literal></emphasis> for
       a data error (e.g. no such account, old password wrong, new password not
       acceptable). In the case of a temporary failure, such as a database
@@ -721,7 +721,7 @@ particular details regarding the LDAP directory layout.</para>
 
     <para>
 A suggested LDAP schema can be found in the file
-<filename>authldap.schema</filename>, 
+<filename>authldap.schema</filename>,
 which is included in Courier authentication library's source code, and
 may be installed on your system.</para>
   </sect1>
@@ -1199,7 +1199,7 @@ the callback function with a NULL login ID.</para>
 
     <para>
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
- 
+
 <ulink url="userdb.html"><citerefentry><refentrytitle>userdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink></para>
 
   </sect1>
