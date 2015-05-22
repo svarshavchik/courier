@@ -1,3 +1,7 @@
+2015-05-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Drop SSLv3 from TLS_CIPHER_LIST.
+
 2015-05-09  "Jö Fahlke" <jorrit@jorrit.de>
 
 	* maildrop: Don't include matched subpatterns in foreach.
