@@ -71,7 +71,7 @@
   </ol>
 
   <p>These additional dependencies are only required if building
-  from Subversion, and not the packaged tarballs.</p>
+  from git, and not the packaged tarballs.</p>
 
   <p>The source code is divided into two Git repositories:</p>
 
@@ -89,7 +89,7 @@
 
     <li>
       <p>Shared modules and libraries. After cloning the main
-      repository, follow the instructions in the <tt>README</tt>
+      repository, follow the instructions in the <tt>INSTALLME</tt>
       file to clone the shared module repository, and finish the
       setup.</p>
 
@@ -104,9 +104,9 @@
   <p>NOTE: Automatically-generated <code>configure</code> and
   <code>Makefile</code>, <code>libtool</code>, and
   <code>sysconftool</code> scripts are NOT stored in the
-  repository, and you must build them yourself. The <tt>README</tt>
-  file+script takes care of rebuilding it, by running the
-  <code>autobloat</code> script.</p>
+  repository, and you must build them yourself. The
+  <tt>INSTALLME</tt> file+script takes care of rebuilding it, by
+  running the <code>autobloat</code> script.</p>
 
   <p>The <code>autobloat</code> script automatically runs
   <code>automake</code>, <code>autoconf</code>,
@@ -117,7 +117,6 @@
   that includes all components (imap, maildrop, sqwebmail, etc...).
   The other top-level directories ("courier-imap", "sqwebmail",
   ...), after being combined with the second, shared module
-  repository, end up building just the individual component. See
-  <a href="intro.html">Introduction</a> for more information.</p>
+  repository, end up building just the individual component.</p>
 </body>
 </html>
