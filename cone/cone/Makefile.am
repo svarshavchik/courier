@@ -3,7 +3,7 @@
 #
 # See COPYING for distribution information.
 #
-SUBDIRS=intl po
+SUBDIRS=po
 
 noinst_PROGRAMS=cone leaf htmlparsertest pwtest
 noinst_SCRIPTS=cone.sh cone.dist
