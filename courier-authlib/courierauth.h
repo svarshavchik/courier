@@ -13,6 +13,9 @@
 extern "C" {
 #endif
 
+#if 0
+}
+#endif
 
 /*
   Callback authentication structure:
@@ -123,9 +126,23 @@ extern char *auth_getoption(const char *options, const char *keyword);
 
 int auth_callback_default(struct authinfo *ainfo);
 
+/*
+** Like auth_callback_default, but if the AUTH_MKHOMEDIR_SKEL environment
+** variable is set, and the home directory does not exist, the home directory
+** gets created, with its initial contents copied from AUTH_MKHOMEDIR_SKEL
+** which must be a directory, typically /etc/skel.
+*/
+
+int auth_callback_default_autocreate(struct authinfo *ainfo);
+
 	/* Utility function: escape LDAP special characters */
 
 char *courier_auth_ldap_escape(const char *str);
+
+#if 0
+{
+#endif
+
 #ifdef	__cplusplus
 }
 #endif

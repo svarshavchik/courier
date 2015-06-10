@@ -30,6 +30,8 @@
 
     <li><a href="#install">Installation</a></li>
 
+    <li><a href="#imapconfig">IMAP configuration file</a></li>
+
     <li><a href="#loginexec">Account initialization hook</a></li>
 
     <li><a href="#shared">Using shared folders</a></li>
@@ -285,7 +287,7 @@ pop3d-ssl.config    pop3d-ssl
   <p>To compile and install the Courier-IMAP server (this is the
   short version, a longer version follows):</p>
   <pre>
- 
+
 $ ./configure [ options, see below ]
 $ make
 $ make check       # Note - the --enable-workarounds-for-imap-client-bugs
@@ -375,7 +377,7 @@ $ su root
   <p>Use the following command to start the Courier-IMAP
   server:</p>
   <pre>
- 
+
 $ @defaultprefix@/libexec/imapd.rc start
 </pre>
 
@@ -383,7 +385,7 @@ $ @defaultprefix@/libexec/imapd.rc start
   <code>@defaultprefix@</code>. Use the following command to stop
   Courier-IMAP:</p>
   <pre>
- 
+
 $ @defaultprefix@/libexec/imapd.rc stop
 </pre>
 
@@ -650,6 +652,28 @@ $ @defaultprefix@/libexec/imapd.rc stop
   <code>--sysconfdir</code> and <code>--datadir</code> work too,
   for those who know how to properly use them.</p>
 
+  <h2><a name="imapconfig" id="imapconfig">Configuration
+  file</a></h2>
+
+  <p>The <code>@defaultprefix@/etc/imapd</code> configuration file
+  sets some configurable options. Each setting has a brief
+  description. Review each setting, and make any necessary
+  adjustments.</p>
+
+  <p>The <code>@defaultprefix@/etc/imapd-ssl</code> configuration
+  file sets additional configuration setting for the server running
+  IMAP over TLS or SSL on port 993. Note that, by default, the
+  regular IMAP server on port 143 also supports encrypted
+  connections, and the default startup script for the port 143
+  server reads both configuration files.</p>
+
+  <p>The <code>@defaultprefix@/etc/pop3d</code> and the
+  <code>@defaultprefix@/etc/pop3d-ssl</code> configuration files
+  set options of the POP3 server.</p>
+
+  <p>NOTE: the actual location of the configuration file directory
+  is itself configured at compilation time.</p>
+
   <h2><a name="loginexec" id="loginexec">ACCOUNT INITIALIZATION
   HOOK</a></h2>
 
@@ -714,7 +738,7 @@ $ @defaultprefix@/libexec/imapd.rc stop
     password:
       <pre>
 userdbpw -hmac-md5 | userdb <i>userdb</i> set hmac-md5pw
-    
+
 </pre>Then run the <code>makeuserdb</code> command, as always.
     </li>
 

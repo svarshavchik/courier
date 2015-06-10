@@ -1,3 +1,9 @@
+2015-06-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* authdaemon.c: auth_callback_default_autocreate, default callback
+	used by clients that autocreates a home directory, if one does not
+	exist already.
+
 0.66.2
 
 2015-02-28  Sam Varshavchik  <mrsam@courier-mta.com>
