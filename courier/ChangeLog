@@ -1,3 +1,7 @@
+2015-06-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* AUTH_MKHOMEDIR_SKEL setting: autocreate home directory.
+
 2015-05-22  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Drop SSLv3 from TLS_CIPHER_LIST.

@@ -83,6 +83,26 @@ DSNTOAUTHADDR=0
 
 DYNAMICDELIVERIES=1
 
+##NAME: AUTH_MKHOMEDIR_SKEL:0
+#
+# Uncomment this setting to automatically create a home directory when
+# the first message is received. If the AUTH_MKHOMEDIR_SKEL environment
+# variable is set, and the home directory does not exist, the home
+# directory gets created, with its initial contents copied fro
+# AUTH_MKHOMEDIR_SKEL which must be a directory, typically /etc/skel.
+#
+# Note that this must be a complete home directory structure, including
+# the maildir. Typically:
+#
+# mkdir /etc/skel
+# chmod 700 /etc/skel
+# maildirmak /etc/skel/Maildir
+#
+# This directory gets copied as is, preserving each file/subdirectory's
+# permissions, with only userid/groupid changed to match the account's.
+#
+# AUTH_MKHOMEDIR_SKEL=/etc/skel
+
 ########################################################################
 #
 ##NAME: DEFAULTDELIVERY:0

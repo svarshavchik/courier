@@ -260,7 +260,7 @@ static int mkhomedir(struct authinfo *ainfo,
 			    *ainfo->sysuserid, ainfo->sysgroupid);
 }
 
-int auth_callback_default_autocreate(struct authinfo *ainfo)
+int auth_mkhomedir(struct authinfo *ainfo)
 {
 	struct stat stat_buf;
 
@@ -269,7 +269,7 @@ int auth_callback_default_autocreate(struct authinfo *ainfo)
 	if (p && *p && ainfo->address &&
 	    (ainfo->sysusername || ainfo->sysuserid) &&
 	    ainfo->homedir && stat(ainfo->homedir, &stat_buf) < 0 &&
-	    stat(p, &stat_buf) == 0)
+	    errno == ENOENT && stat(p, &stat_buf) == 0)
 	{
 		int rc;
 		mode_t old_umask=umask(0777);
@@ -281,6 +281,15 @@ int auth_callback_default_autocreate(struct authinfo *ainfo)
 		if (rc)
 			return rc;
 	}
+	return 0;
+}
+
+int auth_callback_default_autocreate(struct authinfo *ainfo)
+{
+	int rc=auth_mkhomedir(ainfo);
+
+	if (rc)
+		return rc;
 
 	return auth_callback_default(ainfo);
 }

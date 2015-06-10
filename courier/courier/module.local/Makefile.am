@@ -36,11 +36,13 @@ courierlocal_DEPENDENCIES=../../courier/libs/libmodule.la \
 			../../libs/numlib/libnumlib.la \
 			../../libs/waitlib/libwaitlib.a
 
+courierlocal_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 courierlocal_LDADD=../../courier/libs/libmodule.la \
 			../../courier/libs/libcommon.la \
 			../../courier/libs/libcourier.la \
 			../../libs/numlib/libnumlib.la \
-			../../libs/waitlib/libwaitlib.a
+			../../libs/waitlib/libwaitlib.a \
+			-lcourierauth
 
 courierdeliver_SOURCES=deliver.c
 courierdeliver_DEPENDENCIES=librewrite.la \

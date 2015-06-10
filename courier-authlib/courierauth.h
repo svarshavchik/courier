@@ -127,10 +127,16 @@ extern char *auth_getoption(const char *options, const char *keyword);
 int auth_callback_default(struct authinfo *ainfo);
 
 /*
-** Like auth_callback_default, but if the AUTH_MKHOMEDIR_SKEL environment
-** variable is set, and the home directory does not exist, the home directory
+** If the AUTH_MKHOMEDIR_SKEL environment variable is set, and the
+** authenticated account's home directory does not exist, the home directory
 ** gets created, with its initial contents copied from AUTH_MKHOMEDIR_SKEL
 ** which must be a directory, typically /etc/skel.
+*/
+
+int auth_mkhomedir(struct authinfo *info);
+
+/*
+** Like auth_callback_default, but calls auth_mkhomedir().
 */
 
 int auth_callback_default_autocreate(struct authinfo *ainfo);

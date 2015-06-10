@@ -17,6 +17,7 @@
 #include	<errno.h>
 #include	<pwd.h>
 #include	<grp.h>
+#include	<courierauth.h>
 #if TIME_WITH_SYS_TIME
 #include	<sys/time.h>
 #include	<time.h>
@@ -222,13 +223,32 @@ struct moduledel *p;
 			if (s)	*s++=0;
 
 			quota=s;
-			
+
 			if (!s)
 			{
 				clog_msg_start_err();
 				clog_msg_str("Invalid local recipient address.");
 				clog_msg_send();
 				_exit(EX_TEMPFAIL);
+			}
+
+			{
+				struct authinfo ainfo;
+
+				memset(&ainfo, 0, sizeof(ainfo));
+
+				ainfo.address="-";
+				ainfo.sysuserid=&u;
+				ainfo.sysgroupid=g;
+				ainfo.homedir=homedir;
+
+				if (auth_mkhomedir(&ainfo))
+				{
+					clog_msg_str(homedir);
+					clog_msg_str(": ");
+					clog_msg_prerrno();
+					_exit(EX_TEMPFAIL);
+				}
 			}
 
 			if (chdir(homedir))
