@@ -12,7 +12,7 @@
 
 <body text="#000000" bgcolor="#FFFFFF" link="#0000EF" vlink=
 "#51188E" alink="#FF0000">
-  <!-- Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 1998 - 2015 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 
   <h1>Requirements</h1>
@@ -63,7 +63,7 @@
         <ul>
           <li>Your mail server must invoke maildrop as the root
           user (the <code>-d</code> flag reads the mail account's
-          uid and gid, then drops root) .</li>
+          uid and gid, then drops root).</li>
 
           <li>Manually change the permissions on the maildrop
           binary to be setuid root.</li>
@@ -92,6 +92,33 @@
         <p>It is the system administrator's responsibility to
         choose the appropriate security policy when using the
         Courier Authentication Library.</p>
+      </blockquote>
+
+      <blockquote>
+        <p><strong>NOTE:</strong></p>
+
+	<p>
+	  When using the option to have maildrop invoked as root, an
+	  additional option to automatically create a new account's home
+	  directory becomes possible.
+	</p>
+
+	<p>
+	  This uses the <b>AUTH_MKHOMEDIR_SKEL</b> environment variable.
+	  If this environment variable is set, it must point to a template
+	  directory such as <code>/etc/skel</code>. If the environment
+	  variable is set, and the authenticated account's home directory
+	  does not exist, the contents of the template directory
+	  get recursively copied into the new home directory.
+	  The permissions of <b>AUTH_MKHOMEDIR_SKEL</b> and its contents
+	  are preserved, and the owner userid and groupid is set to the
+	  authenticated account's userid and groupid.
+	</p>
+
+	<p>
+	  Consult your mail server's documentation for more information on
+	  how to initialize the mail delivery agent's environment variables.
+	</p>
       </blockquote>
     </li>
   </ul>
@@ -625,7 +652,7 @@
   variable to the C++ compiler to be used. For example, to select
   the <code>CC</code> compiler:
   <pre>
- 
+
 $ CXX=CC
 $ export CXX
 $ ./configure [options]
@@ -820,7 +847,7 @@ variable can also be used to override compiler flags that
   the suggested entry for sendmail.cf, courtesy of Eric J.
   Schwertfeger &lt;ejs<code>@</code>bfd.com&gt;:
   <pre>
- 
+
 Mlocal,         P=/usr/local/bin/maildrop, F=lsAw5:/|@SPfhn, S=10/30, R=20/40,
                 T=DNS/RFC822/X-Unix,
                 A=maildrop -d $u

@@ -1,0 +1,90 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+[
+]>
+
+  <!-- Copyright 2015 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-getuserinfo">
+
+  <refmeta>
+    <refentrytitle>auth_mkhomedir</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_mkhomedir</refname>
+    <refpurpose>Autocreate a new account's home directory</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_mkhomedir</function></funcdef>
+	<paramdef>struct authinfo *<parameter>auth</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+      A <replaceable>callback_func</replaceable> that's passed as a parameter
+      to
+      <ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
+      can invoke this function to automatically create a new account's
+      home directory, if the authlib client is running as root, forwarding
+      the <classname>authinfo</classname> pointer from the callback.
+    </para>
+
+    <para>
+      <function>auth_mkhomedir</function>() checks if the
+      <envar>AUTH_MKHOMEDIR_SKEL</envar> environment variable is set, and
+      if the authenticated account's home directory does not exist.
+      If the environment variable is set it must point to a directory like
+      <filename>/etc/skel</filename> that contains a template for the
+      contents of a new account's home directory.
+    </para>
+
+    <para>
+      If <envar>AUTH_MKHOMEDIR_SKEL</envar> is not set, or if the home
+      directory exists,
+      <function>auth_mkhomedir</function>() does nothing and returns 0.
+      Otherwise the account's home directory gets created, and
+      the contents of the <envar>AUTH_MKHOMEDIR_SKEL</envar>
+      directory get recursively copied into the new home directory.
+      The permissions of <envar>AUTH_MKHOMEDIR_SKEL</envar> and its contents
+      are preserved, and the owner userid and groupid is set to the
+      authenticated account's userid and groupid.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>RETURNS</title>
+
+    <para>
+      <function>auth_mkhomedir</function>() returns a non-zero value if
+      an error occured while creating the new account's home directory.
+      <function>auth_mkhomedir</function>() returns zero if the new
+      account's home directory was created successfully, or if the
+      account's home directory already exists.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+  </refsect1>
+
+</refentry>

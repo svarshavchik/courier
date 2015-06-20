@@ -1,3 +1,7 @@
+2015-06-20  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: Implement option to automatically create home directories.
+
 2015-05-09  "Jö Fahlke" <jorrit@jorrit.de>
 
 	* maildrop: Don't include matched subpatterns in foreach.
