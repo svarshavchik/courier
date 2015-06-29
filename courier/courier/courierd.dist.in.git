@@ -268,6 +268,14 @@ COURIERTLS=@bindir@/couriertls
 
 ESMTP_TLS_VERIFY_DOMAIN=0
 
+##NAME: ESMTP_PREFER_IPV6_MX:0
+#
+# Enable ESMTP_PREFER_IPV6_MX=1 to prefer IPv6 hosts over IPv4.
+#
+# Remove this setting to prefer IPv4 hosts over IPv6.
+
+ESMTP_PREFER_IPV6_MX=1
+
 ##NAME: TLS_PRIORITY:0
 #
 # Set TLS protocol priority settings (GnuTLS only)

@@ -80,7 +80,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
 
                                      list($package, $version_s, $date_s, $filename_s, $size_s)
                                      =split( "[ \t\n]", $line);
-                                     
+
                                      $Version[$package]=$version_s;
                                      $Date[$package]=$date_s;
                                      $Filename[$package]=$filename_s;
@@ -186,7 +186,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     file. The Courier authentication library must be installed
     before building any Courier packages that needs direct access
     to mailboxes (in other words, all packages except for
-    courier-sox and courier-analog).</p>
+    courier-sox, courier-analog, and courier-unicode).</p>
 
     <p><font size="-1">(<a href=
     "http://sourceforge.net/project/showfiles.php?group_id=5404">Download

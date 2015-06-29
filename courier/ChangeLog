@@ -1,3 +1,12 @@
+2015-06-27  "Hanno Böck" <hanno@hboeck.de>
+
+	* libs/maildrop/mailbot.c: Fix bad malloc for --feedback-* command
+	line parameters.
+
+2015-06-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* ESMTP_PREFER_IPV6_MX: new setting.
+
 2015-06-09  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* AUTH_MKHOMEDIR_SKEL setting: autocreate home directory.

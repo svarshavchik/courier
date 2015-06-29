@@ -1,3 +1,10 @@
+2.8.3
+
+2015-06-27  "Hanno Böck" <hanno@hboeck.de>
+
+	* libs/maildrop/mailbot.c: Fix bad malloc for --feedback-* command
+	line parameters.
+
 2015-06-20  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: Implement option to automatically create home directories.

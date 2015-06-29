@@ -14,6 +14,8 @@
 /auth_getoption.html
 /auth_getuserinfo.3
 /auth_getuserinfo.html
+/auth_mkhomedir.3
+/auth_mkhomedir.html
 /authldaprc.h
 /authldap.ldif
 /authlib.3

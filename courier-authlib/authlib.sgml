@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
  "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" >
 
-  <!-- Copyright 2004-2012 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2015 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 
 <refentry id="authlib">
@@ -74,10 +74,11 @@ libraries.</para>
 
 <ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
+<ulink url="auth_mkhomedir.html"><citerefentry><refentrytitle>auth_mkhomedir</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
 <ulink url="auth_passwd.html"><citerefentry><refentrytitle>auth_passwd</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
 <ulink url="auth_sasl.html"><citerefentry><refentrytitle>auth_sasl</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
   </refsect1>
 
 </refentry>
-
