@@ -1,3 +1,5 @@
+0.75.0
+
 2015-06-27  "Hanno Böck" <hanno@hboeck.de>
 
 	* libs/maildrop/mailbot.c: Fix bad malloc for --feedback-* command
