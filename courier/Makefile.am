@@ -140,7 +140,7 @@ dorpm:
 	rm -f rpm/SOURCES/*
 	rm -f rpm/SPECS/*
 	rm -f rpm/SRPMS/*
-	rpmbuild -ta --clean \
+	rpmbuild -ta --clean $(RPMXFLAGS) \
 		--define "_topdir `pwd`/rpm" \
 		--define '_rpmdir %{_topdir}/RPMS' \
 		--define '_srcrpmdir %{_topdir}/SRPMS' \

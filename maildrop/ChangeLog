@@ -1,3 +1,7 @@
+2015-07-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: fix parsing of a message without a body.
+
 2.8.3
 
 2015-06-27  "Hanno Böck" <hanno@hboeck.de>

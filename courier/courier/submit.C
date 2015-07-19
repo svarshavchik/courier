@@ -1373,7 +1373,7 @@ void RcptAliasHandler::Alias(const char *p)
 			else
 				rcptinfoptr->whitelisted_only=1;
 		}
-			
+
 		if (aborted)	return;
 
 		aliasbuf=p;
@@ -1720,13 +1720,13 @@ char	*sender=rfc822_gettok(addresst);
 	line += cme_name;
 
 	line += " with ";
-	
+
 	if (rfc3848_receivedwith && *rfc3848_receivedwith)
 		line += rfc3848_receivedwith;
 	else
 		line += mf->module->name;
 	line += "; ";
-	
+
 	line += rfc822_mkdate(submit_time);
 
 	// Add unique id here.
@@ -1760,20 +1760,17 @@ char	*sender=rfc822_gettok(addresst);
 			break;
 		}
 
+	if (mf->receivedspfhelo)
+		my_rcptinfo.submitfile.Message(mf->receivedspfhelo->c_str());
+	if (mf->receivedspfmailfrom)
+		my_rcptinfo.submitfile.Message(mf->receivedspfmailfrom
+					       ->c_str());
 	my_rcptinfo.submitfile.Message(line.c_str());
 
 	/* Add Authentication-Results header */
 	line=a_r_from_env(cme_name);
 	if (line.size() > 0)
 		my_rcptinfo.submitfile.Message(line.c_str());
-
-	if (line.size() > 0)
-
-	if (mf->receivedspfhelo)
-		my_rcptinfo.submitfile.Message(mf->receivedspfhelo->c_str());
-	if (mf->receivedspfmailfrom)
-		my_rcptinfo.submitfile.Message(mf->receivedspfmailfrom
-					       ->c_str());
 
 	unsigned	received_cnt=0;
 
@@ -1856,7 +1853,7 @@ char	*sender=rfc822_gettok(addresst);
 			       std::ptr_fun(::tolower));
 
 		if (headername == "received")	++received_cnt;
-		
+
 		else if (noaddrrewrite > 1 && headername == "dkim-signature")
 			noaddrrewrite = 1;
 
@@ -2018,14 +2015,14 @@ char	*sender=rfc822_gettok(addresst);
 
  		else if (headername == "return-path")
  			headernameorig="Old-"+headernameorig;
- 
+
  		// Rename Received-SPF only if own SPF checking is done
- 
+
  		else if (headername == "received-spf" &&
-		    (mf->helohost.size() > 0) && 
+		    (mf->helohost.size() > 0) &&
 		    !(bofh_checkspf("BOFHSPFHELO", "off", "off") &&
 		      bofh_checkspf("BOFHSPFMAILFROM", "off", "off") &&
-		      bofh_checkspf("BOFHSPFFROM", "off", "off"))) 
+		      bofh_checkspf("BOFHSPFFROM", "off", "off")))
   			headernameorig="Old-"+headernameorig;
 
 		// Quote A-R if the auth server-id is guarded
@@ -2443,7 +2440,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 		}
 		else
 		{
-			if (!nofilter)	
+			if (!nofilter)
 				rwi.mode |= RW_FILTER;
 			rw_searchdel(&rwi, &found_transport);
 		}
@@ -2462,7 +2459,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 
 		/* If we're here because of a one-alias recipient, pretend
 		** that it's a whitelisted recipient */
-		
+
 	int	rc=handlerp.listcount == 1 ? handlerp.ret_code:
 			do_receipient_filter(&rwi, &riv, errmsg);
 
@@ -2669,7 +2666,7 @@ int cppmain(int argc, char **argv)
 	if (rw_init_courier(0))	exit (1);
 
 struct rw_transport *modulep=rw_search_transport(module);
- 
+
 	if (!modulep)
 	{
 		clog_msg_start_err();

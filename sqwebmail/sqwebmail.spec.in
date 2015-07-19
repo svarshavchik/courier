@@ -54,6 +54,7 @@ Requires: %{cgibindir}
 Obsoletes: %{name}-mysql
 Obsoletes: %{name}-pgsql
 
+BuildRequires: procps-ng
 BuildRequires: rpm >= 4.0.2 fileutils grep perl
 BuildRequires: %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
 BuildRequires: openldap-devel courier-authlib-devel >= 0.55

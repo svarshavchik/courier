@@ -1,3 +1,13 @@
+2015-07-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add procps-ng to BuildRequires.
+
+	* maildrop: fix parsing of a message without a body.
+
+	* courier/submit.C: Write SPF-Received lines before the first
+	Received header. Fix bug that prevented HELO's SPF-Received line
+	from being written.
+
 0.75.0
 
 2015-06-27  "Hanno Böck" <hanno@hboeck.de>
