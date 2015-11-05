@@ -300,4 +300,4 @@ done
 
 CFLAGS="-I../libs -I${srcdir}/../libs $CFLAGS"
 CXXFLAGS="-I../libs -I${srcdir}/../libs $CXXFLAGS"
-AC_OUTPUT(Makefile cone.dist cone.sh IMAGE.filter APPLICATION.PDF.filter http.handler po/Makefile.in intl/Makefile)
+AC_OUTPUT(Makefile cone.dist cone.sh IMAGE.filter APPLICATION.PDF.filter http.handler po/Makefile.in)
