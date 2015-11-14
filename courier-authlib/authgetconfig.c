@@ -1,5 +1,5 @@
 /*
-** Copyright 2012 Double Precision, Inc.  See COPYING for
+** Copyright 2012-2015 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
 
@@ -76,7 +76,7 @@ const char *authgetconfig(const char *filename, const char *env)
 	for (i=0; i<configauth_size; )
 	{
 		p=configauth+i;
-		if (memcmp(p, env, l) == 0 &&
+		if (strncmp(p, env, l) == 0 &&
 			isspace((int)(unsigned char)p[l]))
 		{
 			p += l;
@@ -103,7 +103,7 @@ const char *authgetconfig(const char *filename, const char *env)
 #define		SV_END_LEN		((sizeof(SV_END_MARK))-1)
 
 /* siefca@pld.org.pl */
-struct var_data {			
+struct var_data {
 	const char *name;
 	const char *value;
 	const size_t size;
@@ -140,7 +140,7 @@ struct var_data *vdp;
 				 "%.*s...", MAX_SUBSTITUTION_LEN, begin);
 		return NULL;
 	}
-	
+
 	for (vdp=vdt; vdp->name; vdp++)
 		if (vdp->size == len+1 &&
 		    !strncmp(begin, vdp->name, len))
@@ -151,13 +151,13 @@ struct var_data *vdp;
 				vdp->value_length = strlen (vdp->value);
 			return vdp;
 		}
-	
+
 	err("get_variable: unknown substitution variable "
 			 SV_BEGIN_MARK
 			 "%.*s"
 			 SV_END_MARK
 			 , (int)len, begin);
-	
+
 	return NULL;
 }
 
@@ -170,9 +170,9 @@ static int ParsePlugin_counter (const char *p, size_t length, void *vp)
 				 "query string");
 		return -1;
 	}
-	
+
 	*((size_t *)vp) += length;
-   
+
 	return 0;
 }
 
@@ -187,11 +187,11 @@ char	**strptr = (char **) vp;
 				 "query string");
 		return -1;
 	}
-	
+
 	if (!length) return 0;
 	memcpy ((void *) *strptr, (void *) p, length);
 	*strptr += length;
-	
+
 	return 0;
 }
 
@@ -220,7 +220,7 @@ struct var_data	*v_ptr;
 				 "while parser core was invoked");
 		return -1;
 	}
-	
+
 	q = source;
 	while ( (p=strstr(q, SV_BEGIN_MARK)) )
 	{
@@ -234,11 +234,11 @@ struct var_data	*v_ptr;
 					 "%.*s...", MAX_SUBSTITUTION_LEN, p);
 			return -1;
 		}
-		
+
 		/*
 		 **
 		 **	     __________sometext$(variable_name)_________
-		 **	 	       |      |  |    	     |	
+		 **	 	       |      |  |    	     |
 		 **	        t_begin' t_end'  `v_begin    `v_end
 		 **
 		  */
@@ -246,7 +246,7 @@ struct var_data	*v_ptr;
 		v_begin	= p+SV_BEGIN_LEN; /* variable field ptr		    */
 		v_end	= e-SV_END_LEN;	  /* variable field last character  */
 		v_size	= v_end-v_begin+1;/* variable field length	    */
-		
+
 		t_begin	= q;		  /* text field ptr		    */
 		t_end	= p-1;		  /* text field last character	    */
 		t_size	= t_end-t_begin+1;/* text field length		    */
@@ -254,14 +254,14 @@ struct var_data	*v_ptr;
 		/* work on text */
 		if ( (outfn (t_begin, t_size, result)) == -1 )
 			return -1;
-		
+
 		/* work on variable */
 		v_ptr = get_variable (v_begin, v_size, vdt);
 		if (!v_ptr) return -1;
-		
+
 		if ( (outfn (v_ptr->value, v_ptr->value_length, result)) == -1 )
 			return -1;
-		
+
 		q = e + 1;
 	}
 
@@ -281,7 +281,7 @@ char	*output_buf	= NULL,
 	*pass_buf	= NULL;
 size_t	buf_size	= 2;
 
-	if (source == NULL || *source == '\0' || 
+	if (source == NULL || *source == '\0' ||
 	    vdt == NULL    || vdt[0].name == NULL)
 	{
 		err("auth_parse: source clause is empty "
@@ -312,9 +312,9 @@ size_t	buf_size	= 2;
 	{
 		free (output_buf);
 		return NULL;
-	}	
+	}
 	*pass_buf = '\0';
-	
+
 	return output_buf;
 }
 
@@ -430,7 +430,7 @@ char *auth_parse_chpass_clause (char *(*escape_func)(const char *, size_t),
 	vd[1].value=d_part;
 	vd[2].value	= newpass;
 	vd[3].value	= newpass_crypt;
-	
+
 	if (!vd[0].value || !vd[1].value ||
 	    !vd[2].value || !vd[3].value)
 	{

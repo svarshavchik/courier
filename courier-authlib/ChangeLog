@@ -1,3 +1,9 @@
+0.66.4
+
+2015-11-14 "Hanno Böck" <hanno@hboeck.de>
+
+	* authgetconfig.c (authgetconfig): avoid invalid memory read.
+
 0.66.3
 
 2015-06-09  Sam Varshavchik  <mrsam@courier-mta.com>
