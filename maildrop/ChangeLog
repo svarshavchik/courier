@@ -1,3 +1,7 @@
+2015-12-16  Andreas Kinzler <ml-ak@posteo.de>
+
+	* maildrop: fix maildrop not searching last line of text.
+
 2015-07-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: fix parsing of a message without a body.
