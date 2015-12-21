@@ -1,3 +1,7 @@
+2015-12-20  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: implement the FLAGS variable.
+
 2015-12-16  Andreas Kinzler <ml-ak@posteo.de>
 
 	* maildrop: fix maildrop not searching last line of text.
