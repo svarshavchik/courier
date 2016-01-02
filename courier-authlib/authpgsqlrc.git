@@ -1,4 +1,4 @@
-##VERSION: $Id: authpgsqlrc 17 2011-04-04 02:07:37Z mrsam $
+##VERSION: $Id: $
 #
 # Copyright 2000-2004 Double Precision, Inc.  See COPYING for
 # distribution information.
@@ -38,7 +38,7 @@ PGSQL_PASSWORD		admin
 # PGSQL_OPT specifies the connection debug options to PQsetdbLogin().
 # Don't bother with this setting unless you know what you're doing
 #
-# PGSQL_OPT		
+# PGSQL_OPT
 
 ##NAME: PGSQL_DATABASE:0
 #
@@ -139,7 +139,7 @@ PGSQL_NAME_FIELD	name
 ##NAME: PGSQL_QUOTA_FIELD:0
 #
 # Define PGSQL_QUOTA_FIELD to be the name of the field that can optionally
-# specify a maildir quota.  See README.maildirquota for more information 
+# specify a maildir quota.  See README.maildirquota for more information
 #
 # PGSQL_QUOTA_FIELD	quota
 

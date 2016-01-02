@@ -1,6 +1,6 @@
-##VERSION: $Id: authldaprc 265 2013-02-25 03:49:33Z mrsam $
+##VERSION: $Id: $
 #
-# Copyright 2000-2004 Double Precision, Inc.  See COPYING for
+# Copyright 2000-2016 Double Precision, Inc.  See COPYING for
 # distribution information.
 #
 # Do not alter lines that begin with ##, they are used when upgrading
@@ -19,6 +19,8 @@
 #
 # That is, the name of the field, followed by spaces or tabs, followed by
 # field value.  No trailing spaces.
+#
+# Changes to this file take effect immediately.
 #
 # Here are the fields:
 
@@ -69,11 +71,11 @@ LDAP_TIMEOUT		5
 
 ##NAME: LDAP_INITBIND:1
 #
-# Define this to do an initial bind to the adminstrator DN set in LDAP_BINDDN. 
+# Define this to do an initial bind to the adminstrator DN set in LDAP_BINDDN.
 # If your LDAP server allows access without a bind, or you want to authenticate
 # using a rebind (and have set LDAP_AUTHBIND to 1, you can set this to 0 and
 # need not write the LDAP-Admin passwort into this file.
-# 
+#
 LDAP_INITBIND		1
 
 ##NAME: LDAP_MAIL:0
@@ -93,7 +95,7 @@ LDAP_MAIL		mail
 
 ##NAME: LDAP_DOMAIN:0
 #
-# The following default domain will be appended, if not explicitly specified. 
+# The following default domain will be appended, if not explicitly specified.
 #
 # LDAP_DOMAIN		example.com
 
@@ -176,7 +178,7 @@ LDAP_CRYPTPW		userPassword
 #
 # Auxiliary options.  The LDAP_AUXOPTIONS setting should contain a list of
 # comma-separated "ATTRIBUTE=NAME" pairs.  These names are additional
-# attributes that define various per-account "options", as given in 
+# attributes that define various per-account "options", as given in
 # INSTALL's description of the OPTIONS setting.
 #
 # Each ATTRIBUTE specifies an LDAP attribute name.  If it is present,
@@ -198,7 +200,6 @@ LDAP_CRYPTPW		userPassword
 
 ##NAME: LDAP_ENUMERATE_FILTER:0
 #
-# {EXPERIMENTAL}
 # Optional custom filter used when enumerating accounts for authenumerate,
 # in order to compile a list of accounts for shared folders. If present,
 # this filter will be used instead of LDAP_FILTER.
@@ -280,3 +281,8 @@ LDAP_TLS		0
 # LDAP_BASEDN, but will key against LDAP_EMAILMAP_MAIL instead of LDAP_MAIL.
 #
 # LDAP_EMAILMAP_MAIL mail
+
+##NAME: MARKER:0
+#
+# Do not remove this section from this configuration file. This section
+# must be present at the end of this file.

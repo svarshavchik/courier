@@ -143,12 +143,10 @@ authpgsqlrc.h:
 # The authldap module
 
 libauthldap_t=@LDAPLIBS@ @NETLIBS@
-libauthldap_la_SOURCES=authldap.c preauthldap.c authldaplib.c authldap.h
+libauthldap_la_SOURCES=authldap.c preauthldap.c authldaplib.cpp authldap.h
 libauthldap_la_DEPENDENCIES=$(commonlibdep)
 libauthldap_la_LIBADD=$(commonlibadd) $(libauthldap_t)
 libauthldap_la_LDFLAGS=$(commonldflags)
-
-authldaplib.lo: authldaplib.c authldaprc.h
 
 if HAVE_LDAP
 
@@ -287,10 +285,20 @@ authdaemonrc.h:
 HTMLFILES=README.html NEWS.html INSTALL.html \
 	README.authsqlite.html README.authmysql.html README.authpostgres.html
 
+
+if HAVE_SGML
+
+GITFILES=authldaprc authmysqlrc authpgsqlrc authsqliterc authdaemonrc.in
+
+$(GITFILES): %: %.git
+	perl -p -e 's/\$$Id:[^\$$]*/\$$Id: '"`git log --pretty=format:\"%H\" -n 1 -- $<`-`date +%Y%m%d%H%M%S`/" <$< >$@.tmp
+	mv -f $@.tmp $@
+endif
+
 EXTRA_DIST=$(HTMLFILES) sysconftool COPYING COPYING.GPL\
 	authldap.schema \
 	authldap.ldif \
-	authldaprc authmysqlrc authpgsqlrc authsqliterc README.ldap \
+	$(GITFILES) README.ldap \
 	README.authmysql.myownquery \
 	README.authdebug.html.in \
 	courier-authlib.spec \
@@ -357,7 +365,8 @@ authenumerate_LDFLAGS=
 #
 # The main daemon.
 
-authdaemondprog_SOURCES=authdaemond.c
+authdaemondprog_SOURCES=authdaemond.c authdaemondcpp.cpp
+
 authdaemondprog_DEPENDENCIES=libcourierauthcommon.la \
 	libs/liblock/liblock.la $(modules) \
 	libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la \
@@ -386,7 +395,7 @@ BUILT1=authlib.html authldaprc.h authmysqlrc.h authpgsqlrc.h authpiperc.h \
 	authchangepwdir.h sbindir.h \
 	pkglibdir.h pkgincludedir.h mailusergroup.h \
 	README_authlib.html
-BUILT_SOURCES=$(BUILT1) $(man3:%.3=%.html) $(man1:%.1=%.html)
+BUILT_SOURCES=$(BUILT1) $(GITFILES) $(man3:%.3=%.html) $(man1:%.1=%.html)
 
 authchangepwdir.h: config.status
 	echo '#define AUTHCHANGEPWDIR "$(pkglibexecdir)"' >authchangepwdir.h
@@ -461,14 +470,6 @@ authlib.3: authlib.3.in
 	$(SHELL) ./config.status --file=authlib.3
 
 if HAVE_SGML
-
-GITFILES=authdaemonrc.in
-
-BUILT_SOURCES += $(GITFILES)
-
-$(GITFILES): %: %.git
-	perl -p -e 's/\$$Id:[^\$$]*/\$$Id: '"`git log --pretty=format:\"%H\" -n 1 -- $<`-`date +%Y%m%d%H%M%S`/" <$< >$@.tmp
-	mv -f $@.tmp $@
 
 authpasswd.html: authpasswd.sgml libs/docbook/sgml2html
 	libs/docbook/sgml2html authpasswd.sgml authpasswd.html

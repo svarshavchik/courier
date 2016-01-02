@@ -6,6 +6,10 @@
 /authdaemonrc.in
 /authdaemontest
 /authenumerate
+/authldaprc
+/authmysqlrc
+/authpgsqlrc
+/authsqliterc
 /auth_enumerate.3
 /auth_enumerate.html
 /auth_generic.3

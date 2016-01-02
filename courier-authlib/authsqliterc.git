@@ -1,4 +1,4 @@
-##VERSION: $Id: authsqliterc 17 2011-04-04 02:07:37Z mrsam $
+##VERSION: $Id: $
 #
 # Copyright 2012 Double Precision, Inc.  See COPYING for
 # distribution information.
@@ -124,7 +124,7 @@ SQLITE_NAME_FIELD	name
 ##NAME: SQLITE_QUOTA_FIELD:0
 #
 # Define SQLITE_QUOTA_FIELD to be the name of the field that can optionally
-# specify a maildir quota.  See README.maildirquota for more information 
+# specify a maildir quota.  See README.maildirquota for more information
 #
 # SQLITE_QUOTA_FIELD	quota
 

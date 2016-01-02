@@ -1,4 +1,4 @@
-##VERSION: $Id: authmysqlrc 17 2011-04-04 02:07:37Z mrsam $
+##VERSION: $Id: $
 #
 # Copyright 2000-2007 Double Precision, Inc.  See COPYING for
 # distribution information.
@@ -78,7 +78,7 @@ MYSQL_DATABASE		mysql
 ##NAME: MYSQL_USER_TABLE:0
 #
 # The name of the table containing your user data.  See README.authmysqlrc
-# for the required fields in this table. 
+# for the required fields in this table.
 
 MYSQL_USER_TABLE	passwd
 
@@ -160,7 +160,7 @@ MYSQL_NAME_FIELD	name
 ##NAME: MYSQL_QUOTA_FIELD:0
 #
 # Define MYSQL_QUOTA_FIELD to be the name of the field that can optionally
-# specify a maildir quota.  See README.maildirquota for more information 
+# specify a maildir quota.  See README.maildirquota for more information
 #
 # MYSQL_QUOTA_FIELD	quota
 

@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2008 Double Precision, Inc.  See COPYING for
+** Copyright 2000-2016 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
 
@@ -440,9 +440,9 @@ static int printauth(struct authinfo *authinfo, void *vp)
 			return (1);
 	if (authinfo->fullname)
 	{
-		/* 
-		 * Only the first field of the comma-seperated GECOS field is the 
-		 * full username. 
+		/*
+		 * Only the first field of the comma-seperated GECOS field is the
+		 * full username.
 		 */
 	 	char *fullname;
 		char *p;
@@ -458,7 +458,7 @@ static int printauth(struct authinfo *authinfo, void *vp)
 		p = fullname;
 		while (*p != ',' && *p != '\0')
 			p++;
-		*p=0; 
+		*p=0;
 		retval = writeenvval(fd, "NAME", fullname);
 		free(fullname);
 		if(retval)
@@ -1031,19 +1031,4 @@ int start()
 			doauth(fd);
 		close(fd);
 	}
-}
-
-int main(int argc, char **argv)
-{
-	courier_authdebug_login_init();
-
-	if (argc > 1)
-	{
-		fprintf(stderr, "Error: authdaemond no longer handles its own daemonizing.\n"
-			"Use new startup script.\n");
-		exit(1);
-	}
-
-	start();
-	return (0);
 }

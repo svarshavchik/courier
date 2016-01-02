@@ -18,15 +18,6 @@
 #include	"courierauthdebug.h"
 
 
-extern void auth_ldap_enumerate( void(*cb_func)(const char *name,
-						uid_t uid,
-						gid_t gid,
-						const char *homedir,
-						const char *maildir,
-						const char *options,
-						void *void_arg),
-				 void *void_arg);
-
 static int auth_ldap_login(const char *service, char *authdata,
 			   int (*callback_func)(struct authinfo *, void *),
 			   void *callback_arg)
@@ -80,9 +71,6 @@ int auth_ldap(const char *service, const char *authtype, char *authdata,
 extern int auth_ldap_pre(const char *userid, const char *service,
         int (*callback)(struct authinfo *, void *),
 		  void *arg);
-
-extern int auth_ldap_changepw(const char *, const char *, const char *,
-			      const char *);
 
 static struct authstaticinfo authldap_info={
 	"authldap",

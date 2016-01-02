@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2015 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.66.4],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.66.4.20160106],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -18,6 +18,7 @@ LPATH="$PATH:/usr/local/bin"
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S

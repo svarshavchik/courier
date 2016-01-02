@@ -720,8 +720,9 @@ The <filename>@authldaprc@</filename> configuration file defines the
 particular details regarding the LDAP directory layout.</para>
 
     <para>
-A suggested LDAP schema can be found in the file
-<filename>authldap.schema</filename>,
+A suggested LDAP schema can be found in the files
+<filename>authldap.schema</filename> and
+<filename>authldap.ldif</filename>,
 which is included in Courier authentication library's source code, and
 may be installed on your system.</para>
   </sect1>
