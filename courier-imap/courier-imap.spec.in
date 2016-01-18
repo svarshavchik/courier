@@ -331,6 +331,7 @@ fi
 %attr(755, bin, bin) %config /etc/profile.d/courier-imap.sh
 %if %using_systemd
 %attr(-, root, root) /lib/systemd/system/*
+%{_datadir}/courier-imap.sysvinit
 %else
 %attr(755, bin, bin) %{initdir}/courier-imap
 %if %{suse_version}
@@ -356,7 +357,6 @@ fi
 %{_mandir}
 %dir %{_datadir}
 %{_datadir}/configlist
-%{_datadir}/courier-imap.sysvinit
 %{_datadir}/mk*
 %{_datadir}/sysconftool
 %attr(600, root, root) %{_datadir}/dhparams.pem.dist
