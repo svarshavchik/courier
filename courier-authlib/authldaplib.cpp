@@ -1395,7 +1395,7 @@ int authldap_lookup::operator()(int (*callback)(struct authinfo *, void *),
 	if (au == 0 || ag == 0)
 	{
 		courier_auth_err("authldaplib: refuse to authenticate %s: uid=%d, gid=%d (zero uid or gid not permitted)",
-		       user, au, ag);
+				 user.c_str(), au, ag);
 		rc= 1;
 	}
 
