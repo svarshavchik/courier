@@ -5,7 +5,7 @@
 # Do not alter lines that begin with ##, they are used when upgrading
 # this configuration.
 #
-#  Copyright 2000-2013 Double Precision, Inc.  See COPYING for
+#  Copyright 2000-2016 Double Precision, Inc.  See COPYING for
 #  distribution information.
 #
 #  This configuration file sets various options for the Courier-SMTP server
@@ -219,30 +219,29 @@ COURIERTLS=@bindir@/couriertls
 # treated as confidential, and must not be world-readable. Set TLS_CERTFILE
 # instead of TLS_DHCERTFILE if this is a garden-variety certificate
 #
-# VIRTUAL HOSTS (servers only):
+# VIRTUAL HOSTS ON THE SAME IP ADDRESS.
 #
-# Due to technical limitations in the original SSL/TLS protocol, a dedicated
-# IP address is required for each virtual host certificate. If you have
-# multiple certificates, install each certificate file as
+# Install each certificate $TLS_CERTFILE.domain, so if TLS_CERTFILE is set to
+# /etc/certificate.pem, then you'll need to install the actual certificate
+# files as /etc/certificate.pem.www.example.com,
+# /etc/certificate.pem.www.domain.com and so on. Then, create a link from
+# $TLS_CERTFILE to whichever certificate you consider to be the main one,
+# for example:
+# /etc/certificate.pem => /etc/certificate.pem.www.example.com
+#
+# IP-BASED VIRTUAL HOSTS:
+#
+# There may be a need to support older SSL/TLS client that don't support
+# virtual hosts on the same IP address, and require a dedicated IP address
+# for each SSL/TLS host. If so, install each certificate file as
 # $TLS_CERTFILE.aaa.bbb.ccc.ddd, where "aaa.bbb.ccc.ddd" is the IP address
 # for the certificate's domain name. So, if TLS_CERTFILE is set to
 # /etc/certificate.pem, then you'll need to install the actual certificate
 # files as /etc/certificate.pem.192.168.0.2, /etc/certificate.pem.192.168.0.3
 # and so on, for each IP address.
 #
-# GnuTLS only (servers only):
-#
-# GnuTLS implements a new TLS extension that eliminates the need to have a
-# dedicated IP address for each SSL/TLS domain name. Install each certificate
-# as $TLS_CERTFILE.domain, so if TLS_CERTFILE is set to /etc/certificate.pem,
-# then you'll need to install the actual certificate files as
-# /etc/certificate.pem.host1.example.com, /etc/certificate.pem.host2.example.com
-# and so on.
-#
-# Note that this TLS extension also requires a corresponding support in the
-# client. Older SSL/TLS clients may not support this feature.
-#
-# This is an experimental feature.
+# In all cases, $TLS_CERTFILE needs to be linked to one of the existing
+# certificate files.
 
 TLS_CERTFILE=@mydatadir@/esmtpd.pem
 

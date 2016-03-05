@@ -1,3 +1,7 @@
+2016-03-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/tcpd/libcouriertls.c: Add support for TLS SNI.
+
 2015-12-20  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: implement the FLAGS variable.
