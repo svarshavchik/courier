@@ -1,3 +1,8 @@
+2016-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/rfc1035/spf.c: "mx" keyword a no-op MX-less domains, rather
+	than returning "error".
+
 2016-03-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/tcpd/libcouriertls.c: Add support for TLS SNI.
