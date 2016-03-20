@@ -35,6 +35,7 @@ static int safe_strcmp(const char *a, const char *nullable_b)
 
 static int do_authcheckpassword(const char *password, const char *encrypted_password)
 {
+	char *cpass;
 	if (strncmp(encrypted_password, "$1$", 3) == 0
 	    || strncasecmp(encrypted_password, "{MD5}", 5) == 0
 	    || strncasecmp(encrypted_password, "{MD5RAW}", 8) == 0
@@ -53,14 +54,17 @@ static int do_authcheckpassword(const char *password, const char *encrypted_pass
 		encrypted_password += 7;
 #endif
 
-	return (
 #if	HAVE_CRYPT
-		safe_strcmp(encrypted_password,
-			    crypt(password, encrypted_password))
+
+	cpass = crypt(password, encrypted_password);
+	if (cpass == NULL) {
+		return 1;
+	} else {
+		return safe_strcmp(encrypted_password, cpass);
+	}
 #else
-		safe_strcmp(encrypted_password, password)
+	return safe_strcmp(encrypted_password, password)
 #endif
-				);
 }
 
 int authcheckpassword(const char *password, const char *encrypted_password)

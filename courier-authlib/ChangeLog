@@ -1,3 +1,8 @@
+2016-03-20  Giovanni Bechis <giovanni@openbsd.org>
+
+	* checkpassword.c (do_authcheckpassword): Check for a null return
+	value from crypt().
+
 2016-01-17  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* authldaplib.cpp (operator): Fix compilation warning.
