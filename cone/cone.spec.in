@@ -56,6 +56,12 @@ BuildRequires:      openssl-devel
 BuildRequires:      gnutls-devel libgcrypt-devel
 %endif
 
+%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+
+%if %need_perl_generators
+BuildRequires: perl-generators
+%endif
+
 Requires(post): %{__perl}
 
 %description
@@ -143,4 +149,3 @@ fi
 
 * Wed Mar  5 2003 Mr. Sam <mrsam@courier-mta.com>
 - Initial build.
-

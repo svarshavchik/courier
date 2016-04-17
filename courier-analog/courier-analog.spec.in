@@ -11,8 +11,13 @@ Group: Applications/System
 URL: http://www.courier-mta.org
 Source0: %{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildPreReq: perl
+BuildRequires: perl
 BuildArch: noarch
+%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+
+%if %need_perl_generators
+BuildRequires: perl-generators
+%endif
 
 %description
 The courier-analog script generates log summaries for the Courier mail server.
@@ -42,4 +47,3 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Sep  5 2004 Mr. Sam <sam@email-scan.com> - analog-1
 - Initial build.
-

@@ -135,6 +135,12 @@ BuildRequires:      netpbm-progs
 BuildRequires:      pcre-devel
 Obsoletes:	courier-smtpauth
 
+%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+
+%if %need_perl_generators
+BuildRequires: perl-generators
+%endif
+
 %if ! %alternatives
 %package sendmail-wrapper
 Summary: Courier @VERSION@ soft links for sendmail

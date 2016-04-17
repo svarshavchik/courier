@@ -655,8 +655,6 @@ void ldap_connection::close()
 
 static int ldapopen()
 {
-	int     rc;
-
 	if (main_connection.connected()) return 0;
 
 	if (!main_connection.connect())
@@ -1518,8 +1516,6 @@ int authldap_lookup::verify_password(const std::string &dn)
 
 int authldap_lookup::verify_password_authbind(const std::string &dn)
 {
-	int rc;
-
 	if (!bind_connection.connect())
 		return 1;
 

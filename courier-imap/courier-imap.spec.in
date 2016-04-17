@@ -63,6 +63,12 @@ BuildRequires:      gnutls-devel /usr/bin/certtool
 Requires:	  /usr/bin/certtool
 %endif
 
+%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+
+%if %need_perl_generators
+BuildRequires: perl-generators
+%endif
+
 Obsoletes: %{name}-ldap
 Obsoletes: %{name}-mysql
 Obsoletes: %{name}-pgsql
