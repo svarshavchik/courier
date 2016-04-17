@@ -10,7 +10,6 @@
 #include <sstream>
 #include <map>
 #include <vector>
-#include <fstream>
 #include <algorithm>
 #include <cctype>
 
@@ -37,6 +36,9 @@ extern "C" {
 #include "authldaprc.h"
 #include "courierauthdebug.h"
 };
+
+#include "authconfigfile.h"
+#include <stdio.h>
 
 #ifndef	LDAP_OPT_SUCCESS
 #define LDAP_OPT_SUCCESS LDAP_SUCCESS
@@ -94,132 +96,10 @@ public:
 
 ldap_connection main_connection, bind_connection;
 
-class config_file {
-
-protected:
-	const char *filename;
-
-	std::map<std::string, std::string> parsed_config;
-
-private:
-	bool loaded;
-	time_t config_timestamp;
-
-public:
-	config_file(const char *filenameArg)
-		: filename(filenameArg), loaded(false)
-	{
-	}
-
-	bool load(bool reload=false)
-	{
-		struct stat stat_buf;
-
-		if (stat(filename, &stat_buf) < 0)
-		{
-			courier_auth_err("stat(%s) failed", filename);
-			return false;
-		}
-
-		if (loaded)
-		{
-			if (stat_buf.st_mtime != config_timestamp)
-				do_reload();
-			return true;
-		}
-
-		loaded=open_and_load_file(reload);
-
-		if (loaded)
-			config_timestamp=stat_buf.st_mtime;
-		return loaded;
-	}
-
-private:
-	virtual bool do_load()=0;
-	virtual void do_reload()=0;
-
-	class isspace {
-
-	public:
-
-		bool operator()(char c)
-		{
-			return std::isspace(c);
-		}
-	};
-
-	class not_isspace : public isspace {
-
-	public:
-
-		bool operator()(char c)
-		{
-			return !isspace::operator()(c);
-		}
-	};
-
-
-	bool open_and_load_file(bool reload)
-	{
-		std::ifstream f(filename);
-
-		if (!f.is_open())
-		{
-			courier_auth_err("Cannot open %s", filename);
-
-			return false;
-		}
-
-		std::string s;
-
-		bool seen_marker=false;
-
-		while (s.clear(), !std::getline(f, s).eof() || !s.empty())
-		{
-			std::string::iterator e=s.end();
-
-			std::string::iterator p=
-				std::find_if(s.begin(), e, not_isspace());
-
-			if (p == s.end() || *p == '#')
-			{
-				static const char marker[]="##NAME: MARKER:";
-
-				if (s.substr(0, sizeof(marker)-1) == marker)
-					seen_marker=true;
-				continue;
-			}
-
-			std::string::iterator q=std::find_if(p, e, isspace());
-
-			std::string name(p, q);
-
-			q=std::find_if(q, e, not_isspace());
-
-			while (q != e && isspace()(e[-1]))
-				--e;
-
-			parsed_config.insert(std::make_pair(name,
-							    std::string(q, e)));
-		}
-
-		if (!seen_marker)
-		{
-			courier_auth_err((reload
-					  ? "marker line not found in %s will try again later"
-					  : "marker line not found in %s (probably forgot to run sysconftool after an upgrade)"), filename);
-			return false;
-		}
-
-		return do_load();
-	}
-
-};
 
 // Loaded and parsed authldaprc configuration file.
 
-class authldaprc_file : public config_file {
+class authldaprc_file : public courier::auth::config_file {
 
 public:
 

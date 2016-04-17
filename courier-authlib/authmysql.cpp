@@ -13,32 +13,67 @@
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif
+#include <iostream>
 
-#include	"auth.h"
 #include	"authmysql.h"
+extern "C" {
+#include	"auth.h"
 #include	"courierauthstaticlist.h"
 #include	"courierauthdebug.h"
 #include	"libhmac/hmac.h"
 #include	"cramlib.h"
+}
 
+static bool verify(const authmysqluserinfo &authinfo,
+		   const char *user,
+		   const char *pass)
+{
+	if (authinfo.home.size() == 0)	/* User not found */
+	{
+		errno=EPERM;
+		return false;		/* Username not found */
+	}
 
-extern void auth_mysql_enumerate( void(*cb_func)(const char *name,
-						 uid_t uid,
-						 gid_t gid,
-						 const char *homedir,
-						 const char *maildir,
-						 const char *options,
-						 void *void_arg),
-				  void *void_arg);
+	if (authinfo.cryptpw.size())
+	{
+		if (authcheckpassword(pass,authinfo.cryptpw.c_str()))
+		{
+			errno=EPERM;
+			return false;	/* User/Password not found. */
+		}
+	}
+	else if (authinfo.clearpw.size())
+	{
+		if (strcmp(pass, authinfo.clearpw.c_str()))
+		{
+			if (courier_authdebug_login_level >= 2)
+			{
+				DPRINTF("supplied password '%s' does not match clearpasswd '%s'",
+					pass, authinfo.clearpw.c_str());
+			}
+			else
+			{
+				DPRINTF("supplied password does not match clearpasswd");
+			}
+			errno=EPERM;
+			return false;
+		}
+	}
+	else
+	{
+		DPRINTF("no password available to compare for '%s'", user);
+		errno=EPERM;
+		return false;		/* Username not found */
+	}
+	return true;
+}
 
 static int auth_mysql_login(const char *service, char *authdata,
 			    int (*callback_func)(struct authinfo *, void *),
 			    void *callback_arg)
 {
 	char *user, *pass;
-	struct authmysqluserinfo *authinfo;
 	struct	authinfo	aa;
-
 
 	if ((user=strtok(authdata, "\n")) == 0 ||
 		(pass=strtok(0, "\n")) == 0)
@@ -47,62 +82,35 @@ static int auth_mysql_login(const char *service, char *authdata,
 		return (-1);
 	}
 
-	authinfo=auth_mysql_getuserinfo(user, service);
+	authmysqluserinfo authinfo;
 
-	if (!authinfo)		/* Fatal error - such as MySQL being down */
+	if (!auth_mysql_getuserinfo(user, service, authinfo))
+		/* Fatal error - such as MySQL being down */
 	{
 		errno=EACCES;
 		return (-1);
 	}
 
-	if (authinfo->cryptpw)
-	{
-		if (authcheckpassword(pass,authinfo->cryptpw))
-		{
-			errno=EPERM;
-			return (-1);	/* User/Password not found. */
-		}
-	}
-	else if (authinfo->clearpw)
-	{
-		if (strcmp(pass, authinfo->clearpw))
-		{
-			if (courier_authdebug_login_level >= 2)
-			{
-				DPRINTF("supplied password '%s' does not match clearpasswd '%s'",
-					pass, authinfo->clearpw);
-			}
-			else
-			{
-				DPRINTF("supplied password does not match clearpasswd");
-			}
-			errno=EPERM;
-			return (-1);
-		}
-	}
-	else
-	{
-		DPRINTF("no password available to compare");
-		errno=EPERM;
-		return (-1);		/* Username not found */
-	}
+	if (!verify(authinfo, user, pass))
+		return -1;
 
 	memset(&aa, 0, sizeof(aa));
 
-	aa.sysuserid= &authinfo->uid;
-	aa.sysgroupid= authinfo->gid;
-	aa.homedir=authinfo->home;
-	aa.maildir=authinfo->maildir && authinfo->maildir[0] ?
-		authinfo->maildir:0;
-	aa.address=authinfo->username;
-	aa.quota=authinfo->quota && authinfo->quota[0] ?
-		authinfo->quota:0;
-	aa.fullname=authinfo->fullname;
-	aa.options=authinfo->options;
+	aa.sysuserid= &authinfo.uid;
+	aa.sysgroupid= authinfo.gid;
+	aa.homedir=authinfo.home.c_str();
+
+#define STR(z) (authinfo.z.size() ? authinfo.z.c_str():0)
+
+	aa.maildir=STR(maildir);
+	aa.address=STR(username);
+	aa.quota=STR(quota);
+	aa.fullname=STR(fullname);
+	aa.options=STR(options);
 	aa.clearpasswd=pass;
-	aa.passwd=authinfo->cryptpw;
+	aa.passwd=STR(cryptpw);
 	courier_authdebug_authinfo("DEBUG: authmysql: ", &aa,
-			    authinfo->clearpw, authinfo->cryptpw);
+				   aa.clearpasswd, aa.passwd);
 
 	return (*callback_func)(&aa, callback_arg);
 }
@@ -111,39 +119,20 @@ static int auth_mysql_changepw(const char *service, const char *user,
 			       const char *pass,
 			       const char *newpass)
 {
-	struct authmysqluserinfo *authinfo;
+	authmysqluserinfo authinfo;
 
-	authinfo=auth_mysql_getuserinfo(user, service);
-
-	if (!authinfo)
+	if (!auth_mysql_getuserinfo(user, service, authinfo))
 	{
 		errno=ENOENT;
 		return (-1);
 	}
 
-	if (authinfo->cryptpw)
+	if (!verify(authinfo, user, pass))
 	{
-		if (authcheckpassword(pass,authinfo->cryptpw))
-		{
-			errno=EPERM;
-			return (-1);	/* User/Password not found. */
-		}
-	}
-	else if (authinfo->clearpw)
-	{
-		if (strcmp(pass, authinfo->clearpw))
-		{
-			errno=EPERM;
-			return (-1);
-		}
-	}
-	else
-	{
-		errno=EPERM;
 		return (-1);
 	}
 
-	if (auth_mysql_setpass(user, newpass, authinfo->cryptpw))
+	if (!auth_mysql_setpass(user, newpass, authinfo.cryptpw.c_str()))
 	{
 		errno=EPERM;
 		return (-1);
@@ -193,7 +182,9 @@ static struct authstaticinfo authmysql_info={
 	auth_mysql_enumerate};
 
 
-struct authstaticinfo *courier_authmysql_init()
-{
-	return &authmysql_info;
+extern "C" {
+	struct authstaticinfo *courier_authmysql_init()
+	{
+		return &authmysql_info;
+	}
 }

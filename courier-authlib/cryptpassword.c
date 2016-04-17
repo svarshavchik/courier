@@ -132,8 +132,8 @@ char *authcryptpasswd(const char *password, const char *encryption_hint)
 
 	if (!hash_func)
 	{
-		hash_func= &crypt_hash;
-		pfix="{CRYPT}";
+		hash_func= &ssha_hash_int;
+		pfix="{SSHA}";
 	}
 
 	p= (*hash_func)(password);

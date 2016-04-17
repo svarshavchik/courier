@@ -69,9 +69,11 @@ AC_SUBST(PASSWD)
 if test "$GCC" = "yes"
 then
 	CFLAGS="$CFLAGS -Wall"
+	CXXFLAGS="$CXXFLAGS -Wall"
 fi
 
 CFLAGS="$CFLAGS -Ilibs -I${srcdir}/libs"
+CXXFLAGS="$CXXFLAGS -Ilibs -I${srcdir}/libs"
 
 AC_MSG_CHECKING(whether -lm is needed for floor)
 AC_TRY_LINK_FUNC(floor,
@@ -603,6 +605,7 @@ else
 	LIBS="$saveLIBS"
 	HAVE_AUTHMYSQL=1
 	CFLAGS="$MYSQL_CFLAGS $CFLAGS"
+	CXXFLAGS="$MYSQL_CFLAGS $CXXFLAGS"
 fi
 AC_SUBST(LIBAUTHMYSQL)
 AC_SUBST(MYSQL_LIBS)

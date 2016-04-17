@@ -192,7 +192,6 @@ MYSQL_NAME_FIELD	name
 
 ##NAME: MYSQL_SELECT_CLAUSE:0
 #
-# (EXPERIMENTAL)
 # This is optional, MYSQL_SELECT_CLAUSE can be set when you have a database,
 # which is structuraly different from proposed. The fixed string will
 # be used to do a SELECT operation on database, which should return fields
@@ -201,9 +200,6 @@ MYSQL_NAME_FIELD	name
 # username, cryptpw, clearpw, uid, gid, home, maildir, quota, fullname, options
 #
 # The username field should include the domain (see example below).
-#
-# Enabling this option causes ignorance of any other field-related
-# options, excluding default domain.
 #
 # There are two variables, which you can use. Substitution will be made
 # for them, so you can put entered username (local part) and domain name
@@ -219,6 +215,21 @@ MYSQL_NAME_FIELD	name
 # if the "maildir" field is not empty it will be used in place of
 # DEFAULTDELIVERY.  Courier mail server will also use esmtp when doing
 # authenticated ESMTP.
+#
+# Either cryptpw or clearpw are required. The other one can be specified
+# as an empty string; as well as maildir, quota, and option fields.
+#
+# Example:
+#
+# MYSQL_SELECT_CLAUSE   SELECT CONCAT(user,'@',domain), '', password, \
+#                              uid, gid, home, '' \
+#                       FROM users WHERE user='$(local_part)' \
+#                                    AND domain='$(domain)'
+#
+# The encrypted password field is not used, and a literal '', empty string,
+# appears in its place. Ditto for the 'maildir' field, and the remaining
+# optional fields are completely absent. The maildir field, in this example
+# can also be omitted, it's shown as an example only.
 #
 # This example is a little bit modified adaptation of vmail-sql
 # database scheme:
@@ -286,3 +297,8 @@ MYSQL_NAME_FIELD	name
 #			WHERE	local_part='$(local_part)'		\
 #			AND	domain_name='$(domain)'
 #
+
+##NAME: MARKER:0
+#
+# Do not remove this section from this configuration file. This section
+# must be present at the end of this file.

@@ -49,6 +49,8 @@ libcourierauthcommon_t=@CRYPTLIBS@
 libcourierauthcommon_la_SOURCES= \
 	auth.h courierauth.h \
 	authgetconfig.c \
+	authconfigfile.cpp \
+	authconfigfile.h \
 	authpwdenumerate.c \
 	authsaslfrombase64.c authsasltobase64.c \
 	courierauthstaticlist.h \
@@ -175,12 +177,12 @@ authldaprc.h:
 
 libauthmysql_t=@MYSQL_LIBS@ @LIBM@ @NETLIBS@
 
-libauthmysql_la_SOURCES=authmysql.c preauthmysql.c authmysqllib.c authmysql.h
+libauthmysql_la_SOURCES=authmysql.cpp preauthmysql.cpp authmysqllib.cpp authmysql.h
 libauthmysql_la_DEPENDENCIES=$(commonlibdep)
 libauthmysql_la_LIBADD=$(commonlibadd) $(libauthmysql_t)
 libauthmysql_la_LDFLAGS=$(commonldflags)
 
-authmysqllib.lo: authmysqllib.c authmysqlrc.h
+authmysqllib.lo: authmysqllib.cpp authmysqlrc.h
 
 if HAVE_AUTHMYSQL
 install-authmysqlrc:
