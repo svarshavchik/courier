@@ -1,3 +1,9 @@
+0.76.0
+
+2016-04-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Stop using SSL2 and SSL3 openssl configuration methods.
+
 2016-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/rfc1035/spf.c: "mx" keyword a no-op MX-less domains, rather

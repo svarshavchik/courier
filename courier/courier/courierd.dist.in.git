@@ -308,14 +308,12 @@ ESMTP_PREFER_IPV6_MX=1
 #
 # OpenSSL:
 #
-# SSL3 - SSLv3
-# SSL23 - all protocols (including TLS 1.x protocols)
 # TLSv1 - TLS1
 # TLSv1.1 - TLS1.1
 # TLSv1.2 - TLS1.2
 #
 #
-# SSL3+, TLSv1+, TLSv1.1+, and TLSv1.2+ - the corresponding protocol, and all
+# TLSv1+, TLSv1.1+, and TLSv1.2+ - the corresponding protocol, and all
 # higher protocols.
 #
 # The default value is TLSv1+
