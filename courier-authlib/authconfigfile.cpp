@@ -108,14 +108,38 @@ bool courier::auth::config_file::open_and_load_file(bool reload)
 		std::string::iterator q=std::find_if(p, e, isspace());
 
 		std::string name(p, q);
+		std::string setting;
 
-		q=std::find_if(q, e, not_isspace());
+		while (1)
+		{
+			q=std::find_if(q, e, not_isspace());
 
-		while (q != e && isspace()(e[-1]))
-			--e;
+			while (q != e && isspace()(e[-1]))
+				--e;
 
-		parsed_config.insert(std::make_pair(name,
-						    std::string(q, e)));
+			if (q == e)
+				break;
+
+			bool continuing=false;
+
+			if (e[-1] == '\\')
+			{
+				continuing=true;
+				e[-1]=' ';
+			}
+
+			setting.insert(setting.end(), q, e);
+
+			if (!continuing)
+				break;
+
+			std::getline(f, s);
+
+			q=s.begin();
+			e=s.end();
+		}
+
+		parsed_config.insert(std::make_pair(name, setting));
 	}
 
 	if (!seen_marker)

@@ -614,6 +614,7 @@ static void enumerate(int fd)
 	struct authstaticinfolist *l;
 
 	ei.fd=fd;
+	ei.buf_ptr=ei.buffer;
 	ei.buf_left=0;
 
 	for (l=modulelist; l; l=l->next)

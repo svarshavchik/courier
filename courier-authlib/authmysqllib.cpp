@@ -35,23 +35,8 @@ public:
 	MYSQL *mysql;
 	time_t last_time;
 
-	class authmysqlrc_file : public courier::auth::config_file {
-
-		authmysql_connection &conn;
-
-		std::string config(const char *env,
-				   const char *default_value="")
-		{
-			std::map<std::string, std::string>::iterator
-				p=parsed_config.find(env);
-
-			if (p != parsed_config.end())
-				return p->second;
-			return default_value;
-		}
-
+	class authmysqlrc_vars {
 	public:
-
 		std::string server, server_socket, userid, password, database,
 			character_set,
 			sslkey, sslcert, sslcacert,
@@ -76,15 +61,38 @@ public:
 		unsigned int server_port;
 		unsigned int server_opt;
 
+		authmysqlrc_vars()
+			: server_port(0), server_opt(0) {}
+	};
+
+	class authmysqlrc_file : public courier::auth::config_file,
+				 public authmysqlrc_vars {
+
+		authmysql_connection &conn;
+
+		std::string config(const char *env,
+				   const char *default_value="")
+		{
+			std::map<std::string, std::string>::iterator
+				p=parsed_config.find(env);
+
+			if (p != parsed_config.end())
+				return p->second;
+			return default_value;
+		}
+
+	public:
+
 		authmysqlrc_file &operator=(const authmysqlrc_file &o)
 		{
 			courier::auth::config_file::operator=(o);
+			authmysqlrc_vars::operator=(o);
 			return *this;
 		}
 
 		authmysqlrc_file(authmysql_connection &connArg)
 			: courier::auth::config_file(AUTHMYSQLRC),
-			  conn(connArg), server_port(0), server_opt(0)
+			  conn(connArg)
 		{
 		}
 

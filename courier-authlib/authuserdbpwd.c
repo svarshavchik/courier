@@ -99,7 +99,7 @@ int auth_userdb_passwd(const char *service,
 		errno=EPERM;
 		DPRINTF("userdb: Invalid service or password string for %s.\n",
 			uid);
-		return (1);
+		return (-1);
 	}
 
 	rc=try_auth_userdb_passwd(NULL, service, uid, opwd_buf, npwd_buf);
