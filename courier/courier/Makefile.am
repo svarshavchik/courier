@@ -565,7 +565,6 @@ install-exec-hook:
 		$(localstatedir) $(localstatedir)/tmp\
 		$(webmaildir)\
 		$(localstatedir)/track\
-		$(localstatedir)/sslcache\
 		$(localstatedir)/msgs $(localstatedir)/msgq ; do \
 			$(mkinstalldirs) $(DESTDIR)$$d || :; done
 	$(INSTALL_SCRIPT) imapd.rc $(DESTDIR)$(datadir)/imapd
