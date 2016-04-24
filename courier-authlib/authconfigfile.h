@@ -11,6 +11,7 @@
 #endif
 
 #include <string>
+#include <sstream>
 #include <map>
 
 namespace courier {
@@ -26,7 +27,6 @@ protected:
 	const char *filename;
 
 	std::map<std::string, std::string> parsed_config;
-
 private:
 	bool loaded;
 	time_t config_timestamp;
@@ -46,6 +46,33 @@ private:
 
  public:
 
+
+	template<typename value_type>
+		bool config(const char *name,
+			    value_type &value,
+			    bool required,
+			    const char *default_value=0)
+		const
+	{
+		std::string string_value;
+
+		if (!getconfig(name, string_value, required, default_value))
+			return false;
+
+		std::istringstream i(string_value);
+
+		i >> value;
+		return true;
+	}
+
+	std::string config(const char *name) const;
+	std::string config(const char *name, const char *default_value) const;
+
+	bool getconfig(const char *name,
+		       std::string &value,
+		       bool required,
+		       const char *default_value=0) const;
+
 	static std::string expand_string(const std::string &s,
 					 const std::map<std::string,
 					 std::string> &parameters);
@@ -57,6 +84,12 @@ private:
 				   std::map<std::string,
 				   std::string> &parameters);
 };
+
+template<>
+bool config_file::config(const char *name,
+			     std::string &value,
+			     bool required,
+			     const char *default_value) const;
 
 #if 0
 {

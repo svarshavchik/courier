@@ -19,26 +19,18 @@
 # field value.  Trailing spaces are prohibited.
 
 
-##NAME: LOCATION:0
+##NAME: LOCATION:1
 #
 # The server hostname, port, userid, and password used to log in.
 #
-# To connect to a filesystem socket, delete PGSQL_HOST, and set PGSQL_PORT to
-# the socket's last component.  So, if your pg socket is /tmp/.s.PGSQL.5400
-# set PGSQL_PORT to 5400.
+# See Postgresql's documenation for PQconnectdb(), for other options that
+# you can use here.
 
-PGSQL_HOST		pgsql.example.com
-PGSQL_PORT		5400
-PGSQL_USERNAME		admin
-PGSQL_PASSWORD		admin
-
-
-##NAME: PGSQL_OPT:0
-#
-# PGSQL_OPT specifies the connection debug options to PQsetdbLogin().
-# Don't bother with this setting unless you know what you're doing
-#
-# PGSQL_OPT
+PGSQL_CONNECTION        \
+          host=pgsql.example.com \
+	  port=5400              \
+	  user=admin             \
+	  password=admin
 
 ##NAME: PGSQL_DATABASE:0
 #
@@ -258,3 +250,9 @@ PGSQL_NAME_FIELD	name
 #			WHERE	local_part='$(local_part)'		\
 #			AND	domain_name='$(domain)'
 #
+
+
+##NAME: MARKER:0
+#
+# Do not remove this section from this configuration file. This section
+# must be present at the end of this file.

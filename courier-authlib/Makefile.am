@@ -110,12 +110,12 @@ libauthshadow_la_LDFLAGS=$(commonldflags)
 
 libauthpgsql_t=@PGSQL_LIBS@ @LIBM@ @NETLIBS@
 
-libauthpgsql_la_SOURCES=authpgsql.c preauthpgsql.c authpgsqllib.c authpgsql.h
+libauthpgsql_la_SOURCES=authpgsql.c authpgsqllib.cpp authpgsql.h
 libauthpgsql_la_DEPENDENCIES=$(commonlibdep)
 libauthpgsql_la_LIBADD=$(commonlibadd) $(libauthpgsql_t)
 libauthpgsql_la_LDFLAGS=$(commonldflags)
 
-authpgsqllib.lo: authpgsqllib.c authpgsqlrc.h
+authpgsqllib.lo: authpgsqllib.cpp authpgsqlrc.h
 
 if HAVE_AUTHPGSQL
 

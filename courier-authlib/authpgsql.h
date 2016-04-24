@@ -10,24 +10,15 @@
 /*
 #include	<errmsg.h>
 */
-struct authpgsqluserinfo {
-	char *username;
-	char *fullname;
-	char *cryptpw;
-	char *clearpw;
-	char *home;
-	char *maildir;
-	char *quota;
-	char *options;
-	uid_t uid;
-	gid_t gid;
-	} ;
 
-extern struct authpgsqluserinfo *auth_pgsql_getuserinfo(const char *,
-							const char *service);
+extern int auth_pgsql_login(const char *service, char *authdata,
+			    int (*callback_func)(struct authinfo *, void *),
+			    void *callback_arg);
+extern int auth_pgsql_changepw(const char *service, const char *user,
+			       const char *pass,
+			       const char *newpass);
+
 extern void auth_pgsql_cleanup();
-
-extern int auth_pgsql_setpass(const char *, const char *, const char *);
 
 struct authinfo;
 

@@ -153,6 +153,57 @@ bool courier::auth::config_file::open_and_load_file(bool reload)
 	return do_load();
 }
 
+bool courier::auth::config_file::getconfig(const char *name,
+					   std::string &value,
+					   bool required,
+					   const char *default_value) const
+{
+	std::map<std::string, std::string>::const_iterator
+		iter=parsed_config.find(name);
+
+	if (iter != parsed_config.end())
+	{
+		value=iter->second;
+		return true;
+	}
+
+	if (required)
+	{
+		courier_auth_err("%s not found in %s",
+				 name, filename);
+		return false;
+	}
+
+	value.clear();
+	if (default_value)
+		value=default_value;
+	return true;
+}
+
+template<>
+bool courier::auth::config_file::config(const char *name,
+					std::string &value,
+					bool required,
+					const char *default_value) const
+{
+	return getconfig(name, value, required, default_value);
+}
+
+std::string courier::auth::config_file::config(const char *name) const
+{
+	return config(name, 0);
+}
+
+std::string courier::auth::config_file::config(const char *name,
+					       const char *default_value) const
+{
+	std::string retval;
+
+	config(name, retval, false, default_value);
+
+	return retval;
+}
+
 std::string
 courier::auth::config_file::expand_string(const std::string &s,
 					  const std::map<std::string,

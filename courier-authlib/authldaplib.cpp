@@ -111,6 +111,9 @@ public:
 	uid_t uid;
 	gid_t gid;
 
+	std::string ldap_uri, ldap_binddn, ldap_bindpw, ldap_basedn;
+	int ldap_deref;
+
 	std::vector<std::string> auxoptions, auxnames;
 
 	authldaprc_file();
@@ -119,37 +122,6 @@ private:
 	bool do_load();
 	void do_reload();
 public:
-	template<typename value_type>
-	void operator()(const char *name,
-			value_type &value,
-			const char *default_value=0) const;
-
-	bool operator()(const char *name,
-			std::string &value,
-			const char *error_message,
-			bool required,
-			const char *default_value) const
-	{
-		std::map<std::string, std::string>::const_iterator
-			iter=parsed_config.find(name);
-
-		if (iter != parsed_config.end())
-		{
-			value=iter->second;
-			return true;
-		}
-
-		if (required)
-		{
-			courier_auth_err("%s", error_message);
-			return false;
-		}
-
-		value.clear();
-		if (default_value)
-			value=default_value;
-		return true;
-	}
 };
 
 /*
@@ -212,28 +184,6 @@ static int ldapconncheck()
 	return (1);
 }
 
-template<typename value_type>
-void authldaprc_file::operator()(const char *name,
-				 value_type &value,
-				 const char *default_value) const
-{
-	std::string string_value;
-
-	operator()(name, string_value, "", false, default_value);
-
-	std::istringstream i(string_value);
-
-	i >> value;
-}
-
-template<>
-void authldaprc_file::operator()(const char *name,
-				 std::string &value,
-				 const char *default_value) const
-{
-	operator()(name, value, "", false, default_value);
-}
-
 authldaprc_file::authldaprc_file()
 	: config_file(AUTHLDAPRC)
 {
@@ -245,19 +195,52 @@ bool authldaprc_file::do_load()
 
 	// Frequently-accessed variables.
 
-	timeout=5;
-	operator()("LDAP_TIMEOUT", timeout);
+	if (!config("LDAP_TIMEOUT", timeout, false, "5") ||
+	    !config("LDAP_TLS", tls, false, "0"))
+	{
+		loaded=false;
+	}
 
-	tls=0;
-	operator()("LDAP_TLS", tls);
+	if (!config("LDAP_URI", ldap_uri, true))
+	{
+		loaded=false;
+	}
 
+	ldap_deref=0;
+
+	std::string deref_setting;
+
+	config("LDAP_DEREF", deref_setting, false, "");
+
+	for (std::string::iterator p=deref_setting.begin();
+	     p != deref_setting.end(); ++p)
+		*p=std::tolower(*p);
+
+#ifdef LDAP_OPT_DEREF
+
+	ldap_deref=LDAP_DEREF_NEVER;
+
+	if (deref_setting == "never")
+		ldap_deref = LDAP_DEREF_NEVER;
+	else if (deref_setting == "searching")
+		ldap_deref = LDAP_DEREF_SEARCHING;
+	else if (deref_setting == "finding")
+		ldap_deref = LDAP_DEREF_FINDING;
+	else if (deref_setting == "always")
+		ldap_deref = LDAP_DEREF_ALWAYS;
+	else if (deref_setting != "")
+	{
+		loaded=false;
+		courier_auth_err("authldap: INVALID LDAP_OPT_DEREF");
+	}
+#endif
 	uid=0;
 	gid=0;
 
 	std::string uid_str, gid_str;
 
-	operator()("LDAP_GLOB_UID", uid_str);
-	operator()("LDAP_GLOB_GID", gid_str);
+	config("LDAP_GLOB_UID", uid_str, false);
+	config("LDAP_GLOB_GID", gid_str, false);
 
 	if (!uid_str.empty())
 	{
@@ -303,12 +286,20 @@ bool authldaprc_file::do_load()
 		}
 	}
 
-	operator()("LDAP_AUTHBIND", authbind);
-	operator()("LDAP_INITBIND", initbind);
+	if (!config("LDAP_AUTHBIND", authbind, false, "0")
+	    || !config("LDAP_INITBIND", initbind, false, "0")
+	    || !config("LDAP_BASEDN", ldap_basedn, true))
+		loaded=false;
 
-	protocol_version=0;
+	if (initbind)
+	{
+		if (!config("LDAP_BINDDN", ldap_binddn, true) ||
+		    !config("LDAP_BINDPW", ldap_bindpw, true))
+			loaded=false;
+	}
 
-	operator()("LDAP_PROTOCOL_VERSION", protocol_version);
+	if (!config("LDAP_PROTOCOL_VERSION", protocol_version, false, "0"))
+		loaded=false;
 
 	if (protocol_version)
 	{
@@ -333,7 +324,7 @@ bool authldaprc_file::do_load()
 
 	std::string auxoptions_str;
 
-	operator()("LDAP_AUXOPTIONS", auxoptions_str);
+	config("LDAP_AUXOPTIONS", auxoptions_str, "");
 
 	std::string::iterator p=auxoptions_str.begin();
 
@@ -427,13 +418,7 @@ bool ldap_connection::connect()
 {
 	if (connected()) return true;
 
-	std::string uri;
-
-	if (!authldaprc("LDAP_URI", uri,
-			"LDAP_URI not set in authldaprc", true, 0))
-		return false;
-
-	DPRINTF("authldaplib: connecting to %s", uri.c_str());
+	DPRINTF("authldaplib: connecting to %s", authldaprc.ldap_uri.c_str());
 
 	if (ldapconncheck())
 	{
@@ -441,12 +426,12 @@ bool ldap_connection::connect()
 		return (false);
 	}
 
-	ldap_initialize(&connection, uri.c_str());
+	ldap_initialize(&connection, authldaprc.ldap_uri.c_str());
 
 	if (connection==NULL)
 	{
 		courier_auth_err("cannot connect to LDAP server (%s): %s",
-				 uri.c_str(), strerror(errno));
+				 authldaprc.ldap_uri.c_str(), strerror(errno));
 		ldapconnfailure();
 	}
 #ifdef LDAP_OPT_NETWORK_TIMEOUT
@@ -481,29 +466,10 @@ bool ldap_connection::connect()
 		return false;
 	}
 
-	int deref=LDAP_DEREF_NEVER;
-
-	std::string deref_setting;
-
-	authldaprc("LDAP_DEREF", deref_setting);
-
-	for (std::string::iterator p=deref_setting.begin();
-	     p != deref_setting.end(); ++p)
-		*p=std::tolower(*p);
-
 #ifdef LDAP_OPT_DEREF
-
-	if (deref_setting == "never")
-		deref = LDAP_DEREF_NEVER;
-	if (deref_setting == "searching")
-		deref = LDAP_DEREF_SEARCHING;
-	if (deref_setting == "finding")
-		deref = LDAP_DEREF_FINDING;
-	if (deref_setting == "always")
-		deref = LDAP_DEREF_ALWAYS;
-
 	if (!ok("ldap_set_option",
-		ldap_set_option(connection, LDAP_OPT_DEREF, (void *)&deref)))
+		ldap_set_option(connection, LDAP_OPT_DEREF,
+				(void *)&authldaprc.ldap_deref)))
 	{
 		disconnect();
 		return (false);
@@ -542,33 +508,24 @@ static int ldapopen()
 
 	if (authldaprc.initbind)
 	{
-		std::string binddn, bindpw;
-
-		if (!authldaprc("LDAP_BINDDN", binddn,
-				"LDAP_BINDDN not set in authldaprc", true, 0)
-		    || !authldaprc("LDAP_BINDPW", bindpw,
-				   "LDAP_BINDPW not set in authldaprc", true,
-				   0))
-		{
-			authldapclose();
-			ldapconnfailure();
-			return -1;
-		}
-
 		/* Bind to server */
 		if (courier_authdebug_login_level >= 2)
 		{
 			DPRINTF("binding to LDAP server as DN '%s', password '%s'",
-				binddn.empty() ? "<null>":binddn.c_str(),
-				bindpw.empty() ? "<null>":bindpw.c_str());
+				authldaprc.ldap_binddn.empty() ? "<null>"
+				: authldaprc.ldap_binddn.c_str(),
+				authldaprc.ldap_bindpw.empty() ? "<null>"
+				: authldaprc.ldap_bindpw.c_str());
 		}
 		else
 		{
 			DPRINTF("binding to LDAP server as DN '%s'",
-				binddn.empty() ? "<null>":binddn.c_str());
+				authldaprc.ldap_binddn.empty() ? "<null>"
+				: authldaprc.ldap_binddn.c_str());
 		}
 
-		if (!main_connection.bind(binddn, bindpw))
+		if (!main_connection.bind(authldaprc.ldap_binddn,
+					  authldaprc.ldap_bindpw))
 		{
 			authldapclose();
 			ldapconnfailure();
@@ -590,7 +547,7 @@ public:
 	{
 		std::string value;
 
-		authldaprc(name, value, default_value);
+		authldaprc.config(name, value, false, default_value);
 
 		if (!value.empty())
 			attributes[value]=&return_value;
@@ -866,11 +823,11 @@ static void cpp_auth_ldap_enumerate( void(*cb_func)(const char *name,
 	std::string mail_field, uid_field, gid_field,
 		homedir_field, maildir_field;
 
-	authldaprc("LDAP_MAIL", mail_field, "mail");
-	authldaprc("LDAP_UID", uid_field);
-	authldaprc("LDAP_GID", gid_field);
-	authldaprc("LDAP_HOMEDIR", homedir_field, "homeDir");
-	authldaprc("LDAP_MAILDIR", maildir_field);
+	authldaprc.config("LDAP_MAIL", mail_field, false, "mail");
+	authldaprc.config("LDAP_UID", uid_field, false);
+	authldaprc.config("LDAP_GID", gid_field, false);
+	authldaprc.config("LDAP_HOMEDIR", homedir_field, false, "homeDir");
+	authldaprc.config("LDAP_MAILDIR", maildir_field, false);
 
 	std::vector<std::string> attribute_vector;
 
@@ -887,13 +844,13 @@ static void cpp_auth_ldap_enumerate( void(*cb_func)(const char *name,
 
 	std::string enumerate_filter;
 
-	authldaprc("LDAP_ENUMERATE_FILTER", enumerate_filter);
+	authldaprc.config("LDAP_ENUMERATE_FILTER", enumerate_filter, false);
 
 	if (enumerate_filter.empty())
 	{
 		std::string filter;
 
-		authldaprc("LDAP_FILTER", filter);
+		authldaprc.config("LDAP_FILTER", filter, false);
 
 		if (!filter.empty())
 		{
@@ -903,20 +860,14 @@ static void cpp_auth_ldap_enumerate( void(*cb_func)(const char *name,
 		{
 			std::string s;
 
-			authldaprc("LDAP_MAIL", s);
+			authldaprc.config("LDAP_MAIL", s, false);
 
 			enumerate_filter = s + "=*";
 		}
 	}
 
-	std::string basedn;
-
-	if (!authldaprc("LDAP_BASEDN", basedn,
-			"LDAP_BASEDN not set in authldaprc", true, 0))
-		return;
-
 	DPRINTF("ldap_search: basedn='%s', filter='%s'",
-		basedn.c_str(), enumerate_filter.c_str());
+		authldaprc.ldap_basedn.c_str(), enumerate_filter.c_str());
 
 	authldaprc_search_attributes search_attributes(attribute_vector);
 
@@ -925,7 +876,7 @@ static void cpp_auth_ldap_enumerate( void(*cb_func)(const char *name,
 	tv.tv_usec=0;
 
 	if (ldap_search_ext(main_connection.connection,
-			    basedn.c_str(),
+			    authldaprc.ldap_basedn.c_str(),
 			    LDAP_SCOPE_SUBTREE,
 			    enumerate_filter.c_str(),
 			    search_attributes.search_attributes(),
@@ -1097,7 +1048,7 @@ int authldap_lookup::operator()(int (*callback)(struct authinfo *, void *),
 
 	std::string filter;
 
-	authldaprc("LDAP_FILTER", filter);
+	authldaprc.config("LDAP_FILTER", filter, false);
 
 	if (!filter.empty())
 	{
@@ -1108,7 +1059,7 @@ int authldap_lookup::operator()(int (*callback)(struct authinfo *, void *),
 
 	std::string domain;
 
-	authldaprc("LDAP_DOMAIN", domain);
+	authldaprc.config("LDAP_DOMAIN", domain, false);
 
 	if (!domain.empty() &&
 	     std::find(user.begin(), user.end(), '@') == user.end())
@@ -1142,14 +1093,8 @@ int authldap_lookup::operator()(int (*callback)(struct authinfo *, void *),
 		all_attributes.push_back(authldaprc.auxoptions[i]);
 	}
 
-	std::string basedn;
-
-	if (!authldaprc("LDAP_BASEDN", basedn,
-			"LDAP_BASEDN not set in authldaprc", true, 0))
-		return -1;
-
 	authldaprc_search_result result(main_connection,
-					basedn,
+					authldaprc.ldap_basedn,
 					query_str,
 					all_attributes,
 					timeout);
@@ -1236,7 +1181,7 @@ int authldap_lookup::operator()(int (*callback)(struct authinfo *, void *),
 
 	std::string mailroot;
 
-	authldaprc("LDAP_MAILROOT", mailroot);
+	authldaprc.config("LDAP_MAILROOT", mailroot, false);
 
 	if (!homeDir.empty() && !mailroot.empty())
 	{
@@ -1517,12 +1462,11 @@ static int auth_ldap_try(const char *service,
 
 	std::string emailmap;
 
-	authldaprc("LDAP_EMAILMAP", emailmap);
+	authldaprc.config("LDAP_EMAILMAP", emailmap, false);
 
 	std::string mail;
 
-	if (!authldaprc("LDAP_MAIL", mail,
-			"LDAP_MAIL not set in authldaprc", true, 0))
+	if (!authldaprc.config("LDAP_MAIL", mail, false, "mail"))
 		return -1;
 
 	if (emailmap.empty() || at == user.end())
@@ -1550,21 +1494,15 @@ static int auth_ldap_try(const char *service,
 
 	attributes.push_back("");
 
-	authldaprc("LDAP_EMAILMAP_ATTRIBUTE", attributes[0]);
+	authldaprc.config("LDAP_EMAILMAP_ATTRIBUTE", attributes[0], false);
 
 	if (attributes[0].empty())
 		attributes[0]="handle";
 
 	std::string basedn;
 
-	authldaprc("LDAP_EMAILMAP_BASEDN", basedn);
-
-	if (basedn.empty())
-	{
-		if (!authldaprc("LDAP_BASEDN", basedn,
-				"LDAP_BASEDN not set in authldaprc", true, 0))
-			return -1;
-	}
+	if (!authldaprc.config("LDAP_EMAILMAP_BASEDN", basedn, true))
+		return -1;
 
 	authldaprc_search_result
 		lookup(main_connection,
@@ -1611,7 +1549,7 @@ static int auth_ldap_try(const char *service,
 
 	std::string attrname;
 
-	authldaprc("LDAP_EMAILMAP_MAIL", attrname);
+	authldaprc.config("LDAP_EMAILMAP_MAIL", attrname, false);
 
 	if (attrname.empty())
 	{

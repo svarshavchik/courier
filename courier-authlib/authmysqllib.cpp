@@ -70,17 +70,6 @@ public:
 
 		authmysql_connection &conn;
 
-		std::string config(const char *env,
-				   const char *default_value="")
-		{
-			std::map<std::string, std::string>::iterator
-				p=parsed_config.find(env);
-
-			if (p != parsed_config.end())
-				return p->second;
-			return default_value;
-		}
-
 	public:
 
 		authmysqlrc_file &operator=(const authmysqlrc_file &o)
