@@ -431,12 +431,12 @@ TLS_TRUSTCERTS=@cacerts@
 
 TLS_VERIFYPEER=NONE
 
-##NAME: TLS_CACHE:0
+##NAME: TLS_CACHE:1
 #
 # A TLS/SSL session cache may slightly improve response for SMTP clients
 # that open multiple SSL sessions to the server.  TLS_CACHEFILE will be
 # automatically created, TLS_CACHESIZE bytes long, and used as a cache
 # buffer.
 
-TLS_CACHEFILE=@localstatedir@/couriersslcache-client
+TLS_CACHEFILE=@localstatedir@/sslcache/couriersslcache-client
 TLS_CACHESIZE=524288

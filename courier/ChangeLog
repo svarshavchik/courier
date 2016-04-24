@@ -1,5 +1,11 @@
 0.76.0
 
+2016-04-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Enabled SSL session caching by default, for smtp servers/clients.
+	New default subdirectory, /var/spool/courier/track or
+	/usr/lib/courier/var/track, for cached SSL sessions.
+
 2016-04-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Stop using SSL2 and SSL3 openssl configuration methods.
