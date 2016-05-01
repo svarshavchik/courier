@@ -764,7 +764,7 @@ static bool docheckpw(authpgsql_userinfo &authinfo,
 	}
 	else if (!authinfo.clearpw.empty())
 	{
-		if (strcmp(pass, authinfo.clearpw.c_str()))
+		if (authinfo.clearpw != pass)
 		{
 			if (courier_authdebug_login_level >= 2)
 			{

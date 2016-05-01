@@ -31,20 +31,6 @@ extern char *crypt(const char *, const char *);
 
 static const char crypt_salt[65]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789./";
 
-static const char *crypt_hash(const char *pw)
-{
-	random128binbuf randbuf;
-	char salt[3];
-
-	random128_binary(&randbuf);
-
-	salt[0]=crypt_salt[ randbuf[0] % 64 ];
-	salt[1]=crypt_salt[ randbuf[1] % 64 ];
-	salt[2]=0;
-
-	return (crypt(pw, salt));
-}
-
 static const char *ssha_hash_int(const char *pw)
 {
 	random128binbuf randbuf;

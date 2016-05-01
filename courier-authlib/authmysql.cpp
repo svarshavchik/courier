@@ -44,7 +44,7 @@ static bool verify(const authmysqluserinfo &authinfo,
 	}
 	else if (authinfo.clearpw.size())
 	{
-		if (strcmp(pass, authinfo.clearpw.c_str()))
+		if (authinfo.clearpw != pass)
 		{
 			if (courier_authdebug_login_level >= 2)
 			{

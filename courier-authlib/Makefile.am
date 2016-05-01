@@ -48,7 +48,6 @@ commonlibadd=libcourierauthcommon.la
 libcourierauthcommon_t=@CRYPTLIBS@
 libcourierauthcommon_la_SOURCES= \
 	auth.h courierauth.h \
-	authgetconfig.c \
 	authconfigfile.cpp \
 	authconfigfile.h \
 	authpwdenumerate.c \
@@ -115,8 +114,6 @@ libauthpgsql_la_DEPENDENCIES=$(commonlibdep)
 libauthpgsql_la_LIBADD=$(commonlibadd) $(libauthpgsql_t)
 libauthpgsql_la_LDFLAGS=$(commonldflags)
 
-authpgsqllib.lo: authpgsqllib.cpp authpgsqlrc.h
-
 if HAVE_AUTHPGSQL
 
 install-authpgsqlrc:
@@ -182,8 +179,6 @@ libauthmysql_la_DEPENDENCIES=$(commonlibdep)
 libauthmysql_la_LIBADD=$(commonlibadd) $(libauthmysql_t)
 libauthmysql_la_LDFLAGS=$(commonldflags)
 
-authmysqllib.lo: authmysqllib.cpp authmysqlrc.h
-
 if HAVE_AUTHMYSQL
 install-authmysqlrc:
 	$(mkinstalldirs) $(DESTDIR)`dirname @authmysqlrc@` || :
@@ -210,12 +205,10 @@ authmysqlrc.h:
 
 libauthsqlite_t=@SQLITE_LIBS@ @NETLIBS@
 
-libauthsqlite_la_SOURCES=authsqlite.c preauthsqlite.c authsqlitelib.c authsqlite.h
+libauthsqlite_la_SOURCES=authsqlite.cpp authsqlitelib.cpp authsqlite.h
 libauthsqlite_la_DEPENDENCIES=$(commonlibdep)
 libauthsqlite_la_LIBADD=$(commonlibadd) $(libauthsqlite_t)
 libauthsqlite_la_LDFLAGS=$(commonldflags)
-
-authsqlitelib.lo: authsqlitelib.c authsqliterc.h
 
 if HAVE_AUTHSQLITE
 install-authsqliterc:
@@ -397,7 +390,8 @@ BUILT1=authlib.html authldaprc.h authmysqlrc.h authpgsqlrc.h authpiperc.h \
 	authchangepwdir.h sbindir.h \
 	pkglibdir.h pkgincludedir.h mailusergroup.h \
 	README_authlib.html
-BUILT_SOURCES=$(BUILT1) $(GITFILES) $(man3:%.3=%.html) $(man1:%.1=%.html)
+BUILT_SOURCES=$(BUILT1) $(GITFILES) $(man3:%.3=%.html) $(man1:%.1=%.html) \
+	authsqliterc.h authmysqlrc.h authpgsqlrc.h authldaprc.h
 
 authchangepwdir.h: config.status
 	echo '#define AUTHCHANGEPWDIR "$(pkglibexecdir)"' >authchangepwdir.h

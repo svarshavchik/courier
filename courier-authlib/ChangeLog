@@ -1,3 +1,9 @@
+2016-05-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* authsqlite, authmysql, authpgsql: Rewrite these modules in
+	modern C++. Autodetect and automatically reload the configuration
+	file when it's changed, no server restart is needed.
+
 2016-03-20  Giovanni Bechis <giovanni@openbsd.org>
 
 	* checkpassword.c (do_authcheckpassword): Check for a null return

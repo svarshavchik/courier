@@ -47,17 +47,6 @@ int auth_sys_common( int (*auth_pre_func)(const char *,
 		     int (*callback_func)(struct authinfo *, void *),
 		     void *callback_arg);
 
-const char *authgetconfig(const char *filename, const char *env);
-
-char *auth_parse_select_clause (char *(*escape_func)(const char *, size_t),
-				const char *clause, const char *username,
-				const char *defdomain,
-				const char *service);
-
-char *auth_parse_chpass_clause (char *(*escape_func)(const char *, size_t),
-				const char *clause, const char *username,
-				const char *defdomain, const char *newpass,
-				const char *newpass_crypt);
 
 #ifdef	__cplusplus
 }
