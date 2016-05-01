@@ -642,13 +642,13 @@ bool authmysql_connection::setpass(const char *user, const char *pass,
 
 		o << "UPDATE " << config_file.user_table << " SET ";
 
-		if (config_file.clear_field.size())
+		if (config_file.clear_field != "''")
 			o << config_file.clear_field << "='"
 			  << clear_escaped << "'";
 
-		if (config_file.crypt_field.size())
+		if (config_file.crypt_field != "''")
 		{
-			if (config_file.clear_field.size()) o << ", ";
+			if (config_file.clear_field != "''") o << ", ";
 			o << config_file.crypt_field << "='" << crypt_escaped << "'";
 		}
 

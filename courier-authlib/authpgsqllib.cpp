@@ -42,14 +42,6 @@ public:
 	gid_t gid;
 	} ;
 
-typedef int (*parsefunc)(const char *, size_t, void *);
-struct var_data {
-	const char *name;
-	const char *value;
-	const size_t size;
-	} ;
-
-
 class authpgsql_connection {
 
 	time_t last_time;
@@ -198,7 +190,8 @@ public:
 
 			defdomain=config("DEFAULT_DOMAIN");
 
-			if (select_clause.empty() || chpass_clause.empty())
+			if (select_clause.empty() || chpass_clause.empty() ||
+			    enumerate_clause.empty())
 			{
 				if (!config("PGSQL_USER_TABLE", user_table, true))
 					return false;
@@ -413,7 +406,9 @@ bool authpgsql_connection::getuserinfo(authpgsql_userinfo &uiret,
 		  << config_file.uid_field << ", "
 		  << config_file.gid_field << ", "
 		  << config_file.home_field << ", "
-		  << config_file.maildir_field << ", "
+		  << (strcmp(service, "courier") == 0 ?
+		      config_file.defaultdelivery_field
+		      :config_file.maildir_field) << ", "
 		  << config_file.quota_field << ", "
 		  << config_file.name_field << ", "
 		  << config_file.options_field
@@ -550,17 +545,17 @@ bool authpgsql_connection::setpass(const char *user, const char *pass,
 
 		o << "UPDATE " << config_file.user_table
 		  << " SET ";
-		if (!config_file.clear_field.empty())
+		if (config_file.clear_field != "''")
 		{
 			o << config_file.clear_field << "='"
 			  << clear_escaped
 			  << "'";
 
-			if (!config_file.crypt_field.empty())
+			if (config_file.crypt_field != "''")
 				o << ", ";
 		}
 
-		if (!config_file.crypt_field.empty())
+		if (config_file.crypt_field != "''")
 		{
 			o << config_file.crypt_field << "='"
 			  << crypt_escaped
