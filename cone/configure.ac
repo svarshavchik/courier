@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 #
-# Copyright 2003-2015, Double Precision Inc.
+# Copyright 2003-2016, Double Precision Inc.
 #
 # See COPYING for distribution information.
 #
 AC_PREREQ(2.59)
-AC_INIT(cone,0.92,[courier-cone@lists.sourceforge.net])
+AC_INIT(cone,0.93,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)

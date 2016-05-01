@@ -1,3 +1,11 @@
+0.76.1
+	* Fix OpenSSL TLS SNI support.
+
+	* couriertls: remove debugging message.
+
+	* Update default TLS settings in courierd and esmtpd config files,
+	mostly removing obsoleted settings.
+
 0.76.0
 
 2016-04-23  Sam Varshavchik  <mrsam@courier-mta.com>

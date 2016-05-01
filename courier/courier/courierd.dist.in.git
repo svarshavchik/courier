@@ -365,17 +365,6 @@ ESMTP_PREFER_IPV6_MX=1
 # This is supposed to be an inactivity timeout, but its not yet implemented.
 #
 
-##NAME: TLS_DHCERTFILE:0
-#
-# TLS_DHCERTFILE - PEM file that stores a Diffie-Hellman -based certificate.
-# Use this setting instead of TLS_CERTFILE when using a DH client certificate
-# instead of an RSA client certificate.
-#
-# This setting must be set when Courier uses a smarthost that requires
-# SMTP SSL certificates for authentication and relaying privileges.
-#
-# TLS_DHCERTFILE=
-
 ##NAME: TLS_CERTFILE:0
 #
 # TLS_CERTFILE - client SSL certificate

@@ -145,13 +145,14 @@ COURIERTLS=@bindir@/couriertls
 #
 # OpenSSL:
 #
-# SSL3 - SSLv3
-# SSL23 - all protocols (including TLS 1.x protocols)
-# TLS1 - TLS1
+# TLSv1 - TLS1
 # TLSv1.1 - TLS1.1
 # TLSv1.2 - TLS1.2
 #
-# Leave it unset to use any protocol except SSL 2.
+# TLSv1+, TLSv1.1+, and TLSv1.2+ - the corresponding protocol, and all
+# higher protocols.
+#
+# The default value is TLSv1+
 
 ##NAME: TLS_CIPHER_LIST:0
 #
@@ -163,57 +164,19 @@ COURIERTLS=@bindir@/couriertls
 #
 # TLS_CIPHER_LIST="TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
 #
-# GnuTLS:
 #
-# TLS_CIPHER_LIST="HIGH:MEDIUM"
-#
-# The actual list of available ciphers depend on the options GnuTLS was
-# compiled against. The possible ciphers are:
-#
-# AES256, 3DES, AES128, ARC128, ARC40, RC2, DES, NULL
-#
-# Also, the following aliases:
-#
-# HIGH -- all ciphers that use more than a 128 bit key size
-# MEDIUM -- all ciphers that use a 128 bit key size
-# LOW -- all ciphers that use fewer than a 128 bit key size, the NULL cipher
-#        is not included
-# ALL -- all ciphers except the NULL cipher
-#
-# See GnuTLS documentation, gnutls_priority_init(3) for additional
-# documentation.
 
-##NAME: TLS_KX_LIST:0
+##NAME: TLS_MIN_DH_BITS:0
+#
+# TLS_MIN_DH_BITS=n
 #
 # GnuTLS only:
 #
-# Allowed key exchange protocols. The default of "ALL" should be sufficient.
-# The list of supported key exchange protocols depends on the options GnuTLS
-# was compiled against, but may include the following:
+# Set the minimum number of acceptable bits for a DH key exchange.
 #
-# DHERSA, DHEDSS, RSA, SRP, SRPRSA, SRPDSS, PSK, DHEPSK, ANONDH, RSAEXPORT
-
-TLS_KX_LIST=ALL
-
-##NAME: TLS_COMPRESSION:0
-#
-# GnuTLS only:
-#
-# Optional compression. "ALL" selects all available compression methods.
-#
-# Available compression methods: DEFLATE, LZO, NULL
-
-TLS_COMPRESSION=ALL
-
-##NAME: TLS_CERTS:0
-#
-# GnuTLS only:
-#
-# Supported certificate types are X509 and OPENPGP.
-#
-# OPENPGP has not been tested
-
-TLS_CERTS=X509
+# GnuTLS's compiled-in default is 727 bits (as of GnuTLS 1.6.3). Some server
+# have been encountered that offer 512 bit keys. You may have to set
+# TLS_MIN_DH_BITS=512 here, if necessary.
 
 ##NAME: TLS_TIMEOUT:0
 # TLS_TIMEOUT is currently not implemented, and reserved for future use.

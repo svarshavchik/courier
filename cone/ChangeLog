@@ -1,6 +1,12 @@
+0.93
+
 2016-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Add support for the TLS SNI extension, when built with OpenSSL.
+	Drop support for SSL3.
+
+	* Update config settings in cone.dist to reflect the updated
+	TLS library support.
 
 0.92
 

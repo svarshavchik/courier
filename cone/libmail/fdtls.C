@@ -46,9 +46,6 @@ void mail::fdTLS::free_tls_client_certs(void *vp)
 
 const char *mail::fdTLS::get_tls_config_var(const char *varname)
 {
-	if (strcmp(varname, "TLS_PROTOCOL") == 0 && tlsflag)
-		varname="TLS_STARTTLS_PROTOCOL";
-
 	if (strcmp(varname, "TLS_VERIFYPEER") == 0)
 	{
 		if (domain.size() == 0)
