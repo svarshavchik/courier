@@ -1555,7 +1555,7 @@ static void decode(const std::vector<mail::address> &addrs,
 			wc.tounicode(s_wc);
 		}
 
-		if (!first && current_line_width 
+		if (!first && current_line_width
 		    + comma.size() + addr_width > width)
 		{
 			current_line.insert(current_line.end(),
@@ -2212,7 +2212,7 @@ void CursesMessage::reply()
 
 
 		std::string value=std::string(value_start, value_end);
-		
+
 		if (name == "newsgroups:")
 		{
 			newsgroups=value;
@@ -3084,7 +3084,7 @@ mail::folder *CursesMessage::getSendFolder(mail::smtpInfo &smtpInfo,
 
 			loginPrompt.myCallback= &callback;
 			loginInfo.loginCallbackObj= &loginPrompt;
-			
+
 			if (myServer::smtpServerPassword.size() > 0)
 				pwd=myServer::smtpServerPassword;
 			else if (!PasswordList::passwordList
@@ -3393,7 +3393,7 @@ bool CursesMessage::getSendInfo2(std::string promptStr,
 		}
 
 		std::string notifyString="";
-			
+
 		if (dsnSuccess)
 		{
 			if (notifyString.size() > 0)
@@ -3554,7 +3554,7 @@ public:
 
  	int input_func(char *buf, size_t cnt);
 	void output_func(const char *output, size_t nbytes);
-	
+
 
 };
 
@@ -3761,13 +3761,13 @@ bool CursesMessage::decrypt(std::string passphrase, std::vector<std::string> &op
 			gi.passphrase_fd=passphrase_fd.c_str();
 		}
 
-		gi.input_func= &tempSaveText.input_func;
+		gi.input_func= &DecryptSaveText::input_func;
 		gi.input_func_arg= &tempSaveText;
 
-		gi.output_func= &tempSaveText.output_func;
+		gi.output_func= &DecryptSaveText::output_func;
 		gi.output_func_arg= &tempSaveText;
 
-		gi.errhandler_func= &tempSaveText.err_func;
+		gi.errhandler_func= &DecryptSaveText::err_func;
 		gi.errhandler_arg= &tempSaveText;
 
 		opts.push_back(std::string("--no-tty"));

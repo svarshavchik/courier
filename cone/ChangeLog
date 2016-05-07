@@ -1,5 +1,9 @@
 0.93
 
+2016-05-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cursesscreen.C: fix compilation error.
+
 2016-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Add support for the TLS SNI extension, when built with OpenSSL.
