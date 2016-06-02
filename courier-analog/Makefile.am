@@ -68,17 +68,8 @@ upload-beta:
 distrelease:
 	$(MAKE) -$(MAKEFLAGS) distcheck
 	$(MAKE) -$(MAKEFLAGS) rpm
-	socksify cvs commit
-	socksify cvs tag -F courier-analog-latest
-	$(MAKE) -$(MAKEFLAGS)
-	$(MAKE) -$(MAKEFLAGS)
-	rm -f courier-analog.spec
 	$(MAKE) -$(MAKEFLAGS) courier-analog.spec
 	$(MAKE) -$(MAKEFLAGS) dist
-
-tagrelease:
-	socksify cvs rtag -F -r courier-analog-latest \
-               `echo courier-analog-@VERSION@ | tr '.' '-'` courier-analog
 
 upload-dist:
 	test -z "$(SFPASSWD)" && exit 1; exit 0
