@@ -1,17 +1,17 @@
 #! @PERL@
 #
 #
-# Copyright 2004-2007 Double Precision, Inc.  See COPYING for
+# Copyright 2004-2016 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 # Courier log analyzer
 
 use strict;
 use Getopt::Long;
+use Math::BigInt;
 
 BEGIN
 {
-    require Math::BigInt;
     die "Need at least Math::BigInt v1.68"
         unless ($Math::BigInt::VERSION || 0) >= 1.68;
 }
@@ -179,7 +179,7 @@ sub track_conn {
     my $ip=shift @_; # IP address
     my $line=shift @_; # Entire log line
 
-    
+
 # Compute the IP's network name, and record this connection for this network.
 
     my $ip_detail=$$hash{"ip"};  # Network detail of the hash.
@@ -219,7 +219,7 @@ sub track_esmtp_err {
     }
 
 # Keep track of errors with the same return address.
-    
+
     my $senderhash=$$hash{"sender"};
     $$senderhash{$sender}=[] unless defined $$senderhash{$sender};
     push @{$$senderhash{$sender}}, $record;
@@ -264,7 +264,7 @@ sub track_esmtp_err {
     if ($msgtype =~ /^(511) ([\w\s]+) (- see |See: )?http:\/\/([\w\d\.\-]+)\/?/) {
 	$msgtype = "$1 Blocked by $4 : $2" ;
     }
- 
+
     my $errmsghash=$$hash{"msg"};
     $$errmsghash{$msgtype}=[] unless defined $$errmsghash{$msgtype};
     push @{$$errmsghash{$msgtype}}, $record;
@@ -771,12 +771,15 @@ sub report_conn {
 	. "</tr></tbody></table></body></html>\n";
     close (INDEX);
 
-    mkdir ("$htmldir/smtpbynet", 0777);
-    mkdir ("$htmldir/smtpbytime", 0777);
-    mkdir ("$htmldir/imapbynet", 0777);
-    mkdir ("$htmldir/imapbytime", 0777);
-    mkdir ("$htmldir/pop3bynet", 0777);
-    mkdir ("$htmldir/pop3bytime", 0777);
+    if ($html)
+    {
+	mkdir ("$htmldir/smtpbynet", 0777);
+	mkdir ("$htmldir/smtpbytime", 0777);
+	mkdir ("$htmldir/imapbynet", 0777);
+	mkdir ("$htmldir/imapbytime", 0777);
+	mkdir ("$htmldir/pop3bynet", 0777);
+	mkdir ("$htmldir/pop3bytime", 0777);
+    }
 
     gen_report_frame($htmldir, "smtpbynet.html", "smtpbynetindex.html");
     gen_report($net_fd, $$smtp_hash{"ip"},
@@ -870,10 +873,13 @@ sub report_smtperr {
     my $htmldir=shift @_;
     my $err_fd=shift @_;
 
-    mkdir("$htmldir/smtperrbynet", 0777);
-    mkdir("$htmldir/smtperrbyfrom", 0777);
-    mkdir("$htmldir/smtperrbyto", 0777);
-    mkdir("$htmldir/smtperrbymsg", 0777);
+    if ($html)
+    {
+	mkdir("$htmldir/smtperrbynet", 0777);
+	mkdir("$htmldir/smtperrbyfrom", 0777);
+	mkdir("$htmldir/smtperrbyto", 0777);
+	mkdir("$htmldir/smtperrbymsg", 0777);
+    }
 
     gen_report_frame($htmldir, "smtperrbynet.html", "smtperrbynetindex.html");
     gen_report($err_fd, $$hash{"ip"},
@@ -992,7 +998,7 @@ sub report_smtpout_2 {
 sub report_smtpout_3 {
     my ($hash, $title, $htmldir, $htmlsubdir, $txt_fd)=@_;
 
-    mkdir("$htmldir/$htmlsubdir", 0777);
+    mkdir("$htmldir/$htmlsubdir", 0777) if $html;
     print MAIN "<td>";
     gen_report_2($txt_fd, $hash, remove_noise($hash),
 		 $DEFAULT_SORT_ORDER, $title, $htmldir,
@@ -1058,9 +1064,12 @@ sub report_user {
     my $byxfer_fd=shift @_;
     my $bylength_fd=shift @_;
 
-    mkdir ($htmldir . "/$lname" . "byuser", 0777);
-    mkdir ($htmldir . "/$lname" . "byxfer", 0777);
-    mkdir ($htmldir . "/$lname" . "bylength", 0777);
+    if ($html)
+    {
+	mkdir ($htmldir . "/$lname" . "byuser", 0777);
+	mkdir ($htmldir . "/$lname" . "byxfer", 0777);
+	mkdir ($htmldir . "/$lname" . "bylength", 0777);
+    }
 
     my $noise=remove_noise($hash);
     my @extra_indexcols=("Length","Headers","Body","Total","Avg Length","Avg headers","Avg body","Avg");
@@ -1214,7 +1223,7 @@ while (<>)
     my $logrecord=[$line, $linenum];
 
     if (/^(...............)[^:]*(imapd|pop3d)(-ssl)?[\[\]\d]*:\s*(.*)/)
-    {	
+    {
 	my ($timestamp,$service,$msg)=($1,$2,$4);
 	my $conn= $service eq "imapd" ? \%CONN_IMAP:\%CONN_POP3;
 

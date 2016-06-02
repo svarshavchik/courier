@@ -1,3 +1,10 @@
+0.17
+
+2016-06-02  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-analog.in: Fix inadvertent creation of empty directories
+	in root, if --html is not specified.
+
 0.16
 
 2009-09-23  Alessandro Vesely <vesely@tana.it>
@@ -55,4 +62,3 @@
 2004-09-05  Mr. Sam  <mrsam@courier-mta.com>
 
 	* all: Initial release.
-

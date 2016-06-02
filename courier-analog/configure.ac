@@ -1,9 +1,9 @@
 #
-# Copyright 2004-2009 Double Precision, Inc.  See COPYING for
+# Copyright 2004-2016 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-analog, 0.16, [courier-users@lists.sourceforge.net])
+AC_INIT(courier-analog, 0.17, [courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 LPATH="$PATH:/usr/local/bin"
 
