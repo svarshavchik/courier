@@ -1,3 +1,8 @@
+2016-06-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/libs/lcrewrite.c (rw_syntaxchk): Allow consecutive ! and %
+	characters in email addresses.
+
 0.76.1
 	* Fix OpenSSL TLS SNI support.
 

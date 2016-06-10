@@ -46,7 +46,7 @@ int rw_syntaxchk(struct rfc822token *t)
 int	cnt;
 
 	/*
-	** The following tokens:  ! @ % : . may NOT:
+	** The following tokens:  @ : . may NOT:
 	**
 	** a) appear next to each other, and b) appear at the beginning or
 	** the end of the address.
@@ -65,9 +65,7 @@ int	cnt;
 		case '(':
 		case ')':
 			return (-1);	/* These cannot appear anywhere */
-		case '!':
 		case '@':
-		case '%':
 		case ':':
 		case '.':
 			if (++cnt > 1)	return (-1);
@@ -141,4 +139,3 @@ void rw_rewrite_chksyn_at_ok_print(struct rw_info *info)
 
 	do_rw_rewrite_chksyn_print(info, t);
 }
-
