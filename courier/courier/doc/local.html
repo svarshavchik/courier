@@ -4,22 +4,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="content-type" content=
-  "text/html; charset=utf-8" />
+  "text/html; charset=us-ascii" />
   <meta name="MSSmartTagsPreventParsing" content="TRUE" />
-  <meta name="author" content="Mr. Sam"/>
+  <meta name="author" content="Sam Varshavchik" />
 
   <title>The local module</title>
-  <!-- Copyright 2000-2002 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2000-2016 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
   <link rel="icon" href="icon.gif" type="image/gif" />
 </head>
 
 <body>
-  <h2>The <code>local</code> module</h2>- support for delivering
-  and originating messages on the local machine.
+  <h2>The <code>local</code> module</h2>
 
-  <h3>Configuration files</h3><code>defaulthost</code> - default
-  hostname after the @. Defaults to me.
+  <p>Support for delivering and originating messages on the local
+  machine.</p>
+
+  <h3>Configuration files</h3>
+
+  <p><code>defaulthost</code> - default hostname after the @.
+  Defaults to me.</p>
 
   <p><code>virtualdomains</code> - virtual domains. Each line is of
   the form domain.tld&lt;tab&gt;user</p>
@@ -31,8 +35,10 @@
   (trailing / should NOT be specified!). mailbox may also start
   with a |, to specify a program to pipe the message to.</p>
 
-  <h3>The default default</h3>As the last resort, local will
-  attempt to deliver messages to:
+  <h3>The default default</h3>
+
+  <p>As the last resort, local will attempt to deliver messages
+  to:</p>
 
   <p>A) maildrop, if maildrop is detected during compilation<br />
   B) procmail, if procmail is detected during compilation<br />
@@ -49,22 +55,23 @@
   COURIER=foo.&nbsp; If there is no dash extension, procmail will
   be run with COURIER=-</p>
 
-  <p>maildrop ...<br />
-  &nbsp;</p>
+  <p>maildrop ...</p>
 
-  <h2>Shared library</h2><code>rewritedel</code> - if domain is
-  listed in locals or virtualdomains, will accept delivery. If
-  domain is in virtualdomains, prepends 'user-' to the local part
-  of the address, then works with the local part from then on. If
-  the local part is a valid userid, accepts delivery, otherwise if
-  the local part is user-foo, strips off the foo, and tries again
-  to check for the valid userid. If a valid userid is found, after
+  <h2>Shared library</h2>
+
+  <p><code>rewritedel</code> - if domain is listed in locals or
+  virtualdomains, will accept delivery. If domain is in
+  virtualdomains, prepends 'user-' to the local part of the
+  address, then works with the local part from then on. If the
+  local part is a valid userid, accepts delivery, otherwise if the
+  local part is user-foo, strips off the foo, and tries again to
+  check for the valid userid. If a valid userid is found, after
   stripping one or more portions, takes what was removed, "-foo",
   or maybe even "-foo-bar", prepends ".courier", and checks if the
   file exists in user's home. If not, error, mailbox not found.
   Otherwise the 'host' parameter is the userid, and the 'address'
   parameter is the extension of the courier file, or just a "-" for
-  <code>$HOME/.courier</code>.
+  <code>$HOME/.courier</code>.</p>
 
   <p>Rewrite function:</p>
 
@@ -73,11 +80,10 @@
   <code>local.defaulthost</code> - appends @defaulthost, if domain
   name is missing.</p>
 
-  <h2>Output module</h2>setuids to the user indicated in the host
-  parameter.
+  <h2>Output module</h2>
 
-  <p>If <code>$HOME</code> has the sticky bit set, defers the
-  mail.</p>
+  <p>setuids to the user indicated in the host
+  parameter.&lt;/\p&gt;</p>
 
   <p>attempts to open and read delivery instructions from .courier
   file specified by the address parameter. If can't open the file,
