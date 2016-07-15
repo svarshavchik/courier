@@ -1,3 +1,8 @@
+2016-07-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-sox.spec.in (BuildRequires): gdbm-devel is required for
+	building.
+
 0.12
 
 2013-10-05  Sam Varshavchik  <mrsam@courier-mta.com>
@@ -160,4 +165,3 @@
 2004-07-11  Mr. Sam  <mrsam@courier-mta.com>
 
 	* Initial release.
-

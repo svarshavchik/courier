@@ -28,6 +28,7 @@ Source0: %{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: libtool
 BuildRequires: courier-authlib-devel
+BuildRequires: gdbm-devel
 BuildRequires: /usr/include/ltdl.h
 
 %description
@@ -108,7 +109,7 @@ if ls /lib*/security/pam_stack.so 2>/dev/null >/dev/null
 then
   cat >$RPM_BUILD_ROOT%{_sysconfdir}/pam.d/socks <<EOF
 #%PAM-1.0
- 
+
 auth       required     pam_nologin.so
 auth       required     pam_stack.so service=system-auth
 account    required     pam_stack.so service=system-auth
@@ -117,7 +118,7 @@ EOF
 else
   cat >$RPM_BUILD_ROOT%{_sysconfdir}/pam.d/socks <<EOF
 #%PAM-1.0
- 
+
 auth       required     pam_nologin.so
 auth       include      system-auth
 account    include      system-auth
@@ -215,4 +216,3 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Jul 11 2004 Mr. Sam <sam@email-scan.com> - sox-1
 - Initial build.
-
