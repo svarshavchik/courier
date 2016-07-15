@@ -867,6 +867,9 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 			if (firstword == admin_keywords[n])
 				adminrequest=1;
 		}
+
+		if (buf.size() > 0)
+			first_line=0;
 	}
 
 	fs.flush();
