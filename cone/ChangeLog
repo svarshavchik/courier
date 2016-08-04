@@ -1,3 +1,11 @@
+0.94
+
+2016-08-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libmail/copymessage.C (fetchText): Do not set reset message date
+	to start of epoch if the message being copied does not have neither
+	the Date: nor the Received: header.
+
 0.93
 
 2016-05-07  Sam Varshavchik  <mrsam@courier-mta.com>

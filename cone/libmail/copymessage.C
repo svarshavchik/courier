@@ -234,7 +234,8 @@ void mail::copyMessage::fetchText()
 			return;
 
 		ptr->messageInfo=messageInfo;
-		ptr->messageDate=arrivalDate;
+		if (arrivalDate != 0)
+			ptr->messageDate=arrivalDate;
 
 	} catch (...) {
 		callback.fail("An exception occurred while copying messages.  The copy is aborted.");
