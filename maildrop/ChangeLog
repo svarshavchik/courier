@@ -1,3 +1,10 @@
+2.8.4
+
+2016-08-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* reformime: do not abort due to invalid encoding of the "name"
+	attributes.
+
 2015-12-20  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: implement the FLAGS variable.

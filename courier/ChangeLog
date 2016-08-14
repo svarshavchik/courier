@@ -1,3 +1,12 @@
+0.76.2
+
+2016-08-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* reformime: do not abort due to invalid encoding of the "name"
+	attributes.
+
+	* imapd.c (do_folder_delete): Fix check for DELETE INBOX.
+
 2016-07-14  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/cmlm.C (savemsg): Have NOBOZOS only look for commands on
