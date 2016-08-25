@@ -248,7 +248,7 @@ source code tarball by following the procedure outlined in <ulink
 url="http://www.courier-mta.org/FAQ.html#rpm">http://www.courier-mta.org/FAQ.html#rpm</ulink>
 using the <quote>courier-sox-<replaceable>version</replaceable></quote>
 tarball, and installing the
-<quote>courier-sox</quote> and 
+<quote>courier-sox</quote> and
 <quote>courier-sox-devel</quote> binary RPMs afterwards.</para>
 
 	  <para>
@@ -377,38 +377,28 @@ files should be installed.</para>
 	</varlistentry>
 
 	<varlistentry>
-	  <term><parameter>--with-certdb</parameter>,
-<parameter>--without-certdb</parameter>,
-<parameter>--with-certdb=<replaceable>filename</replaceable></parameter></term>
+	  <term>
+	    <parameter>--with-certdb=<replaceable>pathname</replaceable></parameter>
+	  </term>
 
 	  <listitem>
 	    <para>
-Install or do not install a default set of trusted SSL certificate authorities.
-When using SSL &app; normally checks the server's SSL certificate, which
-must be signed by a trusted certificate authority.
-&app;'s source distribution includes the same list of trusted certificate
-authorities as the
-<ulink url="http://www.mozilla.org"><application>Mozilla</application></ulink>
-browser.
-&app;'s certificate list is installed by default, unless
-<ulink url="http://www.courier-mta.org"><application>Courier</application></ulink>
-is also installed, in which case &app;'s default configuration
-points to <application>Courier</application>'s <filename>rootcerts</filename>
-directory (which contains the same certificate as &app;'s).</para>
-
-	    <para>
-<parameter>--with-certdb</parameter> installs &app;'s trusted SSL certificate
-authority list, even if <application>Courier</application> is also installed,
-in <filename>/usr/local/share/cone/rootcerts</filename> (which is derived
-from the <parameter>--datadir</parameter> default option, as
-explained by
-<command>./configure --help</command>).
-<parameter>--with-certdb=<replaceable>filename</replaceable></parameter>
-installs the
-trusted SSL certificate authority list in the directory
-<replaceable>filename</replaceable>.
-<parameter>--without-certdb</parameter> does not install &app;'s
-trusted SSL certificate authority list.</para>
+	      Sets a non-default location for the systemwide trusted SSL
+	      certificate authorities.
+	      If not specified, a default list of directories and files is
+	      searched for:
+	    </para>
+	    <itemizedlist>
+	      <listitem>
+		<filename>/etc/ssl/certs</filename>
+	      </listitem>
+	      <listitem>
+		<filename>/etc/ssl/cert.pem</filename>
+	      </listitem>
+	      <listitem>
+		<filename>/etc/pki/tls/cert.pem</filename>
+	      </listitem>
+	    </itemizedlist>
 	  </listitem>
 	</varlistentry>
 
@@ -502,27 +492,15 @@ with
       </section>
 
       <section>
-	<title>CVS Source checkouts</title>
+	<title>Git repository</title>
 
 	<para>
-It is also possible to check out the source from CVS, however additional
+It is also possible to check out the source from git, however additional
 requirements apply.
 Besides the usual prerequisites for building &app;, additional development
 software must be installed.
-See the <quote>Download via CVS</quote> instructions at
-<ulink url="http://www.courier-mta.org/status.html">http://www.courier-mta.org/status.html</ulink>.
-&app; has the same requirements as <application>Courier</application>
-for CVS builds (technically, &app; does not need libtool, but that may
-change in the future).
-Make sure that the prerequisite software is installed, then check out the
-<quote>&app;</quote> module from CVS, tagged at revision
-<quote>&app;-latest</quote>.
-The <literal>HEAD</literal> may be checked out, but carries more of the usual
-risks.</para>
-
-	<para>
-After the module is checked out, run the <filename>autobloat</filename>
-shell script to rebuild the autoconf/automake scripts.</para>
+See the <quote>Source code repository</quote> instructions at
+<ulink url="http://www.courier-mta.org/status.html">http://www.courier-mta.org/status.html</ulink>.</para>
       </section>
     </section>
 
@@ -559,7 +537,7 @@ time.</para>
 	  <para>
 	    <ulink url="http://www.gnu.org/software/libidn/">Libidn</ulink>;
 	    although &app; will compile without it, internationalized domain
-	    names will not be shown properly. 
+	    names will not be shown properly.
 	  </para>
 	</listitem>
 

@@ -2137,7 +2137,7 @@ for one week.</para>
 	  </listitem></varlistentry>
 
 	<varlistentry>
-	  <term><filename>retryalpha, retrybeta, retrygamma, retrydelta</filename></term>
+	  <term><filename>retryalpha, retrybeta, retrygamma, retrymaxdelta</filename></term>
 	  <listitem>
 
 	    <para>
