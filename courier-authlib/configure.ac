@@ -741,6 +741,8 @@ saveLIBS="$LIBS"
 LIBS="$CRYPTLIBS $LIBS"
 AC_CHECK_FUNC(crypt, AC_DEFINE_UNQUOTED(HAVE_CRYPT, 1,
 		     [ Whether we have the crypt() function ]))
+AC_CHECK_FUNC(bcrypt, AC_DEFINE_UNQUOTED(HAVE_BCRYPT, 1,
+		     [ Whether we have the bcrypt() function ]))
 LIBS="$saveLIBS"
 AC_CACHE_CHECK([for crypt() prototype],userdb_cv_NEED_CRYPT_PROTOTYPE,
 

@@ -33,6 +33,9 @@
 #include	"libhmac/hmac.h"
 #endif
 
+#if	HAVE_BCRYPT
+#include	<pwd.h>
+#endif
 #include	<string.h>
 #include	<stdio.h>
 #include	<signal.h>
@@ -102,6 +105,7 @@ int	n=1;
 int	md5=0;
 char	buf[BUFSIZ];
 char	salt[9];
+char	*cryptsalt;
 #if	HAVE_HMAC
 struct hmac_hashinfo	*hmac=0;
 #endif
@@ -243,7 +247,11 @@ struct hmac_hashinfo	*hmac=0;
 	}
 #endif
 
-#if	HAVE_CRYPT
+#if	HAVE_BCRYPT
+	cryptsalt=bcrypt_gensalt(8);
+	printf("%s\n", crypt(buf, cryptsalt));
+	fflush(stdout);
+#elif	HAVE_CRYPT
 	printf("%s\n", crypt(buf, salt));
 	fflush(stdout);
 #endif

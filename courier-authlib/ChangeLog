@@ -1,3 +1,7 @@
+2016-09-04  Giovanni Bechis <giovanni@paclan.it>
+
+	* userdb/userdbpw.c (main): Use bcrypt_gensalt() on OpenBSD
+
 2016-05-07  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* authsqlite, authmysql, authpgsql: Rewrite these modules in
