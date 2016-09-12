@@ -1,3 +1,8 @@
+2016-09-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/courieresmtpd.c (main): Allow NOOP before
+	authentication takes place if authentication is required.
+
 0.76.2
 
 2016-08-03  Sam Varshavchik  <mrsam@courier-mta.com>

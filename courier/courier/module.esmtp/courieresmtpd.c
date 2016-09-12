@@ -167,7 +167,7 @@ EHLO_SECURITY_EXTENSION
 const char *me=config_me();
 const char *p, *q;
 
-	if (helobuf[0] == 0) 
+	if (helobuf[0] == 0)
 	{
 		char *p;
 
@@ -1390,6 +1390,13 @@ int	authenticated=0;
 			continue;
 		}
 
+		if (strncmp(line, "NOOP", 4) == 0)
+		{
+			addiovec("250 Ok\r\n", 8);
+			iovflush();
+			continue;
+		}
+
 		if (auth_required && !authenticated && strcmp(line, "RSET"))
 		{
 			addiovec_error("535 Authentication required.");
@@ -1431,12 +1438,6 @@ int	authenticated=0;
 			if (mailfroms)	free(mailfroms);
 			mailfroms=0;
 			set_submit_error(0, 0);
-			continue;
-		}
-		if (strncmp(line, "NOOP", 4) == 0)
-		{
-			addiovec("250 Ok\r\n", 8);
-			iovflush();
 			continue;
 		}
 		if (strncmp(line, "MAIL", 4) == 0 && (p=strchr(line, ':')) != 0
