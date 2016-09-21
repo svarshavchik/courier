@@ -223,7 +223,7 @@ void mail::nntp::GroupOpenTask::selectedGroup(msgnum_t estimatedCount,
 
 				ostringstream o;
 
-				o << "XHDR Lines " << cHi << "-\r\n";
+				o << "XHDR Path " << cHi << "-\r\n";
 				cmd=o.str();
 			}
 		}

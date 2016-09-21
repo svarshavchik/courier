@@ -1,3 +1,7 @@
+2016-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libmail: fix skipping of messages with some Usenet servers.
+
 0.94
 
 2016-08-03  Sam Varshavchik  <mrsam@courier-mta.com>

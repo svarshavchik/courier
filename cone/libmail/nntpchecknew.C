@@ -88,7 +88,7 @@ void mail::nntp::CheckNewTask::processGroupStatus(const char *msg)
 	{
 		// Cheaper to use XHDR
 
-		o << "XHDR Lines " << firstNewMsg << "-\r\n";
+		o << "XHDR Path " << firstNewMsg << "-\r\n";
 	}
 	else
 	{
@@ -106,7 +106,7 @@ void mail::nntp::CheckNewTask::processXhdrStatus(const char *msg)
 	{
 		response_func=
 			&mail::nntp::CheckNewTask::processXhdrList;
-	
+
 		processXhdrList(".");
 		return;
 	}
