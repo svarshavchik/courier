@@ -1,3 +1,10 @@
+2016-09-20  "Hanno Böck" <hanno@hboeck.de>
+
+	* libs/maildrop/maildir.C (MaildirSave): Fix new/delete mismatch.
+	* libs/sqwebmail/gpg.c: Fix external linkage.
+
+0.76.3
+
 2016-09-12  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/module.esmtp/courieresmtpd.c (main): Allow NOOP before

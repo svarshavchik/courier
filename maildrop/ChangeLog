@@ -1,3 +1,7 @@
+2016-09-20  "Hanno Böck" <hanno@hboeck.de>
+
+	* libs/maildrop/maildir.C (MaildirSave): Fix new/delete mismatch.
+
 2.8.4
 
 2016-08-03  Sam Varshavchik  <mrsam@courier-mta.com>
