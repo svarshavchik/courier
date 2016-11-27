@@ -1424,7 +1424,7 @@ void CursesEdit::delAttachment(std::string filename) // att*.txt
 			}
 			break;
 		}
-	}		
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1589,7 +1589,7 @@ bool CursesEdit::processKey(const Curses::Key &key)
 		}
 		else
 		{
-			
+
 			TOGGLET(newsgroupsLabel, _("Newsgroups: "),
 				newsgroups, newsgroupsV);
 			TOGGLET(followuptoLabel, _("Followup-To: "),
@@ -2532,7 +2532,7 @@ class CursesEdit::EncryptSinkFile : public CursesEdit::SaveSink {
 	SaveSink &origSink;
 	CursesMessage::EncryptionInfo &encryptionInfo;
 	FILE *tFile;
-	FILE *passFd;
+	int passFd;
 
 	static int input_func(char *, size_t, void *);
 	static void output_func(const char *, size_t, void *);
@@ -2559,7 +2559,7 @@ CursesEdit::EncryptSinkFile
 ::EncryptSinkFile(SaveSink &origSinkArg,
 		  CursesMessage::EncryptionInfo &encryptionInfoArg)
 	: origSink(origSinkArg), encryptionInfo(encryptionInfoArg),
-	  tFile(NULL), passFd(NULL)
+	  tFile(NULL), passFd(-1)
 {
 }
 
@@ -2568,8 +2568,10 @@ CursesEdit::EncryptSinkFile::~EncryptSinkFile()
 	if (tFile)
 		fclose(tFile);
 
-	if (passFd)
-		fclose(passFd);
+	if (passFd >= 0)
+	{
+		close(passFd);
+	}
 }
 
 bool CursesEdit::EncryptSinkFile::init()
@@ -2600,14 +2602,13 @@ std::string CursesEdit::EncryptSinkFile::done()
 
 	if (encryptionInfo.passphrase.size() > 0)
 	{
-		if ((passFd=tmpfile()) == NULL ||
-		    fprintf(passFd, "%s", encryptionInfo.passphrase.c_str()) < 0 ||
-		    fflush(passFd) < 0 || fseek(passFd, 0L, SEEK_SET) < 0)
+		if ((passFd=libmail_gpg_makepassphrasepipe(encryptionInfo.passphrase.c_str(),
+							   encryptionInfo.passphrase.size())) < 0)
 			return strerror(errno);
 
 		std::ostringstream o;
 
-		o << fileno(passFd);
+		o << passFd;
 
 		passphrase_fd=o.str();
 
@@ -2671,7 +2672,7 @@ std::string CursesEdit::EncryptSinkFile::done()
 			PasswordList::passwordList.remove("gpg:" +
 							  encryptionInfo
 							  .signKey);
-			
+
 		if (errmsg.size() == 0)
 			errmsg=strerror(errno);
 		return errmsg;

@@ -62,6 +62,16 @@ BuildRequires:      gnutls-devel libgcrypt-devel
 BuildRequires: perl-generators
 %endif
 
+%{?_with_gpg2:  %define with_gpg2 1}
+%{!?_with_gpg2: %define with_gpg2 0}
+
+%if %with_gpg2
+BuildRequires: gnupg2
+%define gpg_option --with-gpg2
+%else
+BuildRequires: gnupg
+%endif
+
 Requires(post): %{__perl}
 
 %description
@@ -87,7 +97,7 @@ LDFLAGS="$LDFLAGS -L %{curses_lib_dir}"
 export LDFLAGS
 %endif
 
-%configure -C --with-devel
+%configure -C --with-devel %{?gpg_option}
 %build
 %{__make} -s %{?_smp_mflags}
 %install

@@ -1,5 +1,5 @@
 /*
-** Copyright 2003, Double Precision Inc.
+** Copyright 2003-2016, Double Precision Inc.
 **
 ** See COPYING for distribution information.
 */
@@ -275,28 +275,6 @@ void EncryptionMenu::signkey_s()
 	}
 	requestFocus();
 
-	myServer::promptInfo prompt=
-		myServer::promptInfo(_("How carefully did you check the "
-				       "private key's identity? "))
-		.option(key_GPGNOANSWER, Gettext::keyname(_("GPG_NOANSWER_K:0")),
-			_("No answer"))
-		.option(key_GPGNOCHECKING,
-			Gettext::keyname(_("GPG_NOCHECKING_K:1")),
-			_("No checking at all"))
-		.option(key_GPGCASUALCHECK,
-			Gettext::keyname(_("GPG_CASUALCHECK_K:2")),
-			_("Casual checking"))
-		.option(key_GPGCAREFULCHECK,
-			Gettext::keyname(_("GPG_CAREFULCHECK_K:3")),
-			_("Very careful checking"));
-
-	prompt=myServer::prompt(prompt);
-
-	if (prompt.abortflag || myServer::nextScreen)
-		return;
-
-	int trustlevel=atoi(((string)prompt).c_str());
-
 	string passphrase;
 	string gpgurl="gpg:" + privkey;
 
@@ -317,16 +295,15 @@ void EncryptionMenu::signkey_s()
 		PasswordList::passwordList.save(gpgurl, passphrasePrompt);
 	}
 
-	FILE *fp=NULL;
+	int pipefd=-1;
 
 	if (passphrase.size() > 0)
 	{
-		if ((fp=tmpfile()) == NULL ||
-		    fprintf(fp, "%s", passphrase.c_str()) < 0 ||
-		    fflush(fp) < 0 || fseek(fp, 0L, SEEK_SET) < 0)
+		pipefd=libmail_gpg_makepassphrasepipe(passphrase.c_str(),
+						      passphrase.size());
+
+		if (pipefd < 0)
 		{
-			if (fp)
-				fclose(fp);
 			statusBar->clearstatus();
 			statusBar->status(strerror(errno));
 			statusBar->beepError();
@@ -340,10 +317,9 @@ void EncryptionMenu::signkey_s()
 		if (libmail_gpg_signkey("",
 					pubkey.c_str(),
 					privkey.c_str(),
-					fp ? fileno(fp):-1,
+					pipefd,
 					&EncryptionMenu::DumpFuncHelper
 					::dump_func,
-					trustlevel,
 					&errmsg))
 		{
 			PasswordList::passwordList.remove(gpgurl);
@@ -359,9 +335,11 @@ void EncryptionMenu::signkey_s()
 			statusBar->status(_("Key signed."));
 		}
 
-		fclose(fp);
+		if (pipefd >= 0)
+			close(pipefd);
 	} catch (...) {
-		fclose(fp);
+		if (pipefd >= 0)
+			close(pipefd);
 		throw;
 	}
 

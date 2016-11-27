@@ -3535,7 +3535,7 @@ void CursesMessage::initEncryptEncrypt(CursesMessage::EncryptionInfo *encryptInf
 class CursesMessage::DecryptSaveText : public ReadText {
 public:
 	FILE *fp;
-	FILE *passphrase_fp;
+	int passphrase_fd;
 
 	mail::addMessage *add;
 
@@ -3592,7 +3592,7 @@ void CursesMessage::DecryptSaveText::output_func(const char *output,
 }
 
 CursesMessage::DecryptSaveText::DecryptSaveText() : fp(tmpfile()),
-						    passphrase_fp(NULL),
+						    passphrase_fd(-1),
 						    add(NULL)
 {
 }
@@ -3602,8 +3602,8 @@ CursesMessage::DecryptSaveText::~DecryptSaveText()
 	if (fp)
 		fclose(fp);
 
-	if (passphrase_fp)
-		fclose(passphrase_fp);
+	if (passphrase_fd >= 0)
+		close(passphrase_fd);
 
 	if (add)
 		add->fail("Cancelled.");
@@ -3742,11 +3742,8 @@ bool CursesMessage::decrypt(std::string passphrase, std::vector<std::string> &op
 		{
 			std::ostringstream o;
 
-			if ((tempSaveText.passphrase_fp=tmpfile()) == NULL ||
-			    fprintf(tempSaveText.passphrase_fp, "%s",
-				    passphrase.c_str()) < 0 ||
-			    fflush(tempSaveText.passphrase_fp) < 0 ||
-			    fseek(tempSaveText.passphrase_fp, 0L, SEEK_SET)<0)
+			if ((tempSaveText.passphrase_fd=libmail_gpg_makepassphrasepipe(passphrase.c_str(),
+										       passphrase.size())) < 0)
 			{
 				statusBar->status(strerror(errno),
 						  statusBar->SYSERROR);
@@ -3754,7 +3751,7 @@ bool CursesMessage::decrypt(std::string passphrase, std::vector<std::string> &op
 				return false;
 			}
 
-			o << fileno(tempSaveText.passphrase_fp);
+			o << tempSaveText.passphrase_fd;
 
 			passphrase_fd=o.str();
 

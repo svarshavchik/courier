@@ -123,7 +123,7 @@ dorpm:
 		--define '_build_name_fmt %%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
-		cone-@VERSION@.tar.bz2
+		$(RPM_BUILD_OPTIONS) cone-@VERSION@.tar.bz2
 
 bump.rpm.release: cone.spec
 	VERSION="x"; \
