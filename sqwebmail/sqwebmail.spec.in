@@ -43,7 +43,19 @@ Source: http://download.sourceforge.net/courier/@PACKAGE@-@VERSION@.tar.bz2
 Url: http://www.courier-mta.org/sqwebmail
 BuildRoot: %{_tmppath}/sqwebmail-install
 Requires: /etc/cron.hourly expect
-Requires: %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
+
+%{?_with_gpg2:  %define with_gpg2 1}
+%{!?_with_gpg2: %define with_gpg2 0}
+
+%if %with_gpg2
+BuildRequires: gnupg2
+Requires: gnupg2
+%define gpg_option --with-gpg2
+%else
+BuildRequires: gnupg >= 1.0.5
+Requires: gnupg >= 1.0.5
+%endif
+
 Requires(post):   systemd
 Requires(postun): systemd
 Requires(preun):  systemd
@@ -94,6 +106,7 @@ PATH=/usr/bin:$PATH %configure \
 	--enable-imageurl=%{imageurl} \
 	--with-cachedir=%{cachedir} \
 	--with-cacheowner=%{cacheowner} \
+	%{?gpg_option} \
 	%{?xflags: %{xflags}}
 
 

@@ -1,3 +1,7 @@
+2016-11-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Improve compatibility with gnupg 2.
+
 2016-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libmail: fix skipping of messages with some Usenet servers.

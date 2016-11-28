@@ -29,7 +29,7 @@
 %define courier_release %{nil}
 %endif
 
-%define configure CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS ; CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS ; FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ;  ./configure --host=%{_host} --build=%{_build} --target=%{_target_platform} --program-prefix=%{?_program_prefix} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} --infodir=%{_infodir}
+%define configure CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS ; CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS ; FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ;  ./configure %{?gpg_option} --host=%{_host} --build=%{_build} --target=%{_target_platform} --program-prefix=%{?_program_prefix} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} --infodir=%{_infodir}
 
 
 #
@@ -101,7 +101,17 @@ BuildRequires:    gawk
 BuildRequires:    perl
 BuildRequires:    make
 BuildRequires:    procps-ng
-BuildRequires:    %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
+%{?_with_gpg2:  %define with_gpg2 1}
+%{!?_with_gpg2: %define with_gpg2 0}
+
+%if %with_gpg2
+BuildRequires: gnupg2
+Requires: gnupg2
+%define gpg_option --with-gpg2
+%else
+BuildRequires: gnupg >= 1.0.5
+Requires: gnupg >= 1.0.5
+%endif
 BuildRequires:    expect
 BuildRequires:    gdbm-devel
 BuildRequires:    pam-devel
@@ -172,7 +182,13 @@ Requires: courier = @VERSION@ fileutils
 %package webmail
 Summary: Courier @VERSION@ Integrated HTTP (webmail) server
 Group: Applications/Mail
-Requires: courier = @VERSION@ %{apache_documentroot} /etc/cron.hourly %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2) expect fileutils
+Requires: courier = @VERSION@ %{apache_documentroot} /etc/cron.hourly
+%if %with_gpg2
+Requires: gnupg2
+%define gpg_option --with-gpg2
+%else
+Requires: gnupg >= 1.0.5
+%endif
 %if %is_not_mandrake
 Requires: %{apache_cgibindir}
 %endif
