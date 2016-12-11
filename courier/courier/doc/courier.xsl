@@ -80,6 +80,13 @@ if (x != myname)
 	<xsl:text> | </xsl:text>
 
 	<xsl:element name="a">
+	  <xsl:attribute name="href">links.html</xsl:attribute>
+	  <xsl:text>Links</xsl:text>
+	</xsl:element>
+
+	<xsl:text> | </xsl:text>
+
+	<xsl:element name="a">
 	  <xsl:attribute name="href">imap/</xsl:attribute>
 	  <xsl:text>IMAP</xsl:text>
 	</xsl:element>
