@@ -41,6 +41,7 @@
 #include	<vector>
 #include	<list>
 #include	<algorithm>
+#include	<functional>
 
 std::vector<msgq> msgq::queue;
 std::vector<msgq *> msgq::queuehashfirst, msgq::queuehashlast;

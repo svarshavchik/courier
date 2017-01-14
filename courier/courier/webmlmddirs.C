@@ -211,7 +211,7 @@ bool webmlmd::dirs::initialize(std::string colonpath)
 		    getegid() != stat_buf.st_gid)
 		{
 			std::cerr << "My uid/gid does not match "
-				  << *b << "'s"
+				  << bb->c_str() << "'s"
 				  << std::endl;
 			return false;
 		}
