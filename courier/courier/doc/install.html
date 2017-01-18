@@ -3040,14 +3040,7 @@ esmtp session required        pam_permit.so
   When sending mail using SSL, The <em>Courier</em> mail server can
   optionally verify the remote server's X.509 certificate. This is
   done by setting <code>ESMTP_TLS_VERIFY_DOMAIN</code> to
-  <code>1</code>, in <code>/usr/lib/courier/etc/courierd</code>.
-  Also, <code>TLS_PEERCERTDIR</code> must be set to a directory
-  that contains PEM files of X.509 certificates of trusted root
-  certificate authorities. The PEM files must be hashed by
-  OpenSSL's <code>c_rehash</code> script. When this is done, the
-  remote server's X.509 certificate must signed by trusted root CA,
-  else the <em>Courier</em> mail server will bounce the
-  recipient.</p>
+  <code>1</code>, in <code>/usr/lib/courier/etc/courierd</code>.</p>
 
   <p>The configuration script checks for the system's list of
   trusted certificate authorities, and initializes TLS_TRUSTCERTS
@@ -4214,7 +4207,7 @@ SQWEBMAIL_IMAGEURL
   <p>Let's take a look at a simple Apache Name-based sqwebmail
   template configuration example:</p>
   <pre>
-  
+
   # Sqwebmail Alternate Template URL
   ScriptAlias /cgi-bin/sqwebmail-alt-template <em>"/usr/local/apache/cgi-bin/sqwebmail"</em>
 
@@ -4223,7 +4216,7 @@ SQWEBMAIL_IMAGEURL
       Setenv SQWEBMAIL_IMAGEURL <em>"/alternate-webmail"</em>
       [...]
   &lt;/Location&gt;
-      
+
 </pre>
 
   <p>The above should allow your users to run sqwebmail with the
@@ -5078,7 +5071,7 @@ start)
                 echo -n " esmtpd-msa"
                 ;;
         esac
-        
+
         if test -x ${sbindir}/pop3d
         then
                 POP3DSTART=""
