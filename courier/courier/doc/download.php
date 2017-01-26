@@ -78,8 +78,10 @@ body div.main { height: 100%; width: 100%; overflow: auto;
                                              continue;
                                      }
 
+				     $foo = preg_split( "[ \t\n]", $line);
+
                                      list($package, $version_s, $date_s, $filename_s, $size_s)
-                                     =split( "[ \t\n]", $line);
+                                     =preg_split( "/[ \t\n]/", $line);
 
                                      $Version[$package]=$version_s;
                                      $Date[$package]=$date_s;

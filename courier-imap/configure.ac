@@ -226,10 +226,10 @@ AC_ARG_WITH(makedatprog, [], ,
 AC_ARG_WITH(mailuser, [], , ac_configure_args="$ac_configure_args --with-mailuser=root")
 
 
-AC_CONFIG_SUBDIRS(libs/numlib libs/bdbobj libs/gdbmobj libs/soxwrap \
-	libs/rfc822 libs/rfc1035 libs/rfc2045 \
-	libs/md5 libs/sha1 libs/random128 libs/liblock \
-	libs/maildir libs/makedat libs/libhmac \
+AC_CONFIG_SUBDIRS(libs/numlib libs/bdbobj libs/gdbmobj libs/soxwrap
+	libs/rfc822 libs/rfc1035 libs/rfc2045
+	libs/md5 libs/sha1 libs/random128 libs/liblock
+	libs/maildir libs/makedat libs/libhmac
 	libs/waitlib libs/tcpd libs/rootcerts libs/imap)
 
 # Courier-IMAP standalone does not use SOCKSv5
