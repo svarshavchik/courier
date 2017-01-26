@@ -192,15 +192,9 @@ AC_SUBST(LIBDB)
 AC_SUBST(LIBGDBM)
 AC_SUBST(dblibrary)
 
-save_LIBS="$LIBS"
-LIBS="-lcourier-unicode"
-AC_LINK_IFELSE(
-[AC_LANG_PROGRAM([
-#include <courier-unicode.h>
-],[
-	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
-LIBS="$save_LIBS"
+AC_CHECK_LIB(courier-unicode,
+		unicode_default_chset, [ : ], [ AC_MSG_ERROR([THe Courier Unicode Library 1.2 is not installed])])
+AC_CHECK_HEADER([courier-unicode.h], [ : ], [AC_MSG_ERROR([The Courier Unicode Library 1.2 header files appear not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
 
 dnl
 dnl Need to settle on our uid/gids here
