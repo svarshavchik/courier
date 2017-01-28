@@ -17,9 +17,9 @@
 extern "C" {
 #include	"auth.h"
 #include	"courierauthstaticlist.h"
+#include	"courierauth.h"
 #include	"courierauthdebug.h"
 #include	"libhmac/hmac.h"
-#include	"cramlib.h"
 }
 
 #include	"authsqlite.h"

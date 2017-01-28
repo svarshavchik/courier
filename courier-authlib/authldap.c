@@ -14,9 +14,10 @@
 
 #include	"auth.h"
 #include	"authldap.h"
+#include	"courierauth.h"
 #include	"courierauthstaticlist.h"
 #include	"courierauthdebug.h"
-
+#include	"libhmac/hmac.h"
 
 static int auth_ldap_login(const char *service, char *authdata,
 			   int (*callback_func)(struct authinfo *, void *),
@@ -35,9 +36,6 @@ static int auth_ldap_login(const char *service, char *authdata,
 	return authldapcommon(service, user, pass, callback_func,
 			      callback_arg);
 }
-
-#include	"libhmac/hmac.h"
-#include	"cramlib.h"
 
 static int auth_ldap_cram(const char *service,
 			  const char *authtype, char *authdata,

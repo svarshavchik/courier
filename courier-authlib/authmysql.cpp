@@ -20,8 +20,7 @@ extern "C" {
 #include	"auth.h"
 #include	"courierauthstaticlist.h"
 #include	"courierauthdebug.h"
-#include	"libhmac/hmac.h"
-#include	"cramlib.h"
+#include	"courierauth.h"
 }
 
 static bool verify(const authmysqluserinfo &authinfo,

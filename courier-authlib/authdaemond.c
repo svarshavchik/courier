@@ -23,9 +23,9 @@
 #include	"authdaemonrc.h"
 #include	"courierauthdebug.h"
 #include	"pkglibdir.h"
+#include	"courierauth.h"
 #include	"courierauthstaticlist.h"
 #include        "libhmac/hmac.h"
-#include        "cramlib.h"
 #include	<ltdl.h>
 
 

@@ -145,6 +145,45 @@ int auth_callback_default_autocreate(struct authinfo *ainfo);
 
 char *courier_auth_ldap_escape(const char *str);
 
+struct cram_callback_info {
+	struct hmac_hashinfo *h;
+	char *user;
+	char *challenge;
+	char *response;
+	int (*callback_func)(struct authinfo *, void *);
+	void *callback_arg;
+	};
+
+extern int auth_cram_callback(struct authinfo *a, void *vp);
+
+/*
+** auth_get_cram parses out an authentication request.  It checks whether
+** we have the requisite hash function installed, and, if so, base64decodes
+** the challenge and the response.
+*/
+
+struct hmac_hashinfo;
+
+int auth_get_cram(const char *authtype,			/* authtype */
+		  char *authdata,			/* authdata */
+
+		  struct cram_callback_info *craminfo);
+		/* Initializes craminfo */
+
+/* auth_get_cram_silent() is auth_get_cram(), but without logging */
+
+int auth_get_cram_silent(const char *authtype, char *authdata,
+			 struct cram_callback_info *craminfo);
+
+/*
+** auth_verify_cram attempts to verify the secret cookie.
+*/
+
+int auth_verify_cram(struct hmac_hashinfo *,	/* The hash function */
+	const char *,				/* The challenge */
+	const char *,				/* The response */
+	const char *);				/* Hashed secret, in hex */
+
 #if 0
 {
 #endif

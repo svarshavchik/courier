@@ -16,11 +16,10 @@
 
 #include	"auth.h"
 #include	"authpgsql.h"
+#include	"courierauth.h"
 #include	"courierauthstaticlist.h"
 #include	"courierauthdebug.h"
 #include	"libhmac/hmac.h"
-#include	"cramlib.h"
-
 
 extern void auth_pgsql_enumerate( void(*cb_func)(const char *name,
 						 uid_t uid,

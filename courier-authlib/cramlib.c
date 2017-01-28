@@ -11,10 +11,9 @@
 #include	<string.h>
 #include	<errno.h>
 #include	"courierauthsasl.h"
-#include	"cramlib.h"
+#include	"courierauth.h"
 #include	"courierauthdebug.h"
 #include	"libhmac/hmac.h"
-#include	"cramlib.h"
 
 static int nybble(int c)
 {

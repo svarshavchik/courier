@@ -16,9 +16,9 @@
 #endif
 
 #include	"auth.h"
+#include	"courierauth.h"
 #include	"courierauthstaticlist.h"
 #include	"courierauthdebug.h"
-#include	"cramlib.h"
 #include	"libhmac/hmac.h"
 #include	"userdb/userdb.h"
 

@@ -14,7 +14,9 @@
 
 #include	"auth.h"
 #include	"authcustom.h"
+#include	"courierauth.h"
 #include	"courierauthstaticlist.h"
+#include	"libhmac/hmac.h"
 
 
 static int auth_custom_login(const char *service, char *authdata,
@@ -32,9 +34,6 @@ static int auth_custom_login(const char *service, char *authdata,
 
 	return authcustomcommon(user, pass, callback_func, callback_arg);
 }
-
-#include	"libhmac/hmac.h"
-#include	"cramlib.h"
 
 static int auth_custom_cram(const char *service,
 			    const char *authtype,

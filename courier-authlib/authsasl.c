@@ -5,9 +5,9 @@
 */
 
 #include	"courier_auth_config.h"
+#include	"courierauth.h"
 #include	"courierauthsasl.h"
 #include	"authsaslclient.h"
-#include	"cramlib.h"
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	<string.h>

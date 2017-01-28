@@ -55,7 +55,7 @@ libcourierauthcommon_la_SOURCES= \
 	courierauthstaticlist.h \
 	authsyschangepwd.c authsyscommon.c \
 	authldapescape.c \
-	cramlib.c cramlib.h \
+	cramlib.c \
 	checkpassword.c cryptpassword.c \
 	checkpasswordmd5.c checkpasswordsha1.c
 

@@ -1,5 +1,10 @@
 0.67.0
 
+2017-01-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courierauth.h: Move declarations from cramlib.h into courierauth.h,
+	exporting them as part of the public API.
+
 2016-09-04  Giovanni Bechis <giovanni@paclan.it>
 
 	* userdb/userdbpw.c (main): Use bcrypt_gensalt() on OpenBSD
