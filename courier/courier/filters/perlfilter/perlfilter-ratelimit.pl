@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 #
 # Copyright 2014 Double Precision, Inc.  See COPYING for
 # distribution information.

@@ -1,3 +1,18 @@
+2017-01-27  "Stefan Hornburg (Racke)" <racke@linuxia.de>
+
+	* Merge several Debian patches:
+
+	0001-Include-cstdio-in-afx.h.patch
+	0005-Ignore-and-.dpkg-a-z-files.patch
+	0007-Fix-bashisms.patch
+	0009-Fix-linking-in-upstream-Makefiles.patch
+	0012-Define-and-use-PEMFILE-in-mkesmtpdcert.patch
+	     (*) with some changes.
+	0013-Add-P-to-ghostscript-invocation.patch
+	0014-Improve-error-reporting-in-preline.c.patch
+	0017-Fix-formatting-errors-in-syslog-calls.patch
+	0020-Add-perl-stanza-to-perlfilter-scripts.patch
+
 2017-01-27  Gordon Messmer <gordon.messmer@gmail.com>
 
 	* courier/perms.sh.in, courier/submit2.C (MessageEnd): Patches

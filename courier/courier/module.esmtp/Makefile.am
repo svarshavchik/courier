@@ -98,7 +98,7 @@ commonLDADD=../../courier/libs/libmodule.la librewrite.la \
 			`cat ../../libs/soxwrap/soxlibs.dep` \
 			@NETLIBS@ $(ldaddlibdl) $(DEBUGLIB)
 
-courieresmtp_LDADD=-lcourierauthsaslclient $(commonLDADD)
+courieresmtp_LDADD=$(commonLDADD) -lcourierauthsaslclient -lcourierauth
 
 courieresmtp_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 

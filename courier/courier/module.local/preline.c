@@ -42,6 +42,12 @@ char *cmd;
 		usage();
 	}
 
+	if (argc == 1)
+	 {
+		fprintf(stderr, "%s: commandline parameter 'program' needed\n", argv[0]);
+	 	exit (1);
+	 }
+ 
 	if (pipe(pipefd) < 0)
 	{
 		perror("pipe");

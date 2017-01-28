@@ -8,6 +8,12 @@
 # ESMTP STARTTLS.  Normally this script would get called by an automatic
 # package installation routine.
 
+PEMFILE="$1"
+
+if [ -z "$PEMFILE" ]; then
+	PEMFILE=@mydatadir@/esmtpd.pem
+fi
+
 if test "@ssllib@" = "openssl"
 then
 	test -x @OPENSSL@ || exit 0
@@ -15,17 +21,17 @@ else
 	test -x @CERTTOOL@ || exit 0
 fi
 
-if test -f @mydatadir@/esmtpd.pem
+if test -f "$PEMFILE"
 then
-	echo "@mydatadir@/esmtpd.pem already exists."
+	echo "$PEMFILE already exists."
 	exit 1
 fi
 
 cleanup() {
-	rm -f @mydatadir@/esmtpd.rand
-	rm -f @mydatadir@/esmtpd.pem
-	rm -f @mydatadir@/esmtpd.key
-	rm -f @mydatadir@/esmtpd.cert
+	rm -f "$PEMFILE".rand
+	rm -f "$PEMFILE"
+	rm -f "$PEMFILE".key
+	rm -f "$PEMFILE".cert
 	exit 1
 }
 
@@ -36,13 +42,14 @@ set -e
 
 if test "@ssllib@" = "openssl"
 then
-	cp /dev/null @mydatadir@/esmtpd.pem
-	chmod 600 @mydatadir@/esmtpd.pem
-	chown @mailuser@ @mydatadir@/esmtpd.pem
-	dd if=@RANDOMV@ of=@mydatadir@/esmtpd.rand count=1 2>/dev/null
+	cp /dev/null "$PEMFILE"
+	chmod 600 "$PEMFILE"
+	chown @mailuser@ "$PEMFILE"
+	dd if=@RANDOMV@ of="$PEMFILE".rand count=1 2>/dev/null
 	@OPENSSL@ req -new -x509 -days 365 -nodes \
-		  -config @sysconfdir@/esmtpd.cnf -out @mydatadir@/esmtpd.pem -keyout @mydatadir@/esmtpd.pem || cleanup
-	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/esmtpd.pem || cleanup
+		  -config @sysconfdir@/esmtpd.cnf -out "$PEMFILE" -keyout "$PEMFILE" || cleanup
+	@OPENSSL@ dhparam -2 -rand "$PEMFILE".rand 512 >>"$PEMFILE" || cleanup
+	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in "$PEMFILE" || cleanup
 	rm -f @mydatadir@/esmtpd.rand
 else
 	if test "$BITS" = ""
@@ -50,17 +57,17 @@ else
 		BITS="high"
 	fi
 
-	cp /dev/null @mydatadir@/esmtpd.key
-	chmod 600 @mydatadir@/esmtpd.key
-	cp /dev/null @mydatadir@/esmtpd.cert
-	chmod 600 @mydatadir@/esmtpd.cert
+	cp /dev/null "$PEMFILE".key
+	chmod 600 "$PEMFILE".key
+	cp /dev/null "$PEMFILE".cert
+	chmod 600 "$PEMFILE".cert
 
-	@CERTTOOL@ --generate-privkey --sec-param=$BITS --outfile esmtpd.key
-	@CERTTOOL@ --generate-self-signed --load-privkey esmtpd.key --outfile esmtpd.cert --template @sysconfdir@/esmtpd.cnf
+	@CERTTOOL@ --generate-privkey --sec-param=$BITS --outfile "$PEMFILE".key || cleanup
+	@CERTTOOL@ --generate-self-signed --load-privkey "$PEMFILE".key --outfile "$PEMFILE".cert --template @sysconfdir@/esmtpd.cnf || cleanup
 
-	cp /dev/null @mydatadir@/esmtpd.pem
-	chmod 600 @mydatadir@/esmtpd.pem
-	chown @mailuser@ @mydatadir@/esmtpd.pem
-	cat esmtpd.key esmtpd.cert >esmtpd.pem
-	rm -f esmtpd.key esmtpd.cert
+	cp /dev/null "$PEMFILE".pem
+	chmod 600 "$PEMFILE".pem
+	chown @mailuser@ "$PEMFILE".pem
+	cat "$PEMFILE".key "$PEMFILE".cert >"$PEMFILE"
+	rm -f "$PEMFILE".key "$PEMFILE".cert
 fi

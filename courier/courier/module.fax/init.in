@@ -8,7 +8,7 @@ OUTDIR="$1"
 TROFF=@TROFF@
 DPOST=@DPOST@
 TBL=@TBL@
-GS=@GS@
+GS="@GS@ -P-"
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@

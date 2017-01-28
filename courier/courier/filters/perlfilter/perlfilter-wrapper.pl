@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 #
 # This is basically persistent.pl from perlembed, with a few minor
 # changes.

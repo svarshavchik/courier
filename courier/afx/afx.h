@@ -12,6 +12,7 @@
 #include	<unistd.h>
 #endif
 
+#include	<cstdio>
 #include	<iostream>
 #include	<istream>
 #include	<ostream>

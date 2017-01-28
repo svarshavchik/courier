@@ -48,7 +48,8 @@ esac
 
 if test "$filter" = ""
 then
-	echo "This filter is not installed in $filterbindir\n" >&2
+	echo "This filter is not installed in $filterbindir" >&2
+	echo >&2
 	exit 1
 fi
 
