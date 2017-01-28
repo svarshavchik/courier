@@ -61,8 +61,8 @@ PERMS="
 @libexecdir@/courier/webmail/webmail	555	x	root	bin
 @libexecdir@/courier/webmail/webmlm	555	x	root	bin
 @libexecdir@/courier/sqwebmaild		555
-@libexecdir@/courier/sqwebpasswd	2755
-@libexecdir@/courier/webmail/webadmin	4555	x	root	bin
+@libexecdir@/courier/sqwebpasswd	2555
+@libexecdir@/courier/webmail/webadmin	4511	x	root	bin
 
 @sbindir@			755	x	bin	bin
 @sbindir@/courier		555
@@ -109,10 +109,10 @@ PERMS="
 @sbindir@/makehosteddomains	555
 @datadir@/makeimapaccess	555
 @sbindir@/makeimapaccess	555
-@datadir@/pop3d			755
-@sbindir@/pop3d			755
-@datadir@/pop3d-ssl		755
-@sbindir@/pop3d-ssl		755
+@datadir@/pop3d			555
+@sbindir@/pop3d			555
+@datadir@/pop3d-ssl		555
+@sbindir@/pop3d-ssl		555
 @sbindir@/webgpg		555
 
 @datadir@			755	x	bin	bin
@@ -226,7 +226,7 @@ fi
 if test "@HAVE_LDAP@" != 0
 then
 	echo @sysconfdir@/ldapaliasrc.dist 640 @mailuser@ @mailgroup@ config
-	echo @sbindir@/courierldapaliasd 700 @mailuser@ @mailgroup@
+	echo @sbindir@/courierldapaliasd 500 @mailuser@ @mailgroup@
 fi
 
 echo @datadir@/sqwebmail/images 755 @mailuser@ @mailgroup@

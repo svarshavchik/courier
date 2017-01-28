@@ -642,7 +642,7 @@ struct	stat	stat_buf;
 	if (sizelimit && bytecount > sizelimit)
 	{
 		std::cout << "523 Message length (" <<
-			sizelimit << " bytes) exceeds administrative limit."
+			bytecount << " bytes) exceeds administrative limit(" << sizelimit << ")."
 			<< std::endl << std::flush;
 		return (1);
 	}
