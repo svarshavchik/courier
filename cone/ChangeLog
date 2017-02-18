@@ -1,3 +1,7 @@
+2017-02-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/tcpd/libcouriertls.c: OpenSSL API update.
+
 2016-11-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Improve compatibility with gnupg 2.
