@@ -81,7 +81,7 @@ void CursesTitleBar::draw()
 
 		if (l + 1< w)
 		{
-			std::vector<unicode_char> uc;
+			std::u32string uc;
 
 			wc.tounicode(uc);
 
@@ -100,7 +100,7 @@ void CursesTitleBar::draw()
 		if (l < w)
 		{
 
-			std::vector<unicode_char> uc;
+			std::u32string uc;
 
 			wc.tounicode(uc);
 

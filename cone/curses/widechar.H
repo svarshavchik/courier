@@ -169,7 +169,7 @@ public:
 	get_string_truncated(size_t maxwidth, ssize_t atcol) const;
 
 	// Return as a unicode string
-	std::pair<std::vector<unicode_char>, size_t>
+	std::pair<std::u32string, size_t>
 	get_unicode_truncated(size_t maxwidth, ssize_t atcol) const;
 
 	// Return a substring
@@ -177,17 +177,17 @@ public:
 				  size_t grapheme_cnt) const;
 
 	// Return a unicode substring
-	std::vector<unicode_char> get_unicode_substring(size_t first_grapheme,
+	std::u32string get_unicode_substring(size_t first_grapheme,
 							size_t grapheme_cnt)
 		const;
 
 	// Return as a unicode string, truncated or padded to the given width
 
-	std::vector<unicode_char> get_unicode_fixedwidth(size_t width,
+	std::u32string get_unicode_fixedwidth(size_t width,
 							 ssize_t atcol) const;
 
 	// Initialize from a beginning and ending iterator, iterating
-	// over unicode_chars.
+	// over char32_ts.
 
 	template<typename iter_type>
 	void init_unicode(iter_type b, iter_type e)
@@ -213,17 +213,17 @@ public:
 
 	// The unicode string
 
-	std::vector<unicode_char> ustring;
+	std::u32string ustring;
 
 	// A grapheme: a pointer somewhere in ustring, plus wchar count
 
 	class grapheme_t {
 
 	public:
-		const unicode_char *uptr; // Offset into ustring
+		const char32_t *uptr; // Offset into ustring
 		size_t cnt; // How many unicode chars in the grapheme
 
-		grapheme_t(const unicode_char *uptrArg, size_t cntArg)
+		grapheme_t(const char32_t *uptrArg, size_t cntArg)
 			: uptr(uptrArg), cnt(cntArg) {}
 
 		size_t wcwidth(ssize_t start_col) const;
@@ -256,7 +256,7 @@ public:
 
 	size_t wcwidth(ssize_t start_col) const;
 
-	void tounicode(std::vector<unicode_char> &text) const;
+	void tounicode(std::u32string &text) const;
 
 	static size_t charwidth(wchar_t ch, ssize_t atcol);
 };
@@ -338,20 +338,20 @@ class editablewidechar {
 public:
 	widecharbuf before_insert;
 
-	std::vector<unicode_char> inserted;
+	std::u32string inserted;
 
 	widecharbuf after_insert;
 
-	void set_contents(const std::vector<unicode_char> &before,
-			  const std::vector<unicode_char> &after);
+	void set_contents(const std::u32string &before,
+			  const std::u32string &after);
 
-	void get_contents(std::vector<unicode_char> &before,
-			  std::vector<unicode_char> &after) const;
+	void get_contents(std::u32string &before,
+			  std::u32string &after) const;
 
 	void contents_cut(size_t cut_pos,
-			  std::vector<unicode_char> &cut_text);
+			  std::u32string &cut_text);
 
-	void insert_char(unicode_char wc) { inserted.push_back(wc); }
+	void insert_char(char32_t wc) { inserted.push_back(wc); }
 
 	void insert_to_before();
 
@@ -381,7 +381,7 @@ public:
 /*
 ** Helper class for the word-wrapping logic.
 **
-** This class receives unicode_char pieces, that can be broken. The collector
+** This class receives char32_t pieces, that can be broken. The collector
 ** converts them to system wchars, measures each piece, and collects them
 ** until the next piece can't fit within the alloted width.
 */
@@ -391,7 +391,7 @@ class wordwrap_collector {
 
 public:
 	/* Collected line */
-	std::vector<unicode_char> linebuf;
+	std::u32string linebuf;
 
 	/* Width of the collected line */
 	size_t col;
@@ -425,7 +425,7 @@ public:
 	{
 	}
 
-	void addsegment(const std::vector<unicode_char> &segment)
+	void addsegment(const std::u32string &segment)
 	{
 		std::vector<wchar_t> wsegment;
 
@@ -483,13 +483,13 @@ public:
 /*
 ** Unicode-based linewrapping logic.
 **
-** This template defines an output iterator that takes in unicode_chars.
+** This template defines an output iterator that takes in char32_ts.
 ** The constructor receives a rewrap helper object reference, an output
 ** iterator, the requested width, and whether to trim the trailing
 ** space from each wrapped line.
 **
-** As this iterator is iterated over unicode_chars, it will iterate the
-** received output iterator over std::vector<unicode_char>s, representing
+** As this iterator is iterated over char32_ts, it will iterate the
+** received output iterator over std::u32strings, representing
 ** each line wrapped to the requested width.
 **
 ** The trim flag should normally be false. This properly preserves all
@@ -523,7 +523,7 @@ template<typename output_sink_t,
 	class buffer : public unicode::linebreakc_callback_save_buf {
 
 	public:
-		std::vector<unicode_char> segment; // Current word
+		std::u32string segment; // Current word
 		size_t cnt; // Counts characters that are being wrapped.
 
 		wordwrap_collector<output_sink_t> collector;
@@ -594,7 +594,7 @@ public:
 	iter_t &operator++(int) { return *this; }
 	iter_t &operator*() { return *this; }
 
-	void operator=(unicode_char ch)
+	void operator=(char32_t ch)
 	{
 		if (!buf)
 			return;
@@ -607,7 +607,7 @@ public:
 
 		while (!buf->lb_buf.empty())
 		{
-			std::pair<int, unicode_char> ch(buf->lb_buf.front());
+			std::pair<int, char32_t> ch(buf->lb_buf.front());
 			buf->lb_buf.pop_front();
 
 			// If text is being rewrapped, and the linebreaking

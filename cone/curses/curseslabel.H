@@ -17,7 +17,7 @@
 
 class CursesLabel : public Curses {
 
-	std::vector<unicode_char> utext;
+	std::u32string utext;
 
 	size_t w;
 

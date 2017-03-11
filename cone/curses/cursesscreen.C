@@ -103,7 +103,7 @@ void CursesScreen::KeyReader::operator<<(char ch)
 	}
 }
 
-bool CursesScreen::KeyReader::operator>>(unicode_char &ch)
+bool CursesScreen::KeyReader::operator>>(char32_t &ch)
 {
 	if (winput_cnt < sizeof(ch))
 		return false;
@@ -212,7 +212,7 @@ void CursesScreen::resized()
 bool CursesScreen::writeText(const char *ctext, int row, int col,
 			     const Curses::CursesAttr &attr) const
 {
-	std::vector<unicode_char> ubuf;
+	std::u32string ubuf;
 
 	unicode::iconvert::convert(ctext, unicode_default_chset(), ubuf);
 
@@ -229,16 +229,16 @@ bool CursesScreen::writeText(const char *ctext, int row, int col,
 
 class CursesScreen::repltabs_spaces :
 	public std::iterator<std::random_access_iterator_tag,
-			     const unicode_char> {
+			     const char32_t> {
 
-	const unicode_char *p;
+	const char32_t *p;
 
-	unicode_char tmp;
+	char32_t tmp;
 
 public:
 	repltabs_spaces() : p(0), tmp(0) {}
 
-	repltabs_spaces(const unicode_char *pVal) : p(pVal), tmp(0) {}
+	repltabs_spaces(const char32_t *pVal) : p(pVal), tmp(0) {}
 
 	bool operator==(const repltabs_spaces &v)
 	{
@@ -270,15 +270,15 @@ public:
 		return p <= v.p;
 	}
 
-	unicode_char operator*() const { return operator[](0); }
+	char32_t operator*() const { return operator[](0); }
 
 	repltabs_spaces &operator++() { ++p; return *this; }
 
-	const unicode_char *operator++(int) { tmp=operator*(); ++p; return &tmp; }
+	const char32_t *operator++(int) { tmp=operator*(); ++p; return &tmp; }
 
 	repltabs_spaces &operator--() { --p; return *this; }
 
-	const unicode_char *operator--(int) { tmp=operator*(); --p; return &tmp; }
+	const char32_t *operator--(int) { tmp=operator*(); --p; return &tmp; }
 
 	repltabs_spaces &operator+=(difference_type diff) { p += diff; return *this; }
 
@@ -289,7 +289,7 @@ public:
 
 	difference_type operator-(const repltabs_spaces b) const { return p-b.p; }
 
-	const unicode_char operator[](difference_type diff) const { return p[diff] == 0 || p[diff] == '\t' ? ' ':p[diff]; }
+	const char32_t operator[](difference_type diff) const { return p[diff] == 0 || p[diff] == '\t' ? ' ':p[diff]; }
 };
 
 
@@ -302,16 +302,16 @@ class CursesScreen::writetext_iter_helper
 	: public std::iterator<std::input_iterator_tag,
 			       char, void, void, void> {
 
-	const unicode_char *uptr;
+	const char32_t *uptr;
 	size_t multcnt;
 
 public:
-	writetext_iter_helper(const unicode_char *uptrArg)
+	writetext_iter_helper(const char32_t *uptrArg)
 		: uptr(uptrArg), multcnt(0) {}
 
-	unicode_char operator*()
+	char32_t operator*()
 	{
-		unicode_char c=*uptr;
+		char32_t c=*uptr;
 
 		if (c == 0x2014)
 			c=0x2013;
@@ -358,7 +358,7 @@ public:
 
 
 
-bool CursesScreen::writeText(const std::vector<unicode_char> &utext,
+bool CursesScreen::writeText(const std::u32string &utext,
 			     int row, int col,
 			     const Curses::CursesAttr &attr) const
 {
@@ -420,7 +420,7 @@ bool CursesScreen::writeText(const std::vector<unicode_char> &utext,
 
 	size_t cells=w-col;
 
-	const unicode_char *uptr=b->uptr;
+	const char32_t *uptr=b->uptr;
 	size_t ucnt=0;
 
 	bool right_margin_crossed=false;
@@ -710,7 +710,7 @@ Curses::Key CursesScreen::doGetKey()
 	// If, for some reason, a unicode key is available, take it
 
 	{
-		unicode_char uk;
+		char32_t uk;
 
 		if (keyreader >> uk)
 			return doGetPlainKey(uk);
@@ -767,7 +767,7 @@ Curses::Key CursesScreen::doGetKey()
 			if (LINES != save_h || COLS != save_w)
 				return (Key(Key::RESIZE));
 
-			return Key((unicode_char)0);
+			return Key((char32_t)0);
 		}
 		inputcounter=0;
 
@@ -853,7 +853,7 @@ Curses::Key CursesScreen::doGetKey()
 
 			keyreader << k;
 
-			unicode_char uk;
+			char32_t uk;
 
 			if (keyreader >> uk)
 				return doGetPlainKey(uk);
@@ -861,7 +861,7 @@ Curses::Key CursesScreen::doGetKey()
 	}
 }
 
-Curses::Key CursesScreen::doGetPlainKey(unicode_char k)
+Curses::Key CursesScreen::doGetPlainKey(char32_t k)
 {
 	if (k == 0)
 	{
@@ -870,7 +870,7 @@ Curses::Key CursesScreen::doGetPlainKey(unicode_char k)
 		return Key(Key::SHIFT);
 	}
 
-	if (k == (unicode_char)CursesField::clrEolKey)
+	if (k == (char32_t)CursesField::clrEolKey)
 		return Key(Key::CLREOL);
 
 	if (k == '\r')

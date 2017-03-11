@@ -25,7 +25,7 @@ public:
 	{
 	}
 
-	CursesFlowedLine(const std::vector<unicode_char> &textArg,
+	CursesFlowedLine(const std::u32string &textArg,
 			 bool flowedArg);
 };
 

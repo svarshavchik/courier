@@ -212,7 +212,7 @@ mail::imap::~imap()
 // Verbotten characters
 
 #if 0
-void mail::imap::mkverbotten(std::vector<unicode_char> &verbotten)
+void mail::imap::mkverbotten(std::u32string &verbotten)
 {
 	// Some chars should be modutf7-
 	// encoded, just to be on the safe

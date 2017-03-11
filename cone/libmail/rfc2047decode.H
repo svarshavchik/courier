@@ -42,7 +42,7 @@ namespace rfc2047 {
 	public:
 
 		// Decode to unicode chars.
-		const unicode_char *decode(std::string rfc2047_text);
+		const char32_t *decode(std::string rfc2047_text);
 
 		// Decode to charset 'tocharset'.
 

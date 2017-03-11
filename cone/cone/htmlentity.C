@@ -6,7 +6,7 @@
 
 
 struct unicodeEntity {
-	unicode_char iso10646;
+	char32_t iso10646;
 	const char *alt;	/* Not null - plaintext alternative */
 };
 
@@ -84,7 +84,7 @@ Demoronize::Demoronize(const std::string &chsetArg,
 	{
 		if (chsetArg.size() > 0)
 		{
-			std::vector<unicode_char> uc;
+			std::u32string uc;
 			bool errflag;
 
 			uc.push_back(unicodeEntityList[i].iso10646);
@@ -108,11 +108,11 @@ Demoronize::~Demoronize()
 {
 }
 
-std::string Demoronize::alt(unicode_char ch) const
+std::string Demoronize::alt(char32_t ch) const
 {
 	std::string s;
 
-	std::map<unicode_char, unicodeEntity>::const_iterator
+	std::map<char32_t, unicodeEntity>::const_iterator
 		iter(altlist.find(ch));
 
 	if (iter != altlist.end() && iter->second.alt)
@@ -121,25 +121,25 @@ std::string Demoronize::alt(unicode_char ch) const
 	return s;
 }
 
-std::string Demoronize::operator()(const std::vector<unicode_char> &uc,
+std::string Demoronize::operator()(const std::u32string &uc,
 				   bool &err)
 {
-	std::vector<unicode_char> buffer;
+	std::u32string buffer;
 
 	return unicode::iconvert::convert(expand(uc, buffer), chset, err);
 }
 
-const std::vector<unicode_char> &
-Demoronize::expand(const std::vector<unicode_char> &uc,
-		   std::vector<unicode_char> &newbuffer)
+const std::u32string &
+Demoronize::expand(const std::u32string &uc,
+		   std::u32string &newbuffer)
 {
-	std::vector<unicode_char>::const_iterator b, e;
+	std::u32string::const_iterator b, e;
 	size_t cnt=uc.size();
 	bool found=false;
 
 	for (b=uc.begin(), e=uc.end(); b != e; ++b)
 	{
-		std::map<unicode_char, unicodeEntity>::const_iterator
+		std::map<char32_t, unicodeEntity>::const_iterator
 			iter(altlist.find(*b));
 
 		if (iter != altlist.end() && iter->second.alt)
@@ -156,7 +156,7 @@ Demoronize::expand(const std::vector<unicode_char> &uc,
 
 	for (b=uc.begin(), e=uc.end(); b != e; ++b)
 	{
-		std::map<unicode_char, unicodeEntity>::const_iterator
+		std::map<char32_t, unicodeEntity>::const_iterator
 			iter(altlist.find(*b));
 
 		if (iter != altlist.end() && iter->second.alt)

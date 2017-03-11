@@ -85,11 +85,11 @@ extern Gettext::Key key_TAG9;
 extern char udelete[];
 extern char ucheck[];
 extern char unew[];
-extern unicode_char uchoriz;
-extern unicode_char ucvert;
-extern unicode_char ucupright;
-extern unicode_char ucrighttee;
-extern unicode_char ucwatch, ucwatchend;
+extern char32_t uchoriz;
+extern char32_t ucvert;
+extern char32_t ucupright;
+extern char32_t ucrighttee;
+extern char32_t ucwatch, ucwatchend;
 extern bool usesampm;
 
 extern CursesTitleBar *titleBar;
@@ -208,7 +208,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 	if (row >= (size_t)getHeight()) // Trailing blank lines
 	{
-		std::vector<unicode_char> line;
+		std::u32string line;
 
 		line.insert(line.end(), w, ' ');
 
@@ -230,7 +230,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 	attr.setReverse(isReverse);
 
 	{
-		std::vector<unicode_char> line;
+		std::u32string line;
 
 		line.insert(line.end(), w, ' ');
 
@@ -239,11 +239,11 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 	if (i.status_code == 'D')
 	{
-		std::vector<unicode_char> status;
+		std::u32string status;
 	}
 
 	{
-		std::vector<unicode_char> status;
+		std::u32string status;
 
 		unicode::iconvert::convert(i.status_code == 'D' ? udelete:
 					i.status_code == 'R' ? _("R"):
@@ -260,7 +260,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 	if (marked)
 	{
-		std::vector<unicode_char> status;
+		std::u32string status;
 
 		unicode::iconvert::convert(ucheck, unicode_default_chset(),
 					status);
@@ -274,7 +274,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 
 		msgNumBuf=s.str();
 
-		std::vector<unicode_char> messageNumWC;
+		std::u32string messageNumWC;
 
 		unicode::iconvert::convert(s.str(), unicode_default_chset(),
 					messageNumWC);
@@ -308,7 +308,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 		strftime(buffer2, sizeof(buffer2), "%d-%b-%Y",
 			 localtime(&messageDate));
 
-		std::vector<unicode_char> fmt1, fmt2;
+		std::u32string fmt1, fmt2;
 
 		unicode::iconvert::convert(buffer, unicode_default_chset(), fmt1);
 		unicode::iconvert::convert(buffer2, unicode_default_chset(), fmt2);
@@ -361,7 +361,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 	}
 
 	{
-		std::vector<unicode_char> nameU;
+		std::u32string nameU;
 
 		unicode::iconvert::convert(i.name_utf8, "utf-8", nameU);
 
@@ -370,7 +370,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 		if (sizeStr.size() > 0)
 			sizeStr=" (" + sizeStr + ")";
 
-		std::vector<unicode_char> sizeU;
+		std::u32string sizeU;
 
 		unicode::iconvert::convert(sizeStr, unicode_default_chset(),
 					sizeU);
@@ -404,7 +404,7 @@ void CursesIndexDisplay::drawLine(size_t row)
 		col += name_width;
 	}
 
-	std::vector<unicode_char> watchChar;
+	std::u32string watchChar;
 
 	switch (i.watchLevel) {
 	case 0:
@@ -457,11 +457,11 @@ void CursesIndexDisplay::drawLine(size_t row)
 				subjectStr=subjectStr + " (fwd)";
 		}
 
-		std::vector<unicode_char> subject;
+		std::u32string subject;
 
 		unicode::iconvert::convert(subjectStr, "utf-8", subject);
 
-		std::vector<unicode_char> thread_pad;
+		std::u32string thread_pad;
 
 		thread_pad.insert(thread_pad.end(), i.threadLevel * 2, ' ');
 
@@ -1537,7 +1537,7 @@ bool CursesIndexDisplay::getTag(std::string promptStr, size_t &tagNum)
 	if (info.abortflag || myServer::nextScreen)
 		return false;
 
-	std::vector<unicode_char> ka;
+	std::u32string ka;
 
 	unicode::iconvert::convert( ((std::string)info), unicode_default_chset(),
 				 ka);
@@ -1660,7 +1660,7 @@ bool CursesIndexDisplay::searchPromptBroadenNarrow(mail::ptr<myFolder> &folder,
 			return true;
 	}
 
-	std::vector<unicode_char> ka;
+	std::u32string ka;
 
 	unicode::iconvert::convert( ((std::string)prompt), unicode_default_chset(),
 				 ka);
@@ -1826,7 +1826,7 @@ bool CursesIndexDisplay::watchPrompt(unsigned &nDays, unsigned &nLevels)
 		if (prompt.abortflag || myServer::nextScreen)
 			return false;
 
-		std::vector<unicode_char> ka;
+		std::u32string ka;
 
 		unicode::iconvert::convert( ((std::string)prompt),
 					 unicode_default_chset(),
@@ -1946,7 +1946,7 @@ bool CursesIndexDisplay::processKey(const Curses::Key &key)
 			if (prompt.abortflag)
 				return true;
 
-			std::vector<unicode_char> ka;
+			std::u32string ka;
 
 			unicode::iconvert::convert( ((std::string)prompt),
 						 unicode_default_chset(),
@@ -1954,7 +1954,7 @@ bool CursesIndexDisplay::processKey(const Curses::Key &key)
 
 			if (ka.size() == 0)
 				return true;
-			unicode_char k=ka[0];
+			char32_t k=ka[0];
 
 			if (key_SORTNOT == k)
 			{

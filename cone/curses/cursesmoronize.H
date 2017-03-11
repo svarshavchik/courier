@@ -20,8 +20,8 @@ class CursesMoronize {
 public:
 
 
-	static size_t moronize(const unicode_char *buf,
-			       std::vector<unicode_char> &nreplaced);
+	static size_t moronize(const char32_t *buf,
+			       std::u32string &nreplaced);
 	//
 	// 'buf' should be the characters just preceding the current cursor
 	// position, IN REVERSE ORDER.  So, if the cursor is now:
@@ -37,9 +37,9 @@ public:
 
 	class Entry {
 	public:
-		const unicode_char *keycode;
+		const char32_t *keycode;
 		size_t keycodeLen;
-		const unicode_char *replacements;
+		const char32_t *replacements;
 	};
 
 	static bool enabled;

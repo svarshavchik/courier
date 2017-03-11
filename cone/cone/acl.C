@@ -540,7 +540,7 @@ bool Acl::EditScreen::processKey(const Curses::Key &key)
 			if (prompt.abortflag)
 				return true;
 
-			unicode_char promptKey=prompt.firstChar();
+			char32_t promptKey=prompt.firstChar();
 
 			if (promptKey == 0)
 				return true;

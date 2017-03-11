@@ -9,38 +9,38 @@
 
 bool CursesMoronize::enabled=false;
 
-static const unicode_char plain_169[]={ ')', 'C', '('};
-static const unicode_char plain_174[]={ ')', 'R', '('};
-static const unicode_char plain_177[]={ '-', '/', '+'};
-static const unicode_char plain_188[]={ ' ', '4', '/', '1'};
-static const unicode_char plain_189[]={ ' ', '2', '/', '1'};
-static const unicode_char plain_190[]={ ' ', '4', '/', '3'};
-static const unicode_char plain_8482[]={ ']', 'm', 't', '['};
-static const unicode_char plain_8592[]={ '-', '<'};
-static const unicode_char plain_8594[]={ '>', '-'};
-static const unicode_char plain_8220[]={ '`', '`'};
-static const unicode_char plain_8221[]={ '\'', '\''};
-static const unicode_char plain_8226[]={ ' ', '*', ' '};
-static const unicode_char plain_8230[]={ '.', '.', '.'};
-static const unicode_char plain_8211[]={ ' ', '-', '-', ' '};
-static const unicode_char plain_8212[]={ ' ', '-', '-', '-', ' '};
+static const char32_t plain_169[]={ ')', 'C', '('};
+static const char32_t plain_174[]={ ')', 'R', '('};
+static const char32_t plain_177[]={ '-', '/', '+'};
+static const char32_t plain_188[]={ ' ', '4', '/', '1'};
+static const char32_t plain_189[]={ ' ', '2', '/', '1'};
+static const char32_t plain_190[]={ ' ', '4', '/', '3'};
+static const char32_t plain_8482[]={ ']', 'm', 't', '['};
+static const char32_t plain_8592[]={ '-', '<'};
+static const char32_t plain_8594[]={ '>', '-'};
+static const char32_t plain_8220[]={ '`', '`'};
+static const char32_t plain_8221[]={ '\'', '\''};
+static const char32_t plain_8226[]={ ' ', '*', ' '};
+static const char32_t plain_8230[]={ '.', '.', '.'};
+static const char32_t plain_8211[]={ ' ', '-', '-', ' '};
+static const char32_t plain_8212[]={ ' ', '-', '-', '-', ' '};
 
 
-static const unicode_char repl_169[]={ 169, 0};
-static const unicode_char repl_174[]={ 174, 0};
-static const unicode_char repl_177[]={ 177, 0};
-static const unicode_char repl_188[]={ 188, 0};
-static const unicode_char repl_189[]={ 189, 0};
-static const unicode_char repl_190[]={ 190, 0};
-static const unicode_char repl_8482[]={ 8482, 0};
-static const unicode_char repl_8592[]={ 8592, 0};
-static const unicode_char repl_8594[]={ 8594, 0};
-static const unicode_char repl_8220[]={ 8220, 0};
-static const unicode_char repl_8221[]={ 8221, 0};
-static const unicode_char repl_8226[]={ 8226, 0};
-static const unicode_char repl_8230[]={ 8230, 0};
-static const unicode_char repl_8211[]={ ' ', 8211, ' ', 0};
-static const unicode_char repl_8212[]={ ' ', 8212, ' ', 0};
+static const char32_t repl_169[]={ 169, 0};
+static const char32_t repl_174[]={ 174, 0};
+static const char32_t repl_177[]={ 177, 0};
+static const char32_t repl_188[]={ 188, 0};
+static const char32_t repl_189[]={ 189, 0};
+static const char32_t repl_190[]={ 190, 0};
+static const char32_t repl_8482[]={ 8482, 0};
+static const char32_t repl_8592[]={ 8592, 0};
+static const char32_t repl_8594[]={ 8594, 0};
+static const char32_t repl_8220[]={ 8220, 0};
+static const char32_t repl_8221[]={ 8221, 0};
+static const char32_t repl_8226[]={ 8226, 0};
+static const char32_t repl_8230[]={ 8230, 0};
+static const char32_t repl_8211[]={ ' ', 8211, ' ', 0};
+static const char32_t repl_8212[]={ ' ', 8212, ' ', 0};
 
 
 CursesMoronize::Entry CursesMoronize::moronizationList[] = {
@@ -61,8 +61,8 @@ CursesMoronize::Entry CursesMoronize::moronizationList[] = {
 	{ plain_8212, 5, repl_8212},
 	{ NULL, 0, 0}};
 
-size_t CursesMoronize::moronize(const unicode_char *buf,
-				std::vector<unicode_char> &nreplaced)
+size_t CursesMoronize::moronize(const char32_t *buf,
+				std::u32string &nreplaced)
 {
 	Entry *e=moronizationList;
 

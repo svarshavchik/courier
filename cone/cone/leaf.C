@@ -54,7 +54,7 @@ extern Gettext::Key key_SAVEAS;
 extern Gettext::Key key_TODIRECTORY;
 extern Gettext::Key key_TOGGLEFLOWED;
 
-unicode_char ularr, urarr, ucwrap, ucwrap_visible;
+char32_t ularr, urarr, ucwrap, ucwrap_visible;
 
 static bool flowedmode;
 
@@ -557,7 +557,7 @@ int main(int argc, char **argv)
 
 
 	{
-		std::vector<unicode_char> ucbuf;
+		std::u32string ucbuf;
 		bool errflag;
 
 		ucbuf.push_back(8594);

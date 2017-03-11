@@ -14,14 +14,14 @@ bool unicoderewrapnone::operator()(size_t n) const
 	return false;
 }
 
-void widecharbuf::tounicode(std::vector<unicode_char> &text) const
+void widecharbuf::tounicode(std::u32string &text) const
 {
 	text=ustring;
 }
 
 void widecharbuf::init_string(const std::string &str)
 {
-	std::vector<unicode_char> uc;
+	std::u32string uc;
 
 	unicode::iconvert::convert(str, unicode_default_chset(), uc);
 
@@ -31,7 +31,7 @@ void widecharbuf::init_string(const std::string &str)
 std::pair<std::string, size_t>
 widecharbuf::get_string_truncated(size_t maxwidth, ssize_t col) const
 {
-	std::pair<std::vector<unicode_char>, size_t>
+	std::pair<std::u32string, size_t>
 		tempret(get_unicode_truncated(maxwidth, col));
 
 	std::pair<std::string, size_t> ret;
@@ -54,25 +54,25 @@ std::string widecharbuf::get_substring(size_t first_grapheme,
 			  unicode_default_chset()).first;
 }
 
-std::vector<unicode_char>
+std::u32string
 widecharbuf::get_unicode_substring(size_t first_grapheme,
 				   size_t grapheme_cnt) const
 {
 	if (first_grapheme >= graphemes.size())
-		return std::vector<unicode_char>();
+		return std::u32string();
 
 	size_t max_graphemes=graphemes.size() - first_grapheme;
 
 	if (grapheme_cnt > max_graphemes)
 		grapheme_cnt=max_graphemes;
 
-	return std::vector<unicode_char>(ustring.begin()
+	return std::u32string(ustring.begin()
 					 +first_grapheme,
 					 ustring.begin()
 					 +first_grapheme+grapheme_cnt);
 }
 
-std::pair<std::vector<unicode_char>, size_t>
+std::pair<std::u32string, size_t>
 widecharbuf::get_unicode_truncated(size_t maxwidth, ssize_t col) const
 {
 	size_t i;
@@ -100,15 +100,15 @@ widecharbuf::get_unicode_truncated(size_t maxwidth, ssize_t col) const
 				       ustring.begin()+cnt,
 				       unicode_default_chset(),
 					  s, ignore);
-	return std::make_pair(std::vector<unicode_char>
+	return std::make_pair(std::u32string
 			      (ustring.begin(), ustring.begin()+cnt), width);
 }
 
-std::vector<unicode_char> widecharbuf::get_unicode_fixedwidth(size_t width,
+std::u32string widecharbuf::get_unicode_fixedwidth(size_t width,
 							      ssize_t atcol)
 	const
 {
-	std::pair<std::vector<unicode_char>, size_t>
+	std::pair<std::u32string, size_t>
 		truncated=get_unicode_truncated(width, atcol);
 
 	if (truncated.second < width)
@@ -140,13 +140,13 @@ void widecharbuf::resetgraphemes()
 	if (ustring.empty())
 		return;
 
-	const unicode_char *b=&*ustring.begin(), *e(b+ustring.size());
+	const char32_t *b=&*ustring.begin(), *e(b+ustring.size());
 
 	do
 	{
-		const unicode_char *start_pos=b;
+		const char32_t *start_pos=b;
 
-		unicode_char first, second=*b;
+		char32_t first, second=*b;
 
 		do
 		{
@@ -219,7 +219,7 @@ size_t widecharbuf::grapheme_t::wcwidth(ssize_t col) const
 
 ssize_t widecharbuf::expandtabs(ssize_t col)
 {
-	std::vector<unicode_char> replbuf;
+	std::u32string replbuf;
 
 	replbuf.reserve(ustring.size()*2);
 
@@ -246,9 +246,9 @@ ssize_t widecharbuf::expandtabs(ssize_t col)
 	return col;
 }
 
-void editablewidechar::set_contents(const std::vector<unicode_char>
+void editablewidechar::set_contents(const std::u32string
 				    &before,
-				    const std::vector<unicode_char>
+				    const std::u32string
 				    &after)
 {
 	before_insert.init_unicode(before.begin(), before.end());
@@ -256,8 +256,8 @@ void editablewidechar::set_contents(const std::vector<unicode_char>
 	inserted.clear();
 }
 
-void editablewidechar::get_contents(std::vector<unicode_char> &before,
-				    std::vector<unicode_char> &after)
+void editablewidechar::get_contents(std::u32string &before,
+				    std::u32string &after)
 	const
 {
 	before.clear();
@@ -268,13 +268,13 @@ void editablewidechar::get_contents(std::vector<unicode_char> &before,
 }
 
 void editablewidechar::contents_cut(size_t cut_pos,
-				    std::vector<unicode_char> &cut_text)
+				    std::u32string &cut_text)
 {
 	if (cut_pos == before_insert.graphemes.size() &&
 	    inserted.empty())
 		return;
 
-	std::vector<unicode_char> before, after;
+	std::u32string before, after;
 						
 	if (cut_pos < before_insert.graphemes.size())
 	{
@@ -305,7 +305,7 @@ void editablewidechar::contents_cut(size_t cut_pos,
 
 void editablewidechar::insert_to_before()
 {
-	std::vector<unicode_char> before, after;
+	std::u32string before, after;
 
 	get_contents(before, after);
 	set_contents(before, after);
@@ -330,7 +330,7 @@ void editablewidechar::to_position(size_t o)
 {
 	insert_to_before();
 
-	std::vector<unicode_char> cut_text, before, after;
+	std::u32string cut_text, before, after;
 
 	size_t col=0;
 
@@ -379,7 +379,7 @@ size_t editablewidechar::adjust_shift_pos(size_t &shiftoffset,
 					  widecharbuf &wafter)
 {
 	{
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 		get_contents(before, after);
 
 		wbefore.init_unicode(before.begin(), before.end());
@@ -494,7 +494,7 @@ size_t editablewidechar::adjust_shift_pos(size_t &shiftoffset,
 	return col;
 }
 
-CursesFlowedLine::CursesFlowedLine(const std::vector<unicode_char> &textArg,
+CursesFlowedLine::CursesFlowedLine(const std::u32string &textArg,
 				   bool flowedArg)
 	: text(unicode::iconvert::convert(textArg, "utf-8")), flowed(flowedArg)
 {

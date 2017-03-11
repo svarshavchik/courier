@@ -57,7 +57,7 @@ void CursesLabel::setText(string textArg)
 
 void CursesLabel::setutext(const std::string &textArg)
 {
-	std::vector<unicode_char> buf;
+	std::u32string buf;
 
 	unicode::iconvert::convert(textArg, unicode_default_chset(), buf);
 
@@ -87,7 +87,7 @@ void CursesLabel::draw()
 
 void CursesLabel::erase()
 {
-	std::vector<unicode_char> s;
+	std::u32string s;
 
 	s.insert(s.end(), getWidth(), ' ');
 

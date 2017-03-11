@@ -54,8 +54,8 @@ extern Gettext::Key key_REPLACE_K;
 extern Gettext::Key key_IGNORE_K;
 extern Gettext::Key key_IGNOREALL_K;
 
-extern unicode_char ularr, urarr;
-extern unicode_char ucwrap;
+extern char32_t ularr, urarr;
+extern char32_t ucwrap;
 
 extern CursesStatusBar *statusBar;
 extern CursesMainScreen *mainScreen;
@@ -114,7 +114,7 @@ CursesEditMessage::CursesEditMessage(CursesContainer *parent)
 	: Curses(parent), CursesKeyHandler(PRI_SCREENHANDLER),
 	  cursorCol(0),
 	  cursorLineHorizShift(0), marked(false),
-	  lastKey((unicode_char)0)
+	  lastKey((char32_t)0)
 {
 	text_UTF8.push_back(CursesFlowedLine());
 	// Always have at least one line in text_UTF8
@@ -156,7 +156,7 @@ bool CursesEditMessage::isFocusable()
 //
 
 void CursesEditMessage::getText(size_t line,
-				std::vector<unicode_char> &textRef)
+				std::u32string &textRef)
 {
 	bool dummy;
 
@@ -164,7 +164,7 @@ void CursesEditMessage::getText(size_t line,
 }
 
 void CursesEditMessage::getText(size_t line,
-				std::vector<unicode_char> &textRef,
+				std::u32string &textRef,
 				bool &flowedRet)
 {
 	textRef.clear();
@@ -212,7 +212,7 @@ std::string CursesEditMessage::getUTF8Text(size_t i,
 //
 
 void CursesEditMessage::setText(size_t line,
-				const std::vector<unicode_char> &textRef)
+				const std::u32string &textRef)
 {
 	if (line >= numLines())
 		abort();
@@ -229,16 +229,16 @@ void CursesEditMessage::setText(size_t line,
 	text_UTF8[line]=textRef;
 }
 
-void CursesEditMessage::getTextBeforeAfter(std::vector<unicode_char> &before,
-					   std::vector<unicode_char> &after)
+void CursesEditMessage::getTextBeforeAfter(std::u32string &before,
+					   std::u32string &after)
 {
 	bool dummy;
 
 	getTextBeforeAfter(before, after, dummy);
 }
 
-void CursesEditMessage::getTextBeforeAfter(std::vector<unicode_char> &before,
-					   std::vector<unicode_char> &after,
+void CursesEditMessage::getTextBeforeAfter(std::u32string &before,
+					   std::u32string &after,
 					   bool &flowed)
 {
 	// Get current line
@@ -254,7 +254,7 @@ void CursesEditMessage::getTextBeforeAfter(std::vector<unicode_char> &before,
 
 	// Find character cursor is at.
 
-	std::vector<unicode_char>::iterator pos
+	std::u32string::iterator pos
 		=getIndexOfCol(before, cursorCol);
 
 	// Split the line at that point.
@@ -270,15 +270,15 @@ void CursesEditMessage::getTextBeforeAfter(std::vector<unicode_char> &before,
 // and position the cursor between the two parts.
 //
 void CursesEditMessage
-::setTextBeforeAfter(const std::vector<unicode_char> &before,
-		     const std::vector<unicode_char> &after,
+::setTextBeforeAfter(const std::u32string &before,
+		     const std::u32string &after,
 		     bool flowed)
 {
 	widecharbuf origline;
 
 	origline.init_unicode(before.begin(), before.end());
 
-	std::vector<unicode_char> newline;
+	std::u32string newline;
 
 	newline.reserve(before.size()+after.size());
 
@@ -292,7 +292,7 @@ void CursesEditMessage
 
 template<>
 void CursesEditMessage::replaceTextLine(size_t line,
-					const std::vector<unicode_char> &value)
+					const std::u32string &value)
 {
 	text_UTF8[line]=CursesFlowedLine(value, false);
 }
@@ -307,7 +307,7 @@ void CursesEditMessage::replaceTextLine(size_t line,
 //
 // Replace a range of existing text lines. New content is defined by
 // a beginning and ending iterator, that must iterate over
-// vector<unicode_char>.
+// u32string.
 //
 // The iterators must be random access iterators.
 
@@ -440,12 +440,12 @@ bool CursesEditMessage::justifiable(size_t lineNum)
 	return false;
 }
 
-void CursesEditMessage::insertKeyPos(unicode_char k)
+void CursesEditMessage::insertKeyPos(char32_t k)
 {
 	if ( k >= 0 && k < ' ' && k != '\t')
 		return;
 
-	std::vector<unicode_char> before, after;
+	std::u32string before, after;
 	bool origWrapped;
 
 	getTextBeforeAfter(before, after, origWrapped);
@@ -454,11 +454,11 @@ void CursesEditMessage::insertKeyPos(unicode_char k)
 
 	if (CursesMoronize::enabled)
 	{
-		unicode_char buf[CursesMoronize::max_keycode_len+1];
+		char32_t buf[CursesMoronize::max_keycode_len+1];
 
 		size_t i;
 
-		std::vector<unicode_char>::iterator
+		std::u32string::iterator
 			b(before.begin()),
 			e(before.end());
 
@@ -475,7 +475,7 @@ void CursesEditMessage::insertKeyPos(unicode_char k)
 
 		if (i > 0)
 		{
-			std::vector<unicode_char> repl_c;
+			std::u32string repl_c;
 
 			buf[i]=0;
 			i=CursesMoronize::moronize(buf, repl_c);
@@ -514,7 +514,7 @@ void CursesEditMessage::insertKeyPos(unicode_char k)
 
 			before.erase(before.end() - b->first.n.size(),
 				     before.end());
-				     
+
 			macroptr= &b->second;
 			break;
 		}
@@ -600,7 +600,7 @@ class CursesEditMessage::get_file_helper
 
 		bool flowedflag=false;
 
-		std::vector<unicode_char> uline;
+		std::u32string uline;
 
 		unicode::iconvert::convert(linetxt,
 					unicode_default_chset(),
@@ -608,7 +608,7 @@ class CursesEditMessage::get_file_helper
 
 		if (isflowed)
 		{
-			std::vector<unicode_char>::iterator b(uline.begin()),
+			std::u32string::iterator b(uline.begin()),
 				e(uline.end());
 
 			while (b != e && *b == '>')
@@ -626,7 +626,7 @@ class CursesEditMessage::get_file_helper
 		}
 
 		// Edit out control characters
-		std::vector<unicode_char>::iterator
+		std::u32string::iterator
 			b=uline.begin(), e=uline.end(), c=b;
 
 		for ( ; b != e; ++b)
@@ -705,7 +705,7 @@ public:
 
 class CursesEditMessage::unicode_wordwrap_iterator
 	: public std::iterator<std::input_iterator_tag,
-			       unicode_char> {
+			       char32_t> {
 
 	CursesEditMessage *msg;
 	size_t start_row, end_row;
@@ -755,10 +755,10 @@ public:
 private:
 
 	// Current unjustified line
-	std::vector<unicode_char> line;
+	std::u32string line;
 
 	// Current iterator over the line
-	std::vector<unicode_char>::iterator b, e;
+	std::u32string::iterator b, e;
 
 	// Advanced to the next line in the unjustified text. Set up the
 	// beginning and the ending iterator
@@ -794,7 +794,7 @@ private:
 public:
 
 	// Iterator operation
-	unicode_char operator*() const
+	char32_t operator*() const
 	{
 		return *b;
 	}
@@ -835,13 +835,13 @@ public:
 	unicode_wordwrap_oiterator &operator++(int) { return *this; }
 	unicode_wordwrap_oiterator &operator*() { return *this; }
 
-	unicode_wordwrap_oiterator &operator=(const std::vector<unicode_char>
+	unicode_wordwrap_oiterator &operator=(const std::u32string
 					      &u)
 	{
 		wrapped.push_back(CursesFlowedLine(u, true));
 		return *this;
 	}
-       
+
 };
 
 bool CursesEditMessage::processKeyInFocus(const Key &key)
@@ -991,7 +991,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 					 CursesField::cutBuffer.begin(),
 					 CursesField::cutBuffer.end());
 			CursesField::cutBuffer.clear();
-			lastKey=Key((unicode_char)0); // Not really
+			lastKey=Key((char32_t)0); // Not really
 			draw();
 			return true;
 		}
@@ -1001,7 +1001,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 		if (!justifiable(cursorRow))
 		{
-			lastKey=Key((unicode_char)0); // Not really
+			lastKey=Key((char32_t)0); // Not really
 			return true;
 		}
 
@@ -1115,13 +1115,13 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 		// with title-cased replacement text).
 
 		{
-			std::vector<unicode_char> ubuf;
+			std::u32string ubuf;
 
 			unicode::iconvert::convert(defaultSearchStr,
 						unicode_default_chset(),
 						ubuf);
 
-			for (std::vector<unicode_char>::iterator
+			for (std::u32string::iterator
 				     b(ubuf.begin()), e(ubuf.end()); b != e;
 			     ++b)
 			{
@@ -1162,15 +1162,15 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 		std::string titleReplaceStr=defaultReplaceStr;
 
 		{
-			std::vector<unicode_char> ubuf;
+			std::u32string ubuf;
 
 			if (unicode::iconvert::convert(defaultReplaceStr,
 						    unicode_default_chset(),
 						    ubuf))
 			{
-				std::vector<unicode_char> uc=ubuf;
+				std::u32string uc=ubuf;
 
-				for (std::vector<unicode_char>::iterator
+				for (std::u32string::iterator
 					     b(uc.begin()),
 					     e(uc.end());
 				     b != e; ++b)
@@ -1232,13 +1232,13 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 			if (doSmartReplace && !CursesField::cutBuffer.empty())
 			{
-				std::vector<unicode_char> ubuf;
+				std::u32string ubuf;
 
 				if (unicode::iconvert::
 				    convert(CursesField::cutBuffer.front().text,
 					    "utf-8", ubuf))
 				{
-					std::vector<unicode_char>::iterator
+					std::u32string::iterator
 						b, e;
 
 					for (b=ubuf.begin(),
@@ -1320,7 +1320,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 	if (key == key_DICTSPELL)
 	{
-		std::vector<unicode_char> currentLine;
+		std::u32string currentLine;
 		size_t row=cursorRow;
 
 		getText(row, currentLine);
@@ -1397,7 +1397,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 			std::string word_c;
 
 			{
-				std::vector<unicode_char> word;
+				std::u32string word;
 
 				word.insert(word.end(),
 					    currentLine.begin()+pos,
@@ -1455,7 +1455,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 				return true;
 			}
 
-			std::vector<unicode_char> uc;
+			std::u32string uc;
 
 
 			if (doReplace &&
@@ -1609,7 +1609,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 		macroNamePrompt.optionHelp
 			.push_back(std::make_pair(Gettext
 					     ::keyname(_("ENTER:Enter")),
-					     marked ? 
+					     marked ?
 					     _("Define shortcut")
 					     :
 					     _("Clear shortcut")
@@ -1639,14 +1639,14 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 				if (macroNamePrompt.abortflag)
 					return true;
 
-				std::vector<unicode_char> v;
+				std::u32string v;
 
 				unicode::iconvert::convert(((std::string)
 							 macroNamePrompt),
 							unicode_default_chset(),
 							v);
 
-				std::vector<unicode_char>::iterator b, e;
+				std::u32string::iterator b, e;
 
 				for (b=v.begin(), e=v.end(); b != e; ++b)
 				{
@@ -1699,7 +1699,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 		for (i=row1; i <= row2; i++)
 		{
-			std::vector<unicode_char> u;
+			std::u32string u;
 
 			getText(i, u);
 
@@ -2038,15 +2038,15 @@ CursesEditMessage::ReplacePrompt::prompt()
 //////////////////////////////////////////////////////////////////////////
 
 
-std::vector<unicode_char>::iterator
-CursesEditMessage::getIndexOfCol(std::vector<unicode_char> &line,
+std::u32string::iterator
+CursesEditMessage::getIndexOfCol(std::u32string &line,
 				 size_t colNum)
 {
 	widecharbuf wc;
 
 	size_t col=0;
 
-	std::vector<unicode_char>::iterator b(line.begin()),
+	std::u32string::iterator b(line.begin()),
 		e(line.end()), p=b,
 		retvec=b;
 
@@ -2083,8 +2083,8 @@ CursesEditMessage::getIndexOfCol(std::vector<unicode_char> &line,
 	return retvec;
 }
 
-std::vector<unicode_char>::iterator
-CursesEditMessage::getIndexOfCol(std::vector<unicode_char> &line,
+std::u32string::iterator
+CursesEditMessage::getIndexOfCol(std::u32string &line,
 				 std::vector<size_t> &pos,
 				 size_t colNum)
 {
@@ -2100,9 +2100,9 @@ CursesEditMessage::getIndexOfCol(std::vector<unicode_char> &line,
 	return line.begin() + n;
 
 #if 0
-	std::vector<unicode_char>::iterator indexp=line.begin();
+	std::u32string::iterator indexp=line.begin();
 
-	std::vector<unicode_char>::iterator b=line.begin(), e=line.end();
+	std::u32string::iterator b=line.begin(), e=line.end();
 
 	size_t col=0;
 
@@ -2129,7 +2129,7 @@ CursesEditMessage::getIndexOfCol(std::vector<unicode_char> &line,
 
 void CursesEditMessage::mark()
 {
-	std::vector<unicode_char> line;
+	std::u32string line;
 
 	getText(cursorRow, line);
 
@@ -2140,14 +2140,14 @@ void CursesEditMessage::mark()
 
 void CursesEditMessage::end()
 {
-	std::vector<unicode_char> line;
+	std::u32string line;
 
 	getText(cursorRow, line);
 
 	widecharbuf wc;
 
 	wc.init_unicode(line.begin(), line.end());
-	
+
 	cursorCol=wc.wcwidth(0);
 	drawLine(cursorRow);
 }
@@ -2158,7 +2158,7 @@ void CursesEditMessage::yank(const std::list<CursesFlowedLine> &yankText,
 {
 	size_t origRow=cursorRow;
 
-	std::vector<unicode_char> before, after;
+	std::u32string before, after;
 	bool flowed;
 
 	getTextBeforeAfter(before, after, flowed);
@@ -2168,7 +2168,7 @@ void CursesEditMessage::yank(const std::list<CursesFlowedLine> &yankText,
 
 	replaceTextLines(origRow, 1, yankText.begin(), yankText.end());
 
-	std::vector<unicode_char> line;
+	std::u32string line;
 	bool pasteflowed;
 
 	getText(origRow, line, pasteflowed);
@@ -2188,7 +2188,7 @@ bool CursesEditMessage::search(bool doUpdate, bool doWrap,
 {
 	searchEngine.reset();
 
-	std::vector<unicode_char> line;
+	std::u32string line;
 
 	getText(cursorRow, line);
 
@@ -2200,7 +2200,7 @@ bool CursesEditMessage::search(bool doUpdate, bool doWrap,
 	size_t startRow=searchRow;
 	size_t startPos=searchPos;
 
-	std::vector<unicode_char> lineuc;
+	std::u32string lineuc;
 
 	// We begin the search in the middle of the line, so load a partial
 	// line into lineuc, but make sure the cursor position doesn't change.
@@ -2223,7 +2223,7 @@ bool CursesEditMessage::search(bool doUpdate, bool doWrap,
 
 		if (searchPos >= lineuc.size())
 		{
-			searchEngine << (unicode_char)' ';
+			searchEngine << (char32_t)' ';
 			// Simulated whitespace
 
 			if (++searchRow >= numLines())
@@ -2236,7 +2236,7 @@ bool CursesEditMessage::search(bool doUpdate, bool doWrap,
 
 			lineuc.clear();
 
-			std::vector<unicode_char> uc;
+			std::u32string uc;
 
 			getText(searchRow, uc);
 
@@ -2299,7 +2299,7 @@ bool CursesEditMessage::getMarkedRegion(size_t &row1, size_t &row2,
 	row1=markRow;
 	pos1=markCursorPos;
 
-	std::vector<unicode_char> before, after;
+	std::u32string before, after;
 
 	getTextBeforeAfter(before, after);
 
@@ -2350,7 +2350,7 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 			size_t i;
 
 			CursesFlowedLine line1, line2;
-			std::vector<unicode_char> u;
+			std::u32string u;
 
 			for (i=row1; i <= row2; i++)
 			{
@@ -2381,7 +2381,7 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 			// Get the first and the last line in the cut region
 			// Splice the before and after text, together.
 
-			std::vector<unicode_char> uline1, uline2;
+			std::u32string uline1, uline2;
 
 			getText(row1, line1);
 			getText(row2, line2);
@@ -2418,7 +2418,7 @@ void CursesEditMessage::deleteChar(bool is_clreol_key)
 
 	// Delete grapheme under cursor
 
-	std::vector<unicode_char> before, after;
+	std::u32string before, after;
 	bool flowed;
 
 	getTextBeforeAfter(before, after, flowed);
@@ -2472,7 +2472,7 @@ void CursesEditMessage::inserted()
 	bool wrappedLine;
 
 	{
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 
 		getTextBeforeAfter(before, after, wrappedLine);
 
@@ -2482,7 +2482,7 @@ void CursesEditMessage::inserted()
 	unicode_wordwrap_oiterator insert_iter;
 
 	{
-		std::vector<unicode_char> line;
+		std::u32string line;
 
 		current_buffer.before_insert.tounicode(line);
 
@@ -2503,7 +2503,7 @@ void CursesEditMessage::inserted()
 
 		++cursorRow;
 
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 
 		current_buffer.get_contents(before, after);
 
@@ -2520,11 +2520,11 @@ void CursesEditMessage::inserted()
 
 void CursesEditMessage::left(bool moveOff)
 {
-	std::vector<unicode_char> line;
+	std::u32string line;
 
 	getText(cursorRow, line);
 
-	std::vector<unicode_char>::iterator beg(line.begin()),
+	std::u32string::iterator beg(line.begin()),
 		cursorPos=getIndexOfCol(line, cursorCol);
 
 	if (cursorPos == line.begin())
@@ -2562,11 +2562,11 @@ void CursesEditMessage::left(bool moveOff)
 
 void CursesEditMessage::right()
 {
-	std::vector<unicode_char> line;
+	std::u32string line;
 
 	getText(cursorRow, line);
 
-	std::vector<unicode_char>::iterator
+	std::u32string::iterator
 		cursorPos=getIndexOfCol(line, cursorCol), end(line.end());
 
 	if (cursorPos == line.end())
@@ -2599,7 +2599,7 @@ void CursesEditMessage::right()
 
 int CursesEditMessage::getCursorPosition(int &row, int &col)
 {
-	std::vector<unicode_char> uc_expanded;
+	std::u32string uc_expanded;
 
 	getText(cursorRow, uc_expanded);
 
@@ -2763,7 +2763,7 @@ void CursesEditMessage::erase()
 
 	size_t i;
 
-	std::vector<unicode_char> spaces;
+	std::u32string spaces;
 
 	spaces.insert(spaces.begin(), getWidth(), ' ');
 
@@ -2775,7 +2775,7 @@ void CursesEditMessage::enterKey()
 {
 	size_t row=cursorRow;
 
-	std::vector<unicode_char> currentLine, nextLine;
+	std::u32string currentLine, nextLine;
 	bool flowed;
 
 	getTextBeforeAfter(currentLine, nextLine, flowed);
@@ -2796,7 +2796,7 @@ void CursesEditMessage::enterKey()
 
 void CursesEditMessage::drawLine(size_t lineNum)
 {
-	std::vector<unicode_char> chars;
+	std::u32string chars;
 	bool wrapped;
 
 	{
@@ -2906,7 +2906,7 @@ void CursesEditMessage::drawLine(size_t lineNum)
 
 	if (beforesel.wcwidth(0) + pos > w)
 	{
-		std::pair<std::vector<unicode_char>, size_t>
+		std::pair<std::u32string, size_t>
 			res=beforesel.get_unicode_truncated(w-pos, pos);
 
 		beforesel.init_unicode(res.first.begin(), res.first.end());
@@ -2916,7 +2916,7 @@ void CursesEditMessage::drawLine(size_t lineNum)
 
 	if (sel.wcwidth(pos) + pos > w)
 	{
-		std::pair<std::vector<unicode_char>, size_t>
+		std::pair<std::u32string, size_t>
 			res=sel.get_unicode_truncated(w-pos, pos);
 
 		sel.init_unicode(res.first.begin(), res.first.end());
@@ -2926,7 +2926,7 @@ void CursesEditMessage::drawLine(size_t lineNum)
 
 	if (aftersel.wcwidth(pos) + pos > w)
 	{
-		std::pair<std::vector<unicode_char>, size_t>
+		std::pair<std::u32string, size_t>
 			res=aftersel.get_unicode_truncated(w-pos, pos);
 
 		aftersel.init_unicode(res.first.begin(), res.first.end());
@@ -2943,7 +2943,7 @@ void CursesEditMessage::drawLine(size_t lineNum)
 
 	rev.setReverse();
 
-	std::vector<unicode_char> larr_shown, rarr_shown, rwrap_shown;
+	std::u32string larr_shown, rarr_shown, rwrap_shown;
 	size_t before_pos, sel_pos, after_pos;
 	size_t rarr_pos=w;
 
@@ -3029,11 +3029,12 @@ void CursesEditMessage::drawLine(size_t lineNum)
 		}
 	}
 
-	std::vector<unicode_char>
+	std::u32string
 		before_shown, sel_shown, after_shown;
 	beforesel.tounicode(before_shown);
 	sel.tounicode(sel_shown);
-	after_shown=aftersel.get_unicode_fixedwidth(rarr_pos-after_pos,
+	after_shown=aftersel.get_unicode_fixedwidth((rarr_pos >= after_pos
+						     ? rarr_pos-after_pos:0),
 						    after_pos);
 
 	if (!rwrap_shown.empty() && !after_shown.empty() &&
@@ -3120,7 +3121,7 @@ bool CursesEditMessage::listKeys( std::vector< std::pair<std::string, std::strin
 	return false;
 }
 
-size_t CursesEditMessage::getTextHorizPos(const std::vector<unicode_char> &line,
+size_t CursesEditMessage::getTextHorizPos(const std::u32string &line,
 					  size_t column)
 {
 	widecharbuf wc;

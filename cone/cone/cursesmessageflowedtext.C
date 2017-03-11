@@ -78,7 +78,7 @@ void CursesMessage::FlowedTextParser::line_begin(size_t quoteLevel)
 	emitted_line=false;
 }
 
-void CursesMessage::FlowedTextParser::line_contents(const unicode_char *ptr,
+void CursesMessage::FlowedTextParser::line_contents(const char32_t *ptr,
 						    size_t cnt)
 {
 	while (cnt)
@@ -95,10 +95,10 @@ void CursesMessage::FlowedTextParser::line_end()
 	wrapper.eof();
 
 	if (!emitted_line)
-		operator=(std::vector<unicode_char>());
+		operator=(std::u32string());
 }
 
-void CursesMessage::FlowedTextParser::operator=(const std::vector<unicode_char>
+void CursesMessage::FlowedTextParser::operator=(const std::u32string
 						&line)
 {
 	bool flag;

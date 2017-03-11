@@ -8,6 +8,7 @@ noinst_LTLIBRARIES=libmail.la
 noinst_PROGRAMS=mailtool testsuite
 
 AM_CFLAGS = $(LIBIDN_CFLAGS)
+AM_CXXFLAGS = @COURIER_UNICODE_CXXFLAGS@
 
 libmail_la_SOURCES=misc.H mail.H mail.C \
 			addmessage.C addmessage.H \

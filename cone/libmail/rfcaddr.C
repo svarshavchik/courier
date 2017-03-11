@@ -297,7 +297,7 @@ mail::emailAddress::emailAddress(const mail::address &a)
 std::string mail::emailAddress::setDisplayName(const std::string &s,
 					       const std::string &charset)
 {
-	std::vector<unicode_char> ucbuf;
+	std::u32string ucbuf;
 
 	if (!unicode::iconvert::convert(s, charset, ucbuf))
 		return "Encoding error";
@@ -312,13 +312,13 @@ std::string mail::emailAddress::setDisplayName(const std::string &s,
 std::string mail::emailAddress::setDisplayAddr(const std::string &s,
 					       const std::string &charset)
 {
-	std::vector<unicode_char> ucbuf;
+	std::u32string ucbuf;
 
 	if (!unicode::iconvert::convert(s, charset, ucbuf))
 		return "Encoding error";
 
 #if LIBIDN
-	std::vector<unicode_char>::iterator b, e;
+	std::u32string::iterator b, e;
 
 	for (b=ucbuf.begin(), e=ucbuf.end(); b != e; ++b)
 	{
@@ -334,7 +334,7 @@ std::string mail::emailAddress::setDisplayAddr(const std::string &s,
 	// Assume non-latin usernames are simply UTF-8 */
 
 	std::string name_portion=
-		unicode::iconvert::convert(std::vector<unicode_char>(ucbuf.begin(),
+		unicode::iconvert::convert(std::u32string(ucbuf.begin(),
 								  b),
 					"utf-8");
 
@@ -342,7 +342,8 @@ std::string mail::emailAddress::setDisplayAddr(const std::string &s,
 
 	char *ascii_ptr;
 
-	int rc=idna_to_ascii_4z(&ucbuf[addr_start], &ascii_ptr, 0);
+	int rc=idna_to_ascii_4z(reinterpret_cast<const uint32_t *>
+				(&ucbuf[addr_start]), &ascii_ptr, 0);
 
 	if (rc != IDNA_SUCCESS)
 		return std::string(std::string("Address encoding error: ") +
@@ -359,7 +360,7 @@ std::string mail::emailAddress::setDisplayAddr(const std::string &s,
 	ucbuf.pop_back();
 	addr=name_portion;
 #else
-	std::vector<unicode_char>::iterator b, e;
+	std::u32string::iterator b, e;
 
 	for (b=ucbuf.begin(), e=ucbuf.end(); b != e; ++b)
 	{
@@ -390,7 +391,7 @@ void mail::emailAddress::setAddr(string s)
 
 void mail::emailAddress::decode()
 {
-	std::vector<unicode_char> ucname, ucaddr;
+	std::u32string ucname, ucaddr;
 
 	unicode::iconvert::convert(mail::rfc2047::decoder().decode(name,
 								"utf-8"),
@@ -402,7 +403,7 @@ void mail::emailAddress::decode()
 
 	for (std::string::iterator b=addr.begin(), e=addr.end(); b != e; ++b)
 		ucaddr.push_back((unsigned char)*b);
-		
+
 #if LIBIDN
 	size_t at=std::find(ucaddr.begin(), ucaddr.end(), '@')
 		- ucaddr.begin();
@@ -412,9 +413,11 @@ void mail::emailAddress::decode()
 		++at;
 		ucaddr.push_back(0);
 
-		unicode_char *ucbuf;
+		uint32_t *ucbuf;
 
-		int rc=idna_to_unicode_4z4z(&ucaddr[at], &ucbuf, 0);
+		int rc=idna_to_unicode_4z4z(reinterpret_cast
+					    <const uint32_t *>(&ucaddr[at]),
+					    &ucbuf, 0);
 
 		if (rc == IDNA_SUCCESS)
 		{
@@ -439,4 +442,3 @@ void mail::emailAddress::decode()
 	decodedName=ucname;
 	decodedAddr=ucaddr;
 }
-

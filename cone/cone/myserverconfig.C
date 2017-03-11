@@ -2328,7 +2328,7 @@ void myServer::config::loadmacros(Macros *mp, xmlDocPtr docPtr)
 				if (macroName.size() == 0)
 					continue;
 
-				std::vector<unicode_char> v;
+				std::u32string v;
 
 				if (!unicode::iconvert::convert(macroName,
 							     "utf-8",

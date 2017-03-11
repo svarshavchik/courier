@@ -29,7 +29,7 @@ public:
 
 	// Additional options:
 	std::vector< std::pair<std::string, std::string> > optionHelp;
-	std::vector< unicode_char > optionList;
+	std::u32string optionList;
 
 	Curses *currentFocus; // Internal use - saves previous focus.
 
@@ -50,7 +50,7 @@ public:
 
 	operator std::string() { return value; }
 
-	unicode_char firstChar();
+	char32_t firstChar();
 
 	bool aborted() const { return abortflag; }
 };

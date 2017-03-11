@@ -18,7 +18,7 @@ struct unicodeEntity;
 
 class Demoronize {
 
-	std::map<unicode_char, unicodeEntity> altlist;
+	std::map<char32_t, unicodeEntity> altlist;
 	std::string chset;
 
 public:
@@ -31,13 +31,13 @@ public:
 		   demoron_t dodemoronize);
 	~Demoronize();
 
-	std::string alt(unicode_char ch) const;
-	std::string operator()(const std::vector<unicode_char> &uc,
+	std::string alt(char32_t ch) const;
+	std::string operator()(const std::u32string &uc,
 			       bool &errflag);
 
-	const std::vector<unicode_char>
-		&expand(const std::vector<unicode_char> &uc,
-			std::vector<unicode_char> &buffer);
+	const std::u32string
+		&expand(const std::u32string &uc,
+			std::u32string &buffer);
 
 };
 

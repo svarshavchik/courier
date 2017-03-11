@@ -1095,14 +1095,14 @@ bool CursesMessage::reformat()
 					) << orig_charset
 					  << display_chset;
 
-			std::vector< std::vector<unicode_char> > lines;
+			std::vector< std::u32string > lines;
 
 			{
 				std::back_insert_iterator
-					<std::vector< std::vector<unicode_char>
+					<std::vector< std::u32string
 						      > > insert_iter(lines);
 
-				std::vector<unicode_char> umsg;
+				std::u32string umsg;
 
 				unicode::iconvert::convert(msg,
 							unicode_default_chset(),
@@ -1116,11 +1116,11 @@ bool CursesMessage::reformat()
 						w, true);
 			}
 
-			for (std::vector<std::vector<unicode_char> >::iterator
+			for (std::vector<std::u32string >::iterator
 				     b=lines.begin(),
 				     e=lines.end(); b != e; ++b)
 			{
-				std::vector<unicode_char> uc;
+				std::u32string uc;
 
 				{
 					widecharbuf wc;
@@ -1239,7 +1239,7 @@ void CursesMessage::getDescriptionOf(mail::mimestruct *mime,
 		name=env->subject;
 
 	{
-		std::vector<unicode_char> nameu;
+		std::u32string nameu;
 
 		unicode::iconvert::convert(name, unicode_default_chset(), nameu);
 
@@ -1329,7 +1329,7 @@ bool CursesMessage::toMyCharset_impl(const std::string &content_chset,
 	    content_chset == my_chset)
 		return true;
 
-	std::vector<unicode_char> ucbuf;
+	std::u32string ucbuf;
 
 	if (!unicode::iconvert::convert(line, content_chset, ucbuf))
 		tounicode_error=true;
@@ -1346,12 +1346,12 @@ bool CursesMessage::reformatLine(std::string line)
 	std::vector<std::string> lines;
 
 	{
-		std::vector< std::vector<unicode_char> > ulines;
+		std::vector< std::u32string > ulines;
 		std::back_insert_iterator
-			<std::vector< std::vector<unicode_char>
+			<std::vector< std::u32string
 				      > > insert_iter(ulines);
 
-		std::vector<unicode_char> uline;
+		std::u32string uline;
 
 		unicode::iconvert::convert(line,
 					unicode_default_chset(),
@@ -1362,7 +1362,7 @@ bool CursesMessage::reformatLine(std::string line)
 				unicoderewrapnone(),
 				insert_iter, displayWidth, true);
 
-		for (std::vector<std::vector<unicode_char> >::iterator
+		for (std::vector<std::u32string >::iterator
 			     b=ulines.begin(),
 			     e=ulines.end(); b != e; ++b)
 		{
@@ -1524,7 +1524,7 @@ static void decode(const std::vector<mail::address> &addrs,
 
 	lines.clear();
 
-	std::vector<unicode_char> current_line;
+	std::u32string current_line;
 	size_t current_line_width=0;
 
 	b=addr_cpy.begin();
@@ -1532,14 +1532,14 @@ static void decode(const std::vector<mail::address> &addrs,
 
 	bool first=true;
 
-	std::vector<unicode_char> comma;
+	std::u32string comma;
 
 	while (b != e)
 	{
 		std::string s= mail::address(b->getDisplayName(unicode_default_chset()),
 					b->getDisplayAddr(unicode_default_chset())).toString();
 
-		std::vector<unicode_char> s_wc;
+		std::u32string s_wc;
 
 		unicode::iconvert::convert(s, unicode_default_chset(), s_wc);
 
@@ -1599,7 +1599,7 @@ bool CursesMessage::reformatEnvelopeAddresses(std::string hdrName,
 	size_t hdr_width;
 
 	{
-		std::vector<unicode_char> l;
+		std::u32string l;
 
 		unicode::iconvert::convert(hdrName, unicode_default_chset(), l);
 
@@ -1678,7 +1678,7 @@ bool CursesMessage::addHeader(std::string name, std::string value,
 		value=mail::rfc2047::decoder().decode(value,
 						      unicode_default_chset());
 
-	std::vector<unicode_char> name_u;
+	std::u32string name_u;
 
 	unicode::iconvert::convert(name, unicode_default_chset(), name_u);
 
@@ -1705,13 +1705,13 @@ bool CursesMessage::addHeader(std::string name, std::string value,
 	std::vector<std::string> msg;
 
 	{
-		std::vector< std::vector<unicode_char> > wrapped_header;
+		std::vector< std::u32string > wrapped_header;
 
 		std::back_insert_iterator< std::vector<
-			std::vector<unicode_char> > >
+			std::u32string > >
 			insert_iter(wrapped_header);
 
-		std::vector<unicode_char> value_u;
+		std::u32string value_u;
 
 		unicode::iconvert::convert(value, unicode_default_chset(),
 					value_u);
@@ -1722,7 +1722,7 @@ bool CursesMessage::addHeader(std::string name, std::string value,
 				l,
 				true);
 
-		for (std::vector< std::vector<unicode_char> >::iterator
+		for (std::vector< std::u32string >::iterator
 			     b(wrapped_header.begin()),
 			     e(wrapped_header.end()); b != e; ++b)
 		{
@@ -1871,7 +1871,7 @@ void CursesMessage::drawLine(size_t lineNum,
 			}
 		}
 
-		std::vector<unicode_char> ul;
+		std::u32string ul;
 
 		unicode::iconvert::convert(lineb->second,
 					unicode_default_chset(), ul);
@@ -1919,7 +1919,7 @@ void CursesMessage::drawLine(size_t lineNum,
 
 	if (left)
 	{
-		std::vector<unicode_char> l;
+		std::u32string l;
 
 		l.insert(l.end(), left, ' ');
 		window->writeText(l, windowLineNum, pos,
@@ -2048,10 +2048,10 @@ class CursesMessage::newmsgformatter : public mail::textplainparser {
 	size_t quoteLevelAdjustment;
 
 	size_t quoteLevel;
-	std::vector<unicode_char> line;
+	std::u32string line;
 	bool written;
 
-	class writeoiter : public std::iterator<std::vector<unicode_char>,
+	class writeoiter : public std::iterator<std::u32string,
 						void, void, void, void> {
 
 		newmsgformatter *r;
@@ -2065,7 +2065,7 @@ class CursesMessage::newmsgformatter : public mail::textplainparser {
 		writeoiter &operator++(int) { return *this; }
 		writeoiter &operator*() { return *this; }
 
-		writeoiter &operator=(const std::vector<unicode_char> &line)
+		writeoiter &operator=(const std::u32string &line)
 		{
 			if (r->written)
 			{
@@ -2101,7 +2101,7 @@ public:
 		line.clear();
 	}
 
-	void line_contents(const unicode_char *uc, size_t cnt)
+	void line_contents(const char32_t *uc, size_t cnt)
 	{
 		line.insert(line.end(), uc, uc+cnt);
 	}
@@ -2119,7 +2119,7 @@ public:
 
 		written=false;
 
-		std::vector<unicode_char>::iterator b(line.begin()),
+		std::u32string::iterator b(line.begin()),
 			e(line.end());
 
 		while (b != e && e[-1] == ' ')
@@ -2134,7 +2134,7 @@ public:
 				false);
 
 		if (!written)
-			oiter=std::vector<unicode_char>();
+			oiter=std::u32string();
 
 		o << "\n";
 	}
@@ -3306,7 +3306,7 @@ bool CursesMessage::getSendInfo2(std::string promptStr,
 
 		if (encryptInfo)
 		{
-			std::vector<unicode_char> ka;
+			std::u32string ka;
 
 			unicode::iconvert::convert((std::string)promptDSN,
 						unicode_default_chset(),
@@ -3336,7 +3336,7 @@ bool CursesMessage::getSendInfo2(std::string promptStr,
 	}
 
 	{
-		std::vector<unicode_char> ka;
+		std::u32string ka;
 
 		unicode::iconvert::convert((std::string)promptDSN,
 					unicode_default_chset(),
@@ -3355,7 +3355,7 @@ bool CursesMessage::getSendInfo2(std::string promptStr,
 
 	while ((std::string)promptDSN != "Y")
 	{
-		std::vector<unicode_char> ka;
+		std::u32string ka;
 
 		unicode::iconvert::convert((std::string)promptDSN,
 					unicode_default_chset(),

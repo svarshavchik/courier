@@ -73,18 +73,18 @@ char ucheck[16];
 char udelete[16];
 char unew[16];
 
-unicode_char ularr;
-unicode_char urarr;
-unicode_char ucplus;
-unicode_char ucasterisk;
-unicode_char ucwrap;
+char32_t ularr;
+char32_t urarr;
+char32_t ucplus;
+char32_t ucasterisk;
+char32_t ucwrap;
 
-unicode_char uchoriz;
-unicode_char ucvert;
-unicode_char ucupright;
-unicode_char ucrighttee;
-unicode_char ucwatch;
-unicode_char ucwatchend;
+char32_t uchoriz;
+char32_t ucvert;
+char32_t ucupright;
+char32_t ucrighttee;
+char32_t ucwatch;
+char32_t ucwatchend;
 
 static Macros *macroPtr;
 
@@ -1191,7 +1191,7 @@ int main(int argc, char *argv[])
 	// Init special characters if current display can show them.
 
 	{
-		std::vector<unicode_char> ucbuf;
+		std::u32string ucbuf;
 
 		ucbuf.push_back(8594);
 

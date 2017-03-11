@@ -42,7 +42,7 @@ void CursesVScroll::erase()
 {
 	size_t w=getWidth(), h=getHeight();
 
-	std::vector<unicode_char> spaces;
+	std::u32string spaces;
 
 	spaces.insert(spaces.end(), w, ' ');
 
@@ -123,7 +123,7 @@ bool CursesVScroll::writeText(const char *text, int row, int col,
 	return CursesContainer::writeText(text, row, col, attr);
 }
 
-bool CursesVScroll::writeText(const std::vector<unicode_char> &text,
+bool CursesVScroll::writeText(const std::u32string &text,
 			      int row, int col,
 			      const Curses::CursesAttr &attr) const
 {

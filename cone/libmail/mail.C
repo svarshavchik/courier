@@ -728,9 +728,9 @@ string mail::mbox::translatePathCommon(string path,
 			path=path.substr(n+1);
 		}
 
-		vector<unicode_char> ucvec;
+		u32string ucvec;
 
-		unicode_char *uc;
+		char32_t *uc;
 		size_t ucsize;
 		unicode_convert_handle_t h;
 
@@ -773,7 +773,7 @@ string mail::mbox::translatePathCommon(string path,
 				}
 				if (ucvec[n] == '%')
 				{
-					unicode_char ucnum=0;
+					char32_t ucnum=0;
 					size_t o=n+1;
 
 					while (o < ucvec.size())

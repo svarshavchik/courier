@@ -68,14 +68,14 @@ public:
 
 	class Key {
 		const char *keyname;
-		std::vector<unicode_char> keys;
+		std::u32string keys;
 	public:
 		Key(const char *);
 		~Key();
 
-		bool operator==(unicode_char k);
+		bool operator==(char32_t k);
 
-		operator const std::vector<unicode_char> &()
+		operator const std::u32string &()
 		{
 			init();
 			return keys;

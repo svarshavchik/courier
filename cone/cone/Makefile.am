@@ -8,6 +8,8 @@ SUBDIRS=po
 noinst_PROGRAMS=cone leaf htmlparsertest pwtest
 noinst_SCRIPTS=cone.sh cone.dist
 
+AM_CXXFLAGS=@COURIER_UNICODE_CXXFLAGS@
+
 HTMLMACROFILES=cone.html
 
 MANMACROFILES=man1/cone.1

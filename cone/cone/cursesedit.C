@@ -1496,7 +1496,7 @@ void CursesEdit::draw()
 {
 	CursesContainer::draw();
 
-	std::vector<unicode_char> dashes;
+	std::u32string dashes;
 
 	dashes.insert(dashes.end(), getWidth(), '-');
 
@@ -1507,7 +1507,7 @@ void CursesEdit::erase()
 {
 	CursesContainer::erase();
 
-	std::vector<unicode_char> dashes;
+	std::u32string dashes;
 
 	dashes.insert(dashes.end(), getWidth(), ' ');
 
@@ -2123,7 +2123,7 @@ bool CursesEdit::getPostFolder(mail::folder *&postFolder,
 
 
 
-			unicode_char promptKey=option.firstChar();
+			char32_t promptKey=option.firstChar();
 
 			if (key_SIGN == promptKey)
 			{

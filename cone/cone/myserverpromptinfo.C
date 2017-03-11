@@ -48,7 +48,7 @@ myServer::promptInfo &myServer::promptInfo::option(Gettext::Key &theKey,
 {
 	optionHelp.push_back(make_pair(keyname, keydescr));
 
-	std::vector<unicode_char> ukv=theKey;
+	std::u32string ukv=theKey;
 	optionList.insert(optionList.end(), ukv.begin(), ukv.end());
 	return *this;
 
@@ -91,9 +91,9 @@ myServer::promptInfo myServer::prompt(myServer::promptInfo info)
 	return info;
 }
 
-unicode_char myServer::promptInfo::firstChar()
+char32_t myServer::promptInfo::firstChar()
 {
-	std::vector<unicode_char> buf;
+	std::u32string buf;
 
 	unicode::iconvert::convert(value, unicode_default_chset(), buf);
 

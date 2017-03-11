@@ -146,10 +146,10 @@ public:
 
 	class Key {
 	public:
-		unicode_char ukey;
+		char32_t ukey;
 		const char *keycode;
 
-		Key(unicode_char ch) : ukey(ch), keycode(0) {}
+		Key(char32_t ch) : ukey(ch), keycode(0) {}
 
 		Key(const char *k) : ukey(0), keycode(k) {}
 
@@ -192,7 +192,7 @@ public:
 		}
 
 #if 0
-		bool operator==(unicode_char k) const
+		bool operator==(char32_t k) const
 		{
 			return keycode == 0 && key == k;
 		}
@@ -205,7 +205,7 @@ public:
 				ukey == k.ukey;
 		}
 
-		bool operator==(const std::vector<unicode_char> &v) const;
+		bool operator==(const std::u32string &v) const;
 
 		bool operator!=(const char *p) const
 		{
@@ -218,7 +218,7 @@ public:
 			return !operator==(k);
 		}
 #endif
-		bool operator!=(const std::vector<unicode_char> &v) const
+		bool operator!=(const std::u32string &v) const
 		{
 			return !operator==(v);
 		}
@@ -338,7 +338,7 @@ public:
 
 	virtual bool writeText(const char *text, int row, int col,
 			       const CursesAttr &attr) const;
-	virtual bool writeText(const std::vector<unicode_char> &text,
+	virtual bool writeText(const std::u32string &text,
 			       int row, int col,
 			       const Curses::CursesAttr &attr) const;
 

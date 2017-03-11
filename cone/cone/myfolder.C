@@ -1993,7 +1993,7 @@ void myFolder::FolderIndexUpdate
 		bool err=false;
 
 		{
-			vector<unicode_char> uc;
+			u32string uc;
 
 			if (!unicode::iconvert::convert(i.subject_utf8,
 						     "utf-8", uc))

@@ -55,7 +55,7 @@ void OutputDialog::output(std::string s)
 	{
 		s=buf.end()[-1]+s;
 
-		std::vector<unicode_char> blankLine;
+		std::u32string blankLine;
 
 		blankLine.insert(blankLine.end(), getWidth(), ' ');
 
@@ -104,12 +104,12 @@ void OutputDialog::outputLine(std::string s)
 	std::vector<std::string> addStrings;
 
 	{
-		std::vector< std::vector<unicode_char> > ulines;
+		std::vector< std::u32string > ulines;
 		std::back_insert_iterator
-			<std::vector< std::vector<unicode_char>
+			<std::vector< std::u32string
 				      > > insert_iter(ulines);
 
-		std::vector<unicode_char> uline;
+		std::u32string uline;
 
 		unicode::iconvert::convert(s,
 					unicode_default_chset(),
@@ -119,7 +119,7 @@ void OutputDialog::outputLine(std::string s)
 				unicoderewrapnone(),
 				insert_iter, getWidth(), true);
 
-		for (std::vector<std::vector<unicode_char> >::iterator
+		for (std::vector<std::u32string >::iterator
 			     b=ulines.begin(),
 			     e=ulines.end(); b != e; ++b)
 		{

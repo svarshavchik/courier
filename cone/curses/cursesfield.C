@@ -12,9 +12,9 @@
 #include <algorithm>
 #include <iostream>
 
-std::vector<unicode_char> CursesField::yesKeys, CursesField::noKeys;
-unicode_char CursesField::yankKey='\x19';
-unicode_char CursesField::clrEolKey='\x0B';
+std::u32string CursesField::yesKeys, CursesField::noKeys;
+char32_t CursesField::yankKey='\x19';
+char32_t CursesField::clrEolKey='\x0B';
 
 std::list<CursesFlowedLine> CursesField::cutBuffer; // for cut/paste
 
@@ -37,11 +37,11 @@ CursesField::CursesField(CursesContainer *parent,
 					unicode_default_chset(),
 					yesKeys);
 
-	std::vector<unicode_char> utext;
+	std::u32string utext;
 
 	unicode::iconvert::convert(initValue, unicode_default_chset(), utext);
 
-	text.set_contents(utext, std::vector<unicode_char>());
+	text.set_contents(utext, std::u32string());
 
 	selectpos=text.before_insert.graphemes.size();
 }
@@ -82,11 +82,11 @@ void CursesField::setCol(int col)
 
 void CursesField::setText(std::string textArg)
 {
-	std::vector<unicode_char> utext;
+	std::u32string utext;
 
 	unicode::iconvert::convert(textArg, unicode_default_chset(), utext);
 
-	text.set_contents(utext, std::vector<unicode_char>());
+	text.set_contents(utext, std::u32string());
 
 	selectpos=text.before_insert.graphemes.size();
 	shiftoffset=0;
@@ -95,7 +95,7 @@ void CursesField::setText(std::string textArg)
 
 std::string CursesField::getText() const
 {
-	std::vector<unicode_char> b, a;
+	std::u32string b, a;
 
 	text.get_contents(b, a);
 
@@ -123,7 +123,7 @@ int CursesField::getHeight() const
 
 void CursesField::getbeforeafter(widecharbuf &wbefore, widecharbuf &wafter)
 {
-	std::vector<unicode_char> before, after;
+	std::u32string before, after;
 	text.get_contents(before, after);
 
 	wbefore.init_unicode(before.begin(), before.end());
@@ -157,7 +157,7 @@ void CursesField::draw()
 
 	wbefore += wafter;
 
-	std::vector<unicode_char> ubeforesel, usel, uaftersel;
+	std::u32string ubeforesel, usel, uaftersel;
 	size_t usel_pos=0, uaftersel_pos=0;
 
 	size_t p=shiftoffset;
@@ -168,7 +168,7 @@ void CursesField::draw()
 	for (size_t i=0; i<p && i < wbefore.graphemes.size(); ++i)
 		virtual_col += wbefore.graphemes[i].wcwidth(virtual_col);
 
-	std::vector<unicode_char> unicodes;
+	std::u32string unicodes;
 
 	while (p < wbefore.graphemes.size() && col < width)
 	{
@@ -179,7 +179,7 @@ void CursesField::draw()
 		if (grapheme_width + col > width)
 			break;
 
-		std::vector<unicode_char> *vp;
+		std::u32string *vp;
 
 		if (a)
 		{
@@ -242,7 +242,7 @@ void CursesField::draw()
 
 void CursesField::erase()
 {
-	std::vector<unicode_char> v;
+	std::u32string v;
 
 	v.insert(v.end(), width, ' ');
 
@@ -382,7 +382,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 		return Curses::processKeyInFocus(key);
 	}
 
-	std::vector<unicode_char> cut_text;
+	std::u32string cut_text;
 
 	if (text.inserted.empty() && key != key.SHIFT)
 		text.contents_cut(selectpos, cut_text);
@@ -438,7 +438,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 		return Curses::processKeyInFocus(key);
 	}
 
-	unicode_char k=key.ukey;
+	char32_t k=key.ukey;
 
 	if (k == yankKey && !yesnoField &&
 	    optionField.size() == 0 && !cutBuffer.empty())
@@ -454,7 +454,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 	{
 		text.inserted.push_back(k);
 
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 
 		text.get_contents(before, after);
 
@@ -465,7 +465,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 
 		text.inserted.pop_back();
 
-		std::vector<unicode_char>::iterator p=
+		std::u32string::iterator p=
 			find(optionField.begin(),
 			     optionField.end(), *before.begin());
 
@@ -483,7 +483,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 	{
 		text.inserted.push_back(k);
 
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 
 		text.get_contents(before, after);
 
@@ -492,7 +492,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 		if (before.empty())
 			return true;
 
-		std::vector<unicode_char>::iterator p=
+		std::u32string::iterator p=
 			find(yesKeys.begin(),
 			     yesKeys.end(), *before.begin());
 
@@ -525,7 +525,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 
 	if (k == yankKey)
 	{
-		std::vector<unicode_char> ucut;
+		std::u32string ucut;
 
 		if (!cutBuffer.empty())
 			unicode::iconvert::convert(cutBuffer.front().text,
@@ -534,7 +534,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 
 		text.insert_to_before();
 
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 		text.get_contents(before, after);
 
 		before.insert(before.end(), ucut.begin(), ucut.end());
@@ -586,8 +586,8 @@ bool CursesField::processKeyInFocus(const Key &key)
 		 !text.inserted.empty())
 	{
 		size_t i;
-		unicode_char m_buf[CursesMoronize::max_keycode_len+1];
-		std::vector<unicode_char>::iterator b(text.inserted.begin()),
+		char32_t m_buf[CursesMoronize::max_keycode_len+1];
+		std::u32string::iterator b(text.inserted.begin()),
 			e(text.inserted.end()), p=e;
 
 		for (i=0; i<sizeof(m_buf)/sizeof(m_buf[0])-1; ++i)
@@ -604,7 +604,7 @@ bool CursesField::processKeyInFocus(const Key &key)
 
 		if (m_buf[0] && CursesMoronize::enabled)
 		{
-			std::vector<unicode_char> repl_c;
+			std::u32string repl_c;
 
 			i=CursesMoronize::moronize(m_buf, repl_c);
 
@@ -643,12 +643,12 @@ void CursesField::left()
 
 	if (text.before_insert.graphemes.size() > 0)
 	{
-		std::vector<unicode_char> cut_text;
+		std::u32string cut_text;
 
 		text.contents_cut(text.before_insert.graphemes.size()-1,
 				  cut_text);
 
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 		text.get_contents(before, after);
 
 		after.insert(after.begin(), cut_text.begin(), cut_text.end());
@@ -665,12 +665,12 @@ void CursesField::right()
 
 	if (text.after_insert.graphemes.size() > 0)
 	{
-		std::vector<unicode_char> cut_text;
+		std::u32string cut_text;
 
 		text.contents_cut(text.before_insert.graphemes.size()+1,
 				  cut_text);
 
-		std::vector<unicode_char> before, after;
+		std::u32string before, after;
 		text.get_contents(before, after);
 
 		before.insert(before.end(), cut_text.begin(), cut_text.end());

@@ -411,7 +411,7 @@ void Gettext::Key::init()
 	unicode::iconvert::convert(n, unicode_default_chset(), keys);
 }
 
-bool Gettext::Key::operator==(unicode_char k)
+bool Gettext::Key::operator==(char32_t k)
 {
 	init();
 	return (find(keys.begin(), keys.end(), k) != keys.end());

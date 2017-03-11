@@ -207,7 +207,7 @@ void CursesMessageDisplay::drawLine(size_t lineNum)
 	if (!messageInfo)
 	{
 		Curses::CursesAttr attr;
-		std::vector<unicode_char> l;
+		std::u32string l;
 
 		l.insert(l.end(), w, ' ');
 		writeText(l, lineNum - getFirstLineShown(), 0, attr);
@@ -920,7 +920,7 @@ bool CursesMessageDisplay::processKeyInFocus(const Curses::Key &key)
 			for (b=line.begin(), e=line.end(); b != e; ++b)
 				s += Gettext::toutf8(b->second);
 
-			unicode_char *uc;
+			char32_t *uc;
 			size_t ucsize;
 
 			if (unicode_convert_tou_tobuf(s.c_str(),
@@ -950,7 +950,7 @@ bool CursesMessageDisplay::processKeyInFocus(const Curses::Key &key)
 				searchEngine << uc[i];
 			}
 			free(uc);
-			searchEngine << (unicode_char)' '; // EOL
+			searchEngine << (char32_t)' '; // EOL
 
 			if (searchEngine)
 			{

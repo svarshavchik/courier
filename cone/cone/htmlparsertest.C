@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
 			std::cout << s;
 
-			std::vector<unicode_char> uc;
+			std::u32string uc;
 
 			uc.push_back(unicodeEntityList[i].iso10646);
 

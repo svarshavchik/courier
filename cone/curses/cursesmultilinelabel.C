@@ -24,7 +24,7 @@ void CursesMultilineLabel::init()
 
 	lines.clear();
 
-	std::back_insert_iterator< std::vector< std::vector<unicode_char> > >
+	std::back_insert_iterator< std::vector< std::u32string > >
 		insert_iter(lines);
 
 	unicodewordwrap(text.begin(), text.end(),
@@ -106,7 +106,7 @@ void CursesMultilineLabel::draw()
 
 	size_t row=0;
 
-	for ( std::vector< std::vector<unicode_char> >::iterator
+	for ( std::vector< std::u32string >::iterator
 		      b(lines.begin()), e(lines.end()); b != e; ++b, ++row)
 	{
 		writeText(*b, row, 0, attribute);
@@ -115,7 +115,7 @@ void CursesMultilineLabel::draw()
 
 void CursesMultilineLabel::erase()
 {
-	std::vector<unicode_char> uc;
+	std::u32string uc;
 
 	uc.insert(uc.end(), getWidth(), ' ');
 

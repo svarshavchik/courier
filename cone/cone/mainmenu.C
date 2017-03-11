@@ -326,7 +326,7 @@ void MainMenuScreen::addaccount_s()
 	if (result.abortflag)
 		return;
 
-	unicode_char promptKey=result.firstChar();
+	char32_t promptKey=result.firstChar();
 
 	if (promptKey == 0)
 		return;

@@ -34,7 +34,7 @@ class CursesScreen : public CursesContainer {
 
 	bool underline_hack;
 
-	// Read keyboard input, convert to unicode_chars
+	// Read keyboard input, convert to char32_ts
 
 	class KeyReader {
 
@@ -51,7 +51,7 @@ class CursesScreen : public CursesContainer {
 
 		void operator<<(char);
 
-		bool operator>>(unicode_char &);
+		bool operator>>(char32_t &);
 	};
 
 	KeyReader keyreader;
@@ -74,7 +74,7 @@ public:
 	bool writeText(const char *text, int row, int col,
 		       const Curses::CursesAttr &attr) const;
 
-	bool writeText(const std::vector<unicode_char> &text, int row, int col,
+	bool writeText(const std::u32string &text, int row, int col,
 		       const Curses::CursesAttr &attr) const;
 
 	// Return keyboard input.  Returns Key::nokey() if no keyboard input
@@ -85,7 +85,7 @@ public:
 private:
 
 	Key doGetKey();
-	Key doGetPlainKey(unicode_char);
+	Key doGetPlainKey(char32_t);
 
 public:
 	void resized();

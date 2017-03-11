@@ -104,7 +104,7 @@ void init()
 	{
 		string chset=unicode_default_chset();
 
-		vector<unicode_char> dummy;
+		u32string dummy;
 
 		if (!unicode::iconvert::convert("", chset, dummy))
 		{
@@ -131,7 +131,7 @@ void init()
 				     .replacements[j]; ++j)
 				;
 
-			vector<unicode_char>
+			u32string
 				uc(CursesMoronize::moronizationList[i]
 				   .replacements,
 				   CursesMoronize::moronizationList[i]
@@ -156,8 +156,8 @@ void init()
 	CursesStatusBar::shortcut_next_key= _("^O");
 	CursesStatusBar::shortcut_next_descr= _("mOre");
 
-#define TOKEYCODE(s) ( ((const vector<unicode_char> &)(s)).size() > 0 ? \
-		((const vector<unicode_char> &)(s))[0]:0)
+#define TOKEYCODE(s) ( ((const u32string &)(s)).size() > 0 ? \
+		((const u32string &)(s))[0]:0)
 
 	CursesStatusBar::shortcut_next_keycode=TOKEYCODE(key_MORE);
 

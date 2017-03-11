@@ -68,25 +68,25 @@ class htmlParser {
 
 	class enhanced_char {
 	public:
-		unicode_char ch;
+		char32_t ch;
 		textAttributes attr;
 
-		enhanced_char(unicode_char chArg, textAttributes attrArg);
+		enhanced_char(char32_t chArg, textAttributes attrArg);
 		~enhanced_char();
 	};
 
 	//
-	// Assign linebreaking values to a unicode_char and a textAttribute.
+	// Assign linebreaking values to a char32_t and a textAttribute.
 	// Saves them in a list before using linebreak_callback_base. When
 	// a linebreaking value comes back from linebreak_callback_base,
 	// pop the pair off the list, and there you go.
 
 	class linebuf_calc_linebreak : public unicode::linebreak_callback_base {
 
-		std::list< std::pair<unicode_char, textAttributes > > queue;
+		std::list< std::pair<char32_t, textAttributes > > queue;
 
 	public:
-		void submit(unicode_char ch, textAttributes attr)
+		void submit(char32_t ch, textAttributes attr)
 		{
 			queue.push_back(std::make_pair(ch, attr));
 			linebreak_callback_base::operator<<(ch);
@@ -95,14 +95,14 @@ class htmlParser {
 	private:
 		// Override in subclass, to receive the linebreak values.
 
-		virtual void operator()(int, unicode_char, textAttributes)=0;
+		virtual void operator()(int, char32_t, textAttributes)=0;
 
 		virtual int callback(int v)
 		{
-			std::pair<unicode_char, textAttributes>
+			std::pair<char32_t, textAttributes>
 				&p=queue.front();
 
-			unicode_char ch=p.first;
+			char32_t ch=p.first;
 			textAttributes attr=p.second;
 			queue.pop_front();
 			operator()(v, ch, attr);
@@ -130,7 +130,7 @@ class htmlParser {
 
 		bool isempty;
 
-		unicode_char lastchar;
+		char32_t lastchar;
 
 		size_t wantthiswidth();
 	public:
@@ -139,14 +139,14 @@ class htmlParser {
 		linebuf(htmlParser *parserArg, size_t desiredWidthArg);
 		~linebuf();
 
-		void submit(unicode_char ch, textAttributes attr)
+		void submit(char32_t ch, textAttributes attr)
 		{
 			isempty=false;
 			lastchar=ch;
 			linebuf_calc_linebreak::submit(ch, attr);
 		}
 
-		unicode_char getLastChar()
+		char32_t getLastChar()
 		{
 			return lastchar;
 		}
@@ -166,7 +166,7 @@ class htmlParser {
 		}
 
 	private:
-		virtual void operator()(int, unicode_char, textAttributes);
+		virtual void operator()(int, char32_t, textAttributes);
 
 		size_t wordtoolong(size_t);
 
@@ -185,12 +185,12 @@ class htmlParser {
 		using unicode::iconvert::tou::operator();
 
 	private:
-		int converted(const unicode_char *, size_t);
+		int converted(const char32_t *, size_t);
 	};
 
 	converter tounicode;
 
-	std::vector<unicode_char> leadin_prefix; // Used by <LI>
+	std::u32string leadin_prefix; // Used by <LI>
 
 	size_t desiredLineLength; // Wanted line length.
 
@@ -200,7 +200,7 @@ class htmlParser {
 
 	size_t nblanklines;
 
-	std::vector<unicode_char> currentTag; // Current tag being eaten.
+	std::u32string currentTag; // Current tag being eaten.
 
 	void newTag();
 
@@ -224,7 +224,7 @@ class htmlParser {
 	public:
 		const struct taginfo *name;
 		std::list< std::pair<std::string,
-				     std::vector<unicode_char> > > attributes;
+				     std::u32string > > attributes;
 		// Attributes on a tag.
 
 		textAttributes attr; // Cached current text attrs.
@@ -232,7 +232,7 @@ class htmlParser {
 
 		tag();
 		~tag();
-		void getAttribute(std::string, std::vector<unicode_char> &);
+		void getAttribute(std::string, std::u32string &);
 		// Search for an attribute in attributes, and return the
 		// attribute's value.
 
@@ -242,17 +242,17 @@ class htmlParser {
 	// Utility functions:
 
 	// Skip whispace in b, up to e.
-	static void skipspc(std::vector<unicode_char>::iterator &b,
-			    std::vector<unicode_char>::iterator &e);
+	static void skipspc(std::u32string::iterator &b,
+			    std::u32string::iterator &e);
 
-	static bool isb(unicode_char); // True if this is a blank char.
-	static bool isu(unicode_char); // True if char is latin uppercase.
+	static bool isb(char32_t); // True if this is a blank char.
+	static bool isu(char32_t); // True if char is latin uppercase.
 
 	static void tou(std::string::iterator, std::string::iterator);
 	// Convert char string to uppercase.
 
-	static void tou(std::vector<unicode_char>::iterator,
-			std::vector<unicode_char>::iterator);
+	static void tou(std::u32string::iterator,
+			std::u32string::iterator);
 	// Ditto.
 
 	std::list<tag> tagStack; // Current stack of open tags.
@@ -272,7 +272,7 @@ class htmlParser {
 
 	Demoronize &demoronizer; // HTML entity aliases.
 
-	static unicode_char getHtmlEntity(std::string entityName);
+	static char32_t getHtmlEntity(std::string entityName);
 
 protected:
 	bool conversionError();
@@ -280,11 +280,11 @@ private:
 	bool conversionErrorFlag;
 
 public:
-	static void urlDecode(std::string url, std::vector<unicode_char> &uc);
+	static void urlDecode(std::string url, std::u32string &uc);
 
-	static void cgiDecode(const std::vector<unicode_char> &uc,
+	static void cgiDecode(const std::u32string &uc,
 			      std::map<std::string,
-			      std::vector<unicode_char> > &args);
+			      std::u32string > &args);
 	htmlParser(const std::string &htmlCharsetArg,
 		   // HTML character set
 
@@ -316,7 +316,7 @@ public:
 private:
 	void fmtline(const enhanced_char *b, const enhanced_char *e, bool);
 
-	void parse(const std::vector<unicode_char> &vec);
+	void parse(const std::u32string &vec);
 };
 
 #endif

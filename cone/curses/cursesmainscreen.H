@@ -59,7 +59,7 @@ public:
 
 	bool writeText(const char *text, int row, int col,
 		       const CursesAttr &attr) const;
-	bool writeText(const std::vector<unicode_char> &text, int row, int col,
+	bool writeText(const std::u32string &text, int row, int col,
 		       const Curses::CursesAttr &attr) const;
 };
 

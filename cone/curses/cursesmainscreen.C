@@ -65,11 +65,11 @@ bool CursesMainScreen::writeText(const char *text, int row, int col,
 	return CursesVScroll::writeText(text, row, col, attr);
 }
 
-bool CursesMainScreen::writeText(const std::vector<unicode_char> &text,
+bool CursesMainScreen::writeText(const std::u32string &text,
 				 int row, int col,
 				 const Curses::CursesAttr &attr) const
 {
-	std::vector<unicode_char> dummy;
+	std::u32string dummy;
 
 	return CursesVScroll::writeText(lockcnt > 0 ? dummy:text,
 					row, col, attr);

@@ -453,7 +453,7 @@ void ConfigScreen::init()
 			}
 			else
 			{
-				vector<unicode_char> cpy=b->first.n;
+				u32string cpy=b->first.n;
 
 				bool err;
 

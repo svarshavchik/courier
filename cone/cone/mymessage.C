@@ -590,17 +590,17 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 
 			newMessageAddressHdr(mailtoUrl, "To: ", o);
 
-			map<string, vector<unicode_char> > args;
+			map<string, u32string > args;
 
 			{
-				vector<unicode_char> uparams;
+				u32string uparams;
 
 				htmlParser::urlDecode(params, uparams);
 
 				htmlParser::cgiDecode(uparams, args);
 			}
 
-			vector<unicode_char> &s=args["subject"];
+			u32string &s=args["subject"];
 
 			string ss=unicode::iconvert::convert(s, "utf-8");
 

@@ -18,9 +18,9 @@
 
 class CursesMultilineLabel : public Curses {
 
-	std::vector<unicode_char> text;
+	std::u32string text;
 
-	std::vector< std::vector<unicode_char> > lines;
+	std::vector< std::u32string > lines;
 
 protected:
 	int width;

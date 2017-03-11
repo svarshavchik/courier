@@ -255,7 +255,7 @@ void Filter::editScreen::add()
 	if (prompt.abortflag || myServer::nextScreen)
 		return;
 
-	vector<unicode_char> ka;
+	u32string ka;
 
 	unicode::iconvert::convert((string)prompt, unicode_default_chset(), ka);
 

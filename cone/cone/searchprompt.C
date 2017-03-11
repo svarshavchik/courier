@@ -139,7 +139,7 @@ bool searchPrompt::searchPromptType(mail::searchParams &searchInfo,
 		if (prompt.abortflag || myServer::nextScreen)
 			return true;
 
-		unicode_char promptKey=prompt.firstChar();
+		char32_t promptKey=prompt.firstChar();
 
 		if (promptKey == 0)
 			return true;
@@ -190,7 +190,7 @@ bool searchPrompt::searchPromptStatus(mail::searchParams &searchInfo)
 	if (prompt.abortflag || myServer::nextScreen)
 		return true;
 
-	unicode_char promptKey=prompt.firstChar();
+	char32_t promptKey=prompt.firstChar();
 
 	if (promptKey == 0)
 		return true;
@@ -259,7 +259,7 @@ bool searchPrompt::searchPromptText(mail::searchParams &searchInfo,
 	if (prompt.abortflag || myServer::nextScreen)
 		return true;
 
-	unicode_char promptKey=prompt.firstChar();
+	char32_t promptKey=prompt.firstChar();
 
 	if (promptKey == 0)
 		return true;
@@ -344,7 +344,7 @@ bool searchPrompt::searchPromptDate(mail::searchParams &searchInfo)
 	if (prompt.abortflag || myServer::nextScreen)
 		return true;
 
-	unicode_char promptKey=prompt.firstChar();
+	char32_t promptKey=prompt.firstChar();
 
 	if (promptKey == 0)
 		return true;
@@ -476,7 +476,7 @@ bool searchPrompt::searchPromptDate(mail::searchParams &searchInfo,
 		if (prompt.abortflag || myServer::nextScreen)
 			return true;
 
-		unicode_char promptKey=prompt.firstChar();
+		char32_t promptKey=prompt.firstChar();
 
 		if (key_DAYDEC1 == promptKey)
 		{
@@ -624,7 +624,7 @@ bool searchPrompt::searchPromptSize(mail::searchParams &searchInfo)
 	if (prompt.abortflag || myServer::nextScreen)
 		return true;
 
-	unicode_char promptKey=prompt.firstChar();
+	char32_t promptKey=prompt.firstChar();
 
 	if (key_SMALLER == promptKey)
 	{

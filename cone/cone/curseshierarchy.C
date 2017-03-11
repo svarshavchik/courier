@@ -71,7 +71,7 @@ extern void editAccountScreen(void *);
 extern void quitScreen(void *);
 extern bool isMaildir(string);
 
-extern unicode_char ucplus, ucasterisk;
+extern char32_t ucplus, ucasterisk;
 
 CursesHierarchy::DrawIterator::DrawIterator(CursesHierarchy *meArg,
 					    bool doEraseArg,
@@ -183,7 +183,7 @@ bool CursesHierarchy::drawErase(Hierarchy::Folder *folder, bool doErase)
 	}
 	else
 	{
-		const unicode_char *pfix=f->hasSubFolders() || !f->hasMessages()
+		const char32_t *pfix=f->hasSubFolders() || !f->hasMessages()
 			? f->hasMessages() ? &ucasterisk:&ucplus:NULL;
 
 		color1=color_fl_folderDirName.fcolor;
@@ -192,7 +192,7 @@ bool CursesHierarchy::drawErase(Hierarchy::Folder *folder, bool doErase)
 			color1=color_fl_folderName.fcolor;
 		else
 		{
-			std::vector<unicode_char> buf;
+			std::u32string buf;
 
 			buf.push_back(*pfix);
 
@@ -235,7 +235,7 @@ bool CursesHierarchy::drawErase(string render1,
 				Hierarchy::Entry *e,
 				bool doErase)
 {
-	vector<unicode_char> w1, w2;
+	u32string w1, w2;
 
 	unicode::iconvert::convert(render1, unicode_default_chset(), w1);
 	unicode::iconvert::convert(render2, unicode_default_chset(), w2);
@@ -1348,7 +1348,7 @@ bool CursesHierarchy::processKey(const Curses::Key &key)
 		    !(s=currentFolder->getServer()))
 			return true;
 
-		vector<unicode_char> ka;
+		u32string ka;
 
 		unicode::iconvert::convert((string)prompt,
 					unicode_default_chset(), ka);
@@ -1910,7 +1910,7 @@ bool CursesHierarchy::processKey(const Curses::Key &key)
 				return true;
 			}
 
-			vector<unicode_char> ka;
+			u32string ka;
 
 			unicode::iconvert::convert(((string)prompt),
 						unicode_default_chset(),

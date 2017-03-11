@@ -1099,7 +1099,7 @@ void mail::nntp::searchMessages(const searchParams &searchInfo,
 
 	if (hdr.size() > 0)
 	{
-		unicode_char *uc;
+		char32_t *uc;
 		size_t ucsize;
 		unicode_convert_handle_t
 			h(unicode_convert_tou_init(searchInfo.charset.c_str(),

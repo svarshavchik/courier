@@ -28,9 +28,9 @@ public:
 	class name {
 	public:
 		unsigned f; // If > 0, function key #+1, else n:
-		std::vector<unicode_char> n;
+		std::u32string n;
 
-		name(std::vector<unicode_char> &s) : f(0), n(s) {}
+		name(std::u32string &s) : f(0), n(s) {}
 		name(int fkey) : f(fkey+1) {}
 		~name() {}
 

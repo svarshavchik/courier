@@ -169,7 +169,7 @@ void EncryptionMenu::delkey_s()
 	if ((string)prompt == "N")
 		return;
 
-	vector<unicode_char> ka;
+	u32string ka;
 
 	unicode::iconvert::convert((string)prompt, unicode_default_chset(), ka);
 

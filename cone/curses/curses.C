@@ -50,7 +50,7 @@ const char Curses::Key::LEFT[]="LEFT",
 	Curses::Key::SHIFT[]="SHIFT",
 	Curses::Key::RESIZE[]="RESIZE";
 
-bool Curses::Key::operator==(const std::vector<unicode_char> &v) const
+bool Curses::Key::operator==(const std::u32string &v) const
 {
 	return keycode == 0 &&
 		std::find(v.begin(), v.end(), ukey) != v.end();
@@ -216,7 +216,7 @@ bool Curses::writeText(const char *text, int r, int c,
 	return false;
 }
 
-bool Curses::writeText(const std::vector<unicode_char> &text, int r, int c,
+bool Curses::writeText(const std::u32string &text, int r, int c,
 		       const Curses::CursesAttr &attr) const
 {
 	CursesContainer *p=parent;
@@ -252,7 +252,7 @@ void Curses::erase()
 	size_t w=getWidth();
 	size_t h=getHeight();
 
-	std::vector<unicode_char> spaces;
+	std::u32string spaces;
 
 	spaces.insert(spaces.end(), w, ' ');
 

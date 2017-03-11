@@ -54,7 +54,7 @@ void GPG::Key::getDescription(std::vector<std::string> &descrArray,
 
 	do
 	{
-		std::vector<unicode_char> unicode_buf;
+		std::u32string unicode_buf;
 
 		size_t p=keyDescr.find('\n');
 
@@ -73,10 +73,9 @@ void GPG::Key::getDescription(std::vector<std::string> &descrArray,
 			keyDescr=keyDescr.substr(p+1);
 		}
 
-		std::vector< std::vector<unicode_char> > wrapped_text;
+		std::vector< std::u32string > wrapped_text;
 
-		std::back_insert_iterator<std::vector< std::vector
-						       <unicode_char> > >
+		std::back_insert_iterator<std::vector< std::u32string > >
 			insert_iter(wrapped_text);
 
 		unicodewordwrap(unicode_buf.begin(),
@@ -86,7 +85,7 @@ void GPG::Key::getDescription(std::vector<std::string> &descrArray,
 				width,
 				true);
 
-		for (std::vector< std::vector<unicode_char> >::const_iterator
+		for (std::vector< std::u32string >::const_iterator
 			     b(wrapped_text.begin()),
 			     e(wrapped_text.end()); b != e; ++b)
 		{
@@ -360,7 +359,7 @@ void GPG::find_keys(std::vector<Key> &keys, std::vector<mail::address> &address_
 
 class GPG::dialog : public CursesContainer, public CursesKeyHandler {
 
-	std::vector<unicode_char> utitle;
+	std::u32string utitle;
 	std::vector<GPG::Key> &keys;
 
 	class Keylist : public CursesVScroll {
@@ -418,7 +417,7 @@ public:
 	dialog(std::vector<GPG::Key> &keys, std::vector<std::string> &fingerprints,
 	       std::string title, std::string cancelDescrArg, std::string enterDescrArg);
 	~dialog();
-	
+
 	bool orderlyClose() const { return closing; }
 
 	bool isDialog() const;	// Yes we are
@@ -541,7 +540,7 @@ void GPG::dialog::Keylist::draw()
 
 void GPG::dialog::Keylist::drawKey(size_t n)
 {
-	std::vector<unicode_char> line;
+	std::u32string line;
 
 	if (n < parent->keys.size())
 	{
@@ -556,7 +555,7 @@ void GPG::dialog::Keylist::drawKey(size_t n)
 
 	if (selectedKeys.count(n) > 0 && line.size() > 0)
 	{
-		std::vector<unicode_char> uc;
+		std::u32string uc;
 
 		unicode::iconvert::convert(std::string(ucheck),
 					unicode_default_chset(), uc);
@@ -565,7 +564,7 @@ void GPG::dialog::Keylist::drawKey(size_t n)
 		    line[0]=uc[0];
 
 		attr.setHighlight();
-	}		    
+	}
 
 	if (n == currentRow)
 		attr.setReverse();
@@ -579,12 +578,12 @@ void GPG::dialog::Keylist::drawKey(size_t n)
 			  n, 0, attr);
 	}
 }
- 
+
 // Even though this is a CursesContainer subclass, its focus
 // behavior must be the same as Curses's focus behavior
 // (the default CursesContainer implementation doesn't work,
 // because this object does not have any children).
- 
+
 Curses *GPG::dialog::Keylist::getPrevFocus()
 {
 	return Curses::getPrevFocus();
@@ -785,7 +784,7 @@ void GPG::dialog::draw()
 			  r+4, 0, attr);
 	}
 
-	std::vector<unicode_char> w;
+	std::u32string w;
 
 	w.insert(w.end(), getWidth(), '-');
 	writeText(w, r+3, 0, attr);
@@ -807,7 +806,7 @@ void GPG::dialog::draw()
 
 		Curses::CursesAttr wAttr;
 
-		std::vector<unicode_char> s;
+		std::u32string s;
 
 		wc.tounicode(s);
 
@@ -1276,4 +1275,3 @@ bool GPG::confirmKeySelection(std::string prompt,
 	mainScreen->draw();
 	return rc;
 }
-

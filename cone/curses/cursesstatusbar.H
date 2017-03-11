@@ -52,15 +52,15 @@ class CursesScreen;
 
 class CursesStatusBar : public CursesContainer, public CursesKeyHandler {
 
-	std::vector<unicode_char> statusText;
-	std::vector<unicode_char> progressText;
+	std::u32string statusText;
+	std::u32string progressText;
 	time_t progressTime;
 
 	int busyCounter;
 
 	CursesScreen *parentScreen;
 
-	std::vector< std::vector<unicode_char> > extendedErrorMsg;
+	std::vector< std::u32string > extendedErrorMsg;
 
 	// The status bar is sometimes turned into a one-line field entry.
 	// This is done by creating a CursesField child, which is why
@@ -79,7 +79,7 @@ class CursesStatusBar : public CursesContainer, public CursesKeyHandler {
 
 		bool writeText(const char *text, int row, int col,
 			       const CursesAttr &attr) const;
-		bool writeText(const std::vector<unicode_char> &text,
+		bool writeText(const std::u32string &text,
 			       int row, int col,
 			       const Curses::CursesAttr &attr) const;
 	};
@@ -104,8 +104,8 @@ private:
 	size_t max_sc_dlen;	// Largest shortcut description
 
 	std::vector <std::vector <std::vector <
-		std::pair< std::vector<unicode_char>,
-			   std::vector<unicode_char> > > > > shortcuts;
+		std::pair< std::u32string,
+			   std::u32string > > > > shortcuts;
 
 	// A std::pair of name/description string, inside a two-element vector
 	// (the two-row column on the status bar), inside a vector of all
@@ -119,7 +119,7 @@ public:
 
 	static std::string shortcut_next_key;
 	static std::string shortcut_next_descr;
-	static unicode_char shortcut_next_keycode;
+	static char32_t shortcut_next_keycode;
 
 	friend class Field;
 

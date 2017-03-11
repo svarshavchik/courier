@@ -38,8 +38,8 @@ class CursesEditMessage : public Curses,
 
 public:
 	size_t numLines() const { return text_UTF8.size(); }
-	void getText(size_t line, std::vector<unicode_char> &textRef);
-	void getText(size_t line, std::vector<unicode_char> &textRef,
+	void getText(size_t line, std::u32string &textRef);
+	void getText(size_t line, std::u32string &textRef,
 		     bool &wrapped);
 	void getText(size_t line, CursesFlowedLine &textRef)
 	{
@@ -54,23 +54,23 @@ public:
 				bool useflowedformat);
 
 private:
-	void setText(size_t line, const std::vector<unicode_char> &textRef);
+	void setText(size_t line, const std::u32string &textRef);
 	void setText(size_t line, const CursesFlowedLine &textRef);
 
-	void getTextBeforeAfter(std::vector<unicode_char> &before,
-				std::vector<unicode_char> &after);
+	void getTextBeforeAfter(std::u32string &before,
+				std::u32string &after);
 
-	void getTextBeforeAfter(std::vector<unicode_char> &before,
-				std::vector<unicode_char> &after,
+	void getTextBeforeAfter(std::u32string &before,
+				std::u32string &after,
 				bool &flowed);
 
-	void setTextBeforeAfter(const std::vector<unicode_char> &before,
-				const std::vector<unicode_char> &after,
+	void setTextBeforeAfter(const std::u32string &before,
+				const std::u32string &after,
 				bool flowed=false);
 
 	bool justifiable(size_t lineNum);
 
-	void insertKeyPos(unicode_char key);
+	void insertKeyPos(char32_t key);
 
 	template<typename iter_type>
 	void replaceTextLines(size_t start, size_t cnt,
@@ -152,22 +152,22 @@ private:
 	// Given horizontal position #col, return an iterator to the character
 	// in "line" that's shown at the given horizontal position.
 	//
-	std::vector<unicode_char>
-	::iterator getIndexOfCol(std::vector<unicode_char> &line,
+	std::u32string
+	::iterator getIndexOfCol(std::u32string &line,
 				 size_t col);
 
 	//
 	// Same thing, except that the starting position of each character
 	// in 'line' is precomputed in pos
 	//
-	static std::vector<unicode_char>
-	::iterator getIndexOfCol(std::vector<unicode_char> &line,
+	static std::u32string
+	::iterator getIndexOfCol(std::u32string &line,
 				 std::vector<size_t> &pos,
 				 size_t colNum);
 
 	// Return the horizontal location of the given character
 
-	static size_t getTextHorizPos(const std::vector<unicode_char> &line,
+	static size_t getTextHorizPos(const std::u32string &line,
 				      size_t column);
 
 	class SpellCheckerManager;

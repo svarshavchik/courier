@@ -109,7 +109,7 @@ void CursesFileReq::Dirlist::drawItem(size_t n)
 		colNum = w+2;
 	}
 
-	std::pair<std::vector<unicode_char>, size_t> nameW;
+	std::pair<std::u32string, size_t> nameW;
 
 	{
 		widecharbuf wc;
@@ -122,7 +122,7 @@ void CursesFileReq::Dirlist::drawItem(size_t n)
 	std::string s= (*CursesFileReq::fmtSizeFunc)(directory[n].size,
 						     directory[n].isDir);
 
-	std::pair<std::vector<unicode_char>, size_t> sizeW;
+	std::pair<std::u32string, size_t> sizeW;
 
 	sizeW.second=0;
 	if (nameW.second < w)
@@ -432,7 +432,7 @@ void CursesFileReq::doresized()
 
 	size_t dls=c < w ? w-c:1;
 
-	std::vector<unicode_char> directoryW;
+	std::u32string directoryW;
 
 	unicode::iconvert::convert(currentDir, unicode_default_chset(),
 				directoryW);
@@ -452,7 +452,7 @@ void CursesFileReq::doresized()
 
 	if (directoryW_size > dls)
 	{
-		std::vector<unicode_char>::iterator b, e, c, lastSlash;
+		std::u32string::iterator b, e, c, lastSlash;
 
 		b=directoryW.begin();
 		e=directoryW.end();
@@ -465,7 +465,7 @@ void CursesFileReq::doresized()
 				lastSlash=c;
 		}
 
-		std::vector<unicode_char> replVector;
+		std::u32string replVector;
 
 		replVector.push_back('/');
 		replVector.push_back('.');

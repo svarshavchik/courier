@@ -31,10 +31,10 @@ class CursesField : public Curses {
 	size_t shiftoffset;		// First text char shown
 	size_t selectpos;		// Start of selection position
 
-	unicode_char passwordChar;	// password overlay character
+	char32_t passwordChar;	// password overlay character
 	bool yesnoField;		// True if yes/no field.
 
-	std::vector<unicode_char> optionField; // One character list of options
+	std::u32string optionField; // One character list of options
 
 	std::vector<std::pair<std::string, std::string> > optionHelp; // Option help keys
 	// This field is of primary use by cursesstatusbar
@@ -43,8 +43,8 @@ class CursesField : public Curses {
 protected:
 	Curses::CursesAttr attribute;
 public:
-	static std::vector<unicode_char> yesKeys, noKeys;
-	static unicode_char yankKey, clrEolKey;
+	static std::u32string yesKeys, noKeys;
+	static char32_t yankKey, clrEolKey;
 
 	static std::list<CursesFlowedLine> cutBuffer; // for cut/paste.
 
@@ -67,9 +67,9 @@ public:
 
 	void setWidth(int);
 
-	void setPasswordChar(unicode_char ch='*') { passwordChar=ch; }
+	void setPasswordChar(char32_t ch='*') { passwordChar=ch; }
 	void setYesNo() { yesnoField=true; }
-	void setOptionField(const std::vector<unicode_char> &vec)
+	void setOptionField(const std::u32string &vec)
 	{
 		optionField=vec;
 	}

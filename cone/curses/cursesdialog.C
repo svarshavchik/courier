@@ -202,7 +202,7 @@ bool CursesDialog::writeText(const char *text, int row, int col,
 	return false;
 }
 
-bool CursesDialog::writeText(const std::vector<unicode_char> &text,
+bool CursesDialog::writeText(const std::u32string &text,
 			     int row, int col,
 			     const Curses::CursesAttr &attr) const
 {

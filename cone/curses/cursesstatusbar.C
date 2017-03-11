@@ -14,7 +14,7 @@
 std::string CursesStatusBar::extendedErrorPrompt;
 std::string CursesStatusBar::shortcut_next_key;
 std::string CursesStatusBar::shortcut_next_descr;
-unicode_char CursesStatusBar::shortcut_next_keycode= 'O' & 31;
+char32_t CursesStatusBar::shortcut_next_keycode= 'O' & 31;
 
 CursesStatusBar::CursesStatusBar(CursesScreen *parent) :
 	CursesContainer(parent), CursesKeyHandler(PRI_STATUSHANDLER),
@@ -135,7 +135,7 @@ void CursesStatusBar::draw()
 
 	size_t w=getWidth();
 
-	std::vector<unicode_char> statusLine=statusText;
+	std::u32string statusLine=statusText;
 
 	statusLine.insert(statusLine.begin(), ' ');
 
@@ -144,7 +144,7 @@ void CursesStatusBar::draw()
 		if (busyCounter > (int)sizeof(throbber))
 			busyCounter=1;
 		statusLine.insert(statusLine.begin(),
-				  (unicode_char)throbber[busyCounter-1]);
+				  (char32_t)throbber[busyCounter-1]);
 	}
 	else
 		statusLine.insert(statusLine.begin(),
@@ -167,7 +167,7 @@ void CursesStatusBar::draw()
 
 		wc.expandtabs(0);
 
-		std::pair<std::vector<unicode_char>, size_t>
+		std::pair<std::u32string, size_t>
 			trunc(wc.get_unicode_truncated(w, 0));
 
 		if (trunc.second < w)
@@ -212,27 +212,27 @@ void CursesStatusBar::draw()
 	{
 
 		std::vector<std::vector<
-			std::pair< std::vector<unicode_char>,
-				   std::vector<unicode_char> > > >
+			std::pair< std::u32string,
+				   std::u32string > > >
 			&shortcutPage= shortcuts[currentShortcutPage];
 
 		size_t i;
 
 		for (i=0; i < shortcutPage.size(); i++)
 		{
-			std::vector< std::pair< std::vector<unicode_char>,
-						std::vector<unicode_char> > >
+			std::vector< std::pair< std::u32string,
+						std::u32string > >
 				&column=shortcutPage[i];
 
 			size_t j;
 
 			for (j=0; j<column.size(); j++)
 			{
-				std::pair< std::vector<unicode_char>,
-					   std::vector<unicode_char> >
+				std::pair< std::u32string,
+					   std::u32string >
 					&row=column[j];
 
-				std::vector<unicode_char> cpy=row.first;
+				std::u32string cpy=row.first;
 
 				widecharbuf wc;
 
@@ -296,8 +296,8 @@ public:
 //
 
 static void createShortcuts(size_t &max_sc_nlen, size_t &max_sc_dlen,
-			    std::vector< std::pair< std::vector<unicode_char>,
-			    std::vector<unicode_char> > > &keys_w)
+			    std::vector< std::pair< std::u32string,
+			    std::u32string > > &keys_w)
 {
 	std::vector< std::pair<std::string, std::string> > keys;
 
@@ -317,8 +317,8 @@ static void createShortcuts(size_t &max_sc_nlen, size_t &max_sc_dlen,
 
 	while (b != e)
 	{
-		std::vector<unicode_char> first_w;
-		std::vector<unicode_char> second_w;
+		std::u32string first_w;
+		std::u32string second_w;
 
 		unicode::iconvert::convert(b->first, unicode_default_chset(),
 					first_w);
@@ -341,7 +341,7 @@ static void createShortcuts(size_t &max_sc_nlen, size_t &max_sc_dlen,
 		}
 
 		{
-			std::vector<unicode_char>::iterator b=second_w.begin();
+			std::u32string::iterator b=second_w.begin();
 
 			if (second_w.size() && second_w[0] == '/' &&
 			    second_w[1] >= '0' &&
@@ -370,8 +370,8 @@ void CursesStatusBar::rebuildShortcuts()
 
 	currentShortcutPage=0;
 
-	std::vector<unicode_char> nextpage_n;
-	std::vector<unicode_char> nextpage_d;
+	std::u32string nextpage_n;
+	std::u32string nextpage_d;
 
 	if (shortcut_next_key.size() == 0)
 		shortcut_next_key="^O";
@@ -401,8 +401,8 @@ void CursesStatusBar::rebuildShortcuts()
 		max_sc_dlen=wc.wcwidth(0);
 	}
 
-	std::vector< std::pair< std::vector<unicode_char>,
-				std::vector<unicode_char> > > keys_w;
+	std::vector< std::pair< std::u32string,
+				std::u32string > > keys_w;
 
 	createShortcuts(max_sc_nlen, max_sc_dlen, keys_w);
 
@@ -426,8 +426,8 @@ void CursesStatusBar::rebuildShortcuts()
 		if (n - i > ncols * 2)
 			multiplePages=true;
 
-		std::vector< std::vector< std::pair< std::vector<unicode_char>,
-						     std::vector<unicode_char>
+		std::vector< std::vector< std::pair< std::u32string,
+						     std::u32string
 						     > > >
 			columns;
 
@@ -435,8 +435,8 @@ void CursesStatusBar::rebuildShortcuts()
 
 		for (j=0; j < ncols; j++ )
 		{
-			std::vector< std::pair< std::vector<unicode_char>,
-						std::vector<unicode_char> > >
+			std::vector< std::pair< std::u32string,
+						std::u32string > >
 				column;
 
 			if (i < n)
@@ -445,7 +445,7 @@ void CursesStatusBar::rebuildShortcuts()
 			}
 			else
 			{
-				std::vector<unicode_char> zero;
+				std::u32string zero;
 
 				column.push_back(std::make_pair(zero, zero));
 			}
@@ -454,8 +454,8 @@ void CursesStatusBar::rebuildShortcuts()
 
 			if (j + 1 == ncols && multiplePages)
 			{
-				std::pair< std::vector<unicode_char>,
-					   std::vector<unicode_char> >
+				std::pair< std::u32string,
+					   std::u32string >
 					p=std::make_pair(nextpage_n,
 							 nextpage_d);
 				column.push_back(p);
@@ -466,7 +466,7 @@ void CursesStatusBar::rebuildShortcuts()
 			}
 			else
 			{
-				std::vector<unicode_char> zero;
+				std::u32string zero;
 				column.push_back (make_pair(zero, zero));
 			}
 
@@ -513,14 +513,14 @@ void CursesStatusBar::status(std::string text, statusLevel level)
 		w -= 4;
 
 	{
-		std::vector<unicode_char> uc;
+		std::u32string uc;
 
 		unicode::iconvert::convert(text, unicode_default_chset(), uc);
 
 		extendedErrorMsg.clear();
 
 		std::back_insert_iterator
-			< std::vector< std::vector<unicode_char> > >
+			< std::vector< std::u32string > >
 			insert_iter(extendedErrorMsg);
 
 		unicodewordwrap(uc.begin(), uc.end(),
@@ -530,17 +530,17 @@ void CursesStatusBar::status(std::string text, statusLevel level)
 
 	switch (extendedErrorMsg.size()) {
 	case 0:
-		extendedErrorMsg.push_back(std::vector<unicode_char>());
+		extendedErrorMsg.push_back(std::u32string());
 		// FALLTHROUGH
 	case 1:
 		statusText=extendedErrorMsg.front();
 		extendedErrorMsg.clear();
 		break;
 	default:
-		extendedErrorMsg.push_back(std::vector<unicode_char>());
+		extendedErrorMsg.push_back(std::u32string());
 
 		{
-			std::vector<unicode_char> statusLine;
+			std::u32string statusLine;
 
 			unicode::iconvert::convert(extendedErrorPrompt,
 						unicode_default_chset(),
@@ -655,7 +655,7 @@ CursesField *CursesStatusBar::createPrompt(std::string prompt, std::string initv
 	size_t textW;
 
 	{
-		std::vector<unicode_char> uc;
+		std::u32string uc;
 
 		unicode::iconvert::convert(prompt, unicode_default_chset(), uc);
 
@@ -663,7 +663,7 @@ CursesField *CursesStatusBar::createPrompt(std::string prompt, std::string initv
 
 		wc.init_unicode(uc.begin(), uc.end());
 
-		std::pair<std::vector<unicode_char>, size_t>
+		std::pair<std::u32string, size_t>
 			fragment=wc.get_unicode_truncated(maxW, 0);
 
 		statusText=fragment.first;
@@ -769,7 +769,7 @@ bool CursesStatusBar::Field::writeText(const char *text, int row, int col,
 	return CursesField::writeText(text, row, col, attr_cpy);
 }
 
-bool CursesStatusBar::Field::writeText(const std::vector<unicode_char> &text,
+bool CursesStatusBar::Field::writeText(const std::u32string &text,
 				       int row, int col,
 				       const Curses::CursesAttr &attr) const
 {

@@ -36,7 +36,7 @@ class CursesMessage::FlowedTextParser : public mail::textplainparser,
 
 	void line_begin(size_t);
 
-	void line_contents(const unicode_char *, size_t);
+	void line_contents(const char32_t *, size_t);
 
 	void line_end();
 
@@ -62,7 +62,7 @@ public:
 	FlowedTextParser &operator++() { return *this; }
 	FlowedTextParser &operator++(int) { return *this; }
 	FlowedTextParser &operator*() { return *this; }
-	void operator=(const std::vector<unicode_char> &);
+	void operator=(const std::u32string &);
 };
 
 #endif

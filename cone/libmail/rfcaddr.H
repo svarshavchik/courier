@@ -91,11 +91,11 @@ class emailAddress : public address {
 
 	// The name field as unicode characters
 
-	std::vector<unicode_char> decodedName;
+	std::u32string decodedName;
 
 	//! The address field, with the hostname portion decoded
 
-	std::vector<unicode_char> decodedAddr;
+	std::u32string decodedAddr;
 
 	void decode();
 public:

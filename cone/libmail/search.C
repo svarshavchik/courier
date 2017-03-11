@@ -245,8 +245,8 @@ string mail::searchParams::encode(std::string s)
 int mail::searchOneMessage::Searcher::converted(const char *str,
 						size_t n)
 {
-	const unicode_char *uc=reinterpret_cast<const unicode_char *>(str);
-	n /= sizeof(unicode_char);
+	const char32_t *uc=reinterpret_cast<const char32_t *>(str);
+	n /= sizeof(char32_t);
 
 	while (n)
 	{
@@ -741,7 +741,7 @@ void mail::searchOneMessage::searchEnvelope(const mail::envelope &envelope)
 		return;
 	}
 
-	std::vector<unicode_char> uc;
+	std::u32string uc;
 
 	if (!unicode::iconvert::convert(q, "utf-8", uc))
 	{
@@ -750,7 +750,7 @@ void mail::searchOneMessage::searchEnvelope(const mail::envelope &envelope)
 	}
 	free(q);
 
-	for (std::vector<unicode_char>::iterator
+	for (std::u32string::iterator
 		     b(uc.begin()), e(uc.end()); b != e; ++b)
 		searchEngine << *b;
 
@@ -889,7 +889,7 @@ void mail::searchOneMessage::search(string text)
 				continue;
 
 
-			unicode_char *uc;
+			char32_t *uc;
 			size_t ucsize;
 
 			if (unicode_convert_tou_tobuf(value,
