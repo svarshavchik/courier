@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 0.76.4.20170218, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 0.76.4.20170309, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -20,7 +20,7 @@ AC_PROG_MAKE_SET
 AC_PROG_CXX
 AC_PROG_SYSCONFTOOL
 AC_PATH_PROGS(SETENV, env)
-
+AX_COURIER_UNICODE_VERSION
 AC_ARG_ENABLE(root-check, [  --disable-root-check    Allow build as root (make check will fail)],
 	rootcheck="$enableval",
 	rootcheck="yes")
@@ -191,10 +191,6 @@ AC_SUBST(USE_DB)
 AC_SUBST(LIBDB)
 AC_SUBST(LIBGDBM)
 AC_SUBST(dblibrary)
-
-AC_CHECK_LIB(courier-unicode,
-		unicode_default_chset, [ : ], [ AC_MSG_ERROR([THe Courier Unicode Library 1.2 is not installed])])
-AC_CHECK_HEADER([courier-unicode.h], [ : ], [AC_MSG_ERROR([The Courier Unicode Library 1.2 header files appear not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
 
 dnl
 dnl Need to settle on our uid/gids here

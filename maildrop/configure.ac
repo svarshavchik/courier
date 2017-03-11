@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2015 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(maildrop, 2.8.5, [courier-maildrop@lists.sourceforge.net])
+AC_INIT(maildrop, 2.8.5.20070309, [courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
@@ -128,15 +128,7 @@ AM_CONDITIONAL(HAVE_DBLIBRARY, test "$dblibrary" != "")
 
 LIBS="$saveLIBS"
 
-save_LIBS="$LIBS"
-LIBS="-lcourier-unicode"
-AC_LINK_IFELSE(
-[AC_LANG_PROGRAM([
-#include <courier-unicode.h>
-],[
-	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
-LIBS="$save_LIBS"
+AX_COURIER_UNICODE_VERSION
 
 AC_ARG_WITH(plentyofbeer,
 [  --enable-sendmail=prog       set sendmail location

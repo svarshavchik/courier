@@ -1,3 +1,7 @@
+2017-03-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-unicode library API update.
+
 2017-01-27  "Stefan Hornburg (Racke)" <racke@linuxia.de>
 
 	* Merge several Debian patches:

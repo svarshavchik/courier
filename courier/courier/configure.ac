@@ -54,8 +54,10 @@ then
 	AC_MSG_ERROR(courierauthconfig not found)
 fi
 
+AX_COURIER_UNICODE_CXXFLAGS
+
 CFLAGS="-I$srcdir/.. -I.. -I../libs -I$srcdir/../libs -I$srcdir/libs $CFLAGS"
-CXXFLAGS="-I$srcdir/.. -I.. -I../libs -I$srcdir/../libs -I$srcdir/libs $CXXFLAGS"
+CXXFLAGS="-I$srcdir/.. -I.. -I../libs -I$srcdir/../libs -I$srcdir/libs $CXXFLAGS $COURIER_UNICODE_CXXFLAGS"
 
 AC_ARG_WITH(softlinkdir, [  --with-softlinks=dir:link,dir:link...   specify soft links for
                                           installation subdirectories.], ,
@@ -63,7 +65,7 @@ AC_ARG_WITH(softlinkdir, [  --with-softlinks=dir:link,dir:link...   specify soft
 
 version=`cat ../version`
 
-COPYRIGHT="Courier $version Copyright 1999-2015 Double Precision, Inc."
+COPYRIGHT="Courier $version Copyright 1999-2017 Double Precision, Inc."
 AC_SUBST(COPYRIGHT)
 
 dnl Check whether we should use gdbm, or db.

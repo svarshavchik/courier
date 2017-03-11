@@ -1,3 +1,9 @@
+2017-03-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* couriertcpd: do not issue ANY queries for DNSBL lookups.
+
+	* courier-unicode library API update.
+
 2017-02-07  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/tcpd/libcouriertls.c: OpenSSL API update.

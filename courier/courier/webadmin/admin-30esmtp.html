@@ -146,7 +146,7 @@ alink="#ff0000">
 
 <form method="post" action="30esmtp">
   <p>Add domain (backup MX): <tt><input type="text" size="20"
-  name="addacceptmailfor"></tt> 
+  name="addacceptmailfor"></tt>
   <input type="submit" value="Save" name="SaveAcceptMailFor"></p>
 </form>
 <hr>
@@ -164,23 +164,12 @@ alink="#ff0000">
         <form method="post" action="30esmtp">
           <ul>
             <li><input type="radio" name="AddBl"
-              value="sbl.spamhaus.org/127.0.0.2"> <a
-              href="http://www.spamhaus.org">Spamhaus.org SBL</a><br>
-              <br>
-            </li>
-            <li><input type="radio" name="AddBl"
-              value="xbl.spamhaus.org/127.0.0.2"> <a
-              href="http://www.spamhaus.org">Spamhaus.org XBL</a><br>
-              <br>
-            </li>
-            <li><input type="radio" name="AddBl"
-              value="sbl-xbl.spamhaus.org"> <a
-              href="http://www.spamhaus.org">Spamhaus.org SBL &amp;
-              XBL</a><br>
+              value="zen.spamhaus.org"> <a
+              href="http://www.spamhaus.org">Spamhaus.org ZEN</a><br>
               <br>
             </li>
             <li><input type="radio" name="AddBl" value="CUSTOM"> Other
-              DNS-based blacklist, provide information below: 
+              DNS-based blacklist, provide information below:
 
               <table border="0">
                 <tbody>
@@ -198,7 +187,7 @@ alink="#ff0000">
                   <tr>
                     <th valign="top" align="right">Custom message:</th>
                     <td><tt><input type="text" size="20" name="msg"></tt> <br>
-                      (optional)</td>
+                      (optional, enter "*" to use DNS blacklist-provided message)</td>
                   </tr>
                 </tbody>
               </table>

@@ -5,6 +5,7 @@
 @SET_MAKE@
 
 AUTOMAKE_OPTIONS=dist-bzip2
+AM_CXXFLAGS=@COURIER_UNICODE_CXXFLAGS@
 
 SUBDIRS=afx @DBSUBDIR@ libs/numlib libs/soxwrap libs/md5 libs/sha1 \
 	libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 \

@@ -78,17 +78,9 @@ extern "C" {
 
 webmlmd::dirs mlm_dirs;
 
-std::string toutf8str(std::wstring w)
+std::string toutf8str(const std::u32string &w)
 {
-	std::vector<unicode_char> u;
-
-	u.reserve(w.size()+1);
-
-	u.insert(u.end(), w.begin(), w.end());
-
-	u.push_back(0);
-
-	return unicode::iconvert::convert(u, "utf-8");
+	return unicode::iconvert::convert(w, "utf-8");
 }
 
 // First component of PATH_INFO is the mailing list name
@@ -291,26 +283,25 @@ std::string getoption(std::string option)
 	return getoption(".", option);
 }
 
-std::wstring getwoption(std::string dir, std::string option)
+std::u32string getwoption(std::string dir, std::string option)
 {
 	std::string s=getoption(dir, option);
 
-	std::vector<unicode_char> u;
+	std::u32string u;
 
 	unicode::iconvert::convert(s, "utf-8", u);
 
-	std::wstring w(u.begin(), u.end());
-	return w;
+	return u;
 }
 
-std::wstring getwoption(std::string option)
+std::u32string getwoption(std::string option)
 {
 	return getwoption(".", option);
 }
 
 std::string getlistname(std::string dir, std::string dirbasename)
 {
-	std::wstring listname=getwoption(dir, "LISTNAME");
+	std::u32string listname=getwoption(dir, "LISTNAME");
 
 	if (listname.size() == 0)
 	{
@@ -411,7 +402,7 @@ static void emit_textarea(const char *name, std::string value,
 			  const char *wrap,
 			  int rows, int cols, const char *opts)
 {
-	std::vector<unicode_char> u;
+	std::vector<char32_t> u;
 
 	u.reserve(value.size()+1);
 
@@ -429,11 +420,11 @@ static void emit_textarea(const char *name, std::string value,
 	}
 }
 
-static void emit_input(const char *name, std::wstring value,
+static void emit_input(const char *name, std::u32string value,
 		       int size, int maxlength,
 		       const char *opts)
 {
-	std::vector<unicode_char> unicode_buf;
+	std::vector<char32_t> unicode_buf;
 
 	unicode_buf.reserve(value.size()+1);
 
@@ -674,12 +665,11 @@ HANDLER("OPTNAME", emit_name)
 					      NULL);
 	if (p)
 	{
-		std::vector<unicode_char> u;
+		std::u32string u;
 
 		unicode::iconvert::convert(p, "utf-8", u);
 
-		emit_input("optname", std::wstring(u.begin(), u.end()), 32, 255,
-			   "");
+		emit_input("optname", u, 32, 255,  "");
 		free(p);
 	}
 }
