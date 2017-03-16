@@ -1,3 +1,8 @@
+2017-03-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc1035: fix TLS hostname verification problem caused by CNAME
+	records.
+
 2017-03-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* couriertcpd: do not issue ANY queries for DNSBL lookups.
