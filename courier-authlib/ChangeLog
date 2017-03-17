@@ -1,3 +1,7 @@
+2017-03-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* configure.ac: Rebuild against updated courier-unicode API.
+
 0.67.0
 
 2017-01-27  Sam Varshavchik  <mrsam@courier-mta.com>

@@ -1,7 +1,7 @@
 
 # Custom build against libcurses-5.3
 
-%define custom_curses %(test -d /usr/include/ncursesw >/dev/null 2>&1 && echo 0 && exit 0; echo 1)
+%define custom_curses %(test -d /usr/include/ncurses53w >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 
 %if %custom_curses
 %define curses_include_dir  /usr/include/ncurses53w

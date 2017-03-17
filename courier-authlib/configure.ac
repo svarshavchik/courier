@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2016 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.67.0],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.67.0.20170316],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
