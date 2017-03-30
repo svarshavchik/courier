@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2016 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.67.0.20170316],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.67.0.20170330],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -126,15 +126,7 @@ fi
 LIBS="$saveLIBS"
 AC_SUBST(NETLIBS)
 
-save_LIBS="$LIBS"
-LIBS="-lcourier-unicode"
-AC_LINK_IFELSE(
-[AC_LANG_PROGRAM([
-#include <courier-unicode.h>
-],[
-	unicode_default_chset();
-])],[:],[AC_MSG_ERROR([The Courier Unicode Library 1.2 appears not to be installed. You may need to install a separate development subpackage, in addition to the main package])])
-LIBS="$save_LIBS"
+AX_COURIER_UNICODE_VERSION
 
 dnl #########################################################################
 
@@ -529,6 +521,7 @@ else
 	LIBS="$saveLIBS"
 	HAVE_AUTHPGSQL=1
 	CFLAGS="$PGSQL_CFLAGS $CFLAGS"
+	CXXFLAGS="$PGSQL_CFLAGS $CXXFLAGS"
 	LIBAUTHPGSQL="libauthpgsql.la"
 fi
 
@@ -665,6 +658,7 @@ else
 	LIBS="$saveLIBS"
 	HAVE_AUTHSQLITE=1
 	CFLAGS="$SQLITE_CFLAGS $CFLAGS"
+	CXXFLAGS="$SQLITE_CXXFLAGS $CFLAGS"
 	LIBAUTHSQLITE="libauthsqlite.la"
 
 fi
