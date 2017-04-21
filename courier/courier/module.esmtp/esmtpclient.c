@@ -357,7 +357,10 @@ static int get_sourceaddr(int af,
 	if (buf && strcmp(buf, "0")) {
 		rc = rfc1035_aton(buf, &in);
 		if (rc != 0)
+		{
+			errno=EINVAL;
 			return rc;
+		}
 	} else
 		in = RFC1035_ADDRANY;
 
@@ -565,7 +568,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 				rfc1035_mxlist_free(mxlist);
 				return;
 			}
-		
+
 			if (!q && !static_route &&
 			    (config_islocal(p->hostname, 0)
 			     || isloopback(buf)))
@@ -713,6 +716,11 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 				hard_error(del, ctf, "Did not find a suitable MX for a connection");
 			else
 			{
+				if (net_error)
+				{
+					errno=net_error;
+					soft_error(del, ctf, strerror(errno));
+				}
 				time (&net_timeout);
 				net_timeout += config_time_esmtpdelay();
 			}

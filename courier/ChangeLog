@@ -1,3 +1,8 @@
+2017-04-20  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/esmtpclient.c (sendesmtp): Fix failure
+	to report connection errors.
+
 2017-03-15  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rfc1035: fix TLS hostname verification problem caused by CNAME
