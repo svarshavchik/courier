@@ -1,3 +1,7 @@
+2017-06-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/maildir/maildirquota.c (docheckquota): Skip DT_LNK.
+
 2017-03-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier-unicode library API update.
