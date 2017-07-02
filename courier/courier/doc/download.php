@@ -330,7 +330,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     <p>The sysconftool utility contains an additional autoconf
     macro used by Courier to install configuration files. You only
     need to install sysconftool if you intend to check out Courier
-    from Subversion. You do not need to install sysconftool in
+    from Git. You do not need to install sysconftool in
     order to compile and install tarballed releases.</p>
 
     <p><a href="http://www.courier-mta.org/sysconftool/">More
