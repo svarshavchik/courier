@@ -1913,9 +1913,10 @@ char	*sender=rfc822_gettok(addresst);
 
 		// Rewrite every RFC822 header we can find.
 
-		if (headername == "bcc")
+		if (!hasrcpts && headername == "bcc")
 		{
-					// ... except this one
+			// ... except this one, if we're reading addresses
+			// from the headers.
 
 			headerlimit += headerl;
 			++headercnt;
