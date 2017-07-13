@@ -92,7 +92,7 @@ public:
 
 		mimeAction(const mail::mimestruct &sectionArg, bool a, bool b)
 			: section(sectionArg), somethingCopied(a),
-			  somethingNotCopied(b) {}
+			  somethingNotCopied(b), handleId(0) {}
 
 		~mimeAction() {}
 	};
