@@ -17,14 +17,14 @@
 
   <refsynopsisdiv>
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">sendmail</command>
+      <command>sendmail</command>
       <arg rep="repeat" choice="opt"><replaceable>option</replaceable></arg>
       <arg choice="opt" rep="norepeat">--</arg>
       <arg rep="repeat" choice="opt"><replaceable>address</replaceable></arg>
     </cmdsynopsis>
 
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">rmail</command>
+      <command>rmail</command>
       <arg choice="opt" rep="norepeat">-f <replaceable>sender</replaceable></arg>
       <arg choice="req" rep="norepeat"><replaceable>address</replaceable></arg>
       <arg rep="repeat" choice="opt"><replaceable>address</replaceable></arg>
@@ -35,24 +35,24 @@
     <title>DESCRIPTION</title>
 
     <para>
-The <command moreinfo="none">sendmail</command> command reads an E-mail message and delivers
+The <command>sendmail</command> command reads an E-mail message and delivers
 the
-message to its recipients. This <command moreinfo="none">sendmail</command> command is part of the
+message to its recipients. This <command>sendmail</command> command is part of the
 Courier mail server, although it attempts to emulate the behavior of the
 original
-<ulink url="http://www.sendmail.org/"><application moreinfo="none">sendmail</application></ulink>
+<ulink url="http://www.sendmail.org/"><application>sendmail</application></ulink>
 MTA. Applications written for
-<application moreinfo="none">Sendmail</application> should be able to use
-<application moreinfo="none">Courier</application> mail server's
-<command moreinfo="none">sendmail</command>.
+<application>Sendmail</application> should be able to use
+<application>Courier</application> mail server's
+<command>sendmail</command>.
 This
-<command moreinfo="none">sendmail</command> wrapper understands most command line arguments
+<command>sendmail</command> wrapper understands most command line arguments
 used by
 sendmail 8.9. Certain sendmail-specific arguments that make no sense for
 Courier, (like -o), are silently ignored.</para>
 
     <para>
-This <command moreinfo="none">sendmail</command> always behaves like the real sendmail with the
+This <command>sendmail</command> always behaves like the real sendmail with the
 <option>-oi</option> and <option>-t</option> options. This is how most
 applications expect it to work.  Some applications might run sendmail without
 the <option>-oi</option> and <option>-t</option> options, and expect
@@ -61,25 +61,27 @@ behavior when those options are not used.  Those application may have problems
 with this sendmail wrapper.</para>
 
     <para>
-<command moreinfo="none">sendmail</command> reads the message from standard input, rewrites its
+<command>sendmail</command> reads the message from standard input, rewrites its
 headers appropriately and delivers it to the specified recipients.</para>
 
     <para>
 If at least one E-mail address is specified on the command line,
-<command moreinfo="none">sendmail</command> delivers the message to those recipients only.
+<command>sendmail</command> delivers the message to those recipients only.
 If no
-addresses are specified on the command line, <command moreinfo="none">sendmail</command>
+addresses are specified on the command line, <command>sendmail</command>
 reads the
-message and builds the recipient list from the <literal moreinfo="none">To:</literal>,
-<literal moreinfo="none">Cc:</literal> and <literal moreinfo="none">Bcc:</literal> headers.</para>
+message and builds the recipient list from the <literal>To:</literal>,
+<literal>Cc:</literal> and <literal>Bcc:</literal> headers.</para>
 
     <para>
-<command moreinfo="none">sendmail</command> always removes all <literal moreinfo="none">Bcc:</literal>
-headers before sending the message.</para>
+      <command>sendmail</command> always removes <literal>Bcc:</literal>
+      headers before sending the message if recipients are not specified on the
+      command line.
+    </para>
 
     <para>
 Some of the functionality described below is actually implemented by other
-Courier modules that <command moreinfo="none">sendmail</command> runs automatically.
+Courier modules that <command>sendmail</command> runs automatically.
 This process is
 transparent to the end user, or the application.</para>
 
@@ -91,7 +93,7 @@ transparent to the end user, or the application.</para>
 	  <term><option>-f <replaceable>address</replaceable></option></term>
 	  <listitem>
 	    <para>
-Sets the <literal moreinfo="none">From:</literal> address. This is just
+Sets the <literal>From:</literal> address. This is just
 the E-mail address only, not the name.</para>
 	  </listitem>
 	</varlistentry>
@@ -100,7 +102,7 @@ the E-mail address only, not the name.</para>
 	  <term><option>-F "<replaceable>name</replaceable>"</option></term>
 	  <listitem>
 	    <para>
-Sets the name to put in the <literal moreinfo="none">From:</literal> header.</para>
+Sets the name to put in the <literal>From:</literal> header.</para>
 	  </listitem>
 	</varlistentry>
 
@@ -110,17 +112,17 @@ Sets the name to put in the <literal moreinfo="none">From:</literal> header.</pa
 	    <para>
 Sets delivery status notification
 options. <replaceable>options</replaceable> is a comma-separated list of one or more of the
-following keywords: <literal moreinfo="none">never</literal>, <literal moreinfo="none">success</literal>,
-<literal moreinfo="none">fail</literal>, <literal moreinfo="none">delay</literal>. If not specified, the
+following keywords: <literal>never</literal>, <literal>success</literal>,
+<literal>fail</literal>, <literal>delay</literal>. If not specified, the
 <option>-N</option> option
-defaults to either "<literal moreinfo="none">delay, fail</literal>", or just
-"<literal moreinfo="none">fail</literal>", depending on systemwide options set by the
-administrator. The "<literal moreinfo="none">success</literal>" keyword sends a return receipt
+defaults to either "<literal>delay, fail</literal>", or just
+"<literal>fail</literal>", depending on systemwide options set by the
+administrator. The "<literal>success</literal>" keyword sends a return receipt
 to the sender when the message is succesfully received by each recipient.
-"<literal moreinfo="none">fail</literal>" sends a notice if the message could not be delivered
-for some reason. "<literal moreinfo="none">delay</literal>" sends a notice if the message
+"<literal>fail</literal>" sends a notice if the message could not be delivered
+for some reason. "<literal>delay</literal>" sends a notice if the message
 remains undeliverable for a period of time (but has not yet completely
-failed). "<literal moreinfo="none">never</literal>" means do not send any notices for any
+failed). "<literal>never</literal>" means do not send any notices for any
 reason, but see BUGS below.</para>
 	  </listitem>
 	</varlistentry>
@@ -191,15 +193,15 @@ information.</para>
 	  <term><option>-bcc</option></term>
 	  <listitem>
 	    <para>
-Read <literal moreinfo="none">Bcc:</literal> headers only. Normally, if no
-recipients are specified, <command moreinfo="none">sendmail</command> obtains the list of
-recipients by reading the <literal moreinfo="none">To:</literal>, <literal moreinfo="none">Cc:</literal> and
-<literal moreinfo="none">Bcc:</literal> headers (<literal moreinfo="none">Bcc:</literal> headers are always
+Read <literal>Bcc:</literal> headers only. Normally, if no
+recipients are specified, <command>sendmail</command> obtains the list of
+recipients by reading the <literal>To:</literal>, <literal>Cc:</literal> and
+<literal>Bcc:</literal> headers (<literal>Bcc:</literal> headers are then
 removed).
-The <literal moreinfo="none">-bcc</literal> option ignores <literal moreinfo="none">To:</literal> and
-<literal moreinfo="none">Cc:</literal>
+The <literal>-bcc</literal> option ignores <literal>To:</literal> and
+<literal>Cc:</literal>
 headers for this purpose. This option is ignored if an explicit address
-list is specified on the <command moreinfo="none">sendmail</command> command line.</para>
+list is specified on the <command>sendmail</command> command line.</para>
 	  </listitem>
 	</varlistentry>
 
@@ -217,7 +219,7 @@ and provides a complete ESMTP implementation.</para>
 	  <term><option>-verp</option></term>
 	  <listitem>
 	    <para>
-Use a <literal moreinfo="none">VERP</literal> for this message.
+Use a <literal>VERP</literal> for this message.
 </para>
 	  </listitem>
 	</varlistentry>
@@ -233,8 +235,8 @@ notifications (non-delivery notices, or return receipts) are sent for this
 message.</para>
 
       <para>
-<command moreinfo="none">sendmail</command> constructs the envelope sender (the return address),
-<literal moreinfo="none">userid@host</literal> as follows, unless the <option>-bs</option>
+<command>sendmail</command> constructs the envelope sender (the return address),
+<literal>userid@host</literal> as follows, unless the <option>-bs</option>
 option was
 specified. If the <option>-bs</option> option is specified the envelope sender is
 specified via ESMTP commands, of course.</para>
@@ -282,13 +284,13 @@ absence of a machine-readable DSN.</para>
 This option exists mainly to support Courier's own mailing list manager. At
 this time, it's the only software in the world that knows how to use this
 option.
-The <ulink url="http://www.qmail.org/"><application moreinfo="none">Qmail</application></ulink>
+The <ulink url="http://www.qmail.org/"><application>Qmail</application></ulink>
 server has very
 similar functionality, for it's own mailing list manager.
 However,
 there are many functional differences between the two mail servers, so
-<application moreinfo="none">Courier</application> mail server's
-and <application moreinfo="none">Qmail</application>'s
+<application>Courier</application> mail server's
+and <application>Qmail</application>'s
 mailing list managers are not interchangeable.</para>
 
       <para>
@@ -323,7 +325,7 @@ The one exception is when a VERPed message is sent from one Courier server
 to another Courier server via ESMTP. An ESMTP extension will be used to send
 one message, preserving the VERP status of the message. This ESMTP extension
 is described in the document,
-<filename moreinfo="none">draft-varshavchik-verp-smtpext</filename>,
+<filename>draft-varshavchik-verp-smtpext</filename>,
 a copy of which is included in Courier's source code.</para>
 
     </refsect2>
@@ -332,8 +334,8 @@ a copy of which is included in Courier's source code.</para>
       <title>SENDER ADDRESS</title>
 
       <para>
-<command moreinfo="none">sendmail</command> sets the contents of the
-<literal moreinfo="none">From:</literal> header as
+<command>sendmail</command> sets the contents of the
+<literal>From:</literal> header as
 follows. Note that this is not the same as the return address of the
 message.</para>
 
@@ -343,27 +345,27 @@ applicable. All environment variables are ignored when the <option>-bs</option>
 option is used.</para>
 
 <para>
-If the <literal moreinfo="none">From:</literal> header is present in the message, but the
+If the <literal>From:</literal> header is present in the message, but the
 environment variable <envar>MAILUSER</envar> is set, the userid portion of the
-<literal moreinfo="none">From:</literal> header is replaced by the contents of
+<literal>From:</literal> header is replaced by the contents of
 <envar>MAILUSER</envar>.</para>
 
 <para>
-If the <literal moreinfo="none">From:</literal> header is present in the message, but the
+If the <literal>From:</literal> header is present in the message, but the
 <envar>MAILHOST</envar> environment variable is set, the contents of
 <envar>MAILHOST</envar> replaces the host portion of the
-<literal moreinfo="none">From:</literal> header.</para>
+<literal>From:</literal> header.</para>
 
 <para>
-If the <literal moreinfo="none">From:</literal> header is present in the message,
+If the <literal>From:</literal> header is present in the message,
 but either the
 <option>-F</option> option was specified, or the <envar>MAILNAME</envar> or the
 <envar>NAME</envar> environment variable is set,  the contents of the -F option,
 or the environment variable, will replace the sender's name in the
-<literal moreinfo="none">From:</literal> header.</para>
+<literal>From:</literal> header.</para>
 
 <para>
-If the <literal moreinfo="none">From:</literal> header is not present in the message, one is
+If the <literal>From:</literal> header is not present in the message, one is
 constructed as follows. The sender's name is set by the -F option. If the -F
 option was not specified, the contents of the <envar>MAILNAME</envar> or the
 <envar>NAME</envar> environment variable is used. If neither variable is used,
@@ -380,9 +382,9 @@ set, the system name of the server is used.</para>
       <title>EXIT CODE</title>
 
       <para>
-<command moreinfo="none">sendmail</command> exits with exit status of zero if the message was
+<command>sendmail</command> exits with exit status of zero if the message was
 succesfully scheduled for a delivery. If there was a problem accepting the
-message for delivery, <command moreinfo="none">sendmail</command> displays an error message and
+message for delivery, <command>sendmail</command> displays an error message and
 exits with a non-zero status. The exit status will always be zero when the
 <option>-bs</option> option is used,
 unless a serious system problem occurs.</para>
@@ -392,19 +394,19 @@ unless a serious system problem occurs.</para>
       <title>RMAIL</title>
 
       <para>
-If called as <command moreinfo="none">rmail</command>, only a subset of these options are
+If called as <command>rmail</command>, only a subset of these options are
 available, namely <option>-f</option>, <option>-verp</option>,
 <option>-N</option>, <option>-R</option>, <option>-V</option>,
 <option>-o</option>, and <option>-t</option>. Other options are not
 allowed. Additionally, recipient addresses must be explicitly specified on the
-command line. The <command moreinfo="none">rmail</command> alias is intended to be used for
+command line. The <command>rmail</command> alias is intended to be used for
 receiving mail via UUCP. You must install compatible UUCP software separately,
-and set it up so that it looks for <command moreinfo="none">rmail</command> in Courier's
+and set it up so that it looks for <command>rmail</command> in Courier's
 installation directory.</para>
 
       <para>
-When invoked as <command moreinfo="none">rmail</command> this wrapper will refuse to run unless
-it is invoked by the <literal moreinfo="none">uucp</literal> user. Additionally, the
+When invoked as <command>rmail</command> this wrapper will refuse to run unless
+it is invoked by the <literal>uucp</literal> user. Additionally, the
 <envar>UU_MACHINE</envar> and <envar>UU_USER</envar> environment
 variables must be
 defined.  Also, header and address rewriting described in previous paragraphs
@@ -420,7 +422,7 @@ manual page for more information.</para>
     <title>BUGS</title>
 
     <para>
-There are still some mail gateways out there that do not impl ement
+There are still some mail gateways out there that do not implement
 delivery status notifications according to RFC 1894. This means that you may
 get a delivery notice even if <option>-N never</option> keyword was
 specified.</para>
