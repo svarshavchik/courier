@@ -46,7 +46,7 @@ INSTALL_PROGRAM=${INSTALL} -m 550
 
 EXTRA_DIST=courier.config staticlist.c esmtp.authpam.dist esmtpd.cnf.gnutls
 
-noinst_LTLIBRARIES=librewrite.la
+noinst_LTLIBRARIES=librewrite.la libesmtp.la
 
 install-data-hook:
 	test `id -u` = 0 || exit 0 ; cd $(DESTDIR)$(moduledir) || exit 1 ; chown @mailuser@ . ; chgrp @mailgroup@ .
@@ -61,6 +61,7 @@ courieresmtpd_SOURCES=courieresmtpd.c esmtpconfig.c esmtpconfig.h esmtpiov.c \
 
 courieresmtp_DEPENDENCIES=../../courier/libs/libmodule.la \
 			librewrite.la \
+			libesmtp.la \
 			../../libs/imap/libimapd.la \
 			../../courier/libs/libcommon.la \
 			../../courier/libs/libcourier.la \
@@ -78,7 +79,7 @@ courieresmtp_DEPENDENCIES=../../courier/libs/libmodule.la \
 			../../libs/soxwrap/libsoxwrap.a \
 			../../libs/soxwrap/soxlibs.dep
 
-commonLDADD=../../courier/libs/libmodule.la librewrite.la \
+commonLDADD=../../courier/libs/libmodule.la librewrite.la libesmtp.la \
 			../../libs/imap/libimapd.la \
 			../../courier/libs/libcommon.la \
 			../../courier/libs/libcourier.la \
@@ -172,6 +173,9 @@ install-perms-local:
 
 librewrite_la_SOURCES=esmtp.c
 librewrite_la_LDFLAGS=-static
+
+libesmtp_la_sources=libesmtp.c libesmtp.h
+libesmtp_la_LDFLAGS=-static
 
 localstatedir.h: config.status
 	echo "#define LOCALSTATEDIR \"$(localstatedir)\"" >localstatedir.h
