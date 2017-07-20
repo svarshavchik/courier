@@ -16,6 +16,9 @@
 #include	"courier.h"
 #include	"comreadtime.h"
 #include	"esmtpconfig.h"
+#include	"numlib/numlib.h"
+#include	"tcpd/spipe.h"
+#include	"tcpd/tlsclient.h"
 
 int esmtp_sockfd;
 time_t	esmtp_timeout_time;
@@ -365,6 +368,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 	info->hascourier=0;
 	info->hasstarttls=0;
 	info->hassecurity_starttls=0;
+	info->is_secure_connection=0;
 
 	char *authsasllist=0;
 
@@ -628,4 +632,207 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 	if (getenv("COURIER_ESMTP_DEBUG_NO8BITMIME"))
 		info->has8bitmime=0;
 	return (0);
+}
+
+static void connection_closed(struct esmtp_info *info,
+			      void *arg)
+{
+	(*info->log_smtp_error)
+		(info,
+		 "Connection unexpectedly closed by remote host.",
+		 4, arg);
+}
+
+int esmtp_enable_tls(struct esmtp_info *info,
+		     const char *hostname, int smtps,
+		     const char *sec, /* want_security(ctf) */
+		     void *arg)
+{
+	const char *p;
+	int	pipefd[2];
+	int rc;
+	struct couriertls_info cinfo;
+	char	*verify_domain=0;
+	char	localfd_buf[NUMBUFSIZE+30];
+	char	remotefd_buf[NUMBUFSIZE+30];
+	char	miscbuf[NUMBUFSIZE];
+
+	static char *trustcert_buf=0;
+	static char *origcert_buf=0;
+
+	char *argvec[10];
+
+	int restore_origcert=0;
+	int n;
+
+	if (libmail_streampipe(pipefd))
+	{
+		perror("libmail_streampipe");
+		return (-1);
+	}
+
+	if (!smtps)
+	{
+		if (esmtp_writestr("STARTTLS\r\n") || esmtp_writeflush() ||
+		    (p=esmtp_readline()) == 0)
+		{
+			(*info->log_talking)(info, arg);
+			(*info->log_smtp_error)(info, "Remote mail server disconnected after receiving the STARTTLS command", '4', arg);
+			close(pipefd[0]);
+			close(pipefd[1]);
+			return (1);
+		}
+
+		if (*p != '1' && *p != '2' && *p != '3')
+		{
+			(*info->log_talking)(info, arg);
+			(*info->log_sent)(info, "STARTTLS", arg);
+			close(pipefd[0]);
+			close(pipefd[1]);
+
+			while (!ISFINALLINE(p))
+			{
+				(*info->log_reply)(info, p, arg);
+				if ((p=esmtp_readline()) == 0)
+					break;
+			}
+
+			/* Consider this one a soft error, every time */
+			(*info->log_smtp_error)(info, p, '4', arg);
+			return (-1);
+		}
+	}
+
+	couriertls_init(&cinfo);
+
+	/*
+	** Make sure that our side of the pipe is closed when couriertls
+	** is execed by the child process.
+	*/
+
+	fcntl(pipefd[0], F_SETFD, FD_CLOEXEC);
+
+	strcat(strcpy(localfd_buf, "-localfd="),
+	       libmail_str_size_t(pipefd[1], miscbuf));
+	strcat(strcpy(remotefd_buf, "-remotefd="),
+	       libmail_str_size_t(esmtp_sockfd, miscbuf));
+
+	p=getenv("ESMTP_TLS_VERIFY_DOMAIN");
+
+	if (sec != 0)
+	{
+		char *q, *r;
+
+		/*
+		** Replace TLS_TRUSTCERTS with TLS_TRUSTSECURITYCERTS,
+		** until couriertls is execed.
+		*/
+
+		q=getenv("TLS_TRUSTCERTS");
+
+		r=courier_malloc(strlen(q ? q:"")+40);
+		strcat(strcpy(r, "TLS_TRUSTCERTS="), q ? q:"");
+
+		if (origcert_buf)
+			free(origcert_buf);
+		origcert_buf=r;
+		restore_origcert=1;
+
+		p=getenv("TLS_TRUSTSECURITYCERTS");
+		if (!p || !*p)
+		{
+			static const char fail[]=
+				"500 Unable to set minimum security"
+				" level.\n";
+
+			(*info->log_talking)(info, arg);
+			(*info->log_sent)(info, "STARTTLS", arg);
+			(*info->log_smtp_error)(info, fail, 0, arg);
+			sox_close(esmtp_sockfd);
+			esmtp_sockfd= -1;
+			close(pipefd[0]);
+			close(pipefd[1]);
+			return (-1);
+		}
+
+		q=courier_malloc(strlen(p)+40);
+
+		strcat(strcpy(q, "TLS_TRUSTCERTS="), p);
+		putenv(q);
+		p="1";
+
+		if (trustcert_buf)
+			free(trustcert_buf);
+		trustcert_buf=q;
+	}
+
+	if (p && atoi(p))
+	{
+		verify_domain=courier_malloc(sizeof("-verify=")
+					     +strlen(hostname));
+		strcat(strcpy(verify_domain, "-verify="), hostname);
+	}
+
+
+	n=0;
+
+	argvec[n++]=localfd_buf;
+	argvec[n++]=remotefd_buf;
+	if (verify_domain)
+	{
+		argvec[n++]=verify_domain;
+	}
+	argvec[n]=0;
+
+	n=couriertls_start(argvec, &cinfo);
+
+	if (restore_origcert)
+		putenv(origcert_buf);
+	if (verify_domain)
+		free(verify_domain);
+
+	close(esmtp_sockfd);
+	esmtp_sockfd=pipefd[0];
+	close(pipefd[1]);
+
+	if (!n && fcntl(esmtp_sockfd, F_SETFL, O_NONBLOCK))
+	{
+		perror("fcntl");
+		n= -1;
+		strcpy(cinfo.errmsg, "fcntl() failed");
+	}
+
+	if (n)
+	{
+		char tmperrbuf[sizeof(cinfo.errmsg)+10];
+
+		(*info->log_talking)(info, arg);
+		(*info->log_sent)(info, "STARTTLS", arg);
+		strcat(strcpy(tmperrbuf,sec ? "500 ":"400 "),
+		       cinfo.errmsg);
+		(*info->log_smtp_error)(info, tmperrbuf, 0, arg);
+		sox_close(esmtp_sockfd);
+		esmtp_sockfd= -1;
+		couriertls_destroy(&cinfo);
+		return (-1);
+	}
+	couriertls_destroy(&cinfo);
+
+	/* Reset the socket buffer structure given the new filedescriptor */
+
+	esmtp_init();
+
+	/* Ask again for an EHLO, because the capabilities may differ now */
+
+	if (smtps)
+		return 0;
+
+	rc=esmtp_helo(info, 1, 0, arg);
+
+	if (rc > 0)
+		connection_closed(info, arg);	/* Make sure to log it */
+	else
+		info->is_secure_connection= sec != 0;
+	return (rc);
+
 }

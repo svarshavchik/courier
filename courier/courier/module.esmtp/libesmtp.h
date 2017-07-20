@@ -52,6 +52,7 @@ struct esmtp_info {
 	int hascourier;
 	int hasstarttls;
 	int hassecurity_starttls;
+	int is_secure_connection;
 
 	int quit_needed;
 };
@@ -80,5 +81,9 @@ extern int esmtp_helo(struct esmtp_info *info, int using_tls,
 		      const char *security_level, void *arg);
 extern int esmtp_get_greeting(struct esmtp_info *info,
 			      void *arg);
+extern int esmtp_enable_tls(struct esmtp_info *,
+			    const char *, int,
+			    const char *,
+			    void *arg);
 
 #endif
