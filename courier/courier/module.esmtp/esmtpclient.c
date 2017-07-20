@@ -933,13 +933,86 @@ unsigned        i;
 
 ***************************************************************************/
 
+struct my_esmtp_info {
+	struct moduledel *del;
+	struct ctlfile *ctf;
+};
+
+static RFC1035_ADDR laddr;
+
+/* Try an EHLO */
+
+static void log_talking(struct esmtp_info *info, void *arg)
+{
+	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
+
+	talking(my_info->del, my_info->ctf);
+}
+
+static void log_sent(struct esmtp_info *ingo, const char *str, void *arg)
+{
+	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
+
+	sent(my_info->del, my_info->ctf, str);
+	smtp_msg(my_info->del, my_info->ctf);
+}
+
+static void log_reply(struct esmtp_info *info, const char *str, void *arg)
+{
+	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
+
+	reply(my_info->del, my_info->ctf, str);
+}
+
+static void log_smtp_error(struct esmtp_info *info,
+			   const char *msg, int errcode, void *arg)
+{
+	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
+
+	smtp_error(my_info->del, my_info->ctf, msg, errcode);
+}
+
+static struct esmtp_info *libesmtp_init(struct my_esmtp_info *my_info,
+					struct ctlfile *ctf,
+					struct moduledel *del)
+{
+	struct esmtp_info *info=esmtp_info_alloc();
+
+	my_info->del=del;
+	my_info->ctf=ctf;
+
+	info->log_talking= &log_talking;
+	info->log_sent= &log_sent;
+	info->log_reply= &log_reply;
+	info->log_smtp_error= &log_smtp_error;
+
+	info->laddr=laddr;
+
+	return info;
+}
+
+static void libesmtp_deinit(struct esmtp_info *info)
+{
+	haspipelining=info->haspipelining;
+	hasdsn=info->hasdsn;
+	has8bitmime=info->has8bitmime;
+	hasverp=info->hasverp;
+	hassize=info->hassize;
+	hasexdata=info->hasexdata;
+	hascourier=info->hascourier;
+	hasstarttls=info->hasstarttls;
+	hassecurity_starttls=info->hassecurity_starttls;
+
+	esmtp_info_free(info);
+}
+
 /*
 	Try EHLO then HELO, and see what the other server says.
 */
 
-static RFC1035_ADDR laddr;
-
-static int hello2(struct moduledel *, struct ctlfile *, int);
+static int hello3(struct esmtp_info *info,
+		  struct my_esmtp_info *my_info,
+		  int using_tls);
 
 static int local_sock_address(struct moduledel *del, struct ctlfile *ctf)
 {
@@ -959,118 +1032,30 @@ static int local_sock_address(struct moduledel *del, struct ctlfile *ctf)
 
 static int hello(struct moduledel *del, struct ctlfile *ctf)
 {
-	const char *p;
-
-	esmtp_init();
-	esmtp_timeout(helo_timeout);
-	if ((p=esmtp_readline()) == 0)	/* Wait for server first */
-		return (1);
-
-	if (*p == '5')	/* Hard error */
-	{
-		talking(del, ctf);
-		smtp_msg(del, ctf);
-		while (!ISFINALLINE(p))	/* Skip multiline replies */
-		{
-			reply(del, ctf, p);
-			if ((p=esmtp_readline()) == 0)
-				return (1);
-				/* Caller will report the error */
-		}
-		hard_error(del, ctf, p);
-		return (-1);
-	}
-
-	if (*p != '1' && *p != '2' && *p != '3')	/* Soft error */
-	{
-		for (;;)
-		{
-			if (ISFINALLINE(p))
-				break;
-
-			if ((p=esmtp_readline()) == 0)
-			{
-				talking(del, ctf);
-				return (1);
-			}
-		}
-		quit();
-		return (-1);	/*
-				** Let caller handle this as a hard error,
-				** so that it does not try the next MX.
-				*/
-	}
-
-	/* Skip multiline good response. */
-
-	while (!ISFINALLINE(p))
-	{
-		if ((p=esmtp_readline()) == 0)
-		{
-			talking(del, ctf);
-			return (1);
-		}
-	}
-
-	return (hello2(del, ctf, 0));
-}
-
-
-struct my_esmtp_info {
-	struct moduledel *del;
-	struct ctlfile *ctf;
-};
-
-/* Try an EHLO */
-
-static void log_talking(struct esmtp_info *info, void *arg)
-{
-	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
-
-	talking(my_info->del, my_info->ctf);
-}
-
-static void log_sent(struct esmtp_info *ingo, const char *str, void *arg)
-{
-	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
-
-	sent(my_info->del, my_info->ctf, str);
-	smtp_msg(my_info->del, my_info->ctf);
-}
-
-static void log_reply(struct esmtp_info *ingo, const char *str, void *arg)
-{
-	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
-
-	reply(my_info->del, my_info->ctf, str);
-}
-
-static void log_smtp_error(struct esmtp_info *info,
-			   const char *msg, int errcode, void *arg)
-{
-	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
-
-	smtp_error(my_info->del, my_info->ctf, msg, errcode);
-}
-
-static int hello2(struct moduledel *del, struct ctlfile *ctf, int using_tls)
-{
-	struct esmtp_info *info=esmtp_info_alloc();
 	struct my_esmtp_info my_info;
+	struct esmtp_info *info=libesmtp_init(&my_info, ctf, del);
+
+	int rc=esmtp_get_greeting(info, &my_info);
+
+	if (rc == 0)
+		rc=hello3(info, &my_info, 0);
+
+	if (info->quit_needed)
+		quit();
+
+	libesmtp_deinit(info);
+
+	return rc;
+}
+
+static int hello3(struct esmtp_info *info,
+		  struct my_esmtp_info *my_info,
+		  int using_tls)
+{
 	int rc;
 	time_t timestamp;
 
-	my_info.del=del;
-	my_info.ctf=ctf;
-
-	info->log_talking= &log_talking;
-	info->log_sent= &log_sent;
-	info->log_reply= &log_reply;
-	info->log_smtp_error= &log_smtp_error;
-
-	info->laddr=laddr;
-
-	rc=esmtp_helo(info, using_tls, want_security(ctf), &my_info);
+	rc=esmtp_helo(info, using_tls, want_security(my_info->ctf), my_info);
 
 	if (rc == -1)
 		quit();
@@ -1078,17 +1063,19 @@ static int hello2(struct moduledel *del, struct ctlfile *ctf, int using_tls)
 	if (track_find_broken_starttls(sockfdaddrname, &timestamp))
 		info->hasstarttls=0;
 
-	haspipelining=info->haspipelining;
-	hasdsn=info->hasdsn;
-	has8bitmime=info->has8bitmime;
-	hasverp=info->hasverp;
-	hassize=info->hassize;
-	hasexdata=info->hasexdata;
-	hascourier=info->hascourier;
-	hasstarttls=info->hasstarttls;
-	hassecurity_starttls=info->hassecurity_starttls;
+	return rc;
+}
 
-	esmtp_info_free(info);
+static int hello2(struct moduledel *del, struct ctlfile *ctf, int using_tls)
+{
+	struct my_esmtp_info my_info;
+
+	struct esmtp_info *info=libesmtp_init(&my_info, ctf, del);
+
+	int rc=hello3(info, &my_info, using_tls);
+
+	libesmtp_deinit(info);
+
 	return rc;
 }
 

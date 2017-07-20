@@ -285,6 +285,70 @@ void esmtp_info_free(struct esmtp_info *p)
 	free(p);
 }
 
+int esmtp_get_greeting(struct esmtp_info *info,
+		       void *arg)
+{
+	const char *p;
+
+	esmtp_init();
+	esmtp_timeout(config_time_esmtphelo());
+
+	if ((p=esmtp_readline()) == 0)	/* Wait for server first */
+		return (1);
+
+	if (*p == '5')	/* Hard error */
+	{
+		(*info->log_talking)(info, arg);
+		(*info->log_sent)(info, "(initial greeting)", arg);
+
+		while (!ISFINALLINE(p))	/* Skip multiline replies */
+		{
+			(*info->log_reply)(info, p, arg);
+			if ((p=esmtp_readline()) == 0)
+				return (1);
+				/* Caller will report the error */
+		}
+		(*info->log_smtp_error)(info, p, '5',  arg);
+		return (-1);
+	}
+
+	if (*p != '1' && *p != '2' && *p != '3')	/* Soft error */
+	{
+		(*info->log_talking)(info, arg);
+		(*info->log_sent)(info, "(initial greeting)", arg);
+
+		for (;;)
+		{
+			if (ISFINALLINE(p))
+				break;
+
+			(*info->log_reply)(info, p, arg);
+			if ((p=esmtp_readline()) == 0)
+			{
+				return (1);
+			}
+		}
+		(*info->log_smtp_error)(info, p, '4',  arg);
+		info->quit_needed=1;
+		return (-1);	/*
+				** Let caller handle this as a hard error,
+				** so that it does not try the next MX.
+				*/
+	}
+
+	/* Skip multiline good response. */
+
+	while (!ISFINALLINE(p))
+	{
+		if ((p=esmtp_readline()) == 0)
+		{
+			(*info->log_talking)(info, arg);
+			return (1);
+		}
+	}
+	return 0;
+}
+
 int esmtp_helo(struct esmtp_info *info, int using_tls,
 	       const char *security_level, void *arg)
 {
