@@ -54,6 +54,8 @@ struct esmtp_info {
 	int hassecurity_starttls;
 	int is_secure_connection;
 
+	char *authsasllist;
+	int auth_error_sent;
 	int quit_needed;
 };
 
@@ -85,5 +87,8 @@ extern int esmtp_enable_tls(struct esmtp_info *,
 			    const char *, int,
 			    const char *,
 			    void *arg);
+extern int esmtp_auth(struct esmtp_info *info,
+		      const char *auth_key,
+		      void *arg);
 
 #endif

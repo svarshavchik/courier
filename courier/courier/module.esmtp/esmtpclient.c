@@ -92,7 +92,6 @@ static time_t net_timeout;
 	*/
 static int net_error;
 
-static void sendesmtp(struct moduledel *, struct ctlfile *);
 static void quit();
 
 
@@ -119,6 +118,18 @@ static void setconfig()
        data_timeout=config_time_esmtpdata();
        quit_timeout=config_time_esmtpquit();
 }
+
+struct my_esmtp_info {
+	struct moduledel *del;
+	struct ctlfile *ctf;
+};
+
+static struct esmtp_info *libesmtp_init(struct my_esmtp_info *my_info,
+					struct ctlfile *ctf,
+					struct moduledel *del);
+static void libesmtp_deinit(struct esmtp_info *info);
+
+static void sendesmtp(struct esmtp_info *, struct my_esmtp_info *);
 
 /* We get here as a new child process of the courieresmtp driver */
 
@@ -177,6 +188,8 @@ unsigned long mypid=(unsigned long)getpid();
 		if (ctlfile_openi(del->inum, &ctf, 0) == 0)
 		{
 			int changed_vhosts=ctlfile_setvhost(&ctf);
+			struct my_esmtp_info my_info;
+			struct esmtp_info *info;
 
 			if (changed_vhosts)
 			{
@@ -184,7 +197,11 @@ unsigned long mypid=(unsigned long)getpid();
 				setconfig();
 			}
 
-			sendesmtp(del, &ctf);
+			info=libesmtp_init(&my_info, &ctf, del);
+
+			sendesmtp(info, &my_info);
+			libesmtp_deinit(info);
+
 			ctlfile_close(&ctf);
 		}
 		{
@@ -230,26 +247,19 @@ static RFC1035_ADDR sockfdaddr;
 static char *sockfdaddrname=0;
 static char *auth_key=0;
 static char *host;
-static char *authsasllist=0;
-static int is_secure_connection=0;
 static int smtproutes_flags=0;
-
-static int hasdsn, haspipelining, has8bitmime, hasverp, hassize, hasexdata,
-	hascourier, hasstarttls, hassecurity_starttls;
 
 static void hard_error(struct moduledel *, struct ctlfile *, const char *);
 static void soft_error(struct moduledel *, struct ctlfile *, const char *);
 
 static void connect_error(struct moduledel *, struct ctlfile *);
 
-static int hello(struct moduledel *, struct ctlfile *);
-static int local_sock_address(struct moduledel *, struct ctlfile *);
-static int starttls(struct moduledel *, struct ctlfile *, const char *, int);
-static int authclient(struct moduledel *, struct ctlfile *, const char *);
+static int hello(struct esmtp_info *, struct my_esmtp_info *);
+static int local_sock_address(struct esmtp_info *, struct my_esmtp_info *);
 
 static int rset(struct moduledel *, struct ctlfile *);
 static int smtpreply(const char *, struct moduledel *, struct ctlfile *, int);
-static void push(struct moduledel *, struct ctlfile *);
+static void push(struct esmtp_info *, struct my_esmtp_info *);
 
 static const char *want_security(struct ctlfile *ctf)
 {
@@ -375,8 +385,10 @@ static void report_broken_starttls();
 
 /* Attempt to deliver a message */
 
-static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
+static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
 	char *smtproute;
 	int cn;
 	int connection_attempt_made;
@@ -449,7 +461,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 					     (unsigned)atol( del->receipients[i*2]),
 					     "delivered: backscatter bounce dropped",
 					     COMCTLFILE_DELSUCCESS_NOLOG,
-					     (hasdsn ? "":" r"));
+					     (info->hasdsn ? "":" r"));
 		}
 		return;
 	}
@@ -461,7 +473,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 
 	smtproute=smtproutes(host, &smtproutes_flags);
 
-	if (esmtp_sockfd >= 0 && want_security(ctf) && !is_secure_connection)
+	if (esmtp_sockfd >= 0 && want_security(ctf) && !info->is_secure_connection)
 		quit();
 
 	if (esmtp_sockfd < 0)	/* First time, connect to a server */
@@ -585,7 +597,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 				courier_malloc(strlen(p->hostname)+1),
 				p->hostname);	/* Save this for later */
 
-			is_secure_connection=0;
+			info->is_secure_connection=0;
 			if ((esmtp_sockfd=rfc1035_mksocket(SOCK_STREAM, 0, &af))
 					>= 0 &&
 			    rfc1035_mkaddress(af, &addrbuf, &addr, port,
@@ -604,7 +616,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 
 				int	rc;
 
-				if (local_sock_address(del, ctf) < 0)
+				if (local_sock_address(info, my_info) < 0)
 				{
 					sox_close(esmtp_sockfd);
 					esmtp_sockfd= -1;
@@ -613,7 +625,11 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 
 				if (smtproutes_flags & ROUTE_SMTPS)
 				{
-					if (starttls(del, ctf, p->hostname, 1))
+					if (esmtp_enable_tls(info,
+							     p->hostname,
+							     1,
+							     want_security(my_info->ctf),
+							     my_info))
 					{
 						sox_close(esmtp_sockfd);
 						esmtp_sockfd= -1;
@@ -623,7 +639,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 					smtproutes_flags &= ~(ROUTE_TLS_REQUIRED);
 				}
 
-				rc=hello(del, ctf);
+				rc=hello(info, my_info);
 
 				if (rc == 0)
 				{
@@ -636,7 +652,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 
 					if ((smtproutes_flags
 					     & ROUTE_TLS_REQUIRED)
-					    && !hasstarttls)
+					    && !info->hasstarttls)
 					{
 						talking(del, ctf);
 						smtp_error(del, ctf,
@@ -644,17 +660,19 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 							   '5');
 					}
 					else if (want_security(ctf)
-						 && !hasstarttls)
+						 && !info->hasstarttls)
 					{
 						talking(del, ctf);
 						smtp_error(del, ctf,
 							   "/SECURITY set, but TLS is not available",
 							   '5');
 					}
-					else if (hasstarttls &&
-						 starttls(del, ctf,
-							  p->hostname,
-							  0))
+					else if (info->hasstarttls &&
+						 esmtp_enable_tls
+						 (info, p->hostname,
+						  0,
+						  want_security(my_info->ctf),
+						  my_info))
 					{
 						/*
 						** Only keep track of broken
@@ -666,11 +684,15 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 						if (!want_security(ctf))
 							report_broken_starttls();
 					}
-					else if (authclient(del, ctf, auth_key))
+					else
 					{
-						;
+
+						int rc=esmtp_auth(info, auth_key,
+								  &my_info);
+
+						if (rc == 0)
+							break; /* Good HELO */
 					}
-					else break; /* Good HELO */
 				}
 				quit();	/* We don't want to talk to him */
 				if (rc < 0)
@@ -727,9 +749,9 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 	** does not grok VERPs, we need to do a song-n-dance routine.
 	*/
 
-	if (hasverp || ctlfile_searchfirst(ctf, COMCTLFILE_VERP) < 0)
+	if (info->hasverp || ctlfile_searchfirst(ctf, COMCTLFILE_VERP) < 0)
 	{
-		push(del, ctf);	/* ... but not this time */
+		push(info, my_info);	/* ... but not this time */
 		return;
 	}
 
@@ -766,7 +788,7 @@ static void sendesmtp(struct moduledel *del, struct ctlfile *ctf)
 			verp_sender=verp_getsender(ctf, del->receipients[1]);
 
 			del->sender=verp_sender;
-			push(del, ctf);
+			push(info, my_info);
 			free(verp_sender);
 		}
 	}
@@ -816,11 +838,6 @@ static void soft_error(struct moduledel *del, struct ctlfile *ctf,
 	const char *msg)
 {
 	soft_error1(del, ctf, msg, -1);
-}
-
-static void connection_closed(struct moduledel *del, struct ctlfile *ctf)
-{
-	soft_error(del, ctf, "Connection unexpectedly closed by remote host.");
 }
 
 /* Record an SMTP error for all the recipients */
@@ -952,13 +969,6 @@ unsigned        i;
 
 ***************************************************************************/
 
-struct my_esmtp_info {
-	struct moduledel *del;
-	struct ctlfile *ctf;
-};
-
-static RFC1035_ADDR laddr;
-
 /* Try an EHLO */
 
 static void log_talking(struct esmtp_info *info, void *arg)
@@ -991,19 +1001,6 @@ static void log_smtp_error(struct esmtp_info *info,
 	smtp_error(my_info->del, my_info->ctf, msg, errcode);
 }
 
-#define LIBESMTP_COMPAT do {					\
-		LIBESMTP_MOVE(haspipelining);			\
-		LIBESMTP_MOVE(hasdsn);				\
-		LIBESMTP_MOVE(has8bitmime);			\
-		LIBESMTP_MOVE(hasverp);				\
-		LIBESMTP_MOVE(hassize);				\
-		LIBESMTP_MOVE(hasexdata);			\
-		LIBESMTP_MOVE(hascourier);			\
-		LIBESMTP_MOVE(hasstarttls);			\
-		LIBESMTP_MOVE(hassecurity_starttls);		\
-		LIBESMTP_MOVE(is_secure_connection);		\
-	} while(0)
-
 static struct esmtp_info *libesmtp_init(struct my_esmtp_info *my_info,
 					struct ctlfile *ctf,
 					struct moduledel *del)
@@ -1017,21 +1014,11 @@ static struct esmtp_info *libesmtp_init(struct my_esmtp_info *my_info,
 	info->log_sent= &log_sent;
 	info->log_reply= &log_reply;
 	info->log_smtp_error= &log_smtp_error;
-
-	info->laddr=laddr;
-
-#define LIBESMTP_MOVE(n) info->n=n
-	LIBESMTP_COMPAT;
-#undef LIBESMTP_MOVE
 	return info;
 }
 
 static void libesmtp_deinit(struct esmtp_info *info)
 {
-#define LIBESMTP_MOVE(n) n=info->n
-	LIBESMTP_COMPAT;
-#undef LIBESMTP_MOVE
-
 	esmtp_info_free(info);
 }
 
@@ -1043,36 +1030,33 @@ static int hello3(struct esmtp_info *info,
 		  struct my_esmtp_info *my_info,
 		  int using_tls);
 
-static int local_sock_address(struct moduledel *del, struct ctlfile *ctf)
+static int local_sock_address(struct esmtp_info *info,
+			      struct my_esmtp_info *my_info)
 {
 	RFC1035_NETADDR lsin;
 	socklen_t i;
 
 	i=sizeof(lsin);
 	if (sox_getsockname(esmtp_sockfd, (struct sockaddr *)&lsin, &i) ||
-	    rfc1035_sockaddrip(&lsin, i, &laddr))
+	    rfc1035_sockaddrip(&lsin, i, &info->laddr))
 	{
-		soft_error1(del, ctf, "Cannot obtain local socket IP address.",
-			    -1);
+		(*info->log_smtp_error)(info,
+					"Cannot obtain local socket IP address.",
+					'4', my_info);
 		return -1;
 	}
 	return 0;
 }
 
-static int hello(struct moduledel *del, struct ctlfile *ctf)
+static int hello(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
-	struct my_esmtp_info my_info;
-	struct esmtp_info *info=libesmtp_init(&my_info, ctf, del);
-
-	int rc=esmtp_get_greeting(info, &my_info);
+	int rc=esmtp_get_greeting(info, my_info);
 
 	if (rc == 0)
-		rc=hello3(info, &my_info, 0);
+		rc=hello3(info, my_info, 0);
 
 	if (info->quit_needed)
 		quit();
-
-	libesmtp_deinit(info);
 
 	return rc;
 }
@@ -1098,21 +1082,6 @@ static int hello3(struct esmtp_info *info,
 static void report_broken_starttls()
 {
 	track_save_broken_starttls(sockfdaddrname);
-}
-
-static int starttls(struct moduledel *del, struct ctlfile *ctf,
-		    const char *hostname, int smtps)
-{
-	struct my_esmtp_info my_info;
-
-	struct esmtp_info *info=libesmtp_init(&my_info, ctf, del);
-
-	int rc=esmtp_enable_tls(info, hostname, smtps,
-				want_security(ctf), &my_info);
-
-	libesmtp_deinit(info);
-
-	return rc;
 }
 
 /*
@@ -1222,7 +1191,7 @@ static int rset(struct moduledel *del, struct ctlfile *ctf)
 	return (smtpcommand("RSET\r\n", del, ctf, 0));
 }
 
-static void pushdsn(struct moduledel *, struct ctlfile *);
+static void pushdsn(struct esmtp_info *, struct my_esmtp_info *);
 
 /*
 **	We now resolved issues with VERP support.  Resolve issues with
@@ -1237,13 +1206,16 @@ static void pushdsn(struct moduledel *, struct ctlfile *);
 **	Otherwise we call pushdsn() twice.
 */
 
-static void push(struct moduledel *del, struct ctlfile *ctf)
+static void push(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
-unsigned	i;
-char	**real_receipients;
-const char	*real_sender;
-int	pass;
-unsigned real_nreceipients;
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+
+	unsigned	i;
+	char	**real_receipients;
+	const char	*real_sender;
+	int	pass;
+	unsigned real_nreceipients;
 
 	real_sender=del->sender;
 	real_receipients=del->receipients;
@@ -1253,9 +1225,9 @@ unsigned real_nreceipients;
 
 	/* If the sender is <> already, I don't care */
 
-	if (hasdsn || real_sender == 0 || *real_sender == '\0')
+	if (info->hasdsn || real_sender == 0 || *real_sender == '\0')
 	{
-		pushdsn(del, ctf);
+		pushdsn(info, my_info);
 		return;
 	}
 
@@ -1295,7 +1267,7 @@ unsigned real_nreceipients;
 			++del->nreceipients;
 		}
 		if (del->nreceipients == 0)	continue;
-		pushdsn(del, ctf);
+		pushdsn(info, my_info);
 	}
 	free(del->receipients);
 	del->receipients=real_receipients;
@@ -1307,31 +1279,33 @@ unsigned real_nreceipients;
 ** Construct the MAIL FROM: command, taking into account ESMTP capabilities
 ** of the remote server.
 */
-
-static char *mailfrom(struct moduledel *del, struct ctlfile *ctf,
-	int messagefd, int is8bitmsg)
+static char *mailfrom(struct esmtp_info *info, struct my_esmtp_info *my_info,
+		      int messagefd, int is8bitmsg)
 {
-char	*bodyverb="", *verpverb="", *retverb="";
-char	*oenvidverb="", *sizeverb="";
-const char *seclevel="";
-char	*mailfromcmd;
-int	n;
-struct	stat stat_buf;
-const char *sec=want_security(ctf);
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
 
-static const char seclevel_starttls[]=" SECURITY=STARTTLS";
+	char	*bodyverb="", *verpverb="", *retverb="";
+	char	*oenvidverb="", *sizeverb="";
+	const char *seclevel="";
+	char	*mailfromcmd;
+	int	n;
+	struct	stat stat_buf;
+	const char *sec=want_security(ctf);
 
-	if (has8bitmime)	/* ESMTP 8BITMIME capability */
+	static const char seclevel_starttls[]=" SECURITY=STARTTLS";
+
+	if (info->has8bitmime)	/* ESMTP 8BITMIME capability */
 		bodyverb= is8bitmsg ? " BODY=8BITMIME":" BODY=7BIT";
 
-	if (hasverp && ctlfile_searchfirst(ctf, COMCTLFILE_VERP) >= 0)
+	if (info->hasverp && ctlfile_searchfirst(ctf, COMCTLFILE_VERP) >= 0)
 		verpverb=" VERP";	/* ESMTP VERP capability */
 
 	/* ESMTP DSN capability */
-	if (hasdsn && (n=ctlfile_searchfirst(ctf, COMCTLFILE_DSNFORMAT)) >= 0)
+	if (info->hasdsn && (n=ctlfile_searchfirst(ctf, COMCTLFILE_DSNFORMAT)) >= 0)
 		retverb=strchr(ctf->lines[n]+1, 'F') ? " RET=FULL":
 			strchr(ctf->lines[n]+1, 'H') ? " RET=HDRS":"";
-	if (hasdsn && (n=ctlfile_searchfirst(ctf, COMCTLFILE_ENVID)) >= 0 &&
+	if (info->hasdsn && (n=ctlfile_searchfirst(ctf, COMCTLFILE_ENVID)) >= 0 &&
 			ctf->lines[n][1])
 	{
 		oenvidverb=courier_malloc(sizeof(" ENVID=")+
@@ -1345,13 +1319,13 @@ static const char seclevel_starttls[]=" SECURITY=STARTTLS";
 	{
 		ctf->msgsize=stat_buf.st_size;
 
-		if (hassize)
+		if (info->hassize)
 		{
 			off_t s=stat_buf.st_size;
 			char	buf[MAXLONGSIZE+1];
 
 			s= s/75 * 77+256;	/* Size estimate */
-			if (!has8bitmime && is8bitmsg)
+			if (!info->has8bitmime && is8bitmsg)
 				s=s/70 * 100;
 			sprintf(buf, "%lu", (unsigned long)s);
 			sizeverb=courier_malloc(sizeof(" SIZE=")+strlen(buf));
@@ -1394,18 +1368,20 @@ static const char seclevel_starttls[]=" SECURITY=STARTTLS";
 /*
 ** Construct the RCPT TO command along the same lines.
 */
-
-static char *rcptcmd(struct moduledel *del,
-	struct ctlfile *ctf, unsigned rcptnum)
+static char *rcptcmd(struct esmtp_info *info, struct my_esmtp_info *my_info,
+		     unsigned rcptnum)
 {
-char notify[sizeof(" NOTIFY=SUCCESS,FAILURE,DELAY")];
-char *orcpt="";
-const char *p;
-char	*q;
-unsigned n=atol(del->receipients[rcptnum*2]);
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+
+	char notify[sizeof(" NOTIFY=SUCCESS,FAILURE,DELAY")];
+	char *orcpt="";
+	const char *p;
+	char	*q;
+	unsigned n=atol(del->receipients[rcptnum*2]);
 
 	notify[0]=0;
-	if ((p=ctf->dsnreceipients[n]) != 0 && *p && hasdsn)
+	if ((p=ctf->dsnreceipients[n]) != 0 && *p && info->hasdsn)
 	{
 	int s=0,f=0,d=0,n=0;
 
@@ -1444,7 +1420,7 @@ unsigned n=atol(del->receipients[rcptnum*2]);
 		}
 	}
 
-	if ((p=ctf->oreceipients[n]) != 0 && *p && hasdsn)
+	if ((p=ctf->oreceipients[n]) != 0 && *p && info->hasdsn)
 	{
 		orcpt=courier_malloc(sizeof(" ORCPT=")+strlen(p));
 		strcat(strcpy(orcpt, " ORCPT="), p);
@@ -1483,22 +1459,25 @@ unsigned n=atol(del->receipients[rcptnum*2]);
 
 static const char *readpipelinercpt( struct iovec **, unsigned *);
 
-static int parsedatareply(struct moduledel *, struct ctlfile *,
-	int *, struct iovec **, unsigned *, int);
+static int parsedatareply(struct esmtp_info *info,
+			  struct my_esmtp_info *my_info,
+			  int *, struct iovec **, unsigned *, int);
 
-static int do_pipeline_rcpt(struct moduledel *del,
-	struct ctlfile *ctf,
-	int *rcptok)
+static int do_pipeline_rcpt(struct esmtp_info *info,
+			    struct my_esmtp_info *my_info,
+			    int *rcptok)
 {
-char	**cmdarray;
-struct iovec *iov;
-struct iovec *	iovw;
-unsigned	niovw;
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+	char	**cmdarray;
+	struct iovec *iov;
+	struct iovec *	iovw;
+	unsigned	niovw;
 
-unsigned i;
-const char *p;
+	unsigned i;
+	const char *p;
 
-int	rc=0;
+	int	rc=0;
 
 	/* Construct all the RCPT TOs we'll issue. */
 
@@ -1511,7 +1490,7 @@ int	rc=0;
 
 	for (i=0; i <= del->nreceipients; i++)
 	{
-		cmdarray[i]= i < del->nreceipients ?  rcptcmd(del, ctf, i):
+		cmdarray[i]= i < del->nreceipients ?  rcptcmd(info, my_info, i):
 				strcpy(courier_malloc(sizeof("DATA\r\n")),
 						"DATA\r\n");
 		iov[i].iov_base=(caddr_t)cmdarray[i];
@@ -1521,7 +1500,7 @@ int	rc=0;
 	iovw=iov;
 	niovw= i;
 
-	if (haspipelining)	/* One timeout */
+	if (info->haspipelining)	/* One timeout */
 		esmtp_timeout(cmd_timeout);
 
 	/* Read replies for the RCPT TO commands */
@@ -1533,7 +1512,7 @@ int	rc=0;
 
 		/* If server can't do pipelining, just set niovw to one!!! */
 
-		if (!haspipelining)
+		if (!info->haspipelining)
 		{
 			iovw=iov+i;
 			niovw=1;
@@ -1598,7 +1577,7 @@ int	rc=0;
 
 	if (esmtp_sockfd >= 0)
 	{
-		if (!haspipelining)	/* DATA hasn't been sent yet */
+		if (!info->haspipelining)	/* DATA hasn't been sent yet */
 		{
 			for (i=0; i<del->nreceipients; i++)
 				if (rcptok[i])	break;
@@ -1610,7 +1589,7 @@ int	rc=0;
 			niovw=1;
 			esmtp_timeout(cmd_timeout);
 		}
-		rc=parsedatareply(del, ctf, rcptok, &iovw, &niovw, 0);
+		rc=parsedatareply(info, my_info, rcptok, &iovw, &niovw, 0);
 			/* One more reply */
 	}
 
@@ -1720,8 +1699,9 @@ int	read_flag, write_flag, *writeptr;
 ** iovw/niovw must be initialized appropriately, otherwise they must be null.
 */
 
-static int parseexdatareply(const char *, struct moduledel *, struct ctlfile *,
-	int *);
+static int parseexdatareply(struct esmtp_info *, struct my_esmtp_info *,
+			    const char *,
+			    int *);
 
 static char *logsuccessto()
 {
@@ -1742,12 +1722,16 @@ char	*p;
 	return (p);
 }
 
-static int parsedatareply(struct moduledel *del, struct ctlfile *ctf,
-	int *rcptok, struct iovec **iovw, unsigned *niovw, int isfinal)
+static int parsedatareply(struct esmtp_info *info,
+			  struct my_esmtp_info *my_info,
+			  int *rcptok, struct iovec **iovw, unsigned *niovw,
+			  int isfinal)
 {
-const char *p;
-unsigned line_num=0;
-unsigned i;
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+	const char *p;
+	unsigned line_num=0;
+	unsigned i;
 
 	p=readpipelinercpt(iovw, niovw);
 
@@ -1808,7 +1792,7 @@ unsigned i;
 				ctlfile_append_reply(ctf,
 					(unsigned)atol(del->receipients[i*2]),
 					p, COMCTLFILE_DELSUCCESS_NOLOG,
-					(hasdsn ? "":" r"));
+					(info->hasdsn ? "":" r"));
 			}
 			free(p);
 		}
@@ -1840,8 +1824,8 @@ unsigned i;
 
 	/* DATA error */
 
-	if (hasexdata && isfinal && *p == '5' && p[1] == '5'  && p[2] == '8')
-		return (parseexdatareply(p, del, ctf, rcptok));
+	if (info->hasexdata && isfinal && *p == '5' && p[1] == '5'  && p[2] == '8')
+		return (parseexdatareply(info, my_info, p, rcptok));
 		/* Special logic for EXDATA extended replies */
 
 	/* Fail the recipients that haven't been failed already */
@@ -1899,12 +1883,16 @@ unsigned i;
 ** See draft-varshavchik-exdata-smtpext.txt for more information.
 */
 
-static int parseexdatareply(const char *p,
-	struct moduledel *del, struct ctlfile *ctf, int *rcptok)
+static int parseexdatareply(struct esmtp_info *info,
+			    struct my_esmtp_info *my_info,
+			    const char *p,
+			    int *rcptok)
 {
-unsigned i;
-char err_code=0;
-unsigned line_num=0;
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+	unsigned i;
+	char err_code=0;
+	unsigned line_num=0;
 
 	for (i=0; i<del->nreceipients; i++)
 		if (rcptok[i])	break;
@@ -1965,7 +1953,7 @@ unsigned line_num=0;
 				ctlfile_append_reply(ctf,
 					(unsigned)atol( del->receipients[i*2]),
 					p, COMCTLFILE_DELSUCCESS_NOLOG,
-					(hasdsn ? "":" r"));
+					(info->hasdsn ? "":" r"));
 
 					free(p);
 				}
@@ -2005,14 +1993,15 @@ static void call_rewrite_func(struct rw_info *p, void (*f)(struct rw_info *),
 
 /* Write out .\r\n, then wait for the DATA reply */
 
-static int data_wait(struct moduledel *del, struct ctlfile *ctf, int *rcptok)
+static int data_wait(struct esmtp_info *info, struct my_esmtp_info *my_info,
+		     int *rcptok)
 {
 	esmtp_timeout(data_timeout);
 	if (esmtp_dowrite(".\r\n", 3) || esmtp_writeflush())	return (-1);
 
 	cork(0);
 
-	(void)parsedatareply(del, ctf, rcptok, 0, 0, 1);
+	(void)parsedatareply(info, my_info, rcptok, 0, 0, 1);
 
 	if (esmtp_sockfd < 0)	return (-1);
 	return (0);
@@ -2042,14 +2031,17 @@ struct rw_for_esmtp {
 
 static int convert_to_crlf(const char *, unsigned, void *);
 
-static void pushdsn(struct moduledel *del, struct ctlfile *ctf)
+static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
-unsigned i;
-int	*rcptok;
-int	fd;
-char	*mailfroms;
-struct rfc2045 *rfcp=0;
-int	is8bitmsg;
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+
+	unsigned i;
+	int	*rcptok;
+	int	fd;
+	char	*mailfroms;
+	struct rfc2045 *rfcp=0;
+	int	is8bitmsg;
 
 	if ((fd=open(qmsgsdatname(del->inum), O_RDONLY)) < 0)
 	{
@@ -2058,7 +2050,7 @@ int	is8bitmsg;
 	}
 
 	is8bitmsg=ctlfile_searchfirst(ctf, COMCTLFILE_8BIT) >= 0;
-	if ((mailfroms=mailfrom(del, ctf, fd, is8bitmsg)) == 0)
+	if ((mailfroms=mailfrom(info, my_info, fd, is8bitmsg)) == 0)
 	{
 		sox_close(fd);
 		return;
@@ -2081,7 +2073,7 @@ int	is8bitmsg;
 	** needs to be converted to quoted-printable.
 	*/
 
-	if (!has8bitmime && is8bitmsg)
+	if (!info->has8bitmime && is8bitmsg)
 	{
 		rfcp=rfc2045_alloc_ac();
 		if (!rfcp)	clog_msg_errno();
@@ -2102,7 +2094,7 @@ int	is8bitmsg;
 
 	rcptok=courier_malloc(sizeof(int)*(del->nreceipients+1));
 
-	if ( do_pipeline_rcpt(del, ctf, rcptok) )
+	if ( do_pipeline_rcpt(info, my_info, rcptok) )
 	{
 		if (rfcp)	rfc2045_free(rfcp);
 		free(rcptok);
@@ -2127,7 +2119,7 @@ int	is8bitmsg;
 				&convert_to_crlf,
 				&call_rewrite_func,
 				&rfe))
-			|| data_wait(del, ctf, rcptok))
+		    || data_wait(info, my_info, rcptok))
 			for (i=0; i<del->nreceipients; i++)
 				if (rcptok[i])
 					connect_error1(del, ctf, i);
@@ -2185,204 +2177,4 @@ int	rc;
 	}
 
 	return (esmtp_dowrite(msg+j, i-j));
-}
-
-/****************************************************************************/
-/* Authenticated ESMTP client                                               */
-/****************************************************************************/
-
-static const char *start_esmtpauth(const char *, const char *, void *);
-static const char *esmtpauth(const char *, void *);
-static int final_esmtpauth(const char *, void *);
-static int plain_esmtpauth(const char *, const char *, void *);
-
-struct esmtpauthinfo {
-	struct moduledel *del;
-	struct ctlfile *ctf;
-	int error_sent;
-	} ;
-
-static int authclient(struct moduledel *del, struct ctlfile *ctf,
-		      const char *auth_key)
-{
-FILE	*configfile;
-char	uidpwbuf[256];
-char	*q;
-const char *p;
-struct authsaslclientinfo info;
-struct esmtpauthinfo xinfo;
-int	rc;
-
-	q=config_localfilename("esmtpauthclient");
-	configfile=fopen( q, "r");
-	free(q);
-
-	if (!configfile)	return (0);
-
-	xinfo.del=del;
-	xinfo.ctf=ctf;
-	xinfo.error_sent=0;
-
-	for (;;)
-	{
-		if (fgets(uidpwbuf, sizeof(uidpwbuf), configfile) == 0)
-		{
-			fclose(configfile);
-			return (0);
-		}
-		q=strtok(uidpwbuf, " \t\r\n");
-
-		if (!sockfdaddrname || !q)	continue;
-
-#if	HAVE_STRCASECMP
-		if (strcasecmp(q, auth_key) == 0)
-			break;
-#else
-		if (stricmp(q, auth_key) == 0)
-			break;
-#endif
-	}
-	fclose(configfile);
-	memset(&info, 0, sizeof(info));
-	info.userid=strtok(0, " \t\r\n");
-	info.password=strtok(0, " \t\r\n");
-
-	info.sasl_funcs=authsasllist;
-
-	info.start_conv_func= &start_esmtpauth;
-	info.conv_func= &esmtpauth;
-	info.final_conv_func= &final_esmtpauth;
-	info.plain_conv_func= &plain_esmtpauth;
-	info.conv_func_arg= &xinfo;
-
-	rc=auth_sasl_client(&info);
-	if (rc == AUTHSASL_NOMETHODS)
-	{
-		talking(del, ctf);
-		hard_error(del, ctf,
-			"Compatible SASL authentication not available.");
-		return (-1);
-	}
-
-	if (rc && !xinfo.error_sent)
-	{
-		talking(del, ctf);
-		soft_error(del, ctf, "Temporary SASL authentication error.");
-	}
-
-	if (rc)
-		return (-1);
-
-	if ((p=esmtp_readline()) == 0)
-	{
-		talking(del, ctf);
-		connect_error(del, ctf);
-		return (-1);
-	}
-
-	if (*p != '1' && *p != '2' && *p != '3') /* Some kind of an error */
-	{
-		talking(del, ctf);
-		sent(del, ctf, "AUTH");
-		smtp_msg(del, ctf);
-		while (!ISFINALLINE(p))
-		{
-			reply(del, ctf, p);
-			if ((p=esmtp_readline()) == 0)
-			{
-				connection_closed(del, ctf);
-				return (-1);
-			}
-		}
-		smtp_error(del, ctf, p, 0);
-		quit();
-		return (-1);
-	}
-
-	return (0);
-}
-
-static const char *getresp(struct esmtpauthinfo *x)
-{
-const char *p=esmtp_readline();
-
-	if (p && *p == '3')
-	{
-		do
-		{
-			++p;
-		} while ( isdigit((int)(unsigned char)*p));
-
-		do
-		{
-			++p;
-		} while ( isspace((int)(unsigned char)*p));
-		return (p);
-	}
-	x->error_sent=1;
-	talking(x->del, x->ctf);
-	sent(x->del, x->ctf, "AUTH");
-	smtp_msg(x->del, x->ctf);
-
-	if (!p)
-	{
-		connection_closed(x->del, x->ctf);
-		return (0);
-	}
-
-	while (!ISFINALLINE(p))
-	{
-		reply(x->del, x->ctf, p);
-		if ((p=esmtp_readline()) == 0)
-		{
-			connection_closed(x->del, x->ctf);
-			return (0);
-		}
-	}
-	smtp_error(x->del, x->ctf, p, 0);
-	return (0);
-}
-
-static const char *start_esmtpauth(const char *method, const char *arg,
-	void *voidp)
-{
-	if (arg && !*arg)
-		arg="=";
-
-	if (esmtp_writestr("AUTH ") || esmtp_writestr(method) ||
-			(arg && (esmtp_writestr(" ") || esmtp_writestr(arg))) ||
-			esmtp_writestr("\r\n") ||
-		esmtp_writeflush())
-		return (0);
-
-	return (getresp((struct esmtpauthinfo *)voidp));
-}
-
-static const char *esmtpauth(const char *msg, void *voidp)
-{
-	if (esmtp_writestr(msg) || esmtp_writestr("\r\n") || esmtp_writeflush())
-		return (0);
-	return (getresp((struct esmtpauthinfo *)voidp));
-}
-
-static int final_esmtpauth(const char *msg, void *voidp)
-{
-	if (esmtp_writestr(msg) || esmtp_writestr("\r\n") || esmtp_writeflush())
-		return (AUTHSASL_CANCELLED);
-	return (0);
-}
-
-static int plain_esmtpauth(const char *method, const char *arg,
-	void *voidp)
-{
-	if (arg && !*arg)
-		arg="=";
-
-	if (esmtp_writestr("AUTH ") || esmtp_writestr(method) ||
-			(arg && (esmtp_writestr(" ") || esmtp_writestr(arg))) ||
-			esmtp_writestr("\r\n") ||
-		esmtp_writeflush())
-		return (AUTHSASL_CANCELLED);
-
-	return (0);
 }

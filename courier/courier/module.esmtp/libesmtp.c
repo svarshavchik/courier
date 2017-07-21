@@ -19,6 +19,7 @@
 #include	"numlib/numlib.h"
 #include	"tcpd/spipe.h"
 #include	"tcpd/tlsclient.h"
+#include	<courierauthsaslclient.h>
 
 int esmtp_sockfd;
 time_t	esmtp_timeout_time;
@@ -26,6 +27,16 @@ struct mybuf esmtp_sockbuf;
 char esmtp_writebuf[BUFSIZ];
 char *esmtp_writebufptr;
 unsigned esmtp_writebufleft;
+
+static void connect_error(struct esmtp_info *info, void *arg)
+{
+	(*info->log_smtp_error)(info,
+				errno == 0
+				? "Connection closed by remote host"
+				: errno == ECONNRESET
+				? "Network connection shut down by the remote mail server"
+				: strerror(errno), '4', arg);
+}
 
 void esmtp_init()
 {
@@ -285,6 +296,8 @@ struct esmtp_info *esmtp_info_alloc()
 
 void esmtp_info_free(struct esmtp_info *p)
 {
+	if (p->authsasllist)
+		free(p->authsasllist);
 	free(p);
 }
 
@@ -370,10 +383,10 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 	info->hassecurity_starttls=0;
 	info->is_secure_connection=0;
 
-	char *authsasllist=0;
 
-	if (authsasllist)	free(authsasllist);
-	authsasllist=0;
+	if (info->authsasllist)
+		free(info->authsasllist);
+	info->authsasllist=0;
 
 	p=config_esmtphelo();
 
@@ -537,21 +550,21 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 				if (isspace((int)(unsigned char)*p)||*p == '=')
 				{
 				char	*s;
-				unsigned	l=(authsasllist ?
-					strlen(authsasllist)+1: 0)+strlen(p)+1;
+				unsigned	l=(info->authsasllist ?
+					strlen(info->authsasllist)+1: 0)+strlen(p)+1;
 
 					if (l > 10000)	continue;
 							/* Script kiddies... */
 					++p;
 					s=courier_malloc(l);
 					*s=0;
-					if (authsasllist)
-						strcat(strcpy(s, authsasllist),
+					if (info->authsasllist)
+						strcat(strcpy(s, info->authsasllist),
 							" ");
 					strcat(s, p);
-					if (authsasllist)
-						free(authsasllist);
-					authsasllist=s;
+					if (info->authsasllist)
+						free(info->authsasllist);
+					info->authsasllist=s;
 				}
 			}
 
@@ -835,4 +848,209 @@ int esmtp_enable_tls(struct esmtp_info *info,
 		info->is_secure_connection= sec != 0;
 	return (rc);
 
+}
+
+
+/****************************************************************************/
+/* Authenticated ESMTP client                                               */
+/****************************************************************************/
+
+static const char *start_esmtpauth(const char *, const char *, void *);
+static const char *esmtpauth(const char *, void *);
+static int final_esmtpauth(const char *, void *);
+static int plain_esmtpauth(const char *, const char *, void *);
+
+struct esmtp_auth_xinfo {
+	struct esmtp_info *info;
+	void *arg;
+};
+
+int esmtp_auth(struct esmtp_info *info,
+	       const char *auth_key,
+	       void *arg)
+{
+	FILE	*configfile;
+	char	uidpwbuf[256];
+	char	*q;
+	const char *p;
+	struct authsaslclientinfo clientinfo;
+	int	rc;
+
+	struct esmtp_auth_xinfo xinfo;
+
+	q=config_localfilename("esmtpauthclient");
+	configfile=fopen( q, "r");
+	free(q);
+
+	if (!configfile)	return (0);
+
+	info->auth_error_sent=0;
+
+	for (;;)
+	{
+		if (fgets(uidpwbuf, sizeof(uidpwbuf), configfile) == 0)
+		{
+			fclose(configfile);
+			return (0);
+		}
+		q=strtok(uidpwbuf, " \t\r\n");
+
+		if (!auth_key || !q)	continue;
+
+#if	HAVE_STRCASECMP
+		if (strcasecmp(q, auth_key) == 0)
+			break;
+#else
+		if (stricmp(q, auth_key) == 0)
+			break;
+#endif
+	}
+	fclose(configfile);
+
+	xinfo.info=info;
+	xinfo.arg=arg;
+
+	memset(&clientinfo, 0, sizeof(clientinfo));
+	clientinfo.userid=strtok(0, " \t\r\n");
+	clientinfo.password=strtok(0, " \t\r\n");
+
+	clientinfo.sasl_funcs=info->authsasllist;
+	clientinfo.start_conv_func= &start_esmtpauth;
+	clientinfo.conv_func= &esmtpauth;
+	clientinfo.final_conv_func= &final_esmtpauth;
+	clientinfo.plain_conv_func= &plain_esmtpauth;
+	clientinfo.conv_func_arg= &xinfo;
+
+	rc=auth_sasl_client(&clientinfo);
+	if (rc == AUTHSASL_NOMETHODS)
+	{
+		(*info->log_talking)(info, arg);
+		(*info->log_smtp_error)(info,
+					"Compatible SASL authentication not available.", '5', arg);
+		return (-1);
+	}
+
+	if (rc && !info->auth_error_sent)
+	{
+		(*info->log_talking)(info, arg);
+		(*info->log_smtp_error)(info,
+					"Temporary SASL authentication error.",
+					'4', arg);
+	}
+
+	if (rc)
+		return (-1);
+
+	if ((p=esmtp_readline()) == 0)
+	{
+		(*info->log_talking)(info, arg);
+		connect_error(info, arg);
+		return (-1);
+	}
+
+	if (*p != '1' && *p != '2' && *p != '3') /* Some kind of an error */
+	{
+		(*info->log_talking)(info, arg);
+		(*info->log_sent)(info, "AUTH", arg);
+		while (!ISFINALLINE(p))
+		{
+			(*info->log_reply)(info, p, arg);
+			if ((p=esmtp_readline()) == 0)
+			{
+				connection_closed(info, arg);
+				return (-1);
+			}
+		}
+		(*info->log_smtp_error)(info, p, 0, arg);
+		info->quit_needed=1;
+		return (-1);
+	}
+
+	return (0);
+}
+
+static const char *getresp(struct esmtp_auth_xinfo *x)
+{
+	struct esmtp_info *info=x->info;
+	void *arg=x->arg;
+	const char *p=esmtp_readline();
+
+	if (p && *p == '3')
+	{
+		do
+		{
+			++p;
+		} while ( isdigit((int)(unsigned char)*p));
+
+		do
+		{
+			++p;
+		} while ( isspace((int)(unsigned char)*p));
+		return (p);
+	}
+	info->auth_error_sent=1;
+	(*info->log_talking)(info, arg);
+	(*info->log_sent)(info, "AUTH", arg);
+
+	if (!p)
+	{
+		connection_closed(info, arg);
+		return (0);
+	}
+
+	while (!ISFINALLINE(p))
+	{
+		(*info->log_reply)(info, p, arg);
+		if ((p=esmtp_readline()) == 0)
+		{
+			connection_closed(info, arg);
+			return (0);
+		}
+	}
+	(*info->log_smtp_error)(info, p, 0, arg);
+	return (0);
+}
+
+static const char *start_esmtpauth(const char *method, const char *arg,
+	void *voidp)
+{
+	if (arg && !*arg)
+		arg="=";
+
+	if (esmtp_writestr("AUTH ") || esmtp_writestr(method) ||
+			(arg && (esmtp_writestr(" ") || esmtp_writestr(arg))) ||
+			esmtp_writestr("\r\n") ||
+		esmtp_writeflush())
+		return (0);
+
+	return (getresp((struct esmtp_auth_xinfo *)voidp));
+}
+
+static const char *esmtpauth(const char *msg, void *voidp)
+{
+	if (esmtp_writestr(msg) || esmtp_writestr("\r\n") || esmtp_writeflush())
+		return (0);
+	return (getresp((struct esmtp_auth_xinfo *)voidp));
+}
+
+static int final_esmtpauth(const char *msg, void *voidp)
+{
+	if (esmtp_writestr(msg) || esmtp_writestr("\r\n") || esmtp_writeflush())
+		return (AUTHSASL_CANCELLED);
+	return (0);
+}
+
+static int plain_esmtpauth(const char *method, const char *arg,
+	void *voidp)
+{
+	if (arg && !*arg)
+		arg="=";
+
+	if (esmtp_writestr("AUTH ") || esmtp_writestr(method) ||
+			(arg && (esmtp_writestr(" ") || esmtp_writestr(arg))) ||
+			esmtp_writestr("\r\n") ||
+		esmtp_writeflush())
+		return (AUTHSASL_CANCELLED);
+
+	return (0);
 }
