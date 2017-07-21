@@ -85,6 +85,8 @@ static int corked;
 #define	cork(n)
 #endif
 
+#define WANT_SECURITY(info) ((info)->smtproutes_flags & ROUTE_STARTTLS)
+
 static time_t net_timeout;
 	/*
 	** If all MXs are unreachable, wait until this tick before attempting
@@ -124,9 +126,8 @@ struct my_esmtp_info {
 	struct ctlfile *ctf;
 };
 
-static struct esmtp_info *libesmtp_init(struct my_esmtp_info *my_info,
-					struct ctlfile *ctf,
-					struct moduledel *del);
+static struct esmtp_info *libesmtp_init(const char *host);
+
 static void libesmtp_deinit(struct esmtp_info *info);
 
 static void sendesmtp(struct esmtp_info *, struct my_esmtp_info *);
@@ -135,9 +136,11 @@ static void sendesmtp(struct esmtp_info *, struct my_esmtp_info *);
 
 void esmtpchild(unsigned childnum)
 {
-struct	moduledel *del;
-struct	ctlfile	ctf;
-unsigned long mypid=(unsigned long)getpid();
+	struct	moduledel *del;
+	struct	ctlfile	ctf;
+	unsigned long mypid=(unsigned long)getpid();
+	struct my_esmtp_info my_info;
+	struct esmtp_info *info=0;
 
 	signal(SIGPIPE, SIG_IGN);
 	srand(time(NULL));
@@ -167,9 +170,9 @@ unsigned long mypid=(unsigned long)getpid();
 
 	while ((del=module_getdel()) != 0)
 	{
-	fd_set	fdr;
-	struct	timeval	tv;
-	const char *p;
+		fd_set	fdr;
+		struct	timeval	tv;
+		const char *p;
 
 #if 0
 		clog_msg_start_info();
@@ -179,6 +182,9 @@ unsigned long mypid=(unsigned long)getpid();
 		clog_msg_send();
 		sleep(60);
 #endif
+		my_info.del=del;
+		my_info.ctf=&ctf;
+
 
 		/*
 		** Open the message control file, send the message, close
@@ -188,8 +194,7 @@ unsigned long mypid=(unsigned long)getpid();
 		if (ctlfile_openi(del->inum, &ctf, 0) == 0)
 		{
 			int changed_vhosts=ctlfile_setvhost(&ctf);
-			struct my_esmtp_info my_info;
-			struct esmtp_info *info;
+			const char *sec;
 
 			if (changed_vhosts)
 			{
@@ -197,11 +202,15 @@ unsigned long mypid=(unsigned long)getpid();
 				setconfig();
 			}
 
-			info=libesmtp_init(&my_info, &ctf, del);
+			if (!info)
+				info=libesmtp_init(del->host);
+
+			sec=ctlfile_security(&ctf);
+
+			if (sec && strcmp(sec, "STARTTLS") == 0)
+				info->smtproutes_flags |= ROUTE_STARTTLS;
 
 			sendesmtp(info, &my_info);
-			libesmtp_deinit(info);
-
 			ctlfile_close(&ctf);
 		}
 		{
@@ -241,13 +250,14 @@ unsigned long mypid=(unsigned long)getpid();
 	}
 	if (esmtp_sockfd >= 0)
 		quit();
+
+	if (info)
+		libesmtp_deinit(info);
 }
 
 static RFC1035_ADDR sockfdaddr;
 static char *sockfdaddrname=0;
 static char *auth_key=0;
-static char *host;
-static int smtproutes_flags=0;
 
 static void hard_error(struct moduledel *, struct ctlfile *, const char *);
 static void soft_error(struct moduledel *, struct ctlfile *, const char *);
@@ -260,26 +270,6 @@ static int local_sock_address(struct esmtp_info *, struct my_esmtp_info *);
 static int rset(struct moduledel *, struct ctlfile *);
 static int smtpreply(const char *, struct moduledel *, struct ctlfile *, int);
 static void push(struct esmtp_info *, struct my_esmtp_info *);
-
-static const char *want_security(struct ctlfile *ctf)
-{
-	const char *sec;
-
-	/* ROUTE_SMTPS already establishes an encrypted connection */
-	if (smtproutes_flags & (ROUTE_SMTPS))
-		return (0);
-
-	if (smtproutes_flags & ROUTE_STARTTLS)
-		return ("STARTTLS");
-
-	sec=ctlfile_security(ctf);
-
-	if (!sec)
-		return (0);
-	if (strcmp(sec, "STARTTLS") == 0)
-		return (sec);
-	return (0);
-}
 
 static int get_sourceaddr(int af,
 			  const RFC1035_ADDR *dest_addr,
@@ -389,16 +379,12 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
 	struct moduledel *del=my_info->del;
 	struct ctlfile *ctf=my_info->ctf;
-	char *smtproute;
 	int cn;
 	int connection_attempt_made;
 
-	if (!host)
-		host=strcpy(courier_malloc(strlen(del->host)+1), del->host);
-
 	/* Sanity check */
 
-	if (strcmp(host, del->host))
+	if (strcmp(info->host, del->host))
 	{
 		clog_msg_start_err();
 		clog_msg_str("Internal failure in courieresmtp - daemon mixup.");
@@ -471,15 +457,13 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	** connection has not been secured, close it, so it can be reopened.
 	*/
 
-	smtproute=smtproutes(host, &smtproutes_flags);
-
-	if (esmtp_sockfd >= 0 && want_security(ctf) && !info->is_secure_connection)
+	if (esmtp_sockfd >= 0 && WANT_SECURITY(info) && !info->is_secure_connection)
 		quit();
 
 	if (esmtp_sockfd < 0)	/* First time, connect to a server */
 	{
 		struct rfc1035_mxlist *mxlist, *p, *q;
-		int static_route= smtproute != NULL;
+		int static_route= info->smtproute != NULL;
 		struct rfc1035_res res;
 		int rc;
 
@@ -488,7 +472,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		if (auth_key)
 			free(auth_key);
 
-		auth_key=strdup(smtproute ? smtproute:host);
+		auth_key=strdup(info->smtproute ? info->smtproute:info->host);
 
 		if (!auth_key)
 			clog_msg_errno();
@@ -506,16 +490,13 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		case RFC1035_MX_OK:
 			break;
 		case RFC1035_MX_HARDERR:
-			if (smtproute)	free(smtproute);
 			hard_error(del, ctf, "No such domain.");
 			return;
 		case RFC1035_MX_BADDNS:
-			if (smtproute)	free(smtproute);
 			hard_error(del, ctf,
 				"This domain's DNS violates RFC 1035.");
 			return;
 		default:
-			if (smtproute)	free(smtproute);
 			soft_error(del, ctf, "DNS lookup failed.");
 
 			if (errno)
@@ -526,7 +507,6 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 			}
 			return;
 		}
-		if (smtproute)	free(smtproute);
 
 		/* Check for broken MX records - BOFH */
 
@@ -623,12 +603,11 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 					return;
 				}
 
-				if (smtproutes_flags & ROUTE_SMTPS)
+				if (info->smtproutes_flags & ROUTE_SMTPS)
 				{
 					if (esmtp_enable_tls(info,
 							     p->hostname,
 							     1,
-							     want_security(my_info->ctf),
 							     my_info))
 					{
 						sox_close(esmtp_sockfd);
@@ -636,7 +615,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 						continue; /* Next MX, please */
 					}
 
-					smtproutes_flags &= ~(ROUTE_TLS_REQUIRED);
+					info->smtproutes_flags &= ~(ROUTE_TLS_REQUIRED);
 				}
 
 				rc=hello(info, my_info);
@@ -650,7 +629,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 					rc=1;
 
-					if ((smtproutes_flags
+					if ((info->smtproutes_flags
 					     & ROUTE_TLS_REQUIRED)
 					    && !info->hasstarttls)
 					{
@@ -659,7 +638,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 							   "/SECURITY=REQUIRED set, but TLS is not available",
 							   '5');
 					}
-					else if (want_security(ctf)
+					else if (WANT_SECURITY(info)
 						 && !info->hasstarttls)
 					{
 						talking(del, ctf);
@@ -671,7 +650,6 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 						 esmtp_enable_tls
 						 (info, p->hostname,
 						  0,
-						  want_security(my_info->ctf),
 						  my_info))
 					{
 						/*
@@ -681,7 +659,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 						**
 						** Otherwise, it's on us.
 						*/
-						if (!want_security(ctf))
+						if (!WANT_SECURITY(info))
 							report_broken_starttls();
 					}
 					else
@@ -736,11 +714,6 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 			}
 			return;
 		}
-	}
-	else
-	{
-		if (smtproute)
-			free(smtproute);
 	}
 
 	/*
@@ -1001,14 +974,9 @@ static void log_smtp_error(struct esmtp_info *info,
 	smtp_error(my_info->del, my_info->ctf, msg, errcode);
 }
 
-static struct esmtp_info *libesmtp_init(struct my_esmtp_info *my_info,
-					struct ctlfile *ctf,
-					struct moduledel *del)
+static struct esmtp_info *libesmtp_init(const char *host)
 {
-	struct esmtp_info *info=esmtp_info_alloc();
-
-	my_info->del=del;
-	my_info->ctf=ctf;
+	struct esmtp_info *info=esmtp_info_alloc(host);
 
 	info->log_talking= &log_talking;
 	info->log_sent= &log_sent;
@@ -1068,7 +1036,7 @@ static int hello3(struct esmtp_info *info,
 	int rc;
 	time_t timestamp;
 
-	rc=esmtp_helo(info, using_tls, want_security(my_info->ctf), my_info);
+	rc=esmtp_helo(info, using_tls, my_info);
 
 	if (rc == -1)
 		quit();
@@ -1291,7 +1259,6 @@ static char *mailfrom(struct esmtp_info *info, struct my_esmtp_info *my_info,
 	char	*mailfromcmd;
 	int	n;
 	struct	stat stat_buf;
-	const char *sec=want_security(ctf);
 
 	static const char seclevel_starttls[]=" SECURITY=STARTTLS";
 
@@ -1335,7 +1302,7 @@ static char *mailfrom(struct esmtp_info *info, struct my_esmtp_info *my_info,
 
 	/* SECURITY extension */
 
-	if (sec && strcmp(sec, "STARTTLS") == 0)
+	if (info->smtproutes_flags & ROUTE_STARTTLS)
 		seclevel=seclevel_starttls;
 
 	mailfromcmd=courier_malloc(sizeof("MAIL FROM:<>\r\n")+

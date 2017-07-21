@@ -7,6 +7,7 @@
 #include	"config.h"
 #endif
 #include	"libesmtp.h"
+#include	"smtproutes.h"
 #include	<errno.h>
 #include	<sys/types.h>
 #include	<sys/uio.h>
@@ -283,7 +284,7 @@ static void burp(const char *p, unsigned n)
 	socklinesize += n;
 }
 
-struct esmtp_info *esmtp_info_alloc()
+struct esmtp_info *esmtp_info_alloc(const char *host)
 {
 	struct esmtp_info *p=malloc(sizeof(struct esmtp_info));
 
@@ -291,6 +292,12 @@ struct esmtp_info *esmtp_info_alloc()
 		abort();
 
 	memset(p, 0, sizeof(*p));
+	p->host=strdup(host);
+
+	if (!p->host)
+		abort();
+
+	p->smtproute=smtproutes(p->host, &p->smtproutes_flags);
 	return p;
 }
 
@@ -298,6 +305,9 @@ void esmtp_info_free(struct esmtp_info *p)
 {
 	if (p->authsasllist)
 		free(p->authsasllist);
+	if (p->smtproute)
+		free(p->smtproute);
+	free(p->host);
 	free(p);
 }
 
@@ -366,7 +376,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 }
 
 int esmtp_helo(struct esmtp_info *info, int using_tls,
-	       const char *security_level, void *arg)
+	       void *arg)
 {
 	const	char *p;
 	char	hellobuf[512];
@@ -617,29 +627,26 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 			info->hasstarttls=0;
 	}
 
-	if (security_level != 0)
-	{
-		if ( strcmp(security_level, "STARTTLS") == 0)
-		{
-			if ((info->hasstarttls || using_tls) &&
-			    info->hassecurity_starttls)
-				return (0);
-		}
-
-		(*info->log_talking)(info, arg);
-		(*info->log_sent)(info, "SECURITY=STARTTLS REQUESTED FOR THIS MESSAGE", arg);
-		(*info->log_smtp_error)(info,
-					"500 Unable to set minimum security level.",
-					0, arg);
-		return (-1);
-	}
-
 	if (info->hasstarttls)
 	{
 		const char *p=getenv("ESMTP_USE_STARTTLS");
 
 		if (!p || !atoi(p))
 			info->hasstarttls=0;
+	}
+
+	if ((info->smtproutes_flags & ROUTE_STARTTLS) && !using_tls)
+	{
+
+		if (!info->hasstarttls || !info->hassecurity_starttls)
+		{
+			(*info->log_talking)(info, arg);
+			(*info->log_sent)(info, "SECURITY=STARTTLS REQUESTED FOR THIS MESSAGE", arg);
+			(*info->log_smtp_error)(info,
+						"500 Unable to set minimum security level.",
+						0, arg);
+			return (-1);
+		}
 	}
 
 	if (getenv("COURIER_ESMTP_DEBUG_NO8BITMIME"))
@@ -658,7 +665,6 @@ static void connection_closed(struct esmtp_info *info,
 
 int esmtp_enable_tls(struct esmtp_info *info,
 		     const char *hostname, int smtps,
-		     const char *sec, /* want_security(ctf) */
 		     void *arg)
 {
 	const char *p;
@@ -732,7 +738,7 @@ int esmtp_enable_tls(struct esmtp_info *info,
 
 	p=getenv("ESMTP_TLS_VERIFY_DOMAIN");
 
-	if (sec != 0)
+	if ((info->smtproutes_flags & ROUTE_STARTTLS) != 0)
 	{
 		char *q, *r;
 
@@ -821,7 +827,9 @@ int esmtp_enable_tls(struct esmtp_info *info,
 
 		(*info->log_talking)(info, arg);
 		(*info->log_sent)(info, "STARTTLS", arg);
-		strcat(strcpy(tmperrbuf,sec ? "500 ":"400 "),
+		strcat(strcpy(tmperrbuf,
+			      (info->smtproutes_flags & ROUTE_STARTTLS)
+			      ? "500 ":"400 "),
 		       cinfo.errmsg);
 		(*info->log_smtp_error)(info, tmperrbuf, 0, arg);
 		sox_close(esmtp_sockfd);
@@ -840,12 +848,13 @@ int esmtp_enable_tls(struct esmtp_info *info,
 	if (smtps)
 		return 0;
 
-	rc=esmtp_helo(info, 1, 0, arg);
+	rc=esmtp_helo(info, 1, arg);
 
 	if (rc > 0)
 		connection_closed(info, arg);	/* Make sure to log it */
 	else
-		info->is_secure_connection= sec != 0;
+		info->is_secure_connection=
+			(info->smtproutes_flags & ROUTE_STARTTLS) ? 1:0;
 	return (rc);
 
 }

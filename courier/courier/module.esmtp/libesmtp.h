@@ -41,6 +41,10 @@ struct esmtp_info {
 	void (*log_reply)(struct esmtp_info *, const char *, void *);
 	void (*log_smtp_error)(struct esmtp_info *, const char *, int, void *);
 
+	char *host;
+	char *smtproute;
+	int smtproutes_flags;
+
 	RFC1035_ADDR laddr;
 
 	int haspipelining;
@@ -59,7 +63,7 @@ struct esmtp_info {
 	int quit_needed;
 };
 
-struct esmtp_info *esmtp_info_alloc();
+struct esmtp_info *esmtp_info_alloc(const char *host);
 void esmtp_info_free(struct esmtp_info *);
 
 extern void esmtp_init();
@@ -80,12 +84,12 @@ extern unsigned esmtp_writebufleft;
 extern const char *esmtp_readline();
 
 extern int esmtp_helo(struct esmtp_info *info, int using_tls,
-		      const char *security_level, void *arg);
+		      void *arg);
 extern int esmtp_get_greeting(struct esmtp_info *info,
 			      void *arg);
 extern int esmtp_enable_tls(struct esmtp_info *,
-			    const char *, int,
 			    const char *,
+			    int,
 			    void *arg);
 extern int esmtp_auth(struct esmtp_info *info,
 		      const char *auth_key,
