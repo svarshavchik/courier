@@ -87,14 +87,12 @@ static int corked;
 
 #define WANT_SECURITY(info) ((info)->smtproutes_flags & ROUTE_STARTTLS)
 
-static time_t net_timeout;
-	/*
-	** If all MXs are unreachable, wait until this tick before attempting
-	** any new connections.
-	*/
-static int net_error;
+struct my_esmtp_info {
+	struct moduledel *del;
+	struct ctlfile *ctf;
+};
 
-static void quit();
+static void quit(struct esmtp_info *, struct my_esmtp_info *);
 
 
 extern struct rw_list *esmtp_rw_install(const struct rw_install_info *);
@@ -120,11 +118,6 @@ static void setconfig()
        data_timeout=config_time_esmtpdata();
        quit_timeout=config_time_esmtpquit();
 }
-
-struct my_esmtp_info {
-	struct moduledel *del;
-	struct ctlfile *ctf;
-};
 
 static struct esmtp_info *libesmtp_init(const char *host);
 
@@ -152,8 +145,6 @@ void esmtpchild(unsigned childnum)
 	esmtp_sockfd= -1;
 
 	setconfig();
-
-	net_timeout=0;
 
 #ifdef	TCP_CORK
 
@@ -198,12 +189,14 @@ void esmtpchild(unsigned childnum)
 
 			if (changed_vhosts)
 			{
-				quit();
+				quit(info, &my_info);
 				setconfig();
 			}
 
 			if (!info)
 				info=libesmtp_init(del->host);
+
+			info->net_error=0;
 
 			sec=ctlfile_security(&ctf);
 
@@ -234,7 +227,7 @@ void esmtpchild(unsigned childnum)
 
 			if ( sox_select(1, &fdr, 0, 0, &tv) > 0)
 				break;
-			esmtp_timeout(data_timeout);
+			esmtp_timeout(info, data_timeout);
 			if (esmtp_writestr("RSET\r\n") || esmtp_writeflush())
 				break;
 
@@ -243,13 +236,13 @@ void esmtpchild(unsigned childnum)
 
 			if (p == 0)
 			{
-				quit();
+				quit(info, &my_info);
 				break;
 			}
 		}
 	}
-	if (esmtp_sockfd >= 0)
-		quit();
+	if (esmtp_sockfd >= 0 && info)
+		quit(info, &my_info);
 
 	if (info)
 		libesmtp_deinit(info);
@@ -267,8 +260,10 @@ static void connect_error(struct moduledel *, struct ctlfile *);
 static int hello(struct esmtp_info *, struct my_esmtp_info *);
 static int local_sock_address(struct esmtp_info *, struct my_esmtp_info *);
 
-static int rset(struct moduledel *, struct ctlfile *);
-static int smtpreply(const char *, struct moduledel *, struct ctlfile *, int);
+static int rset(struct esmtp_info *, struct my_esmtp_info *);
+static int smtpreply(struct esmtp_info *info,
+		     struct my_esmtp_info *my_info,
+		     const char *, int);
 static void push(struct esmtp_info *, struct my_esmtp_info *);
 
 static int get_sourceaddr(int af,
@@ -396,30 +391,30 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	if (esmtp_sockfd >= 0)
 	{
-		esmtp_timeout(helo_timeout);
+		esmtp_timeout(info, helo_timeout);
 		if (esmtp_writestr("RSET\r\n") == 0 && esmtp_writeflush() == 0)
 		{
-			if (smtpreply("RSET", del, ctf, -1))
+			if (smtpreply(info, my_info, "RSET", -1))
 			{
-				quit();
+				quit(info, my_info);
 				return;
 			}
 		}
 	}
 
-	if (esmtp_sockfd < 0 && net_timeout)
+	if (esmtp_sockfd < 0 && info->net_timeout)
 	{
 	time_t	t;
 
 		time (&t);
-		if (t < net_timeout)
+		if (t < info->net_timeout)
 		{
-			errno=net_error;
+			errno=info->net_error;
 			if (!errno)	errno=ENETDOWN;
 			connect_error(del, ctf);
 			return;
 		}
-		net_timeout=0;
+		info->net_timeout=0;
 	}
 
 	if ((cn=ctlfile_searchfirst(ctf, COMCTLFILE_MSGSOURCE)) >= 0 &&
@@ -458,7 +453,14 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	*/
 
 	if (esmtp_sockfd >= 0 && WANT_SECURITY(info) && !info->is_secure_connection)
-		quit();
+		quit(info, my_info);
+
+
+
+
+
+
+
 
 	if (esmtp_sockfd < 0)	/* First time, connect to a server */
 	{
@@ -501,9 +503,9 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 			if (errno)
 			{
-				net_error=errno;
-				time (&net_timeout);
-				net_timeout += config_time_esmtpdelay();
+				info->net_error=errno;
+				time (&info->net_timeout);
+				info->net_timeout += config_time_esmtpdelay();
 			}
 			return;
 		}
@@ -672,13 +674,13 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 							break; /* Good HELO */
 					}
 				}
-				quit();	/* We don't want to talk to him */
+				quit(info, my_info);	/* We don't want to talk to him */
 				if (rc < 0)
 					return;	/* HELO failed, perm error */
 				errno=0;
 			}
 			if (errno)
-				net_error=errno;
+				info->net_error=errno;
 
 			if (esmtp_sockfd >= 0)
 				sox_close(esmtp_sockfd);
@@ -704,17 +706,18 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 				hard_error(del, ctf, "Did not find a suitable MX for a connection");
 			else
 			{
-				if (net_error)
+				if (info->net_error)
 				{
-					errno=net_error;
+					errno=info->net_error;
 					soft_error(del, ctf, strerror(errno));
 				}
-				time (&net_timeout);
-				net_timeout += config_time_esmtpdelay();
+				time (&info->net_timeout);
+				info->net_timeout += config_time_esmtpdelay();
 			}
 			return;
 		}
 	}
+
 
 	/*
 	** Ok, we now have a connection.  We want to call push() to deliver
@@ -746,9 +749,9 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 			if (i && esmtp_sockfd >= 0)	/* Call RSET in between */
 			{
-				if (rset(del, ctf))
+				if (rset(info, my_info))
 				{
-					quit();
+					quit(info, my_info);
 					continue;
 				}
 			}
@@ -1024,7 +1027,7 @@ static int hello(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		rc=hello3(info, my_info, 0);
 
 	if (info->quit_needed)
-		quit();
+		quit(info, my_info);
 
 	return rc;
 }
@@ -1039,7 +1042,7 @@ static int hello3(struct esmtp_info *info,
 	rc=esmtp_helo(info, using_tls, my_info);
 
 	if (rc == -1)
-		quit();
+		quit(info, my_info);
 
 	if (track_find_broken_starttls(sockfdaddrname, &timestamp))
 		info->hasstarttls=0;
@@ -1056,13 +1059,13 @@ static void report_broken_starttls()
 ** Send a QUIT, and shut down the connection
 */
 
-static void quit()
+static void quit(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
 const char *p;
 
 	if (esmtp_sockfd < 0)	return;
 
-	esmtp_timeout(quit_timeout);
+	esmtp_timeout(info, quit_timeout);
 	if (esmtp_writestr("QUIT\r\n") || esmtp_writeflush())	return;
 
 	while ((p=esmtp_readline()) != 0 && !ISFINALLINE(p))
@@ -1074,11 +1077,16 @@ const char *p;
 
 /* Parse a reply to a SMTP command that applies to all recipients */
 
-static int smtpreply(const char *cmd,
-	struct moduledel *del, struct ctlfile *ctf, int istalking)
+static int smtpreply(struct esmtp_info *info,
+		     struct my_esmtp_info *my_info,
+		     const char *cmd,
+		     int istalking)
 {
-const char *p;
-unsigned line_num;
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+
+	const char *p;
+	unsigned line_num;
 
 	if ((p=esmtp_readline()) == 0)
 	{
@@ -1087,7 +1095,7 @@ unsigned line_num;
 		if (!istalking)
 			talking(del, ctf);
 		connect_error(del, ctf);
-		quit();
+		quit(info, my_info);
 		return (-1);
 	}
 
@@ -1114,7 +1122,7 @@ unsigned line_num;
 			if ((p=esmtp_readline()) == 0)
 			{
 				connect_error(del, ctf);
-				quit();
+				quit(info, my_info);
 				return (-1);
 			}
 		}
@@ -1129,7 +1137,7 @@ unsigned line_num;
 			if (!istalking || istalking < 0)
 				talking(del, ctf);
 			connect_error(del, ctf);
-			quit();
+			quit(info, my_info);
 			return (-1);
 		}
 	}
@@ -1138,25 +1146,30 @@ unsigned line_num;
 
 /* Send an SMTP command that applies to all recipients, then wait for a reply */
 
-static int smtpcommand(const char *cmd,
-	struct moduledel *del, struct ctlfile *ctf, int istalking)
+static int smtpcommand(struct esmtp_info *info,
+		       struct my_esmtp_info *my_info,
+		       const char *cmd,
+		       int istalking)
 {
+	struct moduledel *del=my_info->del;
+	struct ctlfile *ctf=my_info->ctf;
+
 	if (esmtp_writestr(cmd) || esmtp_writeflush())
 	{
 		if (!istalking)
 			talking(del, ctf);
 		connect_error(del, ctf);
-		quit();
+		quit(info, my_info);
 		return (-1);
 	}
-	return (smtpreply(cmd, del, ctf, istalking));
+	return (smtpreply(info, my_info, cmd, istalking));
 }
 
 
-static int rset(struct moduledel *del, struct ctlfile *ctf)
+static int rset(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
-	esmtp_timeout(helo_timeout);
-	return (smtpcommand("RSET\r\n", del, ctf, 0));
+	esmtp_timeout(info, helo_timeout);
+	return (smtpcommand(info, my_info, "RSET\r\n", 0));
 }
 
 static void pushdsn(struct esmtp_info *, struct my_esmtp_info *);
@@ -1468,7 +1481,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 	niovw= i;
 
 	if (info->haspipelining)	/* One timeout */
-		esmtp_timeout(cmd_timeout);
+		esmtp_timeout(info, cmd_timeout);
 
 	/* Read replies for the RCPT TO commands */
 
@@ -1483,7 +1496,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 		{
 			iovw=iov+i;
 			niovw=1;
-			esmtp_timeout(cmd_timeout);
+			esmtp_timeout(info, cmd_timeout);
 		}
 
 		do
@@ -1554,7 +1567,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 
 			iovw=iov+del->nreceipients;
 			niovw=1;
-			esmtp_timeout(cmd_timeout);
+			esmtp_timeout(info, cmd_timeout);
 		}
 		rc=parsedatareply(info, my_info, rcptok, &iovw, &niovw, 0);
 			/* One more reply */
@@ -1775,7 +1788,7 @@ static int parsedatareply(struct esmtp_info *info,
 				** receipients
 				*/
 			{
-				esmtp_timeout(data_timeout);
+				esmtp_timeout(info, data_timeout);
 				if (esmtp_writestr(".\r\n") || esmtp_writeflush())
 					return (-1);
 				do
@@ -1963,7 +1976,7 @@ static void call_rewrite_func(struct rw_info *p, void (*f)(struct rw_info *),
 static int data_wait(struct esmtp_info *info, struct my_esmtp_info *my_info,
 		     int *rcptok)
 {
-	esmtp_timeout(data_timeout);
+	esmtp_timeout(info, data_timeout);
 	if (esmtp_dowrite(".\r\n", 3) || esmtp_writeflush())	return (-1);
 
 	cork(0);
@@ -1994,6 +2007,9 @@ struct rw_for_esmtp {
 	int	is_sol;
 
 	unsigned byte_counter;
+
+	struct esmtp_info *info;
+	struct my_esmtp_info *my_info;
 	} ;
 
 static int convert_to_crlf(const char *, unsigned, void *);
@@ -2024,14 +2040,14 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	}
 
 	talking(del, ctf);
-	esmtp_timeout(cmd_timeout);
+	esmtp_timeout(info, cmd_timeout);
 
 	if (esmtp_writestr(mailfroms) || esmtp_writeflush())
 	{
 		connect_error(del, ctf);
 		sox_close(fd);
 		free(mailfroms);
-		quit();
+		quit(info, my_info);
 		return;
 	}
 
@@ -2049,7 +2065,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		rfc2045_ac_check(rfcp, RFC2045_RW_7BIT);
 	}
 
-	if (smtpreply(mailfroms, del, ctf, 1))	/* MAIL FROM rejected */
+	if (smtpreply(info, my_info, mailfroms, 1))	/* MAIL FROM rejected */
 	{
 		if (rfcp)	rfc2045_free(rfcp);
 		sox_close(fd);
@@ -2074,6 +2090,8 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 		rfe.is_sol=1;
 		rfe.byte_counter=0;
+		rfe.info=info;
+		rfe.my_info=my_info;
 
 		cork(1);
 
@@ -2099,7 +2117,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 
 static int escape_dots(const char *, unsigned,
-	struct rw_for_esmtp *);
+		       struct rw_for_esmtp *);
 
 static int convert_to_crlf(const char *msg, unsigned l, void *voidp)
 {
@@ -2122,14 +2140,15 @@ int	rc;
 
 static int escape_dots(const char *msg, unsigned l, struct rw_for_esmtp *ptr)
 {
-unsigned i, j;
-int	rc;
+	unsigned i, j;
+	int	rc;
+	struct esmtp_info *info=ptr->info;
 
 	if ( (ptr->byte_counter += l) >= BUFSIZ)
 		ptr->byte_counter=0;
 
 	if (ptr->byte_counter == 0)
-		esmtp_timeout(data_timeout);
+		esmtp_timeout(info, data_timeout);
 
 	for (i=j=0; i<l; i++)
 	{

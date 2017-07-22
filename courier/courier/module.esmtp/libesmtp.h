@@ -61,13 +61,21 @@ struct esmtp_info {
 	char *authsasllist;
 	int auth_error_sent;
 	int quit_needed;
+
+
+	time_t net_timeout;
+	/*
+	** If all MXs are unreachable, wait until this tick before attempting
+	** any new connections.
+	*/
+	int net_error;
 };
 
 struct esmtp_info *esmtp_info_alloc(const char *host);
 void esmtp_info_free(struct esmtp_info *);
 
 extern void esmtp_init();
-extern void esmtp_timeout(unsigned nsecs);
+extern void esmtp_timeout(struct esmtp_info *info, unsigned nsecs);
 extern int esmtp_sockfd;
 extern time_t	esmtp_timeout_time;
 extern struct mybuf esmtp_sockbuf;

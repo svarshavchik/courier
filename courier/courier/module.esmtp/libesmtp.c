@@ -48,7 +48,7 @@ void esmtp_init()
 
 /* Set the timeout */
 
-void esmtp_timeout(unsigned nsecs)
+void esmtp_timeout(struct esmtp_info *info, unsigned nsecs)
 {
 	time(&esmtp_timeout_time);
 	esmtp_timeout_time += nsecs;
@@ -317,7 +317,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 	const char *p;
 
 	esmtp_init();
-	esmtp_timeout(config_time_esmtphelo());
+	esmtp_timeout(info, config_time_esmtphelo());
 
 	if ((p=esmtp_readline()) == 0)	/* Wait for server first */
 		return (1);
@@ -461,7 +461,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 		hellobuf[0]='H';
 		hellobuf[1]='E';
 
-		esmtp_timeout(config_time_esmtphelo());
+		esmtp_timeout(info, config_time_esmtphelo());
 		if (esmtp_writestr(hellobuf) || esmtp_writeflush())
 		{
 			(*info->log_talking)(info, arg);
