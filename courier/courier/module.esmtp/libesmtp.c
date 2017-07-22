@@ -1470,3 +1470,50 @@ void esmtp_quit(struct esmtp_info *info, void *arg)
 
 	esmtp_disconnect(info);
 }
+
+int esmtp_parsereply(struct esmtp_info *info,
+		     const char *cmd,
+		     void *arg)
+{
+	const char *p;
+
+	if ((p=esmtp_readline(info)) == 0)
+	{
+		connect_error(info, arg);
+		esmtp_disconnect(info);
+		return (-1);
+	}
+
+	switch (*p) {
+	case '1':
+	case '2':
+	case '3':
+		break;
+	default:
+		(*info->log_sent)(info, cmd, arg);
+		while (!ISFINALLINE(p))
+		{
+			(*info->log_reply)(info, p, arg);
+
+			if ((p=esmtp_readline(info)) == 0)
+			{
+				connect_error(info, arg);
+				esmtp_disconnect(info);
+				return (-1);
+			}
+		}
+		(*info->log_smtp_error)(info, p, 0, arg);
+		return (-1);
+	}
+
+	while (!ISFINALLINE(p))
+	{
+		if ((p=esmtp_readline(info)) == 0)
+		{
+			connect_error(info, arg);
+			esmtp_disconnect(info);
+			return (-1);
+		}
+	}
+	return (0);
+}

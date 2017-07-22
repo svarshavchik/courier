@@ -83,6 +83,7 @@ static int corked;
 struct my_esmtp_info {
 	struct moduledel *del;
 	struct ctlfile *ctf;
+	int log_line_num;
 };
 
 extern struct rw_list *esmtp_rw_install(const struct rw_install_info *);
@@ -151,7 +152,7 @@ void esmtpchild(unsigned childnum)
 #endif
 		my_info.del=del;
 		my_info.ctf=&ctf;
-
+		my_info.log_line_num=0;
 
 		/*
 		** Open the message control file, send the message, close
@@ -233,9 +234,6 @@ void esmtpchild(unsigned childnum)
 static void connect_error(struct moduledel *, struct ctlfile *);
 
 static int rset(struct esmtp_info *, struct my_esmtp_info *);
-static int smtpreply(struct esmtp_info *info,
-		     struct my_esmtp_info *my_info,
-		     const char *, int);
 static void push(struct esmtp_info *, struct my_esmtp_info *);
 
 static int get_sourceaddr(struct esmtp_info *info,
@@ -360,7 +358,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		if (esmtp_writestr(info, "RSET\r\n") == 0 &&
 		    esmtp_writeflush(info) == 0)
 		{
-			if (smtpreply(info, my_info, "RSET", -1))
+			if (esmtp_parsereply(info, "RSET", my_info))
 			{
 				esmtp_quit(info, my_info);
 				return;
@@ -665,6 +663,9 @@ static void log_reply(struct esmtp_info *info, const char *str, void *arg)
 {
 	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
 
+	if (my_info->log_line_num > 10)
+		return; // Log only the first ten lines of a response.
+	++my_info->log_line_num;
 	reply(my_info->del, my_info->ctf, str);
 }
 
@@ -735,75 +736,6 @@ static void libesmtp_deinit(struct esmtp_info *info)
 	Try EHLO then HELO, and see what the other server says.
 */
 
-/* Parse a reply to a SMTP command that applies to all recipients */
-
-static int smtpreply(struct esmtp_info *info,
-		     struct my_esmtp_info *my_info,
-		     const char *cmd,
-		     int istalking)
-{
-	struct moduledel *del=my_info->del;
-	struct ctlfile *ctf=my_info->ctf;
-
-	const char *p;
-	unsigned line_num;
-
-	if ((p=esmtp_readline(info)) == 0)
-	{
-		if (istalking < 0)	return (0);
-
-		if (!istalking)
-			talking(info, del, ctf);
-		connect_error(del, ctf);
-		esmtp_quit(info, my_info);
-		return (-1);
-	}
-
-	line_num=0;
-
-	switch (SMTPREPLY_TYPE(p))	{
-	case COMCTLFILE_DELDEFERRED:
-	case COMCTLFILE_DELFAIL:
-
-		if (!istalking || istalking < 0)
-			talking(info, del, ctf);
-		sent(del, ctf, cmd);
-		smtp_msg(del, ctf);
-		while (!ISFINALLINE(p))
-		{
-			if (line_num < 10)	/* We record up to 10 lines
-						** of the reply in our log
-						** files.
-						*/
-			{
-				reply(del, ctf, p);
-				++line_num;
-			}
-			if ((p=esmtp_readline(info)) == 0)
-			{
-				connect_error(del, ctf);
-				esmtp_quit(info, my_info);
-				return (-1);
-			}
-		}
-		smtp_error(del, ctf, p, 0);
-		return (-1);
-	}
-
-	while (!ISFINALLINE(p))
-	{
-		if ((p=esmtp_readline(info)) == 0)
-		{
-			if (!istalking || istalking < 0)
-				talking(info, del, ctf);
-			connect_error(del, ctf);
-			esmtp_quit(info, my_info);
-			return (-1);
-		}
-	}
-	return (0);
-}
-
 /* Send an SMTP command that applies to all recipients, then wait for a reply */
 
 static int smtpcommand(struct esmtp_info *info,
@@ -822,7 +754,7 @@ static int smtpcommand(struct esmtp_info *info,
 		esmtp_quit(info, my_info);
 		return (-1);
 	}
-	return (smtpreply(info, my_info, cmd, istalking));
+	return esmtp_parsereply(info, cmd, my_info);
 }
 
 
@@ -1727,7 +1659,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		rfc2045_ac_check(rfcp, RFC2045_RW_7BIT);
 	}
 
-	if (smtpreply(info, my_info, mailfroms, 1))	/* MAIL FROM rejected */
+	if (esmtp_parsereply(info, mailfroms, my_info))	/* MAIL FROM rejected */
 	{
 		if (rfcp)	rfc2045_free(rfcp);
 		sox_close(fd);
