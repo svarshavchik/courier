@@ -58,11 +58,6 @@
 #include	<signal.h>
 #include	<errno.h>
 
-static time_t esmtpkeepaliveping;
-static time_t cmd_timeout;
-static time_t helo_timeout;
-static time_t data_timeout;
-
 #ifdef	TCP_CORK
 
 static int esmtp_cork;
@@ -105,13 +100,6 @@ void rfc2045_error(const char *p)
 
 static void setconfig()
 {
-       esmtpkeepaliveping=config_time_esmtpkeepaliveping();
-       cmd_timeout=config_time_esmtptimeout();
-       connect_timeout=config_time_esmtpconnect();
-       cmd_timeout=config_time_esmtptimeout();
-       helo_timeout=config_time_esmtphelo();
-       data_timeout=config_time_esmtpdata();
-       quit_timeout=config_time_esmtpquit();
 }
 
 static struct esmtp_info *libesmtp_init(const char *host);
@@ -213,16 +201,17 @@ void esmtpchild(unsigned childnum)
 		** so-so seconds
 		*/
 
-		while (esmtpkeepaliveping && esmtp_connected(info))
+		while (info && info->esmtpkeepaliveping &&
+		       esmtp_connected(info))
 		{
 			FD_ZERO(&fdr);
 			FD_SET(0, &fdr);
-			tv.tv_sec=esmtpkeepaliveping;
+			tv.tv_sec=info->esmtpkeepaliveping;
 			tv.tv_usec=0;
 
 			if ( sox_select(1, &fdr, 0, 0, &tv) > 0)
 				break;
-			esmtp_timeout(info, data_timeout);
+			esmtp_timeout(info, info->data_timeout);
 			if (esmtp_writestr("RSET\r\n") || esmtp_writeflush())
 				break;
 
@@ -369,7 +358,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	if (esmtp_connected(info))
 	{
-		esmtp_timeout(info, helo_timeout);
+		esmtp_timeout(info, info->helo_timeout);
 		if (esmtp_writestr("RSET\r\n") == 0 && esmtp_writeflush() == 0)
 		{
 			if (smtpreply(info, my_info, "RSET", -1))
@@ -725,6 +714,16 @@ static struct esmtp_info *libesmtp_init(const char *host)
 	info->report_broken_starttls= &do_report_broken_starttls;
 	info->get_sourceaddr= &get_sourceaddr;
 	info->is_local_or_loopback= &is_local_or_loopback;
+
+
+	info->esmtpkeepaliveping=config_time_esmtpkeepaliveping();
+	info->quit_timeout=config_time_esmtpquit();
+	info->connect_timeout=config_time_esmtpconnect();
+	info->helo_timeout=config_time_esmtphelo();
+	info->data_timeout=config_time_esmtpdata();
+	info->cmd_timeout=config_time_esmtptimeout();
+	info->delay_timeout=config_time_esmtpdelay();
+
 	return info;
 }
 
@@ -830,7 +829,7 @@ static int smtpcommand(struct esmtp_info *info,
 
 static int rset(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
-	esmtp_timeout(info, helo_timeout);
+	esmtp_timeout(info, info->helo_timeout);
 	return (smtpcommand(info, my_info, "RSET\r\n", 0));
 }
 
@@ -1144,7 +1143,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 	niovw= i;
 
 	if (info->haspipelining)	/* One timeout */
-		esmtp_timeout(info, cmd_timeout);
+		esmtp_timeout(info, info->cmd_timeout);
 
 	/* Read replies for the RCPT TO commands */
 
@@ -1159,7 +1158,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 		{
 			iovw=iov+i;
 			niovw=1;
-			esmtp_timeout(info, cmd_timeout);
+			esmtp_timeout(info, info->cmd_timeout);
 		}
 
 		do
@@ -1230,7 +1229,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 
 			iovw=iov+del->nreceipients;
 			niovw=1;
-			esmtp_timeout(info, cmd_timeout);
+			esmtp_timeout(info, info->cmd_timeout);
 		}
 		rc=parsedatareply(info, my_info, rcptok, &iovw, &niovw, 0);
 			/* One more reply */
@@ -1450,7 +1449,7 @@ static int parsedatareply(struct esmtp_info *info,
 				** receipients
 				*/
 			{
-				esmtp_timeout(info, data_timeout);
+				esmtp_timeout(info, info->data_timeout);
 				if (esmtp_writestr(".\r\n") || esmtp_writeflush())
 					return (-1);
 				do
@@ -1638,7 +1637,7 @@ static void call_rewrite_func(struct rw_info *p, void (*f)(struct rw_info *),
 static int data_wait(struct esmtp_info *info, struct my_esmtp_info *my_info,
 		     int *rcptok)
 {
-	esmtp_timeout(info, data_timeout);
+	esmtp_timeout(info, info->data_timeout);
 	if (esmtp_dowrite(".\r\n", 3) || esmtp_writeflush())	return (-1);
 
 	cork(0);
@@ -1702,7 +1701,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	}
 
 	talking(info, del, ctf);
-	esmtp_timeout(info, cmd_timeout);
+	esmtp_timeout(info, info->cmd_timeout);
 
 	if (esmtp_writestr(mailfroms) || esmtp_writeflush())
 	{
@@ -1810,7 +1809,7 @@ static int escape_dots(const char *msg, unsigned l, struct rw_for_esmtp *ptr)
 		ptr->byte_counter=0;
 
 	if (ptr->byte_counter == 0)
-		esmtp_timeout(info, data_timeout);
+		esmtp_timeout(info, info->data_timeout);
 
 	for (i=j=0; i<l; i++)
 	{

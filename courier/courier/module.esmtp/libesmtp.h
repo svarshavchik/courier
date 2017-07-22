@@ -33,8 +33,6 @@
 			isdigit((int)(unsigned char)p[1]) && \
 			isdigit((int)(unsigned char)p[2]) \
 				&& p[3] == ' ')
-extern time_t quit_timeout;
-extern time_t connect_timeout;
 
 struct esmtp_info {
 
@@ -61,6 +59,14 @@ struct esmtp_info {
 	char *host;
 	char *smtproute;
 	int smtproutes_flags;
+
+	time_t esmtpkeepaliveping;
+	time_t quit_timeout;
+	time_t connect_timeout;
+	time_t helo_timeout;
+	time_t data_timeout;
+	time_t cmd_timeout;
+	time_t delay_timeout;
 
 	RFC1035_ADDR sockfdaddr;
 	RFC1035_ADDR laddr;

@@ -15,8 +15,6 @@
 #include	<string.h>
 #include	<stdlib.h>
 #include	"courier.h"
-#include	"comreadtime.h"
-#include	"esmtpconfig.h"
 #include	"numlib/numlib.h"
 #include	"tcpd/spipe.h"
 #include	"tcpd/tlsclient.h"
@@ -28,9 +26,6 @@ struct mybuf esmtp_sockbuf;
 char esmtp_writebuf[BUFSIZ];
 char *esmtp_writebufptr;
 unsigned esmtp_writebufleft;
-
-time_t quit_timeout;
-time_t connect_timeout;
 
 static void connect_error(struct esmtp_info *info, void *arg)
 {
@@ -301,6 +296,15 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 		abort();
 
 	p->smtproute=smtproutes(p->host, &p->smtproutes_flags);
+
+	p->esmtpkeepaliveping=0;
+	p->quit_timeout=10;
+	p->connect_timeout=60;
+	p->helo_timeout=300;
+	p->data_timeout=300;
+	p->cmd_timeout=600;
+	p->delay_timeout=300;
+
 	return p;
 }
 
@@ -335,7 +339,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 	const char *p;
 
 	esmtp_init();
-	esmtp_timeout(info, config_time_esmtphelo());
+	esmtp_timeout(info, info->helo_timeout);
 
 	if ((p=esmtp_readline()) == 0)	/* Wait for server first */
 		return (1);
@@ -450,6 +454,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 		}
 	}
 
+	esmtp_timeout(info, info->helo_timeout);
 	strcpy(hellobuf, "EHLO ");
 	strncat(hellobuf, p, sizeof(hellobuf)-10);
 	strcat(hellobuf, "\r\n");
@@ -479,7 +484,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 		hellobuf[0]='H';
 		hellobuf[1]='E';
 
-		esmtp_timeout(info, config_time_esmtphelo());
+		esmtp_timeout(info, info->helo_timeout);
 		if (esmtp_writestr(hellobuf) || esmtp_writeflush())
 		{
 			(*info->log_talking)(info, arg);
@@ -1213,7 +1218,7 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 		 {
 			 info->net_error=errno;
 			 time (&info->net_timeout);
-			 info->net_timeout += config_time_esmtpdelay();
+			 info->net_timeout += info->delay_timeout;
 		 }
 		 return -1;
 	}
@@ -1299,7 +1304,7 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 		    rfc1035_bindsource(esmtp_sockfd, saddrptr,
 				       saddrptrlen) == 0 &&
 		    s_connect(esmtp_sockfd, addrptr, addrptrlen,
-			      connect_timeout) == 0)
+			      info->connect_timeout) == 0)
 		{
 			/*
 			** If we're connected, make sure EHLO or HELO
@@ -1428,7 +1433,7 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 					(info, strerror(errno), 4, arg);
 			}
 			time (&info->net_timeout);
-			info->net_timeout += config_time_esmtpdelay();
+			info->net_timeout += info->delay_timeout;
 		}
 		return -1;
 	}
@@ -1446,7 +1451,7 @@ void esmtp_quit(struct esmtp_info *info, void *arg)
 
 	if (!esmtp_connected(info))	return;
 
-	esmtp_timeout(info, quit_timeout);
+	esmtp_timeout(info, info->quit_timeout);
 	if (esmtp_writestr("QUIT\r\n") || esmtp_writeflush())
 	{
 		esmtp_disconnect(info);
