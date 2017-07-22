@@ -33,6 +33,8 @@
 			isdigit((int)(unsigned char)p[1]) && \
 			isdigit((int)(unsigned char)p[2]) \
 				&& p[3] == ' ')
+extern time_t quit_timeout;
+extern time_t connect_timeout;
 
 struct esmtp_info {
 
@@ -41,11 +43,29 @@ struct esmtp_info {
 	void (*log_reply)(struct esmtp_info *, const char *, void *);
 	void (*log_smtp_error)(struct esmtp_info *, const char *, int, void *);
 
+	void (*report_broken_starttls)(struct esmtp_info *,
+				       const char *,
+				       void *);
+	int (*lookup_broken_starttls)(struct esmtp_info *,
+				      const char *,
+				      void *);
+	int (*is_local_or_loopback)(struct esmtp_info *,
+				    const char *,
+				    const char *,
+				    void *);
+	int (*get_sourceaddr)(struct esmtp_info *info,
+			      const RFC1035_ADDR *dest_addr,
+			      RFC1035_ADDR *source_addr,
+			      void *arg);
+
 	char *host;
 	char *smtproute;
 	int smtproutes_flags;
 
+	RFC1035_ADDR sockfdaddr;
 	RFC1035_ADDR laddr;
+
+	char *sockfdaddrname;
 
 	int haspipelining;
 	int hasdsn;
@@ -104,5 +124,7 @@ extern int esmtp_enable_tls(struct esmtp_info *,
 extern int esmtp_auth(struct esmtp_info *info,
 		      const char *auth_key,
 		      void *arg);
+extern int esmtp_connect(struct esmtp_info *info, void *arg);
+extern void esmtp_quit(struct esmtp_info *, void *arg);
 
 #endif

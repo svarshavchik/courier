@@ -59,10 +59,8 @@
 #include	<errno.h>
 
 static time_t esmtpkeepaliveping;
-static time_t connect_timeout;
 static time_t cmd_timeout;
 static time_t helo_timeout;
-static time_t quit_timeout;
 static time_t data_timeout;
 
 #ifdef	TCP_CORK
@@ -91,9 +89,6 @@ struct my_esmtp_info {
 	struct moduledel *del;
 	struct ctlfile *ctf;
 };
-
-static void quit(struct esmtp_info *, struct my_esmtp_info *);
-
 
 extern struct rw_list *esmtp_rw_install(const struct rw_install_info *);
 extern int isloopback(const char *);
@@ -189,7 +184,7 @@ void esmtpchild(unsigned childnum)
 
 			if (changed_vhosts)
 			{
-				quit(info, &my_info);
+				esmtp_quit(info, &my_info);
 				setconfig();
 			}
 
@@ -236,29 +231,19 @@ void esmtpchild(unsigned childnum)
 
 			if (p == 0)
 			{
-				quit(info, &my_info);
+				esmtp_quit(info, &my_info);
 				break;
 			}
 		}
 	}
 	if (info && esmtp_connected(info))
-		quit(info, &my_info);
+		esmtp_quit(info, &my_info);
 
 	if (info)
 		libesmtp_deinit(info);
 }
 
-static RFC1035_ADDR sockfdaddr;
-static char *sockfdaddrname=0;
-static char *auth_key=0;
-
-static void hard_error(struct moduledel *, struct ctlfile *, const char *);
-static void soft_error(struct moduledel *, struct ctlfile *, const char *);
-
 static void connect_error(struct moduledel *, struct ctlfile *);
-
-static int hello(struct esmtp_info *, struct my_esmtp_info *);
-static int local_sock_address(struct esmtp_info *, struct my_esmtp_info *);
 
 static int rset(struct esmtp_info *, struct my_esmtp_info *);
 static int smtpreply(struct esmtp_info *info,
@@ -266,13 +251,12 @@ static int smtpreply(struct esmtp_info *info,
 		     const char *, int);
 static void push(struct esmtp_info *, struct my_esmtp_info *);
 
-static int get_sourceaddr(int af,
+static int get_sourceaddr(struct esmtp_info *info,
 			  const RFC1035_ADDR *dest_addr,
-			  RFC1035_NETADDR *addrbuf,
-			  const struct sockaddr **addrptr, int *addrptrlen)
+			  RFC1035_ADDR *source_addr,
+			  void *arg)
 {
 	int rc;
-	RFC1035_ADDR in;
 	const char *vhost=config_get_local_vhost();
 	char vhost_ip_buf[100];
 	const char *buf=getenv(
@@ -319,19 +303,14 @@ static int get_sourceaddr(int af,
 	}
 
 	if (buf && strcmp(buf, "0")) {
-		rc = rfc1035_aton(buf, &in);
+		rc = rfc1035_aton(buf, source_addr);
 		if (rc != 0)
 		{
 			errno=EINVAL;
 			return rc;
 		}
 	} else
-		in = RFC1035_ADDRANY;
-
-	rc = rfc1035_mkaddress(af, addrbuf, &in, htons(0),
-			addrptr, addrptrlen);
-	if (rc != 0)
-		return rc;
+		*source_addr = RFC1035_ADDRANY;
 
 	return 0;
 }
@@ -356,17 +335,17 @@ static int backscatter(const char *src)
 	return 0;
 }
 
-static void talking2(struct moduledel *del, struct ctlfile *ctf, int n);
+static void talking2(struct esmtp_info *info,
+		     struct moduledel *del, struct ctlfile *ctf, int n);
 
-static void talking(struct moduledel *del, struct ctlfile *ctf)
+static void talking(struct esmtp_info *info,
+		    struct moduledel *del, struct ctlfile *ctf)
 {
-	talking2(del, ctf, -1);
+	talking2(info, del, ctf, -1);
 }
 
 static void smtp_error(struct moduledel *del, struct ctlfile *ctf,
 		       const char *msg, int errcode);
-
-static void report_broken_starttls();
 
 /* Attempt to deliver a message */
 
@@ -375,7 +354,6 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	struct moduledel *del=my_info->del;
 	struct ctlfile *ctf=my_info->ctf;
 	int cn;
-	int connection_attempt_made;
 
 	/* Sanity check */
 
@@ -396,7 +374,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		{
 			if (smtpreply(info, my_info, "RSET", -1))
 			{
-				quit(info, my_info);
+				esmtp_quit(info, my_info);
 				return;
 			}
 		}
@@ -453,267 +431,11 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	*/
 
 	if (esmtp_connected(info) && WANT_SECURITY(info) && !info->is_secure_connection)
-		quit(info, my_info);
+		esmtp_quit(info, my_info);
 
 
-
-
-
-
-
-
-	if (!esmtp_connected(info))	/* First time, connect to a server */
-	{
-		struct rfc1035_mxlist *mxlist, *p, *q;
-		int static_route= info->smtproute != NULL;
-		struct rfc1035_res res;
-		int rc;
-
-		errno=0;	/* Detect network failures */
-
-		if (auth_key)
-			free(auth_key);
-
-		auth_key=strdup(info->smtproute ? info->smtproute:info->host);
-
-		if (!auth_key)
-			clog_msg_errno();
-
-		rfc1035_init_resolv(&res);
-
-		rc=rfc1035_mxlist_create_x(&res,
-					   auth_key,
-					   RFC1035_MX_AFALLBACK |
-					   RFC1035_MX_IGNORESOFTERR,
-					   &mxlist);
-		rfc1035_destroy_resolv(&res);
-
-		switch (rc)	{
-		case RFC1035_MX_OK:
-			break;
-		case RFC1035_MX_HARDERR:
-			hard_error(del, ctf, "No such domain.");
-			return;
-		case RFC1035_MX_BADDNS:
-			hard_error(del, ctf,
-				"This domain's DNS violates RFC 1035.");
-			return;
-		default:
-			soft_error(del, ctf, "DNS lookup failed.");
-
-			if (errno)
-			{
-				info->net_error=errno;
-				time (&info->net_timeout);
-				info->net_timeout += config_time_esmtpdelay();
-			}
-			return;
-		}
-
-		/* Check for broken MX records - BOFH */
-
-		q=0;	/* Also see if I'm in the MX list */
-
-		for (p=mxlist; p; p=p->next)
-		{
-		RFC1035_ADDR    addr;
-		char    buf[RFC1035_NTOABUFSIZE];
-
-			if (rfc1035_sockaddrip(&p->address,
-					sizeof(p->address), &addr))
-				continue;
-
-			rfc1035_ntoa(&addr, buf);
-			if (strcmp(buf, p->hostname) == 0)
-			{
-				hard_error(del, ctf,
-					"This domain's DNS violates RFC 1035.");
-				rfc1035_mxlist_free(mxlist);
-				return;
-			}
-
-			if (!q && !static_route &&
-			    (config_islocal(p->hostname, 0)
-			     || isloopback(buf)))
-				q=p;
-		}
-
-		if (q && q->priority == mxlist->priority)
-		{
-			hard_error(del, ctf, "configuration error: mail loops back to myself (MX problem).");
-			rfc1035_mxlist_free(mxlist);
-			return;
-		}
-
-		/* Ok, try each MX server until we get through */
-
-		connection_attempt_made=0;
-
-		for (p=mxlist; p; p=p->next)
-		{
-		RFC1035_ADDR addr;
-		int	port;
-		int	af;
-		RFC1035_NETADDR addrbuf, saddrbuf;
-		const struct sockaddr *addrptr, *saddrptr;
-		int	addrptrlen, saddrptrlen;
-
-			if (q && q->priority == p->priority)
-				break;
-			/*
-			** We're a backup MX for this domain, ignore MXs
-			** with same, or higher, priority than us
-			*/
-
-			if (rfc1035_sockaddrip(&p->address,
-				sizeof(p->address), &addr) ||
-				rfc1035_sockaddrport(&p->address,
-				sizeof(p->address), &port))
-				continue;
-
-			connection_attempt_made=1;
-
-			sockfdaddr=addr;
-			if (sockfdaddrname)	free(sockfdaddrname);
-			sockfdaddrname=strcpy(
-				courier_malloc(strlen(p->hostname)+1),
-				p->hostname);	/* Save this for later */
-
-			info->is_secure_connection=0;
-			if ((esmtp_sockfd=rfc1035_mksocket(SOCK_STREAM, 0, &af))
-					>= 0 &&
-			    rfc1035_mkaddress(af, &addrbuf, &addr, port,
-					      &addrptr, &addrptrlen) == 0 &&
-			    get_sourceaddr(af, &addr, &saddrbuf, &saddrptr,
-					   &saddrptrlen) == 0 &&
-			    rfc1035_bindsource(esmtp_sockfd, saddrptr,
-					       saddrptrlen) == 0 &&
-			    s_connect(esmtp_sockfd, addrptr, addrptrlen,
-				      connect_timeout) == 0)
-			{
-				/*
-				** If we're connected, make sure EHLO or HELO
-				** is cool, before blessing the connection.
-				*/
-
-				int	rc;
-
-				if (local_sock_address(info, my_info) < 0)
-				{
-					esmtp_disconnect(info);
-					return;
-				}
-
-				if (info->smtproutes_flags & ROUTE_SMTPS)
-				{
-					if (esmtp_enable_tls(info,
-							     p->hostname,
-							     1,
-							     my_info))
-					{
-						esmtp_disconnect(info);
-						continue; /* Next MX, please */
-					}
-
-					info->smtproutes_flags &= ~(ROUTE_TLS_REQUIRED);
-				}
-
-				rc=hello(info, my_info);
-
-				if (rc == 0)
-				{
-					/*
-					** If the following fails, go to the
-					** next MX.
-					*/
-
-					rc=1;
-
-					if ((info->smtproutes_flags
-					     & ROUTE_TLS_REQUIRED)
-					    && !info->hasstarttls)
-					{
-						talking(del, ctf);
-						smtp_error(del, ctf,
-							   "/SECURITY=REQUIRED set, but TLS is not available",
-							   '5');
-					}
-					else if (WANT_SECURITY(info)
-						 && !info->hasstarttls)
-					{
-						talking(del, ctf);
-						smtp_error(del, ctf,
-							   "/SECURITY set, but TLS is not available",
-							   '5');
-					}
-					else if (info->hasstarttls &&
-						 esmtp_enable_tls
-						 (info, p->hostname,
-						  0,
-						  my_info))
-					{
-						/*
-						** Only keep track of broken
-						** STARTTLS if we did not ask
-						** for SECURITY.
-						**
-						** Otherwise, it's on us.
-						*/
-						if (!WANT_SECURITY(info))
-							report_broken_starttls();
-					}
-					else
-					{
-
-						int rc=esmtp_auth(info, auth_key,
-								  &my_info);
-
-						if (rc == 0)
-							break; /* Good HELO */
-					}
-				}
-				quit(info, my_info);	/* We don't want to talk to him */
-				if (rc < 0)
-					return;	/* HELO failed, perm error */
-				errno=0;
-			}
-			if (errno)
-				info->net_error=errno;
-
-			esmtp_disconnect(info);
-
-#if 0
-			if (p->next && p->priority == p->next->priority &&
-				strcmp(p->hostname, p->next->hostname) == 0)
-			{
-				continue; /* Another IP address for same MX */
-			}
-
-			/* Skip other MX records with the same priority */
-			while (p->next && p->priority == p->next->priority)
-				p=p->next;
-#endif
-		}
-
-		rfc1035_mxlist_free(mxlist);
-		if (!esmtp_connected(info))	/* Couldn't find an active server */
-		{
-			if (!connection_attempt_made)
-				hard_error(del, ctf, "Did not find a suitable MX for a connection");
-			else
-			{
-				if (info->net_error)
-				{
-					errno=info->net_error;
-					soft_error(del, ctf, strerror(errno));
-				}
-				time (&info->net_timeout);
-				info->net_timeout += config_time_esmtpdelay();
-			}
-			return;
-		}
-	}
-
+	if (esmtp_connect(info, my_info))
+		return;
 
 	/*
 	** Ok, we now have a connection.  We want to call push() to deliver
@@ -747,7 +469,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 			{
 				if (rset(info, my_info))
 				{
-					quit(info, my_info);
+					esmtp_quit(info, my_info);
 					continue;
 				}
 			}
@@ -783,12 +505,6 @@ unsigned        i;
 			COMCTLFILE_DELFAIL, 0);
 }
 
-static void hard_error(struct moduledel *del, struct ctlfile *ctf,
-		const char *msg)
-{
-	hard_error1(del, ctf, msg, -1);
-}
-
 /* Record a temporary failure for one, or all, the recipients */
 
 static void soft_error1(struct moduledel *del, struct ctlfile *ctf,
@@ -806,11 +522,6 @@ unsigned        i;
 			COMCTLFILE_DELDEFERRED, 0);
 }
 
-static void soft_error(struct moduledel *del, struct ctlfile *ctf,
-	const char *msg)
-{
-	soft_error1(del, ctf, msg, -1);
-}
 
 /* Record an SMTP error for all the recipients */
 
@@ -835,13 +546,13 @@ static void smtp_error(struct moduledel *del, struct ctlfile *ctf,
 
 /* Record our peer in the message's control file, for error messages */
 
-static void sockipname(char *buf)
+static void sockipname(struct esmtp_info *info, char *buf)
 {
-	rfc1035_ntoa( &sockfdaddr, buf);
+	rfc1035_ntoa( &info->sockfdaddr, buf);
 
 #if	RFC1035_IPV6
 
-	if (IN6_IS_ADDR_V4MAPPED(&sockfdaddr))
+	if (IN6_IS_ADDR_V4MAPPED(&info->sockfdaddr))
 	{
 	char	*p, *q;
 
@@ -856,16 +567,20 @@ static void sockipname(char *buf)
 #endif
 }
 
-static void talking2(struct moduledel *del, struct ctlfile *ctf, int n)
+static void talking2(struct esmtp_info *info,
+		     struct moduledel *del, struct ctlfile *ctf, int n)
 {
-char	buf[RFC1035_NTOABUFSIZE];
-unsigned i;
-char	*p;
+	char	buf[RFC1035_NTOABUFSIZE];
+	unsigned i;
+	char	*p;
 
-	sockipname(buf);
-	p=courier_malloc(strlen(sockfdaddrname)+strlen(buf)+
+	sockipname(info, buf);
+	p=courier_malloc(strlen(info->sockfdaddrname ?
+				info->sockfdaddrname:"")+strlen(buf)+
 		sizeof(" []"));
-	strcat(strcat(strcat(strcpy(p, sockfdaddrname), " ["),
+	strcat(strcat(strcat(strcpy(p,
+				    info->sockfdaddrname ?
+				    info->sockfdaddrname:""), " ["),
 		buf), "]");
 
 	if (n >= 0)
@@ -947,7 +662,7 @@ static void log_talking(struct esmtp_info *info, void *arg)
 {
 	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
 
-	talking(my_info->del, my_info->ctf);
+	talking(info, my_info->del, my_info->ctf);
 }
 
 static void log_sent(struct esmtp_info *ingo, const char *str, void *arg)
@@ -973,6 +688,31 @@ static void log_smtp_error(struct esmtp_info *info,
 	smtp_error(my_info->del, my_info->ctf, msg, errcode);
 }
 
+
+static int lookup_broken_starttls(struct esmtp_info *info,
+				  const char *hostname,
+				  void *arg)
+{
+	time_t timestamp;
+
+	return track_find_broken_starttls(hostname, &timestamp);
+}
+
+static void do_report_broken_starttls(struct esmtp_info *info,
+				      const char *hostname,
+				      void *arg)
+{
+	track_save_broken_starttls(hostname);
+}
+
+static int is_local_or_loopback(struct esmtp_info *info,
+				const char *hostname,
+				const char *ipaddr,
+				void *arg)
+{
+	return config_islocal(hostname, 0) || isloopback(ipaddr);
+}
+
 static struct esmtp_info *libesmtp_init(const char *host)
 {
 	struct esmtp_info *info=esmtp_info_alloc(host);
@@ -981,6 +721,10 @@ static struct esmtp_info *libesmtp_init(const char *host)
 	info->log_sent= &log_sent;
 	info->log_reply= &log_reply;
 	info->log_smtp_error= &log_smtp_error;
+	info->lookup_broken_starttls= &lookup_broken_starttls;
+	info->report_broken_starttls= &do_report_broken_starttls;
+	info->get_sourceaddr= &get_sourceaddr;
+	info->is_local_or_loopback= &is_local_or_loopback;
 	return info;
 }
 
@@ -992,83 +736,6 @@ static void libesmtp_deinit(struct esmtp_info *info)
 /*
 	Try EHLO then HELO, and see what the other server says.
 */
-
-static int hello3(struct esmtp_info *info,
-		  struct my_esmtp_info *my_info,
-		  int using_tls);
-
-static int local_sock_address(struct esmtp_info *info,
-			      struct my_esmtp_info *my_info)
-{
-	RFC1035_NETADDR lsin;
-	socklen_t i;
-
-	i=sizeof(lsin);
-	if (sox_getsockname(esmtp_sockfd, (struct sockaddr *)&lsin, &i) ||
-	    rfc1035_sockaddrip(&lsin, i, &info->laddr))
-	{
-		(*info->log_smtp_error)(info,
-					"Cannot obtain local socket IP address.",
-					'4', my_info);
-		return -1;
-	}
-	return 0;
-}
-
-static int hello(struct esmtp_info *info, struct my_esmtp_info *my_info)
-{
-	int rc=esmtp_get_greeting(info, my_info);
-
-	if (rc == 0)
-		rc=hello3(info, my_info, 0);
-
-	if (info->quit_needed)
-		quit(info, my_info);
-
-	return rc;
-}
-
-static int hello3(struct esmtp_info *info,
-		  struct my_esmtp_info *my_info,
-		  int using_tls)
-{
-	int rc;
-	time_t timestamp;
-
-	rc=esmtp_helo(info, using_tls, my_info);
-
-	if (rc == -1)
-		quit(info, my_info);
-
-	if (track_find_broken_starttls(sockfdaddrname, &timestamp))
-		info->hasstarttls=0;
-
-	return rc;
-}
-
-static void report_broken_starttls()
-{
-	track_save_broken_starttls(sockfdaddrname);
-}
-
-/*
-** Send a QUIT, and shut down the connection
-*/
-
-static void quit(struct esmtp_info *info, struct my_esmtp_info *my_info)
-{
-const char *p;
-
-	if (!esmtp_connected(info))	return;
-
-	esmtp_timeout(info, quit_timeout);
-	if (esmtp_writestr("QUIT\r\n") || esmtp_writeflush())	return;
-
-	while ((p=esmtp_readline()) != 0 && !ISFINALLINE(p))
-		;
-
-	esmtp_disconnect(info);
-}
 
 /* Parse a reply to a SMTP command that applies to all recipients */
 
@@ -1088,9 +755,9 @@ static int smtpreply(struct esmtp_info *info,
 		if (istalking < 0)	return (0);
 
 		if (!istalking)
-			talking(del, ctf);
+			talking(info, del, ctf);
 		connect_error(del, ctf);
-		quit(info, my_info);
+		esmtp_quit(info, my_info);
 		return (-1);
 	}
 
@@ -1101,7 +768,7 @@ static int smtpreply(struct esmtp_info *info,
 	case COMCTLFILE_DELFAIL:
 
 		if (!istalking || istalking < 0)
-			talking(del, ctf);
+			talking(info, del, ctf);
 		sent(del, ctf, cmd);
 		smtp_msg(del, ctf);
 		while (!ISFINALLINE(p))
@@ -1117,7 +784,7 @@ static int smtpreply(struct esmtp_info *info,
 			if ((p=esmtp_readline()) == 0)
 			{
 				connect_error(del, ctf);
-				quit(info, my_info);
+				esmtp_quit(info, my_info);
 				return (-1);
 			}
 		}
@@ -1130,9 +797,9 @@ static int smtpreply(struct esmtp_info *info,
 		if ((p=esmtp_readline()) == 0)
 		{
 			if (!istalking || istalking < 0)
-				talking(del, ctf);
+				talking(info, del, ctf);
 			connect_error(del, ctf);
-			quit(info, my_info);
+			esmtp_quit(info, my_info);
 			return (-1);
 		}
 	}
@@ -1152,9 +819,9 @@ static int smtpcommand(struct esmtp_info *info,
 	if (esmtp_writestr(cmd) || esmtp_writeflush())
 	{
 		if (!istalking)
-			talking(del, ctf);
+			talking(info, del, ctf);
 		connect_error(del, ctf);
-		quit(info, my_info);
+		esmtp_quit(info, my_info);
 		return (-1);
 	}
 	return (smtpreply(info, my_info, cmd, istalking));
@@ -1678,19 +1345,19 @@ static int parseexdatareply(struct esmtp_info *, struct my_esmtp_info *,
 			    const char *,
 			    int *);
 
-static char *logsuccessto()
+static char *logsuccessto(struct esmtp_info *info)
 {
-char	buf[RFC1035_NTOABUFSIZE];
-char	*p;
+	char	buf[RFC1035_NTOABUFSIZE];
+	char	*p;
 
-	sockipname(buf);
+	sockipname(info, buf);
 	p=courier_malloc(sizeof("delivered:  []")+
-		(sockfdaddrname ?
-			strlen(sockfdaddrname):0)+strlen(buf));
+		(info->sockfdaddrname ?
+			strlen(info->sockfdaddrname):0)+strlen(buf));
 
 	strcpy(p, "delivered: ");
-	if (sockfdaddrname && *sockfdaddrname)
-		strcat(strcat(p, sockfdaddrname), " ");
+	if (info->sockfdaddrname && *info->sockfdaddrname)
+		strcat(strcat(p, info->sockfdaddrname), " ");
 	strcat(p, "[");
 	strcat(p, buf);
 	strcat(p, "]");
@@ -1753,7 +1420,7 @@ static int parsedatareply(struct esmtp_info *info,
 
 		if (isfinal)
 		{
-		char	*p=logsuccessto();
+			char	*p=logsuccessto(info);
 
 			/*
 			** Final reply - record a success for recipients that
@@ -1923,7 +1590,7 @@ static int parseexdatareply(struct esmtp_info *info,
 				break;
 			case COMCTLFILE_DELSUCCESS:
 				{
-				char	*p=logsuccessto();
+					char	*p=logsuccessto(info);
 
 				ctlfile_append_reply(ctf,
 					(unsigned)atol( del->receipients[i*2]),
@@ -2034,7 +1701,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		return;
 	}
 
-	talking(del, ctf);
+	talking(info, del, ctf);
 	esmtp_timeout(info, cmd_timeout);
 
 	if (esmtp_writestr(mailfroms) || esmtp_writeflush())
@@ -2042,7 +1709,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		connect_error(del, ctf);
 		sox_close(fd);
 		free(mailfroms);
-		quit(info, my_info);
+		esmtp_quit(info, my_info);
 		return;
 	}
 
