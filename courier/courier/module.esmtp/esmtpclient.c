@@ -740,20 +740,11 @@ static void libesmtp_deinit(struct esmtp_info *info)
 
 static int smtpcommand(struct esmtp_info *info,
 		       struct my_esmtp_info *my_info,
-		       const char *cmd,
-		       int istalking)
+		       const char *cmd)
 {
-	struct moduledel *del=my_info->del;
-	struct ctlfile *ctf=my_info->ctf;
+	if (esmtp_sendcommand(info, cmd, my_info))
+		return -1;
 
-	if (esmtp_writestr(info, cmd) || esmtp_writeflush(info))
-	{
-		if (!istalking)
-			talking(info, del, ctf);
-		connect_error(del, ctf);
-		esmtp_quit(info, my_info);
-		return (-1);
-	}
 	return esmtp_parsereply(info, cmd, my_info);
 }
 
@@ -761,7 +752,7 @@ static int smtpcommand(struct esmtp_info *info,
 static int rset(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
 	esmtp_timeout(info, info->helo_timeout);
-	return (smtpcommand(info, my_info, "RSET\r\n", 0));
+	return (smtpcommand(info, my_info, "RSET\r\n"));
 }
 
 static void pushdsn(struct esmtp_info *, struct my_esmtp_info *);
@@ -846,95 +837,6 @@ static void push(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	del->receipients=real_receipients;
 	del->nreceipients=real_nreceipients;
 	del->sender=real_sender;
-}
-
-/*
-** Construct the MAIL FROM: command, taking into account ESMTP capabilities
-** of the remote server.
-*/
-static char *mailfrom(struct esmtp_info *info, struct my_esmtp_info *my_info,
-		      int messagefd, int is8bitmsg)
-{
-	struct moduledel *del=my_info->del;
-	struct ctlfile *ctf=my_info->ctf;
-
-	char	*bodyverb="", *verpverb="", *retverb="";
-	char	*oenvidverb="", *sizeverb="";
-	const char *seclevel="";
-	char	*mailfromcmd;
-	int	n;
-	struct	stat stat_buf;
-
-	static const char seclevel_starttls[]=" SECURITY=STARTTLS";
-
-	if (info->has8bitmime)	/* ESMTP 8BITMIME capability */
-		bodyverb= is8bitmsg ? " BODY=8BITMIME":" BODY=7BIT";
-
-	if (info->hasverp && ctlfile_searchfirst(ctf, COMCTLFILE_VERP) >= 0)
-		verpverb=" VERP";	/* ESMTP VERP capability */
-
-	/* ESMTP DSN capability */
-	if (info->hasdsn && (n=ctlfile_searchfirst(ctf, COMCTLFILE_DSNFORMAT)) >= 0)
-		retverb=strchr(ctf->lines[n]+1, 'F') ? " RET=FULL":
-			strchr(ctf->lines[n]+1, 'H') ? " RET=HDRS":"";
-	if (info->hasdsn && (n=ctlfile_searchfirst(ctf, COMCTLFILE_ENVID)) >= 0 &&
-			ctf->lines[n][1])
-	{
-		oenvidverb=courier_malloc(sizeof(" ENVID=")+
-			strlen(ctf->lines[n]+1));
-		strcat(strcpy(oenvidverb, " ENVID="), ctf->lines[n]+1);
-	}
-
-	/* ESMTP SIZE capability */
-
-	if (fstat(messagefd, &stat_buf) == 0)
-	{
-		ctf->msgsize=stat_buf.st_size;
-
-		if (info->hassize)
-		{
-			off_t s=stat_buf.st_size;
-			char	buf[MAXLONGSIZE+1];
-
-			s= s/75 * 77+256;	/* Size estimate */
-			if (!info->has8bitmime && is8bitmsg)
-				s=s/70 * 100;
-			sprintf(buf, "%lu", (unsigned long)s);
-			sizeverb=courier_malloc(sizeof(" SIZE=")+strlen(buf));
-			strcat(strcpy(sizeverb, " SIZE="), buf);
-		}
-	}
-
-	/* SECURITY extension */
-
-	if (info->smtproutes_flags & ROUTE_STARTTLS)
-		seclevel=seclevel_starttls;
-
-	mailfromcmd=courier_malloc(sizeof("MAIL FROM:<>\r\n")+
-				   strlen(del->sender)+
-				   strlen(bodyverb)+
-				   strlen(verpverb)+
-				   strlen(retverb)+
-				   strlen(oenvidverb)+
-				   strlen(sizeverb)+
-				   strlen(seclevel));
-
-	strcat(strcat(strcat(strcat(strcat(
-		strcat(strcat(strcat(strcat(strcpy(
-						   mailfromcmd, "MAIL FROM:<"),
-					    del->sender),
-				     ">"),
-			      bodyverb),
-		       verpverb),
-		retverb),
-				    oenvidverb),
-			     sizeverb),
-		      seclevel),
-	       "\r\n");
-
-	if (*oenvidverb)	free(oenvidverb);
-	if (*sizeverb)		free(sizeverb);
-	return (mailfromcmd);
 }
 
 /*
@@ -1618,7 +1520,11 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	int	fd;
 	char	*mailfroms;
 	struct rfc2045 *rfcp=0;
-	int	is8bitmsg;
+
+	struct	stat stat_buf;
+	struct esmtp_mailfrom_info mf_info;
+
+	memset(&mf_info, 0, sizeof(mf_info));
 
 	if ((fd=open(qmsgsdatname(del->inum), O_RDONLY)) < 0)
 	{
@@ -1626,12 +1532,33 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		return;
 	}
 
-	is8bitmsg=ctlfile_searchfirst(ctf, COMCTLFILE_8BIT) >= 0;
-	if ((mailfroms=mailfrom(info, my_info, fd, is8bitmsg)) == 0)
+	mf_info.is8bitmsg=ctlfile_searchfirst(ctf, COMCTLFILE_8BIT) >= 0;
+	mf_info.verp=ctlfile_searchfirst(ctf, COMCTLFILE_VERP) >= 0;
+
 	{
-		sox_close(fd);
-		return;
+		int n=ctlfile_searchfirst(ctf, COMCTLFILE_DSNFORMAT);
+
+		if (n >= 0)
+		{
+			if (strchr(ctf->lines[n]+1, 'F'))
+				mf_info.dsn_format='F';
+			else if (strchr(ctf->lines[n]+1, 'F'))
+				mf_info.dsn_format='H';
+		}
+		n=ctlfile_searchfirst(ctf, COMCTLFILE_ENVID);
+
+		if (n >= 0 && ctf->lines[n][1])
+		{
+			mf_info.envid=ctf->lines[n]+1;
+		}
 	}
+
+	if (fstat(fd, &stat_buf) == 0)
+		mf_info.msgsize=stat_buf.st_size;
+
+	mf_info.sender=del->sender;
+
+	mailfroms=esmtp_mailfrom_cmd(info, &mf_info);
 
 	talking(info, del, ctf);
 	esmtp_timeout(info, info->cmd_timeout);
@@ -1639,7 +1566,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	if (esmtp_writestr(info, mailfroms) || esmtp_writeflush(info))
 	{
 		connect_error(del, ctf);
-		sox_close(fd);
+		close(fd);
 		free(mailfroms);
 		esmtp_quit(info, my_info);
 		return;
@@ -1650,7 +1577,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	** needs to be converted to quoted-printable.
 	*/
 
-	if (!info->has8bitmime && is8bitmsg)
+	if (!info->has8bitmime && mf_info.is8bitmsg)
 	{
 		rfcp=rfc2045_alloc_ac();
 		if (!rfcp)	clog_msg_errno();
@@ -1662,7 +1589,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	if (esmtp_parsereply(info, mailfroms, my_info))	/* MAIL FROM rejected */
 	{
 		if (rfcp)	rfc2045_free(rfcp);
-		sox_close(fd);
+		close(fd);
 
 		free(mailfroms);
 		return;
@@ -1675,7 +1602,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	{
 		if (rfcp)	rfc2045_free(rfcp);
 		free(rcptok);
-		sox_close(fd);
+		close(fd);
 		return;
 	}
 
@@ -1703,7 +1630,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 				if (rcptok[i])
 					connect_error1(del, ctf, i);
 		free(rcptok);
-		sox_close(fd);
+		close(fd);
 		cork(0);
 	}
 	if (rfcp)	rfc2045_free(rfcp);

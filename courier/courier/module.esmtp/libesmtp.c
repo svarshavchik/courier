@@ -1471,6 +1471,20 @@ void esmtp_quit(struct esmtp_info *info, void *arg)
 	esmtp_disconnect(info);
 }
 
+int esmtp_sendcommand(struct esmtp_info *info,
+		      const char *cmd,
+		      void *arg)
+{
+	if (esmtp_writestr(info, cmd) || esmtp_writeflush(info))
+	{
+		connect_error(info, arg);
+		esmtp_disconnect(info);
+		return (-1);
+	}
+
+	return 0;
+}
+
 int esmtp_parsereply(struct esmtp_info *info,
 		     const char *cmd,
 		     void *arg)
@@ -1516,4 +1530,95 @@ int esmtp_parsereply(struct esmtp_info *info,
 		}
 	}
 	return (0);
+}
+
+
+/*
+** Construct the MAIL FROM: command, taking into account ESMTP capabilities
+** of the remote server.
+*/
+
+char *esmtp_mailfrom_cmd(struct esmtp_info *info,
+			 struct esmtp_mailfrom_info *mf_info)
+{
+	char	*bodyverb="", *verpverb="", *retverb="";
+	char	*oenvidverb="", *sizeverb="";
+	const char *seclevel="";
+	char	*mailfromcmd;
+	size_t l;
+
+	static const char seclevel_starttls[]=" SECURITY=STARTTLS";
+
+	if (info->has8bitmime)	/* ESMTP 8BITMIME capability */
+		bodyverb= mf_info->is8bitmsg ? " BODY=8BITMIME":" BODY=7BIT";
+
+	if (info->hasverp && mf_info->verp)
+		verpverb=" VERP";	/* ESMTP VERP capability */
+
+	/* ESMTP DSN capability */
+	if (info->hasdsn && mf_info->dsn_format)
+		retverb=mf_info->dsn_format == 'F' ? " RET=FULL":
+			mf_info->dsn_format == 'H' ? " RET=HDRS":"";
+
+	if (info->hasdsn && mf_info->envid)
+	{
+		oenvidverb=malloc(sizeof(" ENVID=")+10+
+				  strlen(mf_info->envid));
+		if (!oenvidverb)
+			abort();
+		strcat(strcpy(oenvidverb, " ENVID="), mf_info->envid);
+	}
+
+	/* ESMTP SIZE capability */
+
+	if (mf_info->msgsize > 0)
+	{
+		if (info->hassize)
+		{
+			unsigned long s=mf_info->msgsize;
+			char	buf[NUMBUFSIZE+1];
+
+			s= s/75 * 77+256;	/* Size estimate */
+			if (!info->has8bitmime && mf_info->is8bitmsg)
+				s=s/70 * 100;
+
+			libmail_str_off_t(s, buf);
+			sizeverb=malloc(sizeof(" SIZE=")+strlen(buf));
+			if (!sizeverb)
+				abort();
+			strcat(strcpy(sizeverb, " SIZE="), buf);
+		}
+	}
+
+	/* SECURITY extension */
+
+	if (info->smtproutes_flags & ROUTE_STARTTLS)
+		seclevel=seclevel_starttls;
+
+	l=sizeof("MAIL FROM:<>\r\n")+
+		strlen(mf_info->sender)+
+		strlen(bodyverb)+
+		strlen(verpverb)+
+		strlen(retverb)+
+		strlen(oenvidverb)+
+		strlen(sizeverb)+
+		strlen(seclevel);
+
+	mailfromcmd=malloc(l);
+
+	if (!mailfromcmd)
+		abort();
+
+	snprintf(mailfromcmd, l, "MAIL FROM:<%s>%s%s%s%s%s%s\r\n",
+		 mf_info->sender,
+		 bodyverb,
+		 verpverb,
+		 retverb,
+		 oenvidverb,
+		 sizeverb,
+		 seclevel);
+
+	if (*oenvidverb)	free(oenvidverb);
+	if (*sizeverb)		free(sizeverb);
+	return (mailfromcmd);
 }

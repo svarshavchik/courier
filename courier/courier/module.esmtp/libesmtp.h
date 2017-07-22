@@ -136,8 +136,23 @@ extern int esmtp_auth(struct esmtp_info *info,
 		      void *arg);
 extern int esmtp_connect(struct esmtp_info *info, void *arg);
 extern void esmtp_quit(struct esmtp_info *, void *arg);
+extern int esmtp_sendcommand(struct esmtp_info *info,
+			     const char *cmd,
+			     void *arg);
 extern int esmtp_parsereply(struct esmtp_info *info,
 			    const char *cmd,
 			    void *arg);
+
+struct esmtp_mailfrom_info {
+	const char *sender;
+	unsigned long msgsize;
+	int is8bitmsg;
+	int dsn_format;
+	const char *envid;
+	int verp;
+};
+
+char *esmtp_mailfrom_cmd(struct esmtp_info *info,
+			 struct esmtp_mailfrom_info *mf_info);
 
 #endif
