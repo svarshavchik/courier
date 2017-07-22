@@ -54,12 +54,12 @@ void esmtp_timeout(struct esmtp_info *info, unsigned nsecs)
 
 /* Flush out anything that's waiting to be written out */
 
-static void doflush()
+static void doflush(struct esmtp_info *info)
 {
 int	n;
 int	i;
 
-	if (esmtp_wait_write())
+	if (esmtp_wait_write(info))
 	{
 		if (esmtp_sockfd >= 0)
 			sox_close(esmtp_sockfd);
@@ -80,10 +80,10 @@ int	i;
 	esmtp_writebufleft += n;
 }
 
-int esmtp_writeflush()
+int esmtp_writeflush(struct esmtp_info *info)
 {
 	while (esmtp_writebufptr > esmtp_writebuf && esmtp_sockfd >= 0)
-		doflush();
+		doflush(info);
 	if (esmtp_sockfd < 0)	return (-1);
 	return (0);
 }
@@ -91,7 +91,7 @@ int esmtp_writeflush()
 
 /* Write various stuff to the socket */
 
-int esmtp_dowrite(const char *p, unsigned l)
+int esmtp_dowrite(struct esmtp_info *info, const char *p, unsigned l)
 {
 	while (l)
 	{
@@ -101,7 +101,7 @@ int esmtp_dowrite(const char *p, unsigned l)
 
 		if (esmtp_writebufleft == 0)
 		{
-			doflush();
+			doflush(info);
 			continue;
 		}
 		if (esmtp_writebufleft < l)
@@ -120,7 +120,7 @@ int esmtp_dowrite(const char *p, unsigned l)
 
 /* Wait for either a response, or availability for write, until we time out */
 
-void esmtp_wait_rw(int *waitr, int *waitw)
+void esmtp_wait_rw(struct esmtp_info *info, int *waitr, int *waitw)
 {
 fd_set	fdr, fdw;
 struct	timeval	tv;
@@ -165,25 +165,25 @@ time_t	current_time;
 	esmtp_sockfd= -1;
 }
 
-int esmtp_writestr(const char *p)
+int esmtp_writestr(struct esmtp_info *info, const char *p)
 {
-	return (esmtp_dowrite(p, strlen(p)));
+	return (esmtp_dowrite(info, p, strlen(p)));
 }
 
 
-int esmtp_wait_read()
+int esmtp_wait_read(struct esmtp_info *info)
 {
-int	flag;
+	int	flag;
 
-	esmtp_wait_rw(&flag, 0);
+	esmtp_wait_rw(info, &flag, 0);
 	return (flag ? 0:-1);
 }
 
-int esmtp_wait_write()
+int esmtp_wait_write(struct esmtp_info *info)
 {
-int	flag;
+	int	flag;
 
-	esmtp_wait_rw(0, &flag);
+	esmtp_wait_rw(info, 0, &flag);
 	return (flag ? 0:-1);
 }
 
@@ -191,12 +191,12 @@ int	flag;
 static char socklinebuf[sizeof(esmtp_sockbuf.buffer)+1];
 static unsigned socklinesize=0;
 
-static void swallow(unsigned);
-static void burp(const char *, unsigned);
+static void swallow(struct esmtp_info *info, unsigned);
+static void burp(struct esmtp_info *info, const char *, unsigned);
 
 /* Receive a CRLF-terminated reply from the remote server */
 
-const char *esmtp_readline()
+const char *esmtp_readline(struct esmtp_info *info)
 {
 int	c;
 char	cc;
@@ -211,7 +211,7 @@ unsigned cnt, i;
 		cnt=mybuf_ptrleft( &esmtp_sockbuf );
 		if (cnt == 0)
 		{
-			if (esmtp_wait_read())	return (0);
+			if (esmtp_wait_read(info))	return (0);
 
 			/* Check for unexpected shutdown */
 
@@ -231,17 +231,17 @@ unsigned cnt, i;
 
 		if (i < cnt)
 		{
-			swallow(i);
+			swallow(info, i);
 			(void)mybuf_get( &esmtp_sockbuf );	/* Skip the CR */
 
 			for (;;)	/* Skip continuous CRs */
 			{
 				if (mybuf_ptrleft( &esmtp_sockbuf ) == 0 &&
-					esmtp_wait_read())	return (0);
+				    esmtp_wait_read(info))	return (0);
 
 				if ((c=mybuf_get( &esmtp_sockbuf )) != '\r')
 					break;
-				burp("\r", 1);
+				burp(info, "\r", 1);
 			}
 
 			if (c < 0)
@@ -252,10 +252,10 @@ unsigned cnt, i;
 			}
 			if (c == '\n')	break;	/* Seen CRLF */
 			cc=c;
-			burp(&cc, 1);
+			burp(info, &cc, 1);
 			continue;
 		}
-		swallow(i);
+		swallow(info, i);
 	}
 
 	socklinebuf[socklinesize]=0;
@@ -264,9 +264,9 @@ unsigned cnt, i;
 
 /* Copy stuff read from socket into the line buffer */
 
-static void swallow(unsigned l)
+static void swallow(struct esmtp_info *info, unsigned l)
 {
-	burp(mybuf_ptr( &esmtp_sockbuf ), l);
+	burp(info, mybuf_ptr( &esmtp_sockbuf ), l);
 
 	mybuf_ptr( &esmtp_sockbuf ) += l;
 	mybuf_ptrleft( &esmtp_sockbuf ) -= l;
@@ -274,7 +274,7 @@ static void swallow(unsigned l)
 
 /* Replies are collected into a fixed length line buffer. */
 
-static void burp(const char *p, unsigned n)
+static void burp(struct esmtp_info *info, const char *p, unsigned n)
 {
 	if (n > sizeof(socklinebuf)-1-socklinesize)
 		n=sizeof(socklinebuf)-1-socklinesize;
@@ -341,7 +341,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 	esmtp_init();
 	esmtp_timeout(info, info->helo_timeout);
 
-	if ((p=esmtp_readline()) == 0)	/* Wait for server first */
+	if ((p=esmtp_readline(info)) == 0)	/* Wait for server first */
 		return (1);
 
 	if (*p == '5')	/* Hard error */
@@ -352,7 +352,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 		while (!ISFINALLINE(p))	/* Skip multiline replies */
 		{
 			(*info->log_reply)(info, p, arg);
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 				return (1);
 				/* Caller will report the error */
 		}
@@ -371,7 +371,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 				break;
 
 			(*info->log_reply)(info, p, arg);
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 			{
 				return (1);
 			}
@@ -388,7 +388,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 
 	while (!ISFINALLINE(p))
 	{
-		if ((p=esmtp_readline()) == 0)
+		if ((p=esmtp_readline(info)) == 0)
 		{
 			(*info->log_talking)(info, arg);
 			return (1);
@@ -459,13 +459,13 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 	strncat(hellobuf, p, sizeof(hellobuf)-10);
 	strcat(hellobuf, "\r\n");
 
-	if (esmtp_writestr(hellobuf) || esmtp_writeflush())
+	if (esmtp_writestr(info, hellobuf) || esmtp_writeflush(info))
 	{
 		(*info->log_talking)(info, arg);
 		return (1);
 	}
 
-	if ((p=esmtp_readline()) == 0)
+	if ((p=esmtp_readline(info)) == 0)
 	{
 		(*info->log_talking)(info, arg);
 		return (1);
@@ -475,7 +475,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 	{
 		while (!ISFINALLINE(p))	/* Skip multiline error */
 		{
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 			{
 				(*info->log_talking)(info, arg);
 				return (1);
@@ -485,13 +485,13 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 		hellobuf[1]='E';
 
 		esmtp_timeout(info, info->helo_timeout);
-		if (esmtp_writestr(hellobuf) || esmtp_writeflush())
+		if (esmtp_writestr(info, hellobuf) || esmtp_writeflush(info))
 		{
 			(*info->log_talking)(info, arg);
 			return (1);
 		}
 
-		if ((p=esmtp_readline()) == 0)
+		if ((p=esmtp_readline(info)) == 0)
 		{
 			(*info->log_talking)(info, arg);
 			return (1);
@@ -505,7 +505,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 		while (!ISFINALLINE(p))
 		{
 			(*info->log_reply)(info, p, arg);
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 				return (1);
 		}
 		(*info->log_smtp_error)(info, p, 0, arg);
@@ -524,7 +524,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 	{
 		while (!ISFINALLINE(p))
 		{
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 			{
 				(*info->log_talking)(info, arg);
 				return (1);
@@ -543,7 +543,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 		const char *q;
 		unsigned l;
 
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 			{
 				(*info->log_talking)(info, arg);
 				return (1);
@@ -715,8 +715,8 @@ int esmtp_enable_tls(struct esmtp_info *info,
 
 	if (!smtps)
 	{
-		if (esmtp_writestr("STARTTLS\r\n") || esmtp_writeflush() ||
-		    (p=esmtp_readline()) == 0)
+		if (esmtp_writestr(info, "STARTTLS\r\n") || esmtp_writeflush(info) ||
+		    (p=esmtp_readline(info)) == 0)
 		{
 			(*info->log_talking)(info, arg);
 			(*info->log_smtp_error)(info, "Remote mail server disconnected after receiving the STARTTLS command", '4', arg);
@@ -735,7 +735,7 @@ int esmtp_enable_tls(struct esmtp_info *info,
 			while (!ISFINALLINE(p))
 			{
 				(*info->log_reply)(info, p, arg);
-				if ((p=esmtp_readline()) == 0)
+				if ((p=esmtp_readline(info)) == 0)
 					break;
 			}
 
@@ -973,7 +973,7 @@ int esmtp_auth(struct esmtp_info *info,
 	if (rc)
 		return (-1);
 
-	if ((p=esmtp_readline()) == 0)
+	if ((p=esmtp_readline(info)) == 0)
 	{
 		(*info->log_talking)(info, arg);
 		connect_error(info, arg);
@@ -987,7 +987,7 @@ int esmtp_auth(struct esmtp_info *info,
 		while (!ISFINALLINE(p))
 		{
 			(*info->log_reply)(info, p, arg);
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 			{
 				connection_closed(info, arg);
 				return (-1);
@@ -1005,7 +1005,7 @@ static const char *getresp(struct esmtp_auth_xinfo *x)
 {
 	struct esmtp_info *info=x->info;
 	void *arg=x->arg;
-	const char *p=esmtp_readline();
+	const char *p=esmtp_readline(info);
 
 	if (p && *p == '3')
 	{
@@ -1033,7 +1033,7 @@ static const char *getresp(struct esmtp_auth_xinfo *x)
 	while (!ISFINALLINE(p))
 	{
 		(*info->log_reply)(info, p, arg);
-		if ((p=esmtp_readline()) == 0)
+		if ((p=esmtp_readline(info)) == 0)
 		{
 			connection_closed(info, arg);
 			return (0);
@@ -1046,13 +1046,17 @@ static const char *getresp(struct esmtp_auth_xinfo *x)
 static const char *start_esmtpauth(const char *method, const char *arg,
 	void *voidp)
 {
+	struct esmtp_auth_xinfo *xinfo=(struct esmtp_auth_xinfo *)voidp;
+	struct esmtp_info *info=xinfo->info;
+
 	if (arg && !*arg)
 		arg="=";
 
-	if (esmtp_writestr("AUTH ") || esmtp_writestr(method) ||
-			(arg && (esmtp_writestr(" ") || esmtp_writestr(arg))) ||
-			esmtp_writestr("\r\n") ||
-		esmtp_writeflush())
+	if (esmtp_writestr(info, "AUTH ") || esmtp_writestr(info, method) ||
+			(arg && (esmtp_writestr(info, " ") ||
+				 esmtp_writestr(info, arg))) ||
+			esmtp_writestr(info, "\r\n") ||
+		esmtp_writeflush(info))
 		return (0);
 
 	return (getresp((struct esmtp_auth_xinfo *)voidp));
@@ -1060,14 +1064,21 @@ static const char *start_esmtpauth(const char *method, const char *arg,
 
 static const char *esmtpauth(const char *msg, void *voidp)
 {
-	if (esmtp_writestr(msg) || esmtp_writestr("\r\n") || esmtp_writeflush())
+	struct esmtp_auth_xinfo *xinfo=(struct esmtp_auth_xinfo *)voidp;
+	struct esmtp_info *info=xinfo->info;
+
+	if (esmtp_writestr(info, msg) || esmtp_writestr(info, "\r\n") || esmtp_writeflush(info))
 		return (0);
 	return (getresp((struct esmtp_auth_xinfo *)voidp));
 }
 
 static int final_esmtpauth(const char *msg, void *voidp)
 {
-	if (esmtp_writestr(msg) || esmtp_writestr("\r\n") || esmtp_writeflush())
+	struct esmtp_auth_xinfo *xinfo=(struct esmtp_auth_xinfo *)voidp;
+	struct esmtp_info *info=xinfo->info;
+
+	if (esmtp_writestr(info, msg) || esmtp_writestr(info, "\r\n") ||
+	    esmtp_writeflush(info))
 		return (AUTHSASL_CANCELLED);
 	return (0);
 }
@@ -1075,13 +1086,17 @@ static int final_esmtpauth(const char *msg, void *voidp)
 static int plain_esmtpauth(const char *method, const char *arg,
 	void *voidp)
 {
+	struct esmtp_auth_xinfo *xinfo=(struct esmtp_auth_xinfo *)voidp;
+	struct esmtp_info *info=xinfo->info;
+
 	if (arg && !*arg)
 		arg="=";
 
-	if (esmtp_writestr("AUTH ") || esmtp_writestr(method) ||
-			(arg && (esmtp_writestr(" ") || esmtp_writestr(arg))) ||
-			esmtp_writestr("\r\n") ||
-		esmtp_writeflush())
+	if (esmtp_writestr(info, "AUTH ") || esmtp_writestr(info, method) ||
+	    (arg && (esmtp_writestr(info, " ") ||
+		     esmtp_writestr(info, arg))) ||
+	    esmtp_writestr(info, "\r\n") ||
+	    esmtp_writeflush(info))
 		return (AUTHSASL_CANCELLED);
 
 	return (0);
@@ -1452,13 +1467,13 @@ void esmtp_quit(struct esmtp_info *info, void *arg)
 	if (!esmtp_connected(info))	return;
 
 	esmtp_timeout(info, info->quit_timeout);
-	if (esmtp_writestr("QUIT\r\n") || esmtp_writeflush())
+	if (esmtp_writestr(info, "QUIT\r\n") || esmtp_writeflush(info))
 	{
 		esmtp_disconnect(info);
 		return;
 	}
 
-	while ((p=esmtp_readline()) != 0 && !ISFINALLINE(p))
+	while ((p=esmtp_readline(info)) != 0 && !ISFINALLINE(p))
 		;
 
 	esmtp_disconnect(info);

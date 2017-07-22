@@ -212,7 +212,8 @@ void esmtpchild(unsigned childnum)
 			if ( sox_select(1, &fdr, 0, 0, &tv) > 0)
 				break;
 			esmtp_timeout(info, info->data_timeout);
-			if (esmtp_writestr("RSET\r\n") || esmtp_writeflush())
+			if (esmtp_writestr(info, "RSET\r\n") ||
+			    esmtp_writeflush(info))
 				break;
 
 			while ( (p=esmtp_readline()) != 0 && !ISFINALLINE(p))
@@ -359,7 +360,8 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	if (esmtp_connected(info))
 	{
 		esmtp_timeout(info, info->helo_timeout);
-		if (esmtp_writestr("RSET\r\n") == 0 && esmtp_writeflush() == 0)
+		if (esmtp_writestr(info, "RSET\r\n") == 0 &&
+		    esmtp_writeflush(info) == 0)
 		{
 			if (smtpreply(info, my_info, "RSET", -1))
 			{
@@ -815,7 +817,7 @@ static int smtpcommand(struct esmtp_info *info,
 	struct moduledel *del=my_info->del;
 	struct ctlfile *ctf=my_info->ctf;
 
-	if (esmtp_writestr(cmd) || esmtp_writeflush())
+	if (esmtp_writestr(info, cmd) || esmtp_writeflush(info))
 	{
 		if (!istalking)
 			talking(info, del, ctf);
@@ -1294,7 +1296,7 @@ int	read_flag, write_flag, *writeptr;
 		if (iovw == 0 || niovw == 0 || *niovw == 0)
 			writeptr=0;
 
-		esmtp_wait_rw(&read_flag, writeptr);
+		esmtp_wait_rw(info, &read_flag, writeptr);
 
 		if (write_flag)	/* We can squeeze something out now */
 		{
@@ -1450,7 +1452,8 @@ static int parsedatareply(struct esmtp_info *info,
 				*/
 			{
 				esmtp_timeout(info, info->data_timeout);
-				if (esmtp_writestr(".\r\n") || esmtp_writeflush())
+				if (esmtp_writestr(info, ".\r\n") ||
+				    esmtp_writeflush(info))
 					return (-1);
 				do
 				{
@@ -1638,7 +1641,8 @@ static int data_wait(struct esmtp_info *info, struct my_esmtp_info *my_info,
 		     int *rcptok)
 {
 	esmtp_timeout(info, info->data_timeout);
-	if (esmtp_dowrite(".\r\n", 3) || esmtp_writeflush())	return (-1);
+	if (esmtp_dowrite(info, ".\r\n", 3) ||
+	    esmtp_writeflush(info))	return (-1);
 
 	cork(0);
 
@@ -1703,7 +1707,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	talking(info, del, ctf);
 	esmtp_timeout(info, info->cmd_timeout);
 
-	if (esmtp_writestr(mailfroms) || esmtp_writeflush())
+	if (esmtp_writestr(info, mailfroms) || esmtp_writeflush(info))
 	{
 		connect_error(del, ctf);
 		sox_close(fd);
@@ -1815,13 +1819,13 @@ static int escape_dots(const char *msg, unsigned l, struct rw_for_esmtp *ptr)
 	{
 		if (ptr->is_sol && msg[i] == '.')
 		{
-			if ((rc=esmtp_dowrite(msg+j, i-j)) != 0 ||
-				(rc=esmtp_dowrite(".", 1)) != 0)
+			if ((rc=esmtp_dowrite(info, msg+j, i-j)) != 0 ||
+			    (rc=esmtp_dowrite(info, ".", 1)) != 0)
 				return (rc);
 			j=i;
 		}
 		ptr->is_sol= msg[i] == '\n' ? 1:0;
 	}
 
-	return (esmtp_dowrite(msg+j, i-j));
+	return (esmtp_dowrite(info, msg+j, i-j));
 }
