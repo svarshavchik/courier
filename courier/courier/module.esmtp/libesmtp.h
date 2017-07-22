@@ -71,9 +71,11 @@ struct esmtp_info {
 	int net_error;
 };
 
-struct esmtp_info *esmtp_info_alloc(const char *host);
-void esmtp_info_free(struct esmtp_info *);
+extern struct esmtp_info *esmtp_info_alloc(const char *host);
+extern void esmtp_info_free(struct esmtp_info *);
 
+extern int esmtp_connected(struct esmtp_info *);
+extern void esmtp_disconnect(struct esmtp_info *);
 extern void esmtp_init();
 extern void esmtp_timeout(struct esmtp_info *info, unsigned nsecs);
 extern int esmtp_sockfd;

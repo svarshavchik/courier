@@ -311,6 +311,19 @@ void esmtp_info_free(struct esmtp_info *p)
 	free(p);
 }
 
+int esmtp_connected(struct esmtp_info *info)
+{
+	return esmtp_sockfd >= 0;
+}
+
+void esmtp_disconnect(struct esmtp_info *info)
+{
+	if (esmtp_sockfd < 0)
+		return;
+	sox_close(esmtp_sockfd);
+	esmtp_sockfd= -1;
+}
+
 int esmtp_get_greeting(struct esmtp_info *info,
 		       void *arg)
 {

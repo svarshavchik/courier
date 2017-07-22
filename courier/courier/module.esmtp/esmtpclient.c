@@ -74,7 +74,7 @@ static int corked;
 	{\
 	int flag=(n);\
 \
-		if (esmtp_cork && esmtp_sockfd >= 0 && corked != flag) \
+		if (esmtp_cork && esmtp_connected(info) && corked != flag) \
 		{ \
 			setsockopt(esmtp_sockfd, SOL_TCP, TCP_CORK, &flag, \
 							sizeof(flag));\
@@ -218,7 +218,7 @@ void esmtpchild(unsigned childnum)
 		** so-so seconds
 		*/
 
-		while (esmtpkeepaliveping && esmtp_sockfd >= 0)
+		while (esmtpkeepaliveping && esmtp_connected(info))
 		{
 			FD_ZERO(&fdr);
 			FD_SET(0, &fdr);
@@ -241,7 +241,7 @@ void esmtpchild(unsigned childnum)
 			}
 		}
 	}
-	if (esmtp_sockfd >= 0 && info)
+	if (info && esmtp_connected(info))
 		quit(info, &my_info);
 
 	if (info)
@@ -389,7 +389,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	/* If we're connected, send a RSET to make sure the socket is working */
 
-	if (esmtp_sockfd >= 0)
+	if (esmtp_connected(info))
 	{
 		esmtp_timeout(info, helo_timeout);
 		if (esmtp_writestr("RSET\r\n") == 0 && esmtp_writeflush() == 0)
@@ -402,7 +402,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		}
 	}
 
-	if (esmtp_sockfd < 0 && info->net_timeout)
+	if (!esmtp_connected(info) && info->net_timeout)
 	{
 	time_t	t;
 
@@ -452,7 +452,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	** connection has not been secured, close it, so it can be reopened.
 	*/
 
-	if (esmtp_sockfd >= 0 && WANT_SECURITY(info) && !info->is_secure_connection)
+	if (esmtp_connected(info) && WANT_SECURITY(info) && !info->is_secure_connection)
 		quit(info, my_info);
 
 
@@ -462,7 +462,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 
 
-	if (esmtp_sockfd < 0)	/* First time, connect to a server */
+	if (!esmtp_connected(info))	/* First time, connect to a server */
 	{
 		struct rfc1035_mxlist *mxlist, *p, *q;
 		int static_route= info->smtproute != NULL;
@@ -600,8 +600,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 				if (local_sock_address(info, my_info) < 0)
 				{
-					sox_close(esmtp_sockfd);
-					esmtp_sockfd= -1;
+					esmtp_disconnect(info);
 					return;
 				}
 
@@ -612,8 +611,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 							     1,
 							     my_info))
 					{
-						sox_close(esmtp_sockfd);
-						esmtp_sockfd= -1;
+						esmtp_disconnect(info);
 						continue; /* Next MX, please */
 					}
 
@@ -682,9 +680,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 			if (errno)
 				info->net_error=errno;
 
-			if (esmtp_sockfd >= 0)
-				sox_close(esmtp_sockfd);
-			esmtp_sockfd= -1;
+			esmtp_disconnect(info);
 
 #if 0
 			if (p->next && p->priority == p->next->priority &&
@@ -700,7 +696,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		}
 
 		rfc1035_mxlist_free(mxlist);
-		if (esmtp_sockfd < 0)	/* Couldn't find an active server */
+		if (!esmtp_connected(info))	/* Couldn't find an active server */
 		{
 			if (!connection_attempt_made)
 				hard_error(del, ctf, "Did not find a suitable MX for a connection");
@@ -747,7 +743,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		{
 		char	*verp_sender;
 
-			if (i && esmtp_sockfd >= 0)	/* Call RSET in between */
+			if (i && esmtp_connected(info))	/* Call RSET in between */
 			{
 				if (rset(info, my_info))
 				{
@@ -755,7 +751,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 					continue;
 				}
 			}
-			if (esmtp_sockfd < 0)
+			if (!esmtp_connected(info))
 			{
 				connect_error(del, ctf);
 				continue;
@@ -1063,16 +1059,15 @@ static void quit(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
 const char *p;
 
-	if (esmtp_sockfd < 0)	return;
+	if (!esmtp_connected(info))	return;
 
 	esmtp_timeout(info, quit_timeout);
 	if (esmtp_writestr("QUIT\r\n") || esmtp_writeflush())	return;
 
 	while ((p=esmtp_readline()) != 0 && !ISFINALLINE(p))
 		;
-	if (esmtp_sockfd >= 0)
-		sox_close(esmtp_sockfd);
-	esmtp_sockfd= -1;
+
+	esmtp_disconnect(info);
 }
 
 /* Parse a reply to a SMTP command that applies to all recipients */
@@ -1437,7 +1432,8 @@ static char *rcptcmd(struct esmtp_info *info, struct my_esmtp_info *my_info,
 ** ( DATA is also pipelined! )
 */
 
-static const char *readpipelinercpt( struct iovec **, unsigned *);
+static const char *readpipelinercpt(struct esmtp_info *,
+				    struct iovec **, unsigned *);
 
 static int parsedatareply(struct esmtp_info *info,
 			  struct my_esmtp_info *my_info,
@@ -1501,7 +1497,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 
 		do
 		{
-			if ((p=readpipelinercpt( &iovw, &niovw)) == 0)
+			if ((p=readpipelinercpt(info, &iovw, &niovw)) == 0)
 				break;
 
 			if (line_num == 0)
@@ -1555,7 +1551,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 
 /* ------------------- Read the reply to the DATA ----------------- */
 
-	if (esmtp_sockfd >= 0)
+	if (esmtp_connected(info))
 	{
 		if (!info->haspipelining)	/* DATA hasn't been sent yet */
 		{
@@ -1573,7 +1569,7 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 			/* One more reply */
 	}
 
-	if (esmtp_sockfd < 0)
+	if (!esmtp_connected(info))
 	{
 		for (i=0; i<del->nreceipients; i++)
 		{
@@ -1614,13 +1610,13 @@ size_t	i=0;
 
 /* Read an SMTP reply line in pipeline mode */
 
-static const char *readpipelinercpt(
-		struct iovec **iovw,	/* Write pipeline */
-		unsigned *niovw)
+static const char *readpipelinercpt(struct esmtp_info *info,
+				    struct iovec **iovw,	/* Write pipeline */
+				    unsigned *niovw)
 {
 int	read_flag, write_flag, *writeptr;
 
-	if (esmtp_sockfd < 0)	return (0);
+	if (!esmtp_connected(info))	return (0);
 
 	if (mybuf_more(&esmtp_sockbuf))
 		return (esmtp_readline());	/* We have the reply buffered */
@@ -1640,8 +1636,7 @@ int	read_flag, write_flag, *writeptr;
 
 			if (n < 0)
 			{
-				sox_close(esmtp_sockfd);
-				esmtp_sockfd=-1;
+				esmtp_disconnect(info);
 				return (0);
 			}
 
@@ -1661,7 +1656,7 @@ int	read_flag, write_flag, *writeptr;
 				--*niovw;
 			}
 		}
-	} while (!read_flag && esmtp_sockfd >= 0);
+	} while (!read_flag && esmtp_connected(info));
 
 	return (esmtp_readline());
 }
@@ -1713,7 +1708,7 @@ static int parsedatareply(struct esmtp_info *info,
 	unsigned line_num=0;
 	unsigned i;
 
-	p=readpipelinercpt(iovw, niovw);
+	p=readpipelinercpt(info, iovw, niovw);
 
 	if (!p)	return (-1);
 
@@ -1983,7 +1978,7 @@ static int data_wait(struct esmtp_info *info, struct my_esmtp_info *my_info,
 
 	(void)parsedatareply(info, my_info, rcptok, 0, 0, 1);
 
-	if (esmtp_sockfd < 0)	return (-1);
+	if (!esmtp_connected(info))	return (-1);
 	return (0);
 }
 
