@@ -69,7 +69,7 @@ static int corked;
 \
 		if (esmtp_cork && esmtp_connected(info) && corked != flag) \
 		{ \
-			setsockopt(esmtp_sockfd, SOL_TCP, TCP_CORK, &flag, \
+			setsockopt(info->esmtp_sockfd, SOL_TCP, TCP_CORK, &flag, \
 							sizeof(flag));\
 		} \
 		corked=flag;\
@@ -98,10 +98,6 @@ void rfc2045_error(const char *p)
 	_exit(1);
 }
 
-static void setconfig()
-{
-}
-
 static struct esmtp_info *libesmtp_init(const char *host);
 
 static void libesmtp_deinit(struct esmtp_info *info);
@@ -125,9 +121,6 @@ void esmtpchild(unsigned childnum)
 
 	if (chdir(courierdir()))
 		clog_msg_errno();
-	esmtp_sockfd= -1;
-
-	setconfig();
 
 #ifdef	TCP_CORK
 
@@ -172,8 +165,12 @@ void esmtpchild(unsigned childnum)
 
 			if (changed_vhosts)
 			{
-				esmtp_quit(info, &my_info);
-				setconfig();
+				if (info)
+				{
+					esmtp_quit(info, &my_info);
+					libesmtp_deinit(info);
+					info=NULL;
+				}
 			}
 
 			if (!info)
@@ -216,7 +213,7 @@ void esmtpchild(unsigned childnum)
 			    esmtp_writeflush(info))
 				break;
 
-			while ( (p=esmtp_readline()) != 0 && !ISFINALLINE(p))
+			while ( (p=esmtp_readline(info)) != 0 && !ISFINALLINE(p))
 				;
 
 			if (p == 0)
@@ -751,7 +748,7 @@ static int smtpreply(struct esmtp_info *info,
 	const char *p;
 	unsigned line_num;
 
-	if ((p=esmtp_readline()) == 0)
+	if ((p=esmtp_readline(info)) == 0)
 	{
 		if (istalking < 0)	return (0);
 
@@ -782,7 +779,7 @@ static int smtpreply(struct esmtp_info *info,
 				reply(del, ctf, p);
 				++line_num;
 			}
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 			{
 				connect_error(del, ctf);
 				esmtp_quit(info, my_info);
@@ -795,7 +792,7 @@ static int smtpreply(struct esmtp_info *info,
 
 	while (!ISFINALLINE(p))
 	{
-		if ((p=esmtp_readline()) == 0)
+		if ((p=esmtp_readline(info)) == 0)
 		{
 			if (!istalking || istalking < 0)
 				talking(info, del, ctf);
@@ -1286,8 +1283,8 @@ int	read_flag, write_flag, *writeptr;
 
 	if (!esmtp_connected(info))	return (0);
 
-	if (mybuf_more(&esmtp_sockbuf))
-		return (esmtp_readline());	/* We have the reply buffered */
+	if (mybuf_more(&info->esmtp_sockbuf))
+		return (esmtp_readline(info));	/* We have the reply buffered */
 
 	do
 	{
@@ -1300,7 +1297,7 @@ int	read_flag, write_flag, *writeptr;
 
 		if (write_flag)	/* We can squeeze something out now */
 		{
-		int	n=my_writev(esmtp_sockfd, *iovw, *niovw);
+		int	n=my_writev(info->esmtp_sockfd, *iovw, *niovw);
 
 			if (n < 0)
 			{
@@ -1326,7 +1323,7 @@ int	read_flag, write_flag, *writeptr;
 		}
 	} while (!read_flag && esmtp_connected(info));
 
-	return (esmtp_readline());
+	return (esmtp_readline(info));
 }
 
 /***************************************************************************/
@@ -1415,7 +1412,7 @@ static int parsedatareply(struct esmtp_info *info,
 				++line_num;
 			}
 			if (ISFINALLINE(p))	break;
-			if ((p=esmtp_readline()) == 0)
+			if ((p=esmtp_readline(info)) == 0)
 				return (-1);
 		}
 
@@ -1457,7 +1454,7 @@ static int parsedatareply(struct esmtp_info *info,
 					return (-1);
 				do
 				{
-					p=esmtp_readline();
+					p=esmtp_readline(info);
 					if (!p)	return (-1);
 				} while (!ISFINALLINE(p));
 				return (-1);
@@ -1515,7 +1512,7 @@ static int parsedatareply(struct esmtp_info *info,
 			}
 			break;
 		}
-		if ((p=esmtp_readline()) == 0)
+		if ((p=esmtp_readline(info)) == 0)
 			return (-1);
 	}
 	return (-1);
@@ -1543,7 +1540,7 @@ static int parseexdatareply(struct esmtp_info *info,
 
 	/* i is the next recipient that's getting an extended reply */
 
-	for (;;p=esmtp_readline())
+	for (;;p=esmtp_readline(info))
 	{
 		if (!p)	return (-1);
 

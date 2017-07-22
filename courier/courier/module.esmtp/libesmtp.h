@@ -29,7 +29,7 @@
 
 #include	<ctype.h>
 
-#define	ISFINALLINE(p)	( isdigit((int)(unsigned char)p[0]) && \
+#define	ISFINALLINE(p)	( isdigit((int)(unsigned char)p[0]) &&	\
 			isdigit((int)(unsigned char)p[1]) && \
 			isdigit((int)(unsigned char)p[2]) \
 				&& p[3] == ' ')
@@ -59,6 +59,7 @@ struct esmtp_info {
 	char *host;
 	char *smtproute;
 	int smtproutes_flags;
+	int esmtp_sockfd;
 
 	time_t esmtpkeepaliveping;
 	time_t quit_timeout;
@@ -87,7 +88,7 @@ struct esmtp_info {
 	char *authsasllist;
 	int auth_error_sent;
 	int quit_needed;
-
+	time_t	esmtp_timeout_time;
 
 	time_t net_timeout;
 	/*
@@ -95,6 +96,15 @@ struct esmtp_info {
 	** any new connections.
 	*/
 	int net_error;
+
+	struct mybuf esmtp_sockbuf;
+
+	char socklinebuf[sizeof(((struct mybuf *)0)->buffer)+1];
+	unsigned socklinesize;
+
+	char esmtp_writebuf[BUFSIZ];
+	char *esmtp_writebufptr;
+	unsigned esmtp_writebufleft;
 };
 
 extern struct esmtp_info *esmtp_info_alloc(const char *host);
@@ -102,22 +112,16 @@ extern void esmtp_info_free(struct esmtp_info *);
 
 extern int esmtp_connected(struct esmtp_info *);
 extern void esmtp_disconnect(struct esmtp_info *);
-extern void esmtp_init();
+extern void esmtp_init(struct esmtp_info *);
 extern void esmtp_timeout(struct esmtp_info *info, unsigned nsecs);
-extern int esmtp_sockfd;
-extern time_t	esmtp_timeout_time;
-extern struct mybuf esmtp_sockbuf;
 extern void esmtp_wait_rw(struct esmtp_info *info, int *waitr, int *waitw);
 extern int esmtp_wait_read(struct esmtp_info *info);
 extern int esmtp_wait_write(struct esmtp_info *info);
 extern int esmtp_writeflush(struct esmtp_info *info);
 extern int esmtp_dowrite(struct esmtp_info *info, const char *, unsigned);
 extern int esmtp_writestr(struct esmtp_info *info, const char *);
-extern char esmtp_writebuf[BUFSIZ];
-extern char *esmtp_writebufptr;
-extern unsigned esmtp_writebufleft;
 
-extern const char *esmtp_readline();
+extern const char *esmtp_readline(struct esmtp_info *info);
 
 extern int esmtp_helo(struct esmtp_info *info, int using_tls,
 		      void *arg);

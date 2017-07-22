@@ -20,13 +20,6 @@
 #include	"tcpd/tlsclient.h"
 #include	<courierauthsaslclient.h>
 
-int esmtp_sockfd;
-time_t	esmtp_timeout_time;
-struct mybuf esmtp_sockbuf;
-char esmtp_writebuf[BUFSIZ];
-char *esmtp_writebufptr;
-unsigned esmtp_writebufleft;
-
 static void connect_error(struct esmtp_info *info, void *arg)
 {
 	(*info->log_smtp_error)(info,
@@ -37,19 +30,19 @@ static void connect_error(struct esmtp_info *info, void *arg)
 				: strerror(errno), '4', arg);
 }
 
-void esmtp_init()
+void esmtp_init(struct esmtp_info *info)
 {
-	mybuf_init(&esmtp_sockbuf, esmtp_sockfd);
-	esmtp_writebufptr=esmtp_writebuf;
-	esmtp_writebufleft=sizeof(esmtp_writebuf);
+	mybuf_init(&info->esmtp_sockbuf, info->esmtp_sockfd);
+	info->esmtp_writebufptr=info->esmtp_writebuf;
+	info->esmtp_writebufleft=sizeof(info->esmtp_writebuf);
 }
 
 /* Set the timeout */
 
 void esmtp_timeout(struct esmtp_info *info, unsigned nsecs)
 {
-	time(&esmtp_timeout_time);
-	esmtp_timeout_time += nsecs;
+	time(&info->esmtp_timeout_time);
+	info->esmtp_timeout_time += nsecs;
 }
 
 /* Flush out anything that's waiting to be written out */
@@ -61,30 +54,30 @@ int	i;
 
 	if (esmtp_wait_write(info))
 	{
-		if (esmtp_sockfd >= 0)
-			sox_close(esmtp_sockfd);
-		esmtp_sockfd= -1;
+		if (info->esmtp_sockfd >= 0)
+			sox_close(info->esmtp_sockfd);
+		info->esmtp_sockfd= -1;
 		return;
 	}
-	if ((n=sox_write(esmtp_sockfd, esmtp_writebuf, esmtp_writebufptr-esmtp_writebuf)) <= 0)
+	if ((n=sox_write(info->esmtp_sockfd, info->esmtp_writebuf, info->esmtp_writebufptr-info->esmtp_writebuf)) <= 0)
 	{
-		if (esmtp_sockfd >= 0)
-			sox_close(esmtp_sockfd);
-		esmtp_sockfd= -1;
+		if (info->esmtp_sockfd >= 0)
+			sox_close(info->esmtp_sockfd);
+		info->esmtp_sockfd= -1;
 		return;
 	}
 
-	for (i=n; esmtp_writebuf+i < esmtp_writebufptr; i++)
-		esmtp_writebuf[i-n]=esmtp_writebuf[i];
-	esmtp_writebufptr -= n;
-	esmtp_writebufleft += n;
+	for (i=n; info->esmtp_writebuf+i < info->esmtp_writebufptr; i++)
+		info->esmtp_writebuf[i-n]=info->esmtp_writebuf[i];
+	info->esmtp_writebufptr -= n;
+	info->esmtp_writebufleft += n;
 }
 
 int esmtp_writeflush(struct esmtp_info *info)
 {
-	while (esmtp_writebufptr > esmtp_writebuf && esmtp_sockfd >= 0)
+	while (info->esmtp_writebufptr > info->esmtp_writebuf && info->esmtp_sockfd >= 0)
 		doflush(info);
-	if (esmtp_sockfd < 0)	return (-1);
+	if (info->esmtp_sockfd < 0)	return (-1);
 	return (0);
 }
 
@@ -97,23 +90,23 @@ int esmtp_dowrite(struct esmtp_info *info, const char *p, unsigned l)
 	{
 	int n;
 
-		if (esmtp_sockfd < 0)	return (-1);
+		if (info->esmtp_sockfd < 0)	return (-1);
 
-		if (esmtp_writebufleft == 0)
+		if (info->esmtp_writebufleft == 0)
 		{
 			doflush(info);
 			continue;
 		}
-		if (esmtp_writebufleft < l)
-			n=esmtp_writebufleft;
+		if (info->esmtp_writebufleft < l)
+			n=info->esmtp_writebufleft;
 		else
 			n=l;
 
-		memcpy(esmtp_writebufptr, p, n);
+		memcpy(info->esmtp_writebufptr, p, n);
 		p += n;
 		l -= n;
-		esmtp_writebufptr += n;
-		esmtp_writebufleft -= n;
+		info->esmtp_writebufptr += n;
+		info->esmtp_writebufleft -= n;
 	}
 	return (0);
 }
@@ -130,12 +123,12 @@ time_t	current_time;
 	if (waitr)	*waitr=0;
 	if (waitw)	*waitw=0;
 
-	if (current_time >= esmtp_timeout_time || esmtp_sockfd < 0)
+	if (current_time >= info->esmtp_timeout_time || info->esmtp_sockfd < 0)
 	{
 		errno=ETIMEDOUT;
-		if (esmtp_sockfd >= 0)
-			sox_close(esmtp_sockfd);
-		esmtp_sockfd= -1;
+		if (info->esmtp_sockfd >= 0)
+			sox_close(info->esmtp_sockfd);
+		info->esmtp_sockfd= -1;
 		return;
 	}
 
@@ -143,26 +136,26 @@ time_t	current_time;
 	FD_ZERO(&fdw);
 
 	if (waitr)
-		FD_SET(esmtp_sockbuf.fd, &fdr);
+		FD_SET(info->esmtp_sockbuf.fd, &fdr);
 
 	if (waitw)
-		FD_SET(esmtp_sockbuf.fd, &fdw);
+		FD_SET(info->esmtp_sockbuf.fd, &fdw);
 
-	tv.tv_sec= esmtp_timeout_time - current_time;
+	tv.tv_sec= info->esmtp_timeout_time - current_time;
 	tv.tv_usec=0;
 
-	if ( sox_select(esmtp_sockbuf.fd+1, &fdr, &fdw, 0, &tv) > 0)
+	if ( sox_select(info->esmtp_sockbuf.fd+1, &fdr, &fdw, 0, &tv) > 0)
 	{
-		if (waitw && FD_ISSET(esmtp_sockbuf.fd, &fdw))
+		if (waitw && FD_ISSET(info->esmtp_sockbuf.fd, &fdw))
 			*waitw=1;
-		if (waitr && FD_ISSET(esmtp_sockbuf.fd, &fdr))
+		if (waitr && FD_ISSET(info->esmtp_sockbuf.fd, &fdr))
 			*waitr=1;
 		return;
 	}
 
 	errno=ETIMEDOUT;
-	sox_close(esmtp_sockfd);
-	esmtp_sockfd= -1;
+	sox_close(info->esmtp_sockfd);
+	info->esmtp_sockfd= -1;
 }
 
 int esmtp_writestr(struct esmtp_info *info, const char *p)
@@ -188,9 +181,6 @@ int esmtp_wait_write(struct esmtp_info *info)
 }
 
 
-static char socklinebuf[sizeof(esmtp_sockbuf.buffer)+1];
-static unsigned socklinesize=0;
-
 static void swallow(struct esmtp_info *info, unsigned);
 static void burp(struct esmtp_info *info, const char *, unsigned);
 
@@ -203,27 +193,27 @@ char	cc;
 char	*p;
 unsigned cnt, i;
 
-	socklinesize=0;
-	if (esmtp_sockfd < 0)	return (0);
+	info->socklinesize=0;
+	if (info->esmtp_sockfd < 0)	return (0);
 	for (;;)
 	{
-		p=mybuf_ptr( &esmtp_sockbuf );
-		cnt=mybuf_ptrleft( &esmtp_sockbuf );
+		p=mybuf_ptr( &info->esmtp_sockbuf );
+		cnt=mybuf_ptrleft( &info->esmtp_sockbuf );
 		if (cnt == 0)
 		{
 			if (esmtp_wait_read(info))	return (0);
 
 			/* Check for unexpected shutdown */
 
-			if ((c=mybuf_get( &esmtp_sockbuf )) < 0)
+			if ((c=mybuf_get( &info->esmtp_sockbuf )) < 0)
 			{
-				sox_close(esmtp_sockfd);
-				esmtp_sockfd= -1;
+				sox_close(info->esmtp_sockfd);
+				info->esmtp_sockfd= -1;
 				errno=ECONNRESET;
 				return (0);
 			}
-			p = --mybuf_ptr( &esmtp_sockbuf );
-			cnt = ++mybuf_ptrleft( &esmtp_sockbuf );
+			p = --mybuf_ptr( &info->esmtp_sockbuf );
+			cnt = ++mybuf_ptrleft( &info->esmtp_sockbuf );
 		}
 		for (i=0; i<cnt; i++)
 			if (p[i] == '\r')
@@ -232,22 +222,22 @@ unsigned cnt, i;
 		if (i < cnt)
 		{
 			swallow(info, i);
-			(void)mybuf_get( &esmtp_sockbuf );	/* Skip the CR */
+			(void)mybuf_get( &info->esmtp_sockbuf );	/* Skip the CR */
 
 			for (;;)	/* Skip continuous CRs */
 			{
-				if (mybuf_ptrleft( &esmtp_sockbuf ) == 0 &&
+				if (mybuf_ptrleft( &info->esmtp_sockbuf ) == 0 &&
 				    esmtp_wait_read(info))	return (0);
 
-				if ((c=mybuf_get( &esmtp_sockbuf )) != '\r')
+				if ((c=mybuf_get( &info->esmtp_sockbuf )) != '\r')
 					break;
 				burp(info, "\r", 1);
 			}
 
 			if (c < 0)
 			{
-				sox_close(esmtp_sockfd);
-				esmtp_sockfd= -1;
+				sox_close(info->esmtp_sockfd);
+				info->esmtp_sockfd= -1;
 				return (0);
 			}
 			if (c == '\n')	break;	/* Seen CRLF */
@@ -258,28 +248,28 @@ unsigned cnt, i;
 		swallow(info, i);
 	}
 
-	socklinebuf[socklinesize]=0;
-	return (socklinebuf);
+	info->socklinebuf[info->socklinesize]=0;
+	return (info->socklinebuf);
 }
 
 /* Copy stuff read from socket into the line buffer */
 
 static void swallow(struct esmtp_info *info, unsigned l)
 {
-	burp(info, mybuf_ptr( &esmtp_sockbuf ), l);
+	burp(info, mybuf_ptr( &info->esmtp_sockbuf ), l);
 
-	mybuf_ptr( &esmtp_sockbuf ) += l;
-	mybuf_ptrleft( &esmtp_sockbuf ) -= l;
+	mybuf_ptr( &info->esmtp_sockbuf ) += l;
+	mybuf_ptrleft( &info->esmtp_sockbuf ) -= l;
 }
 
 /* Replies are collected into a fixed length line buffer. */
 
 static void burp(struct esmtp_info *info, const char *p, unsigned n)
 {
-	if (n > sizeof(socklinebuf)-1-socklinesize)
-		n=sizeof(socklinebuf)-1-socklinesize;
-	memcpy(socklinebuf+socklinesize, p, n);
-	socklinesize += n;
+	if (n > sizeof(info->socklinebuf)-1-info->socklinesize)
+		n=sizeof(info->socklinebuf)-1-info->socklinesize;
+	memcpy(info->socklinebuf+info->socklinesize, p, n);
+	info->socklinesize += n;
 }
 
 struct esmtp_info *esmtp_info_alloc(const char *host)
@@ -295,6 +285,7 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 	if (!p->host)
 		abort();
 
+	p->esmtp_sockfd= -1;
 	p->smtproute=smtproutes(p->host, &p->smtproutes_flags);
 
 	p->esmtpkeepaliveping=0;
@@ -310,6 +301,7 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 
 void esmtp_info_free(struct esmtp_info *p)
 {
+	esmtp_disconnect(p);
 	if (p->authsasllist)
 		free(p->authsasllist);
 	if (p->smtproute)
@@ -322,15 +314,15 @@ void esmtp_info_free(struct esmtp_info *p)
 
 int esmtp_connected(struct esmtp_info *info)
 {
-	return esmtp_sockfd >= 0;
+	return info->esmtp_sockfd >= 0;
 }
 
 void esmtp_disconnect(struct esmtp_info *info)
 {
-	if (esmtp_sockfd < 0)
+	if (info->esmtp_sockfd < 0)
 		return;
-	sox_close(esmtp_sockfd);
-	esmtp_sockfd= -1;
+	sox_close(info->esmtp_sockfd);
+	info->esmtp_sockfd= -1;
 }
 
 int esmtp_get_greeting(struct esmtp_info *info,
@@ -338,7 +330,7 @@ int esmtp_get_greeting(struct esmtp_info *info,
 {
 	const char *p;
 
-	esmtp_init();
+	esmtp_init(info);
 	esmtp_timeout(info, info->helo_timeout);
 
 	if ((p=esmtp_readline(info)) == 0)	/* Wait for server first */
@@ -757,7 +749,7 @@ int esmtp_enable_tls(struct esmtp_info *info,
 	strcat(strcpy(localfd_buf, "-localfd="),
 	       libmail_str_size_t(pipefd[1], miscbuf));
 	strcat(strcpy(remotefd_buf, "-remotefd="),
-	       libmail_str_size_t(esmtp_sockfd, miscbuf));
+	       libmail_str_size_t(info->esmtp_sockfd, miscbuf));
 
 	p=getenv("ESMTP_TLS_VERIFY_DOMAIN");
 
@@ -790,8 +782,8 @@ int esmtp_enable_tls(struct esmtp_info *info,
 			(*info->log_talking)(info, arg);
 			(*info->log_sent)(info, "STARTTLS", arg);
 			(*info->log_smtp_error)(info, fail, 0, arg);
-			sox_close(esmtp_sockfd);
-			esmtp_sockfd= -1;
+			sox_close(info->esmtp_sockfd);
+			info->esmtp_sockfd= -1;
 			close(pipefd[0]);
 			close(pipefd[1]);
 			return (-1);
@@ -833,11 +825,11 @@ int esmtp_enable_tls(struct esmtp_info *info,
 	if (verify_domain)
 		free(verify_domain);
 
-	close(esmtp_sockfd);
-	esmtp_sockfd=pipefd[0];
+	close(info->esmtp_sockfd);
+	info->esmtp_sockfd=pipefd[0];
 	close(pipefd[1]);
 
-	if (!n && fcntl(esmtp_sockfd, F_SETFL, O_NONBLOCK))
+	if (!n && fcntl(info->esmtp_sockfd, F_SETFL, O_NONBLOCK))
 	{
 		perror("fcntl");
 		n= -1;
@@ -855,8 +847,8 @@ int esmtp_enable_tls(struct esmtp_info *info,
 			      ? "500 ":"400 "),
 		       cinfo.errmsg);
 		(*info->log_smtp_error)(info, tmperrbuf, 0, arg);
-		sox_close(esmtp_sockfd);
-		esmtp_sockfd= -1;
+		sox_close(info->esmtp_sockfd);
+		info->esmtp_sockfd= -1;
 		couriertls_destroy(&cinfo);
 		return (-1);
 	}
@@ -864,7 +856,7 @@ int esmtp_enable_tls(struct esmtp_info *info,
 
 	/* Reset the socket buffer structure given the new filedescriptor */
 
-	esmtp_init();
+	esmtp_init(info);
 
 	/* Ask again for an EHLO, because the capabilities may differ now */
 
@@ -1180,7 +1172,7 @@ static int local_sock_address(struct esmtp_info *info,
 	socklen_t i;
 
 	i=sizeof(lsin);
-	if (sox_getsockname(esmtp_sockfd, (struct sockaddr *)&lsin, &i) ||
+	if (sox_getsockname(info->esmtp_sockfd, (struct sockaddr *)&lsin, &i) ||
 	    rfc1035_sockaddrip(&lsin, i, &info->laddr))
 	{
 		(*info->log_smtp_error)(info,
@@ -1310,15 +1302,15 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 		info->sockfdaddrname=strdup(p->hostname);	/* Save this for later */
 
 		info->is_secure_connection=0;
-		if ((esmtp_sockfd=rfc1035_mksocket(SOCK_STREAM, 0, &af))
+		if ((info->esmtp_sockfd=rfc1035_mksocket(SOCK_STREAM, 0, &af))
 		    >= 0 &&
 		    rfc1035_mkaddress(af, &addrbuf, &addr, port,
 				      &addrptr, &addrptrlen) == 0 &&
 		    get_sourceaddr(info, af, &addr, &saddrbuf, &saddrptr,
 				   &saddrptrlen, arg) == 0 &&
-		    rfc1035_bindsource(esmtp_sockfd, saddrptr,
+		    rfc1035_bindsource(info->esmtp_sockfd, saddrptr,
 				       saddrptrlen) == 0 &&
-		    s_connect(esmtp_sockfd, addrptr, addrptrlen,
+		    s_connect(info->esmtp_sockfd, addrptr, addrptrlen,
 			      info->connect_timeout) == 0)
 		{
 			/*
