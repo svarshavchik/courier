@@ -231,7 +231,7 @@ void esmtpchild(unsigned childnum)
 		libesmtp_deinit(info);
 }
 
-static void connect_error(struct moduledel *, struct ctlfile *);
+static void connect_error1(struct moduledel *del, struct ctlfile *ctf, int n);
 
 static int rset(struct esmtp_info *, struct my_esmtp_info *);
 static void push(struct esmtp_info *, struct my_esmtp_info *);
@@ -375,7 +375,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		{
 			errno=info->net_error;
 			if (!errno)	errno=ENETDOWN;
-			connect_error(del, ctf);
+			connect_error1(del, ctf, -1);
 			return;
 		}
 		info->net_timeout=0;
@@ -461,7 +461,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 			}
 			if (!esmtp_connected(info))
 			{
-				connect_error(del, ctf);
+				connect_error1(del, ctf, i);
 				continue;
 			}
 
@@ -516,7 +516,7 @@ static void smtp_error(struct moduledel *del, struct ctlfile *ctf,
 {
 	if (!msg)
 	{
-		connect_error(del, ctf);
+		connect_error1(del, ctf, -1);
 		return;
 	}
 
@@ -595,16 +595,21 @@ static void connect_error1(struct moduledel *del, struct ctlfile *ctf, int n)
 		soft_error1(del, ctf, "Connection closed by remote host.", n);
 }
 
-static void connect_error(struct moduledel *del, struct ctlfile *ctf)
-{
-	connect_error1(del, ctf, -1);
-}
-
 /* Log reply received */
 
-static void smtp_msg(struct moduledel *del, struct ctlfile *ctf)
+static void smtp_msg(struct moduledel *del, struct ctlfile *ctf,
+		     int rcpt_num)
 {
-unsigned	i;
+	unsigned	i;
+
+	if (rcpt_num >= 0 && rcpt_num < del->nreceipients)
+	{
+		ctlfile_append_connectioninfo
+			(ctf,
+			 (unsigned)atol(del->receipients[rcpt_num*2]),
+			 COMCTLFILE_DELINFO_REPLYTYPE, "smtp");
+		return;
+	}
 
 	for (i=0; i<del->nreceipients; i++)
 		ctlfile_append_connectioninfo(ctf,
@@ -612,9 +617,19 @@ unsigned	i;
 			COMCTLFILE_DELINFO_REPLYTYPE, "smtp");
 }
 
-static void reply(struct moduledel *del, struct ctlfile *ctf, const char *msg)
+static void reply(struct moduledel *del, struct ctlfile *ctf, const char *msg,
+		  int rcpt_num)
 {
-unsigned        i;
+	unsigned        i;
+
+	if (rcpt_num >= 0 && rcpt_num < del->nreceipients)
+	{
+		ctlfile_append_connectioninfo
+			(ctf,
+			 (unsigned)atol(del->receipients[rcpt_num*2]),
+			 COMCTLFILE_DELINFO_REPLY, msg);
+		return;
+	}
 
 	for (i=0; i<del->nreceipients; i++)
 		ctlfile_append_connectioninfo(ctf,
@@ -624,9 +639,18 @@ unsigned        i;
 
 /* Log the command sent to remote server */
 
-static void sent(struct moduledel *del, struct ctlfile *ctf, const char *msg)
+static void sent(struct moduledel *del, struct ctlfile *ctf, const char *msg,
+		 int rcpt_num)
 {
-unsigned        i;
+	unsigned        i;
+
+	if (rcpt_num >= 0 && rcpt_num < del->nreceipients)
+	{
+		ctlfile_append_connectioninfo(ctf,
+			(unsigned)atol(del->receipients[rcpt_num*2]),
+				COMCTLFILE_DELINFO_SENT, msg);
+		return;
+	}
 
 	for (i=0; i<del->nreceipients; i++)
 		ctlfile_append_connectioninfo(ctf,
@@ -651,32 +675,51 @@ static void log_talking(struct esmtp_info *info, void *arg)
 	talking(info, my_info->del, my_info->ctf);
 }
 
-static void log_sent(struct esmtp_info *ingo, const char *str, void *arg)
+static void log_sent(struct esmtp_info *ingo, const char *str,
+		     int rcpt_num,
+		     void *arg)
 {
 	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
 
-	sent(my_info->del, my_info->ctf, str);
-	smtp_msg(my_info->del, my_info->ctf);
+	sent(my_info->del, my_info->ctf, str, rcpt_num);
+	smtp_msg(my_info->del, my_info->ctf, rcpt_num);
 }
 
-static void log_reply(struct esmtp_info *info, const char *str, void *arg)
+static void log_reply(struct esmtp_info *info, const char *str,
+		      int rcpt_num, void *arg)
 {
 	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
 
 	if (my_info->log_line_num > 10)
 		return; // Log only the first ten lines of a response.
 	++my_info->log_line_num;
-	reply(my_info->del, my_info->ctf, str);
+	reply(my_info->del, my_info->ctf, str, rcpt_num);
 }
 
 static void log_smtp_error(struct esmtp_info *info,
-			   const char *msg, int errcode, void *arg)
+			   const char *msg,
+			   int errcode,
+			   void *arg)
 {
 	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
 
 	smtp_error(my_info->del, my_info->ctf, msg, errcode);
 }
 
+static void log_rcpt_error(struct esmtp_info *info, int n, int errcode,
+			   void *arg)
+{
+	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
+
+	if (SMTPREPLY_TYPE(&errcode) == COMCTLFILE_DELFAIL)
+	{
+		hard_error1(my_info->del, my_info->ctf, 0, n);
+	}
+	else
+	{
+		soft_error1(my_info->del, my_info->ctf, 0, n);
+	}
+}
 
 static int lookup_broken_starttls(struct esmtp_info *info,
 				  const char *hostname,
@@ -710,6 +753,7 @@ static struct esmtp_info *libesmtp_init(const char *host)
 	info->log_sent= &log_sent;
 	info->log_reply= &log_reply;
 	info->log_smtp_error= &log_smtp_error;
+	info->log_rcpt_error= &log_rcpt_error;
 	info->lookup_broken_starttls= &lookup_broken_starttls;
 	info->report_broken_starttls= &do_report_broken_starttls;
 	info->get_sourceaddr= &get_sourceaddr;
@@ -899,9 +943,10 @@ static int parsedatareply(struct esmtp_info *info,
 			  int *, char **, size_t *, int);
 
 static int do_pipeline_rcpt_2(struct esmtp_info *info,
-			    struct my_esmtp_info *my_info,
-			    int *rcptok,
-			    char *rcpt_data_cmd);
+			      struct my_esmtp_info *my_info,
+			      int *rcptok,
+			      size_t nrecipients,
+			      char *rcpt_data_cmd);
 
 static int do_pipeline_rcpt(struct esmtp_info *info,
 			    struct my_esmtp_info *my_info,
@@ -909,7 +954,9 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 {
 	char *buf=mk_rcpt_data(info, my_info->del, my_info->ctf);
 
-	int rc=do_pipeline_rcpt_2(info, my_info, rcptok, buf);
+	int rc=do_pipeline_rcpt_2(info, my_info, rcptok,
+				  my_info->del->nreceipients,
+				  buf);
 
 	free(buf);
 	return rc;
@@ -918,11 +965,10 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 static int do_pipeline_rcpt_2(struct esmtp_info *info,
 			      struct my_esmtp_info *my_info,
 			      int *rcptok,
+			      size_t nrecipients,
 			      char *rcpt_data_cmd)
 {
 	const char *p;
-	struct moduledel *del=my_info->del;
-	struct ctlfile *ctf=my_info->ctf;
 	size_t l=strlen(rcpt_data_cmd);
 	size_t i;
 	int	rc=0;
@@ -934,7 +980,7 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 
 	/* Read replies for the RCPT TO commands */
 
-	for (i=0; i<del->nreceipients; i++)
+	for (i=0; i<nrecipients; i++)
 	{
 		char	err_code=0;
 		unsigned line_num=0;
@@ -1001,24 +1047,17 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 				// Should be the \r
 
 				this_rcpt_to_cmd[this_rcpt_to_len]=0;
-				ctlfile_append_connectioninfo(ctf,
-					(unsigned)atol(del->receipients[i*2]),
-					COMCTLFILE_DELINFO_SENT,
-					this_rcpt_to_cmd);
+
+				(*info->log_sent)(info, this_rcpt_to_cmd,
+						  i, my_info);
 				this_rcpt_to_cmd[this_rcpt_to_len]=save;
-				ctlfile_append_connectioninfo(ctf,
-					(unsigned)atol(del->receipients[i*2]),
-					COMCTLFILE_DELINFO_REPLYTYPE,
-					"smtp");
 			}
-			ctlfile_append_connectioninfo(ctf,
-				(unsigned)atol(del->receipients[i*2]),
-					COMCTLFILE_DELINFO_REPLY, p);
+			(*info->log_reply)(info, p, i, my_info);
 		} while (!ISFINALLINE(p));
 
 		if (!p)
 		{
-			while (i < del->nreceipients)
+			while (i < nrecipients)
 				rcptok[i++]=1;
 			break;
 		}
@@ -1043,10 +1082,7 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 
 		rcptok[i]=0;
 
-		if (SMTPREPLY_TYPE(&err_code) == COMCTLFILE_DELFAIL)
-			hard_error1(del, ctf, 0, i);
-		else
-			soft_error1(del, ctf, 0, i);
+		(*info->log_rcpt_error)(info, i, err_code, my_info);
 	}
 
 /* ------------------- Read the reply to the DATA ----------------- */
@@ -1055,10 +1091,10 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 	{
 		if (!info->haspipelining)	/* DATA hasn't been sent yet */
 		{
-			for (i=0; i<del->nreceipients; i++)
+			for (i=0; i<nrecipients; i++)
 				if (rcptok[i])	break;
 
-			if (i >= del->nreceipients)	return (-1);
+			if (i >= nrecipients)	return (-1);
 					/* All RCPT TOs failed */
 		}
 		rc=parsedatareply(info, my_info, rcptok, &rcpt_data_cmd, &l, 0);
@@ -1067,10 +1103,10 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 
 	if (!esmtp_connected(info))
 	{
-		for (i=0; i<del->nreceipients; i++)
+		for (i=0; i<nrecipients; i++)
 		{
 			if (!rcptok[i])	continue;
-			connect_error1(del, ctf, i);
+			// TODO: connect_error1(del, ctf, i);
 		}
 		rc= -1;
 	}

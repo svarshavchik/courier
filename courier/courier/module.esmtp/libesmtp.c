@@ -339,11 +339,11 @@ int esmtp_get_greeting(struct esmtp_info *info,
 	if (*p == '5')	/* Hard error */
 	{
 		(*info->log_talking)(info, arg);
-		(*info->log_sent)(info, "(initial greeting)", arg);
+		(*info->log_sent)(info, "(initial greeting)", -1, arg);
 
 		while (!ISFINALLINE(p))	/* Skip multiline replies */
 		{
-			(*info->log_reply)(info, p, arg);
+			(*info->log_reply)(info, p, -1, arg);
 			if ((p=esmtp_readline(info)) == 0)
 				return (1);
 				/* Caller will report the error */
@@ -355,14 +355,14 @@ int esmtp_get_greeting(struct esmtp_info *info,
 	if (*p != '1' && *p != '2' && *p != '3')	/* Soft error */
 	{
 		(*info->log_talking)(info, arg);
-		(*info->log_sent)(info, "(initial greeting)", arg);
+		(*info->log_sent)(info, "(initial greeting)", -1, arg);
 
 		for (;;)
 		{
 			if (ISFINALLINE(p))
 				break;
 
-			(*info->log_reply)(info, p, arg);
+			(*info->log_reply)(info, p, -1, arg);
 			if ((p=esmtp_readline(info)) == 0)
 			{
 				return (1);
@@ -493,10 +493,10 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 	if (*p != '1' && *p != '2' && *p != '3') /* Some kind of an error */
 	{
 		(*info->log_talking)(info, arg);
-		(*info->log_sent)(info, hellobuf, arg);
+		(*info->log_sent)(info, hellobuf, -1, arg);
 		while (!ISFINALLINE(p))
 		{
-			(*info->log_reply)(info, p, arg);
+			(*info->log_reply)(info, p, -1, arg);
 			if ((p=esmtp_readline(info)) == 0)
 				return (1);
 		}
@@ -656,7 +656,7 @@ int esmtp_helo(struct esmtp_info *info, int using_tls,
 		if (!info->hasstarttls || !info->hassecurity_starttls)
 		{
 			(*info->log_talking)(info, arg);
-			(*info->log_sent)(info, "SECURITY=STARTTLS REQUESTED FOR THIS MESSAGE", arg);
+			(*info->log_sent)(info, "SECURITY=STARTTLS REQUESTED FOR THIS MESSAGE", -1, arg);
 			(*info->log_smtp_error)(info,
 						"500 Unable to set minimum security level.",
 						0, arg);
@@ -720,13 +720,13 @@ int esmtp_enable_tls(struct esmtp_info *info,
 		if (*p != '1' && *p != '2' && *p != '3')
 		{
 			(*info->log_talking)(info, arg);
-			(*info->log_sent)(info, "STARTTLS", arg);
+			(*info->log_sent)(info, "STARTTLS", -1, arg);
 			close(pipefd[0]);
 			close(pipefd[1]);
 
 			while (!ISFINALLINE(p))
 			{
-				(*info->log_reply)(info, p, arg);
+				(*info->log_reply)(info, p, -1, arg);
 				if ((p=esmtp_readline(info)) == 0)
 					break;
 			}
@@ -780,7 +780,7 @@ int esmtp_enable_tls(struct esmtp_info *info,
 				" level.\n";
 
 			(*info->log_talking)(info, arg);
-			(*info->log_sent)(info, "STARTTLS", arg);
+			(*info->log_sent)(info, "STARTTLS", -1, arg);
 			(*info->log_smtp_error)(info, fail, 0, arg);
 			sox_close(info->esmtp_sockfd);
 			info->esmtp_sockfd= -1;
@@ -841,7 +841,7 @@ int esmtp_enable_tls(struct esmtp_info *info,
 		char tmperrbuf[sizeof(cinfo.errmsg)+10];
 
 		(*info->log_talking)(info, arg);
-		(*info->log_sent)(info, "STARTTLS", arg);
+		(*info->log_sent)(info, "STARTTLS", -1, arg);
 		strcat(strcpy(tmperrbuf,
 			      (info->smtproutes_flags & ROUTE_STARTTLS)
 			      ? "500 ":"400 "),
@@ -975,10 +975,10 @@ int esmtp_auth(struct esmtp_info *info,
 	if (*p != '1' && *p != '2' && *p != '3') /* Some kind of an error */
 	{
 		(*info->log_talking)(info, arg);
-		(*info->log_sent)(info, "AUTH", arg);
+		(*info->log_sent)(info, "AUTH", -1, arg);
 		while (!ISFINALLINE(p))
 		{
-			(*info->log_reply)(info, p, arg);
+			(*info->log_reply)(info, p, -1, arg);
 			if ((p=esmtp_readline(info)) == 0)
 			{
 				connection_closed(info, arg);
@@ -1014,7 +1014,7 @@ static const char *getresp(struct esmtp_auth_xinfo *x)
 	}
 	info->auth_error_sent=1;
 	(*info->log_talking)(info, arg);
-	(*info->log_sent)(info, "AUTH", arg);
+	(*info->log_sent)(info, "AUTH", -1, arg);
 
 	if (!p)
 	{
@@ -1024,7 +1024,7 @@ static const char *getresp(struct esmtp_auth_xinfo *x)
 
 	while (!ISFINALLINE(p))
 	{
-		(*info->log_reply)(info, p, arg);
+		(*info->log_reply)(info, p, -1, arg);
 		if ((p=esmtp_readline(info)) == 0)
 		{
 			connection_closed(info, arg);
@@ -1504,10 +1504,10 @@ int esmtp_parsereply(struct esmtp_info *info,
 	case '3':
 		break;
 	default:
-		(*info->log_sent)(info, cmd, arg);
+		(*info->log_sent)(info, cmd, -1, arg);
 		while (!ISFINALLINE(p))
 		{
-			(*info->log_reply)(info, p, arg);
+			(*info->log_reply)(info, p, -1, arg);
 
 			if ((p=esmtp_readline(info)) == 0)
 			{
