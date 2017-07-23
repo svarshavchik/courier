@@ -33,6 +33,8 @@
 			isdigit((int)(unsigned char)p[2]) \
 				&& p[3] == ' ')
 
+struct rw_info;
+
 struct esmtp_info {
 
 	void (*log_talking)(struct esmtp_info *, void *);
@@ -59,6 +61,8 @@ struct esmtp_info {
 			      RFC1035_ADDR *source_addr,
 			      void *arg);
 
+	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *));
+
 	char *host;
 	char *smtproute;
 	int smtproutes_flags;
@@ -77,6 +81,8 @@ struct esmtp_info {
 
 	char *sockfdaddrname;
 
+	int esmtp_cork;
+	int corked;
 	int haspipelining;
 	int hasdsn;
 	int has8bitmime;
@@ -116,10 +122,11 @@ extern void esmtp_info_free(struct esmtp_info *);
 extern int esmtp_connected(struct esmtp_info *);
 extern void esmtp_disconnect(struct esmtp_info *);
 extern void esmtp_init(struct esmtp_info *);
+
+extern int esmtp_ping(struct esmtp_info *info);
+
+
 extern void esmtp_timeout(struct esmtp_info *info, unsigned nsecs);
-extern void esmtp_wait_rw(struct esmtp_info *info, int *waitr, int *waitw);
-extern int esmtp_wait_read(struct esmtp_info *info);
-extern int esmtp_wait_write(struct esmtp_info *info);
 extern int esmtp_writeflush(struct esmtp_info *info);
 extern int esmtp_dowrite(struct esmtp_info *info, const char *, unsigned);
 extern int esmtp_writestr(struct esmtp_info *info, const char *);
@@ -172,5 +179,14 @@ extern char *esmtp_rcpt_create(struct esmtp_info *,
 extern char *esmtp_rcpt_data_create(struct esmtp_info *,
 				    struct esmtp_rcpt_info *,
 				    size_t);
+
+extern int esmtp_send(struct esmtp_info *info,
+		      struct esmtp_mailfrom_info *mf_info,
+		      struct esmtp_rcpt_info *rcpt_info,
+		      size_t nreceipients,
+		      int fd,
+		      void *arg);
+
+extern void esmtp_sockipname(struct esmtp_info *, char *);
 
 #endif
