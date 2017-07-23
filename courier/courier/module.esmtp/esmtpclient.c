@@ -84,6 +84,7 @@ struct my_esmtp_info {
 	struct moduledel *del;
 	struct ctlfile *ctf;
 	int log_line_num;
+	int prev_rcpt_num;
 };
 
 extern struct rw_list *esmtp_rw_install(const struct rw_install_info *);
@@ -153,6 +154,7 @@ void esmtpchild(unsigned childnum)
 		my_info.del=del;
 		my_info.ctf=&ctf;
 		my_info.log_line_num=0;
+		my_info.prev_rcpt_num=0;
 
 		/*
 		** Open the message control file, send the message, close
@@ -690,6 +692,10 @@ static void log_reply(struct esmtp_info *info, const char *str,
 {
 	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
 
+	if (rcpt_num != my_info->prev_rcpt_num)
+		my_info->log_line_num=0;
+	my_info->prev_rcpt_num=rcpt_num;
+
 	if (my_info->log_line_num > 10)
 		return; // Log only the first ten lines of a response.
 	++my_info->log_line_num;
@@ -720,6 +726,22 @@ static void log_rcpt_error(struct esmtp_info *info, int n, int errcode,
 		soft_error1(my_info->del, my_info->ctf, 0, n);
 	}
 }
+
+static void log_success(struct esmtp_info *info,
+			unsigned rcpt_num,
+			const char *msg,
+			int has_dsn, void *arg)
+{
+	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
+
+
+	ctlfile_append_reply(my_info->ctf,
+			     (unsigned)atol( my_info->del->receipients
+					     [rcpt_num*2]),
+			     msg, COMCTLFILE_DELSUCCESS_NOLOG,
+			     (has_dsn ? "":" r"));
+}
+
 
 static int lookup_broken_starttls(struct esmtp_info *info,
 				  const char *hostname,
@@ -754,6 +776,7 @@ static struct esmtp_info *libesmtp_init(const char *host)
 	info->log_reply= &log_reply;
 	info->log_smtp_error= &log_smtp_error;
 	info->log_rcpt_error= &log_rcpt_error;
+	info->log_success= &log_success;
 	info->lookup_broken_starttls= &lookup_broken_starttls;
 	info->report_broken_starttls= &do_report_broken_starttls;
 	info->get_sourceaddr= &get_sourceaddr;
@@ -939,8 +962,8 @@ static const char *readpipelinercpt(struct esmtp_info *,
 				    char **, size_t *);
 
 static int parsedatareply(struct esmtp_info *info,
-			  struct my_esmtp_info *my_info,
-			  int *, char **, size_t *, int);
+			  size_t,
+			  int *, char **, size_t *, int, void *);
 
 static int do_pipeline_rcpt_2(struct esmtp_info *info,
 			      struct my_esmtp_info *my_info,
@@ -1097,7 +1120,8 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 			if (i >= nrecipients)	return (-1);
 					/* All RCPT TOs failed */
 		}
-		rc=parsedatareply(info, my_info, rcptok, &rcpt_data_cmd, &l, 0);
+		rc=parsedatareply(info, nrecipients,
+				  rcptok, &rcpt_data_cmd, &l, 0, my_info);
 			/* One more reply */
 	}
 
@@ -1168,9 +1192,11 @@ static const char *readpipelinercpt(struct esmtp_info *info,
 ** iovw/niovw must be initialized appropriately, otherwise they must be null.
 */
 
-static int parseexdatareply(struct esmtp_info *, struct my_esmtp_info *,
+static int parseexdatareply(struct esmtp_info *,
 			    const char *,
-			    int *);
+			    int *,
+			    size_t,
+			    void *);
 
 static char *logsuccessto(struct esmtp_info *info)
 {
@@ -1192,55 +1218,56 @@ static char *logsuccessto(struct esmtp_info *info)
 }
 
 static int parsedatareply(struct esmtp_info *info,
-			  struct my_esmtp_info *my_info,
+			  size_t nreceipients,
 			  int *rcptok,
 			  char **write_buf,
 			  size_t *write_l,
-			  int isfinal)
+			  int isfinal,
+			  void *arg)
 {
-	struct moduledel *del=my_info->del;
-	struct ctlfile *ctf=my_info->ctf;
 	const char *p;
-	unsigned line_num=0;
 	unsigned i;
+	int errcode;
 
 	p=readpipelinercpt(info, write_buf, write_l);
 
 	if (!p)	return (-1);
 
-	if (SMTPREPLY_TYPE(p) == COMCTLFILE_DELSUCCESS)
-	{
+	errcode=*p;
+
+	switch (errcode) {
+	case '1':
+	case '2':
+	case '3':
 		/*
 		** DATA went through.  What we do depends on whether this is
 		** the first or the last DATA.
 		*/
 
+		if (isfinal)
+		{
+			for (i=0; i<nreceipients; i++)
+			{
+				if (!rcptok[i])	continue;
+
+				(*info->log_sent)(info, "DATA", i, arg);
+			}
+		}
+
 		for (;;)
 		{
-			if (isfinal && line_num < 10)
+			if (isfinal)
 			{
 				/* We want to record the final DATA reply in
 				** the log.
 				*/
 
-				for (i=0; i<del->nreceipients; i++)
+				for (i=0; i<nreceipients; i++)
 				{
 					if (!rcptok[i])	continue;
 
-					if (line_num == 0)
-						ctlfile_append_connectioninfo(
-							ctf,
-						(unsigned)atol(
-							del->receipients[i*2]),
-						COMCTLFILE_DELINFO_REPLYTYPE,
-						"smtp");
-
-					ctlfile_append_connectioninfo(ctf,
-						(unsigned)atol(
-							del->receipients[i*2]),
-						COMCTLFILE_DELINFO_REPLY, p);
+					(*info->log_reply)(info, p, i, arg);
 				}
-				++line_num;
 			}
 			if (ISFINALLINE(p))	break;
 			if ((p=esmtp_readline(info)) == 0)
@@ -1256,14 +1283,12 @@ static int parsedatareply(struct esmtp_info *info,
 			** haven't previously failed (in RCPT TO).
 			*/
 
-			for (i=0; i<del->nreceipients; i++)
+			for (i=0; i<nreceipients; i++)
 			{
 				if (!rcptok[i])	continue;
 
-				ctlfile_append_reply(ctf,
-					(unsigned)atol(del->receipients[i*2]),
-					p, COMCTLFILE_DELSUCCESS_NOLOG,
-					(info->hasdsn ? "":" r"));
+				(*info->log_success)(info, i, p,
+						     info->hasdsn, arg);
 			}
 			free(p);
 		}
@@ -1271,10 +1296,10 @@ static int parsedatareply(struct esmtp_info *info,
 		{
 			/* Good response to the first DATA */
 
-			for (i=0; i<del->nreceipients; i++)
+			for (i=0; i<nreceipients; i++)
 				if (rcptok[i]) break;
 
-			if (i >= del->nreceipients)
+			if (i >= nreceipients)
 				/* Stupid server wants message with no
 				** receipients
 				*/
@@ -1297,48 +1322,34 @@ static int parsedatareply(struct esmtp_info *info,
 	/* DATA error */
 
 	if (info->hasexdata && isfinal && *p == '5' && p[1] == '5'  && p[2] == '8')
-		return (parseexdatareply(info, my_info, p, rcptok));
+		return (parseexdatareply(info, p, rcptok,
+					 nreceipients, arg));
 		/* Special logic for EXDATA extended replies */
 
 	/* Fail the recipients that haven't been failed already */
 
-	for (i=0; i<del->nreceipients; i++)
+	for (i=0; i<nreceipients; i++)
 	{
 		if (!rcptok[i])	continue;
-		ctlfile_append_connectioninfo(ctf,
-			(unsigned)atol(del->receipients[i*2]),
-			COMCTLFILE_DELINFO_SENT, "DATA");
-
-		ctlfile_append_connectioninfo(ctf,
-			(unsigned)atol(del->receipients[i*2]),
-			COMCTLFILE_DELINFO_REPLYTYPE, "smtp");
+		(*info->log_sent)(info, "DATA", i, arg);
 	}
 
 	for (;;)
 	{
-		if (line_num < 10)
+		for (i=0; i<nreceipients; i++)
 		{
-			for (i=0; i<del->nreceipients; i++)
-			{
-				if (!rcptok[i])	continue;
+			if (!rcptok[i])	continue;
 
-				ctlfile_append_connectioninfo(ctf,
-					(unsigned)atol(
-						del->receipients[i*2]),
-					COMCTLFILE_DELINFO_REPLY, p);
-			}
-			++line_num;
+			(*info->log_reply)(info, p, i, arg);
 		}
+
 		if (ISFINALLINE(p))
 		{
-			for (i=0; i<del->nreceipients; i++)
+			for (i=0; i<nreceipients; i++)
 			{
 				if (!rcptok[i])	continue;
 
-				if (SMTPREPLY_TYPE(p) == COMCTLFILE_DELFAIL)
-					hard_error1(del, ctf, "", i);
-				else
-					soft_error1(del, ctf, "", i);
+				(*info->log_rcpt_error)(info, i, *p, arg);
 				rcptok[i]=0;
 			}
 			break;
@@ -1356,17 +1367,17 @@ static int parsedatareply(struct esmtp_info *info,
 */
 
 static int parseexdatareply(struct esmtp_info *info,
-			    struct my_esmtp_info *my_info,
 			    const char *p,
-			    int *rcptok)
+			    int *rcptok,
+			    size_t nreceipients,
+			    void *arg)
+
 {
-	struct moduledel *del=my_info->del;
-	struct ctlfile *ctf=my_info->ctf;
 	unsigned i;
 	char err_code=0;
 	unsigned line_num=0;
 
-	for (i=0; i<del->nreceipients; i++)
+	for (i=0; i<nreceipients; i++)
 		if (rcptok[i])	break;
 
 	/* i is the next recipient that's getting an extended reply */
@@ -1381,9 +1392,11 @@ static int parseexdatareply(struct esmtp_info *info,
 			continue;
 
 		if (line_num == 0)
+		{
 			err_code=p[4];
+		}
 
-		if (i >= del->nreceipients)	/* Bad extended reply */
+		if (i >= nreceipients)	/* Bad extended reply */
 		{
 			if (ISFINALLINE(p))	break;
 			continue;
@@ -1392,53 +1405,40 @@ static int parseexdatareply(struct esmtp_info *info,
 		if (line_num == 0 &&
 			SMTPREPLY_TYPE(&err_code) != COMCTLFILE_DELSUCCESS)
 		{
-			ctlfile_append_connectioninfo( ctf,
-				(unsigned)atol(del->receipients[i*2]),
-				COMCTLFILE_DELINFO_SENT, "DATA");
+			(*info->log_sent)(info, "DATA", i, arg);
 		}
+
+		(*info->log_reply)(info, p+4, i, arg);
 
 		if (line_num == 0)
-			ctlfile_append_connectioninfo( ctf,
-				(unsigned)atol(del->receipients[i*2]),
-				COMCTLFILE_DELINFO_REPLYTYPE, "smtp");
-
-
-		if (line_num < 10)
-		{
-			ctlfile_append_connectioninfo(ctf,
-				(unsigned)atol(del->receipients[i*2]),
-				COMCTLFILE_DELINFO_REPLY, p+4);
 			++line_num;
-		}
 
 		if (ISFINALLINE((p+4)))
 		{
-			switch (SMTPREPLY_TYPE( &err_code))	{
-			case COMCTLFILE_DELFAIL:
-				hard_error1(del, ctf, "", i);
-				rcptok[i]=0;
-				break;
-			case COMCTLFILE_DELSUCCESS:
+			switch (err_code) {
+			case '1':
+			case '2':
+			case '3':
 				{
 					char	*p=logsuccessto(info);
 
-				ctlfile_append_reply(ctf,
-					(unsigned)atol( del->receipients[i*2]),
-					p, COMCTLFILE_DELSUCCESS_NOLOG,
-					(info->hasdsn ? "":" r"));
+					(*info->log_success)(info, i,
+							     p,
+							     info->hasdsn,
+							     arg);
 
 					free(p);
 				}
 				break;
 			default:
-				soft_error1(del, ctf, "", i);
+				(*info->log_rcpt_error)(info, i, err_code, arg);
 				rcptok[i]=0;
 				break;
 			}
 
 			/* Find next recipient that gets an extended reply */
 
-			while (i < del->nreceipients &&
+			while (i < nreceipients &&
 				!rcptok[++i])
 				;
 			line_num=0;
@@ -1446,11 +1446,14 @@ static int parseexdatareply(struct esmtp_info *info,
 		if (ISFINALLINE(p))	break;
 	}
 
-	while (i < del->nreceipients)
+	while (i < nreceipients)
 		if (rcptok[++i])
 		{
-			hard_error1(del, ctf,
-				"Invalid 558 response from server.", i);
+			(*info->log_reply)(info,
+					   "Invalid 558 response from server",
+					   i, arg);
+
+			(*info->log_rcpt_error)(info, i, '5', arg);
 			rcptok[i]=0;
 		}
 
@@ -1465,8 +1468,8 @@ static void call_rewrite_func(struct rw_info *p, void (*f)(struct rw_info *),
 
 /* Write out .\r\n, then wait for the DATA reply */
 
-static int data_wait(struct esmtp_info *info, struct my_esmtp_info *my_info,
-		     int *rcptok)
+static int data_wait(struct esmtp_info *info, size_t nreceipients,
+		     int *rcptok, void *arg)
 {
 	esmtp_timeout(info, info->data_timeout);
 	if (esmtp_dowrite(info, ".\r\n", 3) ||
@@ -1474,7 +1477,7 @@ static int data_wait(struct esmtp_info *info, struct my_esmtp_info *my_info,
 
 	cork(0);
 
-	(void)parsedatareply(info, my_info, rcptok, 0, 0, 1);
+	(void)parsedatareply(info, nreceipients, rcptok, 0, 0, 1, arg);
 
 	if (!esmtp_connected(info))	return (-1);
 	return (0);
@@ -1620,7 +1623,8 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 				&convert_to_crlf,
 				&call_rewrite_func,
 				&rfe))
-		    || data_wait(info, my_info, rcptok))
+		    || data_wait(info, my_info->del->nreceipients, rcptok,
+				 my_info))
 			for (i=0; i<del->nreceipients; i++)
 				if (rcptok[i])
 					connect_error1(del, ctf, i);

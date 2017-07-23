@@ -40,6 +40,8 @@ struct esmtp_info {
 	void (*log_reply)(struct esmtp_info *, const char *, int, void *);
 	void (*log_smtp_error)(struct esmtp_info *, const char *, int, void *);
 	void (*log_rcpt_error)(struct esmtp_info *, int, int, void *);
+	void (*log_success)(struct esmtp_info *, unsigned, const char *,
+			    int, void *);
 
 	void (*report_broken_starttls)(struct esmtp_info *,
 				       const char *,
