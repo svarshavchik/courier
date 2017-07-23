@@ -304,7 +304,74 @@ static void default_rewrite_func(struct rw_info *info,
 	(*func)(info);
 }
 
-struct esmtp_info *esmtp_info_alloc(const char *host)
+static void default_log_talking(struct esmtp_info *info, void *arg)
+{
+}
+
+static void default_log_sent(struct esmtp_info *info, const char *msg,
+			     int rcpt_num, void *arg)
+{
+}
+
+static void default_log_reply(struct esmtp_info *info, const char *msg,
+			      int rcpt_num, void *arg)
+{
+}
+
+static void default_log_smtp_error(struct esmtp_info *info, const char *msg,
+				   int rcpt_num, void *arg)
+{
+}
+
+static void default_log_rcpt_error(struct esmtp_info *info,
+				   int rcpt_num, int err_code, void *arg)
+{
+}
+
+static void default_log_net_error(struct esmtp_info *info, int rcpt_num,
+				  void *arg)
+{
+}
+
+static void default_log_success(struct esmtp_info *info,
+				unsigned rcpt_num,
+				const char *msg, int dsn_flag,
+				void *arg)
+{
+}
+
+static void default_report_broken_starttls(struct esmtp_info *info,
+					   const char *sockfdaddrname,
+					   void *arg)
+{
+}
+
+static int default_lookup_broken_starttls(struct esmtp_info *info,
+					  const char *sockfdaddrname,
+					  void *arg)
+{
+	return 0;
+}
+
+static int default_is_local_or_loopback(struct esmtp_info *info,
+					const char *hostname,
+					const char *address,
+					void *arg)
+{
+	return 0;
+}
+
+static int default_get_sourceaddr(struct esmtp_info *info,
+				  const RFC1035_ADDR *dest_addr,
+				  RFC1035_ADDR *source_addr,
+				  void *arg)
+{
+	return 0;
+}
+
+struct esmtp_info *esmtp_info_alloc(const char *host,
+				    const char *smtproute,
+				    int smtproutes_flags)
 {
 	struct esmtp_info *p=malloc(sizeof(struct esmtp_info));
 
@@ -312,13 +379,34 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 		abort();
 
 	memset(p, 0, sizeof(*p));
+
+	p->helohost="*";
+	p->log_talking= &default_log_talking;
+	p->log_sent= &default_log_sent;
+	p->log_reply= &default_log_reply;
+	p->log_smtp_error= &default_log_smtp_error;
+	p->log_rcpt_error= &default_log_rcpt_error;
+	p->log_net_error= &default_log_net_error;
+	p->log_success= &default_log_success;
+	p->report_broken_starttls= &default_report_broken_starttls;
+	p->lookup_broken_starttls= &default_lookup_broken_starttls;
+	p->is_local_or_loopback= &default_is_local_or_loopback;
+	p->get_sourceaddr= &default_get_sourceaddr;
+
 	p->host=strdup(host);
 
 	if (!p->host)
 		abort();
 
 	p->esmtp_sockfd= -1;
-	p->smtproute=smtproutes(p->host, &p->smtproutes_flags);
+
+	p->smtproutes_flags=smtproutes_flags;
+	if (smtproute)
+	{
+		p->smtproute=strdup(smtproute);
+		if (!p->smtproute)
+			abort();
+	}
 
 	p->esmtpkeepaliveping=0;
 	p->quit_timeout=10;
@@ -475,7 +563,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 		free(info->authsasllist);
 	info->authsasllist=0;
 
-	p=config_esmtphelo();
+	p=info->helohost;
 
 	/*
 	** If the remote host is "*", use reverse DNS from the local IP addr.
@@ -644,7 +732,9 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 					if (l > 10000)	continue;
 							/* Script kiddies... */
 					++p;
-					s=courier_malloc(l);
+					s=malloc(l);
+					if (!s)
+						abort();
 					*s=0;
 					if (info->authsasllist)
 						strcat(strcpy(s, info->authsasllist),
@@ -795,7 +885,10 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 			}
 
 			/* Consider this one a soft error, every time */
-			(*info->log_smtp_error)(info, p, '4', arg);
+			if (!p)
+				connection_closed(info, arg);
+			else
+				(*info->log_smtp_error)(info, p, '4', arg);
 			return (-1);
 		}
 	}
@@ -827,7 +920,9 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 
 		q=getenv("TLS_TRUSTCERTS");
 
-		r=courier_malloc(strlen(q ? q:"")+40);
+		r=malloc(strlen(q ? q:"")+40);
+		if (!r)
+			abort();
 		strcat(strcpy(r, "TLS_TRUSTCERTS="), q ? q:"");
 
 		if (origcert_buf)
@@ -852,8 +947,9 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 			return (-1);
 		}
 
-		q=courier_malloc(strlen(p)+40);
-
+		q=malloc(strlen(p)+40);
+		if (!q)
+			abort();
 		strcat(strcpy(q, "TLS_TRUSTCERTS="), p);
 		putenv(q);
 		p="1";
@@ -865,8 +961,9 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 
 	if (p && atoi(p))
 	{
-		verify_domain=courier_malloc(sizeof("-verify=")
-					     +strlen(hostname));
+		verify_domain=malloc(sizeof("-verify=")+strlen(hostname));
+		if (!verify_domain)
+			abort();
 		strcat(strcpy(verify_domain, "-verify="), hostname);
 	}
 
@@ -1213,7 +1310,7 @@ static int get_sourceaddr(struct esmtp_info *info,
 			  const struct sockaddr **addrptr, int *addrptrlen,
 			  void *arg)
 {
-	RFC1035_ADDR in;
+	RFC1035_ADDR in=RFC1035_ADDRANY;
 
 	int rc=(*info->get_sourceaddr)(info, dest_addr, &in, arg);
 

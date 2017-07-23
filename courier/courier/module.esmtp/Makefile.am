@@ -174,7 +174,7 @@ install-perms-local:
 librewrite_la_SOURCES=esmtp.c
 librewrite_la_LDFLAGS=-static
 
-libesmtp_la_sources=libesmtp.c libesmtp.h
+libesmtp_la_SOURCES=libesmtp.c libesmtp.h
 libesmtp_la_LDFLAGS=-static
 
 localstatedir.h: config.status

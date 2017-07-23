@@ -256,8 +256,7 @@ static int get_sourceaddr(struct esmtp_info *info,
 			errno=EINVAL;
 			return rc;
 		}
-	} else
-		*source_addr = RFC1035_ADDRANY;
+	}
 
 	return 0;
 }
@@ -457,12 +456,6 @@ unsigned        i;
 static void smtp_error(struct moduledel *del, struct ctlfile *ctf,
 		       const char *msg, int errcode)
 {
-	if (!msg)
-	{
-		connect_error1(del, ctf, -1);
-		return;
-	}
-
 	if (errcode == 0)
 		errcode= *msg;
 
@@ -693,7 +686,15 @@ static int is_local_or_loopback(struct esmtp_info *info,
 
 static struct esmtp_info *libesmtp_init(const char *host)
 {
-	struct esmtp_info *info=esmtp_info_alloc(host);
+	int smtproutes_flags=0;
+	char *smtproute=smtproutes(host,
+				   &smtproutes_flags);
+	struct esmtp_info *info=esmtp_info_alloc(host, smtproute,
+						 smtproutes_flags);
+	if (smtproute)
+		free(smtproute);
+
+	info->helohost=config_esmtphelo();
 
 	info->log_talking= &log_talking;
 	info->log_sent= &log_sent;

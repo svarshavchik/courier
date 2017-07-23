@@ -85,6 +85,7 @@ struct esmtp_info {
 	int smtproutes_flags;
 	int esmtp_sockfd;
 
+	const char *helohost;
 	RFC1035_ADDR sockfdaddr;
 	RFC1035_ADDR laddr;
 
@@ -116,7 +117,9 @@ struct esmtp_info {
 	unsigned esmtp_writebufleft;
 };
 
-extern struct esmtp_info *esmtp_info_alloc(const char *host);
+extern struct esmtp_info *esmtp_info_alloc(const char *host,
+					   const char *smtproute,
+					   int smtproutes_flags);
 extern void esmtp_info_free(struct esmtp_info *);
 extern int esmtp_connected(struct esmtp_info *);
 extern int esmtp_ping(struct esmtp_info *info);
