@@ -60,14 +60,6 @@ struct esmtp_info {
 			      const RFC1035_ADDR *dest_addr,
 			      RFC1035_ADDR *source_addr,
 			      void *arg);
-
-	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *));
-
-	char *host;
-	char *smtproute;
-	int smtproutes_flags;
-	int esmtp_sockfd;
-
 	time_t esmtpkeepaliveping;
 	time_t quit_timeout;
 	time_t connect_timeout;
@@ -76,14 +68,6 @@ struct esmtp_info {
 	time_t cmd_timeout;
 	time_t delay_timeout;
 
-	RFC1035_ADDR sockfdaddr;
-	RFC1035_ADDR laddr;
-
-	char *sockfdaddrname;
-
-	int esmtp_cork;
-	int corked;
-	int haspipelining;
 	int hasdsn;
 	int has8bitmime;
 	int hasverp;
@@ -93,6 +77,22 @@ struct esmtp_info {
 	int hasstarttls;
 	int hassecurity_starttls;
 	int is_secure_connection;
+
+	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *));
+
+	char *host;
+	char *smtproute;
+	int smtproutes_flags;
+	int esmtp_sockfd;
+
+	RFC1035_ADDR sockfdaddr;
+	RFC1035_ADDR laddr;
+
+	char *sockfdaddrname;
+
+	int esmtp_cork;
+	int corked;
+	int haspipelining;
 
 	char *authsasllist;
 	int auth_error_sent;
@@ -118,32 +118,8 @@ struct esmtp_info {
 
 extern struct esmtp_info *esmtp_info_alloc(const char *host);
 extern void esmtp_info_free(struct esmtp_info *);
-
 extern int esmtp_connected(struct esmtp_info *);
-extern void esmtp_disconnect(struct esmtp_info *);
-extern void esmtp_init(struct esmtp_info *);
-
 extern int esmtp_ping(struct esmtp_info *info);
-
-
-extern void esmtp_timeout(struct esmtp_info *info, unsigned nsecs);
-extern int esmtp_writeflush(struct esmtp_info *info);
-extern int esmtp_dowrite(struct esmtp_info *info, const char *, unsigned);
-extern int esmtp_writestr(struct esmtp_info *info, const char *);
-
-extern const char *esmtp_readline(struct esmtp_info *info);
-
-extern int esmtp_helo(struct esmtp_info *info, int using_tls,
-		      void *arg);
-extern int esmtp_get_greeting(struct esmtp_info *info,
-			      void *arg);
-extern int esmtp_enable_tls(struct esmtp_info *,
-			    const char *,
-			    int,
-			    void *arg);
-extern int esmtp_auth(struct esmtp_info *info,
-		      const char *auth_key,
-		      void *arg);
 extern int esmtp_connect(struct esmtp_info *info, void *arg);
 extern void esmtp_quit(struct esmtp_info *, void *arg);
 extern int esmtp_sendcommand(struct esmtp_info *info,
@@ -152,6 +128,7 @@ extern int esmtp_sendcommand(struct esmtp_info *info,
 extern int esmtp_parsereply(struct esmtp_info *info,
 			    const char *cmd,
 			    void *arg);
+
 
 struct esmtp_mailfrom_info {
 	const char *sender;
@@ -162,9 +139,6 @@ struct esmtp_mailfrom_info {
 
 	unsigned long msgsize;
 };
-
-char *esmtp_mailfrom_cmd(struct esmtp_info *info,
-			 struct esmtp_mailfrom_info *mf_info);
 
 struct esmtp_rcpt_info {
 	const char *address;

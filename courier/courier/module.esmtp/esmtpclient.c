@@ -196,7 +196,6 @@ void esmtpchild(unsigned childnum)
 
 static void connect_error1(struct moduledel *del, struct ctlfile *ctf, int n);
 
-static int rset(struct esmtp_info *, struct my_esmtp_info *);
 static void push(struct esmtp_info *, struct my_esmtp_info *);
 
 static int get_sourceaddr(struct esmtp_info *info,
@@ -403,14 +402,6 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		{
 		char	*verp_sender;
 
-			if (i && esmtp_connected(info))	/* Call RSET in between */
-			{
-				if (rset(info, my_info))
-				{
-					esmtp_quit(info, my_info);
-					continue;
-				}
-			}
 			if (!esmtp_connected(info))
 			{
 				connect_error1(del, ctf, i);
@@ -731,29 +722,6 @@ static struct esmtp_info *libesmtp_init(const char *host)
 static void libesmtp_deinit(struct esmtp_info *info)
 {
 	esmtp_info_free(info);
-}
-
-/*
-	Try EHLO then HELO, and see what the other server says.
-*/
-
-/* Send an SMTP command that applies to all recipients, then wait for a reply */
-
-static int smtpcommand(struct esmtp_info *info,
-		       struct my_esmtp_info *my_info,
-		       const char *cmd)
-{
-	if (esmtp_sendcommand(info, cmd, my_info))
-		return -1;
-
-	return esmtp_parsereply(info, cmd, my_info);
-}
-
-
-static int rset(struct esmtp_info *info, struct my_esmtp_info *my_info)
-{
-	esmtp_timeout(info, info->helo_timeout);
-	return (smtpcommand(info, my_info, "RSET\r\n"));
 }
 
 static void pushdsn(struct esmtp_info *, struct my_esmtp_info *);

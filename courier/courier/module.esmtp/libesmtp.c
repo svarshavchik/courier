@@ -25,6 +25,26 @@
 static void esmtp_wait_rw(struct esmtp_info *info, int *waitr, int *waitw);
 static int esmtp_wait_read(struct esmtp_info *info);
 static int esmtp_wait_write(struct esmtp_info *info);
+static void esmtp_disconnect(struct esmtp_info *info);
+static void esmtp_init(struct esmtp_info *info);
+static void esmtp_timeout(struct esmtp_info *info, unsigned nsecs);
+static int esmtp_writeflush(struct esmtp_info *info);
+static int esmtp_dowrite(struct esmtp_info *info, const char *, unsigned);
+static int esmtp_writestr(struct esmtp_info *info, const char *);
+static const char *esmtp_readline(struct esmtp_info *info);
+static int esmtp_helo(struct esmtp_info *info, int using_tls,
+		      void *arg);
+static int esmtp_get_greeting(struct esmtp_info *info,
+			      void *arg);
+static int esmtp_enable_tls(struct esmtp_info *,
+			    const char *,
+			    int,
+			    void *arg);
+static int esmtp_auth(struct esmtp_info *info,
+		      const char *auth_key,
+		      void *arg);
+static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
+				struct esmtp_mailfrom_info *mf_info);
 
 static void connect_error(struct esmtp_info *info, void *arg)
 {
@@ -36,7 +56,7 @@ static void connect_error(struct esmtp_info *info, void *arg)
 				: strerror(errno), '4', arg);
 }
 
-void esmtp_init(struct esmtp_info *info)
+static void esmtp_init(struct esmtp_info *info)
 {
 	mybuf_init(&info->esmtp_sockbuf, info->esmtp_sockfd);
 	info->esmtp_writebufptr=info->esmtp_writebuf;
@@ -45,7 +65,7 @@ void esmtp_init(struct esmtp_info *info)
 
 /* Set the timeout */
 
-void esmtp_timeout(struct esmtp_info *info, unsigned nsecs)
+static void esmtp_timeout(struct esmtp_info *info, unsigned nsecs)
 {
 	time(&info->esmtp_timeout_time);
 	info->esmtp_timeout_time += nsecs;
@@ -79,7 +99,7 @@ int	i;
 	info->esmtp_writebufleft += n;
 }
 
-int esmtp_writeflush(struct esmtp_info *info)
+static int esmtp_writeflush(struct esmtp_info *info)
 {
 	while (info->esmtp_writebufptr > info->esmtp_writebuf && info->esmtp_sockfd >= 0)
 		doflush(info);
@@ -90,7 +110,7 @@ int esmtp_writeflush(struct esmtp_info *info)
 
 /* Write various stuff to the socket */
 
-int esmtp_dowrite(struct esmtp_info *info, const char *p, unsigned l)
+static int esmtp_dowrite(struct esmtp_info *info, const char *p, unsigned l)
 {
 	while (l)
 	{
@@ -164,7 +184,7 @@ time_t	current_time;
 	info->esmtp_sockfd= -1;
 }
 
-int esmtp_writestr(struct esmtp_info *info, const char *p)
+static int esmtp_writestr(struct esmtp_info *info, const char *p)
 {
 	return (esmtp_dowrite(info, p, strlen(p)));
 }
@@ -192,7 +212,7 @@ static void burp(struct esmtp_info *info, const char *, unsigned);
 
 /* Receive a CRLF-terminated reply from the remote server */
 
-const char *esmtp_readline(struct esmtp_info *info)
+static const char *esmtp_readline(struct esmtp_info *info)
 {
 int	c;
 char	cc;
@@ -278,6 +298,12 @@ static void burp(struct esmtp_info *info, const char *p, unsigned n)
 	info->socklinesize += n;
 }
 
+static void default_rewrite_func(struct rw_info *info,
+				 void (*func)(struct rw_info *))
+{
+	(*func)(info);
+}
+
 struct esmtp_info *esmtp_info_alloc(const char *host)
 {
 	struct esmtp_info *p=malloc(sizeof(struct esmtp_info));
@@ -301,6 +327,8 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 	p->data_timeout=300;
 	p->cmd_timeout=600;
 	p->delay_timeout=300;
+
+	p->rewrite_func=default_rewrite_func;
 
 #ifdef	TCP_CORK
 
@@ -352,7 +380,7 @@ int esmtp_connected(struct esmtp_info *info)
 	return info->esmtp_sockfd >= 0;
 }
 
-void esmtp_disconnect(struct esmtp_info *info)
+static void esmtp_disconnect(struct esmtp_info *info)
 {
 	if (info->esmtp_sockfd < 0)
 		return;
@@ -360,8 +388,8 @@ void esmtp_disconnect(struct esmtp_info *info)
 	info->esmtp_sockfd= -1;
 }
 
-int esmtp_get_greeting(struct esmtp_info *info,
-		       void *arg)
+static int esmtp_get_greeting(struct esmtp_info *info,
+			      void *arg)
 {
 	const char *p;
 
@@ -424,8 +452,8 @@ int esmtp_get_greeting(struct esmtp_info *info,
 	return 0;
 }
 
-int esmtp_helo(struct esmtp_info *info, int using_tls,
-	       void *arg)
+static int esmtp_helo(struct esmtp_info *info, int using_tls,
+		      void *arg)
 {
 	const	char *p;
 	char	hellobuf[512];
@@ -713,9 +741,9 @@ static void connection_closed(struct esmtp_info *info,
 		 4, arg);
 }
 
-int esmtp_enable_tls(struct esmtp_info *info,
-		     const char *hostname, int smtps,
-		     void *arg)
+static int esmtp_enable_tls(struct esmtp_info *info,
+			    const char *hostname, int smtps,
+			    void *arg)
 {
 	const char *p;
 	int	pipefd[2];
@@ -924,9 +952,9 @@ struct esmtp_auth_xinfo {
 	void *arg;
 };
 
-int esmtp_auth(struct esmtp_info *info,
-	       const char *auth_key,
-	       void *arg)
+static int esmtp_auth(struct esmtp_info *info,
+		      const char *auth_key,
+		      void *arg)
 {
 	FILE	*configfile;
 	char	uidpwbuf[256];
@@ -1597,8 +1625,8 @@ int esmtp_parsereply(struct esmtp_info *info,
 ** of the remote server.
 */
 
-char *esmtp_mailfrom_cmd(struct esmtp_info *info,
-			 struct esmtp_mailfrom_info *mf_info)
+static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
+				struct esmtp_mailfrom_info *mf_info)
 {
 	char	*bodyverb="", *verpverb="", *retverb="";
 	char	*oenvidverb="", *sizeverb="";
