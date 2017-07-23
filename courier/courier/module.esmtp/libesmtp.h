@@ -40,9 +40,10 @@ struct esmtp_info {
 	void (*log_reply)(struct esmtp_info *, const char *, int, void *);
 	void (*log_smtp_error)(struct esmtp_info *, const char *, int, void *);
 	void (*log_rcpt_error)(struct esmtp_info *, int, int, void *);
+	void (*log_net_error)(struct esmtp_info *, int, void *);
+
 	void (*log_success)(struct esmtp_info *, unsigned, const char *,
 			    int, void *);
-
 	void (*report_broken_starttls)(struct esmtp_info *,
 				       const char *,
 				       void *);
@@ -147,11 +148,12 @@ extern int esmtp_parsereply(struct esmtp_info *info,
 
 struct esmtp_mailfrom_info {
 	const char *sender;
-	unsigned long msgsize;
 	int is8bitmsg;
 	int dsn_format;
 	const char *envid;
 	int verp;
+
+	unsigned long msgsize;
 };
 
 char *esmtp_mailfrom_cmd(struct esmtp_info *info,

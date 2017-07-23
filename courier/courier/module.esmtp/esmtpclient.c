@@ -727,6 +727,13 @@ static void log_rcpt_error(struct esmtp_info *info, int n, int errcode,
 	}
 }
 
+static void log_net_error(struct esmtp_info *info, int rcpt_num, void *arg)
+{
+	struct my_esmtp_info *my_info=(struct my_esmtp_info *)arg;
+
+	connect_error1(my_info->del, my_info->ctf, rcpt_num);
+}
+
 static void log_success(struct esmtp_info *info,
 			unsigned rcpt_num,
 			const char *msg,
@@ -776,6 +783,7 @@ static struct esmtp_info *libesmtp_init(const char *host)
 	info->log_reply= &log_reply;
 	info->log_smtp_error= &log_smtp_error;
 	info->log_rcpt_error= &log_rcpt_error;
+	info->log_net_error= &log_net_error;
 	info->log_success= &log_success;
 	info->lookup_broken_starttls= &lookup_broken_starttls;
 	info->report_broken_starttls= &do_report_broken_starttls;
@@ -907,16 +915,14 @@ static void push(struct esmtp_info *info, struct my_esmtp_info *my_info)
 }
 
 /*
-** Construct the RCPT TO command along the same lines.
+** Construct the RCPT TO information.
 */
 
-static char *mk_rcpt_data(struct esmtp_info *info,
-			  struct moduledel *del,
-			  struct ctlfile *ctf)
+static struct esmtp_rcpt_info *mk_rcpt_info(struct moduledel *del,
+					    struct ctlfile *ctf)
 {
 	unsigned n=del->nreceipients;
 	unsigned i;
-	char *buf;
 
 	struct esmtp_rcpt_info *p=malloc(n*sizeof(struct esmtp_rcpt_info));
 
@@ -934,11 +940,7 @@ static char *mk_rcpt_data(struct esmtp_info *info,
 		p[i].orig_receipient=ctf->oreceipients[n];
 	}
 
-	buf=esmtp_rcpt_data_create(info, p, n);
-
-	free(p);
-
-	return buf;
+	return p;
 }
 
 
@@ -1110,7 +1112,7 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 		for (i=0; i<nrecipients; i++)
 		{
 			if (!rcptok[i])	continue;
-			// TODO: connect_error1(del, ctf, i);
+			(*info->log_net_error)(info, i, arg);
 		}
 		rc= -1;
 	}
@@ -1453,6 +1455,7 @@ static int data_wait(struct esmtp_info *info, size_t nreceipients,
 		     int *rcptok, void *arg)
 {
 	esmtp_timeout(info, info->data_timeout);
+
 	if (esmtp_dowrite(info, ".\r\n", 3) ||
 	    esmtp_writeflush(info))	return (-1);
 
@@ -1461,6 +1464,7 @@ static int data_wait(struct esmtp_info *info, size_t nreceipients,
 	(void)parsedatareply(info, nreceipients, rcptok, 0, 0, 1, arg);
 
 	if (!esmtp_connected(info))	return (-1);
+
 	return (0);
 }
 
@@ -1486,33 +1490,124 @@ struct rw_for_esmtp {
 	unsigned byte_counter;
 
 	struct esmtp_info *info;
-	struct my_esmtp_info *my_info;
+	void *arg;
 	} ;
 
 static int convert_to_crlf(const char *, unsigned, void *);
+
+static void do_pushdsn(struct esmtp_info *info,
+		       struct esmtp_mailfrom_info *mf_info,
+		       struct esmtp_rcpt_info *rcpt_info,
+		       size_t nreceipients,
+		       int fd,
+		       void *arg)
+{
+	unsigned i;
+	int	*rcptok;
+	char	*mailfroms;
+	struct rfc2045 *rfcp=0;
+
+	struct	stat stat_buf;
+	char *rcpt_buf;
+
+
+	if (fstat(fd, &stat_buf) == 0)
+		mf_info->msgsize=stat_buf.st_size;
+
+	mailfroms=esmtp_mailfrom_cmd(info, mf_info);
+
+	(*info->log_talking)(info, arg);
+	esmtp_timeout(info, info->cmd_timeout);
+
+	if (esmtp_sendcommand(info, mailfroms, arg))
+	{
+		free(mailfroms);
+		return;
+	}
+
+	/*
+	** While waiting for MAIL FROM to come back, check if the message
+	** needs to be converted to quoted-printable.
+	*/
+
+	if (!info->has8bitmime && mf_info->is8bitmsg)
+	{
+		rfcp=rfc2045_alloc_ac();
+		if (!rfcp)	clog_msg_errno();
+		parserfc(fd, rfcp);
+
+		rfc2045_ac_check(rfcp, RFC2045_RW_7BIT);
+	}
+
+	if (esmtp_parsereply(info, mailfroms, arg))	/* MAIL FROM rejected */
+	{
+		if (rfcp)	rfc2045_free(rfcp);
+
+		free(mailfroms);
+		return;
+	}
+	free(mailfroms);
+
+	rcptok=courier_malloc(sizeof(int)*(nreceipients+1));
+
+	rcpt_buf=esmtp_rcpt_data_create(info, rcpt_info, nreceipients);
+
+	if ( do_pipeline_rcpt_2(info, rcptok, nreceipients, rcpt_buf,
+				arg) )
+	{
+		free(rcpt_buf);
+		if (rfcp)	rfc2045_free(rfcp);
+		free(rcptok);
+		return;
+	}
+	free(rcpt_buf);
+
+	{
+	struct rw_for_esmtp rfe;
+
+		rfe.is_sol=1;
+		rfe.byte_counter=0;
+		rfe.info=info;
+		rfe.arg=arg;
+
+		cork(1);
+
+		if ((rfcp ?
+			rw_rewrite_msg_7bit(fd, rfcp,
+				&convert_to_crlf,
+				&call_rewrite_func,
+				&rfe):
+			rw_rewrite_msg(fd,
+				&convert_to_crlf,
+				&call_rewrite_func,
+				&rfe))
+		    || data_wait(info, nreceipients, rcptok,  arg))
+			for (i=0; i<nreceipients; i++)
+				if (rcptok[i])
+					(*info->log_net_error)(info, i,
+							       arg);
+		free(rcptok);
+		cork(0);
+	}
+	if (rfcp)	rfc2045_free(rfcp);
+}
 
 static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 {
 	struct moduledel *del=my_info->del;
 	struct ctlfile *ctf=my_info->ctf;
+	struct esmtp_rcpt_info *rcpt_info;
 
-	unsigned i;
-	int	*rcptok;
-	int	fd;
-	char	*mailfroms;
-	struct rfc2045 *rfcp=0;
-
-	struct	stat stat_buf;
+	int fd;
 	struct esmtp_mailfrom_info mf_info;
-	char *rcpt_buf;
-
-	memset(&mf_info, 0, sizeof(mf_info));
 
 	if ((fd=open(qmsgsdatname(del->inum), O_RDONLY)) < 0)
 	{
 		connect_error1(del, ctf, -1);
 		return;
 	}
+
+	memset(&mf_info, 0, sizeof(mf_info));
 
 	mf_info.is8bitmsg=ctlfile_searchfirst(ctf, COMCTLFILE_8BIT) >= 0;
 	mf_info.verp=ctlfile_searchfirst(ctf, COMCTLFILE_VERP) >= 0;
@@ -1535,93 +1630,15 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		}
 	}
 
-	if (fstat(fd, &stat_buf) == 0)
-		mf_info.msgsize=stat_buf.st_size;
-
 	mf_info.sender=del->sender;
 
-	mailfroms=esmtp_mailfrom_cmd(info, &mf_info);
+	rcpt_info=mk_rcpt_info(del, ctf);
 
-	talking(info, del, ctf);
-	esmtp_timeout(info, info->cmd_timeout);
+	do_pushdsn(info, &mf_info, rcpt_info, del->nreceipients, fd, my_info);
 
-	if (esmtp_sendcommand(info, mailfroms, my_info))
-	{
-		close(fd);
-		free(mailfroms);
-		return;
-	}
-
-	/*
-	** While waiting for MAIL FROM to come back, check if the message
-	** needs to be converted to quoted-printable.
-	*/
-
-	if (!info->has8bitmime && mf_info.is8bitmsg)
-	{
-		rfcp=rfc2045_alloc_ac();
-		if (!rfcp)	clog_msg_errno();
-		parserfc(fd, rfcp);
-
-		rfc2045_ac_check(rfcp, RFC2045_RW_7BIT);
-	}
-
-	if (esmtp_parsereply(info, mailfroms, my_info))	/* MAIL FROM rejected */
-	{
-		if (rfcp)	rfc2045_free(rfcp);
-		close(fd);
-
-		free(mailfroms);
-		return;
-	}
-	free(mailfroms);
-
-	rcptok=courier_malloc(sizeof(int)*(del->nreceipients+1));
-
-	rcpt_buf=mk_rcpt_data(info, my_info->del, my_info->ctf);
-
-	if ( do_pipeline_rcpt_2(info, rcptok, del->nreceipients, rcpt_buf,
-				my_info) )
-	{
-		free(rcpt_buf);
-		if (rfcp)	rfc2045_free(rfcp);
-		free(rcptok);
-		close(fd);
-		return;
-	}
-	free(rcpt_buf);
-
-	{
-	struct rw_for_esmtp rfe;
-
-		rfe.is_sol=1;
-		rfe.byte_counter=0;
-		rfe.info=info;
-		rfe.my_info=my_info;
-
-		cork(1);
-
-		if ((rfcp ?
-			rw_rewrite_msg_7bit(fd, rfcp,
-				&convert_to_crlf,
-				&call_rewrite_func,
-				&rfe):
-			rw_rewrite_msg(fd,
-				&convert_to_crlf,
-				&call_rewrite_func,
-				&rfe))
-		    || data_wait(info, my_info->del->nreceipients, rcptok,
-				 my_info))
-			for (i=0; i<del->nreceipients; i++)
-				if (rcptok[i])
-					connect_error1(del, ctf, i);
-		free(rcptok);
-		close(fd);
-		cork(0);
-	}
-	if (rfcp)	rfc2045_free(rfcp);
+	free(rcpt_info);
+	close(fd);
 }
-
 
 static int escape_dots(const char *, unsigned,
 		       struct rw_for_esmtp *);
