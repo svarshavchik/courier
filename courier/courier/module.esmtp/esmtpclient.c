@@ -966,30 +966,10 @@ static int parsedatareply(struct esmtp_info *info,
 			  int *, char **, size_t *, int, void *);
 
 static int do_pipeline_rcpt_2(struct esmtp_info *info,
-			      struct my_esmtp_info *my_info,
 			      int *rcptok,
 			      size_t nrecipients,
-			      char *rcpt_data_cmd);
-
-static int do_pipeline_rcpt(struct esmtp_info *info,
-			    struct my_esmtp_info *my_info,
-			    int *rcptok)
-{
-	char *buf=mk_rcpt_data(info, my_info->del, my_info->ctf);
-
-	int rc=do_pipeline_rcpt_2(info, my_info, rcptok,
-				  my_info->del->nreceipients,
-				  buf);
-
-	free(buf);
-	return rc;
-}
-
-static int do_pipeline_rcpt_2(struct esmtp_info *info,
-			      struct my_esmtp_info *my_info,
-			      int *rcptok,
-			      size_t nrecipients,
-			      char *rcpt_data_cmd)
+			      char *rcpt_data_cmd,
+			      void *arg)
 {
 	const char *p;
 	size_t l=strlen(rcpt_data_cmd);
@@ -1072,10 +1052,10 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 				this_rcpt_to_cmd[this_rcpt_to_len]=0;
 
 				(*info->log_sent)(info, this_rcpt_to_cmd,
-						  i, my_info);
+						  i, arg);
 				this_rcpt_to_cmd[this_rcpt_to_len]=save;
 			}
-			(*info->log_reply)(info, p, i, my_info);
+			(*info->log_reply)(info, p, i, arg);
 		} while (!ISFINALLINE(p));
 
 		if (!p)
@@ -1105,7 +1085,7 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 
 		rcptok[i]=0;
 
-		(*info->log_rcpt_error)(info, i, err_code, my_info);
+		(*info->log_rcpt_error)(info, i, err_code, arg);
 	}
 
 /* ------------------- Read the reply to the DATA ----------------- */
@@ -1121,7 +1101,7 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 					/* All RCPT TOs failed */
 		}
 		rc=parsedatareply(info, nrecipients,
-				  rcptok, &rcpt_data_cmd, &l, 0, my_info);
+				  rcptok, &rcpt_data_cmd, &l, 0, arg);
 			/* One more reply */
 	}
 
@@ -1137,6 +1117,7 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 
 	return (rc);
 }
+
 
 /* Read an SMTP reply line in pipeline mode */
 
@@ -1523,6 +1504,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	struct	stat stat_buf;
 	struct esmtp_mailfrom_info mf_info;
+	char *rcpt_buf;
 
 	memset(&mf_info, 0, sizeof(mf_info));
 
@@ -1596,13 +1578,18 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	rcptok=courier_malloc(sizeof(int)*(del->nreceipients+1));
 
-	if ( do_pipeline_rcpt(info, my_info, rcptok) )
+	rcpt_buf=mk_rcpt_data(info, my_info->del, my_info->ctf);
+
+	if ( do_pipeline_rcpt_2(info, rcptok, del->nreceipients, rcpt_buf,
+				my_info) )
 	{
+		free(rcpt_buf);
 		if (rfcp)	rfc2045_free(rfcp);
 		free(rcptok);
 		close(fd);
 		return;
 	}
+	free(rcpt_buf);
 
 	{
 	struct rw_for_esmtp rfe;
