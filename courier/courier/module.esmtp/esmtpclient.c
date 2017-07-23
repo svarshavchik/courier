@@ -689,10 +689,15 @@ static struct esmtp_info *libesmtp_init(const char *host)
 	int smtproutes_flags=0;
 	char *smtproute=smtproutes(host,
 				   &smtproutes_flags);
+	char *q;
 	struct esmtp_info *info=esmtp_info_alloc(host, smtproute,
 						 smtproutes_flags);
 	if (smtproute)
 		free(smtproute);
+
+	q=config_localfilename("esmtpauthclient");
+	esmtp_setauthclientfile(info, q);
+	free(q);
 
 	info->helohost=config_esmtphelo();
 

@@ -453,6 +453,8 @@ struct esmtp_info *esmtp_info_alloc(const char *host,
 void esmtp_info_free(struct esmtp_info *p)
 {
 	esmtp_disconnect(p);
+	if (p->authclientfile)
+		free(p->authclientfile);
 	if (p->authsasllist)
 		free(p->authsasllist);
 	if (p->smtproute)
@@ -1049,6 +1051,17 @@ struct esmtp_auth_xinfo {
 	void *arg;
 };
 
+void esmtp_setauthclientfile(struct esmtp_info *info, const char *filename)
+{
+	if (info->authclientfile)
+		free(info->authclientfile);
+
+	info->authclientfile=strdup(filename);
+
+	if (!info->authclientfile)
+		abort();
+}
+
 static int esmtp_auth(struct esmtp_info *info,
 		      const char *auth_key,
 		      void *arg)
@@ -1062,9 +1075,10 @@ static int esmtp_auth(struct esmtp_info *info,
 
 	struct esmtp_auth_xinfo xinfo;
 
-	q=config_localfilename("esmtpauthclient");
-	configfile=fopen( q, "r");
-	free(q);
+	if (!info->authclientfile)
+		return 0;
+
+	configfile=fopen(info->authclientfile, "r");
 
 	if (!configfile)	return (0);
 

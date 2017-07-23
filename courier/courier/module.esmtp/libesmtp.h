@@ -60,6 +60,9 @@ struct esmtp_info {
 			      const RFC1035_ADDR *dest_addr,
 			      RFC1035_ADDR *source_addr,
 			      void *arg);
+
+	char *authclientfile;
+
 	time_t esmtpkeepaliveping;
 	time_t quit_timeout;
 	time_t connect_timeout;
@@ -120,6 +123,8 @@ struct esmtp_info {
 extern struct esmtp_info *esmtp_info_alloc(const char *host,
 					   const char *smtproute,
 					   int smtproutes_flags);
+
+extern void esmtp_setauthclientfile(struct esmtp_info *, const char *);
 extern void esmtp_info_free(struct esmtp_info *);
 extern int esmtp_connected(struct esmtp_info *);
 extern int esmtp_ping(struct esmtp_info *info);
