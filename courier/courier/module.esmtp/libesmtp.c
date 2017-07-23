@@ -1622,3 +1622,144 @@ char *esmtp_mailfrom_cmd(struct esmtp_info *info,
 	if (*sizeverb)		free(sizeverb);
 	return (mailfromcmd);
 }
+
+/*
+** Build RCPT TOs
+*/
+
+static void mk_one_receip(struct esmtp_info *info,
+			  struct esmtp_rcpt_info *receip,
+			  void (*builder)(const char *, void *),
+			  void *arg)
+{
+	const char *p;
+
+	if (!receip)
+	{
+		(*builder)("DATA\r\n", arg);
+		return;
+	}
+
+	(*builder)("RCPT TO:<", arg);
+	(*builder)(receip->address, arg);
+	(*builder)(">", arg);
+
+	p=receip->dsn_options;
+
+	if (p && info->hasdsn)
+	{
+		int s=0,f=0,d=0,n=0;
+
+		while (*p)
+			switch (*p++)	{
+			case 'N':
+				n=1;
+				break;
+			case 'D':
+				d=1;
+				break;
+			case 'F':
+				f=1;
+				break;
+			case 'S':
+				s=1;
+				break;
+			}
+
+		if (n)
+			(*builder)(" NOTIFY=NEVER", arg);
+		else
+		{
+			const char *p=" NOTIFY=";
+
+			if (s)
+			{
+				(*builder)(p, arg);
+				(*builder)("SUCCESS", arg);
+				p=",";
+			}
+			if (f)
+			{
+				(*builder)(p, arg);
+				(*builder)("FAILURE", arg);
+				p=",";
+			}
+			if (d)
+			{
+				(*builder)(p, arg);
+				(*builder)("DELAY", arg);
+			}
+		}
+	}
+
+	p=receip->orig_receipient;
+
+	if (p && *p && info->hasdsn)
+	{
+		(*builder)(" ORCPT=", arg);
+		(*builder)(p, arg);
+	}
+
+	(*builder)("\r\n", arg);
+}
+
+static void count(const char *str, void *arg)
+{
+	*(size_t *)arg += strlen(str);
+}
+
+static void build(const char *str, void *arg)
+{
+	char **s=(char **)arg;
+
+	size_t l=strlen(str);
+
+	memcpy((*s), str, l);
+
+	*s += l;
+}
+
+static char *rcpt_data(struct esmtp_info *info,
+		       struct esmtp_rcpt_info *receips,
+		       size_t nreceips, int append_data)
+{
+	size_t i;
+	size_t l=1;
+	char *p;
+	char *ptr;
+	size_t n=nreceips;
+
+	if (append_data)
+		++n;
+
+	for (i=0; i < n; ++i)
+		mk_one_receip(info, (i<nreceips ? &receips[i]:NULL),
+			      count, &l);
+
+	p=malloc(l);
+	if (!p)
+		abort();
+	ptr=p;
+
+	for (i=0; i < n; ++i)
+	{
+		mk_one_receip(info, (i<nreceips ? &receips[i]:NULL),
+			      build, &ptr);
+	}
+	*ptr=0;
+	return p;
+}
+
+char *esmtp_rcpt_create(struct esmtp_info *info,
+			struct esmtp_rcpt_info *receips,
+			size_t n)
+{
+	return rcpt_data(info, receips, n, 0);
+}
+
+char *esmtp_rcpt_data_create(struct esmtp_info *info,
+			     struct esmtp_rcpt_info *receips,
+			     size_t n)
+{
+	return rcpt_data(info, receips, n, 1);
+}

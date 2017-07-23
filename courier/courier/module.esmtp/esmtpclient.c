@@ -842,79 +842,39 @@ static void push(struct esmtp_info *info, struct my_esmtp_info *my_info)
 /*
 ** Construct the RCPT TO command along the same lines.
 */
-static char *rcptcmd(struct esmtp_info *info, struct my_esmtp_info *my_info,
-		     unsigned rcptnum)
+
+static char *mk_rcpt_data(struct esmtp_info *info,
+			  struct moduledel *del,
+			  struct ctlfile *ctf)
 {
-	struct moduledel *del=my_info->del;
-	struct ctlfile *ctf=my_info->ctf;
+	unsigned n=del->nreceipients;
+	unsigned i;
+	char *buf;
 
-	char notify[sizeof(" NOTIFY=SUCCESS,FAILURE,DELAY")];
-	char *orcpt="";
-	const char *p;
-	char	*q;
-	unsigned n=atol(del->receipients[rcptnum*2]);
+	struct esmtp_rcpt_info *p=malloc(n*sizeof(struct esmtp_rcpt_info));
 
-	notify[0]=0;
-	if ((p=ctf->dsnreceipients[n]) != 0 && *p && info->hasdsn)
+	if (!p)
+		abort();
+
+	memset(p, 0, n*sizeof(*p));
+
+	for (i=0; i<n; ++i)
 	{
-	int s=0,f=0,d=0,n=0;
+		unsigned n=atol(del->receipients[i*2]);
 
-		while (*p)
-			switch (*p++)	{
-			case 'N':
-				n=1;
-				break;
-			case 'D':
-				d=1;
-				break;
-			case 'F':
-				f=1;
-				break;
-			case 'S':
-				s=1;
-				break;
-			}
-		if (n)
-			strcpy(notify, " NOTIFY=NEVER");
-		else
-		{
-			p=" NOTIFY=";
-			if (s)
-			{
-				strcat(strcat(notify, p), "SUCCESS");
-				p=",";
-			}
-			if (f)
-			{
-				strcat(strcat(notify, p), "FAILURE");
-				p=",";
-			}
-			if (d)
-				strcat(strcat(notify, p), "DELAY");
-		}
+		p[i].address=del->receipients[i*2+1];
+		p[i].dsn_options=ctf->dsnreceipients[n];
+		p[i].orig_receipient=ctf->oreceipients[n];
 	}
 
-	if ((p=ctf->oreceipients[n]) != 0 && *p && info->hasdsn)
-	{
-		orcpt=courier_malloc(sizeof(" ORCPT=")+strlen(p));
-		strcat(strcpy(orcpt, " ORCPT="), p);
-	}
+	buf=esmtp_rcpt_data_create(info, p, n);
 
-	p=del->receipients[rcptnum*2+1];
+	free(p);
 
-	q=courier_malloc(sizeof("RCPT TO:<>\r\n")+strlen(p)+strlen(notify)+
-		strlen(orcpt));
-
-	strcat(strcat(strcat(strcat(strcat(strcpy(q,
-		"RCPT TO:<"),
-		p),
-		">"),
-		notify),
-		orcpt),
-		"\r\n");
-	if (*orcpt)	free(orcpt);
-	return (q);
+	return buf;
 }
+
+
 
 /***************************************************************************/
 /*                             RCPT TO                                     */
@@ -932,48 +892,42 @@ static char *rcptcmd(struct esmtp_info *info, struct my_esmtp_info *my_info,
 */
 
 static const char *readpipelinercpt(struct esmtp_info *,
-				    struct iovec **, unsigned *);
+				    char **, size_t *);
 
 static int parsedatareply(struct esmtp_info *info,
 			  struct my_esmtp_info *my_info,
-			  int *, struct iovec **, unsigned *, int);
+			  int *, char **, size_t *, int);
+
+static int do_pipeline_rcpt_2(struct esmtp_info *info,
+			    struct my_esmtp_info *my_info,
+			    int *rcptok,
+			    char *rcpt_data_cmd);
 
 static int do_pipeline_rcpt(struct esmtp_info *info,
 			    struct my_esmtp_info *my_info,
 			    int *rcptok)
 {
+	char *buf=mk_rcpt_data(info, my_info->del, my_info->ctf);
+
+	int rc=do_pipeline_rcpt_2(info, my_info, rcptok, buf);
+
+	free(buf);
+	return rc;
+}
+
+static int do_pipeline_rcpt_2(struct esmtp_info *info,
+			      struct my_esmtp_info *my_info,
+			      int *rcptok,
+			      char *rcpt_data_cmd)
+{
+	const char *p;
 	struct moduledel *del=my_info->del;
 	struct ctlfile *ctf=my_info->ctf;
-	char	**cmdarray;
-	struct iovec *iov;
-	struct iovec *	iovw;
-	unsigned	niovw;
-
-	unsigned i;
-	const char *p;
-
+	size_t l=strlen(rcpt_data_cmd);
+	size_t i;
 	int	rc=0;
 
-	/* Construct all the RCPT TOs we'll issue. */
-
-	cmdarray=(char **)courier_malloc(sizeof(char *)*
-		(del->nreceipients+1));	/* 1 extra PTR for the DATA */
-	iov=(struct iovec *)courier_malloc(sizeof(struct iovec)*
-		(del->nreceipients+1));
-
-	/* Allocate cmdarray[], also set up iovecs to point to each cmd */
-
-	for (i=0; i <= del->nreceipients; i++)
-	{
-		cmdarray[i]= i < del->nreceipients ?  rcptcmd(info, my_info, i):
-				strcpy(courier_malloc(sizeof("DATA\r\n")),
-						"DATA\r\n");
-		iov[i].iov_base=(caddr_t)cmdarray[i];
-		iov[i].iov_len=strlen(cmdarray[i]);
-	}
-
-	iovw=iov;
-	niovw= i;
+	char	*orig_rcpt_data_cmd=rcpt_data_cmd;
 
 	if (info->haspipelining)	/* One timeout */
 		esmtp_timeout(info, info->cmd_timeout);
@@ -982,21 +936,53 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 
 	for (i=0; i<del->nreceipients; i++)
 	{
-	char	err_code=0;
-	unsigned line_num=0;
+		char	err_code=0;
+		unsigned line_num=0;
+		size_t write_cnt=l;
+		char *next_rcpt_data_cmd=rcpt_data_cmd;
+		size_t next_cnt=l;
+		char *this_rcpt_to_cmd;
+		size_t this_rcpt_to_len;
+
+		for (this_rcpt_to_len=0; orig_rcpt_data_cmd[this_rcpt_to_len];
+		     ++this_rcpt_to_len)
+			if (orig_rcpt_data_cmd[this_rcpt_to_len] == '\n')
+			{
+				++this_rcpt_to_len;
+				break;
+			}
+
+		// Should end with \r\n
+		this_rcpt_to_cmd=orig_rcpt_data_cmd;
+		orig_rcpt_data_cmd += this_rcpt_to_len;
+
+		if (this_rcpt_to_len)
+			--this_rcpt_to_len;
 
 		/* If server can't do pipelining, just set niovw to one!!! */
 
 		if (!info->haspipelining)
 		{
-			iovw=iov+i;
-			niovw=1;
+			int i;
+
+			for (i=0; i<l; ++i)
+				if (rcpt_data_cmd[i] == '\n')
+				{
+					write_cnt=i+1;
+					break;
+				}
+
+			next_cnt= l-write_cnt;
+			next_rcpt_data_cmd= rcpt_data_cmd+write_cnt;
+
 			esmtp_timeout(info, info->cmd_timeout);
 		}
 
 		do
 		{
-			if ((p=readpipelinercpt(info, &iovw, &niovw)) == 0)
+			if ((p=readpipelinercpt(info,
+						&rcpt_data_cmd, &write_cnt))
+			    == 0)
 				break;
 
 			if (line_num == 0)
@@ -1011,10 +997,15 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 
 			if (line_num == 0)
 			{
+				char save=this_rcpt_to_cmd[this_rcpt_to_len];
+				// Should be the \r
+
+				this_rcpt_to_cmd[this_rcpt_to_len]=0;
 				ctlfile_append_connectioninfo(ctf,
 					(unsigned)atol(del->receipients[i*2]),
 					COMCTLFILE_DELINFO_SENT,
-					cmdarray[i]);
+					this_rcpt_to_cmd);
+				this_rcpt_to_cmd[this_rcpt_to_len]=save;
 				ctlfile_append_connectioninfo(ctf,
 					(unsigned)atol(del->receipients[i*2]),
 					COMCTLFILE_DELINFO_REPLYTYPE,
@@ -1030,6 +1021,16 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 			while (i < del->nreceipients)
 				rcptok[i++]=1;
 			break;
+		}
+
+		if (info->haspipelining)
+		{
+			l=write_cnt;
+		}
+		else
+		{
+			rcpt_data_cmd=next_rcpt_data_cmd;
+			l=next_cnt;
 		}
 
 		if ( SMTPREPLY_TYPE(&err_code) == COMCTLFILE_DELSUCCESS)
@@ -1059,12 +1060,8 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 
 			if (i >= del->nreceipients)	return (-1);
 					/* All RCPT TOs failed */
-
-			iovw=iov+del->nreceipients;
-			niovw=1;
-			esmtp_timeout(info, info->cmd_timeout);
 		}
-		rc=parsedatareply(info, my_info, rcptok, &iovw, &niovw, 0);
+		rc=parsedatareply(info, my_info, rcptok, &rcpt_data_cmd, &l, 0);
 			/* One more reply */
 	}
 
@@ -1078,42 +1075,16 @@ static int do_pipeline_rcpt(struct esmtp_info *info,
 		rc= -1;
 	}
 
-	for (i=0; i<del->nreceipients; i++)
-		free(cmdarray[i]);
-	free(cmdarray);
-	free(iov);
 	return (rc);
-}
-
-/* Sigh... When SOCKSv5 supports writev, I'll be happy... */
-
-static int my_writev(int fd, const struct iovec *vector, size_t count)
-{
-char	buf[BUFSIZ];
-size_t	i=0;
-
-	while (count)
-	{
-		if (vector->iov_len > sizeof(buf)-i)	break;
-
-		memcpy(buf+i, vector->iov_base, vector->iov_len);
-		i += vector->iov_len;
-		++vector;
-		--count;
-	}
-	if (i)
-		return (sox_write(fd, buf, i));
-
-	return (sox_write(fd, vector->iov_base, vector->iov_len));
 }
 
 /* Read an SMTP reply line in pipeline mode */
 
 static const char *readpipelinercpt(struct esmtp_info *info,
-				    struct iovec **iovw,	/* Write pipeline */
-				    unsigned *niovw)
+				    char **write_buf,
+				    size_t *write_l)
 {
-int	read_flag, write_flag, *writeptr;
+	int	read_flag, write_flag, *writeptr;
 
 	if (!esmtp_connected(info))	return (0);
 
@@ -1124,14 +1095,15 @@ int	read_flag, write_flag, *writeptr;
 	{
 		write_flag=0;
 		writeptr= &write_flag;
-		if (iovw == 0 || niovw == 0 || *niovw == 0)
+		if (!write_buf || !*write_buf || !*write_l)
 			writeptr=0;
 
 		esmtp_wait_rw(info, &read_flag, writeptr);
 
 		if (write_flag)	/* We can squeeze something out now */
 		{
-		int	n=my_writev(info->esmtp_sockfd, *iovw, *niovw);
+			int	n=sox_write(info->esmtp_sockfd, *write_buf,
+					    *write_l);
 
 			if (n < 0)
 			{
@@ -1139,21 +1111,8 @@ int	read_flag, write_flag, *writeptr;
 				return (0);
 			}
 
-			/* Update iovecs to reflect # bytes written */
-
-			while (n)
-			{
-				if (n < (*iovw)->iov_len)
-				{
-					(*iovw)->iov_base=(caddr_t)
-						( (char *)(*iovw)->iov_base+n);
-					(*iovw)->iov_len -= n;
-					break;
-				}
-				n -= (*iovw)->iov_len;
-				++*iovw;
-				--*niovw;
-			}
+			*write_buf += n;
+			*write_l -= n;
 		}
 	} while (!read_flag && esmtp_connected(info));
 
@@ -1198,7 +1157,9 @@ static char *logsuccessto(struct esmtp_info *info)
 
 static int parsedatareply(struct esmtp_info *info,
 			  struct my_esmtp_info *my_info,
-			  int *rcptok, struct iovec **iovw, unsigned *niovw,
+			  int *rcptok,
+			  char **write_buf,
+			  size_t *write_l,
 			  int isfinal)
 {
 	struct moduledel *del=my_info->del;
@@ -1207,7 +1168,7 @@ static int parsedatareply(struct esmtp_info *info,
 	unsigned line_num=0;
 	unsigned i;
 
-	p=readpipelinercpt(info, iovw, niovw);
+	p=readpipelinercpt(info, write_buf, write_l);
 
 	if (!p)	return (-1);
 
@@ -1563,12 +1524,10 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	talking(info, del, ctf);
 	esmtp_timeout(info, info->cmd_timeout);
 
-	if (esmtp_writestr(info, mailfroms) || esmtp_writeflush(info))
+	if (esmtp_sendcommand(info, mailfroms, my_info))
 	{
-		connect_error(del, ctf);
 		close(fd);
 		free(mailfroms);
-		esmtp_quit(info, my_info);
 		return;
 	}
 

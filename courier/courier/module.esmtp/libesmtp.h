@@ -26,7 +26,6 @@
 #include	"soxwrap/sconnect.h"
 #include	"rfc1035/rfc1035.h"
 #include	"rfc1035/rfc1035mxlist.h"
-
 #include	<ctype.h>
 
 #define	ISFINALLINE(p)	( isdigit((int)(unsigned char)p[0]) &&	\
@@ -154,5 +153,19 @@ struct esmtp_mailfrom_info {
 
 char *esmtp_mailfrom_cmd(struct esmtp_info *info,
 			 struct esmtp_mailfrom_info *mf_info);
+
+struct esmtp_rcpt_info {
+	const char *address;
+	const char *dsn_options;
+	const char *orig_receipient;
+};
+
+extern char *esmtp_rcpt_create(struct esmtp_info *,
+			       struct esmtp_rcpt_info *,
+			       size_t);
+
+extern char *esmtp_rcpt_data_create(struct esmtp_info *,
+				    struct esmtp_rcpt_info *,
+				    size_t);
 
 #endif
