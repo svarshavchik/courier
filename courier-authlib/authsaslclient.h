@@ -20,11 +20,11 @@ extern "C" {
 
 #define SASL_LIST \
 	SASL("EXTERNAL", NO_SERVER_FUNC(), authsaslclient_external) \
-	SASL("PLAIN", SERVER_FUNC(authsasl_plain), authsaslclient_plain) \
-	SASL("LOGIN", SERVER_FUNC(authsasl_login), authsaslclient_login) \
-	SASL("CRAM-MD5", SERVER_FUNC(authsasl_cram), authsaslclient_crammd5) \
+	SASL("CRAM-SHA256", SERVER_FUNC(authsasl_cram), authsaslclient_cramsha256) \
 	SASL("CRAM-SHA1", SERVER_FUNC(authsasl_cram), authsaslclient_cramsha1) \
-	SASL("CRAM-SHA256", SERVER_FUNC(authsasl_cram), authsaslclient_cramsha256)
+	SASL("CRAM-MD5", SERVER_FUNC(authsasl_cram), authsaslclient_crammd5) \
+	SASL("PLAIN", SERVER_FUNC(authsasl_plain), authsaslclient_plain) \
+	SASL("LOGIN", SERVER_FUNC(authsasl_login), authsaslclient_login)
 
 /* A list of SASL client functions */
 
