@@ -143,7 +143,7 @@ cmdlib_PROGRAMS=submitmkdir courierd @EXTRACMDLIB@
 
 # Subdirectories
 
-SUBDIRS=libs filters doc webadmin @dirlist@
+SUBDIRS=libs doc webadmin @dirlist@ filters
 
 DIST_SUBDIRS=libs filters doc webadmin module.dsn module.esmtp module.fax module.local module.uucp
 

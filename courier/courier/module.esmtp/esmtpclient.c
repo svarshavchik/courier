@@ -456,9 +456,6 @@ unsigned        i;
 static void smtp_error(struct moduledel *del, struct ctlfile *ctf,
 		       const char *msg, int errcode)
 {
-	if (errcode == 0)
-		errcode= *msg;
-
 	if (errcode == '5')
 		hard_error1(del, ctf, msg, -1);
 	else

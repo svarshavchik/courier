@@ -110,8 +110,24 @@ CXXFLAGS="-I.. -I$srcdir/.. -I$srcdir/../libs -I$srcdir/../.. -I../.. -I$srcdir.
 
 INSTALL_SCRIPT='${INSTALL} -m 500'
 
+AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
+
+if test "$COURIERAUTHCONFIG" = ""
+then
+	AC_MSG_ERROR(courierauthconfig not found)
+fi
+
+AC_PATH_PROG(SETENV, env, env, $LPATH)
+
+if test "$SETENV" = "env"
+then
+	AC_MSG_ERROR(env not found.)
+fi
+
+AC_SUBST(SETENV)
+
 AC_CONFIG_SUBDIRS(libfilter perlfilter)
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
 
-AC_OUTPUT(Makefile filterctl)
+AC_OUTPUT(Makefile filterctl courierfilter.start)

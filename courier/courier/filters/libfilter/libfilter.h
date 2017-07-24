@@ -37,6 +37,15 @@ int lf_init(const char *modfile,
 		const char *notalltmpname);
 
 /*
+** Checks if this process is started by courierfilter. Returns true
+** if file descriptor 3 exists. If it doesn't, the binary must have
+** been started from the command line. This can be used to build
+** filters that have some usefulness when they're invoked manually.
+*/
+
+int lf_initializing();
+
+/*
 
 After success in lf_init, the filter may do some additional initialization,
 then call lf_init_completed(), passing the opened file descriptor from lf_init.

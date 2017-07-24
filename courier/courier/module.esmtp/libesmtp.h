@@ -71,6 +71,8 @@ struct esmtp_info {
 	time_t cmd_timeout;
 	time_t delay_timeout;
 
+	void (*log_good_reply)(struct esmtp_info *, const char *, int, void *);
+
 	int hasdsn;
 	int has8bitmime;
 	int hasverp;
@@ -130,12 +132,10 @@ extern int esmtp_connected(struct esmtp_info *);
 extern int esmtp_ping(struct esmtp_info *info);
 extern int esmtp_connect(struct esmtp_info *info, void *arg);
 extern void esmtp_quit(struct esmtp_info *, void *arg);
-extern int esmtp_sendcommand(struct esmtp_info *info,
+
+extern int esmtp_misccommand(struct esmtp_info *info,
 			     const char *cmd,
 			     void *arg);
-extern int esmtp_parsereply(struct esmtp_info *info,
-			    const char *cmd,
-			    void *arg);
 
 
 struct esmtp_mailfrom_info {

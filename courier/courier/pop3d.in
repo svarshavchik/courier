@@ -62,7 +62,6 @@ cd @prefix@
 		libexecdir=@libexecdir@ ; \
 		. @sysconfdir@/pop3d ; \
 		. @sysconfdir@/pop3d-ssl ; \
-	TLS_PROTOCOL=$TLS_STARTTLS_PROTOCOL ; \
 	PROXY_HOSTNAME=$PROXY_HOSTNAME ; \
 	@MKDIR_P@ `dirname $PIDFILE` ; \
 	@courierlogger@ -pid=$PIDFILE -start $LOGGEROPTS \

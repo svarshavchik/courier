@@ -46,6 +46,13 @@ static int esmtp_auth(struct esmtp_info *info,
 static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
 				struct esmtp_mailfrom_info *mf_info);
 
+static int esmtp_sendcommand(struct esmtp_info *info,
+			     const char *cmd,
+			     void *arg);
+static int esmtp_parsereply(struct esmtp_info *info,
+			    const char *cmd,
+			    void *arg);
+
 static void connect_error(struct esmtp_info *info, void *arg)
 {
 	(*info->log_smtp_error)(info,
@@ -653,7 +660,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 			if ((p=esmtp_readline(info)) == 0)
 				return (1);
 		}
-		(*info->log_smtp_error)(info, p, 0, arg);
+		(*info->log_smtp_error)(info, p, *p, arg);
 		return (-1);	/*
 				** Let the caller consider this a hard error,
 				** so that it doesn't try the next MX.
@@ -814,7 +821,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 			(*info->log_sent)(info, "SECURITY=STARTTLS REQUESTED FOR THIS MESSAGE", -1, arg);
 			(*info->log_smtp_error)(info,
 						"500 Unable to set minimum security level.",
-						0, arg);
+						'5', arg);
 			return (-1);
 		}
 	}
@@ -830,7 +837,7 @@ static void connection_closed(struct esmtp_info *info,
 	(*info->log_smtp_error)
 		(info,
 		 "Connection unexpectedly closed by remote host.",
-		 4, arg);
+		 '4', arg);
 }
 
 static int esmtp_enable_tls(struct esmtp_info *info,
@@ -941,7 +948,7 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 
 			(*info->log_talking)(info, arg);
 			(*info->log_sent)(info, "STARTTLS", -1, arg);
-			(*info->log_smtp_error)(info, fail, 0, arg);
+			(*info->log_smtp_error)(info, fail, fail[0], arg);
 			sox_close(info->esmtp_sockfd);
 			info->esmtp_sockfd= -1;
 			close(pipefd[0]);
@@ -1008,7 +1015,7 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 			      (info->smtproutes_flags & ROUTE_STARTTLS)
 			      ? "500 ":"400 "),
 		       cinfo.errmsg);
-		(*info->log_smtp_error)(info, tmperrbuf, 0, arg);
+		(*info->log_smtp_error)(info, tmperrbuf, tmperrbuf[0], arg);
 		sox_close(info->esmtp_sockfd);
 		info->esmtp_sockfd= -1;
 		couriertls_destroy(&cinfo);
@@ -1159,7 +1166,7 @@ static int esmtp_auth(struct esmtp_info *info,
 				return (-1);
 			}
 		}
-		(*info->log_smtp_error)(info, p, 0, arg);
+		(*info->log_smtp_error)(info, p, *p, arg);
 		info->quit_needed=1;
 		return (-1);
 	}
@@ -1205,7 +1212,7 @@ static const char *getresp(struct esmtp_auth_xinfo *x)
 			return (0);
 		}
 	}
-	(*info->log_smtp_error)(info, p, 0, arg);
+	(*info->log_smtp_error)(info, p, *p, arg);
 	return (0);
 }
 
@@ -1611,7 +1618,7 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 			{
 				errno=info->net_error;
 				(*info->log_smtp_error)
-					(info, strerror(errno), 4, arg);
+					(info, strerror(errno), '4', arg);
 			}
 			time (&info->net_timeout);
 			info->net_timeout += info->delay_timeout;
@@ -1669,9 +1676,33 @@ int esmtp_ping(struct esmtp_info *info)
 	return 0;
 }
 
-int esmtp_sendcommand(struct esmtp_info *info,
+int esmtp_misccommand(struct esmtp_info *info,
 		      const char *cmd,
 		      void *arg)
+{
+	char *with_crlf=malloc(strlen(cmd)+3);
+
+	if (!with_crlf)
+		abort();
+
+	strcat(strcpy(with_crlf, cmd), "\r\n");
+
+	esmtp_timeout(info, info->cmd_timeout);
+
+	if (esmtp_sendcommand(info, with_crlf, arg) == 0 &&
+	    esmtp_parsereply(info, cmd, arg) == 0)
+	{
+		free(with_crlf);
+		return 0;
+	}
+	free(with_crlf);
+
+	return -1;
+}
+
+static int esmtp_sendcommand(struct esmtp_info *info,
+			     const char *cmd,
+			     void *arg)
 {
 	if (esmtp_writestr(info, cmd) || esmtp_writeflush(info))
 	{
@@ -1683,9 +1714,9 @@ int esmtp_sendcommand(struct esmtp_info *info,
 	return 0;
 }
 
-int esmtp_parsereply(struct esmtp_info *info,
-		     const char *cmd,
-		     void *arg)
+static int esmtp_parsereply(struct esmtp_info *info,
+			    const char *cmd,
+			    void *arg)
 {
 	const char *p;
 
@@ -1714,9 +1745,12 @@ int esmtp_parsereply(struct esmtp_info *info,
 				return (-1);
 			}
 		}
-		(*info->log_smtp_error)(info, p, 0, arg);
+		(*info->log_smtp_error)(info, p, *p, arg);
 		return (-1);
 	}
+
+	if (info->log_good_reply)
+		(*info->log_good_reply)(info, p, -1, arg);
 
 	while (!ISFINALLINE(p))
 	{
@@ -1726,6 +1760,10 @@ int esmtp_parsereply(struct esmtp_info *info,
 			esmtp_disconnect(info);
 			return (-1);
 		}
+
+		if (info->log_good_reply)
+			(*info->log_good_reply)(info, p, -1, arg);
+
 	}
 	return (0);
 }

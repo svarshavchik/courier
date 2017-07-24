@@ -96,6 +96,13 @@ int	listensock;
 	return (listensock);
 }
 
+int lf_initializing()
+{
+	struct stat stat_buf;
+
+	return fstat(3, &stat_buf) == 0;
+}
+
 void lf_init_completed(int sockfd)
 {
 	if (sockfd != 3)	close(3);

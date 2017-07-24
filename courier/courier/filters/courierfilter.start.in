@@ -1,0 +1,16 @@
+#! @SHELL@
+#
+# Copyright 2017 Double Precision, Inc.  See COPYING for
+# distribution information.
+#
+# Start courierfilter, reading the configuration from
+# ${sysconfdir}/courierd
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+sysconfdir="@sysconfdir@"
+libexecdir="@libexecdir@"
+
+cd ${prefix}
+
+exec @SETENV@ -i @SHELL@ -c "set -a ; . ${sysconfdir}/courierd; ${libexecdir}/courier/courierfilter $*"

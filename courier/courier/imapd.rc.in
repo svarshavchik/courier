@@ -41,7 +41,6 @@ start)
 				. @sysconfdir@/imapd-ssl ; \
 		IMAP_STARTTLS=$IMAPDSTARTTLS ; \
 		PROXY_HOSTNAME=$PROXY_HOSTNAME ; \
-		TLS_PROTOCOL=$TLS_STARTTLS_PROTOCOL ; \
 		@MKDIR_P@ `dirname $PIDFILE` ; \
 		@courierlogger@ -pid=$PIDFILE -start $LOGGEROPTS \
 		@sbindir@/couriertcpd -address=$ADDRESS \

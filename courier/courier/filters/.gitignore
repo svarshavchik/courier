@@ -3,6 +3,7 @@
 /courierfilter.8.in
 /courierfilter.html
 /courierfilter.html.in
+/courierfilter.start
 /courierperlfilter.8
 /courierperlfilter.8.in
 /courierperlfilter.html
@@ -21,3 +22,4 @@
 /ratefilter.8.in
 /ratefilter.html
 /ratefilter.html.in
+/verifyfilter

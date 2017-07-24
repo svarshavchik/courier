@@ -14,10 +14,14 @@ htmldoc_DATA=courierfilter.html courierperlfilter.html dupfilter.html ratefilter
 
 databindir=$(datadir)
 databin_SCRIPTS=filterctl
-sbin_PROGRAMS=courierfilter
+
+courierfilterexecdir=$(libexecdir)/courier
+courierfilterexec_PROGRAMS=courierfilter
+
+noinst_SCRIPTS=courierfilter.start
 
 filterbindir=$(libexecdir)/filters
-filterbin_PROGRAMS=dupfilter ratefilter
+filterbin_PROGRAMS=dupfilter ratefilter verifyfilter
 
 filtersocketdir=$(localstatedir)/filters
 allfiltersocketdir=$(localstatedir)/allfilters
@@ -43,6 +47,43 @@ ratefilter_DEPENDENCIES=libfilter/libfilter.a ../../afx/libafx.a \
 ratefilter_LDADD=libfilter/libfilter.a ../../afx/libafx.a \
 	../libs/libcommon.la ../libs/libcourier.la @NETLIBS@
 
+
+
+verifyfilter_SOURCES=verifyfilter.c
+verifyfilter_DEPENDENCIES=libfilter/libfilter.a \
+	../module.esmtp/libesmtp.la \
+	../libs/libcommon.la ../libs/libcourier.la \
+	../../libs/liblock/liblock.la \
+	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
+	../../libs/threadlib/libthread.dep \
+	../../libs/rfc1035/librfc1035.a \
+	../../libs/rfc2045/librfc2045.la \
+	../../libs/rfc822/librfc822.la \
+	../../libs/tcpd/libspipe.la \
+	../../libs/tcpd/libtlsclient.la \
+	../../libs/md5/libmd5.la \
+	../../libs/soxwrap/libsoxwrap.a \
+	../../libs/soxwrap/soxlibs.dep
+
+verifyfilter_LDADD=libfilter/libfilter.a \
+	../module.esmtp/libesmtp.la \
+	../libs/libcommon.la ../libs/libcourier.la \
+	../../libs/liblock/liblock.la \
+	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
+	`cat ../../libs/threadlib/libthread.dep` \
+	../../libs/rfc1035/librfc1035.a \
+	../../libs/rfc2045/librfc2045.la \
+	../../libs/rfc822/librfc822.la \
+	../../libs/tcpd/libspipe.la \
+	../../libs/tcpd/libtlsclient.la \
+	../../libs/md5/libmd5.la \
+	../../libs/soxwrap/libsoxwrap.a \
+	`cat ../../libs/soxwrap/soxlibs.dep` \
+	-lcourierauthsaslclient -lcourierauth -lcourier-unicode \
+	@NETLIBS@
+
+verifyfilter_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
+
 courierfilter_SOURCES=courierfilter.c
 courierfilter_DEPENDENCIES=../libs/libcommon.la ../libs/libcourier.la \
 	../../libs/liblock/liblock.la ../../libs/numlib/libnumlib.la
@@ -51,7 +92,10 @@ courierfilter_LDADD=../libs/libcommon.la ../libs/libcourier.la \
 	../../libs/liblock/liblock.la ../../libs/numlib/libnumlib.la
 
 install-exec-hook:
-	chmod 500 $(DESTDIR)$(sbindir)/courierfilter
+	-$(mkinstalldirs) $(DESTDIR)$(sbindir)
+	$(INSTALL_SCRIPT) courierfilter.start $(DESTDIR)$(sbindir)/courierfilter
+	chmod 555 $(DESTDIR)$(sbindir)/courierfilter
+	chmod 500 $(DESTDIR)$(courierfilterexecdir)/courierfilter
 
 install-data-hook:
 	-$(mkinstalldirs) $(DESTDIR)$(filtersocketdir)
@@ -79,9 +123,11 @@ install-data-hook:
 	for f in $(htmldoc_DATA); do chmod 444 $(DESTDIR)$(htmldocdir)/$$f ; done
 	test `id -u` = 0 || exit 0; for f in $(htmldoc_DATA); do chown bin $(DESTDIR)$(htmldocdir)/$$f ; chgrp bin $(DESTDIR)$(htmldocdir)/$$f ; done
 	chmod 755 $(DESTDIR)$(filterbindir)/dupfilter
+	chmod 755 $(DESTDIR)$(filterbindir)/verifyfilter
 	chmod 755 $(DESTDIR)$(filterbindir)/ratefilter
 	test `id -u` = 0 || exit 0; chown @mailuser@ $(DESTDIR)$(filterbindir)/dupfilter; chgrp @mailgroup@ $(DESTDIR)$(filterbindir)/dupfilter
 	test `id -u` = 0 || exit 0; chown @mailuser@ $(DESTDIR)$(filterbindir)/ratefilter; chgrp @mailgroup@ $(DESTDIR)$(filterbindir)/ratefilter
+	test `id -u` = 0 || exit 0; chown @mailuser@ $(DESTDIR)$(filterbindir)/verifyfilter; chgrp @mailgroup@ $(DESTDIR)$(filterbindir)/verifyfilter
 
 install-perms:
 	@$(MAKE) install-perms-recursive
@@ -95,13 +141,15 @@ install-perms-local:
 	@echo "$(filterbindir) 755 bin bin" >>permissions.dat
 	@echo "$(filterbindir)/dupfilter 755 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filterbindir)/ratefilter 755 @mailuser@ @mailgroup@" >>permissions.dat
+	@echo "$(filterbindir)/verifyfilter 755 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filtersocketdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(allfiltersocketdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filterconfdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filteractivedir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(datadir)/filterctl 500 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(sbindir)/filterctl 500 @mailuser@ @mailgroup@" >>permissions.dat
-	@echo "$(sbindir)/courierfilter 500 @mailuser@ @mailgroup@" >>permissions.dat
+	@echo "$(sbindir)/courierfilter 555 @mailuser@ @mailgroup@" >>permissions.dat
+	@echo "$(courierfilterexecdir)/courierfilter 500 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(man8dir)/courierfilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/dupfilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/ratefilter.8 644 bin bin man" >>permissions.dat
@@ -126,6 +174,7 @@ BUILT_SOURCES=$(man_MANS) $(htmldoc_DATA) \
 uninstall-local:
 	rm -f $(DESTDIR)$(man8dir)/filterctl.8
 	rm -f $(DESTDIR)$(sbindir)/filterctl
+	rm -f $(DESTDIR)$(sbindir)/courierfilter
 
 EXTRA_DIST=testsuite testsuite.txt \
 	courierfilter.8.in dupfilter.8.in courierperlfilter.8.in \
