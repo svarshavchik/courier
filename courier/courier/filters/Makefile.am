@@ -53,6 +53,7 @@ verifyfilter_SOURCES=verifyfilter.c
 verifyfilter_DEPENDENCIES=libfilter/libfilter.a \
 	../module.esmtp/libesmtp.la \
 	../libs/libcommon.la ../libs/libcourier.la \
+	@dblibrary@ \
 	../../libs/liblock/liblock.la \
 	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
 	../../libs/threadlib/libthread.dep \
@@ -68,6 +69,7 @@ verifyfilter_DEPENDENCIES=libfilter/libfilter.a \
 verifyfilter_LDADD=libfilter/libfilter.a \
 	../module.esmtp/libesmtp.la \
 	../libs/libcommon.la ../libs/libcourier.la \
+	@dblibrary@ \
 	../../libs/liblock/liblock.la \
 	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
 	`cat ../../libs/threadlib/libthread.dep` \
@@ -103,9 +105,13 @@ install-data-hook:
 	-$(mkinstalldirs) $(DESTDIR)$(filterconfdir)
 	-$(mkinstalldirs) $(DESTDIR)$(filteractivedir)
 	-$(mkinstalldirs) $(DESTDIR)$(sbindir)
+	-$(mkinstalldirs) $(DESTDIR)$(bindir)
 	chmod 500 $(DESTDIR)$(datadir)/filterctl
 	rm -f $(DESTDIR)$(sbindir)/filterctl
 	$(LN_S) $(datadir)/filterctl $(DESTDIR)$(sbindir)/filterctl
+	rm -f $(DESTDIR)$(bindir)/verifysmtp
+	ln $(DESTDIR)$(filterbindir)/verifyfilter $(DESTDIR)$(bindir)/verifysmtp
+
 	chmod 750 $(DESTDIR)$(filtersocketdir)
 	chmod 750 $(DESTDIR)$(allfiltersocketdir)
 	chmod 750 $(DESTDIR)$(filterconfdir)
@@ -142,6 +148,7 @@ install-perms-local:
 	@echo "$(filterbindir)/dupfilter 755 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filterbindir)/ratefilter 755 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filterbindir)/verifyfilter 755 @mailuser@ @mailgroup@" >>permissions.dat
+	@echo "$(bindir)/verifysmtp 755 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filtersocketdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(allfiltersocketdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filterconfdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
@@ -175,6 +182,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(man8dir)/filterctl.8
 	rm -f $(DESTDIR)$(sbindir)/filterctl
 	rm -f $(DESTDIR)$(sbindir)/courierfilter
+	rm -f $(DESTDIR)$(bindir)/verifysmtp
 
 EXTRA_DIST=testsuite testsuite.txt \
 	courierfilter.8.in dupfilter.8.in courierperlfilter.8.in \

@@ -54,7 +54,7 @@ install-data-hook:
 ldaddlibdl=@LIBDL@
 
 courieresmtp_SOURCES=courieresmtp.c esmtpclient.c esmtpconfig.c esmtpconfig.h \
-		smtproutes.h smtproutes.c staticlist.c
+		staticlist.c
 
 courieresmtpd_SOURCES=courieresmtpd.c esmtpconfig.c esmtpconfig.h esmtpiov.c \
 		esmtpiov.h staticlist.c

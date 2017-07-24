@@ -8,6 +8,7 @@
 #include	<stdio.h>
 #include	<string.h>
 #include	<stdlib.h>
+#include	<ctype.h>
 #include	<errno.h>
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
@@ -21,6 +22,7 @@
 #include	<sys/stat.h>
 #endif
 #include	"courier.h"
+#include	"smtproutes.h"
 
 #include	"libfilter/libfilter.h"
 #include	"rfc1035/rfc1035.h"
@@ -146,10 +148,12 @@ static int lookup_broken_starttls(struct esmtp_info *info,
 }
 
 static void do_verify(struct verify_info *my_info,
-		      const char *address)
+		      const char *address, int in_environment)
 {
 	const char *domain=strrchr(address, '@');
 	struct esmtp_info *info;
+	int smtproutes_flags=0;
+	char *smtproute=0;
 
 	if (!domain)
 	{
@@ -158,9 +162,25 @@ static void do_verify(struct verify_info *my_info,
 		return;
 	}
 
-	// TODO: smtproutes
-	// TODO: authclient
-	info=esmtp_info_alloc(domain+1, 0, 0);
+	if (in_environment)
+	{
+		smtproute=smtproutes(domain+1, &smtproutes_flags);
+	}
+
+	info=esmtp_info_alloc(domain+1, smtproute, smtproutes_flags);
+	if (smtproute)
+		free(smtproute);
+
+	if (in_environment)
+	{
+		char *q;
+
+		q=config_localfilename("esmtpauthclient");
+		esmtp_setauthclientfile(info, q);
+		free(q);
+		info->helohost=config_esmtphelo();
+	}
+
 	// TODO: helohost
 
 	info->log_talking=log_talking;
@@ -204,12 +224,12 @@ static void do_verify(struct verify_info *my_info,
 	esmtp_info_free(info);
 }
 
-static struct verify_info *verify(const char *address)
+static struct verify_info *verify(const char *address, int in_environment)
 {
 	struct verify_info *my_info=verify_info_init();
 	size_t l;
 
-	do_verify(my_info, address);
+	do_verify(my_info, address, in_environment);
 
 	if (my_info->broken_starttls)
 	{
@@ -217,7 +237,7 @@ static struct verify_info *verify(const char *address)
 		my_info=verify_info_init();
 
 		my_info->broken_starttls=1;
-		do_verify(my_info, address);
+		do_verify(my_info, address, in_environment);
 	}
 
 	l=strlen(my_info->msgbuf);
@@ -228,10 +248,65 @@ static struct verify_info *verify(const char *address)
 	return my_info;
 }
 
+void format_as_smtp(FILE *statusfp, struct verify_info *info,
+		    const char *sender)
+{
+	const char *status=info->errcode == '5' ? "530":"430";
+	char *p;
+	char *msg=info->msgbuf;
+
+	if (info->server[0])
+		fprintf(statusfp, "%s-%s:\n",
+			status, info->server);
+	if (info->sent[0])
+		fprintf(statusfp, "%s->>> %s\n",
+			status, info->sent);
+
+	while ((p=strtok(msg, "\n")) != 0)
+	{
+		if (isdigit(p[0]) && isdigit(p[1]) && isdigit(p[2]))
+		{
+			p += 3;
+			if (*p == ' ' || *p == '-')
+				++p;
+		}
+
+		fprintf(statusfp, "%s-%s\n", status, p);
+		msg=NULL;
+	}
+	fprintf(statusfp, "%s <%s> verification failed.\n",
+		status, sender);
+}
+
 void lookup(int argc, char **argv)
 {
 	int i;
 	int exitcode=0;
+
+	if (argc == 2 && strcmp(argv[1], ".") == 0)
+	{
+		const char *sender=getenv("SENDER");
+		struct verify_info *info;
+
+		/* Called from maildroprcs */
+
+		if (!sender) sender="";
+
+		if (!*sender)
+			exit(0);
+
+		info=verify(sender, 0);
+
+		if (info->errcode == 0)
+		{
+			verify_info_deinit(info);
+			exit(0);
+		}
+		format_as_smtp(stdout, info, sender);
+		verify_info_deinit(info);
+		exit(1);
+	}
+
 
 	for (i=1; i<argc; ++i)
 	{
@@ -243,7 +318,7 @@ void lookup(int argc, char **argv)
 		printf("<%s>: ", argv[i]);
 		fflush(stdout);
 
-		info=verify(argv[i]);
+		info=verify(argv[i], 0);
 
 		if (info->errcode == 0)
 		{
@@ -309,29 +384,11 @@ void search_sender(FILE *ctlfile,
 
 	if (sender[0] && !authenticated_sender)
 	{
-		info=verify(sender);
+		info=verify(sender, 1);
 
 		if (info->errcode)
 		{
-			const char *status=info->errcode == '5' ? "530":"430";
-			char *p;
-			char *msg=info->msgbuf;
-
-			if (info->server[0])
-				fprintf(status_socket, "%s-%s:\n",
-					status, info->server);
-			if (info->sent[0])
-				fprintf(status_socket, "%s->>> %s\n",
-					status, info->sent);
-
-			while ((p=strtok(msg, "\n")) != 0)
-			{
-				fprintf(status_socket, "%s-%s\n", status, p);
-				msg=NULL;
-			}
-			fprintf(status_socket, "%s <%s> verification failed.\n",
-				status, sender);
-
+			format_as_smtp(status_socket, info, sender);
 			verify_info_deinit(info);
 			return;
 		}
@@ -453,7 +510,7 @@ int main(int argc, char **argv)
 	char	*fn;
 	char	*f;
 
-	unsigned nthreads=1;
+	unsigned nthreads=4;
 
 	if (!lf_initializing())
 	{

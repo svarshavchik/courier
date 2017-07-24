@@ -35,6 +35,7 @@ libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c courier_malloc.c \
 	cread1l.c cme.c cdefaultdomain.c chelohost.c cfilteracct.c \
 	cmsgidhost.c courierdir.c islocal.c islocalt.c maxlongsize.h \
 	readfile.c removecomments.c lcclog.c lcclog2.c lcclog3.c \
+	smtproutes.h smtproutes.c \
 	rwdefaulthost.c rwsearch.c lcrewrite.c
 libcourier_la_LDFLAGS=-static
 
@@ -92,4 +93,3 @@ dist-hook:
 
 check-am:
 	./testaliases
-

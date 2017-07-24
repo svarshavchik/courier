@@ -117,6 +117,10 @@ then
 	AC_MSG_ERROR(courierauthconfig not found)
 fi
 
+. ../../dbobj.config
+dblibrary="../../$dblibrary"
+AC_SUBST(dblibrary)
+
 AC_PATH_PROG(SETENV, env, env, $LPATH)
 
 if test "$SETENV" = "env"
