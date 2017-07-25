@@ -97,7 +97,7 @@ courieruucp.html.in: courieruucp.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courieruucp.sgml courieruucp.html.in
 
 courieruucp.8.in: courieruucp.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courieruucp.sgml courieruucp.8.in
+	../../libs/docbook/sgml2man courieruucp.sgml courieruucp.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv courieruucp.8 courieruucp.8.in
 
 endif

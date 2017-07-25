@@ -101,7 +101,7 @@ courierfax.html.in: courierfax.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courierfax.sgml courierfax.html.in
 
 courierfax.8.in: courierfax.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courierfax.sgml courierfax.8.in
+	../../libs/docbook/sgml2man courierfax.sgml courierfax.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv courierfax.8 courierfax.8.in
 
 endif

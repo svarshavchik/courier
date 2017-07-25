@@ -22,4 +22,12 @@
 /ratefilter.8.in
 /ratefilter.html
 /ratefilter.html.in
+/verifyfilter.8
+/verifyfilter.8.in
+/verifyfilter.html
+/verifyfilter.html.in
 /verifyfilter
+/verifyfilter.stamp
+/verifysmtp.8
+/verifysmtp.8.in
+/verifysender

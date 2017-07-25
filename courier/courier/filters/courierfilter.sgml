@@ -42,8 +42,9 @@
 The <command moreinfo="none">filterctl</command> commands install or uninstall global
 mail <replaceable>filter</replaceable>s. Global mail filters are used to
 selectively block unwanted
-mail. More than one mail filter can be enabled at the same time. Two filters -
-<ulink url="dupfilter.html"><citerefentry><refentrytitle>dupfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+mail. More than one mail filter can be enabled at the same time. Three filters -
+<ulink url="dupfilter.html"><citerefentry><refentrytitle>dupfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="verifyfilter.html"><citerefentry><refentrytitle>verifyfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
 and
 <ulink url="courierperlfilter.html"><citerefentry><refentrytitle>courierperlfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink> -
 are provided as examples for writing mail filters.</para>
@@ -309,6 +310,7 @@ Optional filters.</para>
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
 <ulink url="dupfilter.html"><citerefentry><refentrytitle>dupfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
 <ulink url="ratefilter.html"><citerefentry><refentrytitle>ratefilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
+<ulink url="verifyfilter.html"><citerefentry><refentrytitle>verifyfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
 <ulink url="courierperlfilter.html"><citerefentry><refentrytitle>courierperlfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>
 
   </refsect1>

@@ -10,10 +10,11 @@ CLEANFILES=$(htmldoc_DATA) $(man_MANS) filtersocketdir.h filteractivedir.h \
 piddir=@piddir@
 
 htmldocdir=@datadir@/htmldoc
-htmldoc_DATA=courierfilter.html courierperlfilter.html dupfilter.html ratefilter.html
+htmldoc_DATA=courierfilter.html courierperlfilter.html dupfilter.html ratefilter.html verifyfilter.html
 
 databindir=$(datadir)
 databin_SCRIPTS=filterctl
+data_DATA=verifysender
 
 courierfilterexecdir=$(libexecdir)/courier
 courierfilterexec_PROGRAMS=courierfilter
@@ -154,12 +155,15 @@ install-perms-local:
 	@echo "$(filterconfdir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(filteractivedir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(datadir)/filterctl 500 @mailuser@ @mailgroup@" >>permissions.dat
+	@echo "$(datadir)/verifysender 644 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(sbindir)/filterctl 500 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(sbindir)/courierfilter 555 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(courierfilterexecdir)/courierfilter 500 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(man8dir)/courierfilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/dupfilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/ratefilter.8 644 bin bin man" >>permissions.dat
+	@echo "$(man8dir)/verifyfilter.8 644 bin bin man" >>permissions.dat
+	@echo "$(man8dir)/verifysmtp.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/courierperlfilter.8 644 bin bin man" >>permissions.dat
 	@echo "$(man8dir)/filterctl.8 644 bin bin man" >>permissions.dat
 	@for f in $(htmldoc_DATA); do echo "$(htmldocdir)/$$f 644 bin bin doc" >>permissions.dat ; done
@@ -174,7 +178,7 @@ filteractivedir.h: config.status
 pidfile.h: config.status
 	echo '#define PIDFILE "$(piddir)/courierfilter.pid"' >pidfile.h
 
-man_MANS=courierfilter.8 dupfilter.8 ratefilter.8 courierperlfilter.8
+man_MANS=courierfilter.8 dupfilter.8 ratefilter.8 verifyfilter.8 verifysmtp.8 courierperlfilter.8
 BUILT_SOURCES=$(man_MANS) $(htmldoc_DATA) \
 	filtersocketdir.h filteractivedir.h pidfile.h
 
@@ -185,8 +189,8 @@ uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/verifysmtp
 
 EXTRA_DIST=testsuite testsuite.txt \
-	courierfilter.8.in dupfilter.8.in courierperlfilter.8.in \
-	courierfilter.html.in courierperlfilter.html.in dupfilter.html.in \
+	courierfilter.8.in dupfilter.8.in verifyfilter.8.in verifysmtp.8.in courierperlfilter.8.in \
+	courierfilter.html.in courierperlfilter.html.in dupfilter.html.in verifyfilter.html.in \
 	ratefilter.8.in ratefilter.html.in
 
 if HAVE_SGML
@@ -194,29 +198,44 @@ courierfilter.html.in: courierfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courierfilter.sgml courierfilter.html.in
 
 courierfilter.8.in: courierfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courierfilter.sgml courierfilter.8.in
+	../../libs/docbook/sgml2man courierfilter.sgml courierfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv courierfilter.8 courierfilter.8.in
 
 courierperlfilter.html.in: courierperlfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courierperlfilter.sgml courierperlfilter.html.in
 
 courierperlfilter.8.in: courierperlfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courierperlfilter.sgml courierperlfilter.8.in
+	../../libs/docbook/sgml2man courierperlfilter.sgml courierperlfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv courierperlfilter.8 courierperlfilter.8.in
 
 dupfilter.html.in: dupfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html dupfilter.sgml dupfilter.html.in
 
 dupfilter.8.in: dupfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man dupfilter.sgml dupfilter.8.in
+	../../libs/docbook/sgml2man dupfilter.sgml dupfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv dupfilter.8 dupfilter.8.in
 
 ratefilter.html.in: ratefilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html ratefilter.sgml ratefilter.html.in
 
 ratefilter.8.in: ratefilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man ratefilter.sgml ratefilter.8.in
+	../../libs/docbook/sgml2man ratefilter.sgml ratefilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv ratefilter.8 ratefilter.8.in
+
+verifyfilter.html.in: verifyfilter.sgml ../../libs/docbook/sgml2html
+	../../libs/docbook/sgml2html verifyfilter.sgml verifyfilter.html.in
+
+verifyfilter.stamp: verifyfilter.sgml ../../libs/docbook/sgml2man
+	../../libs/docbook/sgml2man verifyfilter.sgml verifyfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+	touch verifyfilter.stamp
+
+verifyfilter.8.in: verifyfilter.stamp
+	mv verifyfilter.8 verifyfilter.8.in
+	touch verifyfilter.8.in
+
+verifysmtp.8.in: verifyfilter.stamp
+	mv verifysmtp.8 verifysmtp.8.in
+	touch verifysmtp.8.in
 
 endif
 
@@ -242,6 +261,15 @@ ratefilter.html: ratefilter.html.in
 	./config.status --file=$@
 
 ratefilter.8: ratefilter.8.in
+	./config.status --file=$@
+
+verifyfilter.html: verifyfilter.html.in
+	./config.status --file=$@
+
+verifyfilter.8: verifyfilter.8.in
+	./config.status --file=$@
+
+verifysmtp.8: verifysmtp.8.in
 	./config.status --file=$@
 
 check-am:

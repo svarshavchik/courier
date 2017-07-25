@@ -37,6 +37,13 @@ int track_read_email(int (*cb_func)(time_t timestamp, int status,
 int track_find_broken_starttls(const char *address, time_t *timestamp);
 void track_save_broken_starttls(const char *address);
 
+#define TRACK_VERIFY_SUCCESS	 'V'
+#define TRACK_VERIFY_SOFTFAIL    'n'
+#define TRACK_VERIFY_HARDFAIL    'N'
+int track_find_verify(const char *address, time_t *timestamp);
+void track_save_verify_success(const char *address);
+void track_save_verify_softfail(const char *address);
+void track_save_verify_hardfail(const char *address);
 #ifdef	__cplusplus
 }
 #endif

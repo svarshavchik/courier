@@ -15,7 +15,7 @@ static const char email_address_statuses[]={
 };
 
 static const char broken_starttls_statuses[]={
-	TRACK_BROKEN_STARTTLS
+	TRACK_BROKEN_STARTTLS, 0
 };
 
 static void all_lower(char *c)
@@ -164,7 +164,6 @@ void track_save_broken_starttls(const char *address)
 	track_save_record(address, TRACK_BROKEN_STARTTLS, all_lower);
 }
 
-
 static int track_read(int (*cb_func)(time_t timestamp, int status,
 				     const char *address, void *voidarg),
 		      const char *acceptable,
@@ -219,4 +218,30 @@ int track_read_email(int (*cb_func)(time_t timestamp, int status,
 		     void *voidarg)
 {
 	return track_read(cb_func, email_address_statuses, voidarg);
+}
+
+
+void track_save_verify_success(const char *address)
+{
+	track_save_record(address, TRACK_VERIFY_SUCCESS, domainlower);
+}
+
+void track_save_verify_softfail(const char *address)
+{
+	track_save_record(address, TRACK_VERIFY_SOFTFAIL, domainlower);
+}
+
+void track_save_verify_hardfail(const char *address)
+{
+	track_save_record(address, TRACK_VERIFY_HARDFAIL, domainlower);
+}
+
+static const char verify_statuses[]={
+	TRACK_VERIFY_SUCCESS, TRACK_VERIFY_SOFTFAIL, TRACK_VERIFY_HARDFAIL, 0
+};
+
+int track_find_verify(const char *address, time_t *timestamp)
+{
+	return track_find_record(address, timestamp, verify_statuses,
+				 domainlower);
 }

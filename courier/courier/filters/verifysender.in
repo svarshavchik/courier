@@ -1,0 +1,13 @@
+#
+# Copyright 2017 Double Precision, Inc.  See COPYING for -->
+# distribution information.
+#
+
+import SENDER
+system '@bindir@/verifysmtp .'
+
+if ($RETURNCODE != 0)
+{
+	EXITCODE=1
+	exit
+}

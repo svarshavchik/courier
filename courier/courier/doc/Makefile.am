@@ -293,156 +293,156 @@ aliaslookup.html: aliaslookup.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html aliaslookup.sgml aliaslookup.html
 
 aliaslookup.8: aliaslookup.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man aliaslookup.sgml aliaslookup.8
+	../../libs/docbook/sgml2man aliaslookup.sgml aliaslookup.8 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 
 
 courier.html.in: courier.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courier.sgml courier.html.in
 
 courier.8.in: courier.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courier.sgml courier.8.in
+	../../libs/docbook/sgml2man courier.sgml courier.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv courier.8 courier.8.in
 
 cancelmsg.html: cancelmsg.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html cancelmsg.sgml cancelmsg.html
 
 cancelmsg.1: cancelmsg.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man cancelmsg.sgml cancelmsg.1
+	../../libs/docbook/sgml2man cancelmsg.sgml cancelmsg.1 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 
 mailq.html: mailq.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html mailq.sgml mailq.html
 
 mailq.1: mailq.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man mailq.sgml mailq.1
+	../../libs/docbook/sgml2man mailq.sgml mailq.1 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 
 couriermlm.html.in: couriermlm.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html couriermlm.sgml couriermlm.html.in
 
 couriermlm.1.in: couriermlm.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man couriermlm.sgml couriermlm.1.in
+	../../libs/docbook/sgml2man couriermlm.sgml couriermlm.1.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv couriermlm.1 couriermlm.1.in
 
 webmlmd.html.in: webmlmd.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html webmlmd.sgml webmlmd.html.in
 
 webmlmd.1.in: webmlmd.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man webmlmd.sgml webmlmd.1.in
+	../../libs/docbook/sgml2man webmlmd.sgml webmlmd.1.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv webmlmd.1 webmlmd.1.in
 
 dot-courier.html.in: dot-courier.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html dot-courier.sgml dot-courier.html.in
 
 dot-courier.5.in: dot-courier.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man dot-courier.sgml dot-courier.5.in
+	../../libs/docbook/sgml2man dot-courier.sgml dot-courier.5.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv dot-courier.5 dot-courier.5.in
 
 courierldapaliasd.html.in: courierldapaliasd.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courierldapaliasd.sgml courierldapaliasd.html.in
 
 courierldapaliasd.8.in: courierldapaliasd.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courierldapaliasd.sgml courierldapaliasd.8.in
+	../../libs/docbook/sgml2man courierldapaliasd.sgml courierldapaliasd.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv courierldapaliasd.8 courierldapaliasd.8.in
 
 esmtpd.html.in: esmtpd.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html esmtpd.sgml esmtpd.html.in
 
 esmtpd.8.in: esmtpd.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man esmtpd.sgml esmtpd.8.in
+	../../libs/docbook/sgml2man esmtpd.sgml esmtpd.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv esmtpd.8 esmtpd.8.in
 
 localmailfilter.html.in: localmailfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html localmailfilter.sgml localmailfilter.html.in
 
 localmailfilter.7.in: localmailfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man localmailfilter.sgml localmailfilter.7.in
+	../../libs/docbook/sgml2man localmailfilter.sgml localmailfilter.7.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv localmailfilter.7 localmailfilter.7.in
 
 makeacceptmailfor.html.in: makeacceptmailfor.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html makeacceptmailfor.sgml makeacceptmailfor.html.in
 
 makeacceptmailfor.8.in: makeacceptmailfor.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man makeacceptmailfor.sgml makeacceptmailfor.8.in
+	../../libs/docbook/sgml2man makeacceptmailfor.sgml makeacceptmailfor.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv makeacceptmailfor.8 makeacceptmailfor.8.in
 
 makealiases.html.in: makealiases.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html makealiases.sgml makealiases.html.in
 
 makealiases.8.in: makealiases.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man makealiases.sgml makealiases.8.in
+	../../libs/docbook/sgml2man makealiases.sgml makealiases.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv makealiases.8 makealiases.8.in
 
 makehosteddomains.html.in: makehosteddomains.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html makehosteddomains.sgml makehosteddomains.html.in
 
 makehosteddomains.8.in: makehosteddomains.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man makehosteddomains.sgml makehosteddomains.8.in
+	../../libs/docbook/sgml2man makehosteddomains.sgml makehosteddomains.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv makehosteddomains.8 makehosteddomains.8.in
 
 submit.html.in: submit.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html submit.sgml submit.html.in
 
 submit.8.in: submit.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man submit.sgml submit.8.in
+	../../libs/docbook/sgml2man submit.sgml submit.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv submit.8 submit.8.in
 
 pop3d.html.in: pop3d.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html pop3d.sgml pop3d.html.in
 
 pop3d.8.in: pop3d.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man pop3d.sgml pop3d.8.in
+	../../libs/docbook/sgml2man pop3d.sgml pop3d.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv pop3d.8 pop3d.8.in
 
 mkdhparams.html.in: mkdhparams.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html mkdhparams.sgml mkdhparams.html.in
 
 mkdhparams.8.in: mkdhparams.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man mkdhparams.sgml mkdhparams.8.in
+	../../libs/docbook/sgml2man mkdhparams.sgml mkdhparams.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv mkdhparams.8 mkdhparams.8.in
 
 mkesmtpdcert.html.in: mkesmtpdcert.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html mkesmtpdcert.sgml mkesmtpdcert.html.in
 
 mkesmtpdcert.8.in: mkesmtpdcert.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man mkesmtpdcert.sgml mkesmtpdcert.8.in
+	../../libs/docbook/sgml2man mkesmtpdcert.sgml mkesmtpdcert.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv mkesmtpdcert.8 mkesmtpdcert.8.in
 
 makesmtpaccess.html.in: makesmtpaccess.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html makesmtpaccess.sgml makesmtpaccess.html.in
 
 makesmtpaccess.8.in: makesmtpaccess.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man makesmtpaccess.sgml makesmtpaccess.8.in
+	../../libs/docbook/sgml2man makesmtpaccess.sgml makesmtpaccess.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv makesmtpaccess.8 makesmtpaccess.8.in
 
 makepercentrelay.html.in: makepercentrelay.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html makepercentrelay.sgml makepercentrelay.html.in
 
 makepercentrelay.8.in: makepercentrelay.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man makepercentrelay.sgml makepercentrelay.8.in
+	../../libs/docbook/sgml2man makepercentrelay.sgml makepercentrelay.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv makepercentrelay.8 makepercentrelay.8.in
 
 sendmail.html: sendmail.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html sendmail.sgml sendmail.html
 
 sendmail.1: sendmail.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man sendmail.sgml sendmail.1
+	../../libs/docbook/sgml2man sendmail.sgml sendmail.1 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 
 testmxlookup.html: testmxlookup.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html testmxlookup.sgml testmxlookup.html
 
 testmxlookup.1: testmxlookup.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man testmxlookup.sgml testmxlookup.1
+	../../libs/docbook/sgml2man testmxlookup.sgml testmxlookup.1 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 
 dot-forward.html: dot-forward.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html dot-forward.sgml dot-forward.html
 
 dot-forward.1: dot-forward.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man dot-forward.sgml dot-forward.1
+	../../libs/docbook/sgml2man dot-forward.sgml dot-forward.1 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 
 preline.html.in: preline.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html preline.sgml preline.html.in
 
 preline.1.in: preline.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man preline.sgml preline.1.in
+	../../libs/docbook/sgml2man preline.sgml preline.1.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 	mv preline.1 preline.1.in
 
 manpage.css: ../../libs/docbook/manpage.css

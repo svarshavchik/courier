@@ -1,3 +1,20 @@
+2017-07-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/tcpd: openssl 1.1.0 update, remove the TLS_PROTOCOL setting
+	from all configuration files.
+
+	* courier/filters/verifyfilter.c: New verifyfilter module/verifysender
+	tool.
+
+	* libs/maildrop: Implement the "system" command.
+
+	* courier/filters/courierfilter: Move courierfilter from sbindir to
+	libexecdir. Replace courierfilter is a shell script wrapper that
+	resets the environment before running the real courierfilter.
+
+	* courier/module.esmtp/libesmtp.c: Carve out ESMTP sending logic
+	from esmtpclient.c
+
 2017-07-06  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/submit.C (getrcpts): Only remove the Bcc header when

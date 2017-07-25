@@ -1,0 +1,266 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- Copyright 2017 Double Precision, Inc.  See COPYING for -->
+<!-- distribution information. -->
+<refentry>
+  <info>
+    <author>
+      <firstname>Sam</firstname><surname>Varshavchik</surname>
+      <contrib>Author</contrib>
+    </author>
+    <productname>Courier Mail Server</productname>
+  </info>
+
+  <refmeta>
+    <refentrytitle>verifyfilter</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>verifyfilter</refname>
+    <refname>verifysmtp</refname>
+    <refpurpose>Verify mail addresses</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+
+    <cmdsynopsis sepchar=" ">
+      <command>filterctl</command>
+      <group choice="req">
+	<arg choice="opt">start</arg>
+	<arg choice="opt">stop</arg>
+      </group>
+      <arg choice="plain">verifyfilter</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis sepchar=" ">
+      <command>verifysmtp</command>
+      <arg choice="req">user@domain</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+      This is a mail filter/tool combination that tries to determine the
+      validity
+      of E-mail addresses by attempting to contact the mail domain's mail
+      server, and executing a <command>RCPT TO</command> command.
+      There are three ways to use this tool.
+    </para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+	  As a shell command, to test an E-mail address for deliverability.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  As a global mail filter.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  As a local recipient mail filter.
+	</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+      <command>verifyfilter</command> may not be suitable for situations
+      that process a high volume of incoming E-mail. Address validation
+      expensive, requiring a DNS lookup and an outbound connection to a
+      mail server for every incoming E-mail.
+      <command>verifyfilter</command> goes through the same steps that
+      the mail server does when sending mail, includes enabling encryption.
+    </para>
+
+    <refsect2>
+      <title>The <command>verifysmtp</command> command</title>
+
+      <cmdsynopsis sepchar=" ">
+	<command>@bindir@/verifysmtp</command>
+	<arg choice="req">user@domain</arg>
+      </cmdsynopsis>
+
+      <para>
+	The <command>verifysmtp</command> command creates a network connection
+	to
+	<replaceable>domain</replaceable>'s mail server, and checks if it
+	considers the given E-mail address as valid.
+	Two or more E-mail addresses can be given, and each E-mail address
+	gets checked individually.
+      </para>
+
+      <para>
+	<command>verifysmtp</command> terminates with a zero exit code if
+	all given E-mail addresses passed. A non-zero exit code indicates that
+	one or more of the given addresses were rejected.
+      </para>
+    </refsect2>
+
+    <refsect2>
+      <title>The <command>verifyfilter</command> global mail filter</title>
+
+      <cmdsynopsis sepchar=" ">
+	<command>filterctl</command>
+	<group choice="req">
+	  <arg choice="opt">start</arg>
+	  <arg choice="opt">stop</arg>
+	</group>
+	<arg choice="plain">verifyfilter</arg>
+      </cmdsynopsis>
+
+      <para>
+	The <command>verifyfilter</command> global mail filter, if enabled,
+	checks each message's return address. The E-mail message gets
+	rejected if its return address's mail server rejects the return
+	address. There's not much sense in accepting mail if its return
+	address is undeliverable.
+      </para>
+
+      <para>
+	<command>verifyfilter</command> ignores messages from authenticated
+	senders, and does not check their return addresses.
+      </para>
+    </refsect2>
+
+    <refsect2>
+      <title>Local recipient mail filter</title>
+
+      <informalexample>
+	<programlisting>
+mkdir @sysconfdir@/maildroprcs
+cp @datadir@/verifysender @sysconfdir@/maildroprcs</programlisting>
+
+	<para>
+	  In <filename>$HOME/.mailfilters/rcptfilter</filename>:
+	</para>
+
+	<programlisting>
+include '@sysconfdir@/maildroprcs/verifysender'</programlisting>
+      </informalexample>
+
+      <para>
+	This alternative provides comparable functionality as the global
+	mail filter, but exposed via the
+	<ulink url="localmailfilter.html">
+	  <citerefentry>
+	    <refentrytitle>localmailfilter</refentrytitle>
+	    <manvolnum>7</manvolnum>
+	  </citerefentry>
+	</ulink>
+	API.
+      </para>
+
+      <para>
+	With maildrop, a protected wrapper filtering recipe gets installed into
+	<filename>@sysconfdir@/maildroprcs/verifysender</filename>, which
+	invokes <command>verifysmtp</command> via
+	<command>maildrop</command>'s
+	<command>system</command> command.
+	The wrapper must be included in this manner, since
+	<command>maildrop</command> normally does not allow the
+	<command>system</command> command in the embedded execution mode that's
+	used by the local mail filtering API.
+      </para>
+
+      <para>
+	The wrapper executes <command>verifysmtp</command> with a special
+	argument, a single <quote>.</quote>. This is a special parameter that
+	indicates that <command>verifysmtp</command> should read the
+	E-mail address from the <varname>SENDER</varname> environment
+	variable (avoiding issues with shell expansion, and script kiddies).
+      </para>
+
+      <para>
+	The
+	<filename>@sysconfdir@/maildroprcs/verifysender</filename>
+	wrapper can be suitably, perhaps optionally, included from either
+	the <filename>rcptfilter</filename> or the
+	<filename>smtpfilter</filename> script.
+      </para>
+    </refsect2>
+
+
+  </refsect1>
+
+  <refsect1>
+    <title>BUGS</title>
+
+    <para>
+      Just because a mail server accepted the
+      <command>RCPT TO</command> it does not mean that the given E-mail
+      address can ultimately receive E-mail.
+    </para>
+
+    <para>
+      When executed as a shell command or a local recipient mail filter the
+      <application>Courier</application> mail server's execution environment
+      is not available, and <command>verifysmtp</command> will not be
+      able to use
+      <application>Courier</application>'s configuration files, such as
+      <filename>smtproutes</filename>
+      and
+      <filename>authclient</filename>,
+      and several others.
+      As such, <command>verifysmtp</command>'s behavior might differ from
+      Courier's, when sending mail.
+    </para>
+
+  </refsect1>
+
+  <refsect1>
+    <title>FILES</title>
+
+    <para>
+<command>verifyfilter</command> uses the following configuration files. Changes to
+the following files do not take effect until the filter has been stopped and
+restarted.</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><filename>@sysconfdir@/filters/verifyfilter-mode</filename></term>
+	<listitem>
+	  <para>
+If this file exists
+and contains the word "all", <command>verifyfilter</command> will create its
+socket in <filename>@localstatedir@/allfilters</filename>,
+otherwise the socket will be
+created in <filename>@localstatedir@/filters</filename>, see
+<ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+for more information.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename>@sysconfdir@/filters/verifyfilter-nthreads</filename></term>
+	<listitem>
+	  <para>
+This file
+contains a single numerical value that sets the number of threads created
+(one thread is used to check each email address). The default
+number of threads is 10.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+      <ulink url="courierfilter.html">
+	<citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+      </ulink>, <ulink url="localmailfilter.html">
+	  <citerefentry>
+	    <refentrytitle>localmailfilter</refentrytitle>
+	    <manvolnum>7</manvolnum>
+	  </citerefentry>
+	</ulink>.</para>
+
+  </refsect1>
+
+</refentry>
