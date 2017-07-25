@@ -15,10 +15,10 @@
 extern "C" {
 #endif
 
-
+	/* At least 2, up to 3 hours of tracking logs searched */
 #define TRACK_NHOURS 2
 
-void trackpurge();
+void trackpurge(const char *trackdir);
 
 int track_find_email(const char *address, time_t *timestamp);
 #define TRACK_ADDRACCEPTED 'A'
@@ -38,12 +38,15 @@ int track_find_broken_starttls(const char *address, time_t *timestamp);
 void track_save_broken_starttls(const char *address);
 
 #define TRACK_VERIFY_SUCCESS	 'V'
-#define TRACK_VERIFY_SOFTFAIL    'n'
-#define TRACK_VERIFY_HARDFAIL    'N'
-int track_find_verify(const char *address, time_t *timestamp);
-void track_save_verify_success(const char *address);
-void track_save_verify_softfail(const char *address);
-void track_save_verify_hardfail(const char *address);
+#define TRACK_VERIFY_HARDFAIL    'v'
+int track_find_verify(const char *trackdir,
+		      const char *address, time_t *timestamp);
+void track_save_verify_success(const char *trackdir,
+			       const char *address,
+			       int autopurge);
+void track_save_verify_hardfail(const char *trackdir,
+				const char *address,
+				int autopurge);
 #ifdef	__cplusplus
 }
 #endif

@@ -134,4 +134,4 @@ AC_CONFIG_SUBDIRS(libfilter perlfilter)
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
 
-AC_OUTPUT(Makefile filterctl courierfilter.start verifysender)
+AC_OUTPUT(Makefile filterctl courierfilter.start verifysender verifysenderfull)

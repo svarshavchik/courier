@@ -69,12 +69,21 @@
     </itemizedlist>
 
     <para>
-      <command>verifyfilter</command> may not be suitable for situations
-      that process a high volume of incoming E-mail. Address validation
+      <command>verifyfilter</command> is suitable for handling moderate
+      amount of E-mail traffic. Address validation is
       expensive, requiring a DNS lookup and an outbound connection to a
-      mail server for every incoming E-mail.
+      mail server for every validated address.
       <command>verifyfilter</command> goes through the same steps that
-      the mail server does when sending mail, includes enabling encryption.
+      the mail server does when sending mail, including enabling
+      of encryption.
+    </para>
+
+    <para>
+      <command>verifyfilter</command> uses logging and caching, to avoid
+      repeatedly validating the same return address when receiving multiple
+      E-mails from the same sender; but its caching is rudimentary (a simple
+      log file), and increased logging due to high E-mail traffic mail
+      delivery may create large log files, impacting performance.
     </para>
 
     <refsect2>
@@ -133,7 +142,15 @@
       <informalexample>
 	<programlisting>
 mkdir @sysconfdir@/maildroprcs
-cp @datadir@/verifysender @sysconfdir@/maildroprcs</programlisting>
+cp @datadir@/verifysender @sysconfdir@/maildroprcs
+cp @datadir@/verifysenderfull @sysconfdir@/maildroprcs</programlisting>
+
+	<para>
+	  In your <replaceable>$HOME</replaceable>:
+	</para>
+
+	<programlisting>
+mkdir $HOME/.trackdir</programlisting>
 
 	<para>
 	  In <filename>$HOME/.mailfilters/rcptfilter</filename>:
@@ -141,6 +158,13 @@ cp @datadir@/verifysender @sysconfdir@/maildroprcs</programlisting>
 
 	<programlisting>
 include '@sysconfdir@/maildroprcs/verifysender'</programlisting>
+
+	<para>
+	  Or:
+	</para>
+
+	<programlisting>
+include '@sysconfdir@/maildroprcs/verifysenderfull'</programlisting>
       </informalexample>
 
       <para>
@@ -184,7 +208,45 @@ include '@sysconfdir@/maildroprcs/verifysender'</programlisting>
       </para>
     </refsect2>
 
+    <refsect2>
+      <title>Logging and caching</title>
 
+      <para>
+	<command>verifyfilter</command> caches the return address it checks.
+	Once <command>verifyfilter</command> verifies that the return address
+	is accepted by the sending domain's mail server, this is logged
+	and additional E-mail with the same return address gets immediately
+	accepted without contacting the sending domain's mail server to
+	re-check the same address.
+      </para>
+
+      <para>
+	Successfully verified return addresses
+	get cached for approximately 2-3 hours.
+	If no other E-mail with the same address get received before the
+	cache expires
+	that return address gets rechecked the next time it is seen.
+	If another E-mail with the same return address gets received,
+	it is immediately accepted and the email address gets recached.
+	Most mailing lists' bounce addresses should not cause excessive
+	re-verification, provided a regular trickle of mailing list
+	traffic. This includes mailing list that use per-message bounce
+	addresses that follow the common VERP convention (Variable
+	Envelope Return Path), see <quote>FILES</quote> below.
+      </para>
+
+      <para>
+	As becomes obvious after perusing the contents of the stock
+	<filename>verifysender</filename> local mail filter,
+	<command>verifysmtp</command>'s <option>-t</option> gives the
+	name of a scratch directory that <command>verifysmtp</command>
+	uses for the cache. This directory should be set aside for
+	<command>verifysmtp</command>, and not used for other purposes.
+	The global mail filter shares the scratch directory together with
+	other <application>Courier</application> functions that work the
+	same way.
+      </para>
+    </refsect2>
   </refsect1>
 
   <refsect1>
@@ -232,6 +294,33 @@ otherwise the socket will be
 created in <filename>@localstatedir@/filters</filename>, see
 <ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
 for more information.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><filename>@sysconfdir@/filters/verifyfilter-logmode</filename></term>
+	<listitem>
+	  <para>
+	    This file contains a single line, <quote>base</quote> or
+	    <quote>full</quote>.
+	    <quote>full</quote> verifies each return address, exactly as
+	    given.
+	    The default <quote>base</quote> value strips off any VERP
+	    component of the sender's address, before comparing it. If the
+	    local mailbox portion of the return address contains a dash,
+	    the dash and the remaining portion of the return address gets
+	    removed.
+	  </para>
+
+	  <para>
+	    With the default <quote>base</quote> logging mode, once the
+	    E-mail address <literal>&lt;list-12@example.com&gt;</literal>
+	    gets verified, all further addresses like
+	    <literal>&lt;list-13@example.com&gt;</literal> and
+	    <literal>&lt;list-foo-bar@example.com&gt;</literal> are
+	    considered as verified, but not
+	    <literal>&lt;anotherlist@example.com&gt;</literal>.
+	  </para>
 	</listitem>
       </varlistentry>
 

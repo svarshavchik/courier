@@ -14,6 +14,7 @@
 #include	<unistd.h>
 #endif
 #include	"comctlfile.h"
+#include	"comtrack.h"
 #include	"filtersocketdir.h"
 #include	"threadlib/threadlib.h"
 
@@ -27,6 +28,11 @@
 #include	"libfilter/libfilter.h"
 #include	"rfc1035/rfc1035.h"
 #include	"module.esmtp/libesmtp.h"
+#include	"localstatedir.h"
+
+#define HARDFAIL_STATUS "530"
+#define SOFTFAIL_STATUS "430"
+#define VERIFICATION_FAILED_FORMAT	"%s <%s> verification failed.\n"
 
 void rfc2045_error(const char *p)
 {
@@ -41,6 +47,13 @@ struct verify_info {
 	char	msgbuf[1024];
 	int	errcode;
 	int	broken_starttls;
+};
+
+struct my_environment {
+	int in_daemon;
+	const char *trackdir;
+	int autopurge;
+	const char *logmode;
 };
 
 struct verify_info *verify_info_init()
@@ -148,7 +161,7 @@ static int lookup_broken_starttls(struct esmtp_info *info,
 }
 
 static void do_verify(struct verify_info *my_info,
-		      const char *address, int in_environment)
+		      const char *address, struct my_environment *my_env)
 {
 	const char *domain=strrchr(address, '@');
 	struct esmtp_info *info;
@@ -162,7 +175,7 @@ static void do_verify(struct verify_info *my_info,
 		return;
 	}
 
-	if (in_environment)
+	if (my_env->in_daemon)
 	{
 		smtproute=smtproutes(domain+1, &smtproutes_flags);
 	}
@@ -171,7 +184,7 @@ static void do_verify(struct verify_info *my_info,
 	if (smtproute)
 		free(smtproute);
 
-	if (in_environment)
+	if (my_env->in_daemon)
 	{
 		char *q;
 
@@ -224,12 +237,111 @@ static void do_verify(struct verify_info *my_info,
 	esmtp_info_free(info);
 }
 
-static struct verify_info *verify(const char *address, int in_environment)
+static struct verify_info *verify2(const char *address,
+				   char *tracking_address,
+				   struct verify_info *my_info,
+				   struct my_environment *my_env);
+
+static struct verify_info *verify(const char *address,
+				  struct my_environment *my_env)
 {
 	struct verify_info *my_info=verify_info_init();
-	size_t l;
+	char *tracking_address=strdup(address);
+	struct verify_info *ret;
 
-	do_verify(my_info, address, in_environment);
+	if (!tracking_address)
+		return my_info;
+
+	ret=verify2(address, tracking_address, my_info, my_env);
+
+	free(tracking_address);
+
+	return ret;
+}
+
+static struct verify_info *verify2(const char *address,
+				   char *tracking_address,
+				   struct verify_info *my_info,
+				   struct my_environment *my_env)
+{
+	size_t l;
+	const char *logmode=my_env->logmode ? my_env->logmode:"base";
+
+	if (strcmp(logmode, "full") == 0)
+	{
+	}
+#if 0
+	else if (strcmp(logmode, "domain") == 0)
+	{
+		char *p=tracking_address;
+		char *q=strchr(p, '@');
+
+		if (q)
+			while ((*p++=*q++) != 0)
+				;
+	}
+#endif
+	else
+	{
+		char *p=tracking_address;
+		char *q;
+
+		while (*p)
+		{
+			if (*p == '@')
+				break;
+
+			if (*p != '-')
+			{
+				++p;
+				continue;
+			}
+			q=strchr(p, '@');
+
+			if (q)
+				while ((*p++=*q++) != 0)
+					;
+			break;
+		}
+	}
+
+	if (my_env->trackdir)
+	{
+		time_t timestamp;
+
+		int logged=track_find_verify(my_env->trackdir,
+					     tracking_address,
+					     &timestamp);
+
+		switch (logged) {
+		case TRACK_VERIFY_SUCCESS:
+			if (timestamp < time(NULL)-60 * 10)
+			{
+				/*
+				** If an address was verified, we want to
+				** remember that. If we are getting regular
+				** traffic, typical of mailing lists, we
+				** can avoid re-validating the mailing list's
+				** address, every TRACK_NHOURS, simply by
+				** re-saving the address, but don't do it
+				** every time, wait 10 mins before doing so.
+				*/
+				track_save_verify_success(my_env->trackdir,
+							  tracking_address,
+							  my_env->autopurge);
+			}
+			return my_info;
+
+		case TRACK_VERIFY_HARDFAIL:
+			snprintf(my_info->server, sizeof(my_info->server),
+				 "Cached verification status found (previously undeliverable)");
+
+			my_info->errcode='5';
+			return my_info;
+		}
+	}
+
+	do_verify(my_info, address, my_env);
 
 	if (my_info->broken_starttls)
 	{
@@ -237,7 +349,7 @@ static struct verify_info *verify(const char *address, int in_environment)
 		my_info=verify_info_init();
 
 		my_info->broken_starttls=1;
-		do_verify(my_info, address, in_environment);
+		do_verify(my_info, address, my_env);
 	}
 
 	l=strlen(my_info->msgbuf);
@@ -245,13 +357,30 @@ static struct verify_info *verify(const char *address, int in_environment)
 	if (l && my_info->msgbuf[--l] == '\n')
 		my_info->msgbuf[l]=0;
 
+	if (my_env->trackdir)
+	{
+		switch (my_info->errcode) {
+		case 0:
+			track_save_verify_success(my_env->trackdir,
+						  tracking_address,
+						  my_env->autopurge);
+			break;
+		case '5':
+			track_save_verify_hardfail(my_env->trackdir,
+						   tracking_address,
+						   my_env->autopurge);
+			break;
+		}
+	}
+
 	return my_info;
 }
 
 void format_as_smtp(FILE *statusfp, struct verify_info *info,
 		    const char *sender)
 {
-	const char *status=info->errcode == '5' ? "530":"430";
+	const char *status=
+		info->errcode == '5' ? HARDFAIL_STATUS:SOFTFAIL_STATUS;
 	char *p;
 	char *msg=info->msgbuf;
 
@@ -274,7 +403,7 @@ void format_as_smtp(FILE *statusfp, struct verify_info *info,
 		fprintf(statusfp, "%s-%s\n", status, p);
 		msg=NULL;
 	}
-	fprintf(statusfp, "%s <%s> verification failed.\n",
+	fprintf(statusfp, VERIFICATION_FAILED_FORMAT,
 		status, sender);
 }
 
@@ -282,11 +411,35 @@ void lookup(int argc, char **argv)
 {
 	int i;
 	int exitcode=0;
+	struct my_environment my_env;
+	int opt;
+	const char *trackdir=0;
+	const char *logmode="base";
 
-	if (argc == 2 && strcmp(argv[1], ".") == 0)
+	memset(&my_env, 0, sizeof(my_env));
+
+	while ((opt=getopt(argc, argv, "m:t:")) != -1)
+	{
+		switch (opt) {
+		case 't':
+			trackdir=optarg;
+			break;
+		case 'm':
+			logmode=optarg;
+			break;
+		default:
+			fprintf(stderr,
+				"Usage: %s [-t trackingdirectory] [-m full|base|domain]\n",
+				argv[0]);
+			exit(1);
+		}
+	}
+
+	if (trackdir)
 	{
 		const char *sender=getenv("SENDER");
 		struct verify_info *info;
+		struct stat stat_buf;
 
 		/* Called from maildroprcs */
 
@@ -295,7 +448,14 @@ void lookup(int argc, char **argv)
 		if (!*sender)
 			exit(0);
 
-		info=verify(sender, 0);
+		if (stat(trackdir, &stat_buf) == 0)
+		{
+			my_env.trackdir=trackdir;
+			my_env.autopurge=1;
+		}
+
+		my_env.logmode=logmode;
+		info=verify(sender, &my_env);
 
 		if (info->errcode == 0)
 		{
@@ -307,8 +467,7 @@ void lookup(int argc, char **argv)
 		exit(1);
 	}
 
-
-	for (i=1; i<argc; ++i)
+	for (i=optind; i<argc; ++i)
 	{
 		struct verify_info *info;
 
@@ -318,7 +477,7 @@ void lookup(int argc, char **argv)
 		printf("<%s>: ", argv[i]);
 		fflush(stdout);
 
-		info=verify(argv[i], 0);
+		info=verify(argv[i], &my_env);
 
 		if (info->errcode == 0)
 		{
@@ -353,7 +512,8 @@ void lookup(int argc, char **argv)
 }
 
 void search_sender(FILE *ctlfile,
-		   FILE *status_socket)
+		   FILE *status_socket,
+		   const char *logmode)
 {
 	char buf[BUFSIZ];
 	char sender[BUFSIZ];
@@ -384,7 +544,15 @@ void search_sender(FILE *ctlfile,
 
 	if (sender[0] && !authenticated_sender)
 	{
-		info=verify(sender, 1);
+		struct my_environment my_env;
+
+		memset(&my_env, 0, sizeof(my_env));
+
+		my_env.in_daemon=1;
+		my_env.trackdir=TRACKDIR;
+		my_env.logmode=logmode;
+
+		info=verify(sender, &my_env);
 
 		if (info->errcode)
 		{
@@ -401,12 +569,14 @@ void search_sender(FILE *ctlfile,
 struct verify_thread_info {
 
 	int fd;
+	char logmode[16];
+
 };
 
 static void initverifyinfo(struct verify_thread_info *a,
 			   struct verify_thread_info *b)
 {
-	a->fd=b->fd;
+	*a=*b;
 }
 
 static FILE *get_first_ctlfile(FILE *fp)
@@ -452,7 +622,7 @@ static void verifythread(struct verify_thread_info *vti)
 
 	ctlfile=get_first_ctlfile(fp);
 
-	search_sender(ctlfile, fp);
+	search_sender(ctlfile, fp, vti->logmode);
 
 	if (ctlfile)
 		fclose(ctlfile);
@@ -468,6 +638,18 @@ int verifyfilter(unsigned nthreads)
 	int	listensock;
 	struct	cthreadinfo *threads;
 	struct	verify_thread_info vti;
+	char	*logmode;
+	char	*fn;
+
+	fn=config_localfilename("filters/verifyfilter-logmode");
+	logmode=config_read1l(fn);
+	free(fn);
+
+	snprintf(vti.logmode, sizeof(vti.logmode), "%s",
+		 logmode ? logmode:"base");
+
+	if (logmode)
+		free(logmode);
 
 	listensock=lf_init("filters/verifyfilter-mode",
 		ALLFILTERSOCKETDIR "/verifyfilter",
@@ -510,7 +692,7 @@ int main(int argc, char **argv)
 	char	*fn;
 	char	*f;
 
-	unsigned nthreads=4;
+	unsigned nthreads=10;
 
 	if (!lf_initializing())
 	{

@@ -240,7 +240,7 @@ struct	mybuf trigger_buf;
 	purgedir(MSGSDIR);
 	rmdir(MSGQDIR);
 	mkdir(MSGQDIR, 0755);
-	trackpurge();
+	trackpurge(TRACKDIR);
 
 	if ((triggerw=open(triggername, O_WRONLY, 0)) < 0 ||
 		(triggerr=open(triggername, O_RDONLY, 0)) < 0)

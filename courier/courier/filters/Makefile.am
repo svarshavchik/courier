@@ -14,7 +14,7 @@ htmldoc_DATA=courierfilter.html courierperlfilter.html dupfilter.html ratefilter
 
 databindir=$(datadir)
 databin_SCRIPTS=filterctl
-data_DATA=verifysender
+data_DATA=verifysender verifysenderfull
 
 courierfilterexecdir=$(libexecdir)/courier
 courierfilterexec_PROGRAMS=courierfilter
@@ -156,6 +156,7 @@ install-perms-local:
 	@echo "$(filteractivedir) 750 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(datadir)/filterctl 500 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(datadir)/verifysender 644 @mailuser@ @mailgroup@" >>permissions.dat
+	@echo "$(datadir)/verifysenderfull 644 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(sbindir)/filterctl 500 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(sbindir)/courierfilter 555 @mailuser@ @mailgroup@" >>permissions.dat
 	@echo "$(courierfilterexecdir)/courierfilter 500 @mailuser@ @mailgroup@" >>permissions.dat
