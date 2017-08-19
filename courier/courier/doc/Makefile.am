@@ -643,7 +643,9 @@ htmldocfiles=$(nohtmlinfiles) $(htmlin) \
 	../filters/courierfilter.html \
 	../filters/courierperlfilter.html \
 	../module.uucp/courieruucp.html \
-	../filters/dupfilter.html
+	../filters/dupfilter.html \
+	../filters/ratefilter.html \
+	../filters/verifyfilter.html
 
 dollar=$$
 id=$(dollar)Id

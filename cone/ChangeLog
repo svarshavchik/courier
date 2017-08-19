@@ -1,3 +1,7 @@
+0.96.1
+
+	* Build fixes for OpenSSL 1.1.0
+
 0.96
 
 2017-03-11  Sam Varshavchik  <mrsam@courier-mta.com>

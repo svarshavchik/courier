@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright 1998 - 2016 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2017 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 0.77.0.20170725, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 0.78.0, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
