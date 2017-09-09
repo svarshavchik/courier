@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2010 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2017 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 # No dist tag from mock; detect mandrake, redhat, etc. the old fashioned way
@@ -284,16 +284,15 @@ then
         /bin/systemctl stop courier-authlib.service || :
 fi
 %systemd_post courier-authlib.service
+if [ $1 -eq 1 ]
+then
+    /bin/systemctl daemon-reload
+fi
 %else
 /sbin/chkconfig --del courier-authlib
 /sbin/chkconfig --add courier-authlib
 %endif
 %preun
-if test -x %{_sbindir}/authdaemond
-then
-	%{_sbindir}/authdaemond stop >/dev/null 2>&1 || /bin/true
-fi
-
 if test "$1" = "0"
 then
 %if %using_systemd
@@ -305,6 +304,10 @@ fi
 
 %postun
 %if %using_systemd
+if [ $1 -eq 0 ]
+then
+    /bin/systemctl daemon-reload
+fi
 %systemd_postun_with_restart courier-authlib.service
 %endif
 
