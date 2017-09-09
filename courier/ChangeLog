@@ -1,3 +1,11 @@
+2017-09-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/cmlm.C (savemsg): Exit with EX_SOFTWARE when rejecting
+	messages from non-subscribers, to avoid triggerring backscatter
+	suppression for the mailing list.
+
+0.78.0
+
 2017-07-24  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/tcpd: openssl 1.1.0 update, remove the TLS_PROTOCOL setting

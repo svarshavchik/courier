@@ -921,7 +921,7 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 			std::cout << "You are not subscribed to this mailing list."
 				  << std::endl;
 		}
-		rc=EX_NOPERM;
+		rc=EX_SOFTWARE;
 		return (rc);
 	}
 
