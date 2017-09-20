@@ -1,3 +1,7 @@
+2017-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier: switch default header encoding to UTF-8.
+
 2017-09-08  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/cmlm.C (savemsg): Exit with EX_SOFTWARE when rejecting

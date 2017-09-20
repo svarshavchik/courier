@@ -383,7 +383,7 @@
   <p>The typical sequence of commands to compile and install
   SqWebMail is as follows:</p>
   <pre>
- 
+
   ./configure [options - see below]
   make configure-check
   make
@@ -524,7 +524,7 @@
 
     <li><code>--enable-mimecharset=<em>charset</em></code> -
     default charset= tag to stick into the Content-Type: header.
-    the default is <code>iso-8859-1</code>.</li>
+    the default is <code>utf-8</code>.</li>
 
     <li><code>--enable-lang=<em>lang</em></code> - reserved for
     future. Default language of web pages to serve.</li>
@@ -1185,7 +1185,7 @@ SetEnv SQWEBMAIL_RANDSEED 82738AZ
   <p>Let's take a look at a simple Apache Name-based sqwebmail
   template configuration example:</p>
   <pre>
-  
+
   # Sqwebmail Alternate Template URL
   ScriptAlias /cgi-bin/sqwebmail-alt-template <i>"/usr/local/apache/cgi-bin/sqwebmail"</i>
 
@@ -1194,7 +1194,7 @@ SetEnv SQWEBMAIL_RANDSEED 82738AZ
       Setenv SQWEBMAIL_IMAGEURL <i>"/alternate-webmail"</i>
       [...]
   &lt;/Location&gt;
-      
+
 </pre>
 
   <p>The above should allow your users to run sqwebmail with the

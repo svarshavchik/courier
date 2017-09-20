@@ -774,7 +774,7 @@ bool CursesMessage::reformat()
 
 	if (!reformat_file.is_open())
 	{
-		part.content_chset="iso-8859-1"; // Default, for now
+		part.content_chset="utf-8"; // Default, for now
 
 		// Start a new section
 
@@ -2380,7 +2380,7 @@ void CursesMessage::reply()
 
 	std::string senderName="";
 
-	std::string content_chset="iso-8859-1";
+	std::string content_chset="utf-8";
 
 	std::string my_chset=unicode_default_chset();
 

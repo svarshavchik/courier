@@ -207,7 +207,7 @@ string Filter::Step::getDescription() const
 				std::string chset=searchType.charset;
 
 				if (chset.size() == 0)
-					chset="iso-8859-1";
+					chset="utf-8";
 
 				std::string srch(unicode::iconvert::convert
 						 (searchType.param2,

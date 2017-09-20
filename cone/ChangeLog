@@ -1,3 +1,7 @@
+2017-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone: switch default header encoding to UTF-8.
+
 0.96.1
 
 	* Build fixes for OpenSSL 1.1.0
