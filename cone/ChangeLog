@@ -1,3 +1,7 @@
+2017-09-27  Giovanni Bechis <giovanni@paclan.it>
+
+	* Fix to configure.ac
+
 2017-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* cone: switch default header encoding to UTF-8.

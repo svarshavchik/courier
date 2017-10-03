@@ -1,3 +1,13 @@
+0.78.1
+
+2017-10-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/reformail.C (add_from_filter): Fix use after free.
+
+2017-09-27  Giovanni Bechis <giovanni@paclan.it>
+
+	* Fix to configure.ac
+
 2017-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier: switch default header encoding to UTF-8.
