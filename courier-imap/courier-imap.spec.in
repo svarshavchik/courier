@@ -59,7 +59,7 @@ BuildRequires: courier-unicode-devel
 BuildRequires:      openssl
 BuildRequires:      openssl-devel
 %else
-BuildRequires:      gnutls-devel /usr/bin/certtool
+BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
 Requires:	  /usr/bin/certtool
 %endif
 

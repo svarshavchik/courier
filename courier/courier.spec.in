@@ -132,7 +132,7 @@ BuildRequires:      openssl-devel
 BuildRequires:      openssl-perl
 %endif
 %else
-BuildRequires:      gnutls-devel /usr/bin/certtool
+BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
 Requires:	  /usr/bin/certtool
 %endif
 
