@@ -1,3 +1,23 @@
+0.78.2
+
+2017-11-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Use libtool to build libfilter and waitlib modules. Fixes perlfilter
+	link failure on Fedora 27.
+
+	* gettext update.
+
+	* rpm packaging fixes.
+
+2017-11-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/sqwebmail/pcp.c (sqpcp_eventstart): Fix null pointer dereference.
+
+2017-11-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/rfc2045/rfc2045reply.c (mkreply): Fix null pointer
+	dereferences.
+
 0.78.1
 
 2017-10-03  Sam Varshavchik  <mrsam@courier-mta.com>

@@ -758,6 +758,10 @@ fi
 
 %if %using_systemd
 %systemd_post courier.service
+if [ $1 -eq 1 ]
+then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
 %else
 /sbin/chkconfig --del courier
 /sbin/chkconfig --add courier

@@ -72,7 +72,7 @@ courieresmtp_DEPENDENCIES=../../courier/libs/libmodule.la \
 			@SASLLIBS@ \
 			../../libs/tcpd/libtlsclient.la \
 			../../libs/numlib/libnumlib.la \
-			../../libs/waitlib/libwaitlib.a \
+			../../libs/waitlib/libwaitlib.la \
 			../../libs/tcpd/libspipe.la \
 			../../libs/md5/libmd5.la \
 			../../libs/random128/librandom128.la \
@@ -89,7 +89,7 @@ commonLDADD=../../courier/libs/libmodule.la librewrite.la libesmtp.la \
 			@SASLLIBS@ \
 			../../libs/tcpd/libtlsclient.la \
 			../../libs/numlib/libnumlib.la \
-			../../libs/waitlib/libwaitlib.a \
+			../../libs/waitlib/libwaitlib.la \
 			../../libs/tcpd/libspipe.la \
 			@dblibrary@ \
 			../../libs/md5/libmd5.la \

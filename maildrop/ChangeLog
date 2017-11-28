@@ -1,3 +1,10 @@
+2.9.3
+
+2017-11-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/rfc2045/rfc2045reply.c (mkreply): Fix null pointer
+	dereferences.
+
 2.9.2
 
 2017-10-03  Sam Varshavchik  <mrsam@courier-mta.com>

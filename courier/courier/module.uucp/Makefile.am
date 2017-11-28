@@ -44,7 +44,7 @@ courieruucp_DEPENDENCIES=../../courier/libs/libmodule.la \
 	../../libs/rfc2045/librfc2045.la \
 	../../libs/rfc822/librfc822.la \
 	../../libs/numlib/libnumlib.la \
-	../../libs/waitlib/libwaitlib.a \
+	../../libs/waitlib/libwaitlib.la \
 	@dblibrary@
 
 courieruucp_LDADD=../../courier/libs/libmodule.la \
@@ -54,7 +54,7 @@ courieruucp_LDADD=../../courier/libs/libmodule.la \
 	../../libs/rfc2045/librfc2045.la \
 	../../libs/rfc822/librfc822.la \
 	../../libs/numlib/libnumlib.la \
-	../../libs/waitlib/libwaitlib.a \
+	../../libs/waitlib/libwaitlib.la \
 	@dblibrary@ -lcourier-unicode
 
 htmldocdir=@datadir@/htmldoc

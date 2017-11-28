@@ -14,7 +14,7 @@ AC_CONFIG_HEADERS(config.h)
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_RANLIB
+AC_PROG_LIBTOOL
 
 dnl Checks for libraries.
 
@@ -28,12 +28,12 @@ AC_SYS_LARGEFILE
 
 AC_CACHE_CHECK([for socklen_t],
 	libfilter_cv_hassocklen_t,
- 
+
 AC_COMPILE_IFELSE([
 AC_LANG_SOURCE( [
 #include <sys/types.h>
 #include <sys/socket.h>
- 
+
 socklen_t sl_t;
 ],[
 	accept(0, 0, &sl_t);
@@ -41,9 +41,9 @@ socklen_t sl_t;
 	libfilter_cv_hassocklen_t=yes,
 	libfilter_cv_hassocklen_t=no)
 )
- 
+
 socklen_t="int"
- 
+
 if test $libfilter_cv_hassocklen_t = yes
 then
 	:

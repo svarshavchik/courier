@@ -34,14 +34,14 @@ courierlocal_DEPENDENCIES=../../courier/libs/libmodule.la \
 			../../courier/libs/libcommon.la \
 			../../courier/libs/libcourier.la \
 			../../libs/numlib/libnumlib.la \
-			../../libs/waitlib/libwaitlib.a
+			../../libs/waitlib/libwaitlib.la
 
 courierlocal_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 courierlocal_LDADD=../../courier/libs/libmodule.la \
 			../../courier/libs/libcommon.la \
 			../../courier/libs/libcourier.la \
 			../../libs/numlib/libnumlib.la \
-			../../libs/waitlib/libwaitlib.a \
+			../../libs/waitlib/libwaitlib.la \
 			-lcourierauth
 
 courierdeliver_SOURCES=deliver.c
@@ -51,7 +51,7 @@ courierdeliver_DEPENDENCIES=librewrite.la \
 		../../libs/maildir/libmaildir.la \
 		../../libs/rfc822/librfc822.la \
 		../../libs/liblock/liblock.la \
-		../../libs/waitlib/libwaitlib.a \
+		../../libs/waitlib/libwaitlib.la \
 		../../libs/numlib/libnumlib.la
 
 courierdeliver_LDADD=$(courierdeliver_DEPENDENCIES) -lcourier-unicode

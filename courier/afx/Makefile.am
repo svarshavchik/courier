@@ -14,7 +14,6 @@ testafxpipe_SOURCES=testafxpipe.C
 testafxpipe_DEPENDENCIES=libafx.a
 testafxpipe_LDADD=libafx.a
 
-check-am:
+check-am: testafxpipe
 	./testafxpipe <libafx.a | cmp - libafx.a
 	./testafxpipe <config.h | cmp - config.h
-

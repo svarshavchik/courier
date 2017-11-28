@@ -4,6 +4,6 @@
 
 CLEANFILES=permissions.dat
 
-noinst_LIBRARIES=libfilter.a
+noinst_LTLIBRARIES=libfilter.la
 
-libfilter_a_SOURCES=libfilter.c libfilter.h
+libfilter_la_SOURCES=libfilter.c libfilter.h

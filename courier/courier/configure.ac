@@ -494,7 +494,7 @@ AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../libs/docbook)
 
 # This gets built by the make rule, and is not in the git repo
 
-for f in courierd.dist.in webmlmrc.dist.in
+for f in courierd.dist.in webmlmrc.dist.in ldapaliasrc.dist
 do
     if test ! -f "$srcdir/$f"
     then
@@ -505,7 +505,6 @@ done
 
 AC_OUTPUT(Makefile courier.h \
 	courierctl.start \
-	courierd.dist \
 	dot-qmail-to-dot-courier.pl \
 	pop3d \
 	pop3d-ssl \
@@ -515,4 +514,4 @@ AC_OUTPUT(Makefile courier.h \
 	makehosteddomains \
 	makeimapaccess \
 	mkmodules.sh perms.sh setperms.sh \
-	perftest1 webmaild webmlmrc.dist webmlmd.rc)
+	perftest1 webmaild webmlmd.rc)

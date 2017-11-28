@@ -31,27 +31,27 @@ filterconfdir=$(sysconfdir)/filters
 filteractivedir=$(sysconfdir)/filters/active
 
 dupfilter_SOURCES=dupfilter.c duphash.c duphash.h msghash.c msghash.h
-dupfilter_DEPENDENCIES=libfilter/libfilter.a ../../libs/md5/libmd5.la \
+dupfilter_DEPENDENCIES=libfilter/libfilter.la ../../libs/md5/libmd5.la \
 	../libs/libcommon.la ../libs/libcourier.la \
 	../../libs/liblock/liblock.la \
 	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
 	../../libs/threadlib/libthread.dep
-dupfilter_LDADD=libfilter/libfilter.a ../../libs/md5/libmd5.la \
+dupfilter_LDADD=libfilter/libfilter.la ../../libs/md5/libmd5.la \
 	../libs/libcommon.la ../libs/libcourier.la \
 	../../libs/liblock/liblock.la \
 	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
 	`cat ../../libs/threadlib/libthread.dep` @NETLIBS@
 
 ratefilter_SOURCES=ratefilter.C
-ratefilter_DEPENDENCIES=libfilter/libfilter.a ../../afx/libafx.a \
+ratefilter_DEPENDENCIES=libfilter/libfilter.la ../../afx/libafx.a \
 	../libs/libcommon.la ../libs/libcourier.la
-ratefilter_LDADD=libfilter/libfilter.a ../../afx/libafx.a \
+ratefilter_LDADD=libfilter/libfilter.la ../../afx/libafx.a \
 	../libs/libcommon.la ../libs/libcourier.la @NETLIBS@
 
 
 
 verifyfilter_SOURCES=verifyfilter.c
-verifyfilter_DEPENDENCIES=libfilter/libfilter.a \
+verifyfilter_DEPENDENCIES=libfilter/libfilter.la \
 	../module.esmtp/libesmtp.la \
 	../libs/libcommon.la ../libs/libcourier.la \
 	@dblibrary@ \
@@ -67,7 +67,7 @@ verifyfilter_DEPENDENCIES=libfilter/libfilter.a \
 	../../libs/soxwrap/libsoxwrap.a \
 	../../libs/soxwrap/soxlibs.dep
 
-verifyfilter_LDADD=libfilter/libfilter.a \
+verifyfilter_LDADD=libfilter/libfilter.la \
 	../module.esmtp/libesmtp.la \
 	../libs/libcommon.la ../libs/libcourier.la \
 	@dblibrary@ \

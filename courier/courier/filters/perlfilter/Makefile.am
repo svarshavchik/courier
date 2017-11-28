@@ -28,7 +28,7 @@ wrapperpl.h: config.status
 
 perlfilter_SOURCES=perlfilter.c
 perlfilter_DEPENDENCIES=\
-	../libfilter/libfilter.a ../../../libs/waitlib/libwaitlib.a \
+	../libfilter/libfilter.la ../../../libs/waitlib/libwaitlib.la \
 	../../libs/libcommon.la ../../libs/libcourier.la
 perlfilter_LDADD=$(perlfilter_DEPENDENCIES) @PERL_LDFLAGS@
 

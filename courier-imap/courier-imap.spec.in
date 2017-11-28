@@ -298,6 +298,10 @@ then
 fi
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist` >/dev/null
 %systemd_post courier-imap.service
+if [ $1 -eq 1 ]
+then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
 %else
 /sbin/chkconfig --del courier-imap
 /sbin/chkconfig --add courier-imap

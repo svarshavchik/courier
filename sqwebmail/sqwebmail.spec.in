@@ -237,6 +237,11 @@ fi
 
 %systemd_post sqwebmail.service
 
+if [ $1 -eq 1 ]
+then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+
 %preun
 
 %systemd_preun sqwebmail.service

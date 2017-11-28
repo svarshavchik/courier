@@ -79,7 +79,7 @@ courierfax_DEPENDENCIES=@courierdir@/courier/libs/libmodule.la \
 		@courierdir@/libs/rfc822/librfc822.la \
 		@courierdir@/libs/gpglib/libgpg.la \
 		@courierdir@/libs/numlib/libnumlib.la \
-		@courierdir@/libs/waitlib/libwaitlib.a
+		@courierdir@/libs/waitlib/libwaitlib.la
 
 courierfax_LDADD=$(courierfax_DEPENDENCIES) -lcourier-unicode # -lefence
 

@@ -36,6 +36,14 @@ $(GITFILES): %: %.git
 	mv -f $@.tmp $@
 endif
 
+BUILT_SOURCES += courierd.dist webmlmrc.dist
+
+courierd.dist: courierd.dist.in
+	$(SHELL) ./config.status --file courierd.dist
+
+webmlmrc.dist: webmlmrc.dist.in
+	$(SHELL) ./config.status --file webmlmrc.dist
+
 extrapkglib=makedatprog courierpop3login pcpd
 pkglibexecdir=$(libexecdir)/courier
 pkglibexec_PROGRAMS=aliasexp aliascombine aliascreate \
@@ -408,7 +416,7 @@ courier_config_SOURCES=courier-config.c
 EXTRA_DIST= testsuite.alias testsuite.alias1.in testsuite.alias2.in \
 		aliases.config smtpaccess.config \
 		dotforward.tst dotforward.tst.chk \
-		webmaild.in ldapaliasrc.dist \
+		webmaild.in courierd.dist.in webmlmrc.dist.in ldapaliasrc.dist \
 		$(mlmdata_DATA)
 
 sharedindexsplit: ../libs/maildir/sharedindexsplit
@@ -653,7 +661,7 @@ install-perms-local:
 #
 # Lame regression test.
 #
-check-am:
+check-am: aliascreate
 	./aliascreate -tmp=./testsuite.tmp -dump=1 <$(srcdir)/testsuite.alias1.in | sed '/^$$/d' | sort | cmp -s $(srcdir)/testsuite.alias -
 	./aliascreate -tmp=./testsuite.tmp -dump=1 <$(srcdir)/testsuite.alias2.in | sed '/^$$/d' | sort | cmp -s $(srcdir)/testsuite.alias -
 	$(srcdir)/dotforward.tst | cmp -s $(srcdir)/dotforward.tst.chk -
