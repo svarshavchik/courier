@@ -24,7 +24,7 @@ URL:            http://www.courier-mta.org
 
 ################################################################################
 
-Source:         http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+Source:         http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
