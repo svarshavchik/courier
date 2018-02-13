@@ -1,3 +1,19 @@
+2018-01-08  Osamu Aoki <osamu@debian.org>
+
+	* libs/maildrop/deliver.C (delivery): Always return 75 upon
+	delivery failure, for the standalone maildrop build.
+
+2017-12-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/maildir/maildirmake.c (main): maildirmake's -q option
+	will create the maildir if it does not exist.
+
+	* libs/rfc2045/reformime.c (main2): Added -rU option, and a new
+	internal RFC2045_RW_8BIT_ALWAYS conversion option.
+
+	* libs/rfc2045/reformime.c (main2): Fix crash when the -s option
+	is not valid.
+
 2.9.3
 
 2017-11-26  Sam Varshavchik  <mrsam@courier-mta.com>
