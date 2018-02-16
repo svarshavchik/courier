@@ -110,6 +110,6 @@ local DNS server is down).</para>
     <title>SEE ALSO</title>
     <para>
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
-<ulink url="http://www.rfc-editor.org/rfc/rfc1035.txt">RFC 1035</ulink>.</para>
+<ulink url="https://www.ietf.org/rfc/rfc1035.txt">RFC 1035</ulink>.</para>
   </refsect1>
 </refentry>

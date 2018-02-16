@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2013 Double Precision, Inc.
+** Copyright 1998 - 2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -1151,7 +1151,7 @@ static int checkdns(const char *sender,
 		return (-1);
 	}
 
-	std::cout << "517 Invalid domain, see <URL:ftp://ftp.isi.edu/in-notes/rfc1035.txt>" << std::endl << std::flush;
+	std::cout << "517 Invalid domain, see <URL:https://www.ietf.org/rfc/rfc1035.txt>" << std::endl << std::flush;
 	return (-1);
 }
 
