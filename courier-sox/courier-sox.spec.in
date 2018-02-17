@@ -30,6 +30,7 @@ BuildRequires: libtool
 BuildRequires: courier-authlib-devel
 BuildRequires: gdbm-devel
 BuildRequires: /usr/include/ltdl.h
+BuildRequires: gcc-c++
 
 %description
 This package installs a Socks 5 client support library that allows applications

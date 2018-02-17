@@ -92,6 +92,7 @@ Obsoletes:        courier-sendmail-wrapper
 Provides:         /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail /usr/bin/newaliases
 %endif
 
+BuildRequires:    gcc-c++
 BuildRequires:	  courier-authlib-devel >= 0.55
 BuildRequires:    rpm >= 4.0.2
 BuildRequires:    fileutils

@@ -1,3 +1,8 @@
+2018-02-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/maildrop/search.C: ":H" pattern matching option, matching
+	only the main message headers.
+
 2018-01-08  Osamu Aoki <osamu@debian.org>
 
 	* libs/maildrop/deliver.C (delivery): Always return 75 upon

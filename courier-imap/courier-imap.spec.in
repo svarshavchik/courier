@@ -47,6 +47,7 @@ Requires(preun):  systemd
 %endif
 %endif
 Requires: courier-authlib >= 0.60.6.20080629
+BuildRequires: gcc-c++
 BuildRequires: procps-ng
 BuildRequires: textutils fileutils perl
 BuildRequires: courier-authlib-devel >= 0.60.6.20080629
