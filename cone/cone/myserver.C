@@ -23,6 +23,7 @@
 #include <fcntl.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <poll.h>
 
 #include <iostream>
 
@@ -41,6 +42,10 @@ Certificates *myServer::certs;
 
 extern void folderIndexScreen(void *);
 extern void hierarchyScreen(void *);
+
+int myServer::pollFDForRefreshMessageCount = -1;
+int myServer::pollFDForRefreshMessageCountWriteDirection = -1;
+CursesHierarchy* myServer::cursesHierarchyForRefreshing = NULL;
 
 myServer::myServer(string name, string urlArg)
 	: serverName(name), url(urlArg), mailCheckInterval(300), server(NULL),
@@ -273,6 +278,16 @@ bool myServer::eventloop(myServer::Callback *callback)
 		if (alarmCalled)
 			continue; // Something might've happened...
 
+		// poll() ignores file descriptors less than 0, thus the
+		// `pollFDForRefresh` can always be added regardless of the
+		// feature being used or not.
+		struct pollfd pollFDForRefresh = {
+			myServer::pollFDForRefreshMessageCount,
+			POLLIN,
+			0
+		};
+		fds.push_back(pollFDForRefresh);
+
 		if (mail::account::poll(fds, ioTimeout) < 0)
 		{
 			if (errno != EINTR)
@@ -281,6 +296,17 @@ bool myServer::eventloop(myServer::Callback *callback)
 				break;
 			}
 		}
+
+		char buf[128];
+		int pollev = fds.back().revents;
+		fds.pop_back();
+		if((pollev & POLLIN) && read(
+				myServer::pollFDForRefreshMessageCount,
+					buf, sizeof(buf)) > 0 &&
+				myServer::pollFDForRefreshMessageCount != -1 &&
+				myServer::cursesHierarchyForRefreshing != NULL)
+			myServer::cursesHierarchyForRefreshing->
+				refreshAllFolders();
 	}
 
 	statusBar->notbusy();
@@ -1031,4 +1057,40 @@ void myServer::checkNewMail()
 
 
 	finishCheckingNewMail();
+}
+
+void myServer::setPollForRefreshMessageCount(string fn)
+{
+	if((myServer::pollFDForRefreshMessageCount =
+		open(fn.c_str(), O_RDONLY | O_CLOEXEC | O_NONBLOCK)) < 0)
+	{
+		perror("Failed to open FIFO for reading");
+		exit(1);
+	}
+	// Open another file descriptor for writing such that the pipe is
+	// kept open regardless of any external application closing it.
+	if((myServer::pollFDForRefreshMessageCountWriteDirection =
+		open(fn.c_str(), O_WRONLY | O_CLOEXEC)) < 0)
+	{
+		perror("Failed to open FIFO for writing");
+		exit(1);
+	}
+}
+
+void myServer::closePollForRefreshMessageCount()
+{
+	if(myServer::pollFDForRefreshMessageCount != -1)
+	{
+		// POSIX logic: close returns 0 on success thus true on fail...
+		if(close(myServer::pollFDForRefreshMessageCount))
+			perror("Failed to close message count update file "
+			       "descriptor");
+		close(myServer::pollFDForRefreshMessageCountWriteDirection);
+		myServer::pollFDForRefreshMessageCount = -1;
+	}
+}
+
+void myServer::setCursesHierarchyPointerForRefreshing(CursesHierarchy* h)
+{
+	myServer::cursesHierarchyForRefreshing = h;
 }

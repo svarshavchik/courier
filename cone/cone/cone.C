@@ -429,6 +429,7 @@ void openHierarchyScreen(std::string prompt,
 			 myServer **selectedServer)
 {
 	CursesHierarchy hierarchy_screen( &myServer::hierarchy, mainScreen);
+	myServer::setCursesHierarchyPointerForRefreshing(&hierarchy_screen);
 	
 	titleBar->setTitles(_("FOLDERS"), "");
 
@@ -474,6 +475,8 @@ void openHierarchyScreen(std::string prompt,
 		*selectedFolder=hierarchy_screen.folderSelected;
 	if (selectedServer)
 		*selectedServer=hierarchy_screen.serverSelected;
+
+	myServer::setCursesHierarchyPointerForRefreshing(NULL);
 }
 
 void hierarchyScreen(void *dummy)
@@ -1025,6 +1028,8 @@ static void cleanup()
 		delete myServer::remoteConfigAccount;
 		myServer::remoteConfigAccount=NULL;
 	}
+
+	myServer::closePollForRefreshMessageCount();
 }
 
 //
@@ -1142,7 +1147,7 @@ int main(int argc, char *argv[])
 	int recover=0;
 	Macros macroBuffer;
 
-	while ((optc=getopt(argc, argv, "vrCc:")) != -1)
+	while ((optc=getopt(argc, argv, "vrCc:m:")) != -1)
 	{
 		switch (optc) {
 		case 'v':
@@ -1150,6 +1155,16 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			recover=1;
+			break;
+		case 'm':
+			// try to delete if existent, ignore fail
+			unlink(optarg);
+			if(mkfifo(optarg, 0644) < 0)
+			{
+				perror("Failed to create FIFO");
+				exit(1);
+			}
+			myServer::setPollForRefreshMessageCount(optarg);
 			break;
 		case 'c':
 

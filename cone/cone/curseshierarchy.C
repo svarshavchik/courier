@@ -985,6 +985,26 @@ void CursesHierarchyDeleteFolderVerifyCallback
 	me->processDeletedFolder(parent, deleted, updatedFolder);
 }
 
+bool CursesHierarchy::RefreshIterator::visit(Hierarchy::Folder* f)
+{
+	if(f != NULL && this->cs != NULL)
+		f->updateInfo(this->cs, true);
+	return true;
+}
+
+bool CursesHierarchy::RefreshIterator::visit(Hierarchy::Server* s)
+{
+	if(s != NULL)
+		this->cs = s->getServer();
+	return true;
+}
+
+void CursesHierarchy::refreshAllFolders()
+{
+	RefreshIterator iterator;
+	getHierarchy()->root.prefixIterate(iterator);
+}
+
 ///////////
 bool CursesHierarchy::processKey(const Curses::Key &key)
 {

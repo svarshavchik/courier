@@ -61,6 +61,14 @@ class CursesHierarchy : public Curses, public HierarchyDisplay,
 
 	};
 
+	class RefreshIterator: public Hierarchy::EntryIterator {
+	private:
+		myServer* cs = NULL;
+	public:
+		bool visit(Hierarchy::Folder* f);
+		bool visit(Hierarchy::Server* s);
+	};
+
 public:
 	friend class DrawIterator;
 
@@ -84,6 +92,7 @@ public:
 	bool drawErase(Hierarchy::Server *server, bool doErase);
 	void visible(Hierarchy::Entry *e);
 
+	void refreshAllFolders();
 
 private:
 	bool drawErase(std::string str1, int col1,

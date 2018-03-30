@@ -14,6 +14,7 @@
 #include "curses/timer.H"
 #include "myreadfolders.H"
 #include "certificates.H"
+#include "curseshierarchy.H"
 
 #include <string>
 #include <vector>
@@ -85,6 +86,13 @@ private:
 	//
 	std::map<std::string, std::map<std::string, std::string>
 	> folder_configuration;
+
+	// Allow refreshing message counts through messages on a named pipe.
+	// Necessary file descriptor for reading, the other direction to keep
+	// the pipe open and GUI pointer.
+	static int pollFDForRefreshMessageCount;
+	static int pollFDForRefreshMessageCountWriteDirection;
+	static CursesHierarchy* cursesHierarchyForRefreshing;
 
 public:
 	bool updateServerConfiguration(std::string name, std::string value);
@@ -220,6 +228,10 @@ public:
 	void addHierarchy(bool assignRows);
 	void showHierarchy();
 	void updateHierarchy();
+
+	static void setPollForRefreshMessageCount(std::string fn);
+	static void closePollForRefreshMessageCount();
+	static void setCursesHierarchyPointerForRefreshing(CursesHierarchy* h);
 private:
 	void addTopLevelFolders();
 	void addTopLevelFolder(std::string);
