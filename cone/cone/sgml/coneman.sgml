@@ -1,4 +1,4 @@
-<!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
+<!-- Copyright 2002-2018 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
 
   <refentry id="cone">
@@ -19,8 +19,10 @@
     <refsynopsisdiv>
       <cmdsynopsis>
 	<command>cone</command>
+	<arg choice='opt'>-v</arg>
 	<arg choice='opt'>-r</arg>
 	<arg choice='opt'>-c <replaceable>directory</replaceable></arg>
+	<arg choice='opt'>-m <replaceable>pipe</replaceable></arg>
       </cmdsynopsis>
     </refsynopsisdiv>
 
@@ -39,6 +41,10 @@ reading and sending E-mail.</para>
       &cone-stop;
 
       <para>
+	The <option>-v</option> shows &app;'s version.
+      </para>
+
+      <para>
 The <option>-c</option> option names a directory where &app; saves its
 configuration files, and defaults to <filename>$HOME/.cone</filename>.
 The configuration directory will be created, if necessary.</para>
@@ -52,6 +58,13 @@ or is not available.
 In all cases, &app; makes a daily local configuration file backup.
 The <option>-r</option> option searches for local configuration file
 backups, and offers an option to restore the backup copy.</para>
+
+      <para>
+	The <option>-m</option> option specifies the filename of
+	a named pipe
+	that &app; opens. Writing to the pipe causes &app; to immediately
+	update the new mail count of the folders that it has opened.
+      </para>
 
       <refsect2>
 	&cone-localmail;
