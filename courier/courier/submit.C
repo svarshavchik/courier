@@ -1725,13 +1725,15 @@ char	*sender=rfc822_gettok(addresst);
 		line += rfc3848_receivedwith;
 	else
 		line += mf->module->name;
-	line += "; ";
-
-	line += rfc822_mkdate(submit_time);
 
 	// Add unique id here.
 	line += "\n  id ";
 	line += my_rcptinfo.submitfile.QueueID();
+
+	line += "; ";
+
+	line += rfc822_mkdate(submit_time);
+
 	line += "\n";
 
 	for (line_iter=line.begin(); line_iter != line.end(); ++line_iter)

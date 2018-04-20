@@ -1,3 +1,8 @@
+2018-04-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/submit.C: Reformat the Received: header to comply with
+	RFC 5322.
+
 2018-02-16  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/maildrop/search.C: ":H" pattern matching option, matching
