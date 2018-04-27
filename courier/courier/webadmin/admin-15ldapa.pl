@@ -1,4 +1,3 @@
-#! perl
 #
 # TITLE: LDAP-based aliasing/routing
 #

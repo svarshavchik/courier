@@ -86,7 +86,7 @@ Requires(postun): /sbin/service
 %define initscript_courier --initscript courier
 %endif
 
-Requires:         fileutils
+Requires:         coreutils
 %if %alternatives
 Obsoletes:        courier-sendmail-wrapper
 Provides:         /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail /usr/bin/newaliases
@@ -94,7 +94,7 @@ Provides:         /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail /usr/bin/newa
 
 BuildRequires:	  courier-authlib-devel >= 0.55
 BuildRequires:    rpm >= 4.0.2
-BuildRequires:    fileutils
+BuildRequires:    coreutils
 BuildRequires:    binutils
 BuildRequires:    sed
 BuildRequires:    gawk
@@ -172,12 +172,12 @@ Group: Application/Mail
 %package pop3d
 Summary: Courier @VERSION@ Integrated POP3 server
 Group: Applications/Mail
-Requires: courier = @VERSION@ fileutils
+Requires: courier = @VERSION@ coreutils
 
 %package imapd
 Summary: Courier @VERSION@ Integrated IMAP server
 Group: Applications/Mail
-Requires: courier = @VERSION@ fileutils
+Requires: courier = @VERSION@ coreutils
 
 %package webmail
 Summary: Courier @VERSION@ Integrated HTTP (webmail) server
