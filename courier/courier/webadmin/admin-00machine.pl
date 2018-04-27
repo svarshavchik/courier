@@ -1,4 +1,3 @@
-#! perl
 #
 # TITLE: Mail server name and local domains
 #

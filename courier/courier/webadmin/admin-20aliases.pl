@@ -1,4 +1,3 @@
-#! perl
 #
 # TITLE: Aliases, role accounts, forwarding, and virtual domain accounts
 #

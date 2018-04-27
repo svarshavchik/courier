@@ -21,14 +21,10 @@ SCRIPTFILES=admin-00machine.pl admin-10password.pl admin-15ldap.pl \
 	admin-31esmtp.pl admin-34fax.pl admin-35fax.pl \
 	admin-40imap.pl admin-45pop3.pl admin-47webmail.pl admin-50bofh.pl
 
-webadmin_DATA=$(HTMLFILES)
-webadmin_SCRIPTS=$(SCRIPTFILES) admin-05local.pl
+webadmin_DATA=$(HTMLFILES) $(SCRIPTFILES) admin-05local.pl
 
 EXTRA_DIST=$(HTMLFILES) $(SCRIPTFILES)
 
 install-perms:
 	@cp /dev/null permissions.dat
-	@for f in $(webadmin_SCRIPTS) ; do echo $(webadmindir)/$$f 555 bin bin >>permissions.dat ; done
 	@for f in $(webadmin_DATA) ; do echo $(webadmindir)/$$f 444 bin bin >>permissions.dat ; done
-
-

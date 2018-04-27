@@ -13,8 +13,9 @@ filterbindir=$(libexecdir)/filters
 filterbin_PROGRAMS=@perlfilter_prog@
 
 scriptdir=$(datadir)
-script_SCRIPTS=perlfilter-wrapper.pl perlfilter-example.pl \
+script_SCRIPTS=perlfilter-wrapper.pl \
 		perlfilter-ratelimit.pl
+script_DATA=perlfilter-example.pl
 
 filtersocketdir=$(localstatedir)/filters
 allfiltersocketdir=$(localstatedir)/allfilters
@@ -48,7 +49,7 @@ install-perms-local:
 		echo "$(filterbindir)/perlfilter 755 bin bin" >>permissions.dat
 	@echo "$(scriptdir)/perlfilter-wrapper.pl 755 bin bin" >>permissions.dat
 	@echo "$(scriptdir)/perlfilter-ratelimit.pl 755 bin bin" >>permissions.dat
-	@echo "$(scriptdir)/perlfilter-example.pl 755 bin bin config" >>permissions.dat
+	@echo "$(scriptdir)/perlfilter-example.pl 444 bin bin config" >>permissions.dat
 
 install-data-hook:
 	chmod 755 $(DESTDIR)$(scriptdir)/perlfilter-wrapper.pl

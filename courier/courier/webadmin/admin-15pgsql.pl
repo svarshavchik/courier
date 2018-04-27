@@ -1,4 +1,3 @@
-#! perl
 #
 # TITLE: PostgreSQL
 #

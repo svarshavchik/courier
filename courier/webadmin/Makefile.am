@@ -10,8 +10,8 @@ webadmindir=@webadmindir@
 
 HTMLFILES=login.html admin-save.html admin-main.html unsecure.html
 SCRIPTFILES=admin-main.pl admin-save.pl admin-cancel.pl
-webadmin_DATA=$(HTMLFILES)
-webadmin_SCRIPTS=webadmin.pl dumpenv.pl $(SCRIPTFILES)
+webadmin_DATA=$(HTMLFILES) $(SCRIPTFILES)
+webadmin_SCRIPTS=webadmin.pl dumpenv.pl
 
 EXTRA_DIST=$(HTMLFILES) $(SCRIPTFILES)
 
@@ -33,5 +33,3 @@ install-perms:
 	@echo $(webadmindir) 755 bin bin >>permissions.dat
 	@for f in $(webadmin_SCRIPTS) ; do echo $(webadmindir)/$$f 555 bin bin >>permissions.dat ; done
 	@for f in $(webadmin_DATA) ; do echo $(webadmindir)/$$f 444 bin bin >>permissions.dat ; done
-
-

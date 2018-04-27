@@ -1,4 +1,3 @@
-#! perl
 #
 #
 # Copyright 2001 Double Precision, Inc.  See COPYING for
