@@ -37,37 +37,40 @@ output_iter towidechar(input_iter beg_iter,
 	{
 		if (cnt == 0 || beg_iter == end_iter)
 		{
-			const char *b=&cbuf[0];
-			const char *e=&cbuf[cbuf.size()];
-			size_t cnt=0;
-
-			while (b != e)
+			if (cbuf.size())
 			{
-				wchar_t wc;
-				size_t r=mbrtowc(&wc, b, e-b, &ps);
+				const char *b=&cbuf[0];
+				const char *e=b+cbuf.size();
+				size_t cnt=0;
 
-				if (r == (size_t)-1)
+				while (b != e)
 				{
-					wc='?';
-					memset(&ps, 0, sizeof(ps));
-					r=1;
+					wchar_t wc;
+					size_t r=mbrtowc(&wc, b, e-b, &ps);
+
+					if (r == (size_t)-1)
+					{
+						wc='?';
+						memset(&ps, 0, sizeof(ps));
+						r=1;
+					}
+
+					if (r > (size_t)(e-b))
+						// must be (size_t)-2 -
+						// Incomplete multibyte sequence
+						break;
+
+					if (r == 0)
+					{
+						wc=0;
+						r=1;
+					}
+
+					*out_iter++=wc;
+
+					b += r;
+					cnt += r;
 				}
-
-				if (r > (size_t)(e-b))
-					// must be (size_t)-2 -
-					// Incomplete multibyte sequence
-					break;
-
-				if (r == 0)
-				{
-					wc=0;
-					r=1;
-				}
-
-				*out_iter++=wc;
-
-				b += r;
-				cnt += r;
 			}
 			cbuf.clear();
 			cnt=MB_CUR_MAX;

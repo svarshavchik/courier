@@ -714,8 +714,6 @@ bool CursesMessage::reformatAddLine(std::string l,
 {
 	LineIndex li;
 
-	memset(&li, 0, sizeof(li));
-
 	li.whence=reformat_whence;
 	li.nbytes=l.size();
 	li.flags=flags;

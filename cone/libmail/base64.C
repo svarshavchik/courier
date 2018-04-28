@@ -132,7 +132,8 @@ mail::encodebase64::~encodebase64()
 
 void mail::encodebase64::encode(string text)
 {
-	libmail_encode(&encodeInfo, &text[0], text.size());
+	if (!text.empty())
+		libmail_encode(&encodeInfo, &text[0], text.size());
 }
 
 void mail::encodebase64::flush()
@@ -195,4 +196,3 @@ void mail::encodebase64str::encoded(string s)
 {
 	responseStr += s;
 }
-

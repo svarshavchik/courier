@@ -37,7 +37,7 @@ void mail::smapAddMessage::saveMessageContents(std::string contents)
 		contents.erase(contents.begin()+n,
 			       contents.begin()+n+1);
 
-	if (tfile)
+	if (tfile && !contents.empty())
 		if (fwrite(&contents[0], contents.size(), 1, tfile) != 1)
 			; // Ignore gcc warning
 }
@@ -119,4 +119,3 @@ void mail::smapAddMessage::fail(std::string errmsg)
 	if (c)
 		c->fail(errmsg);
 }
-

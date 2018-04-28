@@ -26,7 +26,12 @@ myMessageIds::myMessageIds()
 myMessageIds::~myMessageIds()
 {
 	if (msgids.size() > 0)
-		throw "Internal error - dangling message ID pool references.";
+	{
+		std::cerr <<
+			"Internal error - dangling message ID pool references."
+			  << std::endl;
+		abort();
+	}
 }
 
 messageId::messageId() : ids(0)

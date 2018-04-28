@@ -34,7 +34,7 @@ mail::mbox::folder::add::~add()
 
 void mail::mbox::folder::add::saveMessageContents(string msg)
 {
-	if (*(msg.c_str()) == 0)
+	if (msg.empty())
 		return;
 
 	if (fp)
@@ -56,7 +56,7 @@ void mail::mbox::folder::add::success(string msg)
 
 void mail::mbox::folder::add::reportProgress(size_t bytesCompleted,
 					     size_t bytesEstimatedTotal,
-			    
+
 					     size_t messagesCompleted,
 					     size_t messagesEstimatedTotal)
 {
@@ -240,4 +240,3 @@ bool mail::mbox::folder::add::LockCurrentFolder::locked(mail::file
 	done();
 	return true;
 }
-

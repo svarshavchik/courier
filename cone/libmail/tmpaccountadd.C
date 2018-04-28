@@ -26,10 +26,10 @@ mail::tmpaccount::add::~add()
 
 void mail::tmpaccount::add::saveMessageContents(string s)
 {
-	if (newFile)
+	if (newFile && !s.empty())
 		if (fwrite(&s[0], s.size(), 1, newFile) != 1)
 			; // Ignore gcc warning
-	if (rfc2045p)
+	if (rfc2045p && !s.empty())
 		rfc2045_parse(rfc2045p, &s[0], s.size());
 }
 

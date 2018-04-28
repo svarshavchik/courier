@@ -107,7 +107,7 @@ void mail::maildir::addmessage::saveMessageContents(string s)
 	if (!initialized)
 		initialize();
 
-	if (tmpfile != NULL)
+	if (tmpfile != NULL && !s.empty())
 		if (fwrite(&s[0], s.size(), 1, tmpfile) != 1)
 			; // Ignore gcc warning
 }

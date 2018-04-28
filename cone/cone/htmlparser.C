@@ -333,7 +333,7 @@ void htmlParser::linebuf::linebreak_allowed()
 
 	// Calculate width of the last word
 	size_t w=towidechar(towidth_iter(&line[lineBreak]),
-			    towidth_iter(&line[line.size()]),
+			    towidth_iter(&line[0]+line.size()),
 			    towidechar_wcwidth_iter(width_beforebreak
 						    +startingCol));
 
@@ -344,7 +344,7 @@ void htmlParser::linebuf::linebreak_allowed()
 		line.erase(line.begin(), line.begin()+lineBreak);
 
 		w=towidechar(towidth_iter(&line[0]),
-			     towidth_iter(&line[line.size()]),
+			     towidth_iter(&line[0]+line.size()),
 			     towidechar_wcwidth_iter(startingCol));
 		width_beforebreak=0;
 
@@ -400,8 +400,11 @@ size_t htmlParser::linebuf::wordtoolong(size_t w)
 	}
 	line.erase(line.begin(), s);
 
+	if (line.empty())
+		return 0;
+
 	return towidechar(towidth_iter(&line[0]),
-			  towidth_iter(&line[line.size()]),
+			  towidth_iter(&line[0]+line.size()),
 			  towidechar_wcwidth_iter(startingCol));
 }
 
@@ -409,7 +412,18 @@ void htmlParser::linebuf::flush()
 {
 	linebreak_allowed();
 	if (parser)
-		parser->fmtline(&line[0], &line[line.size()], false);
+	{
+		if (line.empty())
+		{
+			enhanced_char c(0, textAttributes());
+
+			parser->fmtline(&c, &c, false);
+		}
+		else
+		{
+			parser->fmtline(&line[0], &line[0]+line.size(), false);
+		}
+	}
 
 	line.clear();
 	lineBreak=0;
@@ -1433,7 +1447,7 @@ void htmlParser::opentag(std::string tagname,
 				o << *b;
 			++b;
 		}
- 
+
 		o << "&gt;";
 
 		std::string os=o.str();
@@ -1607,4 +1621,3 @@ void htmlParser::tou(std::u32string::iterator b,
 		b++;
 	}
 }
-

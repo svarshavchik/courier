@@ -200,7 +200,8 @@ string mail::imap::translatePath(string path)
 		if ((h=unicode_convert_fromu_init("utf-8", &p, &psize, 1))
 		    != NULL)
 		{
-			unicode_convert_uc(h, &ucvec[0], ucvec.size());
+			if (ucvec.size())
+				unicode_convert_uc(h, &ucvec[0], ucvec.size());
 			if (unicode_convert_deinit(h, NULL))
 				p=NULL;
 		}

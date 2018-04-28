@@ -158,7 +158,7 @@ string mail::mimestruct::parameterList::get(string name,
 
 		stringRet=&textStr[0];
 
-		if (chset.size() > 0 && charsetStr[0])
+		if (chset.size() > 0 && !charsetStr.empty() && charsetStr[0])
 		{
 			bool err;
 

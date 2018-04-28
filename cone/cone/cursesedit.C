@@ -2584,7 +2584,7 @@ bool CursesEdit::EncryptSinkFile::init()
 
 CursesEdit::SaveSink &CursesEdit::EncryptSinkFile::operator<<(std::string s)
 {
-	if (fwrite(&s[0], s.size(), 1, tFile) != 1)
+	if (s.size() && fwrite(&s[0], s.size(), 1, tFile) != 1)
 		; // Ignore gcc warning
 	return *this;
 }
