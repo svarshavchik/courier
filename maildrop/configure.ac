@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2017 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(maildrop, 2.9.3.20180216, [courier-maildrop@lists.sourceforge.net])
+AC_INIT(maildrop, 2.9.3.20180428, [courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])

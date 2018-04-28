@@ -34,7 +34,7 @@ License: GPL
 Group: Applications/Mail
 Source: %{name}-@VERSION@.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Requires: fileutils textutils sh-utils sed
+Requires: coreutils sed
 %if %suse_version
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig
@@ -49,7 +49,7 @@ Requires(preun):  systemd
 Requires: courier-authlib >= 0.60.6.20080629
 BuildRequires: gcc-c++
 BuildRequires: procps-ng
-BuildRequires: textutils fileutils perl
+BuildRequires: coreutils perl
 BuildRequires: courier-authlib-devel >= 0.60.6.20080629
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
