@@ -4,7 +4,7 @@
 
 EXTRA_PROGRAMS=perlfilter
 
-EXTRA_DIST=$(script_SCRIPTS)
+EXTRA_DIST=$(script_SCRIPTS) $(script_DATA)
 BUILT_SOURCES=filtersocketdir.h wrapperpl.h xsinit.c
 
 CLEANFILES=$(BUILT_SOURCES) permissions.dat

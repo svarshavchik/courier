@@ -466,7 +466,7 @@ static void fax(struct moduledel *p)
 			size_t npages=0;
 			char fmtbuf[NUMBUFSIZE];
 			char fmtbuf1[NUMBUFSIZE];
-			char fmtbuf2[NUMBUFSIZE+100];
+			char fmtbuf2[NUMBUFSIZE*2+100];
 
 			for (pp=page_list; pp; pp=pp->next)
 				++npages;
