@@ -105,7 +105,9 @@ int	n=1;
 int	md5=0;
 char	buf[BUFSIZ];
 char	salt[9];
+#if HAVE_BCRYPT
 char	*cryptsalt;
+#endif
 #if	HAVE_HMAC
 struct hmac_hashinfo	*hmac=0;
 #endif
