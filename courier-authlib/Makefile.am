@@ -366,7 +366,7 @@ authdaemondprog_DEPENDENCIES=libcourierauthcommon.la \
 	libs/liblock/liblock.la $(modules) \
 	libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la \
 	libs/rfc822/libencode.la libs/numlib/libnumlib.la
-authdaemondprog_LDADD=$(LIBLTDL) libcourierauthcommon.la libs/liblock/liblock.la \
+authdaemondprog_LDADD=$(LIBLTDL) libcourierauthcommon.la libcourierauth.la libs/liblock/liblock.la \
 	libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la \
 	libs/rfc822/libencode.la libs/numlib/libnumlib.la
 authdaemondprog_LDFLAGS=-export-dynamic $(modules:%=-dlopen %) @NETLIBS@
