@@ -363,6 +363,7 @@ authenumerate_LDFLAGS=
 authdaemondprog_SOURCES=authdaemond.c authdaemondcpp.cpp
 
 authdaemondprog_DEPENDENCIES=libcourierauthcommon.la \
+	libcourierauth.la \
 	libs/liblock/liblock.la $(modules) \
 	libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la \
 	libs/rfc822/libencode.la libs/numlib/libnumlib.la
