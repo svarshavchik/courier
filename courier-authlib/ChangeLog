@@ -1,3 +1,8 @@
+2018-05-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* authldaplib.cpp: improve automatic reconnection logic to the LDAP
+	server.
+
 2017-11-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rpm packaging fixes.

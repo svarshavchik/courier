@@ -87,10 +87,19 @@ public:
 		cred.bv_len=buffer.size();
 		cred.bv_val=&buffer[0];
 
-		return ok("ldap_sasl_bind_s",
-			  ldap_sasl_bind_s(connection, userid.c_str(),
-					   NULL, &cred,
-					   NULL, NULL, NULL));
+		if (connect() &&
+		    ok("ldap_sasl_bind_s",
+		       ldap_sasl_bind_s(connection, userid.c_str(),
+					NULL, &cred,
+					NULL, NULL, NULL)))
+			return true;
+
+		disconnect();
+		return connect() &&
+			ok("ldap_sasl_bind_s",
+			   ldap_sasl_bind_s(connection, userid.c_str(),
+					    NULL, &cred,
+					    NULL, NULL, NULL));
 	}
 };
 
@@ -618,7 +627,8 @@ public:
 	{
 		struct timeval timeout_copy=timeout;
 
-		if (!conn.ok("ldap_search_ext_s",
+		if (!conn.connect() ||
+		    !conn.ok("ldap_search_ext_s",
 			     ldap_search_ext_s(conn.connection,
 					       basedn.c_str(),
 					       LDAP_SCOPE_SUBTREE,
@@ -630,6 +640,21 @@ public:
 					       100, &ptr)))
 		{
 			ptr=NULL;
+			conn.disconnect();
+			if (!conn.connect()
+			    || !conn.ok("ldap_search_ext_s",
+				     ldap_search_ext_s(conn.connection,
+						       basedn.c_str(),
+						       LDAP_SCOPE_SUBTREE,
+						       query.c_str(),
+						       search_attributes(),
+						       0,
+						       NULL, NULL,
+						       &timeout_copy,
+						       100, &ptr)))
+			{
+				ptr=NULL;
+			}
 		}
 	}
 
