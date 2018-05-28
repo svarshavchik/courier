@@ -17,8 +17,8 @@ pkglibexecdir=$(libexecdir)/courier-authlib
 pkglibexec_SCRIPTS=authsystem.passwd
 
 pkglib_LTLIBRARIES=libcourierauth.la \
-	libcourierauthsasl.la libcourierauthsaslclient.la \
-	libcourierauthcommon.la $(modules)
+	libcourierauthcommon.la libcourierauthsasl.la libcourierauthsaslclient.la \
+	$(modules)
 sbin_SCRIPTS=authdaemond
 sbin_PROGRAMS=authtest authenumerate authpasswd
 bin_PROGRAMS=courierauthconfig
