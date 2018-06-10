@@ -116,22 +116,22 @@ document.write('&lt;g:plusone href="http://www.courier-mta.org"&gt; &lt;\/g:plus
             <xsl:text> </xsl:text>
           </xsl:element>
           <xsl:element name="td">
-            <xsl:element name="script">
-              <xsl:attribute name="type">text/javascript</xsl:attribute>
-              <xsl:comment>
-google_ad_client = "ca-pub-3196826191648604";
-/* imap */
-google_ad_slot = "1265524507";
-google_ad_width = 728;
-google_ad_height = 90;
-              </xsl:comment>
-            </xsl:element>
+	    <xsl:element name="script">
+	      <xsl:attribute name="async">async</xsl:attribute>
+	      <xsl:attribute name="src">//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js</xsl:attribute>
+	      <xsl:text>&#32;</xsl:text>
+	    </xsl:element>
+	    <xsl:element name="ins">
+	      <xsl:attribute name="class">adsbygoogle</xsl:attribute>
+	      <xsl:attribute name="style">display:inline-block;width:728px;height:90px</xsl:attribute>
+	      <xsl:attribute name="data-ad-client">ca-pub-3196826191648604</xsl:attribute>
+	      <xsl:attribute name="data-ad-slot">1265524507</xsl:attribute>
+		  <xsl:text>&#32;</xsl:text>
+	    </xsl:element>
 
-            <xsl:element name="script">
-              <xsl:attribute name="type">text/javascript</xsl:attribute>
-              <xsl:attribute name="src">http://pagead2.googlesyndication.com/pagead/show_ads.js</xsl:attribute>
-              <xsl:text> </xsl:text>
-            </xsl:element>
+	    <xsl:element name="script">
+	      <xsl:text>(adsbygoogle = window.adsbygoogle || []).push({});</xsl:text>
+	    </xsl:element>
           </xsl:element>
         </xsl:element>
       </xsl:element>
