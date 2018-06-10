@@ -15,7 +15,6 @@
 #endif
 #include	"comctlfile.h"
 #include	"comtrack.h"
-#include	"filtersocketdir.h"
 #include	"threadlib/threadlib.h"
 
 #include	<sys/types.h>
@@ -633,7 +632,7 @@ static void verifyfinish(struct verify_thread_info *ignored)
 {
 }
 
-int verifyfilter(unsigned nthreads)
+int verifyfilter(unsigned nthreads, const char *argv0)
 {
 	int	listensock;
 	struct	cthreadinfo *threads;
@@ -651,11 +650,7 @@ int verifyfilter(unsigned nthreads)
 	if (logmode)
 		free(logmode);
 
-	listensock=lf_init("filters/verifyfilter-mode",
-		ALLFILTERSOCKETDIR "/verifyfilter",
-		ALLFILTERSOCKETDIR "/.verifyfilter",
-		FILTERSOCKETDIR "/verifyfilter",
-		FILTERSOCKETDIR "/.verifyfilter");
+	listensock=lf_init("filters/verifyfilter-mode", argv0);
 
 	if (listensock < 0)
 		return (1);
@@ -716,5 +711,5 @@ int main(int argc, char **argv)
 	}
 	free(fn);
 
-	verifyfilter(nthreads);
+	verifyfilter(nthreads, argv[0]);
 }

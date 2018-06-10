@@ -13,16 +13,15 @@ extern "C" {
 
 /*
 
+chdir() to Courier's root directory.
+
 Create and initialize the filesystem socket used to accept filtering requests.
 Typically we have a configuration file (modfile), then specifies whether
 everything or just the selected mail sources are filtered.
 
-lf_init reads modfile, then creates either "allname", which should be a
-complete pathname to $(allfiltersocketdir), or "notallname", which should be a
-complete pathname to $(filtersocketdir).
-
-alltmpname and notalltmpname are temporary names, in the corresponding
-directories (beginning with a .), that are used to create the socket.
+lf_init reads modfile, then creates either the socket either in
+$(allfiltersocketdir) or $(filtersocketdir), based on the passed-in
+argv0, which should be the filter's argv[0].
 
 lf_init() returns a non-zero file descriptor, or -1 for error.
 
@@ -31,10 +30,8 @@ See dupfilter.c for example usage.
 */
 
 int lf_init(const char *modfile,
-		const char *allname,
-		const char *alltmpname,
-		const char *notallname,
-		const char *notalltmpname);
+	    const char *argv);
+
 
 /*
 ** Checks if this process is started by courierfilter. Returns true

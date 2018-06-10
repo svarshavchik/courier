@@ -1,3 +1,14 @@
+2018-06-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/filters/libfilter/libfilter.c: Use argv[0] to determine
+	socket name. ratefilter, verifyfilter, dupfilter, and perlfilter
+	provide their argv[0] to lf_init().
+
+2018-05-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/makedat/makedat.in (cidr): Fix smtpaccess syntax parsing
+	for IPv6 address ranges.
+
 2018-04-26  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Update for Fedora 28 RPM.

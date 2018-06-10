@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2006 Double Precision, Inc.
+** Copyright 2000-2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -32,14 +32,14 @@
 #include	<sys/un.h>
 
 #include	"libfilter.h"
+#include	"filtersocketdir.h"
 
+static int do_lf_init(const char *modfile,
+		      const char *allname,
+		      const char *alltmpname,
 
-int lf_init(const char *modfile,
-		const char *allname,
-		const char *alltmpname,
-
-		const char *notallname,
-		const char *notalltmpname)
+		      const char *notallname,
+		      const char *notalltmpname)
 {
 int	all=0;
 const	char *sockname, *tmpsockname;
@@ -146,4 +146,42 @@ socklen_t	sunlen;
 		break;
 	}
 	return (fd);
+}
+
+
+int lf_init(const char *modfile,
+	    const char *argv0)
+{
+	char *allname;
+	char *alltmpname;
+	char *notallname;
+	char *notalltmpname;
+	size_t l;
+	int rc;
+
+	const char *p=strrchr(argv0, '/');
+
+	if (p)
+		argv0=p+1;
+
+	l=strlen(argv0);
+
+	allname=courier_malloc(sizeof(ALLFILTERSOCKETDIR "/") + l);
+	alltmpname=courier_malloc(sizeof(ALLFILTERSOCKETDIR "/.") + l);
+
+	notallname=courier_malloc(sizeof(FILTERSOCKETDIR "/") + l);
+	notalltmpname=courier_malloc(sizeof(FILTERSOCKETDIR "/.") + l);
+
+	strcat(strcpy(allname, ALLFILTERSOCKETDIR "/"), argv0);
+	strcat(strcpy(alltmpname, ALLFILTERSOCKETDIR "/."), argv0);
+	strcat(strcpy(notallname, FILTERSOCKETDIR "/"), argv0);
+	strcat(strcpy(notalltmpname, FILTERSOCKETDIR "/."), argv0);
+
+	rc=do_lf_init(modfile, allname, alltmpname, notallname, notalltmpname);
+
+	free(allname);
+	free(alltmpname);
+	free(notallname);
+	free(notalltmpname);
+	return rc;
 }

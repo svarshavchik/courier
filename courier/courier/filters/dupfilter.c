@@ -13,7 +13,6 @@
 #include	"msghash.h"
 #include	"duphash.h"
 #include	"comctlfile.h"
-#include	"filtersocketdir.h"
 #include	"threadlib/threadlib.h"
 
 #include	<sys/types.h>
@@ -196,17 +195,13 @@ static void initdupinfo(struct dupinfo *a, struct dupinfo *b)
 	a->cancelfunc=b->cancelfunc;
 }
 
-static int realmode(unsigned nthreads)
+static int realmode(unsigned nthreads, const char *argv0)
 {
-int	listensock;
-struct	cthreadinfo *threads;
-struct	dupinfo di;
+	int	listensock;
+	struct	cthreadinfo *threads;
+	struct	dupinfo di;
 
-	listensock=lf_init("filters/dupfilter-mode",
-		ALLFILTERSOCKETDIR "/dupfilter",
-		ALLFILTERSOCKETDIR "/.dupfilter",
-		FILTERSOCKETDIR "/dupfilter",
-		FILTERSOCKETDIR "/.dupfilter");
+	listensock=lf_init("filters/dupfilter-mode", argv0);
 
 	if (listensock < 0)
 		return (1);
@@ -310,6 +305,6 @@ int main(int argc, char **argv)
 
 		duphash_init(&top_hash, hashsize, duplevel);
 		duphash_init(&bottom_hash, hashsize, duplevel);
-		return (realmode(nthreads));
+		return (realmode(nthreads, argv[0]));
 	}
 }

@@ -16,7 +16,6 @@
 #include	<fstream>
 #include	<map>
 #include	"comctlfile.h"
-#include	"filtersocketdir.h"
 #include	"afx/afx.h"
 #include	<sys/types.h>
 #if	HAVE_SYS_STAT_H
@@ -24,7 +23,8 @@
 #endif
 #include	"libfilter/libfilter.h"
 
-static int ratefilter(size_t interval, size_t maxrcpts, size_t minuid)
+static int ratefilter(size_t interval, size_t maxrcpts, size_t minuid,
+		      const char *argv0)
 {
 	int	listensock;
 	std::string line;
@@ -44,11 +44,7 @@ static int ratefilter(size_t interval, size_t maxrcpts, size_t minuid)
 	time_t lasttimestamp=0;
 	interval /= 2;
 
-	listensock=lf_init("filters/ratefilter-mode",
-		ALLFILTERSOCKETDIR "/ratefilter",
-		ALLFILTERSOCKETDIR "/.ratefilter",
-		FILTERSOCKETDIR "/ratefilter",
-		FILTERSOCKETDIR "/.ratefilter");
+	listensock=lf_init("filters/ratefilter-mode", argv0);
 
 	if (listensock < 0)
 		return (1);
@@ -192,7 +188,8 @@ int main(int argc, char **argv)
 	clog_open_stderr(0);
 	ratefilter(getconfig("filters/ratefilter-interval", 60),
 		   getconfig("filters/ratefilter-maxrcpts", 100),
-		   getconfig("filters/ratefilter-minuid", 100));
+		   getconfig("filters/ratefilter-minuid", 100),
+		   argv[0]);
 	exit(0);
 	return 0;
 }

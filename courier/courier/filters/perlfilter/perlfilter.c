@@ -21,7 +21,6 @@
 #endif
 #endif
 #include	"libfilter/libfilter.h"
-#include	"filtersocketdir.h"
 #include	"waitlib/waitlib.h"
 #include	"wrapperpl.h"
 
@@ -40,7 +39,7 @@ pid_t	*children;
 #undef	VERSION
 
 #include "xsinit.c"
- 
+
 static void perlfilter()
 {
 char *embedding[] = { "", WRAPPERPL };
@@ -48,16 +47,16 @@ char *args[] = { "", "0", NULL, NULL, NULL};
 int exitstatus = 0;
 int	sock;
 PerlInterpreter *my_perl;
- 
+
 	if((my_perl = perl_alloc()) == NULL)
 	{
 		fprintf(stderr, "no memory!");
 		exit(1);
 	}
 	perl_construct(my_perl);
- 
+
 	exitstatus = perl_parse(my_perl, xs_init, 2, embedding, NULL);
- 
+
 	if (exitstatus || (exitstatus=perl_run(my_perl)) != 0)
 	{
 		fprintf(stderr, "Cannot parse " WRAPPERPL "\n");
@@ -204,11 +203,7 @@ struct	stat	stat_buf;
 		exit(1);
 	}
 
-	listen_sock=lf_init("filters/perlfilter-mode",
-		ALLFILTERSOCKETDIR "/perlfilter",
-		ALLFILTERSOCKETDIR "/.perlfilter",
-		FILTERSOCKETDIR "/perlfilter",
-		FILTERSOCKETDIR "/.perlfilter");
+	listen_sock=lf_init("filters/perlfilter-mode", argv[0]);
 
 	if (listen_sock < 0)
 	{

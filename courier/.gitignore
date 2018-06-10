@@ -5,6 +5,7 @@
 /config.guess
 /config.sub
 /configure.args
+/courier.config.cache
 /courier.service
 /courier.spec
 /courier.sysvinit
