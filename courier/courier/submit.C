@@ -1076,7 +1076,7 @@ static int checkdns(const char *sender,
 
 			if (!q || checkfreemail(q, d))
 			{
-				std::cout << "517-Sender rejected: " << sender
+				std::cout << "517 Sender rejected: " << sender
 				     << " can be accepted only from" << std::endl
 				     << "517 " << d->name << "'s mail relays."
 				     << std::endl << std::flush;
@@ -1135,15 +1135,15 @@ static int checkdns(const char *sender,
 		}
 		rfc1035_mxlist_free(mxlist);
 		if (p == 0)	return (0);
-		std::cout << "517-MX records for " << sender << " violate section 3.3.9 of RFC 1035." << std::endl;
+		std::cout << "517 MX records for " << sender << " violate section 3.3.9 of RFC 1035." << std::endl;
 		break;
 	case RFC1035_MX_HARDERR:
 		if (!docheckdomain)	return (0);
-		std::cout << "517-Domain does not exist: " << sender << "." << std::endl;
+		std::cout << "517 Domain does not exist: " << sender << "." << std::endl;
 		break;
 	case RFC1035_MX_BADDNS:
 		if (!docheckdomain)	return (0);
-		std::cout << "517-RFC 1035 violation: recursive CNAME records for " << sender << "." << std::endl;
+		std::cout << "517 RFC 1035 violation: recursive CNAME records for " << sender << "." << std::endl;
 		break;
 	default:
 		if (!docheckdomain)	return (0);
