@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2016 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 4.18.2.20180428, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 4.18.2.20180622, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -215,8 +215,10 @@ AC_SUBST(userdb)
 AC_ARG_WITH(makedatprog, [], ,
 	ac_configure_args="$ac_configure_args --with-makedatprog='${libexecdir}/makedatprog'")
 
-AC_ARG_WITH(mailuser, [], , ac_configure_args="$ac_configure_args --with-mailuser=root")
-
+AC_ARG_WITH(mailuser, [], , ac_configure_args="$ac_configure_args --with-mailuser=$authmailuser")
+AC_ARG_WITH(mailgroup, [], , ac_configure_args="$ac_configure_args --with-mailgroup=$authmailgroup")
+AC_SUBST(authmailuser)
+AC_SUBST(authmailgroup)
 
 AC_CONFIG_SUBDIRS(libs/numlib libs/bdbobj libs/gdbmobj libs/soxwrap
 	libs/rfc822 libs/rfc1035 libs/rfc2045

@@ -209,10 +209,8 @@ COURIERTLS=@bindir@/couriertls
 
 ##NAME: TLS_CERTFILE:0
 #
-# TLS_CERTFILE - certificate to use.  TLS_CERTFILE is required for SSL/TLS
-# servers, and is optional for SSL/TLS clients.  TLS_CERTFILE is usually
-# treated as confidential, and must not be world-readable. Set TLS_CERTFILE
-# instead of TLS_DHCERTFILE if this is a garden-variety certificate
+# TLS_CERTFILE - certificate to use.  TLS_CERTFILE must be owned
+# by the "@mailuser@" user, and must not be world-readable.
 #
 # VIRTUAL HOSTS ON THE SAME IP ADDRESS.
 #

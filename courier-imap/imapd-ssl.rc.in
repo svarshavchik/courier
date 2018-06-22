@@ -29,14 +29,19 @@ case $1 in
 start)
 	if test "$TLS_CACHEFILE" != ""
 	then
-		rm -f $TLS_CACHEFILE
+		rm -f "$TLS_CACHEFILE"
+		touch "$TLS_CACHEFILE"
+		chown @authmailuser@ "$TLS_CACHEFILE"
+		chgrp @authmailgroup@  "$TLS_CACHEFILE"
+		chmod 600  "$TLS_CACHEFILE"
 	fi
 
+	umask $IMAP_UMASK
 	if test ! -f "${IMAPACCESSFILE}.dat"
 	then
 		@bindir@/makeimapaccess
 	fi
-	umask $IMAP_UMASK
+
 	@ULIMIT@ $IMAP_ULIMITD
 	@SETENV@ -i @SHELL@ -c " set -a ;
 		prefix=@prefix@ ;

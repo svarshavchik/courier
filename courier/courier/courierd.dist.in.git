@@ -368,6 +368,9 @@ ESMTP_PREFER_IPV6_MX=1
 # This setting must be set when Courier uses a smarthost that requires
 # SMTP SSL certificates for authentication and relaying privileges.
 #
+# TLS_CERTFILE must be owned by the "@mailuser@" user, and must not be
+# world-readable.
+#
 # TLS_CERTFILE=
 
 

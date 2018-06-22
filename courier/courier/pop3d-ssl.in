@@ -28,6 +28,14 @@ fi
 
 case $1 in
 start)
+	if test "$TLS_CACHEFILE" != ""
+	then
+		rm -f "$TLS_CACHEFILE"
+		touch "$TLS_CACHEFILE"
+		chown @mailuser@ "$TLS_CACHEFILE"
+		chgrp @mailgroup@  "$TLS_CACHEFILE"
+		chmod 600  "$TLS_CACHEFILE"
+	fi
 	exec @SETENV@ -i PATH="$PATH" SHELL="$SHELL" \
 		@SHELL@ -c " set -a ; \
 		prefix=@prefix@ ; \

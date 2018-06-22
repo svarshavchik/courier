@@ -1,3 +1,16 @@
+2018-06-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/tcpd/tlsclient.h: add username option, used in couriertls_start
+	to set the child process's uid and gid.
+
+	* libs/imap/imaplogin.c (starttls): Set username option for couriertls
+
+	* libs/imap/pop3login.c (starttls): Set username option for couriertls
+
+	* imapd-ssl.dist, pop3d-ssl.dist: Use separate imap and pop3 session
+	cache files. Startup script: remove/set ownership and permsission
+	on the imap and pop3 session cache files.
+
 2018-06-10  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/filters/libfilter/libfilter.c: Use argv[0] to determine
