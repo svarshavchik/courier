@@ -55,6 +55,7 @@ start)
 			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
 			$TCPDOPTS \
 			$SSLPORT $COURIERTLS -server -tcpd \
+			        -user=@mailuser@ \
 				$libexecdir/courier/courierpop3login \
 				$libexecdir/courier/courierpop3d ${MAILDIRPATH}"
 	;;

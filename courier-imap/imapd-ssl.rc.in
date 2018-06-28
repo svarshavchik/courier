@@ -59,6 +59,7 @@ start)
 			-access=$IMAPACCESSFILE.dat \
 			$TCPDOPTS \
 			$SSLPORT $COURIERTLS -server -tcpd \
+				-user=@authmailuser@ \
 				@sbindir@/imaplogin \
 				@bindir@/imapd ${MAILDIRPATH}"
 	;;

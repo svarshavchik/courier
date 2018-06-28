@@ -53,6 +53,7 @@ start)
 			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
 			$TCPDOPTS \
 			$SSLPORT $COURIERTLS -server -tcpd \
+				-user=@authmailuser@ \
 				@sbindir@/pop3login \
 				@bindir@/pop3d ${MAILDIRPATH}"
 	;;

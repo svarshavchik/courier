@@ -15,7 +15,7 @@
 %define courier_release .suse%{suse_version}
 %else
 %if %is_not_mandrake
-%define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
+%define courier_release %(release="`rpm -q --queryformat='.%''{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%''{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
 %else
 %define courier_release mdk
 %endif
@@ -288,6 +288,9 @@ touch $RPM_BUILD_ROOT%{_localstatedir}/pop3d-ssl.pid
 touch $RPM_BUILD_ROOT%{_localstatedir}/pop3d.pid.lock
 touch $RPM_BUILD_ROOT%{_localstatedir}/pop3d-ssl.pid.lock
 
+. ./authconfig
+echo "%attr(600, $authmailuser, $authmailgroup) %{_datadir}/dhparams.pem.dist" >filelist
+
 %post
 %if %using_systemd
 if test -f %{initdir}/courier-imap
@@ -308,11 +311,23 @@ fi
 /sbin/chkconfig --add courier-imap
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist` >/dev/null
 %endif
+
+# Fix up permissions
+chown --reference=%{_datadir}/dhparams.pem.dist %{_datadir}/dhparams.pem
+for f in %{_datadir}/imapd.pem %{_datadir}/pop3d.pem
+do
+	if test -f "$f"
+	then
+		chown --reference=%{_datadir}/dhparams.pem.dist "$f"
+	fi
+done
+
 %preun
 %if %using_systemd
 if test "$1" = "0"
 then
-	rm -f %{_localstatedir}/couriersslcache
+	rm -f %{_localstatedir}/couriersslpop3cache
+	rm -f %{_localstatedir}/couriersslimapcache
 fi
 %systemd_preun courier-imap.service
 %else
@@ -332,7 +347,7 @@ fi
 %systemd_postun_with_restart courier-imap.service
 %endif
 
-%files
+%files -f filelist
 %defattr(-, bin, bin)
 /etc/cron.monthly/*
 %attr(644, root, root) %config(noreplace) %{pamconfdir}/imap
@@ -370,7 +385,6 @@ fi
 %{_datadir}/configlist
 %{_datadir}/mk*
 %{_datadir}/sysconftool
-%attr(600, root, root) %{_datadir}/dhparams.pem.dist
 
 %doc NEWS AUTHORS COPYING libs/imap/BUGS README README.imap README.maildirquota
 %doc README.sharedfolders

@@ -1,3 +1,13 @@
+2018-06-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libs/tcpd/starttls.c (main): Add -user option. Additional fixes
+	to imap/pop3 startup scripts to have couriertls drop root privileges.
+
+2018-06-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/reformime.c (main2): fix crash if -x or -X is specified
+	without the corresponding -s option.
+
 2018-06-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/tcpd/tlsclient.h: add username option, used in couriertls_start
