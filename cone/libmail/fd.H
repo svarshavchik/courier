@@ -1,5 +1,5 @@
 /*
-** Copyright 2002-2008, Double Precision Inc.
+** Copyright 2002-2018, Double Precision Inc.
 **
 ** See COPYING for distribution information.
 */
@@ -164,8 +164,13 @@ public:
 private:
 	bool establishtls();
 
+	class fdsockAddr;
+
 	int connecting;		// Connection in progress
+	fdsockAddr *connecting_addresses; // Addresses connecting to
 	fdTLS *tls;		// SSL/TLS stuff
+
+	std::string nextConnect(); // Next connection attempt.
 
 	std::queue<WriteBuffer *> writequeue;
 			// Stuff waiting to be written out

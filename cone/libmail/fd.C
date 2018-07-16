@@ -1,5 +1,5 @@
 /*
-** Copyright 2002-2008, Double Precision Inc.
+** Copyright 2002-2018, Double Precision Inc.
 **
 ** See COPYING for distribution information.
 */
@@ -27,12 +27,40 @@ using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////
 
+class mail::fd::fdsockAddr {
+
+public:
+	struct addrinfo *res;
+	struct addrinfo *current;
+	int errcode;
+
+	fdsockAddr(const char *node, const char *service,
+		 const struct addrinfo *hints)
+		: errcode(getaddrinfo(node, service, hints, &res))
+	{
+		if (errcode)
+		{
+			res=NULL;
+		}
+		current=res;
+	}
+
+	~fdsockAddr()
+	{
+		if (res)
+			freeaddrinfo(res);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////
+
 string mail::fd::rootCertRequiredErrMsg;
 
 mail::fd::fd(mail::callback::disconnect &disconnect_callback,
 	     std::vector<std::string> &certificatesArg) :
 	mail::account(disconnect_callback), socketfd(-1),
 	ioDebugFlag(false), certificates(certificatesArg), writtenFlag(false),
+	connecting_addresses(NULL),
 	tls(NULL)
 {
 }
@@ -42,6 +70,8 @@ mail::fd::~fd()
 {
 	if (tls)
 		delete tls;
+	if (connecting_addresses)
+		delete connecting_addresses;
 	if (socketfd >= 0)
 		sox_close(socketfd);
 
@@ -100,7 +130,7 @@ static void debug_io(const char *type, int socketfd,
 	string s=o.str();
 
 	if (write(2, s.c_str(), s.size()) < 0)
-		; // Ignore gcc warning 
+		; // Ignore gcc warning
 }
 
 #define DEBUG_IO(a,b,c) \
@@ -146,8 +176,6 @@ string mail::fd::socketConnect(mail::loginInfo &loginInfo,
 
 #endif
 
-	struct addrinfo *res;
-
 	string server=loginInfo.server, portnum;
 	const char *port=loginInfo.use_ssl ? sslservice:plainservice;
 	size_t n=server.find(':');
@@ -169,10 +197,13 @@ string mail::fd::socketConnect(mail::loginInfo &loginInfo,
 	hints.ai_family=PF_UNSPEC;
 	hints.ai_socktype=SOCK_STREAM;
 
-	int errcode=getaddrinfo(server.c_str(),	port, &hints, &res);
+	if (connecting_addresses)
+		delete connecting_addresses;
 
-	if (errcode)
-		return gai_strerror(errcode);
+	connecting_addresses=new fdsockAddr(server.c_str(), port, &hints);
+
+	if (connecting_addresses->errcode)
+		return gai_strerror(connecting_addresses->errcode);
 
 	if (!port)
 	{
@@ -180,26 +211,48 @@ string mail::fd::socketConnect(mail::loginInfo &loginInfo,
 
 		if (nport <= 0 || nport > 65535)
 		{
-			freeaddrinfo(res);
 			return strerror(EINVAL);
 		}
 
-		switch (res->ai_addr->sa_family) {
-		case AF_INET:
-			((struct sockaddr_in *)res->ai_addr)
-				->sin_port=htons(nport);
-			break;
+		struct addrinfo *p;
+
+		for (p=connecting_addresses->res; p; p=p->ai_next) {
+
+			switch (p->ai_addr->sa_family) {
+			case AF_INET:
+				((struct sockaddr_in *)p->ai_addr)
+					->sin_port=htons(nport);
+				break;
 #ifdef AF_INET6
-		case AF_INET6:
-			((struct sockaddr_in6 *)res->ai_addr)
-				->sin6_port=htons(nport);
-			break;
+			case AF_INET6:
+				((struct sockaddr_in6 *)p->ai_addr)
+					->sin6_port=htons(nport);
+				break;
 #endif
-		default:
-			freeaddrinfo(res);
-			return strerror(EAFNOSUPPORT);
+			default:
+				return strerror(EAFNOSUPPORT);
+			}
 		}
 	}
+
+#if HAVE_LIBCOURIERTLS
+
+	if (loginInfo.use_ssl)
+	{
+		string errmsg= starttls(loginInfo, false);
+
+		if (errmsg.size() > 0)
+			return errmsg;
+	}
+#endif
+
+	return nextConnect();
+}
+
+std::string mail::fd::nextConnect()
+{
+ again:
+	struct addrinfo *res=connecting_addresses->current;
 
 	socketfd=socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 
@@ -212,35 +265,24 @@ string mail::fd::socketConnect(mail::loginInfo &loginInfo,
 	if (socketfd < 0 || fcntl(socketfd, F_SETFL, O_NONBLOCK) < 0 ||
 	    fcntl(socketfd, F_SETFD, FD_CLOEXEC) < 0)
 	{
-		freeaddrinfo(res);
 		return strerror(errno);
 	}
 
-#if HAVE_LIBCOURIERTLS
-
-	if (loginInfo.use_ssl)
-	{
-		string errmsg= starttls(loginInfo, false);
-
-		if (errmsg.size() > 0)
-		{
-			freeaddrinfo(res);
-			return errmsg;
-		}
-	}
-#endif
-
 	if (sox_connect(socketfd, res->ai_addr, res->ai_addrlen) < 0)
 	{
-		freeaddrinfo(res);
 		if (errno != EINPROGRESS)
+		{
+			if ((connecting_addresses->current=
+			     connecting_addresses->current->ai_next) != NULL)
+			{
+				goto again;
+			}
 			return strerror(errno);
-
+		}
 		// Async connection in progress.
 	}
 	else	// Managed to connect right away.
 	{
-		freeaddrinfo(res);
 		connecting=3;	// Managed to skip some steps in process()
 	}
 
@@ -454,6 +496,16 @@ int mail::fd::process(std::vector<pollfd> &fds, int &timeout)
 		    || (errno=EINVAL, s) < sizeof(n)
 		    || (errno=n) != 0)
 		{
+			if ((connecting_addresses->current=
+			     connecting_addresses->current->ai_next) != NULL)
+			{
+				sox_close(socketfd);
+				socketfd= -1;
+				std::string s=nextConnect();
+
+				if (s == "")
+					return 0;
+			}
 			timeout=0;
 			disconnect(strerror(errno));
 			return (-1);
@@ -611,7 +663,7 @@ int mail::fd::process(std::vector<pollfd> &fds, int &timeout)
 #endif
 
 		// Connection not encrypted
-				 
+
 		for (;;)
 		{
 			n=sox_read(socketfd, buffer, sizeof(buffer));
@@ -847,4 +899,3 @@ bool mail::fd::WriteBuffer::fillWriteBuffer()
 {
 	return false;
 }
-
