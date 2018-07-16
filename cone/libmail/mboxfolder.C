@@ -77,7 +77,7 @@ string mail::mbox::folder::defaultName(string path)
 	path=string(c, e);
 
 	char *p=unicode_convert_tobuf(path.c_str(),
-					unicode_x_imap_modutf7,
+					unicode_x_smap_modutf8,
 					unicode_default_chset(),
 					NULL);
 
@@ -451,7 +451,7 @@ void mail::mbox::folder::createSubFolder(string name,
 	string fpath;
 
 	char *p=unicode_convert_tobuf(name.c_str(), unicode_default_chset(),
-					unicode_x_imap_modutf7 " ./~:", NULL);
+					unicode_x_smap_modutf8, NULL);
 
 	if (!p)
 		LIBMAIL_THROW("Out of memory.");
@@ -708,7 +708,7 @@ void mail::mbox::folder::renameFolder(const mail::folder *newParent,
 
 	string nameutf7=unicode::iconvert::convert(newName,
 						unicode_default_chset(),
-						unicode_x_imap_modutf7 " ./~:");
+						unicode_x_smap_modutf8);
 
 	string newpath=(newParent ? newParent->getPath() + "/":
 			string("")) + nameutf7;

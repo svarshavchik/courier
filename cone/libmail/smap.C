@@ -667,7 +667,7 @@ string mail::smapHandler::words2path(vector<const char *> &w)
 			path += "/";
 
 		path += unicode::iconvert::convert(*b, "utf-8",
-						unicode_x_imap_modutf7 " /");
+						unicode_x_smap_modutf8);
 
 		b++;
 	}
@@ -693,7 +693,7 @@ void mail::smapHandler::path2words(string path, vector<string> &words)
 			b++;
 
 		words.push_back(unicode::iconvert::convert(component,
-							unicode_x_imap_modutf7,
+							unicode_x_smap_modutf8,
 							"utf-8"));
 	}
 

@@ -1522,5 +1522,5 @@ bool mail::mbox::scan(mail::file &scanFile,
 
 string mail::mbox::translatePath(string path)
 {
-	return translatePathCommon(path, "./~:", "/");
+	return translatePathCommon(path, "/");
 }

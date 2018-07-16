@@ -706,7 +706,6 @@ LIBMAIL_END
 //
 
 string mail::mbox::translatePathCommon(string path,
-				       const char *verbotten,
 				       const char *sep)
 {
 	string newpath;
@@ -807,9 +806,7 @@ string mail::mbox::translatePathCommon(string path,
 
 		free(uc);
 		std::string p(unicode::iconvert::convert(ucvec,
-						      std::string(unicode_x_imap_modutf7 " ")
-						      + verbotten));
-
+							 unicode_x_smap_modutf8));
 
 		if (newpath.size() > 0)
 			newpath += sep;

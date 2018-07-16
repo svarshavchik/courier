@@ -59,7 +59,7 @@ mail::maildir::folder::folder(mail::maildir *maildirArg,
 	// (Courier compatibility) to the current charset.
 
 	char *s=unicode_convert_tobuf(name.c_str(),
-					unicode_x_imap_modutf7,
+					unicode_x_smap_modutf8,
 					unicode_default_chset(),
 					NULL);
 
@@ -545,7 +545,7 @@ void mail::maildir::folder::createSubFolder(string name, bool isDirectory,
 	// blacklisted characters:
 
 	char *p=unicode_convert_tobuf(name.c_str(), unicode_default_chset(),
-					unicode_x_imap_modutf7 " ./~:", NULL);
+				      unicode_x_smap_modutf8, NULL);
 
 	if (!p)
 	{
@@ -631,7 +631,7 @@ bool mail::maildir::maildirmake(string subdir, bool isFolder)
 					if (!isFolder)
 						return true;
 
-					string f=subdir + 
+					string f=subdir +
 						"/maildirfolder";
 
 					int fd=::open(f.c_str(),
@@ -731,7 +731,7 @@ void mail::maildir::folder::renameFolder(const mail::folder *newParent,
 
 	char *s=unicode_convert_tobuf(newName.c_str(),
 					unicode_default_chset(),
-					unicode_x_imap_modutf7 " ./~:", NULL);
+					unicode_x_smap_modutf8, NULL);
 
 	if (!s)
 	{
@@ -886,7 +886,7 @@ void mail::maildir::findFolder(string folder,
 
 string mail::maildir::translatePath(string path)
 {
-	return mail::mbox::translatePathCommon(path, ":/.~", ".");
+	return mail::mbox::translatePathCommon(path, ".");
 }
 
 static string encword(string s)

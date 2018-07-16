@@ -61,7 +61,7 @@ class mbox : public mail::account, public generic {
 
 			void reportProgress(size_t bytesCompleted,
 					    size_t bytesEstimatedTotal,
-			    
+
 					    size_t messagesCompleted,
 					    size_t messagesEstimatedTotal) {}
 			//TODO
@@ -369,7 +369,6 @@ public:
 	std::string translatePath(std::string path);
 
 	static std::string translatePathCommon(std::string path,
-					       const char *verbotten,
 					       const char *sep);
 
 	void readMessageAttributes(const std::vector<size_t> &messages,
