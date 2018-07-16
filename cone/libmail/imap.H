@@ -234,6 +234,9 @@ public:
 	bool hasCapability(std::string capability);
 	std::string getCapability(std::string capability);
 
+	bool utf8_enabled();
+	const char *folder_chset();
+
 	std::string servertype;
 	std::string serverdescr;
 

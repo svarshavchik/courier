@@ -390,8 +390,11 @@ bool mail::imapCREATE::untaggedMessage(mail::imap &imapAccount, string msgname)
 	if (msgname == "LIST") // Untagged LIST replies
 	{
 		hiersep.clear();
-		imapAccount.installBackgroundTask( new mail::imapLIST(hiersep,
-								      0, true));
+		imapAccount.installBackgroundTask( new mail::imapLIST
+						   (hiersep,
+						    0,
+						    imapAccount.folder_chset(),
+						    true));
 		return true;
 	}
 	return false;
@@ -444,9 +447,9 @@ bool mail::imapCREATE::taggedMessage(mail::imap &imapAccount, string msgname,
 
 
 			p=unicode_convert_tobuf(encodedname.c_str(),
-						  unicode_default_chset(),
-						  unicode_x_imap_modutf7,
-						  NULL);
+						unicode_default_chset(),
+						imapAccount.folder_chset(),
+						NULL);
 
 			if (p)
 			{
@@ -515,7 +518,7 @@ public:
 	void timedOut(const char *errmsg);
 
 	bool untaggedMessage(imap &imapAccount, string msgname);
-	
+
 	bool taggedMessage(imap &imapAccount, string msgname,
 			   string message,
 			   bool okfail, string errmsg);
@@ -553,7 +556,7 @@ bool mail::imapRECREATE::untaggedMessage(mail::imap &imapAccount, string msgname
 {
 	return false;
 }
-	
+
 bool mail::imapRECREATE::taggedMessage(mail::imap &imapAccount, string msgname,
 				       string message,
 				       bool okfail, string errmsg)

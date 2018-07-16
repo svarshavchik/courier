@@ -59,6 +59,9 @@ private:
 	void loginCallbackUid(std::string);
 	void loginCallbackPwd(std::string);
 
+	void initialize_namespaces(mail::imap &imapAccount,
+				   std::string message);
+
 public:
 	imapLoginHandler(mail::loginInfo myLoginInfo,
 			 bool preauthenticatedArg);
@@ -833,32 +836,23 @@ bool mail::imapLoginHandler::taggedMessage(mail::imap &imapAccount, string name,
 		}
 		else
 		{
-			imapAccount.namespaces
-				.push_back(mail::imapFolder(imapAccount,
-							    "INBOX", "",
-							    "INBOX", -1));
-			if (imapAccount.hasCapability("NAMESPACE"))
-				imapAccount.imapcmd("NAMESPACE",
-						    "NAMESPACE\r\n");
+			if (imapAccount.utf8_enabled())
+			{
+				imapAccount.imapcmd("ENABLEUTF8",
+						    "ENABLE UTF8=ACCEPT\r\n");
+			}
 			else
 			{
-				mail::imapFolder f(imapAccount, "",
-						   "",
-						   "Folders",
-						   0);
-
-				f.hasMessages(false);
-				f.hasSubFolders(true);
-				imapAccount.namespaces.push_back(f);
-
-				completed=1;
-				mail::callback *callback=
-					myLoginInfo.callbackPtr;
-				imapAccount.uninstallHandler(this);
-				callback->success(message);
+				initialize_namespaces(imapAccount, message);
 			}
 		}
 		return (true);
+	}
+
+	if (name == "ENABLEUTF8")
+	{
+		initialize_namespaces(imapAccount, message);
+		return true;
 	}
 
 	if (name == "NAMESPACE")
@@ -929,6 +923,34 @@ bool mail::imapLoginHandler::taggedMessage(mail::imap &imapAccount, string name,
 	}
 
 	return (false);
+}
+
+void mail::imapLoginHandler::initialize_namespaces(mail::imap &imapAccount,
+						   std::string message)
+{
+	imapAccount.namespaces.push_back(mail::imapFolder(imapAccount,
+							  "INBOX", "",
+							  "INBOX", -1));
+
+	if (imapAccount.hasCapability("NAMESPACE"))
+		imapAccount.imapcmd("NAMESPACE", "NAMESPACE\r\n");
+	else
+	{
+		mail::imapFolder f(imapAccount, "",
+				   "",
+				   "Folders",
+				   0);
+
+		f.hasMessages(false);
+		f.hasSubFolders(true);
+		imapAccount.namespaces.push_back(f);
+
+		completed=1;
+		mail::callback *callback=
+			myLoginInfo.callbackPtr;
+		imapAccount.uninstallHandler(this);
+		callback->success(message);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

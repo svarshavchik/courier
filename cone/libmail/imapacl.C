@@ -66,6 +66,7 @@ class imapGetMyRights::listMyRights : private vector<imapFolder>,
 
 public:
 	listMyRights(string folderNameArg,
+		     const char *folder_chset,
 		     string &rightsArg);
 	~listMyRights();
 
@@ -91,7 +92,7 @@ void mail::imapGetMyRights::installed(imap &imapAccount)
 	if (imapAccount.getCapability("ACL") == "ACL")
 	{
 		/* ACL 1 */
-	
+
 		imapAccount.imapcmd("MYRIGHTS",
 				    "MYRIGHTS "
 				    + imapAccount.quoteSimple(folderName)
@@ -131,6 +132,8 @@ bool mail::imapGetMyRights::untaggedMessage(imap &imapAccount,
 	{
 		imapAccount
 			.installBackgroundTask(new listMyRights(folderName,
+								imapAccount
+								.folder_chset(),
 								rights));
 		return true;
 	}
@@ -225,8 +228,9 @@ void mail::imapGetMyRights::parseMyRights::getRights(imap &imapAcct, Token t)
 /* ---- Parse ACL2 LIST(MYRIGHTS) response ----- */
 
 mail::imapGetMyRights::listMyRights::listMyRights(string folderNameArg,
+						  const char *folder_chset,
 						  string &rightsArg)
-	: imapLIST( *this, 0), folderName(folderNameArg),
+	: imapLIST( *this, 0, folder_chset), folderName(folderNameArg),
 	  rights(rightsArg)
 {
 }
@@ -319,6 +323,7 @@ class mail::imapGetRights::listGetRights : private vector<mail::imapFolder>,
 
 public:
 	listGetRights(string folderNameArg,
+		      const char *folder_chset,
 		      list<pair< string, string> > &rightsArg);
 	~listGetRights();
 
@@ -342,7 +347,7 @@ void mail::imapGetRights::installed(imap &imapAccount)
 	if (imapAccount.getCapability("ACL") == "ACL")
 	{
 		/* ACL 1 */
-	
+
 		imapAccount.imapcmd("GETACL",
 				    "GETACL "
 				    + imapAccount.quoteSimple(folderName)
@@ -373,8 +378,11 @@ bool mail::imapGetRights::untaggedMessage(imap &imapAccount, string msgname)
 	if (msgname == "LIST")
 	{
 		imapAccount
-			.installBackgroundTask(new listGetRights(folderName,
-								 rights));
+			.installBackgroundTask(new
+					       listGetRights(folderName,
+							     imapAccount
+							     .folder_chset(),
+							     rights));
 		return true;
 	}
 
@@ -507,8 +515,9 @@ void mail::imapGetRights::parseGetRights::getRights(imap &imapAcct, Token t)
 
 mail::imapGetRights
 ::listGetRights::listGetRights(string folderNameArg,
+			       const char *folder_chset,
 			       list<pair<string,string> > &rightsArg)
-	: imapLIST(*this, 0), folderName(folderNameArg),
+	: imapLIST(*this, 0, folder_chset), folderName(folderNameArg),
 	  rights(rightsArg)
 {
 }
@@ -746,6 +755,8 @@ bool mail::imapSetRights::untaggedMessage(imap &imapAccount, string msgname)
 		imapAccount
 			.installBackgroundTask(new imapGetRights
 					       ::listGetRights(folderName,
+							       imapAccount
+							       .folder_chset(),
 							       dummy_rights));
 		return true;
 	}

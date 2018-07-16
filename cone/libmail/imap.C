@@ -303,7 +303,7 @@ void mail::imap::insertHandler(mail::imapHandler *handler)
 		LIBMAIL_THROW("mail::imap:: out of memory.");
 
 	const char *name=handler->getName();
-				
+
 	if (handlers.count(name) > 0)
 	{
 		mail::imapHandler *oldHandler=
@@ -581,6 +581,9 @@ int mail::imap::socketRead(const string &readbuffer)
 
 		upper(msg);
 
+		if (msg == "ENABLED")
+			return processedCnt;
+
 		if (msg == "CAPABILITY")
 		{
 			clearCapabilities();
@@ -716,6 +719,18 @@ void mail::imap::setCapability(string status)
 {
 	upper(status);
 	capabilities.insert(status);
+}
+
+const char *mail::imap::folder_chset()
+{
+	return utf8_enabled() ? unicode_x_smap_modutf8:unicode_x_imap_modutf7;
+}
+
+bool mail::imap::utf8_enabled()
+{
+	return hasCapability("ENABLE") &&
+		(hasCapability("UTF8=ACCEPT") ||
+		 hasCapability("UTF8=ONLY"));
 }
 
 bool mail::imap::hasCapability(string status)
@@ -1450,7 +1465,7 @@ void mail::imapFolderHeadersCallback
 
 	if (!prevWasNewline && !prevFoldingSpace)
 		cpy.insert(cpy.end(), c, b);
-		
+
 	originalCallback.messageTextCallback(n, cpy);
 }
 
@@ -1677,7 +1692,7 @@ int mail::imapCommandHandler::process(mail::imap &imapAccount, string &buffer)
 			    okfailWord == "OK", errmsg) ? p+1:0;
 
 	// Report any accumulated server messages in the response
-	
+
 	if (!acctPtr.isDestroyed() && acctPtr->serverMsgs.size() > 0)
 	{
 		vector<string>::iterator b, e;

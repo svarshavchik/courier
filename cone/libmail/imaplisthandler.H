@@ -24,6 +24,7 @@ class imapListHandler : public imapCommandHandler {
 	mail::callback::folderList &callback1;
 	mail::callback &callback2;
 	std::string hier;
+	const char *folder_chset;
 
 	bool oneFolderOnly;
 	bool fallbackOneFolderOnly;
@@ -36,8 +37,9 @@ class imapListHandler : public imapCommandHandler {
 
 public:
 	imapListHandler(mail::callback::folderList &myCallback,
-			      mail::callback &myCallback2,
-			      std::string myHier, bool oneFolderOnlyArg);
+			mail::callback &myCallback2,
+			const char *folder_chset,
+			std::string myHier, bool oneFolderOnlyArg);
 	~imapListHandler();
 	const char *getName();
 	void timedOut(const char *errmsg);
@@ -64,11 +66,14 @@ class imapLIST : public imapHandlerStructured {
 	bool hasChildren, hasNoChildren, marked, unmarked, noSelect;
 	std::string hiersep;
 
+	const char *folder_chset;
+
 protected:
 	imapparsefmt xattributes;
 public:
 	imapLIST(std::vector<imapFolder> &mylist, size_t pfixLengthArg,
-		       bool oneNameOnlyArg=false);
+		 const char *folder_chset,
+		 bool oneNameOnlyArg=false);
 	~imapLIST();
 
 	void installed(imap &imapAccount);

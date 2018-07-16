@@ -35,7 +35,9 @@ void mail::imap::readSubFolders(string path,
 	else
 	{
 		mail::imapListHandler *h=
-			new mail::imapListHandler(callback1, callback2, path,
+			new mail::imapListHandler(callback1, callback2,
+						  folder_chset(),
+						  path,
 						  false);
 		installForegroundTask(h);
 	}
@@ -69,6 +71,7 @@ void mail::imap::findFolder(string folder,
 							   callback2)
 			       : new mail::imapListHandler(callback1,
 							   callback2,
+							   folder_chset(),
 							   folder,
 							   true));
 }
@@ -78,8 +81,8 @@ string mail::imap::translatePath(string path)
 	if (!smap)
 	{
 		char *p=unicode_convert_tobuf(path.c_str(),
-						unicode_default_chset(),
-						unicode_x_imap_modutf7, NULL);
+					      unicode_default_chset(),
+					      folder_chset(), NULL);
 
 		if (p)
 		{
@@ -236,9 +239,11 @@ string mail::imap::translatePath(string path)
 
 mail::imapListHandler::
 imapListHandler(mail::callback::folderList &myCallback,
-		      mail::callback &myCallback2,
-		      string myHier, bool oneFolderOnlyArg)
+		mail::callback &myCallback2,
+		const char *folder_chset,
+		string myHier, bool oneFolderOnlyArg)
 	: callback1(myCallback), callback2(myCallback2), hier(myHier),
+	  folder_chset(folder_chset),
 	  oneFolderOnly(oneFolderOnlyArg), fallbackOneFolderOnly(false)
 {
 }
@@ -273,8 +278,9 @@ bool mail::imapListHandler::untaggedMessage(mail::imap &imapAccount, string name
 	if (name != "LIST")
 		return false;
 	imapAccount.installBackgroundTask( new mail::imapLIST(folders,
-						       hier.length(),
-						       oneFolderOnly));
+							      hier.length(),
+							      folder_chset,
+							      oneFolderOnly));
 	return true;
 }
 
@@ -332,13 +338,14 @@ bool mail::imapListHandler::taggedMessage(mail::imap &imapAccount, string name,
 // Untagged LIST parser
 
 mail::imapLIST::imapLIST(vector<mail::imapFolder> &mylist,
-			       size_t pfixLengthArg,
-			       bool oneNameOnlyArg)
+			 size_t pfixLengthArg,
+			 const char *folder_chset,
+			 bool oneNameOnlyArg)
 	: folderList(mylist), pfixLength(pfixLengthArg),
 	  oneNameOnly(oneNameOnlyArg),
 	  next_func(&mail::imapLIST::start_attribute_list),
 	  hasChildren(false), hasNoChildren(false), marked(false),
-	  unmarked(false), noSelect(false)
+	  unmarked(false), noSelect(false), folder_chset(folder_chset)
 {
 }
 
@@ -436,7 +443,7 @@ void mail::imapLIST::get_name(mail::imap &imapAccount, Token t)
 				nameVal.erase(0, pfixLength);
 		}
 		char *p=unicode_convert_tobuf(nameVal.c_str(),
-						unicode_x_imap_modutf7,
+						folder_chset,
 						unicode_default_chset(),
 						NULL);
 
