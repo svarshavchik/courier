@@ -97,7 +97,7 @@ LDFLAGS="$LDFLAGS -L %{curses_lib_dir}"
 export LDFLAGS
 %endif
 
-%configure -C --with-devel %{?gpg_option}
+%configure -C --with-devel %{?gpg_option} %{?notice_option}
 %build
 %{__make} -s %{?_smp_mflags}
 %install

@@ -1,4 +1,4 @@
-<!-- Copyright 2002-2006 Double Precision, Inc.  See COPYING for -->
+<!-- Copyright 2002-2018 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
 
     <title>&app;: COnsole Newsreader And Emailer</title>
@@ -257,6 +257,11 @@ This step can be omitted if Socks 5 support is not required.
         </listitem>
 	<listitem>
 	  <para>
+Download and install the Courier-Unicode library from
+<ulink url="http://www.courier-mta.org/download.html#unicode">http://www.courier-mta.org/download.html#unicode</ulink> and install it.</para>
+	</listitem>
+	<listitem>
+	  <para>
 Download the source code tarball from
 <ulink url="http://www.courier-mta.org/download.php#cone">http://www.courier-mta.org/download.php#cone</ulink> and unpack it.</para>
 	</listitem>
@@ -447,6 +452,41 @@ Upgrading &app; consists simply of building the new version, and installing it.
 The new version will overwrite the previous version.
 Special upgrade instructions are given below.</para>
 
+	<section>
+	  <title>Upgrading from version 0.96 and earlier</title>
+	  <para>
+	    &app; 0.97 is a coordinated update with other Courier packages
+	    that introduces support for Unicode-based E-mail protocols. As
+	    part of this update, maildir folder names are also changed to
+	    use Unicode instead of custom IMAP naming scheme.
+	  </para>
+
+	  <para>
+	    Manual conversion steps are needed for local maildir (and mbox)
+	    folders. No action is needed if &app; is used exclusively with
+	    IMAP and POP3 accounts.
+	  </para>
+
+	  <para>
+	    Refer to <ulink url="http://www.courier-mta.org/maildirmake.html">http://www.courier-mta.org/maildirmake.html</ulink>
+	    for additional information; specifically
+	    the <quote>Converting pre-Unicode maildirs</quote> section.
+	    When updating &app; together with Courier, Courier-IMAP, or
+	    SqWebMail, use the same conversion steps for any maildirs that
+	    do not get converted as part of updating Courier, Courier-IMAP,
+	    or SqWebMail.
+	    When updating &app; only by itself, the
+	    <command>maildirmake</command> does not get installed together
+	    with &app; but it gets built in the
+	    <filename>libs/maildir</filename> source subdirectory.
+	  </para>
+
+	  <para>
+	    Any mbox folders also need to be renamed, but there are no
+	    automated tools for that. They'll need to be renamed manually,
+	    (or in &app; itself).
+	  </para>
+	</section>
 	<section>
 	  <title>Upgrading from version 0.59 and earlier</title>
 	  <para>

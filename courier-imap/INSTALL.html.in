@@ -1,76 +1,62 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <meta name="generator" content="Bluefish 2.2.10" />
   <meta http-equiv="Content-Type" content=
-  "text/html; charset=us-ascii" />
-
+  "text/html; charset=utf-8" />
   <title>Courier-IMAP</title>
   <meta name="MSSmartTagsPreventParsing" content="TRUE" />
+  <style type="text/css">
+  /*<![CDATA[*/
+  body {
+  background-color: #FFFFFF;
+  color: #000000;
+  }
+  :link { color: #0000EE }
+  :visited { color: #551A8B }
+  :active { color: #FF0000 }
+  /*]]>*/
+  </style>
 </head>
-
-<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink=
-"#551A8B" alink="#FF0000">
-  <!-- Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for -->
+<body>
+  <!-- Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
-
   <h1>Courier-IMAP</h1>
-
   <p>For a general introduction and configuration settings for some
   popular IMAP clients, go and read
   <code>imap/README(.html)</code>.</p>
-
   <p>In this document:</p>
-
   <ul>
     <li><a href="#requirements">Requirements</a></li>
-
     <li><a href="#upgrading">Upgrading</a></li>
-
     <li><a href="#install">Installation</a></li>
-
     <li><a href="#imapconfig">IMAP configuration file</a></li>
-
     <li><a href="#loginexec">Account initialization hook</a></li>
-
     <li><a href="#shared">Using shared folders</a></li>
-
     <li><a href="#crammd5">CRAM-MD5 Authentication</a></li>
-
     <li><a href="#sslcert">Certificate Authentication</a></li>
-
     <li><a href="#imapsend">Sending mail via an IMAP
     connection</a></li>
-
     <li><a href="#idle">Realtime folder status updates</a></li>
-
     <li><a href="#options">Account OPTIONS</a></li>
-
     <li><a href="#smap">SMAP</a></li>
   </ul>
-
   <h2><a name="requirements" id=
   "requirements">Requirements</a></h2>
-
   <p>Now is the good time to read the FAQ, before you start. The
   FAQ is located in the file <code>imap/FAQ(.html?)</code>.</p>
-
   <ul>
     <li>C++ compiler - A C++ compiler is required. The server is
     written in C, but there are some configuration scripts that use
     C++ code.</li>
-
     <li>make - The GNU make is recommended. Solaris's make is to be
     avoided. xBSD already has a gmake port, install it and use it
     (use gmake everywhere this document refers to make).</li>
-
     <li>GDBM/DB - either the GDBM or the Berkeley DB library is
     required.</li>
-
     <li><a href="http://www.gnu.org/software/libidn/">The GNU IDN
     library</a> (http://www.gnu.org/software/libidn/).</li>
-
     <li><a href="http://www.gnome.org/~veillard/gamin/" target=
     "_blank">Gamin</a>
     (<tt>http://www.gnome.org/~veillard/gamin/</tt>) or <a href=
@@ -80,16 +66,26 @@
     installed, it is used for an enhanced IMAP <code>IDLE</code>
     implementation that provides real-time folder status updates to
     concurrent IMAP clients that have the same folder opened.</li>
-
     <li>The Courier authentication library. Before installing
-    Courier-IMAP, download and install <a onclick="" href=
-    "http://www.courier-mta.org/authlib/">http://www.courier-mta.org/authlib/</a>.</li>
+    Courier-IMAP, download and install <a href=
+    "https://www.courier-mta.org/authlib/">https://www.courier-mta.org/authlib/</a>.</li>
+    <li>The Courier unicode library. Before installing
+    Courier-IMAP, download and install <a href=
+    "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.</li>
   </ul>
-
   <h2><a name="upgrading" id="upgrading">UPGRADING</a></h2>
-
+  <h3>Upgrading from Courier-IMAP 4.18.2, and earlier</h3>
+  <p>Courier-IMAP 5.0 added IMAP UTF8 support, and converted
+  maildir folders' names to Unicode. Updating an existing system to
+  Courier-IMAP 5.0, and later, requires a manual one-time
+  conversion of all existing maildirs using the
+  <code>maildirmake</code> command. See the <a href=
+  "https://www.courier-mta.org/maildirmake.html">maildirmake(1)</a>
+  manual page for more information.</p>
+  <p>NOTE: If <a target="_blank" href=
+  "https://www.courier-mta.org/cone/index.html">Cone</a> is
+  installed, Cone also must be updated to 0.97, or later.</p>
   <h3>Upgrading from Courier-IMAP 4.14, and earlier</h3>
-
   <p>Version 4.15 removes the TLS_DHCERTFILE parameter from imap,
   and pop3d configuration files. DH parameters, and DH parameters
   only, get read from the new TLS_DHPARAMS file (and the other
@@ -97,9 +93,7 @@
   into TLS_CERTFILE). After upgrading, run the
   <code>mkdhparams</code> script to create a new TLS_DHPARAMS
   file.</p>
-
   <h3>Upgrading from Courier-IMAP 4.9.3, and earlier</h3>
-
   <p>In 4.10.0, the IMAP server resets the epoch for an internal
   sequence number generator for new mailboxes. This is an internal
   attribute of individual IMAP folders, that's defined by the IMAP
@@ -109,17 +103,14 @@
   recommended that "... a good value to use for the unique
   identifier validity value is a 32-bit representation of the
   creation date/time of the mailbox."</p>
-
   <p>On modern platforms, the system time is now a 64 bit value
   (even on the remaining 32 bit platforms). With Y2038K on the
   horizon, it's time to reset the epoch (the new epoch, for anyone
   who cares, runs until the year 2069). The upgrade impact on
   existing systems is as follows.</p>
-
   <p>There is no impact on existing folders in existing mailboxes.
   New folders will have their internal sequence number in the new
   epoch.</p>
-
   <p>One potential issue exists if a folder gets deleted by the
   IMAP client, and then recreated later. The new folder will now
   get a lower sequence number. Although this is technically not
@@ -134,7 +125,6 @@
   resynchronization with the server. In case an IMAP client fails
   to resynchronize, the remedy is to remove the IMAP account
   configuration from the client, and add it back in.</p>
-
   <p>Copying a mailbox by directly copying the files in maildirs
   preserves each folder's epoch. However if a mailbox gets migrated
   by copying its contents over IMAP, the folders on the destination
@@ -146,7 +136,6 @@
   this situation it will be necessary to completely remove and then
   reconfigure the IMAP account, in the IMAP client. Again, verbatim
   copying of maildirs has no issues.</p>
-
   <p>A marginal situation exists where if a server completely runs
   of disk space, or if there's a hardware failure, and the IMAP
   server is unable to retrieve or save an existing folder's
@@ -155,19 +144,15 @@
   lower sequence than the one that existed before. The rememdy is
   the same: remove the IMAP account configuration from the client,
   and then recreate it.</p>
-
   <h3>Upgrading from Courier-IMAP 3, and earlier.</h3>
-
   <p>Beginning with 4.0, the authentication library that used to be
   a part of Courier-IMAP's source has been spun off into a
   standalone authentication library.</p>
-
   <p>You must download and install the Courier Authentication
   Library from <a href=
-  "http://www.courier-mta.org/authlib/">http://www.courier-mta.org/authlib/</a>
+  "https://www.courier-mta.org/authlib/">https://www.courier-mta.org/authlib/</a>
   before upgrading. Review the documentation in the
   <code>courier-authlib</code> package for more information.</p>
-
   <p>After upgrading to 4.0, or later, to avoid future confusion
   the old copies of these configuration files (including the
   <code>.dist</code> files), should be removed from Courier-IMAP's
@@ -175,9 +160,7 @@
   configuration directory (<code>/usr/local/etc/authlib</code>, or
   whatever was specified to Courier-authlib's
   <code>configure</code> script).</p>
-
   <h3>Upgrading from Courier-IMAP 1.7.3, and earlier.</h3>
-
   <p>After upgrading from Courier-IMAP 1.7.3, or earlier, any
   existing mail in POP3 mailboxes may show up as new mail, by some
   mail clients. Other mail clients may end up downloading a second
@@ -190,7 +173,6 @@
   content. Depending on how the POP3 mail client works, it will
   either flag all messages in the mailbox as unread, or download a
   second copy of the message.</p>
-
   <p>Upgrading from Courier-IMAP 1.3.0, and later versions, is a
   straightforward process. Follow the instructions in the <a href=
   "#install">INSTALLATION</a> section, below, to install the new
@@ -203,17 +185,13 @@
   of the configuration directory) is recommended, in order to
   identify any new configuration settings that might need
   adjustment.</p>
-
   <h3>Upgrading from Courier-IMAP 1.3.8.2 and earlier</h3>
-
   <p>The default configuration options have slightly changed. The
   default configuration script will now always build the
   <code>authdaemon</code> module, and build all real authentication
   modules inside <code>authdaemond</code>. This is true even with
   the <code>authvchkpw</code> module.</p>
-
   <h3>Upgrading from Courier-IMAP 1.2.3 and earlier</h3>
-
   <p>Courier-IMAP 1.3.0 introduced a new configuration file format
   that allows configuration files to be automatically upgraded.
   Additionally, several existing configuration files have been
@@ -227,7 +205,6 @@ imapd-ssl.config    imapd-ssl
 pop3d.config        pop3d
 pop3d-ssl.config    pop3d-ssl
 </pre>
-
   <p>The NEWS file has a detailed explanation of how configuration
   files are now installed. Basically, <code>make install</code> now
   installs <code>configfilename.dist</code>, and <code>make
@@ -236,37 +213,28 @@ pop3d-ssl.config    pop3d-ssl
   file. If there is an existing <code>configfilename</code>, the
   old settings in <code>configfilename</code> which are still valid
   will be kept in the new <code>configfilename</code>.</p>
-
   <p>This only works as long as both the old and the new
   configuration files are in the new format, so this will actually
   take effect with your next upgrade Courier-IMAP. If the previous
   installed version of Courier-IMAP did not use the new format for
   configuration files (1.2.3 and earlier), the old configuration
   file is backed up to <code>configfilename.bak</code>.</p>
-
   <p>The recommended procedure for upgrading from versions 1.2.3
   and earlier is as follows:</p>
-
   <p>The recommended upgrade procedure is as follows:</p>
-
   <ul>
     <li>Back up <code>@defaultprefix@/etc</code></li>
-
     <li>Follow the installation procedures, below</li>
-
     <li>After installing, manually edit all configuration files.
     Restore, by hand, any custom configuration settings.</li>
   </ul>
-
   <p>All configuration files are kept in the configuration
   directory. Nothing else in <code>@defaultprefix@</code> is
   configurable. Do not simply overwrite 1.3.0 configuration files
   with configuration files from the previous version. It's
   tempting, but don't do it. It may work, but you will lose the
   automatic upgrade capability for future releases.</p>
-
   <h3>Upgrading from Courier-IMAP 1.1 or earlier</h3>
-
   <p>Note that Courier-IMAP 1.2 includes a compatible POP3 server,
   and the installation script will also install a POP3 server on
   your system. Even though it is installed, you are not required to
@@ -276,14 +244,10 @@ pop3d-ssl.config    pop3d-ssl
   services, edit both the <code>pop3d.config</code> and
   <code>pop3d-ssl.config</code> configuration files, and set
   <code>POP3DSTART</code> and <code>POP3DSSLSTART</code> to NO</p>
-
   <h3>Upgrading from Courier-IMAP 1.0 or earlier</h3>
-
   <p>If the server is running, manually stop the server before
   installing the new version.</p>
-
   <h2><a name="install" id="install">INSTALLATION</a></h2>
-
   <p>To compile and install the Courier-IMAP server (this is the
   short version, a longer version follows):</p>
   <pre>
@@ -298,10 +262,8 @@ $ su root
 
                    # Start the authdaemond process
 </pre>
-
   <blockquote>
     <p><b>NOTE</b></p>
-
     <p>You MUST run the <code>configure</code> script as normal
     user, not root. Did you extract the tarball as root? It won't
     work. Remove the extracted source code. Log in as a normal
@@ -310,10 +272,8 @@ $ su root
     user, except for the final step of installing the compiled
     software.</p>
   </blockquote>
-
   <blockquote>
     <p><b>NOTE</b></p>
-
     <p>Courier-IMAP does not use <code>inetd</code> or
     <code>xinetd</code>. Any <code>inetd</code> or
     <code>xinetd</code> configuration settings for the IMAP and
@@ -322,11 +282,9 @@ $ su root
     or POP3 connections.</p>
   </blockquote>
   <hr />
-
   <p>As mentioned in "Requirements", above, if you are using xBSD,
   you must use gmake instead of make.</p>
   <hr />
-
   <p>NOTE: The <code>configure</code> script may run as much as
   5-10 minutes on slow machines. It may appear that
   <code>configure</code> is stuck in a loop, but that's an
@@ -335,17 +293,13 @@ $ su root
   configuration scripts share a lot of common code, leading to an
   initial impression that the same configuration script is being
   repeatedly run.</p>
-
   <p>See below for a description of the options to the
   <code>configure</code> script.</p>
-
   <p><b>WARNING:</b> set your umask to 022 before running
   <code>make install</code> or <code>make install-strip</code>.</p>
-
   <p>You should try <code>make install-strip</code> first. Use
   <code>make install</code> if <code>make install-strip</code>
   fails.</p>
-
   <p>The configure script accepts certain options, but the defaults
   should be fine most of the time. <code>make install</code> puts
   everything in <code>@defaultprefix@</code>. If the directory
@@ -355,7 +309,6 @@ $ su root
   server installed, this means that you will want to save your
   existing configuration in
   <code>/etc/pam.d/{imap|pop3}</code>.</p>
-
   <p>"<code>make check</code>" performs some internal sanity
   checks. If <code>make check</code> fails, something is wrong, and
   Courier-IMAP may not work for you reliably. Certain options are
@@ -365,22 +318,18 @@ $ su root
   and if all goes well extract the source code again in a different
   directory, then build it for the second time using your
   options.</p>
-
   <p>After installation, you will need to review the files in
   <code>@defaultprefix@/etc</code> and make any changes you deem
   necessary.</p>
-
   <p>After running <code>make install</code> or <code>make
   install-strip</code> you will then have to modify your system's
   startup scripts to run Courier-IMAP when your system boots.</p>
-
   <p>Use the following command to start the Courier-IMAP
   server:</p>
   <pre>
 
 $ @defaultprefix@/libexec/imapd.rc start
 </pre>
-
   <p>This assumes that Courier-IMAP is installed in
   <code>@defaultprefix@</code>. Use the following command to stop
   Courier-IMAP:</p>
@@ -388,29 +337,23 @@ $ @defaultprefix@/libexec/imapd.rc start
 
 $ @defaultprefix@/libexec/imapd.rc stop
 </pre>
-
   <p>You will have to add these commands to your system
   startup/shutdown scripts.</p>
-
   <h4>IMAP over SSL</h4>
-
   <p>To add SSL support you have to install OpenSSL or GnuTLS
   before installing Courier-IMAP. Download OpenSSL from <a target=
   "_blank" href=
   "http://www.openssl.org/"><code>http://www.openssl.org/</code></a>,
   or GnuTLS from <a target="_blank" href=
   "http://www.gnutls.org"><code>http://www.gnutls.org</code></a>.</p>
-
   <p>Follow OpenSSL's or GnuTLS's installation instructions, then
   build Courier-IMAP.</p>
-
   <blockquote>
     <p><b>NOTE:</b> Most systems already have an available OpenSSL
     or GnuTLS package. Do not build OpenSSL or GnuTLS yourself, if
     a prebuilt package is already available. Just install the
     prebuilt package.</p>
   </blockquote>
-
   <blockquote>
     <p><b>NOTE:</b> The development libraries must be installed in
     addition to the runtime package, in order to build
@@ -420,12 +363,10 @@ $ @defaultprefix@/libexec/imapd.rc stop
     build Courier-IMAP, the development libraries must be
     installed.</p>
   </blockquote>
-
   <p>The OpenSSL library is selected when both OpenSSL and GnuTLS
   libraries are found by the <code>configure</code> script. Use the
   <code>--with-gnutls</code> option to explicitly select the GnuTLS
   library over OpenSSL.</p>
-
   <p>The <code>@defaultprefix@/etc/imapd-ssl</code> configuration
   file sets some additional options for SSL support, which you may
   need to adjust. Consult that configuration file for additional
@@ -435,7 +376,6 @@ $ @defaultprefix@/libexec/imapd.rc stop
   <code>@defaultprefix@/libexec/imapd.rc</code> script. You may
   accept both SSL and non-SSL connections by running both
   scripts.</p>
-
   <p>Note that SSL requires a valid, signed, X.509 certificate to
   be installed where Courier-IMAP expects to find it. The default
   location for the X.509 certificate, in PEM format, is
@@ -450,15 +390,12 @@ $ @defaultprefix@/libexec/imapd.rc stop
   certificate. The gory details of setting up SSL is beyond the
   scope of this document, and you should consult the OpenSSL
   documentation for more information.</p>
-
   <p>The <code>mkimapdcert</code> script will not overwrite an
   existing <code>imapd.pem</code> certificate, in order to allow
   precompiled packages to simply call <code>mkimapdcert</code>
   after installation, without worry.</p>
-
   <h4>Initial parameters, and a monthly cron job to generate DH
   parameters</h4>
-
   <p>Run the <code>mkdhparams</code> script to create a DH
   parameter file. A monthly cron job should be created to run the
   <code>mkdhparams</code> script, in order to periodically generate
@@ -466,29 +403,22 @@ $ @defaultprefix@/libexec/imapd.rc stop
   DH parameter file's timestamp is older than 25 days, and creates
   a new file if it is. DH parameters are used to set up encrypted
   connections.</p>
-
   <h4>The bundled POP3 server</h4>
-
   <p>The POP3 server included with Courier-IMAP provides POP3
   access to INBOX, and that's about it. Enabling the POP3 server is
   very similar to enabling the IMAP server, with the following
   differences:</p>
-
   <p>The configuration files are
   <code>@defaultprefix@</code>/etc/pop3dand
   <code>@defaultprefix@</code>/etc/pop3d-ssl.</p>
-
   <p>The startup/shutdown scripts are
   <code>@defaultprefix@</code>/libexec/pop3d.rcand
   <code>@defaultprefix@</code>/libexec/pop3d-ssl.rc.</p>
-
   <p>The SSL certificate is
   <code>@defaultprefix@/share/pop3d.pem</code>, and the
   <code>@defaultprefix@/share/mkpop3dcert</code> script can be used
   to create a self-signed SSL certificate for testing purposes.</p>
-
   <h4>System-V style startup</h4>
-
   <p>If your system uses System-V style startup scripts, take a
   look at <code>courier-imap.sysvinit</code> - this is a sample
   <code>/etc/init.d</code> script.
@@ -496,17 +426,13 @@ $ @defaultprefix@/libexec/imapd.rc stop
   <code>configure</code>. In most cases it can be merely copied to
   <code>/etc/init.d</code> and <code>/etc/rc?.d</code> directories
   (with the execute permission bit turned on).</p>
-
   <p>The sample startup script will check if IMAP or POP3 over SSL
   is enabled. The sample startup script automatically creates dummy
   SSL certificates the first time it is executed.</p>
-
   <h4>Options to <code>configure</code>:</h4>
-
   <ul>
     <li><code>--prefix=pathname</code> - install here, instead of
     <code>@defaultprefix@</code></li>
-
     <li><code>--without-ipv6</code> - do not compile IPv6 support.
     The <code>configure</code> automatically checks if IPv6 support
     is available, and enables it automatically. This option
@@ -521,31 +447,25 @@ $ @defaultprefix@/libexec/imapd.rc stop
     that it can't load the IPv6 module. Use
     <code>--without-ipv6</code> to turn off IPv6 support, if that
     bothers you.</li>
-
     <li><code>--bindir=pathname</code> ,
     <code>--mandir=pathname</code> - override default names of
     subdirectories under <code>prefix</code>. See below for more
     information.</li>
-
     <li><code>--with-db=db</code> - Use the DB library instead of
     the GDBM library You must have either the GDBM or the DB
     library installed. If both are present, GDBM is selected unless
     you use this option. The GDBM/DB library is used by Courier for
     certain functions.</li>
-
     <li><code>--with-gnutls</code> - Use the GnuTLS library even if
     the OpenSSL library is also installed. Courier-IMAP
     automatically uses whichever one is available. The OpenSSL
     library is selected if both are present. Use this option to
     override and select GnuTLS instead.</li>
-
     <li><code>--with-piddir=dir</code> - use dir/imapd.pid to store
     couriertcpd's process ID.</li>
-
     <li><code>--with-userdb=file</code> - use <i>file</i> instead
     of <code>@userdb@</code> (also means that userdb.dat and
     userdbshadow.dat are appropriately renamed).</li>
-
     <li><code>--enable-workarounds-for-imap-client-bugs</code> -
     there are a number of various bugs in certain IMAP clients. The
     current list of broken IMAP clients consists of Netscape
@@ -559,7 +479,6 @@ $ @defaultprefix@/libexec/imapd.rc stop
     should first configure Courier-IMAP without this option, run
     <code>make check</code>, then reconfigure Courier-IMAP with
     this option.</li>
-
     <li><code>--with-trashquota</code> - include deleted messages,
     and the Trash folder, in the estimated quota usage for
     maildirs. Quotas are optional, see the file
@@ -571,7 +490,6 @@ $ @defaultprefix@/libexec/imapd.rc stop
     check</code> WILL FAIL. You should first configure Courier-IMAP
     without this option, run <code>make check</code>, then
     reconfigure Courier-IMAP with this option.</li>
-
     <li><code>--with-dirsync</code> - after saving a new message to
     a maildir (the <code>IMAP</code> <code>COPY</code> and
     <code>APPEND</code> commands) explicitly sync the maildir's
@@ -585,42 +503,30 @@ $ @defaultprefix@/libexec/imapd.rc stop
     -- this option adds a little bit of extra code to sync the
     parent directory.</li>
   </ul>
-
   <h4>Installation directories</h4>
-
   <p>Unless the options <code>--prefix</code>,
   <code>--bindir</code>, or <code>--mandir</code> are used,
   everything will be installed in the directory
   <code>@defaultprefix@</code>.</p>
-
   <p>Use the <code>--prefix</code> option to specify a different
   directory. This directory will have the following
   subdirectories:</p>
-
   <ul>
     <li><code>etc</code> - configuration files</li>
-
     <li><code>bin</code> - binaries</li>
-
     <li><code>sbin</code> - superuser binaries</li>
-
     <li><code>libexec</code> - additional binaries</li>
-
     <li><code>man</code> - manual pages</li>
-
     <li><code>share</code> - scripts and data files</li>
-
     <li><code>var</code> - temporary files used by the
     <code>authdaemond</code>, daemon process (if the
     <code>authdaemon</code> authentication module is
     selected).</li>
   </ul>
-
   <p>Having everything installed underneath one directory allows
   its contents to be easily backed up, before a newer version of
   <code>courier-imap</code> is installed. Reverting to a previous
   version is as simple as restoring from backup.</p>
-
   <p>Because some binaries in <code>bin</code> and
   <code>sbin</code> may be executed from the command line, it will
   be necessary to change your systemwide global startup script to
@@ -638,7 +544,6 @@ $ @defaultprefix@/libexec/imapd.rc stop
         MANPATH="@defaultprefix@/man:$MANPATH"
         export MANPATH
 </pre>
-
   <p>As an alternative, you may use the <code>--bindir</code> and
   <code>--mandir</code> options in order to install binaries to
   <code>/usr/local/bin</code> and the manual pages to
@@ -647,51 +552,39 @@ $ @defaultprefix@/libexec/imapd.rc stop
   <pre>
         ./configure --bindir=/usr/local/bin --mandir=/usr/local/man
 </pre>
-
   <p>Other familiar configure options, such as
   <code>--sysconfdir</code> and <code>--datadir</code> work too,
   for those who know how to properly use them.</p>
-
   <h2><a name="imapconfig" id="imapconfig">Configuration
   file</a></h2>
-
   <p>The <code>@defaultprefix@/etc/imapd</code> configuration file
   sets some configurable options. Each setting has a brief
   description. Review each setting, and make any necessary
   adjustments.</p>
-
   <p>The <code>@defaultprefix@/etc/imapd-ssl</code> configuration
   file sets additional configuration setting for the server running
   IMAP over TLS or SSL on port 993. Note that, by default, the
   regular IMAP server on port 143 also supports encrypted
   connections, and the default startup script for the port 143
   server reads both configuration files.</p>
-
   <p>The <code>@defaultprefix@/etc/pop3d</code> and the
   <code>@defaultprefix@/etc/pop3d-ssl</code> configuration files
   set options of the POP3 server.</p>
-
   <p>NOTE: the actual location of the configuration file directory
   is itself configured at compilation time.</p>
-
   <h2><a name="loginexec" id="loginexec">ACCOUNT INITIALIZATION
   HOOK</a></h2>
-
   <p>If there is a file or a symbolic link in the maildir called
   "loginexec", and if it is executable, then the executable file
   will be invoked after a succesful login. If the program
   terminates with an exit code of 0, the "loginexec" file (or a
   symbolic link) will be removed.</p>
-
   <h2><a name="shared" id="shared">USING SHARED FOLDERS</a></h2>
-
   <p>Courier-IMAP supports shared folders. See the file <a href=
   "README.sharedfolders.html"><code>README.sharedfolders.html</code></a>
   for information on how to set up shared folders.</p>
-
   <h2><a name="crammd5" id="crammd5">CRAM-MD5
   AUTHENTICATION</a></h2>
-
   <p>CRAM-MD5 authentication allows IMAP clients to authenticate
   themselves without sending the password in clear-text over the
   network. Courier-IMAP now supports CRAM-MD5 by default, but is
@@ -701,27 +594,22 @@ $ @defaultprefix@/libexec/imapd.rc stop
   <code>authmysql</code> support CRAM-MD5 authentication if the
   LDAP or the MySQL/PostgreSQL server stores clear-text passwords,
   and not crypt-ed passwords.</p>
-
   <p>To use CRAM-MD5 it is necessary to use an IMAP client that
   support CRAM-MD5 authentication, of course. That's the easy
   part.</p>
-
   <p>The problem is that it is not possible to use the system
   password when logging in using CRAM-MD5. That's because CRAM-MD5
   requires the knowledge of the actual password, in the clear, in
   order to calculate authentication tokens (even though that the
   password itself is not sent in the clear over the network).</p>
-
   <p>So, implementation of CRAM-MD5 is an advanced task that should
   be attempted only when you are comfortable with, and fully
   understand how Courier-IMAP works in general. Here's an overview
   of this procedure:</p>
-
   <ul>
     <li>Install and implement <code>@userdb@</code>, because
     CRAM-MD5 authentication uses the <code>@userdb@</code> database
     (but see below for LDAP-specific notes).</li>
-
     <li>Figure out which accounts are going to use CRAM-MD5
     authentication. People who do not use an IMAP client that
     supports CRAM-MD5 can continue and log in with the existing
@@ -741,7 +629,6 @@ userdbpw -hmac-md5 | userdb <i>userdb</i> set hmac-md5pw
 
 </pre>Then run the <code>makeuserdb</code> command, as always.
     </li>
-
     <li>NOTE: CRAM-MD5 authentication is also be supported by
     <code>authldap</code>, <code>authpgsql</code> and
     <code>authmysql</code>, as long as clear-text passwords are
@@ -751,9 +638,7 @@ userdbpw -hmac-md5 | userdb <i>userdb</i> set hmac-md5pw
     to install <code>/etc/userdb</code>, as described in this
     section.</li>
   </ul>
-
   <h3>Enabling CRAM-MD5 authentication</h3>
-
   <p>Because of these unfortunate complexities, CRAM-MD5
   authentication is disabled after installation. When you're ready
   to use CRAM-MD5, edit the <code>imapd</code> configuration file
@@ -761,41 +646,34 @@ userdbpw -hmac-md5 | userdb <i>userdb</i> set hmac-md5pw
   environment variable, then restart Courier-IMAP. There are
   instructions in the <code>imapd</code> configuration file to that
   effect.</p>
-
   <p>If you do not intend to ever use CRAM-MD5 authentication, you
   can either specify <code>--without-authcram</code> option to the
   configure script, or simply edit <code>imapd</code> and remove
   authcram from the AUTHMODULES setting.</p>
-
   <h2><a name="sslcert" id="sslcert">CERTIFICATE
   AUTHENTICATION</a></h2>
-
   <p>Courier-IMAP can use SSL certificates for authentication
   purposes. For certificate authentication purposes, one of the
   fields in your certificates' subject must match the login ID in
   the authentication database. Consider the following
   certificate:</p>
-
   <blockquote>
     <pre>
 ...
 Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddress=johnsmith@example.com
 </pre>
   </blockquote>
-
   <p>If the <code>emailAddress</code> field is configured as the
   login ID, the authentication database must provide login details
   for <code>johnsmith@example.com</code>. To enable certificate
   authentication, edit the <code>imapd-ssl</code> and
   <code>pop3d-ssl</code> configuration files, and make the
   following changes:</p>
-
   <ul>
     <li>
       <p>Set <code>TLS_TRUSTCERTS</code> to the filename with your
       certificate authority's X.509 certificate.</p>
     </li>
-
     <li>
       <p>Change the <code>TLS_VERIFYPEER</code> setting to
       "<code>PEER</code>". The setting can also be changed to
@@ -805,13 +683,11 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
       authenticate. Without a certificate, password-based
       authentication remains an option.</p>
     </li>
-
     <li>
       <p>Change the <code>TLS_EXTERNAL</code> setting to the name
       of the certificate subject field that gives the login ID. In
       the above example, this would be
       "<code>TLS_EXTERNAL=emailaddress</code>".</p>
-
       <blockquote>
         <p>NOTE: GnuTLS's <code>certtool</code> uses
         "<code>email</code>" as the name of this field. If
@@ -820,10 +696,8 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
       </blockquote>
     </li>
   </ul>
-
   <h2><a name="imapsend" id="imapsend">SENDING MAIL VIA AN IMAP
   CONNECTION</a></h2>
-
   <p>This server allows using the IMAP connection to send E-mail.
   Normally, the IMAP protocol provides only access to mail in an
   existing mail account, and mail clients must use SMTP in order to
@@ -832,7 +706,6 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
   should work with all existing IMAP mail clients. This can be
   useful when an account is logged in from a shared access pool
   which normally blocks most access to the SMTP port.</p>
-
   <p>This is implemented by enabling a setting in the
   <code>imapd</code> configuration file that designates a folder as
   a special "Outbox" folder. The default setting is a folder called
@@ -845,37 +718,30 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
   mailed out by the Courier-IMAP server to the addresses listed in
   the <code>To:</code>, <code>Cc:</code>, and <code>Bcc:</code>
   headers.</p>
-
   <p>It should be possible to use this to send mail from any IMAP
   client by:</p>
-
   <ol>
     <li>Composing a draft message, telling the IMAP client to save
     the draft message in its drafts folder on the IMAP server.</li>
-
     <li>Opening the drafts folder, and moving or copying the
     message to the Outbox folder.</li>
-
     <li>The act of copying the message into the Outbox folder will
     send the mail. There won't be any explicit notification to the
     fact that the message was sent, so it's a good idea to include
     your own E-mail address on the Cc: list.</li>
   </ol>
-
   <blockquote>
     <p><b>NOTE:</b> it is tempting to configure the IMAP mail
     client to use Outbox as its default folder for saving drafts.
     Resist the temptation. If you forget, you'll save a partially
     completed draft, which will be then obediently mailed out.</p>
   </blockquote>
-
   <blockquote>
     <p><b>NOTE:</b> the message, in addition to being sent, will be
     saved in the folder in the normal fashion. After saving the
     message, reopen the Outbox folder and delete the sent message,
     or move it someplace else.</p>
   </blockquote>
-
   <blockquote>
     <p><b>NOTE:</b> when enabled, the Courier-IMAP server will
     advertize a private <code>XCOURIEROUTBOX</code> IMAP
@@ -886,7 +752,6 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
     At this time, I'm not aware of any actual mail clients that
     know how to do this.</p>
   </blockquote>
-
   <blockquote>
     <p><b>NOTE:</b> many mail clients save some additional internal
     information in headers of draft messages. The internal
@@ -894,10 +759,8 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
     the message. Make sure that none of this extra information is
     something that should not be mailed out.</p>
   </blockquote>
-
   <h2><a name="idle" id="idle">REALTIME FOLDER STATUS
   UPDATES</a></h2>
-
   <p>If <a href="http://www.gnome.org/~veillard/gamin/" target=
   "_blank">Gamin</a>
   (<tt>http://www.gnome.org/~veillard/gamin/</tt>) or <a target=
@@ -906,12 +769,9 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
   be possible to allow multiple clients to open the same folder,
   and have all clients to be simultaneously notified of any changes
   to the folder contents.</p>
-
   <p>After installing the server see the <tt>imapd(8)</tt> manual
   page for more information.</p>
-
   <h2><a name="options" id="options">Account OPTIONS</a></h2>
-
   <p>If the option '<code>disableimap</code>' or
   '<code>disablepop3</code>' is set to a non-zero value, then
   logins via IMAP or POP3 respectively will be disabled for that
@@ -920,12 +780,9 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
   for example, setting <code>DEFAULTOPTIONS="disableimap=1"</code>
   will disable IMAP access for all accounts except those which have
   option <code>disableimap=0</code></p>
-
   <p>See <code>README_authlib.html</code> in the courier-authlib
   package for information on how to set per-account options.</p>
-
   <h2><a name="smap" id="smap">SMAP</a></h2>
-
   <p>Starting with Courier-IMAP 2.0, the server supports an
   experimental mail access protocol, dubbed "Simple Mail Access
   Protocol". SMAP is an experiment to provide enhanced mail
@@ -935,7 +792,7 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
   default. Uncomment the <code>SMAP_CAPABILITY</code> setting in
   the <code>imapd</code> configuration file in order to enable
   SMAP. The <a target="_blank" href=
-  "http://www.courier-mta.org/cone/index.html">Cone</a> mail client
-  supports SMAP.</p>
+  "https://www.courier-mta.org/cone/index.html">Cone</a> mail
+  client supports SMAP.</p>
 </body>
 </html>

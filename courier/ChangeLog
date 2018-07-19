@@ -1,3 +1,14 @@
+2018-07-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-imap, sqwebmail: update Courier-IMAP to support UTF8 IMAP.
+	Convert maildir folders to use UTF-8 for folder names. Add
+	--checkutf8 and --convutf8 options to maildirmake to convert
+	pre-UTF8 maildirs to UTF8 maildirs, a mandatory upgrade procedure.
+
+2018-07-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* waitlib/configure.ac: Fix typo.
+
 2018-06-28  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libs/tcpd/starttls.c (main): Add -user option. Additional fixes

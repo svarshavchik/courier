@@ -1,9 +1,10 @@
 #
-# Copyright 2003-2014, Double Precision Inc.
+# Copyright 2003-2018, Double Precision Inc.
 #
 # See COPYING for distribution information.
 #
 SUBDIRS=libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone
+AM_DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
 
 sysconf_DATA=cone.dist
 
@@ -114,6 +115,7 @@ dorpm:
 	rm -f rpm/SPECS/*
 	rm -f rpm/SRPMS/*
 	rpmbuild -ta --clean \
+		--define 'notice_option --with-notice=unicode' \
 		--define "_topdir `pwd`/rpm" \
 		--define '_rpmdir %{_topdir}/RPMS' \
 		--define '_srcrpmdir %{_topdir}/SRPMS' \

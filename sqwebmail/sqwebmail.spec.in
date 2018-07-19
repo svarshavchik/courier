@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2013 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 
@@ -101,7 +101,7 @@ This package installes the SqWebMail LDAP address book lookup module.
 
 %prep
 %setup -q
-PATH=/usr/bin:$PATH %configure \
+PATH=/usr/bin:$PATH %configure %{?notice_option} \
 	--enable-cgibindir=%{cgibindir} \
 	--enable-imagedir=%{imagedir} \
 	--enable-imageurl=%{imageurl} \

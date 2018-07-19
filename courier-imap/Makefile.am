@@ -1,8 +1,10 @@
 #
-# Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 @SET_MAKE@
+
+AM_DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
 
 TEMPLFILES=packaging/suse/courier-imap.init.in \
 	packaging/suse/imap.pam \
@@ -220,6 +222,7 @@ build-rpm:
 	rm -f rpm/SPECS/*
 	rm -f rpm/SRPMS/*
 	rpmbuild -ta --clean \
+		--define 'notice_option --with-notice=unicode' \
 		--define "_topdir `pwd`/rpm" \
 		--define '_rpmdir %{_topdir}/RPMS' \
 		--define '_srcrpmdir %{_topdir}/SRPMS' \

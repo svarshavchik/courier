@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 0.78.2.20180628, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 0.78.2.20180718, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -24,6 +24,46 @@ AX_COURIER_UNICODE_VERSION
 AC_ARG_ENABLE(root-check, [  --disable-root-check    Allow build as root (make check will fail)],
 	rootcheck="$enableval",
 	rootcheck="yes")
+AC_ARG_WITH(notice,[AS_HELP_STRING([--with-notice=unicode],
+[The --with-notice=unicode option is required, and indicates that you
+are aware of the instructions in INSTALL for upgrading to this
+version])], [notice="$withval"], [])
+
+case "$notice" in
+unicode)
+	;;
+*)
+	AC_MSG_ERROR([
+************************************************************************
+Please rerun configure and add the
+
+      --with-notice=unicode
+
+option.
+
+This indicates that you've read the instructions in INSTALL about
+updating from earlier versions; specifically the need to convert any
+existing maildirs to a Unicode naming scheme, and the need to update
+any other Courier packages together with updating this one.
+
+If you are building RPMs directly using the spec file from the source
+tarball, add a
+
+      --define 'notice_option --with-notice=unicode'
+
+option to the rpmbuild command:
+
+$ rpmbuild -ta --define 'notice_option --with-notice=unicode'
+
+This message is only meant to make sure you are aware of the contents
+of INSTALL about updating from earlier versions, and the need for
+manual steps to update any existing maildirs.
+
+If you are installing for the first time, you can simply rerun configure
+with this option.
+************************************************************************])
+	;;
+esac
 
 if test "$rootcheck" = "yes"
 then

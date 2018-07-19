@@ -117,7 +117,7 @@ full Courier mail server.  Install the Courier package instead.
 %define xflags %{nil}
 %endif
 
-PATH=/usr/bin:$PATH %configure \
+PATH=/usr/bin:$PATH %configure %{?notice_option} \
 	--with-redhat \
 	%{?xflags: %{xflags}}
 
