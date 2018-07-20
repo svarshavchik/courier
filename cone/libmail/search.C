@@ -550,7 +550,7 @@ void mail::searchOneMessage::checkNextHeader()
 		return;
 
 	mail::mimestruct *hdrs;
-	std::string bodyCharset("iso-8859-1");
+	std::string bodyCharset("utf-8");
 
 	for (;;) {
 

@@ -399,10 +399,7 @@ void mail::emailAddress::decode()
 
 	ucaddr.reserve(addr.size());
 
-	std::string::iterator b, e;
-
-	for (std::string::iterator b=addr.begin(), e=addr.end(); b != e; ++b)
-		ucaddr.push_back((unsigned char)*b);
+	unicode::iconvert::convert(addr, "utf-8", ucaddr);
 
 #if LIBIDN
 	size_t at=std::find(ucaddr.begin(), ucaddr.end(), '@')

@@ -1554,13 +1554,24 @@ void mail::imapAPPEND::go()
 		return;
 	}
 
+	bool utf8_enabled=imapAccount.utf8_enabled();
+
 	try {
 
 		string flags=imapAccount.messageFlagStr(messageInfo);
 
-		fprintf(tmpfileptr, "\r\n");
+		size_t extra_stuff=0;
 
-		// Part of the APPEND cmd, actually
+		// Part of the UTF8 APPEND cmd, actually:
+		if (utf8_enabled)
+		{
+			fprintf(tmpfileptr, ")");
+			++extra_stuff;
+		}
+
+		// Part of the APPEND cmd, actually:
+		fprintf(tmpfileptr, "\r\n");
+		extra_stuff+=2;
 
 		bytesDone=0;
 
@@ -1580,7 +1591,7 @@ void mail::imapAPPEND::go()
 		{
 			ostringstream o;
 
-			o << bytes-2;
+			o << bytes-extra_stuff;
 			cnt_s=o.str();
 		}
 
@@ -1608,7 +1619,8 @@ void mail::imapAPPEND::go()
 		appendcmd="APPEND " + imapAccount.quoteSimple(path)
 			+ " (" + flags + ") "
 			+ imapAccount.quoteSimple(p)
-			+ " {" + cnt_s + "}\r\n";
+			+ (utf8_enabled ? " UTF8 (~{" : " {")
+			+ cnt_s + "}\r\n";
 
 		imapAccount.installForegroundTask(this);
 	} catch (...) {
