@@ -271,16 +271,21 @@ class mail::pop3::LoginTask : public mail::pop3::Task,
 	void loginCallbackUid(std::string);
 	void loginCallbackPwd(std::string);
 
+	void utf8Handler(const char *message);
+	void utf8CapaDone();
 	void stlsCapaDone();
 	void nonExternalLogin();
 public:
 	LoginTask(mail::pop3 &server, mail::callback *callbackArg);
 	~LoginTask();
+
+private:
+	bool utf8_capability;
 };
 
 mail::pop3::LoginTask::LoginTask(mail::pop3 &server,
 				 mail::callback *callbackArg)
-	: Task(callbackArg, server)
+	: Task(callbackArg, server), utf8_capability(false)
 {
 }
 
@@ -417,6 +422,9 @@ void mail::pop3::LoginTask::addCapability(const char *message)
 		v="1";
 	}
 
+	if (c == "UTF8")
+		utf8_capability=true;
+
 	if (v.size() == 0)
 		v="1";
 
@@ -424,6 +432,20 @@ void mail::pop3::LoginTask::addCapability(const char *message)
 }
 
 void mail::pop3::LoginTask::processedCapabilities()
+{
+	if (!utf8_capability)
+		utf8CapaDone();
+
+	myserver->socketWrite("UTF8\r\n");
+	currentHandler= &LoginTask::utf8Handler;
+}
+
+void mail::pop3::LoginTask::utf8Handler(const char *message)
+{
+	utf8CapaDone();
+}
+
+void mail::pop3::LoginTask::utf8CapaDone()
 {
 #if HAVE_LIBCOURIERTLS
 
@@ -2176,7 +2198,7 @@ void mail::pop3::installTask(Task *t)
 	if (wasEmpty)
 		(*tasks.begin())->installedTask();
 }
-		
+
 mail::pop3::~pop3()
 {
 	disconnect("POP3 server connection aborted.");

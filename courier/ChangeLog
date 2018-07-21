@@ -1,3 +1,8 @@
+2018-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-imap: update Courier-IMAP to support UTF8 POP3. Update
+	version of the courierpop3dsizelist cache file.
+
 2018-07-17  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier-imap, sqwebmail: update Courier-IMAP to support UTF8 IMAP.
