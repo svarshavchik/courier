@@ -22,6 +22,11 @@ AM_PROG_LIBTOOL
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 
 dnl Checks for libraries.
+PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+if test "$libidn" != "yes"
+then
+	AC_MSG_ERROR([libidn not found])
+fi
 
 dnl Checks for header files.
 

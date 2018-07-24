@@ -42,7 +42,7 @@ courierlocal_LDADD=../../courier/libs/libmodule.la \
 			../../courier/libs/libcourier.la \
 			../../libs/numlib/libnumlib.la \
 			../../libs/waitlib/libwaitlib.la \
-			-lcourierauth
+			-lcourierauth -lcourier-unicode @LIBIDN_LIBS@
 
 courierdeliver_SOURCES=deliver.c
 courierdeliver_DEPENDENCIES=librewrite.la \

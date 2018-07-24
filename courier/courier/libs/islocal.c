@@ -8,6 +8,7 @@
 #include	<string.h>
 #include	<stdlib.h>
 #include	<ctype.h>
+#include	<idna.h>
 
 #ifndef ISLOCAL_MAX_DOT_COUNT
 #define ISLOCAL_MAX_DOT_COUNT 5
@@ -77,11 +78,8 @@ int	dotcount;
 	if (!dbobj_isopen(&db))
 		return (0);
 
-	kl=strlen(address);
-
-	k=strcpy(courier_malloc(kl+1), address);
-	for (v=k; *v; v++)
-		*v=tolower((int)(unsigned char)*v);
+	k=ualllower(address);
+	kl=strlen(k);
 
 	lcaddress = k;
 	dotcount = 0;
@@ -116,7 +114,7 @@ int	dotcount;
 	return (1);
 }
 
-int config_is_indomain(const char *address, const char *localp)
+static int config_is_indomainutf8(const char *address, const char *localp)
 {
 	while (*localp)
 	{
@@ -136,4 +134,21 @@ int config_is_indomain(const char *address, const char *localp)
 		if (*localp)	++localp;
 	}
 	return (0);
+}
+
+int config_is_indomain(const char *address, const char *localp)
+{
+	char *address_utf8;
+	char *l;
+	int rc;
+
+	if (idna_to_unicode_8z8z(address, &address_utf8, 0) != IDNA_SUCCESS)
+		address_utf8=courier_strdup(address);
+
+	l=ualllower(address_utf8);
+	free(address_utf8);
+
+	rc=config_is_indomainutf8(l, localp);
+	free(l);
+	return rc;
 }

@@ -29,6 +29,7 @@ then
 fi
 
 dnl Checks for libraries.
+PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 
 dnl Checks for header files.
 
@@ -50,7 +51,7 @@ AC_CHECK_FUNC(setpgrp,
 		AC_FUNC_SETPGRP
 	]
 )
- 
+
 
 dnl Other options
 

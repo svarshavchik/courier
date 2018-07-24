@@ -77,6 +77,7 @@ dnl Check whether we should use gdbm, or db.
 saveLIBS="$LIBS"
 AC_CHECK_LIB(dl, dlopen, [ LIBDL="-ldl" ])
 LIBS="$saveLIBS"
+PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 
 dnl Checks for transport libraries.
 

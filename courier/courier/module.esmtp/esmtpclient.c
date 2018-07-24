@@ -374,6 +374,17 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		return;
 
 	/*
+	** If this message has 8 bit headers, this mail server better have
+	** smtputf8 support.
+	*/
+	if (ctlfile_searchfirst(ctf, COMCTLFILE_SMTPUTF8) >= 0 &&
+	    !info->hassmtputf8)
+	{
+		esmtp_unicode_required_error(info, my_info);
+		return;
+	}
+
+	/*
 	** Ok, we now have a connection.  We want to call push() to deliver
 	** this message, but if the VERP flag is set but the remote server
 	** does not grok VERPs, we need to do a song-n-dance routine.

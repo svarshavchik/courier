@@ -31,7 +31,7 @@ courierdsn_DEPENDENCIES=@courierdir@/courier/libs/libmodule.la \
 	@courierdir@/libs/rfc822/librfc822.la \
 	@courierdir@/libs/numlib/libnumlib.la \
 	@courierdir@/libs/waitlib/libwaitlib.la
-courierdsn_LDADD=$(courierdsn_DEPENDENCIES)
+courierdsn_LDADD=$(courierdsn_DEPENDENCIES) -lcourier-unicode
 
 noinst_LTLIBRARIES=librewrite.la
 

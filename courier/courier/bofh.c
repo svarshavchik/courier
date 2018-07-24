@@ -1,5 +1,5 @@
 /*
-** Copyright 2001-2002 Double Precision, Inc.
+** Copyright 2001-2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -10,6 +10,7 @@
 #include	<unistd.h>
 #include	<stdlib.h>
 #include	<ctype.h>
+#include	<idna.h>
 
 unsigned max_bofh=100;
 int max_bofh_ishard=0;
@@ -19,21 +20,14 @@ static struct bofh_list *bofh_freemail, *bofh_spamtrap, *bofh_badmx,
 	*bofh_badfrom;
 static struct bofh_list **freemailp, **spamtrapp, **badmxp, **badfromp;
 
-static void addbofh(struct bofh_list ***, void (*)(char *), int);
+static void addbofh(struct bofh_list ***, char *(*)(const char *), int);
 
-static void strlower(char *p)
+static char *uaddress_lower(const char *p)
 {
-	while (*p)
-	{
-		*p=tolower( (int)(unsigned char)*p );
-		++p;
-	}
-}
-
-static void address_lower(char *p)
-{
-	domainlower(p);
-	locallower(p);
+	char *s=ulocallower(p);
+	char *r=udomainutf8(s);
+	free(s);
+	return r;
 }
 
 static void bofh_free(struct bofh_list *p)
@@ -75,7 +69,7 @@ void bofh_init()
 		bofh_free(p);
 	}
 	spamtrapp= &bofh_spamtrap;
- 
+
 	while ((p=bofh_badmx) != 0)
 	{
 		bofh_badmx=p->next;
@@ -109,11 +103,11 @@ void bofh_init()
 
 		if (strcasecmp(p, "freemail") == 0)
 		{
-			addbofh(&freemailp, &strlower, 1);
+			addbofh(&freemailp, &ualllower, 1);
 		}
 		else if (strcasecmp(p, "spamtrap") == 0)
 		{
-			addbofh(&spamtrapp, &address_lower, 0);
+			addbofh(&spamtrapp, &uaddress_lower, 0);
 		}
 		else if (strcasecmp(p, "badmx") == 0)
 		{
@@ -121,12 +115,12 @@ void bofh_init()
 		}
 		else if (strcasecmp(p, "badfrom") == 0)
 		{
-			addbofh(&badfromp, &address_lower, 0);
+			addbofh(&badfromp, &uaddress_lower, 0);
 		}
 		else if (strcasecmp(p, "maxrcpts") == 0)
 		{
 			char *q=strtok(NULL, " \t\r");
-			
+
 			if (q)
 			{
 				unsigned n=atoi(q);
@@ -173,7 +167,8 @@ void bofh_init()
 	fclose(fp);
 }
 
-static void addbofh(struct bofh_list ***p, void (*func)(char *), int moreflag)
+static void addbofh(struct bofh_list ***p, char *(*func)(const char *),
+		    int moreflag)
 {
 	char *q=strtok(NULL, " \t\r");
 	struct bofh_list *b;
@@ -182,10 +177,13 @@ static void addbofh(struct bofh_list ***p, void (*func)(char *), int moreflag)
 		return;
 
 	b=(struct bofh_list *)courier_malloc(sizeof(struct bofh_list));
-	b->name=courier_malloc(strlen(q)+1);
-	strcpy(b->name, q);
+	b->name=courier_strdup(q);
 	if (func)
-		(*func)(b->name);
+	{
+		char *p=(*func)(b->name);
+		free(b->name);
+		b->name=p;
+	}
 	b->next=NULL;
 	b->aliases=NULL;
 	**p=b;
@@ -197,10 +195,14 @@ static void addbofh(struct bofh_list ***p, void (*func)(char *), int moreflag)
 			struct bofh_list *bb=(struct bofh_list *)
 				courier_malloc(sizeof(struct bofh_list));
 
-			bb->name=courier_malloc(strlen(q)+1);
-			strcpy(bb->name, q);
+			bb->name=courier_strdup(q);
 			if (func)
-				(*func)(bb->name);
+			{
+				char *p=(*func)(bb->name);
+
+				free(bb->name);
+				bb->name=p;
+			}
 
 			bb->next=b->aliases;
 			b->aliases=bb;
@@ -228,7 +230,7 @@ static int chkusersubdom(const char *p, const char *d, const char *name)
 	{
 		return (0);
 	}
-	
+
 	lp = d - p;
 	ln = dn - name;
 	if (lp != ln || strncmp(p, name, ln) != 0)
@@ -243,12 +245,9 @@ static int chkusersubdom(const char *p, const char *d, const char *name)
 
 static int chkbadlist(const char *pp, struct bofh_list *b)
 {
-	char *p=courier_malloc(strlen(pp)+1);
+	char *p=uaddress_lower(pp);
 	const char *d;
 	int l, ll;
-
-	strcpy(p, pp);
-	address_lower(p);
 
 	d=strrchr(p, '@');
 	l=d ? strlen(d):0;
@@ -272,28 +271,29 @@ static int chkbadlist(const char *pp, struct bofh_list *b)
 	return (0);
 }
 
-struct bofh_list *bofh_chkfreemail(const char *pp)
+struct bofh_list *bofh_chkfreemail(const char *email)
 {
-	char *p;
+	char *s=uaddress_lower(email);
+	char *pp;
 	struct bofh_list *b;
 
-	pp=strrchr(pp, '@');
+	pp=strrchr(s, '@');
 	if (!pp)
+	{
+		free(s);
 		return (NULL);
-	p=courier_malloc(strlen(pp));
+	}
 	++pp;
-	strcpy(p, pp);
-	address_lower(p);
 
 	for (b=bofh_freemail; b; b=b->next)
 	{
-		if (strcmp(b->name, p) == 0)
+		if (strcmp(b->name, pp) == 0)
 		{
-			free(p);
+			free(s);
 			return (b);
 		}
 	}
-	free(p);
+	free(s);
 	return (NULL);
 }
 

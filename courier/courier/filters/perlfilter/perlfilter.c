@@ -76,6 +76,7 @@ PerlInterpreter *my_perl;
 		ENTER ;
 		SAVETMPS ;
 
+		(void)sp;
 		perl_call_argv("Embed::Persistent::eval_file",
 			G_VOID | G_DISCARD | G_EVAL, args);
 

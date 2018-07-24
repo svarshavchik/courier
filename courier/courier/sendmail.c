@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2004 Double Precision, Inc.
+** Copyright 1998 - 2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 **
 */
@@ -15,6 +15,7 @@
 #include	<stdio.h>
 #include	<ctype.h>
 #include	<signal.h>
+#include	<idna.h>
 #if	HAVE_SYSEXITS_H
 #include	<sysexits.h>
 #else
@@ -211,8 +212,31 @@ char	*pfrom=From ? strcpy(courier_malloc(strlen(From)+1), From):0;
 	if (pfrom)	free(pfrom);
 }
 
+static char *rewrite_from_idna(const char *oldfrom, const char *newuser,
+			       const char *newhost, const char *newname);
+
 static char *rewrite_from(const char *oldfrom, const char *newuser,
-	const char *newhost, const char *newname)
+			  const char *newhost, const char *newname)
+{
+	char *newhost_idna=0;
+	char *p;
+
+	if (newhost && idna_to_ascii_8z(newhost, &newhost_idna, 0)
+	    != IDNA_SUCCESS)
+		newhost_idna=0;
+
+	p=rewrite_from_idna(oldfrom, newuser,
+			    (newhost_idna ? newhost_idna:newhost),
+			    newname);
+
+	if (newhost_idna)
+		free(newhost_idna);
+
+	return p;
+}
+
+static char *rewrite_from_idna(const char *oldfrom, const char *newuser,
+			       const char *newhost, const char *newname)
 {
 struct rfc822t *rfct;
 struct rfc822a *rfca;
@@ -308,7 +332,7 @@ char	*gecosname=0;
 		{
 			for (t=rfca->addrs[0].tokens; t; t=t->next)
 				if (t->token == '@')	break;
-			
+
 			for (u=usert->tokens; u->next; u=u->next)
 				;
 			u->next=t;

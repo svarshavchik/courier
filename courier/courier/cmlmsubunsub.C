@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2008 Double Precision, Inc.
+** Copyright 2000-2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -18,33 +18,39 @@
 #include	<iostream>
 #include	<fstream>
 #include	<list>
-
+#include	<courier-unicode.h>
 #include	<ctype.h>
 #include	<sysexits.h>
+#include	<idna.h>
 
-
-// subscribe an address
-
-void addrlower(char *p)
-{
-	if (cmdget_s("CASESENSITIVE") == "1")
-		p=strchr(p, '@');
-
-	while (p && *p)
-	{
-		*p=tolower((int)(unsigned char)*p);
-		++p;
-	}
-}
-
-void addrlower(std::string &s)
+void uaddrlower(std::string &s)
 {
 	std::string::iterator b=s.begin(), e=s.end();
 
-	if (cmdget_s("CASESENSITIVE") == "1")
-		b=std::find(b, e, '@');
+	std::string::iterator p=std::find(b, e, '@');
 
-	std::transform(b, e, b, std::ptr_fun(::tolower));
+	if (p != e)
+		++p;
+
+	std::string username(b, p);
+
+	if (cmdget_s("CASESENSITIVE") != "1")
+		username=unicode::iconvert::convert_tocase(username,
+							   unicode::utf_8,
+							   unicode_lc);
+	std::string domain(p, e);
+
+	char *ptr;
+
+	if (idna_to_ascii_8z(domain.c_str(), &ptr, 0) == IDNA_SUCCESS)
+	{
+		domain=ptr;
+		free(ptr);
+	}
+
+	s=username+unicode::iconvert::convert_tocase(domain,
+						     unicode::utf_8,
+						     unicode_lc);
 }
 
 static int cmdsubunsub(const std::vector<std::string> &args,
@@ -119,7 +125,7 @@ int docmdsub(const char *aptr, std::string subbuf, bool addflag)
 	std::string	buf;
 	time_t	timestamp;
 
-	addrlower(addr);
+	uaddrlower(addr);
 
 	std::string::iterator b=addr.begin(), e=addr.end(),
 		p=std::find(b, e, '@');
@@ -289,7 +295,7 @@ static int unsub_common(std::string addr, std::string reason, const char *log)
 {
 	struct	stat	stat_buf;
 
-	addrlower(addr);
+	uaddrlower(addr);
 
 	std::string::iterator b=addr.begin(), e=addr.end(),
 		p=std::find(b, e, '@');

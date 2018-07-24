@@ -112,7 +112,7 @@ DbObj	dat;
 	std::string key="sub." + addr;
 	std::string subfilename;
 
-	addrlower(key);
+	uaddrlower(key);
 
 	filename=dat.Fetch(key, "");
 
@@ -205,7 +205,7 @@ DbObj	dat;
 	key += ".";
 	key += addr;
 
-	addrlower(key);
+	uaddrlower(key);
 
 	std::string subfilename;
 
@@ -404,7 +404,7 @@ int dosubunsubconfirm(const char *address, const char *pfix,
 
 		std::string subfilename;
 
-		addrlower(key);
+		uaddrlower(key);
 
 		filename=dat.Fetch(key, "");
 
@@ -453,7 +453,7 @@ int dosubunsubconfirm(const char *address, const char *pfix,
 						get_verp_return("owner");
 
 					afxopipestream ack(sendmail_bcc(p, owner));
-				
+
 					owner= myname() + (" <" + owner + ">");
 
 					ack << "Bcc: " << addr << std::endl

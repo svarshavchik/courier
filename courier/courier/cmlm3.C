@@ -71,7 +71,7 @@ std::string fromverp(std::string buf)
 
 	while (b != e)
 	{
-		if (*b != '+' || e-b < 3) 
+		if (*b != '+' || e-b < 3)
 		{
 			obuf.push_back(*b++);
 			continue;
@@ -217,7 +217,7 @@ int	rc;
 		key="1";
 		key += from;
 
-		addrlower(key);
+		uaddrlower(key);
 
 		if (alias.Fetch(key, "").size() != 0)
 		{
@@ -247,7 +247,7 @@ int getinfodir(std::string dir, std::string address, int (*func)(std::string))
 		return (1);
 	}
 
-	addrlower(address);
+	uaddrlower(address);
 
 	std::string shared_lock_name=dir;
 

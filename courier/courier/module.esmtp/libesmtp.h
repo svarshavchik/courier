@@ -75,6 +75,7 @@ struct esmtp_info {
 
 	int hasdsn;
 	int has8bitmime;
+	int hassmtputf8;
 	int hasverp;
 	int hassize;
 	int hasexdata;
@@ -132,6 +133,7 @@ extern int esmtp_connected(struct esmtp_info *);
 extern int esmtp_ping(struct esmtp_info *info);
 extern int esmtp_connect(struct esmtp_info *info, void *arg);
 extern void esmtp_quit(struct esmtp_info *, void *arg);
+extern void esmtp_unicode_required_error(struct esmtp_info *, void *);
 
 extern int esmtp_misccommand(struct esmtp_info *info,
 			     const char *cmd,
@@ -148,10 +150,16 @@ struct esmtp_mailfrom_info {
 	unsigned long msgsize;
 };
 
+char *esmtp_mailfrom_cmd(struct esmtp_info *info,
+			 struct esmtp_mailfrom_info *mf_info,
+			 const char **errmsg);
+
 struct esmtp_rcpt_info {
 	const char *address;
 	const char *dsn_options;
 	const char *orig_receipient;
+
+	const char * const *our_rcpt_error;
 };
 
 extern char *esmtp_rcpt_create(struct esmtp_info *,

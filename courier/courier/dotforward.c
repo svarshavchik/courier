@@ -30,21 +30,19 @@ static int exit_code;
 static void initdelivto()
 {
 char	buf[BUFSIZ];
-char	*p, *r;
+char	*p, *r, *s;
 struct delivered_to *q;
+int inheader=1;
 
 	p=getenv("DTLINE");
 	if (!p || !(p=strchr(p, ':')))	exit(0);
 	++p;
 	while (*p && isspace((int)(unsigned char)*p))	++p;
-	myaddr=strdup(p);
-	if (!myaddr)
-	{
-		perror("malloc");
-		exit(EX_TEMPFAIL);
-	}
-	domainlower(myaddr);
-	locallower(myaddr);
+
+	r=udomainutf8(p);
+	myaddr=ulocallower(r);
+	free(r);
+
 	if (strchr(myaddr, '@') == 0)
 	{
 		fprintf(stderr, "Invalid DTLINE environment variable.\n");
@@ -55,22 +53,34 @@ struct delivered_to *q;
 	{
 		p=strchr(buf, '\n');
 		if (p)	*p=0;
+		if (buf[0] == 0)
+			inheader=0;
+		if (!inheader)
+			continue;
 		if (strncasecmp(buf, "Delivered-To:", 13))	continue;
 		p=buf+13;
 		while (*p && isspace((int)(unsigned char)*p))	++p;
-		q=malloc(sizeof(*q)+1+strlen(p));
+
+		s=udomainutf8(p);
+		r=strchr(s, '@');
+		if (!r || config_islocal(r+1, 0))
+		{
+			char *ss=ulocallower(s);
+
+			free(s);
+			s=ss;
+		}
+
+		q=malloc(sizeof(*q)+1+strlen(s));
 		if (!q)
 		{
 			perror("malloc");
 			exit(EX_TEMPFAIL);
 		}
-		strcpy(q->addr=(char *)(q+1), p);
+		strcpy(q->addr=(char *)(q+1), s);
 		q->next=delivtolist;
 		delivtolist=q;
-		domainlower(q->addr);
-		r=strchr(q->addr, '@');
-		if (!r || config_islocal(r+1, 0))
-			locallower(q->addr);
+		free(s);
 	}
 }
 
@@ -166,10 +176,18 @@ char	*sep;
 			if (*q == '\\')
 				++q;
 
+			q=udomainutf8(q);
+			free(p);
+			p=q;
 			r=strchr(q, '@');
+
 			if (!r || config_islocal(r+1, 0))
-				locallower(q);
-			domainlower(q);
+			{
+				q=ulocallower(q);
+				free(p);
+				p=q;
+			}
+
 			t=0;
 			orig=q;
 

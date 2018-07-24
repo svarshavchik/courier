@@ -379,8 +379,7 @@ static void dofwd(const char *addr, const char *from, const char *fromuser,
 
 		if (submit_fork(args, envs, save_submit_errmsg) ||
 			(submit_write_message(from), submit_readrcprinterr()))
-		{
-			submit_err=1;
+		{			submit_err=1;
 			return;
 		}
 		while (j)
@@ -393,7 +392,7 @@ static void dofwd(const char *addr, const char *from, const char *fromuser,
 
 	if (!submit_err)
 	{
-	char	*p;
+		char	*p;
 
 		p=strcat(strcat(strcpy(courier_malloc(
 			strlen(addr)+strlen(origuser)+4), addr),
@@ -487,9 +486,15 @@ char	*oreceipients=0;
 				fwdpipe=-1;
 			}
 			else
-				fwdmsg(buf, l, sender,
-					ctf->receipients[rcptnum],
-					oreceipient);
+			{
+				const char *fwduser=
+					ctf->receipients[rcptnum];
+				char *fwduser_ace=udomainace(fwduser);
+
+				fwdmsg(buf, l, sender, fwduser_ace,
+				       oreceipient);
+				free(fwduser_ace);
+			}
 		}
 	}
 
@@ -526,10 +531,15 @@ char	*oreceipients=0;
 			submit_err=1;
 		else
 		{
-		int	c;
+			int	c;
+			const char *address=ctf->receipients[rcptnum];
+
+			char *address_ace=udomainace(address);
 
 			fprintf(submit_to, "\nDelivered-To: %s\n",
-				ctf->receipients[rcptnum]);
+				address_ace);
+			free(address_ace);
+
 			while ((c=getc(f)) != EOF)
 				putc(c, submit_to);
 			if (ferror(f) || fflush(submit_to) || fclose(submit_to))

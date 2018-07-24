@@ -100,6 +100,7 @@ struct rw_list {
 void set_courierdir(const char *);
 const char *courierdir();
 void *courier_malloc(unsigned);
+char *courier_strdup(const char *);
 
 struct ctlfile;
 struct rfc822token;
@@ -114,8 +115,11 @@ struct stat;
 char	*readfile(const char *, struct stat *);
 void	removecomments(char *);
 char	*makeerrmsgtext(int, const char *);
-void	domainlower(char *);
-void	locallower(char *);
+char    *udomainlower(const char *);
+char    *udomainutf8(const char *);
+char    *udomainace(const char *);
+char	*ulocallower(const char *);
+char	*ualllower(const char *);
 void	gettmpfilenameargs(const char **, const char **, const char **);
 void	getnewtmpfilenameargs(const char **, const char **, const char **);
 char	*mktmpfilename();
@@ -151,9 +155,11 @@ void clog_msg_errno();
 void clog_msg_prerrno();
 
 const char *config_me();		/* me config file */
+const char *config_me_ace();		/* me config file */
 const char *config_esmtphelo();		/* helohost config file */
 const char *config_msgidhost();		/* msgidhost config file */
 const char *config_defaultdomain();	/* defaultdomain config file */
+const char *config_defaultdomain_ace();	/* defaultdomain config file */
 const char *config_gethostname();	/* gethostname() call */
 const char *config_batchsize();		/* Max addresses per message */
 const char *config_defaultdelivery();	/* default delivery instructions */

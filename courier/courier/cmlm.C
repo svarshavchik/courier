@@ -1047,7 +1047,7 @@ static int help()
 
 	time(&curtime);
 
-	addrlower(addr);
+	uaddrlower(addr);
 
 	std::string vaddr= TMP "/help." + toverp(addr);
 

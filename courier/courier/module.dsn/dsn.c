@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2012 Double Precision, Inc.
+** Copyright 1998 - 2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -127,7 +127,7 @@ struct moduledel *p;
 		if (ctlfile_openi(atol(argv[1]), &ctf, 0))
 			clog_msg_errno();
 		ctlfile_setvhost(&ctf);
-		dodsn(&ctf, stdout, "sender", 
+		dodsn(&ctf, stdout, "sender",
 			argc > 2 ? atoi(argv[2]):0);
 		ctlfile_close(&ctf);
 		exit(0);
@@ -465,7 +465,7 @@ static int hexconvert(char a, char b)
 	if ( a >= 'A' && a <= 'F')
 		a -= 'A'-10;
 	if ( b >= 'A' && b <= 'F')
-		b -= 'B'-10;
+		b -= 'A'-10;
 
 	return ( (a & 15) * 16 + (b & 15));
 }
@@ -480,8 +480,10 @@ int	infoptr;
 		while (*p)
 		{
 			if (*p == '+' && p[1] && p[2] &&
-				hexconvert(p[1], p[2]) & 0x80)
-			return (1);
+			    hexconvert(p[1], p[2]) & 0x80)
+				return (1);
+			if (*p & 0x80)
+				return (1);
 			p++;
 		}
 	else
@@ -768,18 +770,19 @@ static void print_header(FILE *f, char *template, const char *me,
 static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 		int dodelayed)
 {
-int	dsn8flag=is8bitdsn(ctf, dodelayed);
-const char *datfilename;
-FILE	*datfile;
-struct	stat	stat_buf;
-unsigned i;
-int	j;
-int	returnmsg=0;
-char	boundary[MAXLONGSIZE+40];
-int	msg8flag=0;
-const	char *from_mta;
-const	char *from_mta_p;
-const	char *from_time;
+	int	dsn8flag=is8bitdsn(ctf, dodelayed);
+	const char *datfilename;
+	FILE	*datfile;
+	struct	stat	stat_buf;
+	unsigned i;
+	int	j;
+	int	returnmsg=0;
+	char	boundary[MAXLONGSIZE+40];
+	int	msg8flag=0;
+	const	char *from_mta;
+	const	char *from_mta_p;
+	const	char *from_time;
+	char *sender_ace;
 
 	datfilename=qmsgsdatname(ctf->n);
 	if ((datfile=fopen(datfilename, "r")) == 0 ||
@@ -837,7 +840,20 @@ const	char *from_time;
 		sprintf(boundary, "=_courier_%u", i++);
 	} while (search_boundary(datfile, boundary, &msg8flag));
 
-	fprintf(fp, "From: %s\nTo: %s\nSubject: %s\n", dsnfrom, sender,
+	if ((j=ctlfile_searchfirst(ctf, COMCTLFILE_FROMMTA)) >= 0)
+		from_mta=ctf->lines[j]+1;
+	else
+		from_mta=0;
+
+	if (from_mta)
+	{
+		check8bit(from_mta, 0, &dsn8flag);
+	}
+	check8bit(config_me(), 0, &dsn8flag);
+
+	sender_ace=udomainace(sender);
+	fprintf(fp, "From: %s\nTo: %s\nSubject: %s\n", dsnfrom,
+		sender_ace,
 		dodelayed ? dsnsubjectwarn:dsnsubjectnotice);
 	fprintf(fp, "Mime-Version: 1.0\nContent-Type: multipart/report; report-type=delivery-status;\n    boundary=\"%s\"\nContent-Transfer-Encoding: %s\n\n"
 		RFC2045MIMEMSG "\n--%s\nContent-Transfer-Encoding: %s\n",
@@ -845,12 +861,7 @@ const	char *from_time;
 		dsn8flag || msg8flag ? "8bit":"7bit",
 		boundary,
 		dsn8flag ? "8bit":"7bit");
-
-	if ((j=ctlfile_searchfirst(ctf, COMCTLFILE_FROMMTA)) >= 0)
-		from_mta=ctf->lines[j]+1;
-	else
-		from_mta=0;
-
+	free(sender_ace);
 	if (from_mta && (from_mta_p=strchr(from_mta, ';')) != 0)
 	{
 		while (*++from_mta_p == ' ')
@@ -860,7 +871,7 @@ const	char *from_time;
 
 	from_time=rfc822_mkdate(stat_buf.st_mtime);
 
-	print_header(fp, dsnheader, config_me(), from_time, 
+	print_header(fp, dsnheader, config_me(), from_time,
 		from_mta_p && *from_mta_p ? from_mta_p:"unknown");
 
 	if (dodelayed)
@@ -915,7 +926,7 @@ const	char *from_time;
 					|| strchr(status+1,
 						(pass ? 'r':'l')) == 0)
 					continue;
-				
+
 				if (!dsn_sender(ctf, i, 0))	continue;
 				if (!printed_header)
 				{
@@ -998,7 +1009,7 @@ const	char *from_time;
 
 		if (ctf->oreceipients[i] && ctf->oreceipients[i][0])
 		{
-		const char *c;
+			const char *c;
 
 			fprintf(fp, "Original-Recipient: ");
 			for (c=ctf->oreceipients[i]; *c; c++)
@@ -1008,7 +1019,7 @@ const	char *from_time;
 				{
 					putc(' ', fp);
 					c++;
-					break;	
+					break;
 				}
 			}
 			print_xtext(fp, c);
@@ -1051,7 +1062,7 @@ const	char *from_time;
 	fprintf(fp, "\n--%s\n", boundary);
 
 	fprintf(fp, "Content-Type: %s\nContent-Transfer-Encoding: %s\n\n",
-		returnmsg ? "message/rfc822":"text/rfc822-headers; charset=us-ascii",
+		returnmsg ? "message/rfc822":"text/rfc822-headers; charset=\"utf-8\"",
 		msg8flag ? "8bit":"7bit");
 
 	if (print_message(datfile, fp, returnmsg))

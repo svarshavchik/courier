@@ -32,7 +32,7 @@ void AliasSearch::Open( const char *module )
 {
 char	*p;
 
-	modulename="local"; 
+	modulename="local";
 
 	if (module)
 	{
@@ -69,7 +69,8 @@ char	*hostdomain=0;
 					** "me"
 					*/
 	{
-	const char *me=config_defaultdomain();
+		const char *me=config_defaultdomain();
+		char *r;
 
 		if (!q)
 			q=address+strlen(address);
@@ -78,8 +79,10 @@ char	*hostdomain=0;
 		if (!p)	clog_msg_errno();
 		memcpy(p, address, q-address);
 		strcat(strcpy(&p[q-address], "@"), me);
+		r=udomainlower(p);	/* For stupid people */
+		free(p);
+		p=r;
 		address=p;
-		domainlower(p);	/* For stupid people */
 	}
 	if (hostdomain)	free(hostdomain);
 

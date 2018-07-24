@@ -55,7 +55,7 @@ courieruucp_LDADD=../../courier/libs/libmodule.la \
 	../../libs/rfc822/librfc822.la \
 	../../libs/numlib/libnumlib.la \
 	../../libs/waitlib/libwaitlib.la \
-	@dblibrary@ -lcourier-unicode
+	@dblibrary@ -lcourier-unicode @LIBIDN_LIBS@
 
 htmldocdir=@datadir@/htmldoc
 htmldoc_DATA=courieruucp.html

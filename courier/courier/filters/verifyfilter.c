@@ -166,6 +166,10 @@ static void do_verify(struct verify_info *my_info,
 	struct esmtp_info *info;
 	int smtproutes_flags=0;
 	char *smtproute=0;
+	struct esmtp_mailfrom_info mfi;
+	char *mail_from_cmd;
+	const char *errmsg;
+	char *s;
 
 	if (!domain)
 	{
@@ -205,21 +209,57 @@ static void do_verify(struct verify_info *my_info,
 	info->report_broken_starttls=report_broken_starttls;
 	info->lookup_broken_starttls=lookup_broken_starttls;
 
-	if (esmtp_connect(info, my_info) == 0 &&
-	    esmtp_misccommand(info, "MAIL FROM:<>", my_info) == 0)
+	memset(&mfi, 0, sizeof(mfi));
+	mfi.sender="";
+	mail_from_cmd=esmtp_mailfrom_cmd(info, &mfi, &errmsg);
+
+	if (!mail_from_cmd)
 	{
-		char *rcpt_to_cmd=malloc(sizeof("RCPT TO:<>")+strlen(address));
+		esmtp_quit(info, my_info);
+		log_talking(info, my_info);
+		log_smtp_error(info, errmsg, '5', my_info);
+		return;
+	}
+	s=strchr(mail_from_cmd, '\r');
+	if (s) *s=0;
 
-		if (!rcpt_to_cmd)
-			abort();
+	if (esmtp_connect(info, my_info) == 0 &&
+	    esmtp_misccommand(info, mail_from_cmd, my_info) == 0)
+	{
+		struct esmtp_rcpt_info eri;
+		char *rcpt_to_cmd;
+		char *p;
 
-		strcat(strcat(strcpy(rcpt_to_cmd, "RCPT TO:<"), address),
-		       ">");
+		memset(&eri, 0, sizeof(eri));
+		eri.address=address;
+
+		rcpt_to_cmd=esmtp_rcpt_create(info, &eri, 1);
+
+		if (eri.our_rcpt_error)
+		{
+			const char * const *p=eri.our_rcpt_error;
+
+			free(mail_from_cmd);
+
+			while (*p)
+			{
+				log_smtp_error(info, *p, **p, my_info);
+				++p;
+			}
+			return;
+		}
+
+		p=strchr(rcpt_to_cmd, '\r');
+
+		if (p)
+			*p=0;
+
 		info->log_good_reply=log_reply;
 		esmtp_misccommand(info, rcpt_to_cmd, my_info);
 		free(rcpt_to_cmd);
 		info->log_good_reply=NULL;
 	}
+	free(mail_from_cmd);
 
 	if (my_info->errcode == 0)
 	{

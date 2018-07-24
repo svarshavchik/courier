@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2014 Double Precision, Inc.
+** Copyright 1998 - 2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -162,14 +162,18 @@ EHLO_EXDATA_EXTENSION
 EHLO_SECURITY_EXTENSION
 "250-PIPELINING\r\n"
 "250-8BITMIME\r\n"
+"250-SMTPUTF8\r\n"
 "250-SIZE\r\n"
 "250 DSN\r\n";
-const char *me=config_me();
+const char *me=config_me_ace();
 const char *p, *q;
 
 	if (helobuf[0] == 0)
 	{
 		char *p;
+
+		while (*heloname == ' ')
+		       ++heloname;
 
 		strncat(helobuf, heloname, sizeof(helobuf)-1);
 
@@ -258,7 +262,7 @@ int	rc;
 	a=rfc822a_alloc(t);
 	if (!a)	clog_msg_errno();
 
-	if (a->naddrs != 1 || a->addrs[0].tokens == 0)
+	if (a->naddrs < 1 || a->addrs[0].tokens == 0)
 	{
 		addiovec_error("502 EXPN syntax error.");
 		rfc822a_free(a);

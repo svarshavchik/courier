@@ -49,7 +49,9 @@ struct rfc822token at, name;
 
 	name.next=0;
 	name.token=0;
-	name.ptr=config_defaultdomain();
+	name.ptr=(p->mode & RW_HEADER ?
+		  config_defaultdomain_ace() :
+		  config_defaultdomain());
 	name.len=strlen(name.ptr);
 	(*func)(p);
 }

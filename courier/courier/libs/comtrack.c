@@ -19,15 +19,6 @@ static const char broken_starttls_statuses[]={
 	TRACK_BROKEN_STARTTLS, 0
 };
 
-static void all_lower(char *c)
-{
-	while (*c)
-	{
-		*c=tolower((int)(unsigned char)*c);
-		++c;
-	}
-}
-
 static int dopurge(const char *trackdir);
 
 void trackpurge(const char *trackdir)
@@ -125,20 +116,18 @@ static FILE *open_track_file(const char *trackdir,
 static int track_find_record(const char *trackdir,
 			     const char *address, time_t *timestamp,
 			     const char *search_for_statuses,
-			     void (*lower)(char *))
+			     char *(*ulower)(const char *))
 
 {
 	time_t curTime=time(NULL) / 3600;
 	int i;
 	char linebuf[BUFSIZ];
 	char *p;
-	char *addrbuf=strdup(address);
+	char *addrbuf=ulower(address);
 	int results=TRACK_NOTFOUND;
 
 	if (!addrbuf)
 		return TRACK_NOTFOUND;
-
-	lower(addrbuf);
 
 	for (i=0; i <= TRACK_NHOURS; ++i)
 	{
@@ -177,35 +166,28 @@ int track_find_email(const char *address, time_t *timestamp)
 {
 	return track_find_record(TRACKDIR, address, timestamp,
 				 email_address_statuses,
-				 domainlower);
+				 udomainlower);
 }
 
 int track_find_broken_starttls(const char *address, time_t *timestamp)
 {
 	return track_find_record(TRACKDIR,
 				 address, timestamp, broken_starttls_statuses,
-				 all_lower);
+				 ualllower);
 }
 
 static void track_save_record(const char *trackdir,
 			      const char *address, int status,
-			      void (*lower)(char *),
+			      char *(*ulower)(const char *),
 			      int autopurge)
 {
 	char buf2[NUMBUFSIZE];
 	FILE *fp;
 	time_t curTime=time(NULL);
 	time_t t=curTime / 3600;
-	char *addrbuf;
+	char *addrbuf=ulower(address);
 	struct stat stat_buf;
 	char *namebuf;
-
-	addrbuf=strdup(address);
-
-	if (!addrbuf)
-		return;
-
-	lower(addrbuf);
 
 	namebuf=make_track_filename(trackdir, t);
 
@@ -241,12 +223,12 @@ static void track_save_record(const char *trackdir,
 
 void track_save_email(const char *address, int status)
 {
-	return track_save_record(TRACKDIR, address, status, domainlower, 0);
+	return track_save_record(TRACKDIR, address, status, udomainlower, 0);
 }
 
 void track_save_broken_starttls(const char *address)
 {
-	track_save_record(TRACKDIR, address, TRACK_BROKEN_STARTTLS, all_lower,
+	track_save_record(TRACKDIR, address, TRACK_BROKEN_STARTTLS, ualllower,
 			  0);
 }
 
@@ -308,7 +290,7 @@ void track_save_verify_success(const char *trackdir,
 			       const char *address,
 			       int autopurge)
 {
-	track_save_record(trackdir, address, TRACK_VERIFY_SUCCESS, domainlower,
+	track_save_record(trackdir, address, TRACK_VERIFY_SUCCESS, udomainlower,
 			  autopurge);
 }
 
@@ -316,7 +298,7 @@ void track_save_verify_hardfail(const char *trackdir, const char *address,
 			       int autopurge)
 {
 	track_save_record(trackdir,
-			  address, TRACK_VERIFY_HARDFAIL, domainlower,
+			  address, TRACK_VERIFY_HARDFAIL, udomainlower,
 			  autopurge);
 }
 
@@ -328,5 +310,5 @@ int track_find_verify(const char *trackdir,
 		      const char *address, time_t *timestamp)
 {
 	return track_find_record(trackdir, address, timestamp, verify_statuses,
-				 domainlower);
+				 udomainlower);
 }

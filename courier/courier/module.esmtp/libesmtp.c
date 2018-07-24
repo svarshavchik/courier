@@ -1,5 +1,5 @@
 /*
-** Copyright 2017 Double Precision, Inc.
+** Copyright 2017-2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -20,6 +20,7 @@
 #include	"tcpd/tlsclient.h"
 #include	"rfc2045/rfc2045.h"
 #include	"rw.h"
+#include	<idna.h>
 #include	<courierauthsaslclient.h>
 
 static void esmtp_wait_rw(struct esmtp_info *info, int *waitr, int *waitw);
@@ -43,8 +44,6 @@ static int esmtp_enable_tls(struct esmtp_info *,
 static int esmtp_auth(struct esmtp_info *info,
 		      const char *auth_key,
 		      void *arg);
-static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
-				struct esmtp_mailfrom_info *mf_info);
 
 static int esmtp_sendcommand(struct esmtp_info *info,
 			     const char *cmd,
@@ -53,6 +52,15 @@ static int esmtp_parsereply(struct esmtp_info *info,
 			    const char *cmd,
 			    void *arg);
 
+static const char * const libesmtp_unicode_err[]=
+	{
+	 "553-The recipient's mail server does not support E-mail",
+	 "553-messages with international Unicode E-mail addresses or",
+	 "553-E-mail messages in the international Unicode E-mail"
+	 " format.",
+	 "553 Unable to deliver Unicode E-mail to a non-Unicode mail server.",
+	 0,
+	};
 static void connect_error(struct esmtp_info *info, void *arg)
 {
 	(*info->log_smtp_error)(info,
@@ -559,6 +567,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 	info->haspipelining=0;
 	info->hasdsn=0;
 	info->has8bitmime=0;
+	info->hassmtputf8=0;
 	info->hasverp=0;
 	info->hassize=0;
 	info->hasexdata=0;
@@ -608,7 +617,20 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 
 	esmtp_timeout(info, info->helo_timeout);
 	strcpy(hellobuf, "EHLO ");
-	strncat(hellobuf, p, sizeof(hellobuf)-10);
+
+	{
+		char *q;
+
+		if (idna_to_ascii_8z(p, &q, 0) == IDNA_SUCCESS)
+		{
+			strncat(hellobuf, q, sizeof(hellobuf)-10);
+			free(q);
+		}
+		else
+		{
+			strncat(hellobuf, p, sizeof(hellobuf)-10);
+		}
+	}
 	strcat(hellobuf, "\r\n");
 
 	if (esmtp_writestr(info, hellobuf) || esmtp_writeflush(info))
@@ -722,6 +744,8 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 				info->hasdsn=1;
 			if (strcmp(hellobuf, "8BITMIME") == 0)
 				info->has8bitmime=1;
+			if (strcmp(hellobuf, "SMTPUTF8") == 0)
+				info->hassmtputf8=1;
 			if (strcmp(hellobuf, "SIZE") == 0)
 				info->hassize=1;
 			if (strcmp(hellobuf, "STARTTLS") == 0)
@@ -828,7 +852,29 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 
 	if (getenv("COURIER_ESMTP_DEBUG_NO8BITMIME"))
 		info->has8bitmime=0;
+
+	if (getenv("COURIER_ESMTP_DEBUG_NOSMTPUTF8"))
+		info->hassmtputf8=0;
+
+	if (getenv("COURIER_ESMTP_DEBUG_NOPIPELINING"))
+		info->haspipelining=0;
 	return (0);
+}
+
+void esmtp_unicode_required_error(struct esmtp_info *info,
+				  void *arg)
+{
+	const char * const *p=libesmtp_unicode_err;
+
+	(*info->log_talking)(info, arg);
+
+	while (p[1])
+	{
+		(*info->log_reply)(info, *p, -1, arg);
+		++p;
+	}
+
+	(*info->log_smtp_error)(info, *p, **p, arg);
 }
 
 static void connection_closed(struct esmtp_info *info,
@@ -1768,28 +1814,74 @@ static int esmtp_parsereply(struct esmtp_info *info,
 	return (0);
 }
 
-
 /*
 ** Construct the MAIL FROM: command, taking into account ESMTP capabilities
 ** of the remote server.
 */
+static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
+				     const char *sender,
+				     struct esmtp_mailfrom_info *mf_info,
+				     const char **errmsg);
 
-static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
-				struct esmtp_mailfrom_info *mf_info)
+char *esmtp_mailfrom_cmd(struct esmtp_info *info,
+			 struct esmtp_mailfrom_info *mf_info,
+			 const char **errmsg)
+{
+	if (!info->hassmtputf8)
+	{
+		char *idna_sender=udomainace(mf_info->sender);
+		char *r=esmtp_mailfrom_cmd_idna(info, idna_sender,
+						mf_info, errmsg);
+
+		free(idna_sender);
+		return r;
+	}
+
+	return esmtp_mailfrom_cmd_idna(info, mf_info->sender, mf_info, errmsg);
+}
+
+static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
+				     const char *sender,
+				     struct esmtp_mailfrom_info *mf_info,
+				     const char **errmsg)
 {
 	char	*bodyverb="", *verpverb="", *retverb="";
 	char	*oenvidverb="", *sizeverb="";
+	char	*smtputf8verb="";
+
 	const char *seclevel="";
 	char	*mailfromcmd;
 	size_t l;
 
 	static const char seclevel_starttls[]=" SECURITY=STARTTLS";
 
+	if (errmsg)
+		*errmsg=0;
+
 	if (info->has8bitmime)	/* ESMTP 8BITMIME capability */
 		bodyverb= mf_info->is8bitmsg ? " BODY=8BITMIME":" BODY=7BIT";
 
 	if (info->hasverp && mf_info->verp)
 		verpverb=" VERP";	/* ESMTP VERP capability */
+
+	if (info->hassmtputf8)
+		smtputf8verb=" SMTPUTF8";
+	else
+	{
+		const char *p;
+
+		for (p=sender; *p; p++)
+			if (*p & 0x80)
+			{
+				if (errmsg)
+					*errmsg="553-The addressee's mail"
+						"server "
+						"does not support the sender's "
+						"international E-mail address.";
+
+				return NULL;
+			}
+	}
 
 	/* ESMTP DSN capability */
 	if (info->hasdsn && mf_info->dsn_format)
@@ -1832,12 +1924,13 @@ static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
 		seclevel=seclevel_starttls;
 
 	l=sizeof("MAIL FROM:<>\r\n")+
-		strlen(mf_info->sender)+
+		strlen(sender)+
 		strlen(bodyverb)+
 		strlen(verpverb)+
 		strlen(retverb)+
 		strlen(oenvidverb)+
 		strlen(sizeverb)+
+		strlen(smtputf8verb)+
 		strlen(seclevel);
 
 	mailfromcmd=malloc(l);
@@ -1845,8 +1938,9 @@ static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
 	if (!mailfromcmd)
 		abort();
 
-	snprintf(mailfromcmd, l, "MAIL FROM:<%s>%s%s%s%s%s%s\r\n",
-		 mf_info->sender,
+	snprintf(mailfromcmd, l, "MAIL FROM:<%s>%s%s%s%s%s%s%s\r\n",
+		 sender,
+		 smtputf8verb,
 		 bodyverb,
 		 verpverb,
 		 retverb,
@@ -1859,16 +1953,26 @@ static char *esmtp_mailfrom_cmd(struct esmtp_info *info,
 	return (mailfromcmd);
 }
 
+
 /*
 ** Build RCPT TOs
 */
+
+static void mk_one_receip_idna_or_utf8(struct esmtp_info *info,
+				       struct esmtp_rcpt_info *receip,
+				       const char *utf8_or_idna_address,
+				       const char *utf8_or_idna_orig_receip,
+				       void (*builder)(const char *, void *),
+				       void *arg);
 
 static void mk_one_receip(struct esmtp_info *info,
 			  struct esmtp_rcpt_info *receip,
 			  void (*builder)(const char *, void *),
 			  void *arg)
 {
-	const char *p;
+	char *idna_address=0;
+	const char *orig_receip;
+	char *idna_orig_receip=0;
 
 	if (!receip)
 	{
@@ -1876,8 +1980,65 @@ static void mk_one_receip(struct esmtp_info *info,
 		return;
 	}
 
+	orig_receip=0;
+
+	if (info->hasdsn)
+	{
+		const char *p=receip->orig_receipient;
+
+		if (p && *p)
+		    orig_receip=p;
+	}
+
+	if (!info->hassmtputf8)
+	{
+		idna_address=udomainace(receip->address);
+		if (orig_receip)
+			idna_orig_receip=udomainace(orig_receip);
+	}
+
+	mk_one_receip_idna_or_utf8
+		(info, receip,
+		 (idna_address ? idna_address:receip->address),
+		 (idna_orig_receip ? idna_orig_receip:orig_receip),
+		 builder, arg);
+
+	if (idna_address)
+		free(idna_address);
+	if (idna_orig_receip)
+		free(idna_orig_receip);
+}
+
+static void mk_one_receip_idna_or_utf8(struct esmtp_info *info,
+				       struct esmtp_rcpt_info *receip,
+				       const char *utf8_or_idna_address,
+				       const char *utf8_or_idna_orig_receip,
+				       void (*builder)(const char *, void *),
+				       void *arg)
+{
+	const char *p;
+
+	if (!info->hassmtputf8)
+	{
+		const char *p;
+
+		for (p=utf8_or_idna_address; *p; p++)
+			if ( (*p) & 0x80 )
+			{
+				receip->our_rcpt_error=libesmtp_unicode_err;
+				return;
+			}
+
+		for (p=utf8_or_idna_orig_receip; p && *p; ++p)
+			if ( (*p) & 0x80 )
+			{
+				receip->our_rcpt_error=libesmtp_unicode_err;
+				return;
+			}
+	}
+
 	(*builder)("RCPT TO:<", arg);
-	(*builder)(receip->address, arg);
+	(*builder)(utf8_or_idna_address, arg);
 	(*builder)(">", arg);
 
 	p=receip->dsn_options;
@@ -1928,12 +2089,10 @@ static void mk_one_receip(struct esmtp_info *info,
 		}
 	}
 
-	p=receip->orig_receipient;
-
-	if (p && *p && info->hasdsn)
+	if (utf8_or_idna_orig_receip)
 	{
 		(*builder)(" ORCPT=", arg);
-		(*builder)(p, arg);
+		(*builder)(utf8_or_idna_orig_receip, arg);
 	}
 
 	(*builder)("\r\n", arg);
@@ -1967,6 +2126,9 @@ static char *rcpt_data(struct esmtp_info *info,
 
 	if (append_data)
 		++n;
+
+	for (i=0; i < nreceips; ++i)
+		receips[i].our_rcpt_error=0;
 
 	for (i=0; i < n; ++i)
 		mk_one_receip(info, (i<nreceips ? &receips[i]:NULL),
@@ -2050,6 +2212,7 @@ static int parsedatareply(struct esmtp_info *info,
 
 static int do_pipeline_rcpt_2(struct esmtp_info *info,
 			      int *rcptok,
+			      struct esmtp_rcpt_info *receips,
 			      size_t nrecipients,
 			      char *rcpt_data_cmd,
 			      void *arg)
@@ -2075,6 +2238,21 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 		size_t next_cnt=l;
 		char *this_rcpt_to_cmd;
 		size_t this_rcpt_to_len;
+
+		if (receips[i].our_rcpt_error)
+		{
+			const char * const *p=receips[i].our_rcpt_error;
+
+			rcptok[i]=0;
+			(*info->log_reply)(info, *p, **p, arg);
+			while (p[1])
+			{
+				++p;
+				(*info->log_reply)(info, *p, **p, arg);
+			}
+			(*info->log_rcpt_error)(info, i, **p, arg);
+			continue;
+		}
 
 		for (this_rcpt_to_len=0; orig_rcpt_data_cmd[this_rcpt_to_len];
 		     ++this_rcpt_to_len)
@@ -2604,6 +2782,7 @@ int esmtp_send(struct esmtp_info *info,
 
 	struct	stat stat_buf;
 	char *rcpt_buf;
+	const char *errmsg;
 
 	if (info->esmtp_sockfd < 0)
 		return -1;
@@ -2611,10 +2790,16 @@ int esmtp_send(struct esmtp_info *info,
 	if (fstat(fd, &stat_buf) == 0)
 		mf_info->msgsize=stat_buf.st_size;
 
-	mailfroms=esmtp_mailfrom_cmd(info, mf_info);
+	mailfroms=esmtp_mailfrom_cmd(info, mf_info, &errmsg);
 
 	(*info->log_talking)(info, arg);
 	esmtp_timeout(info, info->cmd_timeout);
+
+	if (!mailfroms)
+	{
+		(*info->log_smtp_error)(info, errmsg, *errmsg, arg);
+		return 0;
+	}
 
 	if (esmtp_sendcommand(info, mailfroms, arg))
 	{
@@ -2651,7 +2836,7 @@ int esmtp_send(struct esmtp_info *info,
 
 	rcpt_buf=esmtp_rcpt_data_create(info, rcpt_info, nreceipients);
 
-	if ( do_pipeline_rcpt_2(info, rcptok, nreceipients, rcpt_buf,
+	if ( do_pipeline_rcpt_2(info, rcptok, rcpt_info, nreceipients, rcpt_buf,
 				arg) )
 	{
 		free(rcpt_buf);

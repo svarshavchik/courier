@@ -412,7 +412,16 @@ void SubmitFile::openctl()
 		if (nfd >= 0)
 			ctlfile.fd(nfd);
 	}
-	if (ctlfile.fd() < 0)	clog_msg_errno();
+	if (ctlfile.fd() < 0)
+	{
+		clog_msg_start_err();
+		clog_msg_str(LIBEXECDIR "/courier/submit: ");
+		clog_msg_str(filename.c_str());
+		clog_msg_str(": ");
+		clog_msg_str(strerror(errno));
+		clog_msg_send();
+		exit(1);
+	}
 
 struct	stat	stat_buf;
 char	ino_buf[sizeof(ino_t)*2+1];
@@ -741,6 +750,19 @@ struct	stat	stat_buf;
 		datfile.close();
 		if (datfile.fail())	clog_msg_errno();
 	}
+
+	if (rwrfcptr->rfcviolation & RFC2045_ERR8BITHEADER)
+	{
+		/*
+		** One control file: add a COMCTLFILE_SMTPUTF8 record.
+		** When there are multiple control files, this is
+		** handled below.
+		*/
+
+		if (num_control_files_created == 1)
+			ctlfile << COMCTLFILE_SMTPUTF8 << std::endl;
+	}
+
 	if (is8bit)
 	{
 		ctlfile << COMCTLFILE_8BIT << "\n" << std::flush;
@@ -770,6 +792,45 @@ struct	stat	stat_buf;
 	else
 	{
 		closectl();
+	}
+
+	if (rwrfcptr->rfcviolation & RFC2045_ERR8BITHEADER)
+	{
+		/*
+		** Multiple control files, add a COMCTLFILE_SMTPUTF8
+		** record to each one.
+		*/
+
+		if (num_control_files_created > 1)
+		{
+			unsigned i;
+
+			for (i=1; i <= num_control_files_created; i++)
+			{
+				std::string n=namefile("C", i);
+
+				int fd=open(n.c_str(), O_WRONLY | O_APPEND,
+					    0666);
+
+				if (fd < 0)
+				{
+					clog_msg_errno();
+				}
+				else
+				{
+					char c[2];
+
+					c[0]=COMCTLFILE_SMTPUTF8;
+					c[1]='\n';
+
+					if (write(fd, c, 2) != 2 ||
+					    close(fd) < 0)
+					{
+						clog_msg_errno();
+					}
+				}
+			}
+		}
 	}
 
 	SubmitFile *voidp=this;

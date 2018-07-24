@@ -108,6 +108,7 @@ int	pipe0[2], pipe1[2];
 	if (pipe(pipe0))
 	{
 		clog_msg_start_err();
+		clog_msg_str(LIBEXECDIR "/courier/submit: ");
 		clog_msg_str(strerror(errno));
 		clog_msg_send();
 		return (-1);
@@ -117,6 +118,7 @@ int	pipe0[2], pipe1[2];
 		close(pipe0[0]);
 		close(pipe0[1]);
 		clog_msg_start_err();
+		clog_msg_str(LIBEXECDIR "/courier/submit: ");
 		clog_msg_str(strerror(errno));
 		clog_msg_send();
 		return (-1);
@@ -140,6 +142,7 @@ int	pipe0[2], pipe1[2];
 		execve( LIBEXECDIR "/courier/submit", args, env );
 
 		clog_msg_start_err();
+		clog_msg_str(LIBEXECDIR "/courier/submit: ");
 		clog_msg_str(strerror(errno));
 		clog_msg_send();
 		if (write(1, execfailed, sizeof(execfailed)-1) != 1)
@@ -152,6 +155,7 @@ int	pipe0[2], pipe1[2];
 	if (submit_pid == -1)
 	{
 		clog_msg_start_err();
+		clog_msg_str(LIBEXECDIR "/courier/submit: ");
 		clog_msg_str(strerror(errno));
 		clog_msg_send();
 		close(pipe0[1]);
@@ -162,6 +166,7 @@ int	pipe0[2], pipe1[2];
 	    (submit_to=fdopen(pipe0[1], "w")) == NULL)
 	{
 		clog_msg_start_err();
+		clog_msg_str(LIBEXECDIR "/courier/submit: ");
 		clog_msg_str(strerror(errno));
 		clog_msg_send();
 		close(pipe0[1]);
@@ -174,6 +179,7 @@ int	pipe0[2], pipe1[2];
 	    (fromsubmit=fdopen(pipe1[0], "r")) == NULL)
 	{
 		clog_msg_start_err();
+		clog_msg_str(LIBEXECDIR "/courier/submit: ");
 		clog_msg_str(strerror(errno));
 		clog_msg_send();
 		fclose(submit_to);

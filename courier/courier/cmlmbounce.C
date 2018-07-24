@@ -216,8 +216,8 @@ struct	stat	stat_buf;
 char bufn[NUMBUFSIZE];
 
 	libmail_str_size_t(n, bufn);
- 
-	addrlower(addr);
+
+	uaddrlower(addr);
 	if (addr.find('@') == addr.npos)
 	{
 		std::cerr << "Invalid address." << std::endl;

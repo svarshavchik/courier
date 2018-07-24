@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2007 Double Precision, Inc.
+** Copyright 1998 - 2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -13,6 +13,7 @@
 #endif
 
 #include	<string>
+#include	<idna.h>
 
 extern	time_t	submit_time;
 
@@ -20,6 +21,8 @@ std::string	mkmessageidheader()
 {
 	char	timebuf[sizeof(time_t)*2+1], pidbuf[sizeof(pid_t)*2+1];
 	static const char hex[]="0123456789ABCDEF";
+	const char *mhostname;
+	char *idna_hostname=0;
 
 	timebuf[sizeof(timebuf)-1]=0;
 	pidbuf[sizeof(pidbuf)-1]=0;
@@ -47,7 +50,17 @@ std::string	mkmessageidheader()
 	hdrbuf += '.';
 	hdrbuf += pidbuf;
 	hdrbuf += '@';
-	hdrbuf += config_msgidhost();
+
+	mhostname=config_msgidhost();
+
+	if (idna_to_ascii_8z(mhostname, &idna_hostname, 0) == IDNA_SUCCESS)
+		mhostname=idna_hostname;
+	else
+		idna_hostname=0;
+
+	hdrbuf += mhostname;
 	hdrbuf += ">\n";
+	if (idna_hostname)
+		free(idna_hostname);
 	return (hdrbuf);
 }

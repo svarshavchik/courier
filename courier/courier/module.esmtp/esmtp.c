@@ -78,7 +78,7 @@ struct rfc822token *p, *s;
 		    comgetfaxoptsn(p->next->ptr, p->next->len, &dummy) == 0 &&
 		    getenv("FAXRELAYCLIENT") != NULL)
 			return (p);
-		    
+
 		if (s == 0 && seen1dot)	return (p);
 	}
 
@@ -324,9 +324,9 @@ static void rw_del_esmtp(struct rw_info *rwi,
 		void (*delfunc)(struct rw_info *, const struct rfc822token *,
 			const struct rfc822token *))
 {
-struct rfc822token *p;
-char	*c;
-struct	rfc822token host, addr;
+	struct rfc822token *p;
+	char	*c, *ac;
+	struct	rfc822token host, addr;
 
 	for (p=rwi->ptr; p; p=p->next)
 	{
@@ -357,9 +357,17 @@ struct	rfc822token host, addr;
 		return;
 	}
 
-	c=rfc822_gettok(rwi->ptr);
-	if (!c)	clog_msg_errno();
-	domainlower(c);
+	ac=rfc822_gettok(rwi->ptr);
+	if (!ac)	clog_msg_errno();
+	if (strchr(ac, '@') == 0)
+	{
+		free(ac);
+		(*nextfunc)(rwi); /* Local? */
+		return;
+	}
+
+	c=udomainlower(ac);
+	free(ac);
 	host.next=0;
 	host.token=0;
 	host.ptr=strchr(c, '@')+1;

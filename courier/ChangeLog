@@ -1,3 +1,10 @@
+2018-07-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier: implement the SMTPUTF8 extension.
+
+	* dotforward: parse for Delivered-To: only in the header portion
+	of the message.
+
 2018-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier-imap: update Courier-IMAP to support UTF8 POP3. Update

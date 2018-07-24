@@ -111,6 +111,7 @@ time_t ctlfile_getnextattempt(struct ctlfile *);
 #define	COMCTLFILE_CANCELLED_ACK 'x'
 #define	COMCTLFILE_NEXTATTEMPT	'A'
 #define	COMCTLFILE_MSGID	'M'
+#define COMCTLFILE_SMTPUTF8	'm'
 #define	COMCTLFILE_SUBMITDELAY	'L'
 #define COMCTLFILE_SECURITY	'U'
 #define COMCTLFILE_MSGSOURCE	'u'

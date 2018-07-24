@@ -26,6 +26,7 @@
 #include	<ctype.h>
 #include	<errno.h>
 #include	<utime.h>
+#include	<idna.h>
 #include	<iostream>
 #if	HAVE_LOCALE_H
 #include	<locale.h>
@@ -145,7 +146,7 @@ static void rewrite_address(const char *inaddress, struct rw_transport *module,
 struct	rw_info_rewrite	rwir;
 struct	rw_info rwi;
 struct	rfc822t *rfcp;
-char	*address, *p, *errmsg;
+char	*address, *errmsg;
 
 	rfcp=rw_rewrite_tokenize(inaddress);
 
@@ -162,13 +163,22 @@ char	*address, *p, *errmsg;
 	address=((struct rw_info_rewrite *)rwi.udata)->buf;
 	if (address)
 	{
-	char	*hostdomain=0;
+		char	*hostdomain=0;
+		char	*p;
 
 		if ((p=strrchr(address, '@')) &&
 			config_islocal(p+1, &hostdomain) && hostdomain == 0)
-			locallower(address);
+		{
+			p=ulocallower(address);
+			free(address);
+			address=p;
+		}
+
 		if (hostdomain)	free(hostdomain);
-		domainlower(address);
+
+		p=udomainlower(address);
+		free(address);
+		address=p;
 	}
 	errmsg=((struct rw_info_rewrite *)rwi.udata)->errmsg;
 
@@ -843,6 +853,30 @@ static int checkmx(const char *helohost,
 	return 0;
 }
 
+/*
+** If we see an ASCII-encoded domain, convert it to UTF8. Courier
+** uses UTF8 domains internally.
+*/
+
+static std::string utf8ize_address(const std::string &s)
+{
+	size_t p=s.rfind('@');
+
+	if (p == std::string::npos)
+		return s;
+
+	std::string domain=s.substr(++p);
+	char *utf8;
+
+	if (idna_to_unicode_8z8z(domain.c_str(), &utf8, 0) != IDNA_SUCCESS)
+		return s;
+
+	domain=utf8;
+	free(utf8);
+
+	return s.substr(0, p) + domain;
+}
+
 static int getsender(Input &input, struct rw_transport *module)
 {
 	struct	mailfrominfo frominfo;
@@ -895,8 +929,10 @@ static int getsender(Input &input, struct rw_transport *module)
 
 	stripdots(buf);
 
+	buf=utf8ize_address(buf);
+
 	if ((q=getenv("DSNRET")) != 0)
-		setmsgopts(frominfo, q);
+		setmsgopts(frominfo, utf8ize_address(q));
 
 	const char *tcpremoteip=getenv("TCPREMOTEIP");
 	int bofhcheckhelo=(q=getenv("BOFHCHECKHELO")) == NULL ? 0:atoi(q);
@@ -1031,6 +1067,7 @@ static int getsender(Input &input, struct rw_transport *module)
 		frominfo.envid= &envid;
 	}
 
+	sender=utf8ize_address(sender);
 	struct	rfc822t *rfcp=rw_rewrite_tokenize(sender.c_str());
 	struct	rw_info	rwi;
 
@@ -1422,6 +1459,7 @@ static bool read_next_line(Input &input, std::string &str)
 }
 
 static void getrcpt(struct rw_info *rwi);
+static void getrcpt_toutf8(struct rw_info *rwi);
 static void rcpttoerr(int, const char *, struct rw_info *);
 
 static inline char* getenv_subvar(char const *first, char const *second)
@@ -1619,6 +1657,8 @@ char	*sender=rfc822_gettok(addresst);
 			continue;
 		}
 
+		receipient=utf8ize_address(receipient);
+
 		struct	rw_info rwi;
 		struct	rfc822t *rfcp;
 
@@ -1666,7 +1706,7 @@ char	*sender=rfc822_gettok(addresst);
 	std::string	header, headername, headernameorig;
 	std::string	line;
 	std::string	accumulated_errmsg;
-	std::string	cme_name = config_me();
+	std::string	cme_name = config_me_ace();
 	int	has_msgid=0;
 	int	has_date=0;
 	int	has_tocc=0;
@@ -1735,32 +1775,6 @@ char	*sender=rfc822_gettok(addresst);
 	line += rfc822_mkdate(submit_time);
 
 	line += "\n";
-
-	for (line_iter=line.begin(); line_iter != line.end(); ++line_iter)
-		if ( (*line_iter & 0x80) != 0)
-		{
-			char *s=rfc2047_encode_str(line.c_str(),
-						   RFC2045CHARSET,
-						   rfc2047_qp_allow_any);
-
-			if (!s)
-			{
-				perror("500 ");
-				exit(1);
-			}
-
-			try
-			{
-				line=s;
-			}
-			catch (...)
-			{
-				perror("500 ");
-				exit(1);
-			}
-			free(s);
-			break;
-		}
 
 	if (mf->receivedspfhelo)
 		my_rcptinfo.submitfile.Message(mf->receivedspfhelo->c_str());
@@ -1889,11 +1903,8 @@ char	*sender=rfc822_gettok(addresst);
 				(*my_rcptinfo.oreceipient) = "";
 				(*my_rcptinfo.dsn) = "";
 
-			char	*p=rfc822_gettok(rfca->addrs[i].tokens);
-				my_rcptinfo.prw_receipient=p;
-				free(p);
-
-				rw_rewrite_module(mf->module, &rwi, getrcpt);
+				rw_rewrite_module(mf->module, &rwi,
+						  getrcpt_toutf8);
 
 		// CANNOT reject if errflag=0 any more, due to filtering
 		// syncronization.
@@ -2183,19 +2194,47 @@ static std::string checkrcpt(struct rcptinfo *,
 	struct rfc822token *,
 	const char *);
 
+static void getrcpt_common(struct rw_info *rwi, bool);
+
+// Collecting RCPT TO from the explicit envelope.
 static void getrcpt(struct rw_info *rwi)
 {
-struct rcptinfo *my_rcptinfo=(struct rcptinfo *)rwi->udata;
-struct rfc822token *addresst=rwi->ptr;
-char	*address=rfc822_gettok(addresst);
+	getrcpt_common(rwi, false);
+}
+
+// Collecting RCPT TO from the message's headers.
+static void getrcpt_toutf8(struct rw_info *rwi)
+{
+	getrcpt_common(rwi, true);
+}
+
+static void getrcpt_common(struct rw_info *rwi, bool to_utf8)
+{
+	struct rcptinfo *my_rcptinfo=(struct rcptinfo *)rwi->udata;
+	struct rfc822token *addresst=rwi->ptr;
+	char	*address=rfc822_gettok(addresst);
 
 	if (!address)
 		clog_msg_errno();
 
 	std::string	errmsg;
 
-	domainlower(address);
-	errmsg=checkrcpt(my_rcptinfo, addresst, address);
+	{
+		char *p=udomainlower(address);
+		free(address);
+		address=p;
+	}
+
+	std::string addrstr=address;
+	free(address);
+
+	if (to_utf8)
+	{
+		addrstr=utf8ize_address(addrstr);
+		my_rcptinfo->prw_receipient=addrstr;
+	}
+
+	errmsg=checkrcpt(my_rcptinfo, addresst, addrstr.c_str());
 	my_rcptinfo->errflag=0;
 
 	if (errmsg.size())
@@ -2203,7 +2242,6 @@ char	*address=rfc822_gettok(addresst);
 		my_rcptinfo->errmsgtext=errmsg;
 		my_rcptinfo->errflag=1;
 	}
-	free(address);
 }
 
 static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
@@ -2323,8 +2361,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 		}
 	}
 
-	addressl=strcpy((char *)courier_malloc(strlen(address)+1), address);
-	locallower(addressl);
+	addressl=ulocallower(address);
 
 	int search_rc=aliasp.Search(addressl, handlerp);
 
@@ -2690,11 +2727,14 @@ struct rw_transport *modulep=rw_search_transport(module);
 			expn_info.asptr=&asearch;
 			expn_info.flag=0;
 
-			rewrite_address(expnname ? expnname:vrfyname,
-				modulep,
-				(expnname ? RW_ENVRECIPIENT|RW_EXPN:
-					RW_ENVRECIPIENT|RW_VERIFY), NULL,
-				expnname ? showexpn:showvrfy, &expn_info);
+			rewrite_address(utf8ize_address(expnname ?
+							expnname:vrfyname)
+					.c_str(),
+					modulep,
+					(expnname ? RW_ENVRECIPIENT|RW_EXPN:
+					 RW_ENVRECIPIENT|RW_VERIFY), NULL,
+					expnname ? showexpn:showvrfy,
+					&expn_info);
 		}
 		exit(expn_info.flag);
 	}

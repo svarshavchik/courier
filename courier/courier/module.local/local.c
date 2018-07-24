@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2006 Double Precision, Inc.
+** Copyright 1998 - 2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -26,6 +26,7 @@
 #include	"modulelist.h"
 #include	"sysconfdir.h"
 #include	<courierauth.h>
+#include	<idna.h>
 
 #if	HAVE_SYSLOG_H
 #include	<syslog.h>
@@ -103,14 +104,6 @@ struct localauthinfo {
 	int exists;
 } ;
 
-static int cleanup_set=0;
-
-/* Before terminating, nicely shut down everything */
-
-static void cleanup()
-{
-}
-
 /*
 
    Accept delivery for a local address, if:
@@ -121,26 +114,23 @@ static void cleanup()
 
 */
 
-static void rw_del_local(struct rw_info *rwi,
-			void (*nextfunc)(struct rw_info *),
-		void (*delfunc)(struct rw_info *, const struct rfc822token *,
-				const struct rfc822token *))
-{
-struct rfc822token *p, **prevp;
-char	*addr, *ext;
-int	i;
-struct localauthinfo lai;
-char	*hostdomain=NULL;
-struct	rfc822token	hostdomaint;
-#if LOCAL_EXTENSIONS
-char *atdomain;
-#endif
+static void rw_del_local2(struct rw_info *rwi,
+			  char *addr,
+			  void (*nextfunc)(struct rw_info *),
+			  void (*delfunc)(struct rw_info *,
+					  const struct rfc822token *,
+					  const struct rfc822token *));
 
-	if (!cleanup_set)
-	{
-		atexit(cleanup);
-		cleanup_set=1;
-	}
+static void rw_del_local(struct rw_info *rwi,
+			 void (*nextfunc)(struct rw_info *),
+			 void (*delfunc)(struct rw_info *,
+					 const struct rfc822token *,
+					 const struct rfc822token *))
+{
+	struct rfc822token *p, **prevp;
+	char	*addr;
+	char	*hostdomain=NULL;
+	struct	rfc822token	hostdomaint;
 
 	prevp=0;
 	for (p= *(prevp=&rwi->ptr); p; p= *(prevp= &p->next))
@@ -165,12 +155,14 @@ char *atdomain;
 
 		if (hostdomain)
 		{
-			char *pp;
+			char *q;
 
 			p->next= &hostdomaint;
 
-			for (pp=hostdomain; *pp; pp++)
-				*pp=tolower((int)(unsigned char)*pp);
+			q=ualllower(hostdomain);
+
+			free(hostdomain);
+			hostdomain=q;
 
 			hostdomaint.next=0;
 			hostdomaint.token=0;
@@ -188,7 +180,34 @@ char *atdomain;
 	addr=rfc822_gettok(rwi->ptr);
 
 	if (!addr)	clog_msg_errno();
-	locallower(addr);
+
+	{
+		char *p=ulocallower(addr);
+
+		free(addr);
+		addr=p;
+	}
+
+	rw_del_local2(rwi, addr, nextfunc, delfunc);
+	if (hostdomain)
+		free(hostdomain);
+	free(addr);
+}
+
+
+static void rw_del_local2(struct rw_info *rwi,
+			  char *addr,
+			  void (*nextfunc)(struct rw_info *),
+			  void (*delfunc)(struct rw_info *,
+					  const struct rfc822token *,
+					  const struct rfc822token *))
+{
+	char *ext;
+	int	i;
+	struct localauthinfo lai;
+#if LOCAL_EXTENSIONS
+	char *atdomain;
+#endif
 
 	if (strchr(addr, '!') || *addr == 0)
 	{
@@ -235,11 +254,11 @@ char *atdomain;
 
 	for (;;)
 	{
-	char *search_addr=addr;
+		char *search_addr=addr;
 
 #if LOCAL_EXTENSIONS
-	char	c;
-	char *alloc_buf=0;
+		char	c;
+		char *alloc_buf=0;
 
 		c= *ext;
 		*ext=0;
@@ -274,8 +293,6 @@ char *atdomain;
 		{
 			if (lai.exists)
 			{
-				free(addr);
-				if (hostdomain)	free(hostdomain);
 				return;
 			}
 			goto not_found;
@@ -283,8 +300,6 @@ char *atdomain;
 
 		if (i > 0)
 		{
-			free(addr);
-			if (hostdomain)	free(hostdomain);
 			(*rwi->err_func)(450,
 				"Service temporarily unavailable.", rwi);
 			return;
@@ -319,17 +334,12 @@ char *atdomain;
 				{
 					if (lai.exists)
 					{
-						free(addr);
-						if (hostdomain)
-							free(hostdomain);
 						return;
 					}
 					goto not_found;
 				}
 				if (i > 0)
 				{
-					free(addr);
-					if (hostdomain)	free(hostdomain);
 					(*rwi->err_func)(450,
 							 "Service temporarily unavailable.", rwi);
 					return;
@@ -372,8 +382,6 @@ toalias:
 		{
 			if (lai.exists)
 			{
-				free(addr);
-				if (hostdomain)	free(hostdomain);
 				return;
 			}
 			goto not_found;
@@ -381,8 +389,6 @@ toalias:
 
 		if (i > 0)
 		{
-			free(addr);
-			if (hostdomain)	free(hostdomain);
 			(*rwi->err_func)(450,
 				"Service temporarily unavailable.", rwi);
 			return;
@@ -402,10 +408,7 @@ not_found:
 	    (strcmp(rwi->smodule, "local") == 0 ||
 	     strcmp(rwi->smodule, "uucp") == 0))
 	{
-		free(addr);
 		(*delfunc)(rwi, rwi->ptr, rwi->ptr);
-		if (hostdomain)	free(hostdomain);
-
 		return;
 	}
 
@@ -414,18 +417,19 @@ not_found:
 
 		char *orig_addr=rfc822_gettok(rwi->ptr);
 
+		/* This can come out in SMTP, so make it an ACE domain */
+
+		char *orig_addr_ace=udomainace(orig_addr ? orig_addr:"");
+
 		buf[255]=0;
 
-		snprintf(buf, 255, "User <%s> unknown",
-			 orig_addr ? orig_addr:"");
-		free(addr);
-		if (hostdomain)	free(hostdomain);
+		snprintf(buf, 255, "User <%s> unknown", orig_addr_ace);
 
 		if (orig_addr)
 			free(orig_addr);
+		free(orig_addr_ace);
 		(*rwi->err_func)(550, buf, rwi);
 	}
-	return;
 }
 
 
@@ -640,7 +644,7 @@ const char *quota;
 		strcpy(buf, "450 malloc() failed.");
 		return (1);
 	}
-	
+
 	host=s;
 
 	t=strchr(s, '!');

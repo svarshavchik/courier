@@ -86,15 +86,25 @@ char	*hostdomain;
 	if ((p=strrchr(address, '@')) == 0
 		|| (config_islocal(p+1, &hostdomain) && hostdomain == 0))
 	{
-		locallower(address);
+		/*
+		** Local address, convert the userid to lowercase.
+		*/
+		char *ua=ulocallower(address);
+		free(address);
+		address=ua;
 		islocal=1;
 	}
 	if (hostdomain)	free(hostdomain);
 
-	domainlower(address);
+	/*
+	** Make sure the domain is in UTF8, and is in lowercase.
+	*/
+	char *addressu=udomainutf8(address);
 
-	std::string s=address;
 	free(address);
+
+	std::string s=addressu;
+	free(addressu);
 
 	return (s);
 }

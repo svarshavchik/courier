@@ -84,6 +84,12 @@ then
 fi
 fi
 
+PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+if test "$libidn" != "yes"
+then
+	AC_MSG_ERROR([libidn not found])
+fi
+
 AC_ARG_WITH(redhat, [], [ redhat=$withval ], [redhat=no])
 
 if test "$srcdir" = "."

@@ -194,7 +194,7 @@ showmodules_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 showconfig_SOURCES=cppmain.C showconfig.C
 showconfig_DEPENDENCIES=$(COURIERDEPENDENCIES) module.esmtp/esmtpconfig.o
 showconfig_LDADD=$(COURIERLDADD) module.esmtp/esmtpconfig.o
-showconfig_LDFLAGS=$(COURIERLDFLAGS)
+showconfig_LDFLAGS=$(COURIERLDFLAGS) @LIBIDN_LIBS@
 
 # submit - message submission
 
@@ -217,7 +217,7 @@ submit_LDADD=../libs/rfc1035/librfc1035.a \
 	../libs/md5/libmd5.la ../libs/random128/librandom128.la \
 	../libs/soxwrap/libsoxwrap.a \
 	`cat ../libs/soxwrap/soxlibs.dep` \
-	../afx/libafx.a @NETLIBS@ -lcourierauth
+	../afx/libafx.a @NETLIBS@ @LIBIDN_LIBS@ -lcourierauth
 
 submit_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
@@ -226,7 +226,7 @@ submit_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 aliaslookup_SOURCES=aliaslookup.C ldapaliasdrc.c
 aliaslookup_DEPENDENCIES=libs/libcommon.la libs/libcourier.la ../afx/libafx.a
 aliaslookup_LDADD=libs/libcommon.la libs/libcourier.la ../afx/libafx.a\
-	@dblibrary@ @NETLIBS@
+	@dblibrary@ @NETLIBS@ @LIBIDN_LIBS@ -lcourier-unicode
 
 # ldapaliasd - resolve aliases via LDAP
 
@@ -265,7 +265,7 @@ testmxlookup_DEPENDENCIES=../libs/rfc1035/librfc1035.a ../libs/soxwrap/libsoxwra
 
 testmxlookup_LDADD=../libs/rfc1035/librfc1035.a ../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` libs/libcourier.la \
 	../libs/md5/libmd5.la ../libs/random128/librandom128.la \
-	@dblibrary@ @NETLIBS@
+	@dblibrary@ @NETLIBS@ -lcourier-unicode @LIBIDN_LIBS@
 
 # maildirmake - create a maildir
 
@@ -285,7 +285,7 @@ maildirkw$(EXEEXT): ../libs/maildir/maildirkw$(EXEEXT)
 
 aliasexp_SOURCES=cppmain.C aliasexp.C
 aliasexp_DEPENDENCIES=$(COURIERDEPENDENCIES) ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a ../libs/soxwrap/soxlibs.dep ../afx/libafx.a
-aliasexp_LDADD=$(COURIERLDADD) ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` ../afx/libafx.a -lcourierauth
+aliasexp_LDADD=$(COURIERLDADD) ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` ../afx/libafx.a -lcourierauth -lcourier-unicode @LIBIDN_LIBS@
 aliasexp_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
 # aliascombine - Merge alias specifications
@@ -309,7 +309,8 @@ courierpop3d$(EXEEXT): ../libs/imap/pop3d$(EXEEXT)
 
 mailq_SOURCES=mailq.c
 mailq_DEPENDENCIES=libs/libcommon.la libs/libcourier.la ../libs/numlib/libnumlib.la
-mailq_LDADD=libs/libcommon.la libs/libcourier.la ../libs/numlib/libnumlib.la
+mailq_LDADD=libs/libcommon.la libs/libcourier.la ../libs/numlib/libnumlib.la \
+	-lcourier-unicode @LIBIDN_LIBS@
 
 # courierd
 
@@ -403,11 +404,11 @@ dotforward_LDADD=$(dotforward_DEPENDENCIES) -lcourier-unicode
 courier_SOURCES=courier.c courier2.C
 courier_DEPENDENCIES=libs/libcommon.la libs/libcourier.la ../libs/liblock/liblock.la \
 		../libs/numlib/libnumlib.la
-courier_LDADD=$(courier_DEPENDENCIES)
+courier_LDADD=$(courier_DEPENDENCIES) -lcourier-unicode @LIBIDN_LIBS@
 
 cancelmsg_SOURCES=cancelmsg.c
 cancelmsg_DEPENDENCIES=libs/libcommon.la libs/libcourier.la ../libs/numlib/libnumlib.la
-cancelmsg_LDADD=$(cancelmsg_DEPENDENCIES)
+cancelmsg_LDADD=$(cancelmsg_DEPENDENCIES) -lcourier-unicode @LIBIDN_LIBS@
 
 # courier-config
 
@@ -661,7 +662,18 @@ install-perms-local:
 #
 # Lame regression test.
 #
+noinst_PROGRAMS=testtrack
+
+testtrack_SOURCES=testtrack.c
+testtrack_DEPENDENCIES=../libs/numlib/libnumlib.la
+testtrack_LDADD=../libs/numlib/libnumlib.la \
+	@LIBIDN_LIBS@ -lcourier-unicode
+
 check-am: aliascreate
 	./aliascreate -tmp=./testsuite.tmp -dump=1 <$(srcdir)/testsuite.alias1.in | sed '/^$$/d' | sort | cmp -s $(srcdir)/testsuite.alias -
 	./aliascreate -tmp=./testsuite.tmp -dump=1 <$(srcdir)/testsuite.alias2.in | sed '/^$$/d' | sort | cmp -s $(srcdir)/testsuite.alias -
 	$(srcdir)/dotforward.tst | cmp -s $(srcdir)/dotforward.tst.chk -
+	rm -rf testtrack.tmp
+	mkdir testtrack.tmp
+	./testtrack
+	rm -rf testtrack.tmp

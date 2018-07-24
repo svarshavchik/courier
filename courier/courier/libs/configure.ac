@@ -37,6 +37,7 @@ CFLAGS="-I.. -I$srcdir/.. -I../.. -I$srcdir/../.. -I$srcdir/../../libs -I../../l
 CXXFLAGS="-I.. -I$srcdir/.. -I../.. -I$srcdir/../.. -I$srcdir/../../libs -I../../libs $CXXFLAGS"
 
 dnl Checks for libraries.
+PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -119,7 +120,7 @@ then
 	[ Whether gethostname() needs to be prototyped ])
 fi
 
-AC_ARG_WITH(qdircount, 
+AC_ARG_WITH(qdircount,
 [--with-qdircount=n        Queue subdirectory count], qdircount="$withval",
 	qdircount=100)
 AC_DEFINE_UNQUOTED(QDIRCOUNT,$qdircount, [ Queue directory hash count ])

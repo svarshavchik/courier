@@ -40,7 +40,8 @@ dupfilter_LDADD=libfilter/libfilter.la ../../libs/md5/libmd5.la \
 	../libs/libcommon.la ../libs/libcourier.la \
 	../../libs/liblock/liblock.la \
 	../../libs/threadlib/libthreadlib.a ../../libs/numlib/libnumlib.la \
-	`cat ../../libs/threadlib/libthread.dep` @NETLIBS@
+	`cat ../../libs/threadlib/libthread.dep` @NETLIBS@ -lcourier-unicode \
+	@LIBIDN_LIBS@
 
 ratefilter_SOURCES=ratefilter.C
 ratefilter_DEPENDENCIES=libfilter/libfilter.la ../../afx/libafx.a \
@@ -83,6 +84,7 @@ verifyfilter_LDADD=libfilter/libfilter.la \
 	../../libs/soxwrap/libsoxwrap.a \
 	`cat ../../libs/soxwrap/soxlibs.dep` \
 	-lcourierauthsaslclient -lcourierauth -lcourier-unicode \
+	@LIBIDN_LIBS@
 	@NETLIBS@
 
 verifyfilter_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`

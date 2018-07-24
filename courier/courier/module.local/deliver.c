@@ -54,7 +54,6 @@
 #include	"liblock/liblock.h"
 #include	"liblock/mail.h"
 
-
 extern char *local_dotcourier(const char *, const char *, const char **);
 extern char *local_extension();
 
@@ -145,10 +144,21 @@ char		*userhome;
 	return (0);
 }
 
+static int chkdelto_ace(FILE *f, const char *delivto);
+
 static int chkdelto(FILE *f, const char *delivto)
 {
-char	buf[BUFSIZ];
-char	*p, *q;
+	char *ace_address=udomainace(delivto);
+	int rc=chkdelto_ace(f, ace_address);
+	free(ace_address);
+	return rc;
+}
+
+static int chkdelto_ace(FILE *f, const char *delivto)
+{
+	char	buf[BUFSIZ];
+	char	*p, *q;
+	int	rc;
 
 	/* Check for mail loops, by looking for my Delivered-To: line. */
 
@@ -172,13 +182,19 @@ char	*p, *q;
 		if (strcmp(buf, "delivered-to"))	continue;
 		while (*p == ' ')
 			++p;
-		if (strcmp(p, delivto) == 0)
+
+		q=udomainace(delivto);
+
+		rc=strcmp(p, q);
+		free(q);
+
+		if (rc == 0)
 			return (1);
 	}
 	return (0);
 }
 
-static int savemessage(const char *, const char *, const char *,
+static int savemessage(const char *,
 		FILE *, const char *,
 		const char *, const char *, const char *, const char *);
 
@@ -223,6 +239,59 @@ char	*bs;
 	return (ctl);
 }
 
+static void mkdelheaders_ace(const char *sender,
+			     const char *receipient,
+			     char **ufromline,
+			     char **dtline,
+			     char **rpline)
+{
+	time_t	t;
+	const char *curtime;
+
+	time(&t);
+	curtime=ctime(&t);
+	if ((*ufromline=malloc(strlen(curtime)+strlen(sender)+30))==0||
+	    (*dtline=malloc(strlen(receipient)+
+			    sizeof("Delivered-To: "))) == 0 ||
+	    (*rpline=malloc(strlen(sender) +
+			    sizeof("Return-Path: <>"))) == 0)
+	{
+		perror("malloc");
+		exit(EX_TEMPFAIL);
+	}
+
+	sprintf(*ufromline, "From %s %s", sender, curtime);
+
+	{
+	char *p;
+
+		if ((p=strchr(*ufromline, '\n')) != 0)
+			*p=0;
+	}
+
+	strcat(strcpy(*dtline, "Delivered-To: "), receipient);
+	strcat(strcat(strcpy(*rpline, "Return-Path: <"), sender), ">");
+}
+
+static void mkdelheaders(const char *sender,
+			 const char *receipient,
+			 char **ufromline,
+			 char **dtline,
+			 char **rpline)
+{
+	char *sender_ace=udomainace(sender);
+	char *receipient_ace=udomainace(receipient);
+
+	mkdelheaders_ace(sender_ace,
+			 receipient_ace,
+			 ufromline,
+			 dtline,
+			 rpline);
+
+	free(sender_ace);
+	free(receipient_ace);
+
+}
 /* Minor helper function */
 
 static void dodel(const char *username, const char *userhome,
@@ -231,23 +300,11 @@ static void dodel(const char *username, const char *userhome,
 	const char *defaultext, const char *quota, const char *defaultmail,
 	int recursion_level)
 {
-char	*ufromline;
-char	*dtline;
-char	*rpline;
-time_t	t;
-const char *curtime;
+	char	*ufromline;
+	char	*dtline;
+	char	*rpline;
 
-	time(&t);
-	curtime=ctime(&t);
-	if ((ufromline=malloc(strlen(curtime)+strlen(sender)+30))==0||
-		(dtline=malloc(strlen(receipient)+
-			sizeof("Delivered-To: "))) == 0 ||
-		(rpline=malloc(strlen(sender) +
-			sizeof("Return-Path: <>"))) == 0)
-	{
-		perror("malloc");
-		exit(EX_TEMPFAIL);
-	}
+	mkdelheaders(sender, receipient, &ufromline, &dtline, &rpline);
 
 	if ( (!ctl || !*ctl) && recursion_level == 0)
 	{
@@ -260,18 +317,6 @@ const char *curtime;
 		}
 		strcpy(ctl, p);
 	}
-
-	sprintf(ufromline, "From %s %s", sender, curtime);
-
-	{
-	char *p;
-
-		if ((p=strchr(ufromline, '\n')) != 0)
-			*p=0;
-	}
-
-	strcat(strcpy(dtline, "Delivered-To: "), receipient);
-	strcat(strcat(strcpy(rpline, "Return-Path: <"), sender), ">");
 
 	while (*ctl)
 	{
@@ -313,7 +358,7 @@ const char *curtime;
 				++ctl;
 			}
 
-			if (savemessage(extension, sender, receipient,
+			if (savemessage(extension,
 				fp_hack, filename,
 				ufromline,
 				dtline,
@@ -397,7 +442,7 @@ const char *curtime;
 			fflush(stdout);
 		}
 	}
-			
+
 	free(rpline);
 	free(dtline);
 	free(ufromline);
@@ -438,8 +483,7 @@ static RETSIGTYPE truncmbox(int signum)
 #endif
 }
 
-static int savemessage(const char *extension, const char *sender,
-		const char *receipient,
+static int savemessage(const char *extension,
 		FILE *f, const char *name,
 		const char *ufromline,
 		const char *dtline,

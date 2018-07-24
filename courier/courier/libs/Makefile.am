@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 CLEANFILES=sysconfdir.h localstatedir.h libexecdir.h sbindir.h lcrwstatic.h \
@@ -10,7 +10,8 @@ noinst_PROGRAMS=testaliases
 
 BUILT_SOURCES=sysconfdir.h localstatedir.h libexecdir.h sbindir.h lcrwstatic.h
 
-libcommon_la_SOURCES= aliases.h comaliases1.C comaliases2.C \
+libcommon_la_SOURCES= aliases.h \
+	comaliases1.C comaliases2.C \
 	comaliases3.C comaliases4.C combatchsize.c comcargs.c comcargs.h \
 	comconfig.c comconfig.h comctlfile.c \
 	comctlfile.h comdsn.c comdsn2.c comerrmsg.c \

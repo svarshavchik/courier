@@ -11,8 +11,8 @@
   </refmeta>
 
   <refnamediv>
-    <refname>dotforward</refname>
     <refname>dot-forward</refname>
+    <refname>dotforward</refname>
     <refpurpose>Read <filename moreinfo="none">$HOME/.forward</filename></refpurpose>
   </refnamediv>
 

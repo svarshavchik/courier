@@ -164,8 +164,7 @@ int is_subscriber(std::string);
 int getinfo(std::string, int (*)(std::string));
 std::string myname();
 
-void addrlower(char *);
-void addrlower(std::string &); // TODO
+void uaddrlower(std::string &);
 
 int isfound(std::string);
 int sendmail(const char **, pid_t &);

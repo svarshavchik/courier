@@ -144,12 +144,12 @@ int	trunc=0;
 
 	while (n)
 	{
-		c= *p++;
+		c= (unsigned char)*p++;
 		if ( c == '\r')	continue;
 		if ( c == '\n' && *p == 0)	break;
 
 		if ( c == '\n')	c='/';
-		else if (c < ' ' || c >= 0x7E)	c='.';
+		else if (c < ' ')	c='.';
 		logbuf[l++]=c;
 		--n;
 	}
