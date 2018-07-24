@@ -69,7 +69,6 @@ License:          GPL
 URL:              http://www.courier-mta.org
 Packager:         %{PACKAGER}
 Source:           http://download.sourceforge.net/courier/courier-@VERSION@.tar.bz2
-BuildRoot:        %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Provides:         smtpdaemon server(smtp)
 Provides:         config(courier) = %{version}-%{release}
 AutoProv:         no
@@ -156,34 +155,41 @@ BuildRequires: perl-generators
 %package sendmail-wrapper
 Summary: Courier @VERSION@ soft links for sendmail
 Group: Applications/Mail
+Requires: courier = %{version}-%{release}
 %endif
 
 %package ldap
 Summary: Courier @VERSION@ LDAP modules and configuration screen
 Group: Application/Mail
+Requires: courier = %{version}-%{release}
 
 %package mysql
 Summary: Courier @VERSION@ MySQL configuration screen
 Group: Application/Mail
+Requires: courier = %{version}-%{release}
 
 %package pgsql
 Summary: Courier @VERSION@ PostgreSQL configuration screen
 Group: Application/Mail
+Requires: courier = %{version}-%{release}
 
 %package pop3d
 Summary: Courier @VERSION@ Integrated POP3 server
 Group: Applications/Mail
-Requires: courier = @VERSION@ coreutils
+Requires: coreutils
+Requires: courier = %{version}-%{release}
 
 %package imapd
 Summary: Courier @VERSION@ Integrated IMAP server
 Group: Applications/Mail
-Requires: courier = @VERSION@ coreutils
+Requires: coreutils
+Requires: courier = %{version}-%{release}
 
 %package webmail
 Summary: Courier @VERSION@ Integrated HTTP (webmail) server
 Group: Applications/Mail
-Requires: courier = @VERSION@ %{apache_documentroot} /etc/cron.hourly
+Requires: %{apache_documentroot} /etc/cron.hourly
+Requires: courier = %{version}-%{release}
 %if %with_gpg2
 Requires: gnupg2
 %define gpg_option --with-gpg2
@@ -197,7 +203,8 @@ Requires: %{apache_cgibindir}
 %package webadmin
 Summary: Courier @VERSION@ web-based administration tool
 Group: Applications/Mail
-Requires: courier = @VERSION@ %{apache_documentroot}
+Requires: %{apache_documentroot}
+Requires: courier = %{version}-%{release}
 %if %is_not_mandrake
 Requires: %{apache_cgibindir}
 %endif
@@ -205,12 +212,13 @@ Requires: %{apache_cgibindir}
 %package mlm
 Summary: Courier @VERSION@ Integrated Mailing List Manager
 Group: Applications/Mail
-Requires: courier = @VERSION@
+Requires: courier = %{version}-%{release}
 
 %package mlm-web
 Summary: Courier @VERSION@ Integrated web-based mailing list interface
 Group: Applications/Mail
-Requires: courier-mlm = @VERSION@ %{apache_documentroot}
+Requires: %{apache_documentroot}
+Requires: courier-mlm = %{version}-%{release}
 %if %is_not_mandrake
 Requires: %{apache_cgibindir}
 %endif
@@ -218,17 +226,18 @@ Requires: %{apache_cgibindir}
 %package maildrop
 Summary: Courier @VERSION@ Integrated mail filter
 Group: Applications/Mail
-Requires: courier = @VERSION@
+Requires: courier = %{version}-%{release}
 
 %package fax
 Summary: Courier @VERSION@ fax support
 Group: Application/Mail
-Requires: courier = @VERSION@ groff ghostscript netpbm-progs mgetty-sendfax
+Requires: courier = %{version}-%{release}
+Requires: groff ghostscript netpbm-progs mgetty-sendfax
 
 %package maildrop-wrapper
 Summary: Courier @VERSION@ soft links for maildrop
 Group: Applications/Mail
-Requires: courier-maildrop = @VERSION@
+Requires: courier-maildrop = %{version}-%{release}
 
 %description
 The Courier mail transfer agent (MTA) is an integrated mail/groupware
