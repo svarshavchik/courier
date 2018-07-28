@@ -3,7 +3,7 @@
 ** See COPYING for distribution information.
 */
 
-#include	"courier_lib_config.h"
+#include	"libs/courier_lib_config.h"
 #include	"courier.h"
 #include	"comqueuename.h"
 #include	"comctlfile.h"

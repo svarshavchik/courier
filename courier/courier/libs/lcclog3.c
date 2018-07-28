@@ -4,7 +4,7 @@
 */
 
 #include	"courier.h"
-#include	"courier_lib_config.h"
+#include	"libs/courier_lib_config.h"
 #include	"sbindir.h"
 #include	<string.h>
 #include	<stdio.h>

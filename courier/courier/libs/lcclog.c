@@ -4,7 +4,7 @@
 */
 
 #if	HAVE_CONFIG_H
-#include	"courier_lib_config.h"
+#include	"libs/courier_lib_config.h"
 #endif
 
 #include	"courier.h"
