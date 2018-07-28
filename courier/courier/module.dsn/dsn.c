@@ -947,9 +947,12 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 		}
 	}
 
-	fprintf(fp, "%s\n\n--%s\nContent-Type: message/delivery-status\nContent-Transfer-Encoding: %s\n\nReporting-MTA: dns; %s\nArrival-Date: %s\n",
+	fprintf(fp, "%s\n\n--%s\nContent-Type: %s\nContent-Transfer-Encoding: %s\n\nReporting-MTA: dns; %s\nArrival-Date: %s\n",
 		dsnfooter,
 		boundary,
+		dsn8flag
+		? "message/global-delivery-status"
+		: "message/delivery-status",
 		dsn8flag ? "8bit":"7bit",
 		config_me(), from_time);
 
@@ -1062,7 +1065,10 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 	fprintf(fp, "\n--%s\n", boundary);
 
 	fprintf(fp, "Content-Type: %s\nContent-Transfer-Encoding: %s\n\n",
-		returnmsg ? "message/rfc822":"text/rfc822-headers; charset=\"utf-8\"",
+		returnmsg ?
+		(msg8flag ? "message/global":"message/rfc822"):
+		(msg8flag ? "message/global-headers; charset=\"utf-8\""
+		 :"text/rfc822-headers; charset=\"utf-8\""),
 		msg8flag ? "8bit":"7bit");
 
 	if (print_message(datfile, fp, returnmsg))

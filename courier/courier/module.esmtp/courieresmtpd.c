@@ -540,12 +540,13 @@ const char *q=skipaddress(&p);
 
 static int domailfrom(const char *p, const char *q)
 {
-const char *r, *s;
-char	retformat=0;
-const char *envid=0;
-size_t	envidlen=0;
-char	*buf;
-int	rc;
+	const char *r, *s;
+	char	retformat=0;
+	const char *envid=0;
+	size_t	envidlen=0;
+	char	*buf;
+	int	rc;
+	int	smtputf8=0;
 
 	hasexdata=0;
 	hasverp=0;
@@ -638,6 +639,19 @@ int	rc;
 				l=n;
 			}
 		}
+		else if (s - r >= 8 &&
+#if HAVE_STRNCASECMP
+			 strncasecmp(r, "SMTPUTF8", 8)
+#else
+			 strnicmp(r, "SMTPUTF8", 8)
+#endif
+			 == 0)
+		{
+			if (s-r == 8 || r[8] == '=')
+			{
+				smtputf8=1;
+			}
+		}
 		r= s-1;
 	}
 
@@ -659,6 +673,10 @@ int	rc;
 	if (hasstarttls)
 	{
 		strcat(buf, "S{STARTTLS}");
+	}
+	if (smtputf8)
+	{
+		strcat(buf, "8");
 	}
 
 	if (envidlen)

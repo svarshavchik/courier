@@ -1874,7 +1874,7 @@ static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
 			if (*p & 0x80)
 			{
 				if (errmsg)
-					*errmsg="553-The addressee's mail"
+					*errmsg="550-The addressee's mail"
 						"server "
 						"does not support the sender's "
 						"international E-mail address.";

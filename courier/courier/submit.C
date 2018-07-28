@@ -528,6 +528,7 @@ struct mailfrominfo {
 	AliasSearch	*asptr;
 	std::string	*envid;
 	char	dsnformat;
+	int	smtputf8;
 	struct	rw_transport *module;
 	int	flag;
 	std::string	helohost;
@@ -592,6 +593,9 @@ static void setmsgopts(struct mailfrominfo &mfi, std::string optstring)
 		case 'S':
 			if (opts.size() && security.size() == 0)
 				security=opts;
+			break;
+		case '8':
+			mfi.smtputf8=1;
 			break;
 		}
 	}
@@ -896,6 +900,7 @@ static int getsender(Input &input, struct rw_transport *module)
 	frominfo.flag=1;
 	frominfo.module=module;
 	frominfo.dsnformat=0;
+	frominfo.smtputf8=0;
 	frominfo.envid=NULL;
 	frominfo.receivedspfhelo=NULL;
 	frominfo.receivedspfmailfrom=NULL;
@@ -932,7 +937,7 @@ static int getsender(Input &input, struct rw_transport *module)
 	buf=utf8ize_address(buf);
 
 	if ((q=getenv("DSNRET")) != 0)
-		setmsgopts(frominfo, utf8ize_address(q));
+		setmsgopts(frominfo, q);
 
 	const char *tcpremoteip=getenv("TCPREMOTEIP");
 	int bofhcheckhelo=(q=getenv("BOFHCHECKHELO")) == NULL ? 0:atoi(q);
@@ -1762,7 +1767,11 @@ char	*sender=rfc822_gettok(addresst);
 	line += " with ";
 
 	if (rfc3848_receivedwith && *rfc3848_receivedwith)
+	{
+		if (mf->smtputf8)
+			line += "UTF8";
 		line += rfc3848_receivedwith;
+	}
 	else
 		line += mf->module->name;
 

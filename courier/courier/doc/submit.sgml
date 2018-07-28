@@ -23,6 +23,7 @@
       <arg choice="opt" rep="norepeat">-vhost=<replaceable>address</replaceable></arg>
       <arg choice="opt" rep="norepeat">-bcc</arg>
       <arg choice="opt" rep="norepeat">-delay=<replaceable>n</replaceable></arg>
+      <arg choice="opt" rep="norepeat">-rfc3848=<replaceable>type</replaceable></arg>
       <arg choice="req" rep="norepeat">module</arg>
       <arg choice="req" rep="norepeat">"<replaceable>type</replaceable>; <replaceable>hostid</replaceable>"</arg>
     </cmdsynopsis>
@@ -133,6 +134,17 @@ time (default: 0 seconds -- immediate delivery).</para>
       </varlistentry>
 
       <varlistentry>
+	<term>-rfc3848=<replaceable>text</replaceable></term>
+
+	<listitem>
+	  <para>
+	    Specify the RFC 3848 transmission type label to be included
+	    in the message's <quote>Received:</quote> header
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
 	<term>-vhost=<replaceable>address</replaceable></term>
 	<listitem>
 	  <para>
@@ -191,13 +203,22 @@ empty string, optionally followed by tab, then "format", another tab, then
 "envid".</para>
 
     <para>
-<replaceable>format</replaceable> is one or more chatacters that specify delivery status
-notification processing, and other message options. The 'F' character
-specifies that delivery status notifications should include the entire
-message, 'H' specifies just the headers of the message should be included.
-Absence of either 'F' or 'H' specifies no preference. "S{keyword}" specifies
-the optional SECURITY extension keyword for this message. The 'V' character in
-<replaceable>format</replaceable> sets the VERP extension flag for this message.</para>
+      <replaceable>format</replaceable> is one or more chatacters that
+      specify delivery status
+      notification processing, and other message options. The 'F' character
+      specifies that delivery status notifications should include the entire
+      message, 'H' specifies just the headers of the message should be included.
+      Absence of either 'F' or 'H' specifies no preference. "S{keyword}"
+      specifies
+      the optional SECURITY extension keyword for this message.
+      The 'V' character in
+      <replaceable>format</replaceable> sets the VERP extension flag for
+      this message.
+      The '8' character is a flag indicating that the message was received
+      via SMTP with a <literal>SMTPUTF8</literal> keyword, this prepends
+      <quote>UTF8</quote> to the transmission type passed in via
+      <option>-rfc3848</option>.
+    </para>
 
     <para>
 <replaceable>envid</replaceable> is the original message envelope ID, that will be shown on any
