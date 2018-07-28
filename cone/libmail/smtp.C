@@ -1214,6 +1214,11 @@ void mail::smtp::rsetResponse(int result, string message)
 			mailfrom += " VERP";
 	}
 
+	if (hasCapability("SMTPUTF8"))
+	{
+		mailfrom += " SMTPUTF8";
+	}
+
 	if (info.messageInfo.options.count("SECURITY") > 0)
 	{
 		string sec=info.messageInfo.options.find("SECURITY")->second;
