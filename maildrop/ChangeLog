@@ -1,3 +1,11 @@
+2018-07-29  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mailbot: generate message/global, message/global-delivery-status,
+	and message/global-headers, when needed, when formatting autoreplies.
+
+	* reformime: -m option uses message/global instead of message/rfc822
+	for UTF8 messages.
+
 2018-06-25  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rfc2045/reformime.c (main2): fix crash if -x or -X is specified

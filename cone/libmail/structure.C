@@ -240,7 +240,7 @@ std::string mail::mimestruct::parameterList::toString(string s) const
 }
 
 mail::mimestruct::mimestruct()
-	: content_size(0), content_lines(0),
+	: content_size(0), content_lines(0), smtputf8(false),
 	  message_rfc822_envelope(0), parent(0)
 {
 }
@@ -255,6 +255,13 @@ mail::mimestruct::mimestruct(const mail::mimestruct &cpy)
 	  message_rfc822_envelope(0), parent(0)
 {
 	(*this)=cpy;
+}
+
+bool mail::mimestruct::messagerfc822() const
+{
+	std::string s=type + "/" + subtype;
+
+	return rfc2045_message_content_type(s.c_str());
 }
 
 mail::mimestruct &mail::mimestruct::operator=(const mail::mimestruct &cpy)

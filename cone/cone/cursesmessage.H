@@ -136,6 +136,8 @@ public:
 		virtual void operator()(std::string text);
 	};
 
+	class SaveTextParseMime;
+
 	// Helper class for prompting for encryption info
 
 	class EncryptionInfo {

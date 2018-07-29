@@ -1,3 +1,9 @@
+2018-07-29  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Enable UTF8 mode when sending SMTP mail. Recognize and display
+	UTF8 messages and delivery status notifications. Use message/global
+	MIME type when forwarding a UTF8 message.
+
 2018-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Enable UTF8 mode when connecting to IMAP and POP3 servers that

@@ -25,6 +25,7 @@
 #include "passwordlist.H"
 #include "gpglib/gpglib.h"
 #include "messagesize.H"
+#include "rfc2045/rfc2045.h"
 #include "rfc822/rfc822.h"
 #include "rfc822/rfc822hdr.h"
 #include "curses/cursesscreen.H"
@@ -104,6 +105,28 @@ void CursesMessage::SaveText::operator()(std::string text)
 	o.write(&*text.begin(), text.size());
 }
 
+class CursesMessage::SaveTextParseMime : public SaveText {
+
+public:
+	struct rfc2045 *rfc2045p;
+
+	SaveTextParseMime(std::ostream &o)
+		: SaveText(o),
+		  rfc2045p(rfc2045_alloc())
+	{
+	}
+
+	~SaveTextParseMime()
+	{
+		rfc2045_free(rfc2045p);
+	}
+
+	void operator()(std::string text)
+	{
+		rfc2045_parse(rfc2045p, text.c_str(), text.size());
+		SaveText::operator()(text);
+	}
+};
 
 ///////////////////////////////////////////////////////////////////
 
@@ -354,12 +377,15 @@ bool (CursesMessage::* CursesMessage::getHandler(mail::mimestruct &s))(size_t)
 	if (s.type == "TEXT")
 	{
 		if (s.subtype == "PLAIN" ||
-		    s.subtype == "RFC822-HEADERS" ||
 		    s.subtype == "HTML" ||
 		    (s.subtype == "X-GPG-OUTPUT" &&
 		     tmpaccount && usingTmpaccount))
 			return &CursesMessage::readTextPlain;
 	}
+
+	if (rfc2045_message_headers_content_type( (s.type + "/" + s.subtype)
+						  .c_str()))
+		return &CursesMessage::readTextPlain;
 
 	if (reformatCompletedFunc)
 		// Not showing the message, downloading it for some other
@@ -2708,7 +2734,15 @@ void CursesMessage::forward()
 
 		std::ofstream otmpfile(tmpfile.c_str());
 
-		otmpfile << "Content-Type: message/rfc822" << std::endl
+		extern char should_be_same[sizeof(RFC2045_MIME_MESSAGE_RFC822)
+					   ==
+					   sizeof(RFC2045_MIME_MESSAGE_GLOBAL)
+					   ? 1:-1];
+
+		(void)sizeof(should_be_same);
+
+		otmpfile << "Content-Type: " RFC2045_MIME_MESSAGE_RFC822
+			 << std::endl
 			 << "Content-Description: "
 			 << shown[n].envelope->subject << std::endl
 			 << std::endl;
@@ -2717,7 +2751,7 @@ void CursesMessage::forward()
 		statusBar->status(_("Downloading message..."),
 				  statusBar->INPROGRESS);
 
-		SaveText save_attachment(otmpfile);
+		SaveTextParseMime save_attachment(otmpfile);
 
 		if (shown[n].structure == NULL ||
 		    shown[n].structure->getParent() == NULL)
@@ -2734,6 +2768,14 @@ void CursesMessage::forward()
 		}
 
 		otmpfile << std::flush;
+
+		if (save_attachment.rfc2045p->rfcviolation &
+		    RFC2045_ERR8BITHEADER)
+		{
+			otmpfile.seekp(0);
+			otmpfile << "Content-Type: " RFC2045_MIME_MESSAGE_GLOBAL
+				 << std::flush;
+		}
 
 		if (otmpfile.fail() ||
 		    (otmpfile.close(), rename(tmpfile.c_str(),

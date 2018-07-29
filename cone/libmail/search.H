@@ -71,7 +71,7 @@ public:
 		// Internal date:
 
 		before,
-		on,    
+		on,
 		since,
 
 		// Sent date,

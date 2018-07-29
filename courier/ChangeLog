@@ -1,3 +1,15 @@
+2018-07-29  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mailbot: generate message/global, message/global-delivery-status,
+	and message/global-headers, when needed, when formatting autoreplies.
+
+	* reformime: -m option uses message/global instead of message/rfc822
+	for UTF8 messages.
+
+	* sqwebmail: recognize message/global and message/rfc822 attachments.
+	Update very old login error message that references a long gone-by
+	era.
+
 2018-07-28  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier: implement the SMTPUTF8 extension.

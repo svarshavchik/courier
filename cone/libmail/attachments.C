@@ -1,5 +1,5 @@
 /*
-** Copyright 2004-2008, Double Precision Inc.
+** Copyright 2004-2018, Double Precision Inc.
 **
 ** See COPYING for distribution information.
 */
@@ -8,6 +8,7 @@
 #include "headers.H"
 #include "rfc822/encode.h"
 #include "rfc2045/rfc2045charset.h"
+#include "rfc2045/rfc2045.h"
 #include <sys/time.h>
 #include "attachments.H"
 #include <stdio.h>
@@ -83,7 +84,7 @@ void mail::Attachment::check_multipart_encoding()
 	const char *p=multipart_type.c_str();
 
 	if (strncmp(p, "MULTIPART/", 10) == 0 ||
-	    strcmp(p, "MESSAGE/RFC822") == 0)
+	    rfc2045_message_content_type(p))
 		transfer_encoding="8bit";
 }
 
@@ -194,7 +195,7 @@ void mail::Attachment::add_content_encoding()
 	    // Already have the header. Must be already encoded.
 
 	    strncmp(p, "MULTIPART/", 10) == 0 ||
-	    strcmp(p, "MESSAGE/RFC822") == 0)
+	    rfc2045_message_content_type(p))
 	{
 		transfer_encoding="8bit";
 		return;
@@ -323,7 +324,7 @@ void mail::Attachment::common_multipart_init()
 
 	mail::upper(multipart_type);
 
-	if (multipart_type == "MESSAGE/RFC822")
+	if (rfc2045_message_content_type(multipart_type.c_str()))
 	{
 		if (parts.size() > 1) // Woot?
 		{

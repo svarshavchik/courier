@@ -88,10 +88,7 @@ public:
 
 	std::string type, subtype;	// text, plain
 
-	bool messagerfc822() const
-	{
-		return type == "MESSAGE" && subtype == "RFC822";
-	}
+	bool messagerfc822() const;
 
 	bool multipartsigned() const
 	{
@@ -120,6 +117,9 @@ public:
 	std::string content_disposition;
 
 	parameterList content_disposition_parameters;
+
+	bool smtputf8;
+	/* 8 bit headers exist, set only when parsing a message from a file. */
 
 	mimestruct();
 	~mimestruct();

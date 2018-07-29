@@ -1374,6 +1374,7 @@ void mail::generic::genericMakeMimeStructure(mail::mimestruct &s,
 
 	s.content_size=end_pos - start_body;
 	s.content_lines=nbodylines;
+	s.smtputf8=rfcp->rfcviolation & RFC2045_ERR8BITHEADER ? true:false;
 
 	try {
 		while (h && rfc2045header_get(h, &header, &value, 0) == 0)
