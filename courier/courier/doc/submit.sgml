@@ -238,7 +238,7 @@ formatted as follows:</para>
 
     <informalexample>
       <programlisting format="linespecific">
-address<token>&lt;tab&gt;</token>dsn<token>&lt;tab&gt;</token>orecipient
+address<token>&lt;tab&gt;</token>dsn<token>&lt;tab&gt;</token>oreceipient
 </programlisting>
     </informalexample>
 
@@ -248,11 +248,16 @@ by the tab character, then zero or more characters specifying <replaceable>dsn</
 a tab character, then the <replaceable>orecipient</replaceable> value.</para>
 
     <para>
-<replaceable>dsn</replaceable> is zero or more of the following characters: S - send a delivery
-status notification upon a successful delivery to this address, F - send a DSN
-upon a failed delivery, D - send a DSN upon a mail delay, N - never send a
-DSN. <replaceable>orecipient</replaceable> is the "Original Recipient", as specified in RFC1894,
-using xtext encoding.</para>
+      <replaceable>dsn</replaceable> is zero or more of the following
+      characters: S - send a delivery
+      status notification upon a successful delivery to this address,
+      F - send a DSN upon a failed delivery,
+      D - send a DSN upon a mail delay,
+      N - never send a DSN.
+      <replaceable>oreceipient</replaceable> is the "Original Recipient",
+      as specified in RFC1894, except that is not encoded using xtext
+      encoding, but in unencoded UTF-8.
+    </para>
 
     <para>
 <command>submit</command> will print a response to each recipient (see "RESPONSES

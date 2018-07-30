@@ -2028,13 +2028,6 @@ static void mk_one_receip_idna_or_utf8(struct esmtp_info *info,
 				receip->our_rcpt_error=libesmtp_unicode_err;
 				return;
 			}
-
-		for (p=utf8_or_idna_orig_receip; p && *p; ++p)
-			if ( (*p) & 0x80 )
-			{
-				receip->our_rcpt_error=libesmtp_unicode_err;
-				return;
-			}
 	}
 
 	(*builder)("RCPT TO:<", arg);
@@ -2091,8 +2084,11 @@ static void mk_one_receip_idna_or_utf8(struct esmtp_info *info,
 
 	if (utf8_or_idna_orig_receip)
 	{
+		char *encoded=rfc6533_encode(utf8_or_idna_orig_receip,
+					     !info->hassmtputf8);
 		(*builder)(" ORCPT=", arg);
-		(*builder)(utf8_or_idna_orig_receip, arg);
+		(*builder)(encoded, arg);
+		free(encoded);
 	}
 
 	(*builder)("\r\n", arg);

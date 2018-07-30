@@ -473,15 +473,12 @@ static int hexconvert(char a, char b)
 static int is8bitreceipient(struct ctlfile *ctf, unsigned nreceipient)
 {
 int	flag=0;
-const char *p=ctf->oreceipients[nreceipient];
+const char *p=ctf->oreceipients_utf8[nreceipient];
 int	infoptr;
 
-	if (p && *p)
+	if (p)
 		while (*p)
 		{
-			if (*p == '+' && p[1] && p[2] &&
-			    hexconvert(p[1], p[2]) & 0x80)
-				return (1);
 			if (*p & 0x80)
 				return (1);
 			p++;
@@ -535,18 +532,9 @@ static void print_xtext(FILE *fp, const char *xtext)
 
 static void print_receipient(FILE *fp, struct ctlfile *ctf, unsigned n)
 {
-	fputs(" <", fp);
-	if (ctf->oreceipients[n] &&
-#if	HAVE_STRNCASECMP
-		strncasecmp(ctf->oreceipients[n], "rfc822;", 7)
-#else
-		strnicmp(ctf->oreceipients[n], "rfc822;", 7)
-#endif
-		== 0)
-		print_xtext(fp, ctf->oreceipients[n]+7);
-	else
-		fprintf(fp, "%s", ctf->receipients[n]);
-	putc('>', fp);
+	fprintf(fp, "<%s>",
+		(ctf->oreceipients_utf8[n] && ctf->oreceipients_utf8[n][0]
+		 ? ctf->oreceipients_utf8[n] : ctf->receipients[n]));
 }
 
 /* Format delivery info in the plain text portion of the response. */
@@ -1010,23 +998,18 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 		fprintf(fp, "\nFinal-Recipient: rfc822; %s\nAction: %s\n",
 			ctf->receipients[i], action);
 
-		if (ctf->oreceipients[i] && ctf->oreceipients[i][0])
+		if (ctf->oreceipients_utf8[i] &&
+		    ctf->oreceipients_utf8[i][0])
 		{
-			const char *c;
+			char *encoded=rfc6533_encode(ctf->oreceipients_utf8[i],
+						     0);
+			char *p=strchr(encoded, ';');
+			if (p) *p=0;
 
-			fprintf(fp, "Original-Recipient: ");
-			for (c=ctf->oreceipients[i]; *c; c++)
-			{
-				putc(*c, fp);
-				if (*c == ';')
-				{
-					putc(' ', fp);
-					c++;
-					break;
-				}
-			}
-			print_xtext(fp, c);
-			fprintf(fp, "\n");
+			fprintf(fp, "Original-Recipient: %s; %s\n",
+				encoded,
+				ctf->oreceipients_utf8[i]);
+			free(encoded);
 		}
 		fprintf(fp, "Status: %s\n", status);
 

@@ -239,7 +239,7 @@ void SubmitFile::AddReceipient(const char *r,
 	if (ctlfile.fd() < 0)
 		openctl();
 	ctlfile << COMCTLFILE_RECEIPIENT << r << std::endl
-		<< COMCTLFILE_ORECEIPIENT << (orig ? orig:"") << std::endl
+		<< COMCTLFILE_ORECEIPIENTUTF8 << (orig ? orig:"") << std::endl
 		<< COMCTLFILE_DSN << (dsn ? dsn:"") << std::endl;
 
 	if (delivered)

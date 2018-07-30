@@ -46,7 +46,7 @@ struct ctlfile {
 
 	const char *sender;		/* Envelope sender */
 	char **receipients;		/* Receipients */
-	char **oreceipients;		/* Original receipients */
+	char **oreceipients_utf8;	/* Original receipients */
 	char **dsnreceipients;		/* DSN flags */
 	char **delstatus;		/* Per-receipient delivery status */
 	unsigned nreceipients;		/* # of receipients */
@@ -84,7 +84,7 @@ time_t ctlfile_getnextattempt(struct ctlfile *);
 
 #define	COMCTLFILE_SENDER	's'
 #define	COMCTLFILE_RECEIPIENT	'r'
-#define	COMCTLFILE_ORECEIPIENT	'R'
+#define	COMCTLFILE_ORECEIPIENTUTF8	'R'
 #define	COMCTLFILE_DSN		'N'
 #define	COMCTLFILE_ENVID	'e'
 #define	COMCTLFILE_AUTHNAME	'i'

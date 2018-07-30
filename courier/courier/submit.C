@@ -2436,10 +2436,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 
 			if (*oaddress == 0)
 			{
-			char	*p=dsnencodeorigaddr(address);
-
-				oaddressbuf=p;
-				free(p);
+				oaddressbuf=address;
 				oaddress=oaddressbuf.c_str();
 			}
 

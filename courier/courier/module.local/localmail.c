@@ -394,6 +394,9 @@ static void dofwd(const char *addr, const char *from, const char *fromuser,
 	{
 		char	*p;
 
+		if (!origuser)
+			origuser="";
+
 		p=strcat(strcat(strcpy(courier_malloc(
 			strlen(addr)+strlen(origuser)+4), addr),
 				"\tF\t"), origuser);
@@ -435,18 +438,16 @@ char	buf[BUFSIZ];
 int	waitstat;
 char	*sender=verp_getsender(ctf, ctf->receipients[rcptnum]);
 
-const	char *oreceipient;
-char	*oreceipients=0;
+const	char *oreceipient_utf8;
 
-	if ( ctf->oreceipients[rcptnum] == 0 ||
-			ctf->oreceipients[rcptnum][0])
+	if ( ctf->oreceipients_utf8[rcptnum] == 0 ||
+	     ctf->oreceipients_utf8[rcptnum][0])
 	{
-		oreceipient=ctf->oreceipients[rcptnum];
+		oreceipient_utf8=ctf->oreceipients_utf8[rcptnum];
 	}
 	else
 	{
-		oreceipient=oreceipients=dsnencodeorigaddr(
-			ctf->receipients[rcptnum]);
+		oreceipient_utf8=ctf->receipients[rcptnum];
 	}
 
 	++maxfd;
@@ -492,7 +493,7 @@ char	*oreceipients=0;
 				char *fwduser_ace=udomainace(fwduser);
 
 				fwdmsg(buf, l, sender, fwduser_ace,
-				       oreceipient);
+				       oreceipient_utf8);
 				free(fwduser_ace);
 			}
 		}
@@ -574,14 +575,10 @@ char	*oreceipients=0;
 					"Message delivered.",
 					COMCTLFILE_DELSUCCESS, " l");
 			}
-			if (oreceipients)
-				free (oreceipients);
 			return;
 		case EX_SOFTWARE:
 			ctlfile_append_reply(ctf, rcptnum,
 					"", COMCTLFILE_DELFAIL_NOTRACK, 0);
-			if (oreceipients)
-				free (oreceipients);
 			return;
 
 
@@ -599,12 +596,8 @@ char	*oreceipients=0;
 		default:
 			ctlfile_append_reply(ctf, rcptnum,
 					"", COMCTLFILE_DELDEFERRED, 0);
-			if (oreceipients)
-				free (oreceipients);
 			return;
 		}
 
 	ctlfile_append_reply(ctf, rcptnum, "", COMCTLFILE_DELFAIL, 0);
-	if (oreceipients)
-		free (oreceipients);
 }

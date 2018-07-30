@@ -32,6 +32,7 @@
 #include	"comsubmitclient.h"
 #include	"comreadtime.h"
 #include	"rfc822/rfc822.h"
+#include	"rfc2045/rfc2045.h"
 #include	"waitlib/waitlib.h"
 #include	"esmtpiov.h"
 #include	"esmtpconfig.h"
@@ -775,8 +776,8 @@ static int rcpttolocal(const char *p, const char *r, const char *q)
 static int dorcptto2(const char *p, const char *q)
 {
 int	notifyn=0,notifyf=0,notifys=0,notifyd=0;
-const char *orcpt=0;
-int	orcptlen=0;
+char	*orcpt_utf8=0;
+size_t  orcpt_utf8_len=0;
 const char *r, *s;
 char	*t, *buf;
 const char *relayclient=getenv("RELAYCLIENT");
@@ -828,13 +829,24 @@ int	rc;
 #endif
 			== 0)
 		{
+			char *encoded_orcpt;
+
 			r += 6;
-			orcpt=r;
-			orcptlen=s-r;
+
+			encoded_orcpt=malloc(s-r+1);
+			if (!encoded_orcpt)
+				abort();
+			memcpy(encoded_orcpt, r, s-r);
+			encoded_orcpt[s-r]=0;
+			orcpt_utf8=rfc6533_decode(encoded_orcpt);
+			free(encoded_orcpt);
 		}
 	}
 
-	buf=courier_malloc(q-p + relayclientl + orcptlen + 10);
+	if (orcpt_utf8)
+		orcpt_utf8_len=strlen(orcpt_utf8);
+
+	buf=courier_malloc(q-p + relayclientl + orcpt_utf8_len + 10);
 	memcpy(buf, p, q-p);
 	t=buf + (q-p);
 	if (relayclientl)
@@ -854,9 +866,12 @@ int	rc;
 			*t++ = 'D';
 	}
 	*t++ = '\t';
-	if (orcptlen)
-		memcpy(t, orcpt, orcptlen);
-	t[orcptlen]=0;
+
+	if (orcpt_utf8_len)
+		memcpy(t, orcpt_utf8, orcpt_utf8_len);
+	t[orcpt_utf8_len]=0;
+	if (orcpt_utf8)
+		free(orcpt_utf8);
 
 	submit_write_message(buf);
 	free(buf);

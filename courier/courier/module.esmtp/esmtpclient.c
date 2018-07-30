@@ -845,7 +845,7 @@ static struct esmtp_rcpt_info *mk_rcpt_info(struct moduledel *del,
 
 		p[i].address=del->receipients[i*2+1];
 		p[i].dsn_options=ctf->dsnreceipients[n];
-		p[i].orig_receipient=ctf->oreceipients[n];
+		p[i].orig_receipient=ctf->oreceipients_utf8[n];
 	}
 
 	return p;

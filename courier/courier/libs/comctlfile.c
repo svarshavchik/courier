@@ -125,13 +125,13 @@ static char deferred_status[2]={COMCTLFILE_DELDEFERRED, 0};
 
 	p->sender="";
 	p->receipients=(char **)courier_malloc(nreceipients*sizeof(char *));
-	p->oreceipients=(char **)courier_malloc(nreceipients*sizeof(char *));
+	p->oreceipients_utf8=(char **)courier_malloc(nreceipients*sizeof(char *));
 	p->dsnreceipients=(char **)courier_malloc(nreceipients*sizeof(char *));
 	p->delstatus=(char **)courier_malloc(nreceipients*sizeof(char *));
 
 	for (i=0; i<nreceipients; i++)
 	{
-		p->receipients[i]=p->oreceipients[i]=p->dsnreceipients[i]=0;
+		p->receipients[i]=p->oreceipients_utf8[i]=p->dsnreceipients[i]=0;
 		p->delstatus[i]=deferred_status;
 	}
 
@@ -144,9 +144,9 @@ static char deferred_status[2]={COMCTLFILE_DELDEFERRED, 0};
 		case COMCTLFILE_RECEIPIENT:
 			p->receipients[rcnt++]=p->lines[i]+1;
 			break;
-		case COMCTLFILE_ORECEIPIENT:
+		case COMCTLFILE_ORECEIPIENTUTF8:
 			if (orcnt < nreceipients)
-				p->oreceipients[orcnt++]=p->lines[i]+1;
+				p->oreceipients_utf8[orcnt++]=p->lines[i]+1;
 			break;
 		case COMCTLFILE_DSN:
 			if (dsncnt < nreceipients)
@@ -167,7 +167,7 @@ static char deferred_status[2]={COMCTLFILE_DELDEFERRED, 0};
 
 void ctlfile_close(struct ctlfile *p)
 {
-	free( p->oreceipients );
+	free( p->oreceipients_utf8 );
 	free( p->dsnreceipients );
 	free( p->receipients );
 	free( p->lines );
