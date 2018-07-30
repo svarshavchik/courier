@@ -37,7 +37,7 @@
 +-------------+        |                               |      +--------------+
 |courieresmtpd|   -----|    +------+     +----------+  |----&gt; | courieresmtp |
 +-------------+        |    |      |     |          |  |      +--------------+
-                       +---&gt;|submit| --&gt; | courierd |--+ 
+                       +---&gt;|submit| --&gt; | courierd |--+
 +-------------+        |    |      |     |          |  |      +--------------+
 | courierdsn  |   -----/    +------+     +----------+  |----&gt; |  courierdsn  |
 +-------------+                                        |      +--------------+
@@ -557,6 +557,15 @@
   <p>The envid of this message, as specified in RFC1891. If this
   record is missing, no ENVID was specified</p>
 
+  <p>Mxxxxxxxxxxx</p>
+
+  <p>The 'M' record contains this message's "message id."</p>
+
+  <p>ixxxxxxxxxxx</p>
+
+  <p>The 'i' record specifies the name used to authenticate the
+  sender, if authentication was provided.</p>
+
   <p>tx</p>
 
   <p>'x' is either 'F' or 'H', specifying FULL or HDRS in the RET
@@ -568,6 +577,10 @@
   <p>Expiration time of this message. If undeliverable after that
   time, the message gets bounced. "tttttt" would be the time in
   seconds, as returned by the time() system call.</p>
+
+  <p>ptttttt</p>
+
+  <p>Expiration time of this message, for the fax module.</p>
 
   <p>Wtttttt</p>
 
@@ -659,6 +672,52 @@
   individual output module. When one <em>Courier</em> server sends mail via
   ESMTP to another <em>Courier</em> server, only one copy of VERPed messages
   are sent.</p>
+
+  <p>vxxxxxxxxxxx</p>
+
+  <p>The 'v' record recordss the vhost argument given to submit,
+  or the domain of authuser if no argument was given on the command
+  line.</p>
+
+  <p>Xxxxxxxxxxxx</p>
+
+  <p>The 'X' record indicates that the message has been cancelled,
+  and records the reason given for cancellation.</p>
+
+  <p>Axxxxxxxxxxx</p>
+
+  <p>The 'A' record indicates the timestamp of the next scheduled
+  delivery attempt.</p>
+
+  <p>m</p>
+
+  <p>The simple 'm' record indicates that the message has 8-bit
+  headers.</p>
+
+  <p>Lxxxxxxxxxxx</p>
+
+  <p>The 'L' record indicates a delay before the first delivery
+  attempt, in the format of the queuetime configuration setting.</p>
+
+  <p>Uxxxxxxxxxxx</p>
+
+  <p>The 'U' record flags messages that use Courier's SECURITY virtual
+    E-mail network extension.</p>
+
+  <p>uxxxxxxxxxxx</p>
+
+  <p>The 'u' record indicates the message source (local, smtp,
+  authsmtp, etc).</p>
+
+  <p>T</p>
+
+  <p>The simple 'T' record indicates that backscatter should
+  be suppressed.</p>
+
+  <p>Oxxxxxxxxxxx</p>
+
+  <p>'O' records indicate environment variable names and values
+  saved by the submit process.</p>
 
   <h3>Queue directories</h3><code>$localstatedir/msgs</code>
   contains the current message queue (messages not yet delivered).
