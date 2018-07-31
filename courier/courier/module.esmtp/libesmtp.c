@@ -2084,8 +2084,19 @@ static void mk_one_receip_idna_or_utf8(struct esmtp_info *info,
 
 	if (utf8_or_idna_orig_receip)
 	{
-		char *encoded=rfc6533_encode(utf8_or_idna_orig_receip,
-					     !info->hassmtputf8);
+		char *encoded;
+
+		if (info->hassmtputf8)
+		{
+			encoded=rfc6533_encode(utf8_or_idna_orig_receip, 0);
+		}
+		else
+		{
+			char *p=udomainace(utf8_or_idna_orig_receip);
+
+			encoded=rfc6533_encode(p, 1);
+			free(p);
+		}
 		(*builder)(" ORCPT=", arg);
 		(*builder)(encoded, arg);
 		free(encoded);

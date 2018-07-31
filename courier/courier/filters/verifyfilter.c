@@ -211,6 +211,13 @@ static void do_verify(struct verify_info *my_info,
 
 	memset(&mfi, 0, sizeof(mfi));
 	mfi.sender="";
+
+	/*
+	** mail_from_cmd should be called only after esmtp_connect(), so that
+	** it factors in the server's advertised capabilities.
+	**
+	** This is ok, because we don't need any capabilities.
+	*/
 	mail_from_cmd=esmtp_mailfrom_cmd(info, &mfi, &errmsg);
 
 	if (!mail_from_cmd)
