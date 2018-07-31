@@ -1,3 +1,7 @@
+2018-07-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: explicitly require libidn to build maildrop.
+
 2018-07-29  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* mailbot: generate message/global, message/global-delivery-status,

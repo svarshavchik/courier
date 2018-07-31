@@ -128,6 +128,12 @@ AM_CONDITIONAL(HAVE_DBLIBRARY, test "$dblibrary" != "")
 
 LIBS="$saveLIBS"
 
+PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+if test "$libidn" != "yes"
+then
+	AC_MSG_ERROR([libidn not found])
+fi
+
 AX_COURIER_UNICODE_VERSION
 
 AC_ARG_WITH(plentyofbeer,

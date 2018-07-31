@@ -1,5 +1,8 @@
 2018-07-29  Sam Varshavchik  <mrsam@courier-mta.com>
 
+	* courier: implement "utf-8" address type in delivery status
+	notifications.
+
 	* mailbot: generate message/global, message/global-delivery-status,
 	and message/global-headers, when needed, when formatting autoreplies.
 
