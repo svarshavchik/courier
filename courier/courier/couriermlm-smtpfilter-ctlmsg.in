@@ -1,0 +1,5 @@
+import SENDER
+`@bindir@/couriermlm smtpfilter-ctlmsg`
+
+EXITCODE=$RETURNCODE
+exit

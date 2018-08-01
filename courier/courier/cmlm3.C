@@ -236,6 +236,8 @@ int getinfodir(std::string dir, std::string address, int (*func)(std::string))
 {
 	struct	stat	stat_buf;
 
+	uaddrlower(address);
+
 	std::string::iterator b=address.begin(), e=address.end(),
 		p=std::find(b, e, '@');
 
@@ -246,8 +248,6 @@ int getinfodir(std::string dir, std::string address, int (*func)(std::string))
 		std::cerr << "Invalid address." << std::endl;
 		return (1);
 	}
-
-	uaddrlower(address);
 
 	std::string shared_lock_name=dir;
 
@@ -425,7 +425,14 @@ std::string readmsg()
 	for (j=0; j<i; j++)
 		if (msgbuf[j] == 0)	msgbuf[j]=' ';
 
-	return msgbuf;
+	std::string s(msgbuf, msgbuf+i);
+
+	do
+	{
+		std::cin.read(msgbuf, sizeof(msgbuf));
+	} while (std::cin.good());
+
+	return s;
 }
 
 //

@@ -1,3 +1,7 @@
+2018-07-31  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* rfc2045/reformime: parse utf-8 address types in DSNs.
+
 2018-07-30  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: explicitly require libidn to build maildrop.

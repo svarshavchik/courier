@@ -177,6 +177,10 @@ PERMS="
 @datadir@/couriermlm/webmlmsubinfo.tmpl.html		644
 @datadir@/couriermlm/webmlmsublist.tmpl.html		644
 
+@datadir@/couriermlm/couriermlm-rcptfilter-ctlmsg	644
+@datadir@/couriermlm/couriermlm-rcptfilter-msg		644
+@datadir@/couriermlm/couriermlm-smtpfilter-ctlmsg	644
+@datadir@/couriermlm/couriermlm-smtpfilter-msg		644
 "
 
 echo "$PERMS" | while read FILE MODE SPECIAL USER GROUP

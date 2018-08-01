@@ -1,0 +1,5 @@
+import SENDER
+import DEFAULT
+system '@bindir@/couriermlm rcptfilter-msg'
+EXITCODE=$RETURNCODE
+exit

@@ -165,6 +165,7 @@ int getinfo(std::string, int (*)(std::string));
 std::string myname();
 
 void uaddrlower(std::string &);
+std::string extract_alias_to_subscribe(const std::string &);
 
 int isfound(std::string);
 int sendmail(const char **, pid_t &);
@@ -181,5 +182,16 @@ int copyio(afxipipestream &, afxopipestream &);
 int copyio_noseek(afxipipestream &, afxopipestream &);
 int copyio_noseek_cnt(afxipipestream &, afxopipestream &, unsigned long *);
 int cmddigest(const std::vector<std::string> &);
+
+const char *is_cmd(const char *default_env,
+		   const char *cmd);
+
+struct savemsg_sink {
+
+	virtual void saveline(const std::string &)=0;
+	virtual void error(const std::string &)=0;
+};
+
+int savemsg(std::istream &, savemsg_sink &);
 
 #endif

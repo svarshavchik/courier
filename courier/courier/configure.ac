@@ -506,6 +506,10 @@ done
 
 AC_OUTPUT(Makefile courier.h \
 	courierctl.start \
+	couriermlm-rcptfilter-ctlmsg \
+	couriermlm-rcptfilter-msg \
+	couriermlm-smtpfilter-ctlmsg \
+	couriermlm-smtpfilter-msg \
 	dot-qmail-to-dot-courier.pl \
 	pop3d \
 	pop3d-ssl \

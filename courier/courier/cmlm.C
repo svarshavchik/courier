@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2009 Double Precision, Inc.
+** Copyright 2000-2018 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -7,6 +7,7 @@
 
 #include	"afx/afx.h"
 #include	"rfc822/rfc822.h"
+#include	"rfc2045/rfc2045.h"
 #include	"random128/random128.h"
 #include	"numlib/numlib.h"
 #include	"dbobj.h"
@@ -45,6 +46,7 @@
 #include "cmlmbounce.h"
 #include "cmlmcleanup.h"
 #include "cmlmfetch.h"
+#include "cmlmfilter.h"
 
 #include <string>
 #include <vector>
@@ -97,17 +99,66 @@ static struct ncmdtab {
 	{"digest", cmddigest},
 };
 
+static struct filtercmdtab {
+	const char *cmdname;
+	int (*cmdfunc)();
+} filtercmds[]=
+	{
+	 {"rcptfilter-msg", rcptfilter_msg},
+	 {"smtpfilter-msg", smtpfilter_msg},
+	 {"rcptfilter-ctlmsg", rcptfilter_ctlmsg},
+	 {"smtpfilter-ctlmsg", smtpfilter_ctlmsg},
+	};
+
 int main(int argc, char **argv)
 {
-	if (argc < 3)	usage();
-
 	setlocale(LC_ALL, "");
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGCHLD, SIG_DFL);
 
-const char *cmd=argv[1];
-const char *dir=argv[2];
+	size_t i;
+
+	if (argc == 2)
+	{
+		int (*cmdfunc)()=0;
+
+		for (i=0; i<sizeof(filtercmds)/sizeof(filtercmds[0]); ++i)
+		{
+			if (strcmp(filtercmds[i].cmdname, argv[1]) == 0)
+			{
+				cmdfunc=filtercmds[i].cmdfunc;
+				break;
+			}
+		}
+
+		if (!cmdfunc)
+		{
+			exit(1);
+		}
+
+		const char *listdir=getenv("LISTDIR");
+
+		if (!listdir || strchr(listdir, '.'))
+		{
+			std::cout << "500 Internal configuration error."
+				  << std::endl;
+			exit(1);
+		}
+		if (chdir(listdir) < 0)
+		{
+			std::cout << "500 " << listdir << ": "
+				  << strerror(errno) << std::endl;
+			exit(1);
+		}
+
+		exit((*cmdfunc)());
+	}
+
+	if (argc < 3)	usage();
+
+	const char *cmd=argv[1];
+	const char *dir=argv[2];
 
 	if (strcmp(cmd, "create") == 0)
 	{
@@ -136,8 +187,6 @@ const char *dir=argv[2];
 		exit(EX_SOFTWARE);
 	}
 
-unsigned	i;
-
 	std::vector<std::string> argv_cpy;
 
 	argv_cpy.insert(argv_cpy.end(), argv+3, argv+argc);
@@ -157,26 +206,40 @@ unsigned	i;
 
 static int help();
 
+const char *is_cmd(const char *default_env,
+		   const char *cmd)
+{
+	size_t l=strlen(cmd);
+
+	if (strncasecmp(default_env, cmd, l) == 0)
+	{
+		default_env += l;
+
+		if (*default_env == 0 || (*default_env == '-' &&
+					  *default_env != 0))
+			return default_env;
+	}
+
+	return NULL;
+}
+
 static int cmdctlmsg(const std::vector<std::string> &)
 {
-const char *cmd=getenv("DEFAULT");
+	const char *cmd=getenv("DEFAULT");
+	const char *ext;
 
 	if (!cmd)	cmd="";
 
 	if (strcasecmp(cmd, "help") == 0)
 		return (help());
 
-	if (strncasecmp(cmd, "subscribe", 9) == 0)
+	if ((ext=is_cmd(cmd, "subscribe")) != 0)
 	{
-		cmd += 9;
-		if (*cmd == 0 || (*cmd == '-' && *++cmd != 0))
-			return (dosub(cmd));
+		return dosub(ext);
 	}
-	else if (strncasecmp(cmd, "alias-subscribe", 15) == 0)
+	else if ((ext=is_cmd(cmd, "alias-subscribe")) != 0)
 	{
-		cmd += 15;
-		if (*cmd == 0 || (*cmd == '-' && *++cmd != 0))
-			return (doalias(cmd));
+		return (doalias(ext));
 	}
 	else if (strncasecmp(cmd, "modsubconfirm-", 14) == 0)
 	{
@@ -661,7 +724,42 @@ void post(std::istream &fs, const char *verp_ret)
 	mail.Send();
 }
 
+struct savemsg_totmpfile : public savemsg_sink {
+
+	std::ostream &o;
+
+	savemsg_totmpfile(std::ostream &oArg) : o(oArg) {}
+
+	void saveline(const std::string &s)
+	{
+		o << s << "\n";
+	}
+
+	void error(const std::string &errmsg)
+	{
+		std::cout << errmsg << std::endl;
+	}
+};
+
 static int savemsg(std::istream &msgs, std::ostream &fs)
+{
+	savemsg_totmpfile ttf(fs);
+
+	int rc=savemsg(msgs, ttf);
+
+	fs.flush();
+	fs.seekp(0);
+	if (fs.bad() || fs.fail())
+	{
+		perror(	"write" );
+		return (EX_TEMPFAIL);
+	}
+	std::cout << std::flush;
+
+	return rc;
+}
+
+int savemsg(std::istream &msgs, savemsg_sink &sink)
 {
 	const char *dt=getenv("DTLINE");
 	std::string buf;
@@ -669,12 +767,13 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 	int	n;
 	std::string keyword= cmdget_s("KEYWORD"), keywords;
 	int	adminrequest=0;
+	struct rfc2045 *rfc2045_parser=rfc2045_alloc();
 
 	if (keyword.size() > 0)
 		keywords="["+keyword+"]";
 
 	if (dt && *dt)
-		fs << dt << std::endl;
+		sink.saveline(dt);
 
 	{
 		std::ifstream ifs(HEADERADD);
@@ -684,7 +783,7 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 			std::string line;
 
 			while (std::getline(ifs, line).good())
-				fs << line << std::endl;
+				sink.saveline(line);
 		}
 	}
 
@@ -732,7 +831,7 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 			}
 
 			if (!dodelete)
-				fs << buf << std::endl;
+				sink.saveline(buf);
 			continue;
 		}
 
@@ -797,16 +896,21 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 			from=buf.substr(colon_pos);
 
 		if (!dodelete)
-			fs << buf << std::endl;
+		{
+			sink.saveline(buf);
+			rfc2045_parse(rfc2045_parser, buf.c_str(), buf.size());
+			rfc2045_parse(rfc2045_parser, "\n", 1);
+		}
 	}
 
-	fs << "\n";
-
+	sink.saveline("");
+	rfc2045_parse(rfc2045_parser, "\n", 1);
 
 	struct rfc822t *t=rfc822t_alloc_new(from.c_str(), 0, 0);
 
 	if (!t)
 	{
+		rfc2045_free(rfc2045_parser);
 		perror("malloc");
 		return (EX_TEMPFAIL);
 	}
@@ -816,6 +920,7 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 	if (!a)
 	{
 		rfc822t_free(t);
+		rfc2045_free(rfc2045_parser);
 		perror("malloc");
 		return (EX_TEMPFAIL);
 	}
@@ -829,6 +934,7 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 		{
 			rfc822a_free(a);
 			rfc822t_free(t);
+			rfc2045_free(rfc2045_parser);
 			perror("malloc");
 			return (EX_TEMPFAIL);
 		}
@@ -847,7 +953,9 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 
 	while (std::getline(msgs, buf).good())
 	{
-		fs << buf << std::endl;
+		sink.saveline(buf);
+		rfc2045_parse(rfc2045_parser, buf.c_str(), buf.size());
+		rfc2045_parse(rfc2045_parser, "\n", 1);
 
 		// Check for "subscribe/unsubscribe on the first line" wankers.
 
@@ -872,14 +980,19 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 			first_line=0;
 	}
 
-	fs.flush();
-	fs.seekp(0);
-	if (fs.bad() || fs.fail())
-	{
-		perror(	"write" );
-		return (EX_TEMPFAIL);
-	}
+	bool smtputf8=rfc2045_parser->rfcviolation & RFC2045_ERR8BITHEADER
+		? true:false;
 
+	rfc2045_free(rfc2045_parser);
+
+	if (smtputf8)
+	{
+		if (cmdget_s("UNICODE") != "1")
+		{
+			sink.error("This mailing list does not accept Unicode messages, yet.");
+			return (EX_SOFTWARE);
+		}
+	}
 	if ( cmdget_s("NOBOZOS") == "0")
 		adminrequest=0;
 
@@ -892,14 +1005,12 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 		{
 			while (std::getline(ifs, buf).good())
 			{
-				std::cout << buf << std::endl;
+				sink.error(buf);
 				flag=1;
 			}
 		}
 
-		if (!flag)	std::cout << "Administractive request blocked."
-					  << std::endl;
-		std::cout << std::flush;
+		if (!flag)	sink.error("Administrative request blocked.");
 		return (EX_SOFTWARE);
 	}
 
@@ -918,8 +1029,7 @@ static int savemsg(std::istream &msgs, std::ostream &fs)
 	{
 		if (rc == EX_NOUSER)
 		{
-			std::cout << "You are not subscribed to this mailing list."
-				  << std::endl;
+			sink.error("<" + from + "> is not subscribed to this mailing list.");
 		}
 		rc=EX_SOFTWARE;
 		return (rc);

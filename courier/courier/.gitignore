@@ -14,6 +14,10 @@
 /courierd.dist.in
 /courierldapaliasd
 /couriermlm
+/couriermlm-rcptfilter-ctlmsg
+/couriermlm-rcptfilter-msg
+/couriermlm-smtpfilter-ctlmsg
+/couriermlm-smtpfilter-msg
 /courierpop3d
 /courierpop3login
 /couriertcpd

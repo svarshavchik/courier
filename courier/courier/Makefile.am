@@ -129,6 +129,11 @@ mlmdata_DATA=\
 	warn2msg.tmpl \
 	webmlm.tmpl \
 \
+	couriermlm-rcptfilter-ctlmsg	\
+	couriermlm-rcptfilter-msg	\
+	couriermlm-smtpfilter-ctlmsg	\
+	couriermlm-smtpfilter-msg	\
+\
 	style.css.tmpl \
 	webmlmconfirm.html \
 	webmlmerror.tmpl.html \
@@ -343,7 +348,9 @@ courierpop3login$(EXEEXT): ../libs/imap/pop3login$(EXEEXT)
 
 couriermlm_SOURCES= cmlm.C cmlm.h cmlm2.C cmlm3.C cmlmarchive.C cmlmarchive.h \
 	cmlmbounce.C cmlmbounce.h cmlmcleanup.C cmlmcleanup.h cmlmcmdmisc.C \
-	cmlmcmdmisc.h cmlmdigest.C cmlmfetch.C cmlmfetch.h cmlmmoderate.C \
+	cmlmcmdmisc.h cmlmdigest.C cmlmfetch.C cmlmfetch.h \
+	cmlmfilter.C cmlmfilter.h \
+	cmlmmoderate.C \
 	cmlmmoderate.h cmlmstartmail.C cmlmstartmail.h cmlmsublist.C \
 	cmlmsublist.h cmlmsubunsub.C cmlmsubunsub.h cmlmsubunsubmsg.C \
 	cmlmsubunsubmsg.h

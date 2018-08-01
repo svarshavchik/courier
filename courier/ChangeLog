@@ -1,3 +1,10 @@
+2018-07-31  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* couriermlm: Implement smtp prefiltering. Implement blocking of
+	Unicode messages and E-mail addresses, by default.
+
+	* rfc2045/reformime: parse utf-8 address types in DSNs.
+
 2018-07-29  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier: implement "utf-8" address type in delivery status

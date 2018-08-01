@@ -7,6 +7,7 @@
 #include	"cmlm.h"
 #include	"cmlmsubunsubmsg.h"
 #include	"afx/afx.h"
+#include	"rfc822/rfc822.h"
 #include	"random128/random128.h"
 #include	"dbobj.h"
 #include	"mydirent.h"
@@ -47,6 +48,40 @@ int dounsub(const char *address)
 		0, 0));
 }
 
+extern "C" {
+#if 0
+}
+#endif
+
+static void display_header(const char *p,
+			   size_t cnt,
+			   void *dummy)
+{
+	std::string *s=reinterpret_cast<std::string *>(dummy);
+
+	s->append(p, cnt);
+}
+
+#if 0
+{
+#endif
+}
+std::string extract_alias_to_subscribe(const std::string &msg)
+{
+	std::string h(header_s(msg, "subject"));
+
+	std::string decoded_header;
+
+	rfc822_display_hdrvalue("Subject",
+				h.c_str(),
+				"utf-8",
+				display_header,
+				NULL,
+				&decoded_header);
+
+	return decoded_header;
+}
+
 // Set a write-only alias.
 
 int doalias(const char *address)
@@ -54,7 +89,7 @@ int doalias(const char *address)
 	std::string msg(readmsg());
 	std::string addr=returnaddr(msg, address);
 
-	std::string x_alias="X-Alias: " + header_s(msg, "subject");
+	std::string x_alias="X-Alias: " + extract_alias_to_subscribe(msg);
 
 	return (dosubunsub(msg, addr, "alias", "aliasconfirm", "sub.tmpl", 0,
 			   x_alias.c_str()));
