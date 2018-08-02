@@ -1,5 +1,5 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
+<!-- Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
 <refentry>
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
@@ -137,6 +137,26 @@ You need to set up
 jobs to run the <command>couriermlm hourly</command> and
 <command>couriermlm daily</command>
 commands, which perform regular mailing list maintenance.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>Enable SMTP pre-filtering</term>
+
+	  <listitem>
+	    <para>
+	      This step configures a hook that runs
+	      <command>couriermlm</command> as part of the SMTP
+	      transaction when receiving mail to a mailing list address,
+	      and rejects the mail if it would not be accepted to the
+	      mailing list instead of receiving the message and then
+	      generating a non-delivery report.
+	    </para>
+
+	    <para>
+	      This is an optional step that adds some complexity, but
+	      reduces mailing list management issues.
+	    </para>
 	  </listitem>
 	</varlistentry>
 
@@ -476,11 +496,12 @@ contain the following delivery instruction:</para>
 	      <para>
 		Messages to <quote>POST=subscribers</quote> lists from
 		non-subscribers get rejected by <command>couriermlm</command>
-		resulting in delivery failure. This generates a bounce
-		message. Unfortunately this can be abused to generate
-		a bandwidth amplification attack. To suppress bounces
-		as a result of delivery failure append "; exit 0" to the
-		<filename>.courier</filename> command:
+		resulting in delivery failure. This generates a
+		undeliverable message report, a <quote>bounce</quote>.
+		Unfortunately this can be abused to generate
+		a bandwidth amplification attack. Append "; exit 0"  to the
+		<filename>.courier</filename> command,
+		to suppress bounces from delivery failures:
 	      </para>
 	      <informalexample>
 		<programlisting format="linespecific">
@@ -492,6 +513,12 @@ contain the following delivery instruction:</para>
 	      <para>
 		This will suppress all bounces, though, not just the ones
 		resulting from messages from non-subscribers.
+		A better solution is to configure SMTP pre-filtering,
+		as described below. SMTP pre-filtering checks each message
+		before it's accepted from the sending SMTP server.
+		A rejected message does not generate a bounce message,
+		but returns an error to the sending SMTP server, leaving it
+		on the hook for generating bounces.
 	      </para>
 	    </note>
 	  </listitem>
@@ -542,6 +569,203 @@ list commands</ulink>", below.</para>
       </variablelist>
     </refsect2>
 
+    <refsect2>
+      <title>Configuring SMTP pre-filtering of mailing list messages</title>
+
+      <para>
+	This is an optional step that implements filtering of mailing list
+	messages before each message is received from the sending SMTP
+	server. Otherwise, Courier accepts all messages, and the rejected
+	ones generate a non-delivery report. The report gets E-mailed to the
+	purported sender. Another
+	option is to quietly ignore the rejections, as described above.
+	Either way, non-delivery notifications can sometimes be problematic.
+	This step adds some complexity to the mailing list configuration,
+	but mostly eliminates this problem.
+      </para>
+
+      <para>
+	SMTP pre-filtering uses the
+	<ulink url="localmailfilter.html"><citerefentry><refentrytitle>localmailfilter</refentrytitle><manvolnum>7</manvolnum></citerefentry></ulink>
+	interface.
+	The following instructions repeat some of the information from the
+	<citerefentry><refentrytitle>localmailfilter</refentrytitle><manvolnum>7</manvolnum></citerefentry>
+	documentation, for convenience. See that
+	documentation for complete information.
+      </para>
+
+      <para>
+	The following instructions reference a typical mailing list
+	configuration setup:
+      </para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    A reserved system account called <quote>lists</quote>.
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    A mailing list's address of
+	    <quote>lists-announcements@example.com</quote>, set up by
+	    installing
+	    <filename>$HOME/.courier-announcements</filename> and
+	    <filename>$HOME/.courier-announcements-default</filename>
+	    (and <filename>$HOME/.courier-announcements-owner</filename>)
+	    in <literal>lists</literal>'s home directory,
+	    as described above.
+	  </para>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    The mailing list directory
+	    (created by <command>couriermlm create</command>) is
+	    <filename>$HOME/announcements</filename>.
+	  </para>
+	</listitem>
+      </itemizedlist>
+
+      <para>
+	The first two steps enable SMTP mail filtering using
+	<command>maildrop</command>, and this should be done as root:
+      </para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>
+# echo @bindir@/maildrop >@sysconfdir@/maildropfilter</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <note>
+	<para>
+	  This enables SMTP mail filtering to all local mailboxes. All
+	  local mailboxes will be able to specify their SMTP mail filters,
+	  as explained in
+	  <citerefentry><refentrytitle>localmailfilter</refentrytitle><manvolnum>7</manvolnum></citerefentry>.
+	</para>
+      </note>
+
+      <para>
+	The second step installs <command>couriermlm</command> wrappers for
+	SMTP filters:
+      </para>
+      <blockquote>
+	<informalexample>
+	  <programlisting>
+# mkdir @sysconfdir@/maildroprcs
+# d="@datadir@/couriermlm"
+# ln -s $d/couriermlm-rcptfilter-ctlmsg @sysconfdir@/maildroprcs
+# ln -s $d/couriermlm-rcptfilter-msg @sysconfdir@/maildroprcs
+# ln -s $d/couriermlm-smtpfilter-ctlmsg @sysconfdir@/maildroprcs
+# ln -s $d/couriermlm-smtpfilter-msg @sysconfdir@/maildroprcs</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+	The remaining steps are done while logged in as the mailing list
+	owner's account:
+      </para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>
+$ mkdir $HOME/.mailfilters
+$ chmod 700 $HOME/.mailfilters</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+	Each mailing list needs four <command>maildrop</command> scripts
+	installed in <filename>.mailfilters</filename>. Using the
+	<quote>lists-announcements@example.com</quote> list as an example,
+	owned by <literal>lists</literal>'s account:
+      </para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>
+$ cd $HOME/.mailfilters
+$ cat rcptfilter-announcements
+
+
+LISTDIR="announcements"
+include '/etc/courier/maildroprcs/couriermlm-rcptfilter-msg'
+
+
+$ cat rcptfilter-announcements-default
+
+
+LISTDIR="announcements"
+FILENAMEPREFIX="rcptfilter-announcements"
+include '/etc/courier/maildroprcs/couriermlm-rcptfilter-ctlmsg'
+
+
+$ cat smtpfilter-announcements
+
+
+LISTDIR="announcements"
+include '/etc/courier/maildroprcs/couriermlm-smtpfilter-msg'
+
+
+$ cat smtpfilter-announcements-default
+
+
+LISTDIR="announcements"
+FILENAMEPREFIX="smtpfilter-announcements"
+include '/etc/courier/maildroprcs/couriermlm-smtpfilter-ctlmsg'
+
+</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+	And the permissions must be nailed down, as always:
+      </para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>
+$ chmod 600 $HOME/.mailfilters/*</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+	Each <command>maildrop</command> script sets the
+	<varname>LISTDIR</varname> variable before invoking the
+	<command>couriermlm</command> wrapper.
+	<varname>LISTDIR</varname> is the name of the mailing list's
+	directory, in the account's home directory. In this case the
+	mailing list directory, created by
+	<command>couriermlm create</command> is
+	<filename>$HOME/announcements</filename>, so
+	<varname>LISTDIR</varname> is <filename>announcements</filename>.
+	It's possible to put mailing list directories in a subdirectory,
+	and reference the subdirectory here. Mailing list directories' names
+	cannot contain periods.
+      </para>
+
+      <para>
+	Additionally,
+	the two <filename>-default</filename> scripts must set
+	<varname>FILENAMEPREFIX</varname> to their own names, with
+	the <quote>-default</quote> suffix stripped off.
+      </para>
+
+      <para>
+	The easiest way to test this configuration is to use the default
+	mailing list configuration that allows messages only from the
+	list's subscribers, then attempt to send a message to the mailing list,
+	from another SMTP server,
+	using a return address that's not subscribed to the list.
+	The resulting
+	non-delivery report should come from the other SMTP server, and not
+	<command>couriermlm</command>'s mail server.
+      </para>
+    </refsect2>
     <refsect2>
       <title>MANUAL COMMANDS</title>
 
@@ -672,8 +896,7 @@ any appended <acronym>HTML</acronym> portion of template's text.</para>
 	<varlistentry>
 	  <term>set</term>
 	  <listitem>
-	    <para>
-Set mailing list options.</para>
+	    <para>Set mailing list options, see below.</para>
 	  </listitem>
 	</varlistentry>
 
@@ -1098,6 +1321,39 @@ and messages are sent to the list owner for approval (moderation).</para>
 	  </listitem>
 	</varlistentry>
 
+	<varlistentry>
+	  <term>UNICODE=<replaceable>flag</replaceable></term>
+
+	  <listitem>
+	    <para>
+	      Accept mailing list messages with Unicode-formatted headers.
+	      The default setting of 0 rejects messages with Unicode
+	      headers, and rejects subscription requests from E-mail
+	      addresses with Unicode mailbox names.
+	    </para>
+
+	    <para>
+	      Most mail servers on the Internet do not implement support for
+	      Unicode messages
+	      at this time. Accepting a Unicode message and redistributing it
+	      to a mailing list results in delivery failures to all
+	      mailing list subscribers that do not implement Unicode support,
+	      so by default this setting is turned off.
+	      Set <literal>UNICODE</literal> to <literal>1</literal> to
+	      accept mailing list messages with Unicode headers, and
+	      subscription requests from Unicode mailbox names.
+	    </para>
+
+	    <note>
+	      <para>
+		Subscription requests from
+		E-mail addresses that have an international domain name
+		are always accepted if the internal domain name uses
+		ASCII-compatible encoding.
+	      </para>
+	    </note>
+	  </listitem>
+	</varlistentry>
 	<varlistentry>
 	  <term>POSTARCHIVE=<replaceable>option</replaceable></term>
 	  <listitem>

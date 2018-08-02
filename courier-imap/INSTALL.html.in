@@ -69,6 +69,8 @@
     <li>The Courier authentication library. Before installing
     Courier-IMAP, download and install <a href=
     "https://www.courier-mta.org/authlib/">https://www.courier-mta.org/authlib/</a>.</li>
+    <li>The <a href="http://www.gnu.org/software/libidn/">GNU IDN</a>) library
+    is required.</li>
     <li>The Courier unicode library. Before installing
     Courier-IMAP, download and install <a href=
     "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.</li>

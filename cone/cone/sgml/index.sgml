@@ -241,6 +241,11 @@ Otherwise:</para>
 
 	<listitem>
 	  <para>
+	    The <ulink url="http://www.gnu.org/software/libidn/">GNU IDN</ulink>)
+	    library is required.</para>
+	</listitem>
+	<listitem>
+	  <para>
 Download the Courier Socks 5 proxy client library from <ulink
 url="http://www.courier-mta.org/download.php#sox">http://www.courier-mta.org/download.php#sox</ulink>
 and follow its installation instructions. Binary RPMs can be built from the
@@ -255,6 +260,7 @@ tarball, and installing the
 This step can be omitted if Socks 5 support is not required.
 &app; will compile without the Socks 5 proxy toolkit.</para>
         </listitem>
+
 	<listitem>
 	  <para>
 Download and install the Courier-Unicode library from
