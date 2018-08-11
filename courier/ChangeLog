@@ -1,3 +1,9 @@
+2018-08-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/libs/comtrack.c (track_find_record): Don't stop after
+	finding the E-mail address in the current tracking file, continue
+	reading the remaining tracking files.
+
 2018-07-31  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* couriermlm: Implement smtp prefiltering. Implement blocking of

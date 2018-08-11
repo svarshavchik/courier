@@ -155,8 +155,6 @@ static int track_find_record(const char *trackdir,
 			}
 		}
 		fclose(fp);
-		if (results != TRACK_NOTFOUND)
-			break;
 	}
 	free(addrbuf);
 	return results;
