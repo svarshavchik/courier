@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2016 Double Precision, Inc.  See COPYING for
+** Copyright 2000-2018 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
 
@@ -56,10 +56,11 @@ struct	sockaddr_un skun;
 	strcat(skun.sun_path, ".tmp");
 	unlink(skun.sun_path);
 	if (bind(fd, (const struct sockaddr *)&skun, sizeof(skun)) ||
-		listen(fd, SOMAXCONN) ||
-		chmod(skun.sun_path, 0777) ||
-		rename(skun.sun_path, AUTHDAEMONSOCK) ||
-		fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
+	    listen(fd, SOMAXCONN) ||
+	    chmod(skun.sun_path, 0777) ||
+	    rename(skun.sun_path, AUTHDAEMONSOCK) ||
+	    fcntl(fd, F_SETFD, FD_CLOEXEC) < 0 ||
+	    fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
 	{
 		perror(AUTHDAEMONSOCK);
 		close(fd);
@@ -1024,7 +1025,8 @@ int start()
 		saddr_len=sizeof(saddr);
 		if ((fd=accept(s, &saddr, &saddr_len)) < 0)
 			continue;
-		if (fcntl(fd, F_SETFL, 0) < 0)
+		if (fcntl(fd, F_SETFL, 0) < 0 ||
+		    fcntl(fd, F_SETFD, FD_CLOEXEC) < 0)
 		{
 			perror("CRIT: fcntl() failed");
 		}
