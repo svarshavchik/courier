@@ -1,3 +1,7 @@
+2018-08-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix substitution typoes in imapd and pop3d startup scripts.
+
 2018-08-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/libs/comtrack.c (track_find_record): Don't stop after

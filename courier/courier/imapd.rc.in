@@ -30,8 +30,8 @@ start)
 	then
 		rm -f "$TLS_CACHEFILE"
 		touch "$TLS_CACHEFILE"
-		chown @authmailuser@ "$TLS_CACHEFILE"
-		chgrp @authmailgroup@  "$TLS_CACHEFILE"
+		chown @mailuser@ "$TLS_CACHEFILE"
+		chgrp @mailgroup@  "$TLS_CACHEFILE"
 		chmod 600  "$TLS_CACHEFILE"
 	fi
 
