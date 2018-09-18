@@ -1,3 +1,5 @@
+3.0.0
+
 2018-07-31  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rfc2045/reformime: parse utf-8 address types in DSNs.

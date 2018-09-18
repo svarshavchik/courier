@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2017 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(courier, 0.78, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 1.0, [courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -65,7 +65,7 @@ AC_ARG_WITH(softlinkdir, [  --with-softlinks=dir:link,dir:link...   specify soft
 
 version=`cat ../version`
 
-COPYRIGHT="Courier $version Copyright 1999-2017 Double Precision, Inc."
+COPYRIGHT="Courier $version Copyright 1999-2018 Double Precision, Inc."
 AC_SUBST(COPYRIGHT)
 
 dnl Check whether we should use gdbm, or db.

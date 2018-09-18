@@ -2589,14 +2589,13 @@ void CursesMessage::reply()
 		 << "X-Folder: " << r_folder << std::endl
 		 << "X-UID: " << r_uid << std::endl
 		 << "Subject: Re: " << subject << std::endl
-		 << "References: ";
+		 << "References:";
 
-	size_t i;
+	size_t i=references.size() > 6 ? references.size()-6:0;
 
-	for (i=0; i<references.size(); i++)
+	for (; i<references.size(); i++)
 	{
-		if (i > 0) otmpfile << ' ';
-		otmpfile << "<" << references[i].getAddr() << ">";
+		otmpfile << " <" << references[i].getAddr() << ">";
 	}
 
 	otmpfile << std::endl

@@ -1,3 +1,10 @@
+1.0
+
+2018-09-13  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cursesmessage.C: Keep only the last six message IDs in the
+	References: header when creating a reply.
+
 2018-07-29  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Enable UTF8 mode when sending SMTP mail. Recognize and display

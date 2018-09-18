@@ -1,3 +1,5 @@
+1.0
+
 2018-08-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fix substitution typoes in imapd and pop3d startup scripts.
