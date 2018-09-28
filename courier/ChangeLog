@@ -1,3 +1,12 @@
+2018-09-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* couriertls: additional fixes.
+
+2018-09-24  Yoshinari Takaoka <mumumu@mumumu.org>
+
+	* couriertls: option to use a separate file for the SSL certificate's
+	private key, as an alternative to the combined keyfile+certificate.
+
 1.0
 
 2018-08-23  Sam Varshavchik  <mrsam@courier-mta.com>

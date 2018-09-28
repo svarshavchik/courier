@@ -238,6 +238,44 @@ COURIERTLS=@bindir@/couriertls
 
 TLS_CERTFILE=@mydatadir@/esmtpd.pem
 
+##NAME: TLS_PRIVATE_KEYFILE:0
+#
+# TLS_PRIVATE_KEYFILE - SSL/TLS private key for decrypting peer data.
+# This file must be owned by the "@mailuser@" user, and must not be world
+# readable.
+#
+# By default, courier generates SSL/TLS certifice including private key
+# and install it in TLS_CERTFILE path, so TLS_PRIVATE_KEYFILE is completely
+# optional. If TLS_PRIVATE_KEYFILE is not set (default), TLS_CERTFILE is
+# treated as certificate including private key file.
+#
+# If you get SSL/TLS certificate and private key from trusted certificate
+# authority(CA) and want to install them separately, TLS_PRIVATE_KEYFILE can
+# be used as private key file path setting.
+#
+# VIRTUAL HOSTS ON THE SAME IP ADDRESS.
+#
+# $TLS_PRIVATE_KEYFILE.domain and $TLS_CERTFILE.domain are a pair.
+# If you use VIRTUAL HOST feature on TLS_CERTFILE setting, you must set pair
+# private key as $TLS_PRIVATE_KEYFILE.domain. Then, create a link from
+# $TLS_PRIVATE_KEYFILE to whichever private key you consider to be the main one.
+# for example:
+# /etc/tls_private_keyfile.pem => /etc/tls_private_keyfile.pem.www.example.com
+#
+# IP-BASED VIRTUAL HOSTS:
+#
+# Just described on "VIRTUAL HOSTS ON THE SAME IP ADDRESS" above,
+# $TLS_PRIVATE_KEYFILE.aaa.bbb.ccc.ddd and $TLS_CERTFILE.aaa.bbb.ccc.ddd are
+# a pair. If TLS_PRIVATE_KEYFILE is set to /etc/tls_private_keyfile.pem,
+# then you'll need to install the actual certificate files as
+# /etc/tls_private_keyfile.pem.192.168.0.2, /etc/tls_private_keyfile.192.168.0.3
+# and so on, for each IP address.
+#
+# In all cases, $TLS_PRIVATE_KEYFILE needs to be linked to one of the existing
+# certificate files.
+#
+#TLS_PRIVATE_KEYFILE=@certsdir@/imapd_private_key.pem
+
 ##NAME: TLS_DHPARAMS:0
 #
 # TLS_DHPARAMS - DH parameter file.
