@@ -377,7 +377,8 @@ ESMTP_PREFER_IPV6_MX=1
 #
 # TLS_PRIVATE_KEYFILE - SSL/TLS private key for the client certificate.
 # This file must be owned by the "@mailuser@" user, and must not be world
-# readable.
+# readable, and must be accessible without a pass-phrase, i.e. it must not
+# be encrypted.
 #
 # By default, courier generates SSL/TLS certifice including private key
 # and install it in TLS_CERTFILE path, so TLS_PRIVATE_KEYFILE is completely
