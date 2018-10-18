@@ -9,6 +9,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <set>
 #include <vector>
 #include <algorithm>
 #include <cctype>
@@ -548,7 +549,7 @@ class authldaprc_attributes {
 
 public:
 
-	std::map<std::string, std::string *> attributes;
+	std::map<std::string, std::vector<std::string *>> attributes;
 
 	std::string attribute(const char *name,
 			      const char *default_value,
@@ -559,7 +560,7 @@ public:
 		authldaprc.config(name, value, false, default_value);
 
 		if (!value.empty())
-			attributes[value]=&return_value;
+			attributes[value].push_back(&return_value);
 		return value;
 	}
 };
@@ -568,10 +569,11 @@ class authldaprc_attribute_vector : public std::vector<std::string> {
 
 public:
 
-	authldaprc_attribute_vector(const std::map<std::string, std::string *>
-				    &attributes)
+	authldaprc_attribute_vector(const std::map<std::string,
+				    std::vector<std::string *>> &attributes)
 	{
-		for (std::map<std::string, std::string *>::const_iterator
+		for (std::map<std::string, std::vector<std::string *>>
+			     ::const_iterator
 			     p=attributes.begin(); p != attributes.end(); ++p)
 		{
 			push_back(p->first);
@@ -590,6 +592,8 @@ public:
 	authldaprc_search_attributes(const std::vector<std::string> &attributes)
 		: copy_buffer(attributes)
 	{
+		std::set<std::string> dupes;
+
 		for (std::vector<std::string>::iterator
 			     p=copy_buffer.begin();
 		     p != copy_buffer.end(); ++p)
@@ -597,6 +601,9 @@ public:
 			if (p->empty())
 				continue;
 
+			if (dupes.find(*p) != dupes.end())
+				continue;
+			dupes.insert(*p);
 			p->push_back(0);
 			all_attributes_ptr.push_back(& (*p)[0]);
 		}
@@ -801,6 +808,21 @@ public:
 
 		value=values[0];
 		return true;
+	}
+
+	bool operator()(const std::string &attrname,
+			const std::vector<std::string *> &values)
+	{
+		bool found=true;
+
+		for (std::vector<std::string *>::const_iterator
+			     b=values.begin();
+		     b != values.end(); ++b)
+		{
+			found=operator()(attrname, **b);
+		}
+
+		return found;
 	}
 
 	std::string options()
@@ -1186,10 +1208,10 @@ int authldap_lookup::operator()(int (*callback)(struct authinfo *, void *),
 
 	authldap_get_values get_value(main_connection.connection, entry, dn.c_str());
 
-	for (std::map<std::string, std::string *>::iterator
+	for (std::map<std::string, std::vector<std::string *>>::iterator
 		     p=attributes.begin(); p != attributes.end(); ++p)
 	{
-		get_value(p->first, *p->second);
+		get_value(p->first, p->second);
 	}
 
 	au=authldaprc.uid;
