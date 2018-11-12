@@ -1,3 +1,11 @@
+1.0.2
+
+2018-10-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* imap: Additional changes to how Unicode messages are
+	handled with non-Unicode clients: disclaim all warranties, still
+	report an error, but provide the raw message content, as is.
+
 1.0.1
 
 2018-09-24  Sam Varshavchik  <mrsam@courier-mta.com>
