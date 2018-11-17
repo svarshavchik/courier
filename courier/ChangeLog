@@ -1,3 +1,17 @@
+1.0.3
+
+2018-11-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* pop3dserver.c (calcsize): Fix spurious flagging of non-UTF8
+	messages as UTF-8.
+
+2018-11-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* pop3dserver.c (readpop3dlist): Be able to update
+	courierpop3dsizelist from version 2 to 3 in place.
+	(do_retr): Instead of returning an ERR to a non-Unicode client,
+	handle Unicode messages by wrapping them as an attachment.
+
 1.0.2
 
 2018-10-27  Sam Varshavchik  <mrsam@courier-mta.com>
