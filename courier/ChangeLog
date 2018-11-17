@@ -5,6 +5,16 @@
 	* pop3dserver.c (calcsize): Fix spurious flagging of non-UTF8
 	messages as UTF-8.
 
+	To fix existing mailboxes with erroneously-flagged messages. In
+	each mailbox, if its existing courierpop3dsizelist file starts with
+
+	/3 [followed by additional data]
+
+	Only if the first line in courierpop3dsizelist starts with /3, then
+	execute:
+
+	perl -p -i -e 's/:\d+$/:0/' courierpop3dsizelist
+
 2018-11-16  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* pop3dserver.c (readpop3dlist): Be able to update
