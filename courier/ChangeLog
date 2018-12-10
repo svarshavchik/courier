@@ -1,3 +1,7 @@
+2018-12-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* imap: Send an alert about a Unicode messages to a non-Unicode
+	client at most once per IMAP session.
 1.0.4
 
 2018-11-28  Hideki SAKAMOTO <hsakamt@tsnr.com>
