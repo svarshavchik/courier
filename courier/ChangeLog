@@ -1,3 +1,14 @@
+1.0.6
+
+2019-01-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* pop3dserver.c: Fix parsing of pop3d file cache, on some
+	architectures.
+
+2019-01-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriertls.c: Ignore unreadable cert files.
+
 1.0.5
 
 2018-12-09  Sam Varshavchik  <mrsam@courier-mta.com>
