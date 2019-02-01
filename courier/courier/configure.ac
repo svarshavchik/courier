@@ -47,6 +47,14 @@ then
 fi
 AC_SUBST(SETENV)
 
+AC_PATH_PROGS(WGET, wget, /usr/bin/wget, $LPATH)
+AC_SUBST(WGET)
+
+if test ! -x "$WGET"
+then
+	AC_MSG_ERROR(wget not found, please install the wget tool)
+fi
+
 AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
 
 if test "$COURIERAUTHCONFIG" = ""

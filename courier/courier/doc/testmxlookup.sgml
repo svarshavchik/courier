@@ -1,5 +1,5 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<!-- Copyright 1999 - 2011 Double Precision, Inc.  See COPYING for -->
+<!-- Copyright 1999 - 2019 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
 <refentry>
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
@@ -17,10 +17,11 @@
 
   <refsynopsisdiv>
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">testmxlookup</command>
+      <command>testmxlookup</command>
       <arg choice="opt">@<replaceable>ip-address</replaceable></arg>
       <arg choice="opt">--dnssec</arg>
       <arg choice="opt">--udpsize <replaceable>n</replaceable></arg>
+      <arg choice="opt">--sts</arg>
       <arg choice="req"><replaceable>domain</replaceable></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
@@ -29,24 +30,41 @@
     <title>DESCRIPTION</title>
 
     <para>
-<command moreinfo="none">testmxlookup</command> lists the names and IP addresses of mail
-relays that receive mail for the <replaceable>domain</replaceable>.
-This is useful in diagnosing mail delivery problems.</para>
+      <command>testmxlookup</command> lists the names and IP addresses of mail
+      relays that receive mail for the <replaceable>domain</replaceable>.
+      This is useful in diagnosing mail delivery problems.
+    </para>
 
     <para>
-<command moreinfo="none">testmxlookup</command> sends a DNS MX query for the specified domain,
-followed by A/AAAA queries, if needed.
-<command moreinfo="none">testmxlookup</command> lists the
-hostname and the IP address of every mail relay, and its MX priority.</para>
+      <command>testmxlookup</command> sends a DNS MX query for the specified
+      domain, followed by A/AAAA queries, if needed.
+      <command>testmxlookup</command> lists the
+      hostname and the IP address of every mail relay, and its MX priority.
+      The list is followed by the domain's strict transport security
+      (<acronym>STS</acronym>) policy status, if one is published.
+    </para>
 
     <refsect2>
       <title>DIAGNOSTICS</title>
 
       <para>
-The error message "Hard error" indicates that the domain does not exist,
-or does not have any mail relays. The error message "Soft error" indicates a
-temporary error condition (usually a network failure of some sorts, or the
-local DNS server is down).</para>
+	The error message <quote>Hard error</quote> indicates that the
+	domain does not exist,
+	or does not have any mail relays. The error message "Soft error"
+	indicates a temporary error condition (usually a network failure of
+	some sorts, or the local DNS server is down).
+      </para>
+
+      <para>
+	<quote>STS: testing</quote> or
+	<quote>STS: enforcing</quote> after the list of mail relays
+	indicates that the domain publishes an <acronym>STS</acronym>
+	policy.
+	<quote>ERROR: STS Policy verification failed</quote> appearing
+	after an individual mail relay
+	indicates that the mail relay's name does not meet the domain's
+	<acronym>STS</acronym> policy.
+      </para>
     </refsect2>
 
     <refsect2>
@@ -101,8 +119,57 @@ local DNS server is down).</para>
 	      networks may impose lower limits).
 	    </para>
 	  </listitem>
+
+	</varlistentry>
+	<varlistentry>
+	  <term><literal>--sts</literal></term>
+	  <listitem>
+	    <para>
+	      Do not issue an MX query, and display the domain's raw
+	      <acronym>STS</acronym> policy file.
+	    </para>
+	  </listitem>
 	</varlistentry>
       </variablelist>
+    </refsect2>
+
+    <refsect2>
+      <title>STRICT TRANSPORT SECURITY</title>
+
+      <para>
+	Courier automatically download and caches domains'
+	<acronym>STS</acronym> policy files by default.
+	<filename>@localstatedir@/sts/.cache_size</filename>
+	sets the size of the <acronym>STS</acronym> cache, 1000 domains by
+	default, and <acronym>STS</acronym> checking can be turned off by
+	setting the cache size to 0:
+      </para>
+
+      <blockquote>
+	<informalexample>
+	  <programlisting>
+echo 0 &gt;@localstatedir@/sts/.cache_size</programlisting>
+	</informalexample>
+      </blockquote>
+
+      <para>
+	<command>rm</command> it to reenable default <acronym>STS</acronym>
+	cache settings.
+      </para>
+
+      <note>
+	<para>
+	  The cache size setting is approximate.
+	  <application>Courier</application>
+	  purges stale cache entries periodically, and the size of the
+	  cache can temporarily exceed its set size, by as much as a factor
+	  of two.
+	  <filename>@localstatedir@/sts</filename>
+	  must be owned by @mailuser@:@mailgroup@, and uses one file
+	  per mail domain. The maximum cache size depends on the
+	  capabilities of the underlying filesystem.
+	</para>
+      </note>
     </refsect2>
   </refsect1>
 
@@ -110,6 +177,8 @@ local DNS server is down).</para>
     <title>SEE ALSO</title>
     <para>
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
-<ulink url="https://www.ietf.org/rfc/rfc1035.txt">RFC 1035</ulink>.</para>
+<ulink url="https://www.ietf.org/rfc/rfc1035.txt">RFC 1035</ulink>,
+<ulink url="https://www.ietf.org/rfc/rfc8461.txt">RFC 8461</ulink>.
+    </para>
   </refsect1>
 </refentry>

@@ -86,6 +86,7 @@ Requires(postun): /sbin/service
 %endif
 
 Requires:         coreutils
+Requires:	  wget
 %if %alternatives
 Obsoletes:        courier-sendmail-wrapper
 Provides:         /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail /usr/bin/newaliases
@@ -101,6 +102,7 @@ BuildRequires:    gawk
 BuildRequires:    perl
 BuildRequires:    make
 BuildRequires:    procps-ng
+BuildRequires:    wget
 %{?_with_gpg2:  %define with_gpg2 1}
 %{!?_with_gpg2: %define with_gpg2 0}
 

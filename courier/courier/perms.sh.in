@@ -16,6 +16,7 @@ PERMS="
 @localstatedir@/tmp	770
 @localstatedir@/msgs	750
 @localstatedir@/msgq	750
+@localstatedir@/sts	755
 @localstatedir@/track	755
 
 @sysconfdir@		755	x

@@ -282,7 +282,7 @@ BUILT_SOURCES= \
 	preline.html.in preline.1.in \
 	sendmail.html sendmail.1 \
 	submit.html.in submit.8.in \
-	testmxlookup.html testmxlookup.1 \
+	testmxlookup.html.in testmxlookup.1.in \
 	webmlmd.html.in webmlmd.1.in
 
 EXTRA_DIST=$(nohtmlin) $(BUILT_SOURCES) dotforward.1 pop3d-ssl.8
@@ -426,11 +426,12 @@ sendmail.html: sendmail.sgml ../../libs/docbook/sgml2html
 sendmail.1: sendmail.sgml ../../libs/docbook/sgml2man
 	../../libs/docbook/sgml2man sendmail.sgml sendmail.1 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
 
-testmxlookup.html: testmxlookup.sgml ../../libs/docbook/sgml2html
-	../../libs/docbook/sgml2html testmxlookup.sgml testmxlookup.html
+testmxlookup.html.in: testmxlookup.sgml ../../libs/docbook/sgml2html
+	../../libs/docbook/sgml2html testmxlookup.sgml testmxlookup.html.in
 
-testmxlookup.1: testmxlookup.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man testmxlookup.sgml testmxlookup.1 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+testmxlookup.1.in: testmxlookup.sgml ../../libs/docbook/sgml2man
+	../../libs/docbook/sgml2man testmxlookup.sgml testmxlookup.1.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+	mv testmxlookup.1 testmxlookup.1.in
 
 dot-forward.html: dot-forward.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html dot-forward.sgml dot-forward.html
@@ -550,6 +551,12 @@ preline.html: preline.html.in
 	./config.status --file=$@
 
 preline.1: preline.1.in
+	./config.status --file=$@
+
+testmxlookup.html: testmxlookup.html.in
+	./config.status --file=$@
+
+testmxlookup.1: testmxlookup.1.in
 	./config.status --file=$@
 
 install-man-extra:

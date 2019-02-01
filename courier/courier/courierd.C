@@ -21,6 +21,7 @@
 #include	"courierd.h"
 #include	"mydirent.h"
 #include	"numlib/numlib.h"
+#include	"comsts.h"
 #include	<sys/types.h>
 #if HAVE_SYS_STAT_H
 #include	<sys/stat.h>
@@ -221,6 +222,7 @@ struct	mybuf trigger_buf;
 	drvinfo::init();
 
 	libmail_changeuidgid(MAILUID, MAILGID);
+
 	signal(SIGPIPE, SIG_IGN);
 
 	respawnlo=config_time_respawnlo();

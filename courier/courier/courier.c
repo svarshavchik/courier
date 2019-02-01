@@ -30,6 +30,7 @@
 #include	"liblock/config.h"
 #include	"liblock/liblock.h"
 #include	"numlib/numlib.h"
+#include	"wget.h"
 
 void courier_clear_all();
 void courier_show_all();
@@ -122,15 +123,20 @@ int main(int argc, char **argv)
 
 	if (strcmp(argv[1], "start") == 0)
 	{
-	pid_t	p;
-	int	waitstat;
-	char	dummy;
+		pid_t	p;
+		int	waitstat;
+		char	dummy;
 
-	/*
-	** Ok, courierd will close file descriptor 3 when it starts, so we
-	** put a pipe on there, and wait for it to close.
-	*/
-	int	pipefd[2];
+		/*
+		** Ok, courierd will close file descriptor 3 when it starts,
+		** so we put a pipe on there, and wait for it to close.
+		*/
+		int	pipefd[2];
+
+		if (access(WGET, 0) < 0)
+		{
+			fprintf(stderr, "%s not found\n", WGET);
+		}
 
 		close(3);
 		if (open("/dev/null", O_RDONLY) != 3 || pipe(pipefd))

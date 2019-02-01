@@ -22,6 +22,7 @@ DISTCLEANFILES=uidgid
 DEBUGLIB=@DEBUGLIB@
 
 BUILT_SOURCES=prefix.h exec_prefix.h sysconfdir.h localstatedir.h \
+	wget.h \
 	libexecdir.h bindir.h sbindir.h datadir.h filtersocketdir.h \
 	uidgid.h configargs.h sort.h
 
@@ -265,11 +266,23 @@ makedat: ../libs/makedat/makedat
 # testmxlookup - look up MX records
 
 testmxlookup_SOURCES=testmxlookup.c
-testmxlookup_DEPENDENCIES=../libs/rfc1035/librfc1035.a ../libs/soxwrap/libsoxwrap.a ../libs/soxwrap/soxlibs.dep libs/libcourier.la \
-	../libs/md5/libmd5.la ../libs/random128/librandom128.la
+testmxlookup_DEPENDENCIES= \
+	libs/libcourier.la \
+	../libs/numlib/libnumlib.la \
+	../libs/liblock/liblock.la \
+	../libs/rfc1035/librfc1035.a \
+	../libs/soxwrap/libsoxwrap.a ../libs/soxwrap/soxlibs.dep\
+	../libs/md5/libmd5.la \
+	../libs/random128/librandom128.la
 
-testmxlookup_LDADD=../libs/rfc1035/librfc1035.a ../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` libs/libcourier.la \
-	../libs/md5/libmd5.la ../libs/random128/librandom128.la \
+testmxlookup_LDADD= \
+	libs/libcourier.la \
+	../libs/numlib/libnumlib.la \
+	../libs/liblock/liblock.la \
+	../libs/rfc1035/librfc1035.a \
+	../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` \
+	../libs/md5/libmd5.la \
+	../libs/random128/librandom128.la \
 	@dblibrary@ @NETLIBS@ -lcourier-unicode @LIBIDN_LIBS@
 
 # maildirmake - create a maildir
@@ -454,6 +467,9 @@ sysconfdir.h: config.status
 localstatedir.h: config.status
 	echo "#define LOCALSTATEDIR \"$(localstatedir)\"" >localstatedir.h
 
+wget.h: config.status
+	echo "#define WGET \"$(WGET)\"" >wget.h
+
 libexecdir.h: config.status
 	echo "#define LIBEXECDIR \"$(libexecdir)\"" >libexecdir.h
 
@@ -581,6 +597,7 @@ install-exec-hook:
 		$(localstatedir) $(localstatedir)/tmp\
 		$(webmaildir)\
 		$(localstatedir)/track\
+		$(localstatedir)/sts\
 		$(localstatedir)/msgs $(localstatedir)/msgq ; do \
 			$(mkinstalldirs) $(DESTDIR)$$d || :; done
 	$(INSTALL_SCRIPT) imapd.rc $(DESTDIR)$(datadir)/imapd
