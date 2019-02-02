@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2013 Double Precision, Inc.
+** Copyright 1998 - 2019 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 #include	"cdpendelinfo.h"
@@ -18,6 +18,7 @@
 #include	"comparseqid.h"
 #include	"comqueuename.h"
 #include	"comtrack.h"
+#include	"comsts.h"
 #include	"courierd.h"
 #include	"mydirent.h"
 #include	"numlib/numlib.h"
@@ -69,6 +70,7 @@ time_t retryalpha;
 int	retrybeta;
 time_t retrygamma;
 int	retrymaxdelta;
+int	sts_cache_size_counter;
 
 time_t queuefill;
 time_t nextqueuefill;
@@ -243,6 +245,11 @@ struct	mybuf trigger_buf;
 	rmdir(MSGQDIR);
 	mkdir(MSGQDIR, 0755);
 	trackpurge(TRACKDIR);
+	clog_msg_start_info();
+	clog_msg_str("Purging ");
+	clog_msg_str(STSDIR);
+	clog_msg_send();
+	sts_cache_size_counter=sts_expire();
 
 	if ((triggerw=open(triggername, O_WRONLY, 0)) < 0 ||
 		(triggerr=open(triggername, O_RDONLY, 0)) < 0)

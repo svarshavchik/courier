@@ -16,13 +16,26 @@
   </refnamediv>
 
   <refsynopsisdiv>
-    <cmdsynopsis sepchar=" ">
+    <cmdsynopsis>
       <command>testmxlookup</command>
-      <arg choice="opt">@<replaceable>ip-address</replaceable></arg>
-      <arg choice="opt">--dnssec</arg>
-      <arg choice="opt">--udpsize <replaceable>n</replaceable></arg>
-      <arg choice="opt">--sts</arg>
+      <group choice="opt">
+	<arg choice="plain">@<replaceable>ip-address</replaceable></arg>
+	<arg choice="plain">--dnssec</arg>
+	<arg choice="plain">--udpsize <replaceable>n</replaceable></arg>
+	<arg choice="plain">--sts</arg>
+	<arg choice="plain">--sts-override=<replaceable>mode</replaceable></arg>
+	<arg choice="plain">--sts-purge</arg>
+      </group>
       <arg choice="req"><replaceable>domain</replaceable></arg>
+    </cmdsynopsis>
+    <cmdsynopsis>
+      <command>testmxlookup</command>
+      <group choice="req">
+	<arg choice="plain">--sts-expire</arg>
+	<arg choice="plain">--sts-cache-disable</arg>
+	<arg choice="plain">--sts-cache-enable</arg>
+	<arg choice="plain">--sts-cache-enable=<replaceable>size</replaceable></arg>
+      </group>
     </cmdsynopsis>
   </refsynopsisdiv>
 
@@ -30,8 +43,10 @@
     <title>DESCRIPTION</title>
 
     <para>
-      <command>testmxlookup</command> lists the names and IP addresses of mail
-      relays that receive mail for the <replaceable>domain</replaceable>.
+      <command>testmxlookup</command> reports the names and IP addresses of mail
+      relays that receive mail for the <replaceable>domain</replaceable>,
+      as well as the <replaceable>domain</replaceable> published
+      <acronym>STS</acronym> policy.
       This is useful in diagnosing mail delivery problems.
     </para>
 
@@ -40,8 +55,9 @@
       domain, followed by A/AAAA queries, if needed.
       <command>testmxlookup</command> lists the
       hostname and the IP address of every mail relay, and its MX priority.
-      The list is followed by the domain's strict transport security
-      (<acronym>STS</acronym>) policy status, if one is published.
+      The domain's strict transport security
+      (<acronym>STS</acronym>) policy status, if one is published,
+      precedes the mail relay list.
     </para>
 
     <refsect2>
@@ -57,13 +73,22 @@
 
       <para>
 	<quote>STS: testing</quote> or
-	<quote>STS: enforcing</quote> after the list of mail relays
+	<quote>STS: enforcing</quote> preceding the list of mail relays
 	indicates that the domain publishes an <acronym>STS</acronym>
 	policy.
 	<quote>ERROR: STS Policy verification failed</quote> appearing
 	after an individual mail relay
 	indicates that the mail relay's name does not meet the domain's
 	<acronym>STS</acronym> policy.
+      </para>
+
+      <para>
+	<quote>STS: testing</quote> or
+	<quote>STS: enforcing</quote> by itself, with no further messages,
+	indicates that all listed mail relays comply with the listed
+	<acronym>STS</acronym> policy. If you are attempting to install
+	your own STS policy this is a simple means of checking its
+	validity.
       </para>
     </refsect2>
 
@@ -130,6 +155,85 @@
 	    </para>
 	  </listitem>
 	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>--sts-cache-disable</literal></term>
+	  <listitem>
+	    <para>
+	      Turn off <acronym>STS</acronym> lookups, checking, and
+	      verification. <acronym>STS</acronym> is enabled by default,
+	      but requires that a global systemwide list of
+	      SSL certificate authorities is available, and
+	      that <envar>TLS_TRUSTCERTS</envar> is specified in
+	      @sysconfdir@/courierd. <acronym>STS</acronym> can be disabled,
+	      if needed.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>--sts-cache-enable</literal></term>
+	  <listitem>
+	    <para>
+	      Reenable <acronym>STS</acronym> lookups, checking, and
+	      verification, and set the size of the internal cache to its
+	      default value. Specify <quote><literal>=size</literal></quote>
+	      to enable and set a non-default cache size, a positive value
+	      indicating the approximate number of most recent domains
+	      whose <acronym>STS</acronym> policies get cached internally.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>--sts-override=<replaceable>policy</replaceable></literal></term>
+	  <listitem>
+	    <para>
+	      Override the domain's
+	      <acronym>STS</acronym> enforcement mode.
+	      <replaceable>policy</replaceable> is one of:
+	      <quote>none</quote>,
+	      <quote>testing</quote>, or
+	      <quote>enforce</quote>, and overrides the cached
+	      domain <acronym>STS</acronym> policy setting.
+	    </para>
+
+	    <note>
+	      <para>
+		This is a diagnostic or a testing tool.
+		<application>Courier</application> may eventually purge
+		the cached policy setting, or the domain can update its
+		policy, replacing the overridden setting.
+	      </para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><literal>--sts-purge</literal></term>
+	  <listitem>
+	    <para>
+	      Remove the domain's cached <acronym>STS</acronym> policy,
+	      and retrieve and cache the domain's policy, again.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><literal>--sts-expire</literal></term>
+
+	  <listitem>
+	    <para>
+	      Execute
+	      <application>Courier</application>'s
+	      <acronym>STS</acronym> policy expiration process. Nothing
+	      happens unless
+	      <filename>@localstatedir@/sts</filename>'s size exceeds the
+	      configured cache size setting.
+	      The oldest cached policy files get removed
+	      to bring the cache size down to its maximum size.
+	    </para>
+	  </listitem>
+	</varlistentry>
       </variablelist>
     </refsect2>
 
@@ -137,24 +241,10 @@
       <title>STRICT TRANSPORT SECURITY</title>
 
       <para>
-	Courier automatically download and caches domains'
-	<acronym>STS</acronym> policy files by default.
-	<filename>@localstatedir@/sts/.cache_size</filename>
-	sets the size of the <acronym>STS</acronym> cache, 1000 domains by
-	default, and <acronym>STS</acronym> checking can be turned off by
-	setting the cache size to 0:
-      </para>
-
-      <blockquote>
-	<informalexample>
-	  <programlisting>
-echo 0 &gt;@localstatedir@/sts/.cache_size</programlisting>
-	</informalexample>
-      </blockquote>
-
-      <para>
-	<command>rm</command> it to reenable default <acronym>STS</acronym>
-	cache settings.
+	<application>Courier</application>
+	automatically downloads and caches domains'
+	<acronym>STS</acronym> policy files by default, an an internal
+	cache with a default size of 1000 domains.
       </para>
 
       <note>
@@ -168,6 +258,18 @@ echo 0 &gt;@localstatedir@/sts/.cache_size</programlisting>
 	  must be owned by @mailuser@:@mailgroup@, and uses one file
 	  per mail domain. The maximum cache size depends on the
 	  capabilities of the underlying filesystem.
+	</para>
+
+	<para>
+	  <command>testmxlookup</command> must be executed with sufficient
+	  privileges to access the cache directory (by root, or by
+	  @mailuser@). Without sufficient privileges
+	  <command>testmxlookup</command> still attempts to use
+	  the cache directory
+	  even without write permissions on it, as long as it's
+	  accessible, and attempts to download the STS policy for a domain
+	  that's not already cached; but, of course, won't be able to
+	  save the downloaded policy in the cache directory.
 	</para>
       </note>
     </refsect2>

@@ -78,10 +78,42 @@ enum sts_mode get_sts_mode(struct sts_id *id);
 int sts_mx_validate(struct sts_id *id, const char *domainname);
 
 /*
-** Expire old cache entries.
+** Expire old cache entries, returns the cache size.
 */
 
-void sts_expire();
+int sts_expire();
+
+/*
+** Manually override the domain's policy.
+**
+** mode: "none", "testing", or "enforce".
+*/
+
+void sts_policy_override(const char *domain, const char *mode);
+
+/*
+** Manually remove the cached policy for the domain.
+*/
+void sts_policy_purge(const char *domain);
+
+/*
+** Enable the STS cache with the default cache size.
+*/
+
+void sts_cache_enable();
+
+/*
+** Enable the STS cache and set its size.
+*/
+
+void sts_cache_size_set(int);
+
+/*
+** Disable the STS cache.
+*/
+void sts_cache_disable();
+
+
 #if 0
 {
 #endif

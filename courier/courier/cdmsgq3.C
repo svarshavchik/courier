@@ -1,5 +1,5 @@
 /*
-** Copyright 1998 - 2007 Double Precision, Inc.
+** Copyright 1998 - 2019 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -18,6 +18,7 @@
 #include	"comstrinode.h"
 #include	"comstrtimestamp.h"
 #include	"comstrtotime.h"
+#include	"comsts.h"
 
 #include	<sys/types.h>
 #if	HAVE_SYS_STAT_H
@@ -42,6 +43,7 @@ extern unsigned stat_nattempts;
 extern unsigned stat_ndelivered;
 extern unsigned long stat_nkdelivered;
 extern unsigned stat_nkkdelivered;
+extern int	sts_cache_size_counter;
 
 void msgq::logmsgid(msgq *q)
 {
@@ -55,6 +57,13 @@ int i;
 
 	++inprogress;
 	++stat_nattempts;
+
+	if (sts_cache_size_counter == 0)
+		/* So we can still recheck it, occasionally */
+		sts_cache_size_counter=1000;
+
+	if (--sts_cache_size_counter == 0)
+		sts_cache_size_counter=sts_expire();
 
 	/* If the message is due for cancellation, cancel it here */
 
@@ -83,7 +92,7 @@ int i;
 							&ctf,
 							ri->addressesidx[i],
 						COMCTLFILE_DELINFO_REPLY, msg);
-			
+
 					msg=ctf.lines[j]+1;
 				}
 
@@ -574,7 +583,7 @@ int	cancelled=0;
 
 			current_time += retrygamma * (1L << completedcnt);
 		}
-	
+
 		std::string buf2;
 
 		ctlfile_nextattempt(&ctlinfo, current_time);

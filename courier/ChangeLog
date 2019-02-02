@@ -1,3 +1,9 @@
+2019-02-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* testmxlookup: implement the Strict Transport Security policy for
+	SMTP, as specified in RFC 8461. Add some diagnostic options to
+	testmxlookup.
+
 2019-02-02  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/filters/verifyfilter.c: Remove the 'smtpfilter' symlink

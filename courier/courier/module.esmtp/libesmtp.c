@@ -8,6 +8,7 @@
 #endif
 #include	"libesmtp.h"
 #include	"smtproutes.h"
+#include	"comsts.h"
 #include	<errno.h>
 #include	<sys/types.h>
 #include	<sys/uio.h>
@@ -38,6 +39,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 static int esmtp_get_greeting(struct esmtp_info *info,
 			      void *arg);
 static int esmtp_enable_tls(struct esmtp_info *,
+			    enum sts_mode,
 			    const char *,
 			    int,
 			    void *arg);
@@ -574,6 +576,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 	info->hascourier=0;
 	info->hasstarttls=0;
 	info->hassecurity_starttls=0;
+	info->is_tls_connection=0;
 	info->is_secure_connection=0;
 
 
@@ -887,6 +890,7 @@ static void connection_closed(struct esmtp_info *info,
 }
 
 static int esmtp_enable_tls(struct esmtp_info *info,
+			    enum sts_mode domain_sts_mode,
 			    const char *hostname, int smtps,
 			    void *arg)
 {
@@ -899,12 +903,13 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 	char	remotefd_buf[NUMBUFSIZE+30];
 	char	miscbuf[NUMBUFSIZE];
 
-	static char *trustcert_buf=0;
-	static char *origcert_buf=0;
+	char *trustcert_buf=0;
+
+	char *vars[10];
+	int vars_n=0;
 
 	char *argvec[10];
 
-	int restore_origcert=0;
 	int n;
 
 	if (libmail_streampipe(pipefd))
@@ -964,26 +969,17 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 
 	p=getenv("ESMTP_TLS_VERIFY_DOMAIN");
 
+	if (domain_sts_mode == sts_mode_enforce)
+		p="1";
+
 	if ((info->smtproutes_flags & ROUTE_STARTTLS) != 0)
 	{
-		char *q, *r;
+		char *q;
 
 		/*
 		** Replace TLS_TRUSTCERTS with TLS_TRUSTSECURITYCERTS,
 		** until couriertls is execed.
 		*/
-
-		q=getenv("TLS_TRUSTCERTS");
-
-		r=malloc(strlen(q ? q:"")+40);
-		if (!r)
-			abort();
-		strcat(strcpy(r, "TLS_TRUSTCERTS="), q ? q:"");
-
-		if (origcert_buf)
-			free(origcert_buf);
-		origcert_buf=r;
-		restore_origcert=1;
 
 		p=getenv("TLS_TRUSTSECURITYCERTS");
 		if (!p || !*p)
@@ -1006,12 +1002,8 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 		if (!q)
 			abort();
 		strcat(strcpy(q, "TLS_TRUSTCERTS="), p);
-		putenv(q);
+		vars[vars_n++]=q;
 		p="1";
-
-		if (trustcert_buf)
-			free(trustcert_buf);
-		trustcert_buf=q;
 	}
 
 	if (p && atoi(p))
@@ -1033,10 +1025,22 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 	}
 	argvec[n]=0;
 
+	if (trustcert_buf)
+	{
+		vars[vars_n++]=trustcert_buf;
+	}
+
+	if (domain_sts_mode == sts_mode_enforce)
+	{
+		vars[vars_n++]="TLS_VERIFYPEER=PEER";
+	}
+	vars[vars_n]=0;
+	cinfo.override_vars=vars;
+
 	n=couriertls_start(argvec, &cinfo);
 
-	if (restore_origcert)
-		putenv(origcert_buf);
+	if (trustcert_buf)
+		free(trustcert_buf);
 	if (verify_domain)
 		free(verify_domain);
 
@@ -1072,6 +1076,8 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 	/* Reset the socket buffer structure given the new filedescriptor */
 
 	esmtp_init(info);
+
+	info->is_tls_connection=1;
 
 	/* Ask again for an EHLO, because the capabilities may differ now */
 
@@ -1410,23 +1416,52 @@ static int local_sock_address(struct esmtp_info *info,
 	return 0;
 }
 
+static int do_esmtp_connect_to(struct esmtp_info *info,
+			       const char *connect_to,
+			       struct sts_id *id,
+			       enum sts_mode domain_sts_mode,
+			       void *arg);
+
+
 static int do_esmtp_connect(struct esmtp_info *info, void *arg)
+{
+	const char *dest_domain=info->smtproute ? info->smtproute:info->host;
+	struct sts_id domain_sts_id;
+	int rc;
+	const char *tls_trustcerts=getenv("TLS_TRUSTCERTS");
+
+	/* If TLS is not enabled, disable STS */
+
+	sts_init(&domain_sts_id, (tls_trustcerts && *tls_trustcerts
+				  ? dest_domain:NULL));
+
+	rc=do_esmtp_connect_to(info, dest_domain, &domain_sts_id,
+			       get_sts_mode(&domain_sts_id),
+			       arg);
+
+	sts_deinit(&domain_sts_id);
+
+	return rc;
+}
+
+static int do_esmtp_connect_to(struct esmtp_info *info,
+			       const char *connect_to,
+			       struct sts_id *domain_sts_id,
+			       enum sts_mode domain_sts_mode,
+			       void *arg)
 {
 	struct rfc1035_mxlist *mxlist, *p, *q;
 	int static_route= info->smtproute != NULL;
 	struct rfc1035_res res;
 	int rc;
-	const char *auth_key;
 	int connection_attempt_made;
 
 	errno=0;	/* Detect network failures */
 
-	auth_key=info->smtproute ? info->smtproute:info->host;
-
 	rfc1035_init_resolv(&res);
 
 	rc=rfc1035_mxlist_create_x(&res,
-				   auth_key,
+				   connect_to,
 				   RFC1035_MX_AFALLBACK |
 				   RFC1035_MX_IGNORESOFTERR,
 				   &mxlist);
@@ -1522,6 +1557,10 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 					 sizeof(p->address), &port))
 			continue;
 
+		if (domain_sts_mode == sts_mode_enforce &&
+		    sts_mx_validate(domain_sts_id, p->hostname) < 0)
+			continue;
+
 		connection_attempt_made=1;
 
 		info->sockfdaddr=addr;
@@ -1556,6 +1595,7 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 			if (info->smtproutes_flags & ROUTE_SMTPS)
 			{
 				if (esmtp_enable_tls(info,
+						     domain_sts_mode,
 						     p->hostname,
 						     1,
 						     arg))
@@ -1597,11 +1637,17 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 						(info,
 						 "/SECURITY set, but TLS is not available",
 						 '5', arg);
-					}
+				}
+				else if (domain_sts_mode == sts_mode_enforce
+					 && !info->hasstarttls)
+				{
+					rc=1;
+				}
 				else if (info->hasstarttls &&
-					 esmtp_enable_tls
-					 (info, p->hostname,
-					  0, arg))
+					 esmtp_enable_tls(info,
+							  domain_sts_mode,
+							  p->hostname,
+							  0, arg))
 				{
 					/*
 					** Only keep track of broken
@@ -1611,7 +1657,8 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 					** Otherwise, it's on us.
 					*/
 					if (!(info->smtproutes_flags &
-					      ROUTE_STARTTLS))
+					      ROUTE_STARTTLS) &&
+					    domain_sts_mode != sts_mode_enforce)
 					{
 						(*info->report_broken_starttls)
 							(info,
@@ -1621,7 +1668,8 @@ static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 				}
 				else
 				{
-					int rc=esmtp_auth(info, auth_key, arg);
+					int rc=esmtp_auth(info, connect_to,
+							  arg);
 
 					if (rc == 0)
 						break; /* Good HELO */

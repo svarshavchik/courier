@@ -16,6 +16,7 @@
 #include	"comctlfile.h"
 #include	"comtrack.h"
 #include	"threadlib/threadlib.h"
+#include	"numlib/numlib.h"
 
 #include	<sys/types.h>
 #if	HAVE_SYS_STAT_H
@@ -477,8 +478,7 @@ void lookup(int argc, char **argv)
 			break;
 		default:
 			fprintf(stderr,
-				"Usage: verifysmtp [-t trackingdirectory] [-m full|base|domain]\n",
-				argv[0]);
+				"Usage: verifysmtp [-t trackingdirectory] [-m full|base|domain]\n");
 			exit(1);
 		}
 	}
@@ -740,6 +740,9 @@ int main(int argc, char **argv)
 
 	if (argc > 1)
 	{
+		umask(022);
+		if (geteuid() == 0)
+			libmail_changeuidgid(MAILUID, MAILGID);
 		lookup(argc, argv);
 	}
 

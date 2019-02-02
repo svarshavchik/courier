@@ -82,6 +82,11 @@ struct esmtp_info {
 	int hascourier;
 	int hasstarttls;
 	int hassecurity_starttls;
+
+	/* This connection has TLS enabled.  */
+	int is_tls_connection;
+
+	/* TLS connection with Courier's SECURITY extension. */
 	int is_secure_connection;
 
 	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *));

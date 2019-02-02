@@ -17,6 +17,7 @@
 #include	<dirent.h>
 #include	<string.h>
 #include	<stdlib.h>
+#include	<stdio.h>
 #include	<unistd.h>
 
 static char *policy_filename_for_domain(const char *domain);
@@ -28,41 +29,30 @@ static int get_new_policy(struct sts_id *id,
 			  const char *domain);
 static void save(struct sts_id *id, FILE *cached_policy_fp);
 
-static int sts_init1(struct sts_id *id,
+static int sts_init2(struct sts_id *id,
 		     const char *domain,
 		     const char *policy_filename,
 		     FILE *cached_policy_fp,
-		     int readwrite);
+		     int readwrite,
+		     void *ignore);
 
-static int get_cache_size()
-{
-	FILE *fp=fopen(STSDIR "/.cache_size", "r");
-	char buffer[1024];
-	int n;
+extern int sts_cache_size();
 
-	strcpy(buffer, "1000"); /* Default cache size */
-
-	if (fp)
-	{
-		fgets(buffer, sizeof(buffer), fp);
-		fclose(fp);
-	}
-	n=atoi(buffer);
-
-	if (n < 0)
-		n=0;
-
-	return n;
-}
-
-void sts_init(struct sts_id *id, const char *domain)
+static void sts_init1(struct sts_id *id, const char *domain,
+		      int (*process)(struct sts_id *id,
+				     const char *domain,
+				     const char *policy_filename,
+				     FILE *cached_policy_fp,
+				     int readwrite,
+				     void *arg),
+		      void *arg)
 {
 	FILE *cached_policy_fp;
 	int rc;
 	char *policy_filename;
 	int readwrite;
 
-	int cache_size=get_cache_size();
+	int cache_size=sts_cache_size();
 	struct stat stat_buf1;
 	struct stat stat_buf2;
 
@@ -100,8 +90,8 @@ void sts_init(struct sts_id *id, const char *domain)
 		break;
 	}
 
-	rc=sts_init1(id, domain, policy_filename, cached_policy_fp,
-		     readwrite);
+	rc=(*process)(id, domain, policy_filename, cached_policy_fp,
+		      readwrite, arg);
 
 	if (cached_policy_fp)
 	{
@@ -115,17 +105,127 @@ void sts_init(struct sts_id *id, const char *domain)
 		sts_deinit(id);
 }
 
+void sts_init(struct sts_id *id, const char *domain)
+{
+	sts_init1(id, domain, sts_init2, 0);
+}
+
+void sts_policy_purge(const char *domain)
+{
+	char  *policy_filename=policy_filename_for_domain(domain);
+
+	if (!policy_filename)
+		return;
+
+	if (unlink(policy_filename) < 0)
+		perror(policy_filename);
+
+	free(policy_filename);
+}
+
+static int sts_policy_override2(struct sts_id *id,
+				const char *domain,
+				const char *policy_filename,
+				FILE *cached_policy_fp,
+				int readwrite,
+				void *mode_ptr);
+
+void sts_policy_override(const char *domain, const char *mode_str)
+{
+	enum sts_mode mode;
+	struct sts_id dummy;
+
+	if (strcmp(mode_str, "none") == 0)
+		mode=sts_mode_none;
+	else if (strcmp(mode_str, "testing") == 0)
+		mode=sts_mode_testing;
+	else if (strcmp(mode_str, "enforce") == 0)
+		mode=sts_mode_enforce;
+	else
+	{
+		printf("Unknown STS policy: %s\n", mode_str);
+		return;
+	}
+	sts_init1(&dummy, domain, sts_policy_override2, &mode);
+	sts_deinit(&dummy);
+}
+
+static int sts_policy_override2(struct sts_id *id,
+				const char *domain,
+				const char *policy_filename,
+				FILE *cached_policy_fp,
+				int readwrite,
+				void *mode_ptr)
+{
+	char *new_policy;
+
+	if (!cached_policy_fp || load(id, cached_policy_fp))
+	{
+		printf("%s: cached policy not found.\n", domain);
+	}
+	else if (!readwrite)
+	{
+		printf("%s: no write permission.\n", policy_filename);
+	}
+	else if ((new_policy=courier_malloc(strlen(id->policy)+
+					    strlen(domain)+1024)) != 0)
+	{
+		char *put_p=new_policy;
+		const char *p;
+		char lastc='\n';
+		int skipping=0;
+
+		for (p=id->policy; *p; p++)
+		{
+			if (lastc == '\n')
+				skipping=strncmp(p, "mode:", 5) == 0 ||
+					strncmp(p, "info:", 5) == 0;
+
+			if (!skipping)
+				*put_p++=*p;
+
+			lastc=*p;
+		}
+		if (lastc != '\n')
+			*put_p++='\n';
+
+		sprintf(put_p,
+			"info: this policy has been manually overridden, "
+			"as follows\n"
+			"info: use \"testmxlookup --sts-purge %s\" to "
+			"restore the default policy:\n",
+			domain);
+
+		switch (*(enum sts_mode *)mode_ptr) {
+		case sts_mode_none:
+			strcat(put_p, "mode: none\n");
+			break;
+		case sts_mode_testing:
+			strcat(put_p, "mode: testing\n");
+			break;
+		case sts_mode_enforce:
+			strcat(put_p, "mode: enforce\n");
+			break;
+		}
+		free(id->policy);
+		id->policy=new_policy;
+		save(id, cached_policy_fp);
+	}
+	return 0;
+}
+
 static char *sts_getid(const char *domain);
 static char *sts_download(const char *domain);
 
 static unsigned max_age(struct sts_id *id);
 static void reset_timestamp(struct sts_id *id);
 
-static int sts_init1(struct sts_id *id,
+static int sts_init2(struct sts_id *id,
 		     const char *domain,
 		     const char *policy_filename,
 		     FILE *cached_policy_fp,
-		     int readwrite)
+		     int readwrite,
+		     void *ignore)
 {
 	int rc;
 
@@ -813,111 +913,4 @@ static int load2(struct sts_id *id, FILE *fp)
 	id->expiration=id->timestamp+max_age(id);
 
 	return 0;
-}
-
-struct sts_file_list {
-	struct sts_file_list *next;
-	char *filename;
-	time_t timestamp;
-};
-
-static int sort_by_timestamp(const void *a, const void *b)
-{
-	const struct sts_file_list **fa=a, **fb=b;
-
-	return (*fa)->timestamp < (*fb)->timestamp ? -1
-		: (*fa)->timestamp > (*fb)->timestamp ? 1
-		: 0;
-}
-
-void sts_expire()
-{
-	struct sts_file_list *list=0;
-	DIR *dirp;
-	struct dirent *de;
-	size_t cnt=0;
-	size_t i;
-	size_t max_size=get_cache_size();
-	struct sts_file_list **array;
-
-	if (max_size == 0)
-		return;
-
-	dirp=opendir(STSDIR);
-
-	if (!dirp)
-		return;
-
-	while ((de=readdir(dirp)) != 0)
-	{
-		struct sts_file_list *n;
-
-		if (de->d_name[0] == '.')
-			continue;
-
-		n=courier_malloc(sizeof(struct sts_file_list));
-
-		if (!n)
-			break;
-
-		if ((n->filename=courier_malloc(sizeof(STSDIR "/") +
-						strlen(de->d_name))) == 0)
-		{
-			free(n);
-			break;
-		}
-		strcat(strcpy(n->filename, STSDIR "/"), de->d_name);
-		n->next=list;
-		list=n;
-		++cnt;
-	}
-	closedir(dirp);
-
-	if (cnt <= max_size)
-		return;
-
-	if ((array=calloc(cnt, sizeof(*array))) != 0)
-	{
-		struct sts_file_list *p;
-
-		cnt=0;
-
-		for (p=list; p; p=p->next)
-		{
-			array[cnt]=p;
-			++cnt;
-		}
-
-		for (i=0; i<cnt; ++i)
-		{
-			struct stat stat_buf;
-
-			if (stat(array[i]->filename, &stat_buf) < 0)
-			{
-				array[i]->filename[0]=0;
-				stat_buf.st_mtime=0;
-			}
-			array[i]->timestamp=stat_buf.st_mtime;
-		}
-
-		qsort(array, cnt, sizeof(*array), sort_by_timestamp);
-
-		for (i=0; i<cnt-max_size; ++i)
-		{
-			if (array[i]->filename[0]) /* stat() error, above */
-				unlink(array[i]->filename);
-		}
-
-		free(array);
-	}
-
-	while (list)
-	{
-		struct sts_file_list *p;
-
-		p=list->next;
-		free(list->filename);
-		free(list);
-		list=p;
-	}
 }

@@ -50,9 +50,12 @@ int main(int argc, char **argv)
 	struct rfc1035_mxlist *mxlist, *p;
 	struct rfc1035_res res;
 	int rc;
-	int sts=0, sts_expire_opt=0;
+	int sts=0, sts_expire_opt=0, sts_purge_opt=0,
+		sts_cache_disable_opt=0, sts_cache_enable_opt=0;
+	const char *sts_override_opt=0;
 	struct sts_id domain_sts_id;
 	enum sts_mode domain_sts_mode;
+	int need_domain=1;
 
 	argn=1;
 	srand(time(NULL));
@@ -103,9 +106,86 @@ int main(int argc, char **argv)
 		{
 			sts_expire_opt=1;
 			++argn;
+			need_domain=0;
+			continue;
+		}
+
+		if (strncmp(argv[argn], "--sts-override=", 15) == 0)
+		{
+			sts_override_opt=argv[argn]+15;
+			++argn;
+		}
+
+		if (strcmp(argv[argn], "--sts-purge") == 0)
+		{
+			sts_purge_opt=1;
+			++argn;
+			continue;
+		}
+
+		if (strcmp(argv[argn], "--sts-cache-disable") == 0)
+		{
+			sts_cache_disable_opt=1;
+			++argn;
+			need_domain=0;
+			continue;
+		}
+
+		if (strcmp(argv[argn], "--sts-cache-enable") == 0)
+		{
+			sts_cache_enable_opt=-1;
+			++argn;
+			need_domain=0;
+			continue;
+		}
+
+		if (strncmp(argv[argn], "--sts-cache-enable=", 19) == 0)
+		{
+			sts_cache_enable_opt=atoi(argv[argn]+19);
+			if (sts_cache_enable_opt <= 0 ||
+			    sts_cache_enable_opt > 999999)
+			{
+				fprintf(stderr, "Invalid option.\n");
+				exit(1);
+			}
+			++argn;
+			need_domain=0;
+			continue;
+		}
+
+		if (strcmp(argv[argn], "--sts-cache-disable") == 0)
+		{
+			sts_cache_disable_opt=1;
+			++argn;
+			need_domain=0;
 			continue;
 		}
 		break;
+	}
+
+	if (sts_expire_opt + sts_purge_opt + sts + (sts_override_opt ? 1:0)
+	    + (sts_cache_enable_opt ? 1:0) + sts_cache_disable_opt > 1
+		||
+	    (argn >= argc ? 0:1) != need_domain)
+	{
+		fprintf(stderr,
+			"Usage: testmxlookup [options] [domain]\n"
+			"   @ip-address          override default name server\n"
+			"   --dnssec             enable DNSSEC\n"
+			"   --udpsize n          override eDNS payload size\n"
+			"   --sts-cache-disable  disable the STS policy cache\n"
+			"   --sts-cache-enable   enable the STS policy cache\n"
+			"   --sts-cache-enable=n enable the STS policy cache"
+			" with a non-default size\n"
+			"   --sts                show STS policy for domain\n"
+			"   --sts-expire         manually expire the STS"
+			" cache\n"
+			"   --sts-purge          manually remove domain's"
+			" cached STS policy\n"
+			"   --sts-override=[p]   manually override domain's"
+			" cached STS policy (none,\n"
+			"                       testing, enforce)\n");
+		exit(1);
 	}
 
 	if (sts_expire_opt)
@@ -113,10 +193,42 @@ int main(int argc, char **argv)
 		sts_expire();
 		exit(0);
 	}
+
+	if (sts_cache_disable_opt)
+	{
+		sts_cache_disable();
+		exit(0);
+	}
+
+	if (sts_cache_enable_opt)
+	{
+		if (sts_cache_enable_opt < 0)
+		{
+			sts_cache_enable();
+		}
+		else
+		{
+			sts_cache_size_set(sts_cache_enable_opt);
+		}
+		exit(0);
+	}
+
 	if (argn >= argc)	exit(0);
 
 	q_name=argv[argn++];
 
+	if (sts_purge_opt)
+	{
+		sts_policy_purge(q_name);
+		printf("Reloading %s\n", q_name);
+		sts=1;
+	}
+
+	if (sts_override_opt)
+	{
+		sts_policy_override(q_name, sts_override_opt);
+		sts=1;
+	}
 	sts_init(&domain_sts_id, q_name);
 
 	if (sts)
@@ -166,6 +278,17 @@ int main(int argc, char **argv)
 	printf("Domain %s:\n", q_name);
 	domain_sts_mode=get_sts_mode(&domain_sts_id);
 
+	switch (domain_sts_mode) {
+	case sts_mode_none:
+		break;
+	case sts_mode_testing:
+		printf("STS: testing\n");
+		break;
+	case sts_mode_enforce:
+		printf("STS: enforcing\n");
+		break;
+	}
+
 	for (p=mxlist; p; p=p->next)
 	{
 		RFC1035_ADDR	addr;
@@ -191,16 +314,6 @@ int main(int argc, char **argv)
 
 	rfc1035_mxlist_free(mxlist);
 
-	switch (domain_sts_mode) {
-	case sts_mode_none:
-		break;
-	case sts_mode_testing:
-		printf("STS: testing\n");
-		break;
-	case sts_mode_enforce:
-		printf("STS: enforcing\n");
-		break;
-	}
 	sts_deinit(&domain_sts_id);
 	return (0);
 }

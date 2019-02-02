@@ -31,7 +31,7 @@ libcommon_la_LDFLAGS=-static
 
 libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c courier_malloc.c \
 	cdefaultdelivery.c cdomaincmp.c cfilename.c cmaildropfilter.c \
-	comsts.c comsts.h \
+	comsts.c comsts2.c comsts.h \
 	cmaildropmda.c \
 	cread1l.c cme.c cdefaultdomain.c chelohost.c cfilteracct.c \
 	cmsgidhost.c courierdir.c islocal.c islocalt.c maxlongsize.h \
