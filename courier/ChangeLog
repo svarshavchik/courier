@@ -1,3 +1,14 @@
+2019-02-02  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/filters/verifyfilter.c: Remove the 'smtpfilter' symlink
+	to verifyfilter. Replace it with a shell script wrapper that loads
+	the environment variables and invokes verifyfilter.
+
+	* tcpd/libcouriertls.c: Add support for verifying certificate
+	subject alternative names.
+
+	* tcpd/tlsclient.c: Implement the override_vars parameter.
+
 1.0.6
 
 2019-01-30  Sam Varshavchik  <mrsam@courier-mta.com>

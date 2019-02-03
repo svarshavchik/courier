@@ -259,15 +259,17 @@ include '@sysconfdir@/maildroprcs/verifysenderfull'</programlisting>
     </para>
 
     <para>
-      When executed as a shell command or a local recipient mail filter the
-      <application>Courier</application> mail server's execution environment
-      is not available, and <command>verifysmtp</command> will not be
-      able to use
-      <application>Courier</application>'s configuration files, such as
+      <command>verifysmtp</command> is a shell script wrapper that imports
+      <application>Courier</application>'s environment from
+      <filename>@sysconfdir@/courierd</filename> then executes
+      <command>verifyfilter</command>.
+      Running as a non-daemon user, <command>verifysmtp</command>
+      may not be able to read some
+      <application>Courier</application>'s configuration files, and also
+      won't use several others like
       <filename>smtproutes</filename>
       and
-      <filename>authclient</filename>,
-      and several others.
+      <filename>authclient</filename>.
       As such, <command>verifysmtp</command>'s behavior might differ from
       Courier's, when sending mail.
     </para>

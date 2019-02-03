@@ -464,9 +464,11 @@ void lookup(int argc, char **argv)
 
 	memset(&my_env, 0, sizeof(my_env));
 
-	while ((opt=getopt(argc, argv, "m:t:")) != -1)
+	while ((opt=getopt(argc, argv, "cm:t:")) != -1)
 	{
 		switch (opt) {
+		case 'c':
+			break;
 		case 't':
 			trackdir=optarg;
 			break;
@@ -475,7 +477,7 @@ void lookup(int argc, char **argv)
 			break;
 		default:
 			fprintf(stderr,
-				"Usage: %s [-t trackingdirectory] [-m full|base|domain]\n",
+				"Usage: verifysmtp [-t trackingdirectory] [-m full|base|domain]\n",
 				argv[0]);
 			exit(1);
 		}
@@ -736,16 +738,8 @@ int main(int argc, char **argv)
 
 	unsigned nthreads=10;
 
-	if (!lf_initializing())
+	if (argc > 1)
 	{
-		if (!getenv("COURIERTLS"))
-		{
-			putenv("COURIERTLS=" BINDIR "/couriertls");
-			putenv("ESMTP_USE_STARTTLS=1");
-
-			if (!getenv("TLS_VERIFYPEER"))
-				putenv("TLS_VERIFYPEER=NONE");
-		}
 		lookup(argc, argv);
 	}
 

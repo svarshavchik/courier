@@ -1,5 +1,5 @@
 #
-# Copyright 2000-2002 Double Precision, Inc.  See COPYING for
+# Copyright 2000-2019 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 SUBDIRS=libfilter perlfilter
@@ -23,6 +23,7 @@ noinst_SCRIPTS=courierfilter.start
 
 filterbindir=$(libexecdir)/filters
 filterbin_PROGRAMS=dupfilter ratefilter verifyfilter
+bin_SCRIPTS=verifysmtp
 
 filtersocketdir=$(localstatedir)/filters
 allfiltersocketdir=$(localstatedir)/allfilters
@@ -112,8 +113,6 @@ install-data-hook:
 	chmod 500 $(DESTDIR)$(datadir)/filterctl
 	rm -f $(DESTDIR)$(sbindir)/filterctl
 	$(LN_S) $(datadir)/filterctl $(DESTDIR)$(sbindir)/filterctl
-	rm -f $(DESTDIR)$(bindir)/verifysmtp
-	ln $(DESTDIR)$(filterbindir)/verifyfilter $(DESTDIR)$(bindir)/verifysmtp
 
 	chmod 750 $(DESTDIR)$(filtersocketdir)
 	chmod 750 $(DESTDIR)$(allfiltersocketdir)
