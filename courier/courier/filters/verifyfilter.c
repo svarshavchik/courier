@@ -465,10 +465,14 @@ void lookup(int argc, char **argv)
 
 	memset(&my_env, 0, sizeof(my_env));
 
-	while ((opt=getopt(argc, argv, "cm:t:")) != -1)
+	while ((opt=getopt(argc, argv, "cnm:t:")) != -1)
 	{
 		switch (opt) {
 		case 'c':
+			break;
+		case 'n':
+			close(2);
+			open("/dev/null", O_WRONLY);
 			break;
 		case 't':
 			trackdir=optarg;
@@ -478,7 +482,7 @@ void lookup(int argc, char **argv)
 			break;
 		default:
 			fprintf(stderr,
-				"Usage: verifysmtp [-t trackingdirectory] [-m full|base|domain]\n");
+				"Usage: verifysmtp [-t trackingdirectory] [-m full|base]\n");
 			exit(1);
 		}
 	}

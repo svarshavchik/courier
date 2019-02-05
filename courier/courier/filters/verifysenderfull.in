@@ -8,7 +8,7 @@
 # Must mkdir $HOME/.trackdir before using this.
 
 import SENDER
-system '@bindir@/verifysmtp -m full -t $HOME/.trackdir'
+system '@bindir@/verifysmtp -n -m full -t $HOME/.trackdir'
 
 if ($RETURNCODE != 0)
 {

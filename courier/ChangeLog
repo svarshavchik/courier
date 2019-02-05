@@ -1,3 +1,13 @@
+2019-02-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/libs/comsts.c (open_and_lock_cached_policy_file): Fix
+	errno getting clobbered by isatty().
+
+	* courier/filters/verifyfilter.c: -n option explicitly suppresses
+	stderr.
+
+	* courier/filters/verifysender: Pass the -n option to verifysmtp.
+
 2019-02-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* testmxlookup: implement the Strict Transport Security policy for

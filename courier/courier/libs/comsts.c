@@ -19,6 +19,7 @@
 #include	<stdlib.h>
 #include	<stdio.h>
 #include	<unistd.h>
+#include	<errno.h>
 
 static char *policy_filename_for_domain(const char *domain);
 static FILE *open_and_lock_cached_policy_file(const char *filename,
@@ -350,6 +351,7 @@ static FILE *open_and_lock_cached_policy_file(const char *filename,
 					      int *readwrite)
 {
 	int fd;
+	int save_errno;
 
 	*readwrite=1;
 	fd=open(filename, O_RDWR | O_CREAT, 0644);
@@ -369,10 +371,12 @@ static FILE *open_and_lock_cached_policy_file(const char *filename,
 	** script let's bark this somewhere where someone will hopefully
 	** notice this.
 	*/
-
+	save_errno=errno;
 	if (!isatty(2))
+	{
+		errno=save_errno;
 		perror(filename);
-
+	}
 	if (fd >= 0)
 		close(fd);
 

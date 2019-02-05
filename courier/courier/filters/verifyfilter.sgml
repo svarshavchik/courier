@@ -32,11 +32,6 @@
       </group>
       <arg choice="plain">verifyfilter</arg>
     </cmdsynopsis>
-
-    <cmdsynopsis sepchar=" ">
-      <command>verifysmtp</command>
-      <arg choice="req">user@domain</arg>
-    </cmdsynopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -89,10 +84,14 @@
     <refsect2>
       <title>The <command>verifysmtp</command> command</title>
 
+
       <cmdsynopsis sepchar=" ">
-	<command>@bindir@/verifysmtp</command>
+	<command>verifysmtp</command>
+	<arg choice="opt">-n</arg>
+	<arg choice="opt">-t <replaceable>directory</replaceable></arg>
+	<arg choice="opt">-m {full|base}</arg>
 	<arg choice="req">user@domain</arg>
-      </cmdsynopsis>
+    </cmdsynopsis>
 
       <para>
 	The <command>verifysmtp</command> command creates a network connection
@@ -107,6 +106,21 @@
 	<command>verifysmtp</command> terminates with a zero exit code if
 	all given E-mail addresses passed. A non-zero exit code indicates that
 	one or more of the given addresses were rejected.
+      </para>
+
+      <para>
+	The <option>-m</option> option is analogous to the
+	<filename>verifyfilter-logmode</filename> setting, described below,
+	that specifies how E-mail addresses are compared against the cached
+	verification results.
+	The <option>-t</option> enables caching of verification results,
+	and specifies the directory for storing the cached results.
+      </para>
+
+      <para>
+	The <option>-n</option> option suppresses internal error messages
+	from getting logged to standard error. This is used in the
+	<command>verifyfilter</command> global mail filter.
       </para>
     </refsect2>
 
