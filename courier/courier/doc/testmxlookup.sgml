@@ -12,7 +12,7 @@
 
   <refnamediv>
     <refname>testmxlookup</refname>
-    <refpurpose>Look up mail relays for a domain</refpurpose>
+    <refpurpose>Look up mail servers for a domain</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -44,8 +44,8 @@
 
     <para>
       <command>testmxlookup</command> reports the names and IP addresses of mail
-      relays that receive mail for the <replaceable>domain</replaceable>,
-      as well as the <replaceable>domain</replaceable> published
+      servers that receive mail for the <replaceable>domain</replaceable>,
+      as well as the <replaceable>domain</replaceable>'s published
       <acronym>STS</acronym> policy.
       This is useful in diagnosing mail delivery problems.
     </para>
@@ -54,10 +54,10 @@
       <command>testmxlookup</command> sends a DNS MX query for the specified
       domain, followed by A/AAAA queries, if needed.
       <command>testmxlookup</command> lists the
-      hostname and the IP address of every mail relay, and its MX priority.
+      hostname and the IP address of every mail server, and its MX priority.
       The domain's strict transport security
       (<acronym>STS</acronym>) policy status, if one is published,
-      precedes the mail relay list.
+      precedes the mail server list.
     </para>
 
     <refsect2>
@@ -66,26 +66,26 @@
       <para>
 	The error message <quote>Hard error</quote> indicates that the
 	domain does not exist,
-	or does not have any mail relays. The error message "Soft error"
+	or does not have any mail servers. The error message "Soft error"
 	indicates a temporary error condition (usually a network failure of
 	some sorts, or the local DNS server is down).
       </para>
 
       <para>
 	<quote>STS: testing</quote> or
-	<quote>STS: enforcing</quote> preceding the list of mail relays
+	<quote>STS: enforcing</quote> preceding the list of mail servers
 	indicates that the domain publishes an <acronym>STS</acronym>
 	policy.
 	<quote>ERROR: STS Policy verification failed</quote> appearing
-	after an individual mail relay
-	indicates that the mail relay's name does not meet the domain's
+	after an individual mail server
+	indicates that the mail server's name does not meet the domain's
 	<acronym>STS</acronym> policy.
       </para>
 
       <para>
 	<quote>STS: testing</quote> or
 	<quote>STS: enforcing</quote> by itself, with no further messages,
-	indicates that all listed mail relays comply with the listed
+	indicates that all listed mail servers comply with the listed
 	<acronym>STS</acronym> policy. If you are attempting to install
 	your own STS policy this is a simple means of checking its
 	validity.
@@ -243,7 +243,7 @@
       <para>
 	<application>Courier</application>
 	automatically downloads and caches domains'
-	<acronym>STS</acronym> policy files by default, an an internal
+	<acronym>STS</acronym> policy files by default, in an internal
 	cache with a default size of 1000 domains.
       </para>
 

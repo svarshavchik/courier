@@ -1,3 +1,16 @@
+2019-02-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/doc/testmxlookup.sgml: Minor editing to the testmxlookup
+	man page.
+
+2019-02-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/libs/comsts.c (sts_download2): Specify --max-redirect 0
+	for STS policy downloads, as per STS spec.
+
+	* pop3dserver.c (do_retr): Use the new MIME_UNICODE_MESSAGE_TYPE
+	setting to set the type of the wrapped MIME attachment.
+
 2019-02-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/libs/comsts.c (open_and_lock_cached_policy_file): Fix

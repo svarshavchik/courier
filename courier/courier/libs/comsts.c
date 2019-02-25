@@ -666,6 +666,7 @@ static int sts_download2(const char *url, pid_t *pidptr)
 
 		execl(WGET, WGET, "-O", "-",
 		      "--timeout", "60",
+		      "--max-redirect", "0",
 		      "-q", url, NULL);
 		perror(WGET);
 		exit(1);
