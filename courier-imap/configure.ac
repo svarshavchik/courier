@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 5.0.6, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 5.0.7, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -40,10 +40,13 @@ Please rerun configure and add the
 
 option.
 
-This indicates that you've read the instructions in INSTALL about
-updating from earlier versions; specifically the need to convert any
-existing maildirs to a Unicode naming scheme, and the need to update
-any other Courier packages together with updating this one.
+This indicates that you've read the instructions in the maildirmake
+manual page (see "Converting pre-unicode format maildirs" at
+http://www.courier-mta.org/maildirmake.html, or in the man page in
+this package) about updating from earlier versions; specifically the
+need to convert any existing maildirs to a Unicode naming scheme,
+and the need to update any other Courier packages together with
+updating this one.
 
 If you are building RPMs directly using the spec file from the source
 tarball, add a
@@ -55,7 +58,7 @@ option to the rpmbuild command:
 $ rpmbuild -ta --define 'notice_option --with-notice=unicode'
 
 This message is only meant to make sure you are aware of the contents
-of INSTALL about updating from earlier versions, and the need for
+of the man page about updating from earlier versions, and the need for
 manual steps to update any existing maildirs.
 
 If you are installing for the first time, you can simply rerun configure
