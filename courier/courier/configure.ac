@@ -52,7 +52,7 @@ AC_SUBST(WGET)
 
 if test ! -x "$WGET"
 then
-	AC_MSG_ERROR(wget not found, please install the wget tool)
+	AC_MSG_ERROR(wget not found please install the wget tool)
 fi
 
 AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
