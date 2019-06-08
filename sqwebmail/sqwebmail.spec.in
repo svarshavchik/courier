@@ -75,10 +75,11 @@ BuildRequires: /etc/mime.types
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
 
-%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+%define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
 
-%if %need_perl_generators
+%if %is_fedora
 BuildRequires: perl-generators
+BuildRequires: glibc-all-langpacks
 %endif
 
 %description

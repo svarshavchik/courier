@@ -1,3 +1,15 @@
+1.0.8
+
+2019-06-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* sqwebmail.c (rename_sent_folder): Fix quoting of autorenamed
+	Sent folder.
+
+2019-05-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cgi/cgidaemon.c (connect_err): Fix quoting in HTTP headers for
+	error messages.
+
 1.0.7
 
 2019-02-25  Sam Varshavchik  <mrsam@courier-mta.com>
