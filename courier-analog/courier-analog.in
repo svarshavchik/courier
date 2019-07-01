@@ -1,7 +1,7 @@
 #! @PERL@
 #
 #
-# Copyright 2004-2016 Double Precision, Inc.  See COPYING for
+# Copyright 2004-2019 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 # Courier log analyzer
@@ -1231,6 +1231,8 @@ while (<>)
 	{
 	    my ($login,$ip,$headers,$body,$seconds,$tls)=($1,$2,$5,$7,$9,$10);
 
+	    $seconds=0 unless defined $seconds;
+
 	    my $hash=$$conn{"user"};
 
 	    $$hash{$login}=[] unless defined $$hash{$login};
@@ -1262,7 +1264,7 @@ while (<>)
 	    next;
 	}
 
-	if ($logline =~ /^id=[^,]*,from=(<>),addr=(<.*>),status: defer/)
+	if ($logline =~ /^id=[^,]*,from=(<.*>),addr=(<.*>),status: defer/)
 	{
 	    my ($sender,$recipient)=($1,$2);
 	    track_esmtp_out($ESMTP_OUTBOUND{"defer"}, $sender, $recipient,
@@ -1270,7 +1272,7 @@ while (<>)
 	    next;
 	}
 
-	if ($logline =~ /^id=[^,]*,from=(<>),addr=(<.*>),status: fail/)
+	if ($logline =~ /^id=[^,]*,from=(<.*>),addr=(<.*>),status: fail/)
 	{
 	    my ($sender,$recipient)=($1,$2);
 	    track_esmtp_out($ESMTP_OUTBOUND{"fail"}, $sender, $recipient,
