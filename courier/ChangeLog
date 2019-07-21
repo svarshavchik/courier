@@ -1,3 +1,8 @@
+2019-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/esmtp.c (isindomaindb): use ualllower instead
+	of tolower.
+
 1.0.8
 
 2019-06-08  Sam Varshavchik  <mrsam@courier-mta.com>

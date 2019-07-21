@@ -152,13 +152,10 @@ struct rfc822token *p, *q;
 	return (0);
 }
 
-static int isindomaindb(char *address, struct dbobj *db)
+static int isindomaindb_utf8(const char *address, struct dbobj *db)
 {
-char	*p;
-int	n=8;
-
-	for (p=address; *p; p++)
-		*p=tolower(*p);
+	const char	*p;
+	int	n=8;
 
 	p=address;
 
@@ -169,8 +166,18 @@ int	n=8;
 		if (*p == '.')	++p;
 		while (*p && *p != '.')
 			++p;
+		--n;
 	}
 	return (0);
+}
+
+static int isindomaindb(const char *p, struct dbobj *db)
+{
+	char *q=ualllower(p);
+	int ret=isindomaindb_utf8(q, db);
+
+	free(q);
+	return ret;
 }
 
 static int ispercenthack(struct rfc822token *ptr)
