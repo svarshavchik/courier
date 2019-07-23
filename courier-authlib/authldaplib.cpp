@@ -54,8 +54,9 @@ class ldap_connection {
 
 public:
 	LDAP *connection;
+	bool bound;
 
-	ldap_connection() : connection(0) {}
+	ldap_connection() : connection(0), bound(false) {}
 	~ldap_connection() { disconnect(); }
 
 	bool connected() const { return connection != 0; }
@@ -80,6 +81,19 @@ public:
 	}
 
 	bool bind(const std::string &userid,
+		  const std::string &password)
+	{
+		if (do_bind(userid, password))
+		{
+			bound=true;
+			return true;
+		}
+
+		return false;
+	}
+
+private:
+	bool do_bind(const std::string &userid,
 		  const std::string &password)
 	{
 		std::vector<char> buffer(password.begin(), password.end());
@@ -428,6 +442,8 @@ bool ldap_connection::connect()
 {
 	if (connected()) return true;
 
+	bound=false;
+
 	DPRINTF("authldaplib: connecting to %s", authldaprc.ldap_uri.c_str());
 
 	if (ldapconncheck())
@@ -511,12 +527,13 @@ void ldap_connection::close()
 
 static int ldapopen()
 {
-	if (main_connection.connected()) return 0;
+	if (!main_connection.connected())
+	{
+		if (!main_connection.connect())
+			return 1;
+	}
 
-	if (!main_connection.connect())
-		return 1;
-
-	if (authldaprc.initbind)
+	if (authldaprc.initbind && !main_connection.bound)
 	{
 		/* Bind to server */
 		if (courier_authdebug_login_level >= 2)
