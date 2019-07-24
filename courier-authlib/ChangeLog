@@ -1,3 +1,5 @@
+0.69.1
+
 2019-07-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* authldaplib.cpp (ldapopen): Make sure that we rebind if we reconnect,
