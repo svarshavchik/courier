@@ -566,7 +566,7 @@ class authldaprc_attributes {
 
 public:
 
-	std::map<std::string, std::vector<std::string *>> attributes;
+	std::map<std::string, std::vector<std::string *> > attributes;
 
 	std::string attribute(const char *name,
 			      const char *default_value,
@@ -587,9 +587,9 @@ class authldaprc_attribute_vector : public std::vector<std::string> {
 public:
 
 	authldaprc_attribute_vector(const std::map<std::string,
-				    std::vector<std::string *>> &attributes)
+				    std::vector<std::string *> > &attributes)
 	{
-		for (std::map<std::string, std::vector<std::string *>>
+		for (std::map<std::string, std::vector<std::string *> >
 			     ::const_iterator
 			     p=attributes.begin(); p != attributes.end(); ++p)
 		{
@@ -1225,7 +1225,7 @@ int authldap_lookup::operator()(int (*callback)(struct authinfo *, void *),
 
 	authldap_get_values get_value(main_connection.connection, entry, dn.c_str());
 
-	for (std::map<std::string, std::vector<std::string *>>::iterator
+	for (std::map<std::string, std::vector<std::string *> >::iterator
 		     p=attributes.begin(); p != attributes.end(); ++p)
 	{
 		get_value(p->first, p->second);
