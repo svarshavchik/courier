@@ -1,3 +1,11 @@
+2019-07-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/submit.C (my_spf_lookup): Convert hostnames and addresses
+	in the Received-SPF: header from UTF-8 to ACE.
+
+	* rfc1035/spf.c (get_macro): When expanding macros in SPF messages
+	convert UTF-8 domains to ACE.
+
 2019-07-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/module.esmtp/esmtp.c (isindomaindb): use ualllower instead

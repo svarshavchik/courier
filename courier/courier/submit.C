@@ -710,7 +710,21 @@ static const char *my_spf_lookup(const char *checkname,
 
 	for (i=0; i<sizeof(values)/sizeof(values[0]); i++)
 	{
-		char *v=strdup(values[i] ? values[i]:"");
+		const char *c=values[i] ? values[i]:"";
+
+		char *v;
+
+		switch (i) {
+		case 0:
+			v=udomainace(c);
+			break;
+		case 1:
+			v=strdup(c);
+			break;
+		default:
+			if (idna_to_ascii_8z(c, &v, 0) != IDNA_SUCCESS)
+				v=strdup(c);
+		}
 
 		for (q=v; q && *q; q++)
 			if (*q < ' ' || *q >= 127)
@@ -722,6 +736,9 @@ static const char *my_spf_lookup(const char *checkname,
 		(*hdrOut) += "=";
 		(*hdrOut) += v ? v:strerror(errno);
 		(*hdrOut) += ";\n";
+
+		if (v)
+			free(v);
 	}
 	return str;
 }
