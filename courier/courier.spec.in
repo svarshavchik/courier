@@ -151,7 +151,7 @@ Obsoletes:	courier-smtpauth
 
 %if %is_fedora
 BuildRequires: perl-generators
-BuildRequires: glibc-all-langpacks
+BuildRequires: /usr/lib/locale/locale-archive
 %endif
 
 %if ! %alternatives

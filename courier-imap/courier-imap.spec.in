@@ -68,7 +68,7 @@ Requires:	  /usr/bin/certtool
 
 %if %is_fedora
 BuildRequires: perl-generators
-BuildRequires: glibc-all-langpacks
+BuildRequires: /usr/lib/locale/locale-archive
 %endif
 
 Obsoletes: %{name}-ldap

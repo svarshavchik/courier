@@ -79,7 +79,7 @@ BuildRequires: courier-unicode-devel
 
 %if %is_fedora
 BuildRequires: perl-generators
-BuildRequires: glibc-all-langpacks
+BuildRequires: /usr/lib/locale/locale-archive
 %endif
 
 %description

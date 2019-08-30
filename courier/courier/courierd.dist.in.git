@@ -278,7 +278,9 @@ ESMTP_PREFER_IPV6_MX=1
 
 ##NAME: TLS_PRIORITY:0
 #
-# Set TLS protocol priority settings (GnuTLS only)
+# GnuTLS setting only (use TLS_CIPHER_LIST for OpenSSL)
+#
+# Set TLS protocol priority settings
 #
 # DEFAULT: NORMAL:-CTYPE-OPENPGP
 #
@@ -316,33 +318,15 @@ ESMTP_PREFER_IPV6_MX=1
 
 ##NAME: TLS_CIPHER_LIST:0
 #
+# OpenSSL only (use TLS_PRIORITY for GnuTLS):
+#
 # TLS_CIPHER_LIST optionally sets the list of ciphers to be used by the
 # OpenSSL library.  In most situations you can leave TLS_CIPHER_LIST
 # undefined
 #
-# OpenSSL:
+# TLS_CIPHER_LIST="TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
 #
-# TLS_CIPHER_LIST="SSLv3:TLSv1:HIGH:!LOW:!MEDIUM:!EXP:!NULL:!aNULL@STRENGTH"
-#
-# GnuTLS:
-#
-# TLS_CIPHER_LIST="HIGH:MEDIUM"
-#
-# The actual list of available ciphers depend on the options GnuTLS was
-# compiled against. The possible ciphers are:
-#
-# AES256, 3DES, AES128, ARC128, ARC40, RC2, DES, NULL
-#
-# Also, the following aliases:
-#
-# HIGH -- all ciphers that use more than a 128 bit key size
-# MEDIUM -- all ciphers that use a 128 bit key size
-# LOW -- all ciphers that use fewer than a 128 bit key size, the NULL cipher
-#        is not included
-# ALL -- all ciphers except the NULL cipher
-#
-# See GnuTLS documentation, gnutls_priority_init(3) for additional
-# documentation.
+# See the OpenSSL ciphers(1) manual page for the format of this setting.
 
 ##NAME: TLS_MIN_DH_BITS:0
 #
