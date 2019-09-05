@@ -46,7 +46,7 @@ If only one argument is provided, the authentication request displays the
 account information for <replaceable>loginid</replaceable>, if found.</para>
 
     <para>
-If two arguments are provided, 
+If two arguments are provided,
 <replaceable>password</replaceable> must match
 <replaceable>loginid</replaceable>'s
 existing password.</para>
@@ -55,7 +55,7 @@ existing password.</para>
 If three arguments are provided,
 <replaceable>loginid</replaceable>'s password is changed to
 <replaceable>newpassword</replaceable>, but only if
-<replaceable>password</replaceable> matches the existing psasword.</para>
+<replaceable>password</replaceable> matches the existing password.</para>
 
     <para>
 These three basic authentication requests can be used to troubleshoot
@@ -64,4 +64,3 @@ the authentication library's configuration.</para>
   </refsect1>
 
 </refentry>
-
