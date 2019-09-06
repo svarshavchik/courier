@@ -61,7 +61,7 @@ static char *input_line="";
 static void cancelsubmit();
 static time_t data_timeout;
 
-static const char *tcpremoteip, *tcpremotehost;
+static const char *tcpremoteip, *tcpremotehost, *tcpremoteport;
 
 #define	INIT_TEERGRUBE	8
 #define	MAX_TEERGRUBE	128
@@ -110,6 +110,8 @@ void iov_logerror(const char *q, const char *p)
 	clog_msg_start_info();
 	clog_msg_str("error,relay=");
 	clog_msg_str(tcpremoteip);
+	clog_msg_str(",port=");
+	clog_msg_str(tcpremoteport);
 	if (ident)
 	{
 		clog_msg_str(",ident=\"");
@@ -463,6 +465,8 @@ const char *p;
 
 	clog_msg_str("error,relay=");
 	clog_msg_str(tcpremoteip);
+	clog_msg_str(",port=");
+	clog_msg_str(tcpremoteport);
 	if ((p=getenv("TCPREMOTEINFO")) != 0 && *p)
 	{
 	char	*q=strdup(p), *r;
@@ -1155,8 +1159,9 @@ int	authenticated=0;
 
 	tcpremoteip=getenv("TCPREMOTEIP");
 	tcpremotehost=getenv("TCPREMOTEHOST");
+	tcpremoteport=getenv("TCPREMOTEPORT");
 
-	if (!tcpremoteip)
+	if (!tcpremoteip || !tcpremoteport)
 	{
 		fprintf(stderr, "%s: don't know your IP address, no dice.\n",
 			argv[0]);
@@ -1174,6 +1179,8 @@ int	authenticated=0;
 	clog_msg_start_info();
 	clog_msg_str("started,ip=[");
 	clog_msg_str(tcpremoteip);
+	clog_msg_str("],port=[");
+	clog_msg_str(tcpremoteport);
 	clog_msg_str("]");
 	clog_msg_send();
 

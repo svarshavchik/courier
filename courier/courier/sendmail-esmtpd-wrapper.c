@@ -35,7 +35,8 @@
 	it, then sets its uid and gid to courier, then execs bin/courieresmtpd
 	with a fresh environment.
 
-	The fresh environment will have fake TCPREMOTEHOST and TCPREMOTEIP.
+	The fresh environment will have fake TCPREMOTEHOST, TCPREMOTEIP,
+	and TCPREMOTEPORT.
 	Furthermore, TCPREMOTEINFO will be set to the identity of the
 	invoking user.  This way, we can read the sender's identity in the
 	headers.
@@ -51,7 +52,7 @@ void	esmtpd()
 uid_t orig_uid=getuid();
 char	ubuf[NUMBUFSIZE];
 char	remoteinfobuf[NUMBUFSIZE+30];
-char	*environ[6];
+char	*environ[7];
 char	*argv[2];
 int	pipefd[2];
 pid_t	pid;
@@ -96,7 +97,8 @@ pid_t	pid;
 	environ[2]=remoteinfobuf;
 	environ[3]="RELAYCLIENT=";
 	environ[4]="FAXRELAYCLIENT=";
-	environ[5]=0;
+	environ[5]="TCPREMOTEPORT=N/A";
+	environ[6]=0;
 	argv[0]="sendmail";
 	argv[1]=0;
 	execve(SBINDIR "/courieresmtpd", argv, environ);
