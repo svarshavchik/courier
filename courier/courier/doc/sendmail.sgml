@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1999 - 2011 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="sendmail">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -31,7 +31,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -85,7 +85,7 @@ Courier modules that <command>sendmail</command> runs automatically.
 This process is
 transparent to the end user, or the application.</para>
 
-    <refsect2>
+    <refsect2 id="options">
 
       <title>OPTIONS</title>
       <variablelist>
@@ -226,7 +226,7 @@ Use a <literal>VERP</literal> for this message.
       </variablelist>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="returnaddress">
       <title>RETURN ADDRESS</title>
 
       <para>
@@ -269,7 +269,7 @@ Finally, if the <option>-verp</option> option was specified, the return address
 is VERPed.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="verp">
       <title>Variable Envelope Return Paths (VERPs)</title>
 
       <para>
@@ -284,8 +284,8 @@ absence of a machine-readable DSN.</para>
 This option exists mainly to support Courier's own mailing list manager. At
 this time, it's the only software in the world that knows how to use this
 option.
-The <ulink url="http://www.qmail.org/"><application>Qmail</application></ulink>
-server has very
+The <application>Qmail</application>
+server originally had very
 similar functionality, for it's own mailing list manager.
 However,
 there are many functional differences between the two mail servers, so
@@ -330,7 +330,7 @@ a copy of which is included in Courier's source code.</para>
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="senderaddress">
       <title>SENDER ADDRESS</title>
 
       <para>
@@ -378,7 +378,7 @@ the contents of the <envar>MAILHOST</envar> environment variable. If it is not
 set, the system name of the server is used.</para>
 </refsect2>
 
-    <refsect2>
+    <refsect2 id="exitcode">
       <title>EXIT CODE</title>
 
       <para>
@@ -390,7 +390,7 @@ exits with a non-zero status. The exit status will always be zero when the
 unless a serious system problem occurs.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="rmail">
       <title>RMAIL</title>
 
       <para>
@@ -418,7 +418,7 @@ manual page for more information.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="bugs">
     <title>BUGS</title>
 
     <para>
@@ -434,14 +434,13 @@ they're used, are different from Qmail's and may produce different
 results.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="seealso">
     <title>SEE ALSO</title>
     <para>
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
 <ulink url="courieruucp.html"><citerefentry><refentrytitle>courieruucp</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
 <ulink url="mailq.html"><citerefentry><refentrytitle>mailq</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
 <ulink url="cancelmsg.html"><citerefentry><refentrytitle>cancelmsg</refentrytitle><manvolnum>1</manvolnum></citerefentry></ulink>,
-<ulink url="http://www.sendmail.org">http://www.sendmail.org</ulink>,
-<ulink url="http://www.qmail.org">http://www.qmail.org</ulink>.</para>
+<ulink url="http://www.sendmail.org">http://www.sendmail.org</ulink>.</para>
   </refsect1>
 </refentry>

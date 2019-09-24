@@ -566,7 +566,7 @@ also be used to override compiler flags that <code>configure</code> selects.
   automatically append the user's name.
   <p>If it doesn't begin with a slash, <i>maildrop</i> will prepend the user's
   home directory to <code>DEFAULT_DEF</code>. To use <i>maildrop</i> with
-  <a href="http://www.qmail.org">qmail</a>, which normally delivers to
+  qmail, which normally delivers to
   <code>$HOME/Mailbox</code>, set <code>DEFAULT_DEF</code> to
   <b><code>./Mailbox</code></b>.</p>
   <p>The '=' character in DEFAULT_DEF gets replaced by progressive characters
