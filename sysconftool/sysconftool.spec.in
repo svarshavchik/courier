@@ -18,8 +18,6 @@ BuildRequires: automake
 BuildRequires: perl-generators
 %endif
 
-ExclusiveArch: noarch
-
 %description
 sysconftool is a script that is used by applications to update configuration
 files when a new version of the application is installed. sysconftool reads

@@ -123,24 +123,13 @@ distrelease:
 	$(MAKE) dorpm
 
 upload-beta:
-	test -z "$(SFPASSWD)" && exit 1; exit 0
 	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	~/src/sftools/release.pl mrsam $(SFPASSWD) courier @PACKAGE@-devel `echo @VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
+	~/src/sftools/release.pl mrsam courier @PACKAGE@-devel `echo @VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
 
 upload-dist:
-	test -z "$(SFPASSWD)" && exit 1; exit 0
 	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
 	git tag -s @PACKAGE@/@VERSION@/`date +%Y%m%d%H%M%S` -m 'Tag version @VERSION@'
-	socksify ~/src/sftools/release.pl mrsam $(SFPASSWD) courier @PACKAGE@ @VERSION@ @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
-
-
-release-dist:
-	test -z "$(SFPASSWD)" && exit 1; exit 0
-	./changelog.pl >changelog.txt
-	emacs releasenotes.txt
-	test -f releasenotes.txt || exit 1
-	socksify ~/src/sftools/release.pl mrsam $(SFPASSWD) courier @PACKAGE@ @VERSION@ releasenotes.txt changelog.txt @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
-	socksify ssh courier.sourceforge.net rm -f /home/groups/c/co/courier/@PACKAGE@.beta
+	socksify ~/src/sftools/release.pl mrsam courier @PACKAGE@ @VERSION@ @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
 
 htmldoc: $(noinst_DATA) index.html
 	rm -rf html

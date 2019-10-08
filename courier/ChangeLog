@@ -1,3 +1,17 @@
+2019-11-10  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* configure.ac: Update for Fedora 31 RPM.
+
+2019-10-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriertls.c (verifypeer): Use openssl to verify
+	hostnames.
+
+2019-10-02  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* When making both IPv4 and IPv6 mx lookups, ignore one of them
+	SOFTFAILing if the other one succeeds.
+
 2019-09-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* smtp, imap, pop3: include remote port TCP port number together

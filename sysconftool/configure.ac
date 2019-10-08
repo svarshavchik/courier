@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Copyright 2000-2013 Double Precision, Inc.  See COPYING for
 dnl distribution information.
-AC_INIT(sysconftool, 0.17, [courier-users@lists.sourceforge.net])
+AC_INIT(sysconftool, 0.17.20191110, [courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(sysconftool.in)
 AM_INIT_AUTOMAKE
