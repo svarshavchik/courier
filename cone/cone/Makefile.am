@@ -281,7 +281,7 @@ uninstall-local:
 
 EXTRA_DIST = ../config.rpath testsuite1 testsuite1.out pwtest.txt colors.txt mkcolors.pl \
 	fixonlinehelp.pl mkhtmlmsg.pl postproc.xsl $(SPELLSRC) \
-	m4/ChangeLog $(srcdir)/m4/*.m4
+	$(srcdir)/m4/*.m4
 
 colors_inc.h: colors.txt mkcolors.pl
 	@PERL@ $(srcdir)/mkcolors.pl <$(srcdir)/colors.txt >colors_inc.h
