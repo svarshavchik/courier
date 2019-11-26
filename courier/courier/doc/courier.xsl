@@ -42,10 +42,6 @@ if (x != myname)
 }
 	</xsl:text>
       </script>
-      <script type="text/javascript" src=
-         "https://apis.google.com/js/plusone.js">
-         <xsl:text> </xsl:text>
-      </script>
   </xsl:copy>
 </xsl:template>
 
@@ -111,14 +107,6 @@ if (x != myname)
 	  <xsl:attribute name="href">sqwebmail/</xsl:attribute>
 	  <xsl:text>SqWebMail</xsl:text>
 	</xsl:element>
-
-	<xsl:text disable-output-escaping="yes">
-&lt;span class="gplus"&gt;&lt;script type="text/javascript"&gt;
-//&lt;![CDATA[
-document.write('&lt;g:plusone href="http://www.courier-mta.org"&gt; &lt;\/g:plusone&gt;');
-//]]&gt;
-&lt;/script&gt;&lt;/span&gt;
-	</xsl:text>
       </xsl:element>
     </xsl:element>
 

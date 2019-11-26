@@ -386,7 +386,7 @@ PIDFILE=@piddir@/esmtpd.pid
 # -nodnslookup and -noidentlookup.
 #
 
-TCPDOPTS="-stderrlogger=@courierlogger@"
+TCPDOPTS="-stderrlogger=@courierlogger@ -noidentlookup"
 
 ##NAME: ESMTPAUTH:4
 #

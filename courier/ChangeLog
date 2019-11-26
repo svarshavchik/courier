@@ -1,3 +1,9 @@
+2019-12-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix virtual IP and hostname handling when using GnuTLS for SSL.
+
+	* Add -noidentlookup option to the default TCPDOPTS.
+
 2019-11-10  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* configure.ac: Update for Fedora 31 RPM.
