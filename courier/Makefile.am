@@ -60,6 +60,7 @@ install-recursive: install-check-umask
 
 install-check-umask:
 	@test `umask | sed 's/^0*//'` = 22 && exit 0; \
+	test `umask | sed 's/^0*//'` = 2 && exit 0; \
 	test "$$INSTALL_IGNORE_UMASK" = 1 && exit 0; \
 	echo "ERROR: your umask MUST be 022."; \
 	echo "Change your umask to 022, then";\
