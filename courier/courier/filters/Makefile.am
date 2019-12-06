@@ -113,7 +113,7 @@ install-data-hook:
 	chmod 500 $(DESTDIR)$(datadir)/filterctl
 	rm -f $(DESTDIR)$(sbindir)/filterctl
 	$(LN_S) $(datadir)/filterctl $(DESTDIR)$(sbindir)/filterctl
-
+	chmod 755 $(DESTDIR)$(filterbindir)
 	chmod 750 $(DESTDIR)$(filtersocketdir)
 	chmod 750 $(DESTDIR)$(allfiltersocketdir)
 	chmod 750 $(DESTDIR)$(filterconfdir)

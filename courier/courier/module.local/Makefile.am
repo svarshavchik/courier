@@ -61,6 +61,7 @@ preline_SOURCES=preline.c
 noinst_LTLIBRARIES=librewrite.la
 
 install-data-hook:
+	chmod 755 $(DESTDIR)$(moduledir)
 	@test `id -u` = 0 || exit 0 ; cd $(DESTDIR)$(moduledir) || exit 1 ; chown @mailuser@ . ; chgrp @mailgroup@ .
 
 install-perms:

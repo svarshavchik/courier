@@ -41,6 +41,8 @@ noinst_LTLIBRARIES=librewrite.la
 
 install-data-hook:
 	-$(mkinstalldirs) $(DESTDIR)$(moduledir)
+	chmod 755 $(DESTDIR)$(moduledir)
+	chmod 755 $(DESTDIR)$(filterbindir)
 	@test `id -u` = 0 || exit 0 ; cd $(DESTDIR)$(moduledir) || exit 1 ; chown @mailuser@ . ; chgrp @mailgroup@ .
 	-$(mkinstalldirs) $(DESTDIR)@faxtmpdir@
 	chmod 700 $(DESTDIR)@faxtmpdir@

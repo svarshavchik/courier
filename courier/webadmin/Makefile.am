@@ -26,6 +26,9 @@ install-exec-hook:
 	-chgrp @mailgroup@ $(DESTDIR)$(sysconfdir)/webadmin/added
 	-chgrp @mailgroup@ $(DESTDIR)$(sysconfdir)/webadmin/removed
 
+install-data-hook:
+	chmod 755 $(DESTDIR)$(webadmindir)
+
 install-perms:
 	@echo $(sysconfdir)/webadmin 700 @mailuser@ @mailgroup@ >permissions.dat
 	@echo $(sysconfdir)/webadmin/added 700 @mailuser@ @mailgroup@ >>permissions.dat

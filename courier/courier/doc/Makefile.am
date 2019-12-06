@@ -600,6 +600,7 @@ install-data-hook:
 	$(MAKE) install-man-extra
 	$(MAKE) install-htmldocDATA
 	$(MAKE) do-man-install
+	chmod 755 $(DESTDIR)$(htmldocdir)
 
 do-man-install:
 	for f in $(mandir) $(man1dir) $(man7dir) $(man8dir) ; do test -d $(DESTDIR)$$f && chmod 755 $(DESTDIR)$$f ; done ; exit 0

@@ -49,6 +49,7 @@ EXTRA_DIST=courier.config staticlist.c esmtp.authpam.dist esmtpd.cnf.gnutls
 noinst_LTLIBRARIES=librewrite.la libesmtp.la
 
 install-data-hook:
+	chmod 755 $(DESTDIR)$(moduledir)
 	test `id -u` = 0 || exit 0 ; cd $(DESTDIR)$(moduledir) || exit 1 ; chown @mailuser@ . ; chgrp @mailgroup@ .
 
 ldaddlibdl=@LIBDL@

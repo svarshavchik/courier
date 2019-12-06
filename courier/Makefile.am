@@ -169,7 +169,7 @@ bump.rpm.release: courier.spec
 
 install-configure:
 	@$(MAKE) install-perms
-	@SYSCONFTOOL@ `awk ' $$5 == "config" && $$1 ~ /\.dist$$/ { print $$1 }' <permissions.dat`
+	@SYSCONFTOOL@ `awk ' $$5 == "config" && $$1 ~ /\.dist$$/ { print $$1 }'  <permissions.dat | sed s@^@$$DESTDIR@`
 
 install-webadmin-password:
 	@stty -echo ; echo -n "Password: " ; read P; stty echo ; echo "" ; echo $$P >@sysconfdir@/webadmin/password && chown @mailuser@ @sysconfdir@/webadmin/password && chgrp @mailgroup@ @sysconfdir@/webadmin/password && chmod 400 @sysconfdir@/webadmin/password
