@@ -11,7 +11,7 @@
 PEMFILE="$1"
 
 if [ -z "$PEMFILE" ]; then
-	PEMFILE=@mydatadir@/esmtpd.pem
+	PEMFILE=@mydatadir@/esmtpd
 fi
 
 if test "@ssllib@" = "openssl"
