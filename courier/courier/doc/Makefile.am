@@ -655,6 +655,9 @@ htmldocfiles=$(nohtmlinfiles) $(htmlin) \
 	../filters/ratefilter.html \
 	../filters/verifyfilter.html
 
+download.html: download.php
+	cp -f $(srcdir)/download.php download.html
+
 dollar=$$
 id=$(dollar)Id
 
