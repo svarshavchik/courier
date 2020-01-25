@@ -89,12 +89,12 @@ echo 'static const char * const mimetypefiles[]={' >mimetypefiles.h
 changequote([,])
 
 AC_ARG_ENABLE(mimetypes, [  --enable-mimetypes={dir}   Your mime.types file.],
-			 echo "\"$enableval\"," >>mimetypefiles.h
+			 [echo "\"$enableval\"," >>mimetypefiles.h]
 )
 
 for f in /usr/lib /usr/local/lib /usr/lib/pine /usr/local/lib/pine /etc \
          /var/lib/httpd/conf /home/httpd/conf /usr/local/etc/apache \
-         /usr/local/apache/conf /var/lib/apache/etc
+         /usr/local/apache/conf /var/lib/apache/etc /etc/nginx
 do
         if test -f $f/mime.types
         then
