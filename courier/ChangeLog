@@ -1,3 +1,8 @@
+2020-02-25  FlorianMickler <florian@mickler.org>
+
+	* tcpd/starttls.c (dossl): Start client after negotiating SSL,
+	in order to allow EXTERNAL client certificate authentication.
+
 2019-12-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fix virtual IP and hostname handling when using GnuTLS for SSL.
