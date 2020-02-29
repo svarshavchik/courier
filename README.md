@@ -41,3 +41,16 @@ you should already know what it is.
 _Copyright 1998-2013 Double Precision, Inc. This software is distributed
 under the terms of the GNU General Public License. See COPYING for
 additional information._
+
+## How to debug
+If you want to debug login troubles a nice trick is to save the "imaplogin" binary to "imaplogin.save" and replace it with a shell script: (debian path examples) 
+
+```sh
+#!/bin/sh
+env >/tmp/imapd.environ
+DATE=$(date)
+echo "new imapdlogin $DATE from $TLS_SUBJECT_CN" >> /tmp/imap_chat_in.txt
+echo "new imapdlogin $DATE from $TLS_SUBJECT_CN" >> /tmp/imap_chat_out.txt
+exec tee -a /tmp/imap_chat_in.txt | usr/lib/courier/courier/imaplogin.debug "$@" 2>>/tmp/imaplogin_errout.txt | tee -a /tmp/imap_chat_out.txt
+```
+Make shure your imaplogin process is executable and has write access to these files.
