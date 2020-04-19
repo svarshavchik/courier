@@ -1,3 +1,11 @@
+0.70.0
+
+2020-02-29  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* authsasl.c (auth_sasl_ex): For EXTERNAL, base64-decode the
+	initial authorization string, since if none is provided the
+	callback's reply is base64-decoded.
+
 0.69.1
 
 2019-07-23  Sam Varshavchik  <mrsam@courier-mta.com>

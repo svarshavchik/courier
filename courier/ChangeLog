@@ -1,3 +1,9 @@
+1.0.10
+
+2020-04-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix corruption of logged local mail addresses when using aliases.
+
 2020-02-25  FlorianMickler <florian@mickler.org>
 
 	* tcpd/starttls.c (dossl): Start client after negotiating SSL,

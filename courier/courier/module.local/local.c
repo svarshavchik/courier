@@ -326,6 +326,8 @@ static void rw_del_local2(struct rw_info *rwi,
 				strcat(strcpy(alloc_buf, DEFAULTNAME),
 				       atdomain);
 
+				lai.address=alloc_buf;
+
 				i=auth_getuserinfo("courier",
 						   alloc_buf,
 						   &local_callback, &lai);

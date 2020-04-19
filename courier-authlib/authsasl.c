@@ -99,10 +99,30 @@ int auth_sasl_ex(const char *method,
 	if (initresponse && !*initresponse)
 		initresponse=NULL;
 
-	if (initresponse && strcmp(initresponse, externalauth))
-		return AUTHSASL_ERROR;
+	if (initresponse)
+	{
+		uid=strdup(initresponse);
 
-	if (!initresponse)
+		if (!uid)
+			return AUTHSASL_ERROR;
+
+		n=authsasl_frombase64(uid);
+
+		if (n < 0)
+		{
+			free(uid);
+			return AUTHSASL_ABORTED;
+		}
+		uid[n]=0;
+
+		if (strcmp(uid, externalauth))
+		{
+			free(uid);
+			return AUTHSASL_ERROR;
+		}
+		free(uid);
+	}
+	else
 	{
 		uid=callback_func("", callback_arg);
 
