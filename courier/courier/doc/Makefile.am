@@ -289,6 +289,9 @@ EXTRA_DIST=$(nohtmlin) $(BUILT_SOURCES) dotforward.1 pop3d-ssl.8
 
 if HAVE_SGML
 
+download.html: download.php
+	cp -f $(srcdir)/download.php download.html
+
 aliaslookup.html: aliaslookup.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html aliaslookup.sgml aliaslookup.html
 
@@ -655,13 +658,10 @@ htmldocfiles=$(nohtmlinfiles) $(htmlin) \
 	../filters/ratefilter.html \
 	../filters/verifyfilter.html
 
-download.html: download.php
-	cp -f $(srcdir)/download.php download.html
-
 dollar=$$
 id=$(dollar)Id
 
-WWW=$$HOME/www/www.courier-mta.org
+WWW=$$HOME/www/hostrocket/courier-mta.org
 
 htmldoc: $(htmldocfiles)
 	for f in $(htmldocfiles); do test "$$f" = "menu.html" && continue; b=`basename $$f`; d=$(WWW)/$$b; h=`test ! -f $$d || perl -ne ' print $$1 if /\\$(id):([^\\$$]*)\\$$/' <$$d`; echo $$f; xsltproc --nonet courier.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$d; done
