@@ -885,7 +885,7 @@ fi
 %post webadmin
 if test ! -f %{_sysconfdir}/webadmin/password
 then
-	dd if=/dev/urandom 2>/dev/null | tr -d -c '[A-Za-z0-9]' | dd bs=16 count=1 2>/dev/null >%{_sysconfdir}/webadmin/password
+	dd if=/dev/urandom 2>/dev/null | tr -d -c '[A-Za-z0-9]' 2>/dev/null | dd bs=16 count=1 2>/dev/null >%{_sysconfdir}/webadmin/password
 	chmod 400 %{_sysconfdir}/webadmin/password
 	chown --reference=%{_sysconfdir}/webadmin %{_sysconfdir}/webadmin/password
 fi
