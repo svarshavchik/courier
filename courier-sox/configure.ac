@@ -17,6 +17,7 @@ LT_INIT(dlopen)
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CC_C99
 LT_INIT(dlopen)
 LTDL_INIT
 AC_SUBST(LTDLINCL)

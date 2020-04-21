@@ -1,3 +1,7 @@
+2020-04-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add AC_PROG_CC_C99 to configure
+
 3.0.0
 
 2018-07-31  Sam Varshavchik  <mrsam@courier-mta.com>
