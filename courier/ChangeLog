@@ -1,3 +1,11 @@
+1.0.13
+
+2020-04-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* configure.ac: Remove inadvertent debugging message.
+
+1.0.12
+
 2020-04-21  Alessandro Vesely <vesely@tana.it>
 
 	* Add back-end support for simultaneous DNS queries
