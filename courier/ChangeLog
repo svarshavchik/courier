@@ -1,3 +1,7 @@
+2020-04-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fixed defaults in the mkesmtpdcert script.
+
 1.0.13
 
 2020-04-24  Sam Varshavchik  <mrsam@courier-mta.com>
