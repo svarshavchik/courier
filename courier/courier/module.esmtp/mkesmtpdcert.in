@@ -21,15 +21,15 @@ else
 	test -x @CERTTOOL@ || exit 0
 fi
 
-if test -f "$PEMFILE"
+if test -f "$PEMFILE".pem
 then
-	echo "$PEMFILE already exists."
+	echo "${PEMFILE}.pem already exists."
 	exit 1
 fi
 
 cleanup() {
 	rm -f "$PEMFILE".rand
-	rm -f "$PEMFILE"
+	rm -f "$PEMFILE".pem
 	rm -f "$PEMFILE".key
 	rm -f "$PEMFILE".cert
 	exit 1
@@ -42,15 +42,22 @@ set -e
 
 if test "@ssllib@" = "openssl"
 then
-	cp /dev/null "$PEMFILE"
-	chmod 600 "$PEMFILE"
-	chown @mailuser@ "$PEMFILE"
+	cp /dev/null "$PEMFILE".pem
+	chmod 600 "$PEMFILE".pem
+	chown @mailuser@ "$PEMFILE".pem
 	dd if=@RANDOMV@ of="$PEMFILE".rand count=1 2>/dev/null
 	@OPENSSL@ req -new -x509 -days 365 -nodes \
-		  -config @sysconfdir@/esmtpd.cnf -out "$PEMFILE" -keyout "$PEMFILE" || cleanup
-	@OPENSSL@ dhparam -2 -rand "$PEMFILE".rand 512 >>"$PEMFILE" || cleanup
-	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in "$PEMFILE" || cleanup
-	rm -f @mydatadir@/esmtpd.rand
+		  -config @sysconfdir@/esmtpd.cnf -out "$PEMFILE".pem -keyout "$PEMFILE".pem || cleanup
+
+	if test "$BITS" = ""
+	then
+		BITS="2048"
+	fi
+
+	@OPENSSL@ dhparam -2 -rand "$PEMFILE".rand $BITS >>"$PEMFILE".pem || cleanup
+	@OPENSSL@ x509 -text -noout -in "$PEMFILE".pem > "$PEMFILE".cert || cleanup
+	cat "$PEMFILE".cert >>"$PEMFILE".pem
+	rm -f "$PEMFILE".rand "$PEMFILE".cert
 else
 	if test "$BITS" = ""
 	then
@@ -68,6 +75,6 @@ else
 	cp /dev/null "$PEMFILE".pem
 	chmod 600 "$PEMFILE".pem
 	chown @mailuser@ "$PEMFILE".pem
-	cat "$PEMFILE".key "$PEMFILE".cert >"$PEMFILE"
+	cat "$PEMFILE".key "$PEMFILE".cert >"$PEMFILE".pem
 	rm -f "$PEMFILE".key "$PEMFILE".cert
 fi
