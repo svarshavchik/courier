@@ -21,7 +21,7 @@ char *udomainlower(const char *c)
 	char *ud;
 	char *s;
 
-	d=strchr(c, '@');
+	d=strrchr(c, '@');
 
 	if (!d)
 		return courier_strdup(c);
@@ -45,7 +45,7 @@ static char *udomainutf82(const char *c)
 	char *ud;
 	char *s;
 
-	d=strchr(c, '@');
+	d=strrchr(c, '@');
 
 	if (!d)
 		return courier_strdup(c);
@@ -78,7 +78,7 @@ static char *udomainace2(const char *c)
 	char *ud;
 	char *s;
 
-	d=strchr(c, '@');
+	d=strrchr(c, '@');
 
 	if (!d)
 		return courier_strdup(c);
@@ -126,7 +126,7 @@ char *ulocallower(const char *c)
 			== 0 && (c[10] == '\0' || c[10] == '@')))
 	{
 		char *c_copy=courier_strdup(c);
-		char *at=strchr(c_copy, '@');
+		char *at=strrchr(c_copy, '@');
 		char save;
 		char *lower_username;
 

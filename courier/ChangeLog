@@ -1,3 +1,10 @@
+2020-05-07  Alessandro Vesely <vesely@tana.it>
+
+	* rfc1035/rfc1035search.c: More back-end support for simultaneous
+	DNS queries.
+
+	* Fix logic that converts domain names to lowercase.
+
 2020-04-26  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fixed defaults in the mkesmtpdcert script.
