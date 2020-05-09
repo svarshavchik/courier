@@ -1,9 +1,17 @@
+2020-05-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriertls.c (nonsslerror): Spurious message when
+	if connection closed during handshake.
+
 2020-05-07  Alessandro Vesely <vesely@tana.it>
 
 	* rfc1035/rfc1035search.c: More back-end support for simultaneous
 	DNS queries.
 
 	* Fix logic that converts domain names to lowercase.
+
+	* tcpd/tcpd.c: Use simultaneous DNS queries to query for A and TXT
+	records at the same time.
 
 2020-04-26  Sam Varshavchik  <mrsam@courier-mta.com>
 
