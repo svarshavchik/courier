@@ -105,7 +105,7 @@ dorpm:
 bump.rpm.release: sysconftool.spec
 	VERSION="x"; \
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
-	NEXT_RELEASE=0; \
+	NEXT_RELEASE=100; \
 	test "$$VERSION" = "@VERSION@" && NEXT_RELEASE="$$RELEASE"; \
 	RELEASE=`expr $$NEXT_RELEASE + 1`; \
 	echo "VERSION=@VERSION@" >$(srcdir)/rpm.release; \
