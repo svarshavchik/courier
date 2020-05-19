@@ -1,3 +1,24 @@
+2020-05-18  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Configure and installed versions shared libraries, both shared
+	and the authentication modules.
+
+	* Update INSTALL. Remove obsolete pre-courier authlib migration
+	script and documentation. It's been long enough.
+
+2020-05-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add _meta API functions with an extra auth_meta parameter,
+	keep the original functions as wrappers that provide a stub meta
+	parameter. Use this to pass arbitrary variables to authdaemon.
+
+	* authdaemond.c: retrieve the TCPREMOTEIP variable if it's provided.
+
+	* authpam.c: TCPREMOTEIP, if set, sets PAM_RHOST.
+
+	* Makefile.am (commonldflags): Link all libraries with the
+	--enable-new-dtags flag.
+
 2020-04-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Add AC_PROG_CC_C99 to configure

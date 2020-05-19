@@ -13,12 +13,13 @@
 <refentry id="auth-getuserinfo">
 
   <refmeta>
-    <refentrytitle>auth_getuserinfo</refentrytitle>
+    <refentrytitle>auth_getuserinfo_meta</refentrytitle>
     <manvolnum>3</manvolnum>
     <refmiscinfo>Double Precision, Inc.</refmiscinfo>
   </refmeta>
 
   <refnamediv>
+    <refname>auth_getuserinfo_meta</refname>
     <refname>auth_getuserinfo</refname>
     <refpurpose>Obtain account information</refpurpose>
   </refnamediv>
@@ -27,6 +28,17 @@
     <literallayout>
 #include &lt;courierauth.h&gt;
 </literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_getuserinfo_meta</function></funcdef>
+	<paramdef>struct auth_meta *<parameter>meta</parameter></paramdef>
+	<paramdef>const char *<parameter>userid</parameter></paramdef>
+
+	<paramdef>int <parameter>(*callback_func)</parameter><funcparams>struct authinfo *, void *</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
     <funcsynopsis>
       <funcprototype>
 	<funcdef>int rc=<function>auth_getuserinfo</function></funcdef>
@@ -46,6 +58,17 @@
 If <parameter>userid</parameter> is a valid account name,
 retrieve the account particulars and invoke
 <parameter>callback_func</parameter>.</para>
+
+    <para>
+      A NULL <parameter>meta</parameter> is equivalent to
+      using the default <structname>auth_meta</structname> returned by
+      <ulink url="auth_meta.html"><citerefentry><refentrytitle>auth_meta_init_default</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
+    </para>
+
+    <para>
+      <function>auth_getuserinfo</function>() is deprecated and should not
+      be used in new code.
+    </para>
   </refsect1>
 
   <refsect1>
@@ -72,10 +95,12 @@ return value indicates that this request was processed, but it failed
 
     <para>
 <ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
- 
-<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
-<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_meta.html"><citerefentry><refentrytitle>auth_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
 <ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
@@ -86,4 +111,3 @@ return value indicates that this request was processed, but it failed
   </refsect1>
 
 </refentry>
-

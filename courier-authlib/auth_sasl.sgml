@@ -139,7 +139,7 @@ initializes <parameter>*authtype_ret</parameter> and
 They will be set to a
 <citerefentry><refentrytitle>malloc</refentrytitle><manvolnum>3</manvolnum></citerefentry>-ed
 buffers that can be directly passed as arguments to
-<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
 It is the application's responsibility to
 <citerefentry><refentrytitle>free</refentrytitle><manvolnum>3</manvolnum></citerefentry>
 these buffers when it's done with them.</para>
@@ -179,7 +179,7 @@ Check <varname>errno</varname> for any clues.</para>
     <para>
 <ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
  
-<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
 
   </refsect1>
 

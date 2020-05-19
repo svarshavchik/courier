@@ -27,6 +27,7 @@
 #include	<Pam/pam_appl.h>
 #endif
 
+extern char tcpremoteip[];
 
 static const char *pam_username, *pam_password, *pam_service;
 
@@ -108,6 +109,17 @@ static int dopam(pam_handle_t **pamh, int *started)
 		*started=0;
 	}
 
+#ifdef PAM_RHOST
+	if (retval == PAM_SUCCESS && tcpremoteip[0])
+	{
+		retval=pam_set_item(*pamh, PAM_RHOST, tcpremoteip);
+		if (retval != PAM_SUCCESS)
+		{
+			DPRINTF("pam_set_item(PAM_RHOST) failed, result %d",
+				retval);
+		}
+	}
+#endif
 #if 0
 	if (retval == PAM_SUCCESS)
 	{
@@ -174,7 +186,7 @@ char	*s;
 char	buf[1];
 
 
-	a->clearpasswd=pam_password; 
+	a->clearpasswd=pam_password;
 	s=strdup(a->sysusername);
 	if (!s)
 	{

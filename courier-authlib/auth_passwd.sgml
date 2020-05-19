@@ -61,11 +61,11 @@ A non-0 error code indicates a failure..</para>
     <para>
 <ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
  
-<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
-<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
-<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
 <ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
 

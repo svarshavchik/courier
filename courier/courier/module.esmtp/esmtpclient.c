@@ -24,7 +24,6 @@
 #include	"numlib/numlib.h"
 #include	"tcpd/spipe.h"
 #include	"tcpd/tlsclient.h"
-#include	<courierauthsaslclient.h>
 
 #include	"rw.h"
 #include	"esmtpconfig.h"

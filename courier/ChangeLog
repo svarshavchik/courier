@@ -1,3 +1,7 @@
+2020-05-18  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-authlib API update.
+
 2020-05-09  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* tcpd/libcouriertls.c (nonsslerror): Spurious message when

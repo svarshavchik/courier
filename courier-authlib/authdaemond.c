@@ -26,6 +26,7 @@
 #include	"courierauth.h"
 #include	"courierauthstaticlist.h"
 #include        "libhmac/hmac.h"
+#include	"authdaemond.h"
 #include	<ltdl.h>
 
 
@@ -44,6 +45,8 @@ struct authstaticinfolist {
 };
 
 static struct authstaticinfolist *modulelist=NULL;
+
+char tcpremoteip[40];
 
 static int mksocket()
 {
@@ -112,10 +115,12 @@ static int initmodules(const char *p)
 
 		strcpy(buf, "lib");
 		strncat(buf, p, i>40 ? 40:i);
+		strcpy(buf2, buf);
+		strcat(buf2, COURIERDLEXT);
 
-		fprintf(stderr, "INFO: Installing %s\n", buf);
+		fprintf(stderr, "INFO: Installing %s\n", buf2);
 		p += i;
-		h=lt_dlopenext(buf);
+		h=lt_dlopen(buf2);
 
 		if (h == NULL)
 		{
@@ -123,7 +128,8 @@ static int initmodules(const char *p)
 			continue;
 		}
 
-		sprintf(buf2, "courier_%s_init", buf+3);
+		buf2[snprintf(buf2, sizeof(buf2)-1, "courier_%s_init",
+			      buf+3)]=0;
 
 		pt=lt_dlsym(h, buf2);
 		if (pt == NULL)
@@ -794,21 +800,40 @@ int	i, ch;
 char	*p;
 
 	readleft=0;
-	for (i=0; (ch=getauthc(fd)) != '\n'; i++)
-	{
-		if (ch < 0 || i >= sizeof(buf)-2)
-			return;
-		buf[i]=ch;
-	}
-	buf[i]=0;
+	tcpremoteip[0]=0;
 
-	for (p=buf; *p; p++)
+	while (1)
 	{
+		for (i=0; (ch=getauthc(fd)) != '\n'; i++)
+		{
+			if (ch < 0 || i >= sizeof(buf)-2)
+				return;
+			buf[i]=ch;
+		}
+		buf[i]=0;
+
+		for (p=buf; *p; p++)
+		{
+			if (*p == ' ' || *p == '=')
+				break;
+		}
+
+		if (!*p)
+			break;
+
 		if (*p == ' ')
 		{
 			*p++=0;
 			while (*p == ' ')	++p;
 			break;
+		}
+
+		*p++=0;
+
+		if (strcmp(buf, "TCPREMOTEIP") == 0)
+		{
+			tcpremoteip[sizeof(tcpremoteip)-1]=0;
+			strncpy(tcpremoteip, p, sizeof(tcpremoteip)-1);
 		}
 	}
 

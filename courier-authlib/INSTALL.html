@@ -7,7 +7,7 @@
   "text/html; charset=us-ascii" />
 
   <title>INSTALL</title>
-  <!-- Copyright 2004-2012 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2020 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 </head>
 
@@ -46,7 +46,7 @@
   Courier authentication library:</p>
 
   <ul>
-    <li>A modern version of gcc (<a onclick="" href=
+    <li>The current version of gcc (<a onclick="" href=
     "http://www.gnu.org/software/gcc/">http://www.gnu.org/software/gcc/</a>)</li>
 
     <li>The GNU linker (<a onclick="" href=
@@ -73,7 +73,7 @@
     others) will work.</li>
 
     <li>Courier Unicode Library. Before installing
-    Courier-IMAP, download and install <a onclick="" href=
+    this package, download and install <a onclick="" href=
     "http://www.courier-mta.org/unicode/">http://www.courier-mta.org/unicode/</a>.</li>
   </ul>
 
@@ -108,13 +108,19 @@
   <h2><a name="Installation" id="Installation">Installation
   overview</a></h2>
 
+  <p>
+    Courier-authlib should be built into a native installable package for
+    your distribution (rpm for Fedora and derives, deb for Debian and its
+    derivatives, etc..). The following documentation is for documentation
+    purposes. See "Guidelines", below, for packaging instructions.
+  </p>
+
   <p>The following sequence of commands should be sufficient to
   install courier-authlib in most cases:</p>
   <pre>
 ./configure [options] [variable=value]*...
 make
 make install
-make install-migrate      # Only if upgrading from pre-authlib Courier packages
 make install-configure
 </pre>
 
@@ -123,52 +129,6 @@ make install-configure
     usually the 'gmake' command. Use the 'gmake' command, instead
     of 'make'.</p>
   </blockquote>
-
-  <blockquote>
-    <p><strong>NOTE:</strong> It might appear that the
-    <code>configure</code> script is stuck in an infinite loop.
-    This is only an optical illusion. The <code>configure</code>
-    script takes several minutes to complete. The Courier
-    authentication library consists of many small modules, each
-    with its own configuration script; and all configuration
-    scripts are built from the same template. When they are
-    invoked, one at a time, an illusion of an infinite loop
-    appears.</p>
-  </blockquote>
-
-  <p>Courier-authlib is a requirement starting with the following
-  Courier package versions: Courier 0.48, Courier-IMAP 4.0,
-  SqWebMail 5.0. When upgrading from earlier versions of these
-  packages, install the Courier-authlib package first, then upgrade
-  the existing package.</p>
-
-  <p>The '<code>make install-migrate</code>' command imports the
-  authentication configuration from earlier versions of these
-  packages. '<code>make install-migrate</code>' is not needed
-  otherwise.</p>
-
-  <p>The '<code>make install-migrate</code>' command searches all
-  the known default installation directories for Courier,
-  Courier-IMAP, and SqWebMail, and imports the older configuration
-  files. If the older versions of these packages are installed in
-  some unusual, non-standard, directories, the <code>make
-  install-migrate</code> command won't find them. Instead, copy
-  those configuration files (<code>authdaemonrc</code>,
-  <code>authldaprc</code>, <code>authmysqlprc</code>,
-  <code>authpgsqlprc</code>, and <code>userdb</code>) by hand.
-  <strong>DO NOT COPY</strong> <code>authdaemonrc.dist</code>,
-  <code>authldaprc.dist</code>, <code>authmysqlprc.dist</code>, and
-  <code>authpgsqlprc.dist</code>.</p>
-
-  <p>After finishing '<code>make install-migrate</code>', the rest
-  of the installation steps, and after upgrading Courier,
-  Courier-IMAP, or SqWebMail to the new versions, to avoid future
-  confusion the old copies of these configuration files (including
-  the <code>.dist</code> files), should be removed from
-  Courier/Courier-IMAP/SqWebMail's configuration directory. They
-  now live in Courier-authlib's configuration directory
-  (<code>/usr/local/etc/authlib</code>, or whatever was specified
-  to the <code>configure</code> script).</p>
 
   <p>The '<code>make install-configure</code>' command is required;
   it installs and updates the configuration files; this command
@@ -471,8 +431,25 @@ make install-configure
     "<code>authenumerate</code>", and "<code>authtest</code>"
     commands can be renamed, to avoid name clashes.</li>
 
-    <li>Remove all static libraries from
-    <code>%libdir%/courier-authlib</code>.</li>
+    <li>There are two types of libraries that get installed in
+      <code>%libdir%</code>:
+
+      <ol>
+	<li>Common libraries that application link with,
+	  <code>libcourier*</code>.</li>
+	<li>Dynamically-loaded authentication modules:
+	  <code>libauth*</code>.</li>
+      </ol>
+
+      <p>Remove all static libraries from
+	<code>%libdir%/courier-authlib</code>.
+	Keep the <code>*.la</code> and <code>*.so</code> for
+	<code>libcourier*</code>, and include them
+	in a devel subpackage.
+	Remove <code>*.la</code> and <code>*.so</code> for
+	all <code>libauth*</code> libraries, they are not needed.
+      </p>
+    </li>
   </ul>
 
   <p>Now, create the installable packages, as follows:</p>

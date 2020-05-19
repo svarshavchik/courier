@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2019 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 5.0.10, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 5.0.10.20200518, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -146,9 +146,9 @@ then
 	AC_MSG_WARN([])
 	AC_MSG_ERROR(courierauthconfig not found)
 fi
-if test `$COURIERAUTHCONFIG --version=0.61.0` = "no"
+if test `$COURIERAUTHCONFIG --version=0.70.0.20200518` = "no"
 then
-	AC_MSG_ERROR(Courier authentication library version 0.61 required.)
+	AC_MSG_ERROR(Courier authentication library version 0.71 is required.)
 fi
 
 $COURIERAUTHCONFIG --configfiles >conftest || exit 1

@@ -6,8 +6,7 @@ function in any way.
 The first argument will be a pointer to the following structure:</para>
 
 <blockquote>
-  <example>
-    <title>struct authinfo</title>
+  <informalexample>
     <programlisting>
 struct authinfo {
 	const char *sysusername;
@@ -26,7 +25,7 @@ struct authinfo {
 
 	} ;
 </programlisting>
-  </example>
+  </informalexample>
     </blockquote>
 
 <para>

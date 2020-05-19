@@ -1,4 +1,5 @@
 /authchangepwdir.h
+/authdaemond.h
 /authdaemond
 /authdaemondprog
 /authdaemonrc
@@ -13,10 +14,12 @@
 /auth_enumerate.3
 /auth_enumerate.html
 /auth_generic.3
+/auth_generic_meta.3
 /auth_generic.html
 /auth_getoption.3
 /auth_getoption.html
 /auth_getuserinfo.3
+/auth_getuserinfo_meta.3
 /auth_getuserinfo.html
 /auth_mkhomedir.3
 /auth_mkhomedir.html
@@ -27,8 +30,10 @@
 /authlib.html
 /authlib.html.in
 /auth_login.3
+/auth_login_meta.3
 /auth_login.html
-/authmigrate
+/auth_meta.3
+/auth_meta.html
 /authmksock
 /authmysqlrc.h
 /authpasswd

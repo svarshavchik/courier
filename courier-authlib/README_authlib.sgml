@@ -224,8 +224,9 @@ is included in the courier-authlib source.</para>
       <title>The <literal>authpipe</literal> protocol</title>
 
       <para>
-authpipe uses the same protocol as authdaemon clients use to communicate
-with authdaemond.</para>
+	authpipe uses the same protocol as authdaemon clients use to communicate
+	with authdaemond (with the exception of optional authentication metadata
+	whose forwarding is not implemented at this time).</para>
 
 <para>There are four possible requests: <literal>PRE</literal>,
 <literal>AUTH</literal>, <literal>PASSWD</literal> and
@@ -753,7 +754,7 @@ system-based authentication modules (password/shadow files, or PAM).</para>
 
     <para>
 See
-<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
 for a description of option names used by various Courier packages.
 Other applications can make up names for their own settings, and
 use them in the same way.</para>
@@ -1100,7 +1101,7 @@ to the callback function as a second argument.
 The first argument is a pointer to the
 <structname>authinfo</structname> structure, which is described in detail
 in the
-<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
 manual page.
 The authentication module is responsible for allocating this structure.
 After the callback function returns this structure can be deallocated.

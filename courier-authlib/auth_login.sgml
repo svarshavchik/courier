@@ -7,18 +7,19 @@
 
 ]>
 
-  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2020 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 
 <refentry id="auth-login">
 
   <refmeta>
-    <refentrytitle>auth_login</refentrytitle>
+    <refentrytitle>auth_login_meta</refentrytitle>
     <manvolnum>3</manvolnum>
     <refmiscinfo>Double Precision, Inc.</refmiscinfo>
   </refmeta>
 
   <refnamediv>
+    <refname>auth_login_meta</refname>
     <refname>auth_login</refname>
     <refpurpose>Validate a userid and password</refpurpose>
   </refnamediv>
@@ -27,6 +28,18 @@
     <literallayout>
 #include &lt;courierauth.h&gt;
 </literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_login_meta</function></funcdef>
+	<paramdef>struct auth_meta *<parameter>meta</parameter></paramdef>
+	<paramdef>const char *<parameter>service</parameter></paramdef>
+	<paramdef>const char *<parameter>userid</parameter></paramdef>
+	<paramdef>const char *<parameter>password</parameter></paramdef>
+
+	<paramdef>int <parameter>(*callback_func)</parameter><funcparams>struct authinfo *, void *</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
     <funcsynopsis>
       <funcprototype>
 	<funcdef>int rc=<function>auth_login</function></funcdef>
@@ -45,13 +58,25 @@
     <title>DESCRIPTION</title>
 
     <para>
-<function>auth_login</function> verifies whether
-<replaceable>userid</replaceable> exists, and whether it's
-<replaceable>password</replaceable> is correct.
+<function>auth_login_meta</function> verifies whether
+<parameter>userid</parameter> exists, and whether it's
+<parameter>password</parameter> is correct.
 <parameter>service</parameter> specifies which so-called "service" is
 being authenticated; like <quote>imap</quote> or <quote>pop3</quote>.
 <parameter>service</parameter> may or may not be used by the Courier
 authentication library's configured back-end module.</para>
+
+    <para>
+      A NULL <parameter>meta</parameter> is equivalent to
+      using the default <structname>auth_meta</structname> returned by
+      <ulink url="auth_meta.html"><citerefentry><refentrytitle>auth_meta_init_default</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
+    </para>
+
+    <para>
+      <function>auth_login</function>() is deprecated and should not be used
+      in new code.
+    </para>
+
   </refsect1>
 
   <refsect1>
@@ -75,10 +100,12 @@ return value indicates that this request was processed, but it failed.</para>
 
     <para>
 <ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
- 
-<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
-<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_meta.html"><citerefentry><refentrytitle>auth_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
 <ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
@@ -89,4 +116,3 @@ return value indicates that this request was processed, but it failed.</para>
   </refsect1>
 
 </refentry>
-

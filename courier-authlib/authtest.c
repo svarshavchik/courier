@@ -97,12 +97,14 @@ const char *service="login";
 			exit(0);
 		}
 	}
+	setenv("TCPREMOTEIP", "::1", 0);
+
 	if (argc - argn >= 2)
 	{
-		if (auth_login(service, argv[argn],
-			       argv[argn+1],
-			       callback_pre,
-			       NULL))
+		if (auth_login_meta(NULL, service, argv[argn],
+				    argv[argn+1],
+				    callback_pre,
+				    NULL))
 		{
 			perror("Authentication FAILED");
 			exit(1);
@@ -110,9 +112,9 @@ const char *service="login";
 	}
 	else if (argc - argn >= 1)
 	{
-		if (auth_getuserinfo(service, argv[argn],
-				     callback_pre,
-				     NULL))
+		if (auth_getuserinfo_meta(NULL, service, argv[argn],
+					  callback_pre,
+					  NULL))
 		{
 			perror("Authentication FAILED");
 			exit(1);

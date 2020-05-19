@@ -3,7 +3,7 @@ dnl Copyright 1998 - 2019 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(sqwebmail, 6.0.3, [courier-sqwebmail@lists.sourceforge.net])
+AC_INIT(sqwebmail, 6.0.3.20200518, [courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -106,9 +106,9 @@ AC_ARG_WITH(mailgroup, [],
 AC_SUBST(mailuser)
 AC_SUBST(mailgroup)
 
-if test `$COURIERAUTHCONFIG --version=0.57` = "no"
+if test `$COURIERAUTHCONFIG --version=0.70.0.20200518` = "no"
 then
-	AC_MSG_ERROR(Courier authentication library version 0.57 required.)
+	AC_MSG_ERROR(Courier authentication library version 0.71 is required.)
 fi
 
 dnl Check whether we should use gdbm, or db.

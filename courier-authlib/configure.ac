@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.70.0],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.70.0.20200518],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -948,6 +948,27 @@ AC_SUBST(REPOSITORY)
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/libs/docbook)
 
+save_LDFLAGS="$LDFLAGS"
+LDFLAGS="-Wl,--enable-new-dtags $LDFLAGS"
+
+AC_CACHE_CHECK([--enable-new-dtags option],authlib_cv_enable_new_dtags,
+
+
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+		]], [[return 0; ]])],[authlib_cv_enable_new_dtags=yes],[authlib_cv_enable_new_dtags=no ])
+
+)
+
+if test "$authlib_cv_enable_new_dtags" = "yes"
+then
+   courierauth_ldflags="-Wl,--enable-new-dtags $courierauth_ldflags"
+fi
+
+AC_SUBST(courierauth_ldflags)
+
+VERSION_INFO=0:0:0
+AC_SUBST(VERSION_INFO)
+
 # This gets built by the make rule, and is not in the git repo
 
 for f in authdaemonrc.in
@@ -961,5 +982,5 @@ done
 
 AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
 
-AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h authmigrate courier-authlib.spec courier-authlib.lpspec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)
+AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h courier-authlib.spec courier-authlib.lpspec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)
 AC_OUTPUT

@@ -38,7 +38,7 @@
     <para>
       A <replaceable>callback_func</replaceable> that's passed as a parameter
       to
-      <ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
+      <ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>
       can invoke this function to automatically create a new account's
       home directory, if the authlib client is running as root, forwarding
       the <classname>authinfo</classname> pointer from the callback.
@@ -83,7 +83,7 @@
     <para>
 <ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
-<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
 
   </refsect1>
 

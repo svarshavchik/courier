@@ -1,0 +1,163 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+  <!-- Copyright 2020 Double Precision, Inc.  See COPYING for -->
+  <!-- distribution information. -->
+
+<refentry id="auth-meta">
+
+  <refmeta>
+    <refentrytitle>auth_meta</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>auth_meta</refname>
+    <refpurpose>Authentication metadata</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <literallayout>
+#include &lt;courierauth.h&gt;
+</literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>struct auth_meta *meta=<function>auth_meta_init_default</function></funcdef>
+	<paramdef>void</paramdef>
+      </funcprototype>
+    </funcsynopsis>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>void <function>auth_meta_destroy_default</function></funcdef>
+	<paramdef>struct auth_meta *<parameter>meta</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>
+      The <structname>auth_meta</structname> structure provides additional,
+      optional metadata for
+      <citerefentry><refentrytitle>auth_login_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry>, and
+      <citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry>.
+    </para>
+
+    <blockquote>
+      <informalexample>
+	<programlisting><![CDATA[
+struct auth_meta {
+    char **envvars;
+};]]></programlisting>
+      </informalexample>
+    </blockquote>
+
+    <para>Description of the above fields:</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>envvars</term>
+	<listitem>
+	  <para>
+	    An array of opaque
+	    <quote><replaceable>name</replaceable>=<replaceable>value</replaceable></quote>
+	    strings, ending with a null pointer.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+
+    <para>
+      The library recognizes the following <varname>envvars</varname>
+      variables:
+    </para>
+    <variablelist>
+      <varlistentry>
+	<term>TCPREMOTEIP</term>
+	<listitem>
+	  <para>
+	    The IP address the authentication request came from.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <refsect2 id="auth-meta-init">
+      <title>Initializing a default <structname>auth_meta</structname></title>
+
+      <para>
+	<function>auth_meta_init_default</function> creates an
+	<structname>auth_meta</structname> with default values.
+	A NULL pointer gets returned if the object could not be created.
+	<function>auth_meta_destroy_default</function> frees the object
+	and all memory used by it, after it is no longer needed.
+      </para>
+
+      <para>
+	Typical usage:
+      </para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    <function>auth_meta_init_default</function> gets called to create
+	    an <structname>auth_meta</structname>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    The pointer to the new
+	    <structname>auth_meta</structname> gets passed to
+	    <citerefentry><refentrytitle>auth_login_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
+	    <citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry> or
+	    <citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <function>auth_meta_destroy_default</function> deallocates and
+	    frees <structname>auth_meta</structname>'s memory.
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </refsect2>
+
+    <refsect2 id="auth-meta-default">
+      <title>Default <structname>auth_meta</structname> values</title>
+
+      <para>
+	<function>auth_meta_init_default</function> creates an
+	<structname>auth_meta</structname> with the following values:
+      </para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    The <envar>TCPREMOTEIP</envar> environment variable, if set,
+	    is placed in the <literal>TCPREMOTEIP</literal>
+	    <varname>envvars</varname>
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </refsect2>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>
+<ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_generic.html"><citerefentry><refentrytitle>auth_generic_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink></para>
+  </refsect1>
+
+</refentry>

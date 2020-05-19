@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 AUTOMAKE_OPTIONS=dist-bzip2
@@ -7,6 +7,7 @@ AUTOMAKE_OPTIONS=dist-bzip2
 SUBDIRS=libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog
 
 AM_CPPFLAGS=-I liblock $(LTDLINCL)
+BUILT_SOURCES=
 
 modules=@LIBAUTHUSERDB@ \
 	@LIBAUTHPAM@ @LIBAUTHPWD@ @LIBAUTHSHADOW@ \
@@ -42,7 +43,7 @@ CLEANFILES=authldaprc.h authmysqlrc.h authsqliterc.h authdaemonrc.h \
 DISTCLEANFILES=dbobj.config README_authlib.html
 
 commonlibdep=libcourierauthcommon.la
-commonldflags=-module -rpath $(pkglibdir) -export-symbols-regex 'courier_auth.*_init' -avoid-version
+commonldflags=-module -rpath $(pkglibdir) -export-symbols-regex 'courier_auth.*_init'  -version-info @VERSION_INFO@ @courierauth_ldflags@
 commonlibadd=libcourierauthcommon.la
 
 libcourierauthcommon_t=@CRYPTLIBS@
@@ -61,7 +62,7 @@ libcourierauthcommon_la_SOURCES= \
 
 libcourierauthcommon_la_DEPENDENCIES=libcourierauth.la
 libcourierauthcommon_la_LIBADD=libcourierauth.la
-libcourierauthcommon_la_LDFLAGS=$(libcourierauthcommon_t:%=-Wl,%) -avoid-version
+libcourierauthcommon_la_LDFLAGS=$(libcourierauthcommon_t:%=-Wl,%) -version-info @VERSION_INFO@
 
 libcourierauth_la_SOURCES=authdaemon.c authdaemonlib.c preauthdaemon.c \
 	authmoduser2.c authmoduser3.c debug.c \
@@ -69,7 +70,7 @@ libcourierauth_la_SOURCES=authdaemon.c authdaemonlib.c preauthdaemon.c \
 	authoption.c
 libcourierauth_la_LIBADD=libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la libs/numlib/libnumlib.la \
 	libs/random128/librandom128.la libs/rfc822/libencode.la
-libcourierauth_la_LDFLAGS=@NETLIBS@ -avoid-version
+libcourierauth_la_LDFLAGS=@NETLIBS@ -version-info @VERSION_INFO@
 
 # The userdb module
 
@@ -277,6 +278,8 @@ authdaemonrc.h:
 	echo "#define AUTHDAEMONSOCK AUTHDAEMONVAR \"/socket\"" >>authdaemonrc.h
 	echo "#define AUTHDAEMONLOCK AUTHDAEMONVAR \"/lock\"" >>authdaemonrc.h
 
+BUILT_SOURCES += authdaemonrc.h
+
 HTMLFILES=README.html NEWS.html INSTALL.html \
 	README.authsqlite.html README.authmysql.html README.authpostgres.html
 
@@ -303,10 +306,11 @@ EXTRA_DIST=$(HTMLFILES) sysconftool COPYING COPYING.GPL\
 	authpasswd.html authpasswd.1 \
 	authtest.html authtest.1 \
 	auth_sasl.html auth_sasl.3 auth_sasl_ex.3 \
-	auth_generic.html auth_generic.3 \
-	auth_login.html auth_login.3 \
+	auth_generic.html auth_generic.3 auth_generic_meta.3 \
+	auth_login.html auth_login.3 auth_login_meta.3 \
 	auth_passwd.html auth_passwd.3 \
-	auth_getuserinfo.html auth_getuserinfo.3 \
+	auth_meta.html auth_meta.3 \
+	auth_getuserinfo.html auth_getuserinfo.3 auth_getuserinfo_meta.3 \
 	auth_mkhomedir.html auth_mkhomedir.3 \
 	auth_enumerate.html auth_enumerate.3 \
 	auth_getoption.html auth_getoption.3 \
@@ -326,7 +330,7 @@ libcourierauthsasl_la_SOURCES=\
 	authsaslcram.c authsasllogin.c authsaslplain.c \
 	authsaslfrombase64.c authsasltobase64.c
 libcourierauthsasl_la_LIBADD=libcourierauthcommon.la libcourierauth.la
-libcourierauthsasl_la_LDFLAGS=-export-symbols-regex '^auth_sasl|auth_sasl_ex|auth_sasl_extract_userid$$' -avoid-version
+libcourierauthsasl_la_LDFLAGS=-export-symbols-regex '^auth_sasl|auth_sasl_ex|auth_sasl_extract_userid$$' -version-info @VERSION_INFO@
 
 libcourierauthsaslclient_la_SOURCES=courierauthsaslclient.h \
 	authsaslclient.c authsaslclient.h authsaslclientcram.c \
@@ -335,7 +339,7 @@ libcourierauthsaslclient_la_SOURCES=courierauthsaslclient.h \
 	authsaslclientexternal.c \
 	authsaslfrombase64.c authsasltobase64.c
 libcourierauthsaslclient_la_LIBADD=libcourierauth.la
-libcourierauthsaslclient_la_LDFLAGS=-export-symbols-regex '^auth_sasl_client$$' -avoid-version
+libcourierauthsaslclient_la_LDFLAGS=-export-symbols-regex '^auth_sasl_client$$' -version-info @VERSION_INFO@
 
 include_HEADERS=courier_auth_config.h courierauth.h courierauthsasl.h \
 	courierauthsaslclient.h courierauthdebug.h courierauthstaticlist.h
@@ -362,6 +366,13 @@ authenumerate_LDFLAGS=
 
 authdaemondprog_SOURCES=authdaemond.c authdaemondcpp.cpp
 
+authdaemond.o: authdaemond.h
+
+authdaemond.h: libcourierauthcommon.la
+	. ./libcourierauthcommon.la; echo '#define COURIERDLEXT "'`echo $$dlname | sed s/libcourierauthcommon//`'"' >authdaemond.h
+
+CLEANFILES += authdaemond.h
+
 authdaemondprog_DEPENDENCIES=libcourierauthcommon.la \
 	libcourierauth.la \
 	libs/liblock/liblock.la $(modules) \
@@ -381,18 +392,22 @@ authmksock_SOURCES=authmksock.c
 authmksock_LDADD=@NETLIBS@
 
 man3=authlib.3 auth_generic.3 auth_login.3 auth_getuserinfo.3 auth_mkhomedir.3 \
-	auth_enumerate.3 auth_passwd.3 auth_getoption.3 auth_sasl.3
+	auth_enumerate.3 auth_passwd.3 auth_getoption.3 auth_sasl.3 \
+	auth_meta.3
+
+extraman3=auth_generic_meta.3 auth_login_meta.3 auth_getuserinfo_meta.3 \
+	auth_sasl_ex.3
 man1=authpasswd.1 authtest.1
 
-man_MANS=$(man1) $(man3) auth_sasl_ex.3
+man_MANS=$(man1) $(man3) $(extraman3)
 
 BUILT1=authlib.html authldaprc.h authmysqlrc.h authpgsqlrc.h authpiperc.h \
 	authdaemonrc.h packageversion.h \
 	authchangepwdir.h sbindir.h \
 	pkglibdir.h pkgincludedir.h mailusergroup.h \
 	README_authlib.html
-BUILT_SOURCES=$(BUILT1) $(GITFILES) $(man3:%.3=%.html) $(man1:%.1=%.html) \
-	authsqliterc.h authmysqlrc.h authpgsqlrc.h authldaprc.h
+BUILT_SOURCES += $(BUILT1) $(GITFILES) $(man3:%.3=%.html) $(man1:%.1=%.html) \
+	authsqliterc.h authmysqlrc.h authpgsqlrc.h
 
 authchangepwdir.h: config.status
 	echo '#define AUTHCHANGEPWDIR "$(pkglibexecdir)"' >authchangepwdir.h
@@ -493,20 +508,34 @@ README_authlib.html.in: README_authlib.sgml optionlist.sgml libs/docbook/sgml2ht
 auth_generic.html: auth_generic.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
 	libs/docbook/sgml2html auth_generic.sgml auth_generic.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
 
-auth_generic.3: auth_generic.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_generic.sgml auth_generic.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+auth_generic.3: auth_generic_meta.3
+	touch $@
+
+auth_generic_meta.3: auth_generic.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
+	libs/docbook/sgml2man auth_generic.sgml auth_generic_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
 
 auth_login.html: auth_login.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
 	libs/docbook/sgml2html auth_login.sgml auth_login.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
 
-auth_login.3: auth_login.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_login.sgml auth_login.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+auth_login.3: auth_login_meta.3
+	touch $@
+
+auth_login_meta.3: auth_login.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
+	libs/docbook/sgml2man auth_login.sgml auth_login_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
 
 auth_getuserinfo.html: auth_getuserinfo.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
 	libs/docbook/sgml2html auth_getuserinfo.sgml auth_getuserinfo.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+auth_getuserinfo.3: auth_getuserinfo_meta.3
+	touch $@
 
-auth_getuserinfo.3: auth_getuserinfo.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_getuserinfo.sgml auth_getuserinfo.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+auth_getuserinfo_meta.3: auth_getuserinfo.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
+	libs/docbook/sgml2man auth_getuserinfo.sgml auth_getuserinfo_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+
+auth_meta.3: auth_meta.sgml libs/docbook/sgml2man
+	libs/docbook/sgml2man auth_meta.sgml auth_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+
+auth_meta.html: auth_meta.sgml libs/docbook/sgml2html
+	libs/docbook/sgml2html auth_meta.sgml auth_meta.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
 
 auth_mkhomedir.html: auth_mkhomedir.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
 	libs/docbook/sgml2html auth_mkhomedir.sgml auth_mkhomedir.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"

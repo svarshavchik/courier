@@ -298,7 +298,7 @@ distrelease:
 dollar=$$
 id=$(dollar)Id
 
-WWW=$$HOME/www/www.courier-mta.org
+WWW=$$HOME/www/hostrocket/courier-mta.org
 
 htmldoc: $(DELIVERQUOTAHTMLSOURCE) $(htmldataclean) libs/maildrop/maildroptips.html $(HTMLWWW)
 	for f in $^; do xsltproc --nonet $(WWW)/xsl/maildrop.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/maildrop/`basename $$f`; done

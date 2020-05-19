@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 1.0.13.20200509, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 1.0.13.20200518, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -152,9 +152,9 @@ AC_ARG_WITH(courierlogger, [], : ,
 			   [
 			   ac_configure_args="$ac_configure_args --with-courierlogger=$authsbindir/courierlogger"])
 
-if test `$COURIERAUTHCONFIG --version=0.65.0.20130910` = "no"
+if test `$COURIERAUTHCONFIG --version=0.70.0.20200518` = "no"
 then
-	AC_MSG_ERROR(Courier authentication library version 0.66 is required.)
+	AC_MSG_ERROR(Courier authentication library version 0.71 is required.)
 fi
 
 PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])

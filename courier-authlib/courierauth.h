@@ -18,6 +18,40 @@ extern "C" {
 #endif
 
 /*
+** Additional authentication parameters.
+**
+** Extra parameters passed to auth_meta_* functions.
+*/
+
+struct auth_meta {
+
+	/*
+	** A list of strings, ending with a NULL pointers.
+	**
+	** Current supported parameters:
+	**
+	** TCPREMOTEIP=<ipv4 or ipv6 address>
+	**
+	** Source of the authentication request.
+	*/
+	char **envvars;
+};
+
+/*
+** Create a default auth_meta object.
+**
+** The TCPREMOTEIP setting is taken from an environment variable of the
+** same name, if it set.
+*/
+
+struct auth_meta *auth_meta_init_default();
+
+/*
+** Free the memory created by auth_meta_init_default().
+*/
+void auth_meta_destroy_default(struct auth_meta *);
+
+/*
   Callback authentication structure:
 */
 
@@ -68,7 +102,7 @@ struct authinfo {
 #define	AUTHTYPE_CRAMSHA1 "cram-sha1"	/* authdata is challenge\nresponse\n */
 #define	AUTHTYPE_CRAMSHA256 "cram-sha256"	/* authdata is challenge\nresponse\n */
 
-	/* auth_generic: INTERNAL */
+/* auth_generic: INTERNAL */
 
 int auth_generic(const char *service,
 		 const char *authtype,
@@ -76,17 +110,37 @@ int auth_generic(const char *service,
 		 int (*callback_func)(struct authinfo *, void *),
 		 void *callback_arg);
 
-	/* Login request: */
+int auth_generic_meta(struct auth_meta *meta,
+		      const char *service,
+		      const char *authtype,
+		      char *authdata,
+		      int (*callback_func)(struct authinfo *, void *),
+		      void *callback_arg);
+
+
+/* Login request: */
 int auth_login(const char *service,
 	       const char *userid,
 	       const char *passwd,
 	       int (*callback_func)(struct authinfo *, void *),
 	       void *callback_arg);
 
-	/* Return account info: */
+int auth_login_meta(struct auth_meta *meta,
+		    const char *service,
+		    const char *userid,
+		    const char *passwd,
+		    int (*callback_func)(struct authinfo *, void *),
+		    void *callback_arg);
+
+/* Return account info: */
 int auth_getuserinfo(const char *service, const char *uid,
 		     int (*callback)(struct authinfo *, void *),
 		     void *arg);
+
+int auth_getuserinfo_meta(struct auth_meta *meta,
+			  const char *service, const char *uid,
+			  int (*callback)(struct authinfo *, void *),
+			  void *arg);
 
 	/* Enumerate accounts */
 void auth_enumerate( void(*cb_func)(const char *name,

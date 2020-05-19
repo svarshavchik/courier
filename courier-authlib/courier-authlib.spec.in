@@ -235,6 +235,19 @@ do
 	esac
 
 	case "$fn" in
+	*.so)
+		case "$fn" in
+		libcourierauth*)
+			;;
+		*)
+			rm -f "$f"
+			continue
+			;;
+		esac
+		;;
+	esac
+
+	case "$fn" in
 	libauthpipe*)
 		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.pipe
 		;;
@@ -255,6 +268,9 @@ do
 		;;
 	libauthuserdb*)
 		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.userdb
+		;;
+	*.so)
+		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.devel
 		;;
 	*)
 		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.base

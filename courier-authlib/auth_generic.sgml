@@ -7,18 +7,19 @@
 
 ]>
 
-  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2020 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 
 <refentry id="auth-generic">
 
   <refmeta>
-    <refentrytitle>auth_generic</refentrytitle>
+    <refentrytitle>auth_generic_meta</refentrytitle>
     <manvolnum>3</manvolnum>
     <refmiscinfo>Double Precision, Inc.</refmiscinfo>
   </refmeta>
 
   <refnamediv>
+    <refname>auth_generic_meta</refname>
     <refname>auth_generic</refname>
     <refpurpose>Generic authentication request</refpurpose>
   </refnamediv>
@@ -27,6 +28,20 @@
     <literallayout>
 #include &lt;courierauth.h&gt;
 </literallayout>
+    <funcsynopsis>
+      <funcprototype>
+	<funcdef>int rc=<function>auth_generic_meta</function></funcdef>
+	<paramdef>struct auth_meta *<parameter>meta</parameter></paramdef>
+	<paramdef>const char *<parameter>service</parameter></paramdef>
+	<paramdef>const char *<parameter>authtype</parameter></paramdef>
+	<paramdef>const char *<parameter>authdata</parameter></paramdef>
+
+	<paramdef>int <parameter>(*callback_func)</parameter>
+               <funcparams>struct authinfo *, void *</funcparams></paramdef>
+	<paramdef>void *<parameter>callback_arg</parameter></paramdef>
+      </funcprototype>
+    </funcsynopsis>
+
     <funcsynopsis>
       <funcprototype>
 	<funcdef>int rc=<function>auth_generic</function></funcdef>
@@ -46,10 +61,10 @@
     <title>DESCRIPTION</title>
 
     <para>
-<function>auth_generic</function> processes a generic authentication request.
-You do not want to use this function.
+<function>auth_generic_meta</function> processes a generic authentication request.
+You do not want to use this function by itself.
 You really want to use
-<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
 <parameter>service</parameter> specifies which so-called "service" is
 being authenticated; like <quote>imap</quote> or <quote>pop3</quote>.
 <parameter>service</parameter> may or may not be used by the Courier
@@ -92,6 +107,22 @@ digits.</para>
 	</listitem>
       </varlistentry>
     </variablelist>
+    <para>
+      A NULL <parameter>meta</parameter> is equivalent to
+      using the default <structname>auth_meta</structname> returned by
+      <ulink url="auth_meta.html"><citerefentry><refentrytitle>auth_meta_init_default</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.
+    </para>
+
+    <para>
+      <function>auth_generic_meta</function>() should not be used by itself,
+      but only together with
+      <ulink url="auth_sasl.html"><citerefentry><refentrytitle>auth_sasl_ex</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>.</para>
+
+    <para>
+      <function>auth_generic</function>() is deprecated and should not be used
+      in new code.
+    </para>
+
   </refsect1>
 
   <refsect1>
@@ -99,11 +130,11 @@ digits.</para>
 
     <para>
 <function>callback_func</function> will be invoked if
-<function>auth_generic</function>
+<function>auth_generic_meta</function>
 succeeds, and <function>callback_func</function>'s return value becomes
-the return value from <function>auth_generic</function> (which should be 0, by convention).
+the return value from <function>auth_generic_meta</function> (which should be 0, by convention).
 <function>callback_func</function> will not be invoked if an error occurs,
-which is reported by a non-zero return value from <function>auth_generic</function>.
+which is reported by a non-zero return value from <function>auth_generic_meta</function>.
 By convention, a positive return value indicates an internal, temporary
 failure, such as the authentication daemon process not running; a negative
 return value indicates that this request was processed, but it failed.</para>
@@ -115,10 +146,12 @@ return value indicates that this request was processed, but it failed.</para>
 
     <para>
 <ulink url="authlib.html"><citerefentry><refentrytitle>authlib</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
- 
-<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
-<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+<ulink url="auth_meta.html"><citerefentry><refentrytitle>auth_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_login.html"><citerefentry><refentrytitle>auth_login_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
+
+<ulink url="auth_getuserinfo.html"><citerefentry><refentrytitle>auth_getuserinfo_meta</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
 <ulink url="auth_enumerate.html"><citerefentry><refentrytitle>auth_enumerate</refentrytitle><manvolnum>3</manvolnum></citerefentry></ulink>,
 
@@ -129,4 +162,3 @@ return value indicates that this request was processed, but it failed.</para>
   </refsect1>
 
 </refentry>
-

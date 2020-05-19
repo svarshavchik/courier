@@ -1382,10 +1382,11 @@ int	authenticated=0;
 			}
 			else
 			{
-				int rc=auth_generic("esmtp", authtype,
-						    authdata,
-						    auth_callback_func,
-						    authmethod);
+				int rc=auth_generic_meta(NULL,
+							 "esmtp", authtype,
+							 authdata,
+							 auth_callback_func,
+							 authmethod);
 
 				if (rc)
 				{

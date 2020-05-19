@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2006 Double Precision, Inc.  See COPYING for
+** Copyright 2000-2020 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
 
@@ -29,8 +29,70 @@
 
 static int TIMEOUT_SOCK=10,
 	TIMEOUT_WRITE=10,
-	TIMEOUT_READ=30; 
+	TIMEOUT_READ=30;
 
+static int auth_meta_init_default_envvar(char **p, size_t *i,
+					const char *n)
+{
+	const char *v=getenv(n);
+
+	if (!v)
+		return 0;
+
+	if ((p[*i]=malloc(strlen(v)+strlen(n)+2)) == 0)
+	{
+		return -1;
+	}
+
+	strcat(strcat(strcpy(p[*i], n), "="), v);
+	++*i;
+	return 0;
+}
+
+struct auth_meta *auth_meta_init_default()
+{
+	struct auth_meta *p=malloc(sizeof(struct auth_meta));
+	size_t i;
+
+	if (!p)
+		return 0;
+
+	if ((p->envvars=malloc(sizeof(char *)*2)) == 0)
+	{
+		free(p);
+		return 0;
+	}
+
+	i=0;
+
+	if (auth_meta_init_default_envvar(p->envvars, &i, "TCPREMOTEIP"))
+	{
+		while (i)
+		{
+			free(p->envvars[--i]);
+		}
+		free(p->envvars);
+		free(p);
+		return 0;
+	}
+
+	p->envvars[i]=0;
+	return p;
+}
+
+void auth_meta_destroy_default(struct auth_meta *ptr)
+{
+	if (ptr->envvars)
+	{
+		size_t i;
+
+		for (i=0; ptr->envvars[i]; ++i)
+			free(ptr->envvars[i]);
+
+		free(ptr->envvars);
+	}
+	free(ptr);
+}
 
 static int s_connect(int sockfd,
 		     const struct sockaddr *addr,
@@ -233,7 +295,7 @@ int _authdaemondopasswd(int wrfd, int rdfd, char *buffer, int bufsiz)
 {
 	if (writeauth(wrfd, buffer, strlen(buffer)))
 		return 1;
-	
+
 	readauth(rdfd, buffer, bufsiz, "\n");
 
 	if (strcmp(buffer, "OK\n"))
@@ -347,11 +409,80 @@ uid_t	u;
 	return (1);
 }
 
-int authdaemondo(const char *authreq,
-	int (*func)(struct authinfo *, void *), void *arg)
+static int request_with_meta_create(struct auth_meta *meta,
+				    const char *authreq,
+				    void (*cb)(const char *, size_t,
+					       void *),
+				    void *ptr)
 {
-int	s=opensock();
-int	rc;
+	if (meta->envvars)
+	{
+		for (size_t i=0; meta->envvars[i]; ++i)
+		{
+			const char *p=meta->envvars[i];
+			const char *q=p;
+
+			while (*q)
+			{
+				if (*q < ' ')
+					return -1;
+				++q;
+			}
+			(*cb)(p, q-p, ptr);
+			(*cb)("\n", 1, ptr);
+		}
+	}
+
+	(*cb)(authreq, strlen(authreq)+1, ptr);
+	return 0;
+}
+
+static void count_request_with_meta(const char *ignored, size_t n,
+				    void *ptr)
+{
+	*(size_t *)ptr += n;
+}
+
+static void save_request_with_meta(const char *chunk, size_t n,
+				   void *ptr)
+{
+	char **q=(char **)ptr;
+
+	memcpy(*q, chunk, n);
+
+	*q += n;
+}
+
+static char *request_with_meta(struct auth_meta *meta,
+			       const char *authreq)
+{
+	size_t cnt=0;
+	char *ptr, *q;
+
+	if (request_with_meta_create(meta, authreq, count_request_with_meta,
+				     &cnt) < 0)
+	{
+		errno=EINVAL;
+		return 0;
+	}
+
+	ptr=malloc(cnt);
+
+	if (!ptr)
+		return 0;
+
+	q=ptr;
+
+	request_with_meta_create(meta, authreq, save_request_with_meta, &q);
+	return ptr;
+}
+
+static int do_authdaemondo_meta(const char *authreq,
+				int (*func)(struct authinfo *, void *),
+				void *arg)
+{
+	int	s=opensock();
+	int	rc;
 
 	if (s < 0)
 	{
@@ -359,6 +490,40 @@ int	rc;
 	}
 	rc = _authdaemondo(s, s, authreq, func, arg);
 	close(s);
+	return rc;
+}
+
+int authdaemondo_meta(struct auth_meta *meta,
+		      const char *authreq,
+		      int (*func)(struct authinfo *, void *),
+		      void *arg)
+{
+	char *buf;
+	int rc;
+	struct auth_meta *default_meta=0;
+
+	if (!meta)
+	{
+		default_meta=auth_meta_init_default();
+
+		if (!default_meta)
+			return 1;
+
+		meta=default_meta;
+	}
+
+	buf=request_with_meta(meta, authreq);
+
+	if (default_meta)
+		auth_meta_destroy_default(default_meta);
+
+	if (!buf)
+		return 1;
+
+	rc=do_authdaemondo_meta(buf, func, arg);
+
+	free(buf);
+
 	return rc;
 }
 
@@ -502,7 +667,7 @@ int _auth_enumerate(int wrfd, int rdfd,
 						*p++=0;
 						maildir=p;
 						p=strchr(p, '\t');
-						
+
 						if (p)
 						{
 							*p++=0;
@@ -535,7 +700,7 @@ void auth_enumerate( void(*cb_func)(const char *name,
 
 	if (s < 0)
 		return;
-	
+
 	_auth_enumerate(s, s, cb_func, void_arg);
 
 	close(s);

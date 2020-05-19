@@ -22,8 +22,10 @@
 #include	<sys/types.h>
 #include	<dirent.h>
 
-extern int authdaemondo(const char *authreq,
-	int (*func)(struct authinfo *, void *), void *arg);
+extern int authdaemondo_meta(struct auth_meta *meta,
+			     const char *authreq,
+			     int (*func)(struct authinfo *, void *),
+			     void *arg);
 
 extern void auth_daemon_enumerate( void(*cb_func)(const char *name,
 						  uid_t uid,
@@ -34,12 +36,26 @@ extern void auth_daemon_enumerate( void(*cb_func)(const char *name,
 						  void *void_arg),
 				   void *void_arg);
 
-
 int auth_generic(const char *service,
 		 const char *authtype,
 		 char *authdata,
 		 int (*callback_func)(struct authinfo *, void *),
 		 void *callback_arg)
+{
+	struct auth_meta dummy;
+
+	memset(&dummy, 0, sizeof(dummy));
+
+	return auth_generic_meta(&dummy, service, authtype, authdata,
+				 callback_func, callback_arg);
+}
+
+int auth_generic_meta(struct auth_meta *meta,
+		      const char *service,
+		      const char *authtype,
+		      char *authdata,
+		      int (*callback_func)(struct authinfo *, void *),
+		      void *callback_arg)
 {
 	char	tbuf[NUMBUFSIZE];
 	size_t	l=strlen(service)+strlen(authtype)+strlen(authdata)+2;
@@ -58,9 +74,9 @@ int auth_generic(const char *service,
 	strcat(buf, authdata);
 
 	rc=strcmp(authtype, "EXTERNAL") == 0
-		? auth_getuserinfo(service, authdata, callback_func,
-				   callback_arg)
-		: authdaemondo(buf, callback_func, callback_arg);
+		? auth_getuserinfo_meta(meta, service, authdata, callback_func,
+					callback_arg)
+		: authdaemondo_meta(meta, buf, callback_func, callback_arg);
 	free(buf);
 
 	if (courier_authdebug_login_level)

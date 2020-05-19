@@ -4,19 +4,13 @@
 */
 
 #include	"auth.h"
+#include	"courierauth.h"
 #include	"courierauthdebug.h"
 #include	<stdio.h>
 #include	<string.h>
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	<errno.h>
-
-
-extern int auth_generic(const char *service,
-			const char *authtype,
-			char *authdata,
-			int (*callback_func)(struct authinfo *, void *),
-			void *callback_arg);
 
 static int badstr(const char *p)
 {
@@ -64,6 +58,22 @@ int auth_login(const char *service,
 	       void *callback_arg)
 
 {
+	struct auth_meta dummy;
+
+	memset(&dummy, 0, sizeof(dummy));
+
+	return auth_login_meta(&dummy, service, userid, passwd, callback_func,
+			       callback_arg);
+}
+
+int auth_login_meta(struct auth_meta *meta,
+		    const char *service,
+		    const char *userid,
+		    const char *passwd,
+		    int (*callback_func)(struct authinfo *, void *),
+		    void *callback_arg)
+
+{
 	char	*p;
 	int rc;
 
@@ -81,9 +91,9 @@ int auth_login(const char *service,
 	if (!p)
 		return (-1);
 
-	rc=auth_generic(service, AUTHTYPE_LOGIN, p,
-			callback_func,
-			callback_arg);
+	rc=auth_generic_meta(meta, service, AUTHTYPE_LOGIN, p,
+			     callback_func,
+			     callback_arg);
 	free(p);
 	return rc;
 }
