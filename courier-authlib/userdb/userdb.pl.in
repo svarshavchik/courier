@@ -1,6 +1,6 @@
 #! @PERL@
 #
-# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 use Fcntl ':flock';
@@ -65,15 +65,6 @@ while (defined ($link= &safe_readlink($userdb)))
 
 $tmpuserdb= $userdb =~ /^(.*)\/([^\/]*)$/ ? "$1/.tmp.$2":".tmp.$userdb";
 $lockuserdb= $userdb =~ /^(.*)\/([^\/]*)$/ ? "$1/.lock.$2":".lock.$userdb";
-
-if ( $doshow && ! defined $name)
-{
-}
-else
-{
-	die "Invalid name: $name\n"
-		unless $name =~ /^[\@a-zA-Z0-9\.\-\_\:\+]+$/;
-}
 
 grep( (/[\|\n]/ && die "Invalid field or value.\n"), @ARGV);
 

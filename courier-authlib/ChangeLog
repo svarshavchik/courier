@@ -1,6 +1,11 @@
+2020-05-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* userdb: Make userdb script accept UTF-8 domain names. Document
+	it in the man page.
+
 2020-05-18  Sam Varshavchik  <mrsam@courier-mta.com>
 
-	* Configure and installed versions shared libraries, both shared
+	* Configure and installed versioned shared libraries, both shared
 	and the authentication modules.
 
 	* Update INSTALL. Remove obsolete pre-courier authlib migration

@@ -31,13 +31,13 @@
       <arg choice='plain'>unset</arg>
       <arg choice='req' rep='repeat'><replaceable>field</replaceable></arg>
     </cmdsynopsis>
-    
+
     <cmdsynopsis>
       <command>userdb</command>
       <arg choice='req'><replaceable>addr</replaceable></arg>
       <arg choice='plain'>del</arg>
     </cmdsynopsis>
-    
+
     <cmdsynopsis>
       <command>userdb</command>
       <arg choice='req'><replaceable>path/addr</replaceable></arg>
@@ -212,8 +212,26 @@ all the fields in <filename>@userdb@</filename> for this
     </refsect2>
 
     <refsect2>
+      <title>International domains</title>
+
+      <para>
+	<parameter><replaceable>addr</replaceable></parameter>s
+	with international domains should use UTF-8 to specify an
+	international domain name:
+      </para>
+
+      <blockquote>
+	<informalexample>
+	  <literallayout><command><![CDATA[
+userdb postmaster@test.испытание set \
+        home=/home/postmaster.test.com uid=999 gid=999]]></command></literallayout>
+	</informalexample>
+      </blockquote>
+
+    </refsect2>
+    <refsect2>
       <title>REBUILDING <filename>@userdb@.dat</filename></title>
-      
+
       <para>
 The actual virtual account/address database is
 <filename>@userdb@.dat</filename>.
@@ -256,10 +274,9 @@ will fail with an error message.</para>
 
     <para>
 <ulink url="makeuserdb.html"><citerefentry><refentrytitle>makeuserdb</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
- 
+
 <ulink url="userdbpw.html"><citerefentry><refentrytitle>userdbpw</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink></para>
 
   </refsect1>
 
 </refentry>
-
