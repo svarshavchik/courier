@@ -53,4 +53,4 @@ echo "new imapdlogin $DATE from $TLS_SUBJECT_CN" >> /tmp/imap_chat_in.txt
 echo "new imapdlogin $DATE from $TLS_SUBJECT_CN" >> /tmp/imap_chat_out.txt
 exec tee -a /tmp/imap_chat_in.txt | usr/lib/courier/courier/imaplogin.debug "$@" 2>>/tmp/imaplogin_errout.txt | tee -a /tmp/imap_chat_out.txt
 ```
-Make shure your imaplogin process is executable and has write access to these files.
+Make sure your imaplogin process is executable and has write access to these files.
