@@ -122,6 +122,12 @@ file. Unless otherwise specified, you must run
 <command>courier restart</command>
 for any changes to these files to take effect.</para>
 
+      <para>
+	International domain names should be listed in UTF-8 lowercase.
+	For example, the hosteddomains file may list
+	<quote>пример.испытание</quote> as a domain.
+      </para>
+
       <variablelist>
 	<varlistentry>
 	  <term><filename>aliasfilteracct</filename></term>

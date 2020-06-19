@@ -1,9 +1,9 @@
 dnl
-dnl Copyright 1998 - 2019 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(sqwebmail, 6.0.3.20200518, [courier-sqwebmail@lists.sourceforge.net])
+AC_INIT(sqwebmail, 6.0.4, [courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE

@@ -1,3 +1,5 @@
+0.71.0
+
 2020-05-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* userdb: Make userdb script accept UTF-8 domain names. Document
