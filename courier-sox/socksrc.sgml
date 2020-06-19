@@ -286,9 +286,25 @@ anonproxy 10.0.0.0/8 0.0.0.0/0 block4=/etc/blacklist.dat
 	  <term><literal>authproxy</literal> <replaceable>netmask1</replaceable> [<replaceable>netmask2</replaceable>] [<literal>bind=</literal><replaceable>address</replaceable>] [<literal>block4=</literal><replaceable>filename</replaceable>]</term>
 	  <listitem>
 	    <para>
-Like the <quote>anonproxy</quote> command, except that the connecting
-client must provide an acceptable userid and password, before the proxy
-connection is allowed.</para>
+	      Like the <quote>anonproxy</quote> command, except that the
+	      connecting
+	      client must provide an acceptable userid and password, before
+	      the proxy
+	      connection is allowed.</para>
+
+	    <note>
+	      <para>
+		The Socks server attempts to authenticate the user by
+		connecting to the Courier authentication daemon. On most
+		system the authentication daemon's socket is accessible
+		only by root or the configure Courier userid or groupid
+		(typically <quote>courier</quote>, <quote>mail</quote>
+		or <quote>daemon</quote>).
+		Check your Courier authentication daemon's configuration,
+		and user the <command>user</command> setting to run the
+		Socks server as the same userid.
+	      </para>
+	    </note>
 	  </listitem>
 	</varlistentry>
 
@@ -297,12 +313,12 @@ connection is allowed.</para>
 
 	  <listitem>
 	    <para>
-Run the Socks server as user <quote>username</quote>
-(default: <literal>nobody</literal>).
-The Socks server cannot bind to privileged ports unless it runs as
-<literal>root</literal>.
-If you choose to do so, <quote>user root</quote> needs to be added
-to <filename>@sysconfdir@/socksrc</filename>.</para>
+	      Run the Socks server as user <quote>username</quote>
+	      (default: <literal>nobody</literal>).
+	      The Socks server cannot bind to privileged ports unless it runs as
+	      <literal>root</literal>.
+	      If you choose to do so, <quote>user root</quote> needs to be added
+	      to <filename>@sysconfdir@/socksrc</filename>.</para>
 	  </listitem>
 	</varlistentry>
 

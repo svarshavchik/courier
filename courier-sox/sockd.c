@@ -361,9 +361,51 @@ static int auth_cb(struct authinfo *dummy, void *dummy2)
 }
 
 static int validateuseridpw(const char *uid,
-			    const char *pw)
+			    const char *pw,
+			    struct conninfo *ci)
 {
-	return auth_login("socks", uid, pw, auth_cb, NULL);
+#if HAVE_IPV6
+
+	char buf[INET6_ADDRSTRLEN];
+#else
+	char buf[40];
+#endif
+	char tcpremoteip[sizeof(buf)+40];
+
+	struct auth_meta meta;
+	char *envvars[2];
+
+	switch (((struct sockaddr_in *)&ci->clientaddr)->sin_family) {
+	case AF_INET:
+		strcpy(buf, inet_ntoa(((struct sockaddr_in *)&ci->clientaddr)
+				      ->sin_addr));
+		break;
+#if HAVE_IPV6
+	case AF_INET6:
+		if (!inet_ntop(((struct sockaddr_in6 *)&ci->clientaddr)
+			       ->sin6_family,
+			       &((struct sockaddr_in6 *)&ci->clientaddr)
+			       ->sin6_addr, buf, sizeof(buf)))
+			buf[0]=0;
+		break;
+#endif
+	default:
+		buf[0]=0;
+		break;
+	}
+
+	memset(&meta, 0, sizeof(meta));
+
+	meta.envvars=envvars;
+
+	envvars[0]=envvars[1]=0;
+
+	if (buf[0])
+	{
+		strcat(strcpy(tcpremoteip, "TCPREMOTEIP="), buf);
+		envvars[0]=tcpremoteip;
+	}
+	return auth_login_meta(&meta, "socks", uid, pw, auth_cb, NULL);
 }
 
 static char *authenticate(struct conninfo *ci)
@@ -453,7 +495,7 @@ static char *authenticate(struct conninfo *ci)
 			return NULL;
 		}
 
-		if (validateuseridpw(buf, pw))
+		if (validateuseridpw(buf, pw, ci))
 		{
 			buf[0]=5;
 			buf[1]=1;
@@ -2422,7 +2464,7 @@ int main(int argc, char **argv)
 			exit(0);
 		}
 	}
-		
+
 	exit(start());
 	return (0);
 }

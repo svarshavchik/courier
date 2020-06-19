@@ -6,7 +6,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-sox],[0.13],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.14],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AC_CONFIG_HEADERS([courier_socks_config.h])

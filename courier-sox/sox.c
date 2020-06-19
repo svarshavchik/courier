@@ -1616,7 +1616,7 @@ static int read_uidpwd_packet(struct sox_info *si)
 		return 1;
 	}
 
-	if (si->misc_buffer[0] == 1 && si->misc_buffer[1] == 0)
+	if (si->misc_buffer[0] == 5 && si->misc_buffer[1] == 0)
 		return prep_connect_packet(si);
 
 	D(DEBUG_CONNECT)
