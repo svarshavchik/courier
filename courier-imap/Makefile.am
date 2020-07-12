@@ -325,13 +325,13 @@ upload-dist:
 dollar=$$
 id=$(dollar)Id
 
-WWW=$$HOME/www/www.courier-mta.org
+WWW=$$HOME/www/hostrocket/courier-mta.org
 
 htmldoc: INSTALL.html libs/imap/README.html libs/maildir/README.maildirquota.html libs/maildir/README.sharedfolders.html libs/maildir/README.imapkeywords.html libs/imap/BUGS.html libs/imap/README.proxy.html libs/imap/README.html
 	for f in $^; do xsltproc --nonet $(srcdir)/imap-format.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/imap/`basename $$f`; done
 	rm -rf doc
 	mkdir doc
-	xsltproc -o doc/ $(srcdir)/imap.xsl $(srcdir)/imap.xml
+	xsltproc --nonet -o doc/ $(srcdir)/imap.xsl $(srcdir)/imap.xml
 	for f in doc/*.html; do \
 		echo $$f; \
 		tidy -i -asxml --doctype transitional \

@@ -231,8 +231,8 @@ sgmltimestamp: sgml/*.sgml
 	rm -rf html
 	$(mkinstalldirs) html
 	cp -p icon.gif html
-	xsltproc -o html/ $(srcdir)/cone.xsl $(srcdir)/sgml/book.sgml
-	for f in html/*.html; do xsltproc --nonet $(srcdir)/../libs/docbook/fixhtml.xsl $$f | tidy -i -q --doctype transitional --input-encoding utf8 --output-encoding ascii -asxml >html/.t; xsltproc --nonet $(srcdir)/postproc.xsl html/.t >$$f; done
+	xsltproc --nonet -o html/ $(srcdir)/cone.xsl $(srcdir)/sgml/book.sgml
+	for f in html/*.html; do echo "***$$f"; xsltproc --nonet $(srcdir)/../libs/docbook/fixhtml.xsl $$f | tidy -i -q --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml >html/.t; xsltproc --nonet $(srcdir)/postproc.xsl html/.t >$$f || exit 1; done
 	rm -f html/.t
 	for f in html/cone*html ; do @PERL@ $(srcdir)/fixonlinehelp.pl $$f ; done
 	touch sgmltimestamp
