@@ -221,6 +221,7 @@ void mail::copyMessage::fetchText()
 	{
 		callback.fail("Original folder's contents modified during copy");
 		delete this;
+		return;
 	}
 
 	fetch_callback.successCallback= &mail::copyMessage::fetchCompleted;
