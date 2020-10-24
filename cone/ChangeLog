@@ -1,3 +1,14 @@
+1.1
+
+2020-10-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* passwordlist.C (PasswordList::remove): Do not automatically
+	remove saved passwords after a failed login, prompt first.
+
+2020-10-20  jacadcaps@users.noreply.github.com
+
+	* mail::copyMessage::fetchText: fix use after free (CVE-2020-27684).
+
 2020-04-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Add AC_PROG_CC_C99 to configure

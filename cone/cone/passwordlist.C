@@ -99,6 +99,16 @@ void PasswordList::remove(string url)
 	if (p == list.end())
 		return;
 
+	std::string response=
+		myServer::prompt
+		(myServer::promptInfo
+		 (Gettext
+		  (_("Login failed, forget memorized password? (N) "))).yesno()
+		 );
+
+	if (response != "Y")
+		return;
+
 	list.erase(p);
 
 	if (hasMasterPassword())
@@ -167,5 +177,3 @@ void PasswordList::loadPasswords(const char * const *uids,
 		list.insert(make_pair(string(*uids), string(*pw)));
 	}
 }
-
-

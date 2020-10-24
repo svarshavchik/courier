@@ -1,10 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
 #
-# Copyright 2003-2015, Double Precision Inc.
+# Copyright 2003-2020, Double Precision Inc.
 #
 # See COPYING for distribution information.
 #
-AC_INIT(cone, 1.0, [courier-cone@lists.sourceforge.net])
+AC_INIT(cone, 1.1, [courier-cone@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(cone.C)
 AC_CONFIG_AUX_DIR(..)
