@@ -322,7 +322,8 @@ void EncryptionMenu::signkey_s()
 					::dump_func,
 					&errmsg))
 		{
-			PasswordList::passwordList.remove(gpgurl);
+			PasswordList::passwordList.remove(gpgurl,
+							  _("Signing key failed"));
 
 			statusBar->clearstatus();
 			statusBar->status(_("An attempt to sign this key has "

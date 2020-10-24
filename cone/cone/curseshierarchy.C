@@ -524,7 +524,7 @@ public:
 };
 
 CursesHierarchyFindServerIterator::CursesHierarchyFindServerIterator()
-	: server(NULL) 
+	: server(NULL)
 {
 }
 
@@ -619,7 +619,7 @@ void CursesHierarchy::openSubFolders(Hierarchy::Folder *f)
 		Hierarchy::Folder *child=
 			new Hierarchy::Folder(myServer::hierarchy, f,
 					      *b++);
-		
+
 		if (!child)
 			outofmemory();
 		folders.push_back(child);
@@ -686,7 +686,8 @@ bool CursesHierarchy::autologin(myServer *ss)
 	    !ss->login(savedPwd))
 	{
 		ss->disconnect();
-		PasswordList::passwordList.remove(ss->url);
+		PasswordList::passwordList.remove(ss->url,
+						  _("Login failed"));
 
 		myServerLoginCallback loginCallback;
 
@@ -1572,7 +1573,8 @@ bool CursesHierarchy::processKey(const Curses::Key &key)
 									->url);
 
 					drawEraseBelow(erasePtr, true);
-
+					PasswordList::passwordList.remove
+						(serverPtr->url, "");
 					bool wasRemote=mail::account
 						::isRemoteUrl(serverPtr->url);
 					delete server;

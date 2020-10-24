@@ -2671,7 +2671,8 @@ std::string CursesEdit::EncryptSinkFile::done()
 		if (encryptionInfo.signKey.size() > 0)
 			PasswordList::passwordList.remove("gpg:" +
 							  encryptionInfo
-							  .signKey);
+							  .signKey,
+							  _("GPG key failed"));
 
 		if (errmsg.size() == 0)
 			errmsg=strerror(errno);

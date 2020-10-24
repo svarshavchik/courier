@@ -762,7 +762,7 @@ ConfigScreen::~ConfigScreen()
 			tagFields[n]=NULL;
 		}
 
-	for (n=0; n<colorLabels.size(); n++)	
+	for (n=0; n<colorLabels.size(); n++)
 		if (colorLabels[n])
 		{
 			delete colorLabels[n];
@@ -1256,7 +1256,7 @@ void ConfigScreen::doSave()
 	if (server.size() > 0)
 	{
 		string uid=smtpServerUID.getText();
-		
+
 		if (smtpServerCRAM.getSelected())
 			server += "/cram";
 
@@ -1267,14 +1267,17 @@ void ConfigScreen::doSave()
 		if (newurl != myServer::smtpServerURL)
 		{
 			myServer::smtpServerPassword="";
-			PasswordList::passwordList.remove(myServer::smtpServerURL);
+			PasswordList::passwordList
+				.remove(myServer::smtpServerURL,
+					_("SMTP authentication failed"));
 		}
 		myServer::smtpServerURL=newurl;
 	}
 	else
 	{
 		if (myServer::smtpServerURL != "")
-			PasswordList::passwordList.remove(myServer::smtpServerURL);
+			PasswordList::passwordList
+				.remove(myServer::smtpServerURL, "");
 
 		myServer::smtpServerURL="";
 		myServer::smtpServerPassword="";

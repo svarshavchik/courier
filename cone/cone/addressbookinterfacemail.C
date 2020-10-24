@@ -70,7 +70,8 @@ bool AddressBook::Interface::Mail::open(std::string url,
 	if (!PasswordList::passwordList.check(url, pwd) ||
 	    !serverLogin(url, pwd, NULL))
 	{
-		PasswordList::passwordList.remove(url);
+		PasswordList::passwordList.remove(url,
+						  _("Login failed"));
 
 		myServerLoginCallback loginCallback;
 

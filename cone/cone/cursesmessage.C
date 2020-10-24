@@ -3176,7 +3176,8 @@ mail::folder *CursesMessage::getSendFolder(mail::smtpInfo &smtpInfo,
 					delete smtpServer;
 					smtpServer=NULL;
 					PasswordList::passwordList
-						.remove(myServer::smtpServerURL);
+						.remove(myServer::smtpServerURL,
+							_("SMTP authentication failed"));
 					return NULL;
 				}
 				break;

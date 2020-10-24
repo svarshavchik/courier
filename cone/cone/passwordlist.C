@@ -92,23 +92,26 @@ void PasswordList::save()
 		myServer::savepasswords(masterPassword);
 }
 
-void PasswordList::remove(string url)
+void PasswordList::remove(string url, std::string context)
 {
 	map<string, string>::iterator p=list.find(url);
 
 	if (p == list.end())
 		return;
 
-	std::string response=
-		myServer::prompt
-		(myServer::promptInfo
-		 (Gettext
-		  (_("Login failed, forget memorized password? (N) "))).yesno()
-		 );
+	if (!context.empty())
+	{
+		std::string response=
+			myServer::prompt
+			(myServer::promptInfo
+			 (Gettext
+			  (_("%1%, forget memorized password? (N) "))
+			  << context).yesno()
+			 );
 
-	if (response != "Y")
-		return;
-
+		if (response != "Y")
+			return;
+	}
 	list.erase(p);
 
 	if (hasMasterPassword())

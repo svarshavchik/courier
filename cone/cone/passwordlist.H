@@ -39,7 +39,8 @@ public:
 
 	void save();
 
-	void remove(std::string url); // URL does not exist.
+	void remove(std::string url,
+		    std::string context); // URL does not exist.
 
 	bool hasMasterPassword();
 	bool hasMasterPasswordFile();

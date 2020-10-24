@@ -75,7 +75,8 @@ mail::account *myServer::remoteConfig::login()
 				return a;
 
 			PasswordList::passwordList
-				.remove(myServer::remoteConfigURL);
+				.remove(myServer::remoteConfigURL,
+					_("Login failed"));
 		}
 
 		myServer::remoteConfigPassword="";
@@ -158,7 +159,7 @@ mail::account *myServer::remoteConfig::login2()
 		account->findFolder(myServer::remoteConfigFolder,
 				    folders,
 				    findCallback);
- 
+
 		if (myServer::eventloop(findCallback) && folders.size() == 1)
 		{
 			folder=account->folderFromString(folders[0]);

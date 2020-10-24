@@ -280,7 +280,7 @@ myServer *tryCreateAccount(string account, string url, string password,
 		}
 		PasswordList::passwordList.save(url, password);
 		// Make sure the password is memorized.
-	
+
 		myServer::Callback callback;
 
 		// Get the server's top level folder list, and save it as the
@@ -430,7 +430,7 @@ void openHierarchyScreen(std::string prompt,
 {
 	CursesHierarchy hierarchy_screen( &myServer::hierarchy, mainScreen);
 	myServer::setCursesHierarchyPointerForRefreshing(&hierarchy_screen);
-	
+
 	titleBar->setTitles(_("FOLDERS"), "");
 
 	hierarchy_screen.requestFocus();
@@ -637,7 +637,8 @@ void editAccountScreen(void *voidArg)
 
 		s->serverLogout();
 
-		PasswordList::passwordList.remove(s->url);
+		PasswordList::passwordList.remove(s->url,
+						  _("Login failed"));
 
 		AddressBook::updateAccount(s->url, newUrl);
 		SpecialFolder::updateAccount(s->url, newUrl);
@@ -1429,7 +1430,8 @@ int main(int argc, char *argv[])
 			    !s->login(pwd, NULL))
 			{
 				s->disconnect();
-				PasswordList::passwordList.remove(s->url);
+				PasswordList::passwordList.remove(s->url,
+								  _("Login failed"));
 
 				// Ok, that didn't work, let's try again
 				// and this time prompt for a password.
