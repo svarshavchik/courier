@@ -1785,9 +1785,16 @@ char	*sender=rfc822_gettok(addresst);
 
 	if (rfc3848_receivedwith && *rfc3848_receivedwith)
 	{
+		const char *p=rfc3848_receivedwith;
+
 		if (mf->smtputf8)
+		{
 			line += "UTF8";
-		line += rfc3848_receivedwith;
+			if (*p == 'E')
+				// Naming convention in 6531 was inconsistent
+				++p;
+		}
+		line += p;
 	}
 	else
 		line += mf->module->name;
