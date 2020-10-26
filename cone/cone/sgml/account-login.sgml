@@ -32,7 +32,7 @@ mail::account::openInfo accountOpenInfo;
     </funcsynopsis>
     &libmail-accterrmsg;
   </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="account_login_usage">
     <title>USAGE</title>
 
     <para>
@@ -47,7 +47,7 @@ for the description of the parameters set by
 <parameter>accountOpenInfo</parameter>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="account_login_return_codes_and_callbacks">
     <title>RETURN CODES AND CALLBACKS</title>
     &libmail-account-return;
 
@@ -62,7 +62,7 @@ object must be created for another login attempt.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="account_login_see_also">
     <title>SEE ALSO</title>
 
     <para>

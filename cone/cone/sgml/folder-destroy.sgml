@@ -26,7 +26,7 @@
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_destroy_usage">
       <title>USAGE</title>
 
       <para>
@@ -57,14 +57,14 @@ folder directory, and to <literal>false</literal> when destroying a regular
 folder.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_destroy_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_destroy_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="folder-createsubfolder"><citerefentry>

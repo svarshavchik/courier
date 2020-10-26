@@ -32,7 +32,7 @@ mail::folder *folder;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_renamefolder_usage">
       <title>USAGE</title>
 
       <para>
@@ -56,7 +56,7 @@ application's character set.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_renamefolder_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
@@ -83,7 +83,7 @@ to this folder.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_renamefolder_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="folder-clone"><citerefentry>

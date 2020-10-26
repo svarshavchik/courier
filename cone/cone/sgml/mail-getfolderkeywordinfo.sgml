@@ -29,7 +29,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_getfolderkeywordinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -46,13 +46,13 @@ the return code from
 	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
 	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_getfolderkeywordinfo_return_codes">
       <title>Return Codes</title>
 
     <para>
 This function returns immediately.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_getfolderkeywordinfo_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-updatekeywords"><citerefentry>

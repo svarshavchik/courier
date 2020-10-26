@@ -22,7 +22,7 @@
 mail::mimestruct myMimeStructure;
 </literallayout>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mimestruct_usage">
       <title>USAGE</title>
 
       <para>
@@ -168,7 +168,7 @@ See below for more information.</para>
 	</varlistentry>
       </variablelist>
 
-      <refsect2>
+      <refsect2 id="mimestruct_mail__mimestruct_methods">
 	<title><structname>mail::mimestruct</structname> methods</title>
 
 	<variablelist>
@@ -254,7 +254,7 @@ if the MIME message is corrupted.</para>
       </refsect2>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mimestruct_mail__mimestruct__parameterlist">
       <title><structname>mail::mimestruct::parameterList</structname></title>
 
       <para>
@@ -321,7 +321,7 @@ std::string&gt;</structname>.)</para>
 
       </variablelist>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mimestruct_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="envelope"><citerefentry>

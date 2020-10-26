@@ -31,7 +31,7 @@ std::cout &lt;&lt; (std::string)headers;
 
 </literallayout>
     </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="header_list_usage">
     <title>USAGE</title>
 
     <para>
@@ -64,7 +64,7 @@ formats all headers, and returns the
 set of E-mail headers as a single string.
 Long headers are folded accordingly.</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="header_list_see_also">
     <title>SEE ALSO</title>
     <para>
 <link linkend="header-addresslist"><citerefentry>

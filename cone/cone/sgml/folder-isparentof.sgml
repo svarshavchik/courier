@@ -30,7 +30,7 @@ mail::folder *otherFolder;
       </funcsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="folder_isparentof_usage">
       <title>USAGE</title>
 
       <para>
@@ -41,7 +41,7 @@ This function returns an indication whether a folder's path
 	    <manvolnum>3x</manvolnum></citerefentry></link>)
 refers to a subfolder of this folder.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="folder_isparentof_return_codes">
       <title>Return Codes</title>
 
       <para>
@@ -57,7 +57,7 @@ a <literal>true</literal> return).</para>
       </note>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_isparentof_see_also">
       <title>SEE ALSO</title>
 
       <para>

@@ -29,7 +29,7 @@ mail::folder *folder;
 
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="folder_hasmessages_usage">
       <title>USAGE</title>
 
       <para>
@@ -41,7 +41,7 @@ The
 <function>hasMessages</function> method indicates whether
 <parameter>folder</parameter> is capable of storing messages.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="folder_hasmessages_return_codes">
       <title>Return Codes</title>
 
       <para>
@@ -87,7 +87,7 @@ guarantee that neither of the above procedures will work.</para>
       </note>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_hasmessages_see_also">
       <title>SEE ALSO</title>
 
       <para>

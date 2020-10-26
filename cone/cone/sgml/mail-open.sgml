@@ -84,7 +84,7 @@ myPromptCallback passwdCallback;
       </funcprototype>
     </funcsynopsis>
   </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="mail_open_usage">
     <title>USAGE</title>
 
     <para>
@@ -526,7 +526,7 @@ to standard error.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="mail_open_return_codes_and_callbacks">
     <title>RETURN CODES AND CALLBACKS</title>
     <para>
 <function>mail::account::open</function> allocates and returns a
@@ -591,7 +591,7 @@ The <parameter class='function'>disconnectCallback</parameter> object may not
 be destroyed until after the <structname>mail::account</structname> object is
 destroyed.</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="mail_open_see_also">
     <title>SEE ALSO</title>
 
     <para>

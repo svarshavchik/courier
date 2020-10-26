@@ -27,14 +27,14 @@
       </funcsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="mail_homedir_usage">
       <title>USAGE</title>
 
       <para>
 This function returns the home directory of the application's process
 ID.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_homedir_return_codes">
       <title>Return Codes</title>
 
       <para>

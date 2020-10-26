@@ -166,10 +166,10 @@ pub:
 	mkdir tmp
 	set -e; for f in `cd cone/html; ls *.html`; \
 	do \
-		xsltproc --nonet $$HOME/www/www.courier-mta.org/xsl/cone.xsl cone/html/$$f >tmp/$$f ; \
+		xsltproc --nonet $$HOME/www/hostrocket/courier-mta.org/xsl/cone.xsl cone/html/$$f >tmp/$$f ; \
 	done
 	cp -p cone/html/*.css cone/html/*.gif tmp
-	rsync -a --exclude .svn --delete-after tmp/. $$HOME/www/www.courier-mta.org/cone
+	rsync -a --exclude .svn --delete-after tmp/. $$HOME/www/hostrocket/courier-mta.org/cone
 	rm -rf tmp
 
 tst:

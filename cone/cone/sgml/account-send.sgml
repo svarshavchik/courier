@@ -48,7 +48,7 @@ info.recipients.push_back("recipient@example.com");
       </funcsynopsis>
       &libmail-accterrmsg;
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_send_usage">
       <title>USAGE</title>
 
       <para>
@@ -73,14 +73,14 @@ The resulting <structname>mail::ACCOUNT</structname>'s
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_send_return_codes">
       <title>Return Codes</title>
 
       &libmail-account-return;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_send_see_also">
       <title>SEE ALSO</title>
 
       <para>

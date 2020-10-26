@@ -51,7 +51,7 @@ addMessage-&gt;go();
 </literallayout>
 
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_getsendfolder_usage">
       <title>USAGE</title>
 
       <para>
@@ -84,7 +84,7 @@ with thousand messages, to a thousand recipients.</para>
       &libmail-smtpinfo;
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_getsendfolder_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       <para>
@@ -96,7 +96,7 @@ mail.
 message.
 </para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_getsendfolder_see_also">
       <title>SEE ALSO</title>
 
       <para>

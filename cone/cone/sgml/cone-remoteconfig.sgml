@@ -40,7 +40,7 @@ Even if the server allows multiple access, &app; configuration will keep
 getting overwritten by the other &app;'s saved configuration, leading to
 unpredictable results.</para>
 
-  <section>
+  <section id="chapter_saved_settings">
     <title>Saved settings</title>
 
     <para>
@@ -85,7 +85,7 @@ can be quite big, and its not feasible to save it remotely.</para>
       </listitem>
     </itemizedlist>
 
-      <section>
+      <section id="chapter_disabling_remote_configuration">
 	<title>Disabling remote configuration</title>
 
 	<para>

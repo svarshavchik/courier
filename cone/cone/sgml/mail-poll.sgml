@@ -25,7 +25,7 @@
       </funcsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="mail_poll_usage">
       <title>USAGE</title>
 
     <para>
@@ -36,7 +36,7 @@ is a C++ wrapper around the
 	    <manvolnum>2</manvolnum></citerefentry> system call, that receives
 C++ objects as arguments, instead of an array count, and a pointer.</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="mail_poll_return_codes">
     <title>Return Codes</title>
 
     <para>
@@ -47,7 +47,7 @@ returns the exit code from
 	    <manvolnum>2</manvolnum></citerefentry>.
 </para>
   </refsect1>
-    <refsect1>
+    <refsect1 id="mail_poll_see_also">
       <title>SEE ALSO</title>
 
       <para>

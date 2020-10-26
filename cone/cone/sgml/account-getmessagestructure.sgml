@@ -40,7 +40,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getmessagestructure_usage">
       <title>USAGE</title>
 
       &libmail-amsglist;
@@ -55,7 +55,7 @@ array member containing the MIME structure for the corresponding
 message in <parameter>msgList</parameter>.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getmessagestructure_return_codes">
       <title>Return Codes</title>
 
       &libmail-account-return;
@@ -69,7 +69,7 @@ empty).</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getmessagestructure_see_also">
       <title>SEE ALSO</title>
 
       <para>

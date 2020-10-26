@@ -28,7 +28,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_removemessages_usage">
       <title>USAGE</title>
 
       <para>
@@ -109,12 +109,12 @@ the end of the message list).</para>
       &libmail-removemessages;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_removemessages_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_removemessages_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-savefolderindexinfo"><citerefentry>

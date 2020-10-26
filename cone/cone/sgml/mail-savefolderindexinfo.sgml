@@ -29,7 +29,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_savefolderindexinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -56,14 +56,14 @@ The message is specified by
 be changed.</para>
       </note>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_savefolderindexinfo_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
       &libmail-updatestatus;
       &libmail-concurrency;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_savefolderindexinfo_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-removemessages"><citerefentry>

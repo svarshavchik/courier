@@ -24,7 +24,7 @@ std::cout &lt;&lt; plain_header.toString();
 
 </literallayout>
     </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="header_plain_usage">
     <title>USAGE</title>
 
     <para>
@@ -43,7 +43,7 @@ string: <quote><replaceable>name</replaceable>:
 <replaceable>value</replaceable></quote>.
 Long headers are folded at the nearest whitespace.</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="header_plain_see_also">
     <title>SEE ALSO</title>
     <para>
 <link linkend="header-addresslist"><citerefentry>

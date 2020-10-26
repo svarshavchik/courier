@@ -9,7 +9,7 @@ This screen is used to enter various configuration settings.
 After making any changes on this screen, highlight <quote>SAVE</quote>
 and press <keycap>ENTER</keycap>.</para>
 
-  <section>
+  <section id="chapter_setup_screen">
     <title>Setup Screen</title>
 
     <programlisting>

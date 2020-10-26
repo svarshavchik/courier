@@ -29,7 +29,7 @@ mail::ACCOUNT *mail;
       </funcsynopsis>
       &libmail-accterrmsg;
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_savefolderindexinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -52,12 +52,12 @@ The message is specified by
 be changed.</para>
       </note>
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_savefolderindexinfo_return_codes">
       <title>Return Codes</title>
 
       &libmail-account-return;
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_savefolderindexinfo_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="account-updatefolderindexflags"><citerefentry>

@@ -30,7 +30,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_updatenotify_usage">
       <title>USAGE</title>
 
       <para>
@@ -145,12 +145,12 @@ just before the client requested the termination of immediate update
 notification.</para>
       </note>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_updatenotify_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_updatenotify_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-checknewmail"><citerefentry>

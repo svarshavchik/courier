@@ -37,7 +37,7 @@ public:
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_readfolderinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -80,14 +80,14 @@ accounts, and with IMAP-based accounts.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_readfolderinfo_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_readfolderinfo_see_also">
        <title>SEE ALSO</title>
        <para>
 

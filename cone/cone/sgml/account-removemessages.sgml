@@ -27,7 +27,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_removemessages_usage">
       <title>USAGE</title>
 
       <para>
@@ -38,13 +38,13 @@ is a list of messages to be removed.</para>
       &libmail-removemessages;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_removemessages_return_codes">
       <title>Return Codes</title>
 
       &libmail-account-return;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_removemessages_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="account-savefolderindexinfo"><citerefentry>

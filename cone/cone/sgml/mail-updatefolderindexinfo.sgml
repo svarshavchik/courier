@@ -27,7 +27,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_updatefolderindexinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -68,12 +68,12 @@ the end of the message list).</para>
       </itemizedlist>
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_updatefolderindexinfo_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_updatefolderindexinfo_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-savefolderindexinfo"><citerefentry>

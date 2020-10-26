@@ -19,7 +19,7 @@ and digital signatures.</para>
 <quote>BEGIN PGP SIGNED MESSAGE</quote>).</para>
     </note>
 
-    <section>
+    <section id="chapter_mime_encryption_and_digital_signatures">
       <title>MIME encryption and digital signatures</title>
 
       <para>
@@ -28,7 +28,7 @@ and signature verification functionality.
 Key management (like creating and signing keys) must still be done with
 <application>GnuPG</application>.</para>
 
-      <section>
+      <section id="chapter_signing_and_encrypting_messages">
 	<title>Signing and encrypting messages</title>
 	<para>
 When <application>GnuPG</application> is installed,
@@ -107,7 +107,7 @@ will not be able to read a copy of the sender's own message!</para>
 
       </section>
 
-      <section>
+      <section id="chapter_passphrases">
 	<title>Passphrases</title>
 
 	<para>
@@ -128,7 +128,7 @@ Simply try again to sign the same message, and &app; will prompt for the
 new passphrase.</para>
       </section>
 
-      <section>
+      <section id="chapter_decrypting_messages,_and_verifying_signatures">
 	<title>Decrypting messages, and verifying signatures</title>
 
 	<para>
@@ -157,7 +157,7 @@ If the message is not decrypted, its original encrypted version is
 forwarded.</para>
       </section>
 
-      <section>
+      <section id="chapter_decrypting_messages_with_a_passphrase_protected_key">
 	<title>Decrypting messages with a passphrase-protected key</title>
 
 	<para>

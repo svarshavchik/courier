@@ -33,7 +33,7 @@ std::string folderPath=folder-&gt;getPath();
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getfolderfrompath_usage">
       <title>USAGE</title>
 
       <para>
@@ -45,14 +45,14 @@ This function is the
 See the description of this function for more information.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getfolderfrompath_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       <para>
 This function returns a NULL pointer if it cannot allocate memory for the
 new <structname>mail::folder</structname> object.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_getfolderfrompath_see_also">
       <title>SEE ALSO</title>
 
       <para>

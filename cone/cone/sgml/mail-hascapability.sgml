@@ -27,7 +27,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_hascapability_usage">
       <title>USAGE</title>
 
       <para>
@@ -49,7 +49,7 @@ have this capability defined).</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_hascapability_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
 <para>

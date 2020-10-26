@@ -41,7 +41,7 @@ std::map&lt;std::string, std::string&gt;::iterator
 </literallayout>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="mail_loginurldecode_usage">
       <title>USAGE</title>
 
       <para>
@@ -96,7 +96,7 @@ options are placed into this map).</para>
 	</varlistentry>
       </variablelist>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_loginurldecode_return_codes">
       <title>Return Codes</title>
 
       <para>
@@ -107,7 +107,7 @@ contents of a valid URL, or <literal>false</literal> if the URL was not
 valid.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_loginurldecode_see_also">
       <title>SEE ALSO</title>
 
       <para>

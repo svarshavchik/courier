@@ -35,7 +35,7 @@ address.setDisplayName(name, "utf-8");
 
 </literallayout>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="emailaddress_usage">
       <title>USAGE</title>
 
       <para>
@@ -117,7 +117,7 @@ A <structname>mail::emailAddress</structname> object may be assigned or
 converted to a
 <structname>mail::address</structname>, and vice-versa.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="emailaddress_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="address"><citerefentry>

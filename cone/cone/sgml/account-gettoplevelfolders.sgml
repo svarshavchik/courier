@@ -35,7 +35,7 @@ const mail::folder *folder=folderList[n];
 </literallayout>
 
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_gettoplevelfolders_usage">
       <title>USAGE</title>
 
       <para>
@@ -70,12 +70,12 @@ responsible for destroying).</para>
       </note>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_gettoplevelfolders_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
       &libmail-account-return;
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_gettoplevelfolders_see_also">
       <title>SEE ALSO</title>
 
       <para>

@@ -29,7 +29,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getfolderkeywordinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -42,13 +42,13 @@ If the message does not have any keywords set, <parameter>keywords</parameter>
 will be an empty set.
 &libmail-amsgnum;</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_getfolderkeywordinfo_return_codes">
       <title>Return Codes</title>
 
     <para>
 This function returns immediately.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_getfolderkeywordinfo_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="account-getfolderindexsize"><citerefentry>

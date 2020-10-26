@@ -67,7 +67,7 @@ When new messages are added to the folder, only the new messages will be
 processed by the mail filters.
 Existing messages will be ignored.</para>
 
-  <section>
+  <section id="chapter_mail_filter_entry_screen">
     <title>Mail Filter Entry Screen</title>
 
     <programlisting>

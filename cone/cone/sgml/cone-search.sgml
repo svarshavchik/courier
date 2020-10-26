@@ -1,4 +1,4 @@
-<section>
+<section id="_search_criteria">
   <title>Search criteria</title>
 
   <variablelist>
@@ -75,7 +75,7 @@ press <keycap>ENTER</keycap> to search.</para>
     </varlistentry>
   </variablelist>
 
-  <section>
+  <section id="_date_based_searches">
     <title>Date-based searches</title>
 
     <para>
@@ -138,7 +138,7 @@ newsgroups.</para>
   </section>
 
 
-  <section>
+  <section id="_text_based_searches">
     <title>Text-based searches</title>
 
     <para>

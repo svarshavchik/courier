@@ -45,7 +45,7 @@ myAddMessagePull message;
       </funcsynopsis>
       &libmail-accterrmsg;
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_libmail_addmessage_usage">
       <title>USAGE</title>
 
       <para>
@@ -105,14 +105,14 @@ to the folder.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_libmail_addmessage_return_codes">
       <title>Return Codes</title>
 
       &libmail-account-return;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_libmail_addmessage_see_also">
       <title>SEE ALSO</title>
 
       <para>

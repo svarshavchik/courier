@@ -31,20 +31,20 @@ mail::folder *folder;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getrights_usage">
       <title>USAGE</title>
 
     &libmail-aclintro;
     &libmail-aclgetrights;
 
-    <refsect2>
+    <refsect2 id="account_getrights_identifier">
       <title>Identifier</title>
 
       &libmail-aclentities;
       &libmail-aclentitiesutf8;
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="account_getrights_access_rights">
       <title>Access rights</title>
 
       &libmail-aclrights;
@@ -52,14 +52,14 @@ mail::folder *folder;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getrights_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-account-return;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getrights_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="account-delrights"><citerefentry>

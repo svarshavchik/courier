@@ -40,7 +40,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getmessageenvelope_usage">
       <title>USAGE</title>
 
       &libmail-amsglist;
@@ -54,7 +54,7 @@ array to the same size as <parameter>msgList</parameter>, with each
 array member containing the envelope header information for the corresponding
 message in <parameter>msgList</parameter>.</para>
 
-      <refsect2>
+      <refsect2 id="account_getmessageenvelope_mail__xenvelope">
 	<title><structname>mail::xenvelope</structname></title>
 
 	<para>
@@ -87,7 +87,7 @@ may be slightly higher or lower.</para>
       </refsect2>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getmessageenvelope_return_codes">
       <title>Return Codes</title>
 
       &libmail-account-return;
@@ -101,7 +101,7 @@ empty).</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getmessageenvelope_see_also">
       <title>SEE ALSO</title>
 
       <para>

@@ -27,7 +27,7 @@ mail::folder *folder;</literallayout>
       </funcsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="folder_getname_usage">
       <title>USAGE</title>
 
       <para>
@@ -38,14 +38,14 @@ The folder's name is generally specified by the server;
 it is automatically converted
 to the application's character set, where possible.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="folder_getname_return_codes">
       <title>Return Codes</title>
 
       <para>
 A string that specifies the folder's name.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_getname_see_also">
       <title>SEE ALSO</title>
 
       <para>

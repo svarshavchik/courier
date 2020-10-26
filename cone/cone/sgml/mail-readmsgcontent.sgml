@@ -43,7 +43,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_readmsgcontent_usage">
       <title>USAGE</title>
 
       <para>
@@ -89,13 +89,13 @@ parameters.</para>
       &libmail-messagecontent;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_readmsgcontent_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
       &libmail-concurrency;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_readmsgcontent_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-getfolderindexsize"><citerefentry>

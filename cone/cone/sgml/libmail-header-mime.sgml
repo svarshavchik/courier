@@ -30,7 +30,7 @@ std::cout &lt;&lt; content_type.toString();
 
 </literallayout>
     </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="header_mime_usage">
     <title>USAGE</title>
 
     <para>
@@ -84,7 +84,7 @@ string: <quote><replaceable>name</replaceable>:
 <replaceable>value</replaceable></quote>.
 Long headers are folded accordingly.</para>
 
-    <refsect2>
+    <refsect2 id="header_mime_dynamic_parameter_generation">
       <title>Dynamic parameter generation</title>
 
       <para>
@@ -99,7 +99,7 @@ The second version also receives the character set and language information,
 and corresponds to the <function>set</function> function.</para>
     </refsect2>
   </refsect1>
-  <refsect1>
+  <refsect1 id="header_mime_see_also">
     <title>SEE ALSO</title>
     <para>
 <link linkend="header-addresslist"><citerefentry>

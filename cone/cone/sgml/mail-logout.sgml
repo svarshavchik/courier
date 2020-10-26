@@ -29,7 +29,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_logout_usage">
       <title>USAGE</title>
 
       <para>
@@ -43,7 +43,7 @@ The
 <structname>mail::callback::disconnect</structname> object, originally passed
 to <function>mail::account::open</function>, is also invoked.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_logout_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;

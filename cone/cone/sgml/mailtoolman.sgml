@@ -23,7 +23,7 @@
     </cmdsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="mailtool_usage">
       <title>USAGE</title>
 
       <para>
@@ -138,7 +138,7 @@ options that control various settings of the IMAP or POP3 connection:</para>
 	</varlistentry>
       </variablelist>
 
-      <refsect2>
+      <refsect2 id="mailtool_displaying_mailbox_contents">
 	<title>Displaying mailbox contents</title>
 
 	<cmdsynopsis>
@@ -166,7 +166,7 @@ mailtool -tree imap://jsmith@mail.example.com/novalidate-cert/cram
 
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="mailtool_creating_folders">
 	<title>Creating folders</title>
 
 	<cmdsynopsis>
@@ -198,7 +198,7 @@ This command creates a new folder <quote>announcements</quote> as a
 subfolders of <quote>INBOX.lists</quote> in the local maildir.</para>
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="mailtool_deleting_folders">
 	<title>Deleting folders</title>
 
 	<cmdsynopsis>
@@ -225,7 +225,7 @@ mailtool -delete INBOX.lists.announcements maildir:Maildir
 	</informalexample>
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="mailtool_renaming_folders">
 	<title>Renaming folders</title>
 
 	<cmdsynopsis>
@@ -262,7 +262,7 @@ in the mail <replaceable>account</replaceable>'s folder hierarchy.</para>
 
 
 
-      <refsect2>
+      <refsect2 id="mailtool_reading_folder's_index">
 	<title>Reading folder's index</title>
 
 	<cmdsynopsis>
@@ -286,7 +286,7 @@ mailtool -index INBOX imap://john@mail.example.com/novalidate-cert
 	</informalexample>
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="mailtool_removing_a_message_from_a_folder">
 	<title>Removing a message from a folder</title>
 
 	<cmdsynopsis>
@@ -318,7 +318,7 @@ mailtool -remove INBOX 28,31 imap://john@mail.example.com/novalidate-cert
 	</informalexample>
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="mailtool_filtering_messages">
 	<title>Filtering messages</title>
 
 	<cmdsynopsis>
@@ -354,7 +354,7 @@ disconnected for inactivity.</para>
 	</note>
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="mailtool_copying_folders">
 	<title>Copying folders</title>
 
 	<cmdsynopsis>
@@ -425,7 +425,7 @@ that support hybrid folders.</para>
       </refsect2>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mailtool_see_also">
       <title>SEE ALSO</title>
 
       <para>

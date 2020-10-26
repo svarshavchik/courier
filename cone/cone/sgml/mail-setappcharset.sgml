@@ -29,7 +29,7 @@ const char *myCharset=nl_langinfo(CODESET);
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_setappcharset_usage">
       <title>USAGE</title>
 
       <para>
@@ -50,7 +50,7 @@ traditional and simplified Chinese) are experimental, and have not been
 fully tested.</para>
 </note>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_setappcharset_return_codes">
       <title>Return Codes</title>
 
       <para>
@@ -58,7 +58,7 @@ This function returns <literal>true</literal> if the character set was
 succesfully installed; <literal>false</literal> if the character set is not
 supported.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_setappcharset_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-open"><citerefentry>

@@ -39,7 +39,7 @@ folders.
 &app;'s interface is foolproof enough to be used by inexperienced users,
 but it also offers advanced features for power users.</para>
 
-      <section>
+      <section id="overview">
 	<title>Overview</title>
 	<itemizedlist>
 	  <listitem>
@@ -451,14 +451,14 @@ This option selects
 	</varlistentry>
       </variablelist>
 
-      <section>
+      <section id="upgradefrom">
 	<title>Upgrading from an earlier version of &app;</title>
 	<para>
 Upgrading &app; consists simply of building the new version, and installing it.
 The new version will overwrite the previous version.
 Special upgrade instructions are given below.</para>
 
-	<section>
+	<section id="ugprade096">
 	  <title>Upgrading from version 0.96 and earlier</title>
 	  <para>
 	    &app; 0.97 is a coordinated update with other Courier packages
@@ -493,7 +493,7 @@ Special upgrade instructions are given below.</para>
 	    (or in &app; itself).
 	  </para>
 	</section>
-	<section>
+	<section id="upgrade059">
 	  <title>Upgrading from version 0.59 and earlier</title>
 	  <para>
 The address book format has changed in version 0.60.
@@ -503,7 +503,7 @@ If &app; is later downgraded to an earlier version, addresses in an address
 book that contain non-English characters will not be shown correctly.</para>
 	</section>
       </section>
-      <section>
+      <section id="rpmbuild">
 	<title>RPM builds</title>
 
 	<para>
@@ -537,7 +537,7 @@ with
 &libname;.</para>
       </section>
 
-      <section>
+      <section id="gitrepo">
 	<title>Git repository</title>
 
 	<para>
@@ -667,7 +667,7 @@ display UTF-8, or other
 variable-length character sets.</para>
       </note>
 
-      <section>
+      <section id="localmail">
 	&cone-localmail;
       </section>
     </section>

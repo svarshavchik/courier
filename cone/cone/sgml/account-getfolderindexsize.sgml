@@ -28,7 +28,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getfolderindexsize_usage">
       <title>USAGE</title>
 
       <para>
@@ -43,7 +43,7 @@ returns 5 it means that there are five messages in the folder, numbered
 0 through 4.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getfolderindexsize_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       <para>
@@ -51,7 +51,7 @@ This function always succeeds, and returns the number of messages in the
 currently-open folder.</para>
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_getfolderindexsize_see_also">
       <title>SEE ALSO</title>
 
       <para>

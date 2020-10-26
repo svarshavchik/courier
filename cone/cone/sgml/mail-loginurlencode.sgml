@@ -29,7 +29,7 @@
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_loginurlencode_usage">
       <title>USAGE</title>
 
       <para>
@@ -81,7 +81,7 @@ the <parameter>password</parameter> parameter to
 	    <refentrytitle>mail::account::open</refentrytitle>
 	    <manvolnum>3x</manvolnum></citerefentry></link>.
 should be set to an empty string.</para>
-      <refsect2>
+      <refsect2 id="mail_loginurlencode_options">
 	<title>Options</title>
 	<para>
 Additional protocol options are specified by prefixing each option with
@@ -90,14 +90,14 @@ to <parameter>server</parameter> (after any optional protocol port
 number).</para>
       </refsect2>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_loginurlencode_return_codes">
       <title>Return Codes</title>
 
       <para>
 This function returns the resulting URL.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_loginurlencode_see_also">
       <title>SEE ALSO</title>
 
       <para>

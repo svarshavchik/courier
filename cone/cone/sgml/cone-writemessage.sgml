@@ -6,7 +6,7 @@
 
   &cone-write;
 
-  <section>
+  <section id="chapter_write_message_screen">
     <title>Write Message Screen</title>
 
     <programlisting>

@@ -30,7 +30,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_readtoplevel_usage">
       <title>USAGE</title>
 
       <para>
@@ -47,7 +47,7 @@ method.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_readtoplevel_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
@@ -91,7 +91,7 @@ identify folder collections will have a
 single <structname>mail::folder</structname> object, representing the root
 of the IMAP server's namespace.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_readtoplevel_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="folder-readsubfolders"><citerefentry>

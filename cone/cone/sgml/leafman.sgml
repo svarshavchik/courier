@@ -26,7 +26,7 @@
     </cmdsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="leaf_usage">
       <title>USAGE</title>
 
       <para>
@@ -54,7 +54,7 @@ rejustify the paragraph under the cursor.
 The bottom two lines on the screen list which keys to press for other
 functions.</para>
 
-      <refsect2>
+      <refsect2 id="leaf_flowed_text">
 	<title>Flowed text</title>
 	<para>
 	  The <option>-f</option> option enables <quote>flowed text</quote>
@@ -131,7 +131,7 @@ functions.</para>
 	</note>
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="leaf_spell_checking">
 	<title>Spell checking</title>
 
     <para>
@@ -143,7 +143,7 @@ position to line #<replaceable>n</replaceable>.</para>
       </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="leaf_see_also">
     <title>SEE ALSO</title>
 
     <para>

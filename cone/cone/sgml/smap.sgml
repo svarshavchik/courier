@@ -9,7 +9,7 @@
 This document is a work-in-progress.</para>
   </note>
 
-  <section>
+  <section id="appendix_introduction">
     <title>Introduction</title>
 
     <para>
@@ -30,7 +30,7 @@ as various flags, and a datestamp.
 Beyond that, SMAP's primary focus is to serve as an experimental
 implementation of advanced mail client/server functionality.</para>
 
-    <section>
+    <section id="appendix_summary">
       <title>Summary</title>
 
       <itemizedlist>
@@ -138,7 +138,7 @@ folder names.</para>
       </itemizedlist>
     </section>
 
-    <section>
+    <section id="appendix_roadmap">
       <title>Roadmap</title>
 
       <para>
@@ -158,7 +158,7 @@ The server creates the appropriate MIME headers.</para>
       </itemizedlist>
     </section>
 
-    <section>
+    <section id="appendix_conventions_used_in_this_document">
       <title>Conventions used in this document</title>
 
       <para>
@@ -238,7 +238,7 @@ periodically send the <literal>NOOP</literal> command to prevent themselves
 from being disconnected for inactivity.</para>
 
     </section>
-    <section>
+    <section id="appendix_words">
       <title>Words</title>
 
       <para>
@@ -262,7 +262,7 @@ A word that's meant to be completely empty is represented by two quotes:
 <literal>""</literal>.</para>
     </section>
 
-    <section>
+    <section id="appendix_smap_server_replies">
       <title>SMAP server replies</title>
 
       <para>
@@ -451,7 +451,7 @@ byte count, reads the indicated number of bytes, then repeats the
 process.</para>
     </section>
 
-    <section>
+    <section id="appendix_an_empty_multi_line_reply">
       <title>An empty multi-line reply</title>
       <para>
 An expected multi-line reply may be empty.
@@ -623,7 +623,7 @@ S: * OK [CAPABILITY SMAP1 KEYWORDSAUTH=CRAM-MD5 STARTTLS
 </literallayout>
 </para>
 
-    <section>
+    <section id="appendix_imap_smap_protocol_selection">
       <title>IMAP/SMAP protocol selection</title>
 
       <para>
@@ -641,7 +641,7 @@ the server reverts to IMAP mode for this client connection.</para>
     </section>
 
 
-    <section>
+    <section id="appendix_smap_capability_list">
       <title>SMAP capability list</title>
 
       <para>
@@ -666,7 +666,7 @@ The server should reply with the same capability list as the initial
 
     </section>
 
-    <section>
+    <section id="appendix_enabling_encryption">
       <title>Enabling encryption</title>
 
       <para>
@@ -695,7 +695,7 @@ S: +OK Ready to accept an encrypted SMAP1 connection
 </para>
     </section>
 
-    <section>
+    <section id="appendix_language_selection">
       <title>Language selection</title>
 
       <para>
@@ -720,7 +720,7 @@ The UTF-8 character set is used for all languages.</para>
       </note>
     </section>
 
-    <section>
+    <section id="appendix_userid_password_login">
       <title>Userid/password login</title>
 
       <para>
@@ -743,7 +743,7 @@ S: +OK Logged in
 </para>
     </section>
 
-    <section>
+    <section id="appendix_sasl_login">
       <title>SASL login</title>
 
       <para>
@@ -829,7 +829,7 @@ directory.
 Servers that have this restriction should reject attempts to create
 top-level folders with an informative error message.</para>
 
-    <section>
+    <section id="appendix_creating_folders_and_folder_directories">
       <title>Creating folders and folder directories</title>
 
       <para>
@@ -880,7 +880,7 @@ folder directory (normally a server SHOULD reject such a request).
 This is because SMAP clients will send both command because they
 cannot rely on this behavior.</para>
 
-      <section>
+      <section id="appendix_executive_summary">
 	<title>Executive Summary</title>
 
 	<itemizedlist>
@@ -908,7 +908,7 @@ automatically create logical folder directories on as-needed basis.</para>
       </section>
     </section>
 
-    <section>
+    <section id="appendix_deleting_folders_and_folder_directories">
       <title>Deleting folders and folder directories</title>
 
       <para>
@@ -944,7 +944,7 @@ that the server will delete the empty directory, so it explicitly asks the
 server to do that.</para>
     </section>
 
-    <section>
+    <section id="appendix_renaming_folders_and_folder_directories">
       <title>Renaming folders and folder directories</title>
 
       <para>
@@ -981,7 +981,7 @@ parent folder directory.</para>
 
     </section>
 
-    <section>
+    <section id="appendix_listing_folders">
       <title>Listing folders</title>
 
       <para>
@@ -1055,7 +1055,7 @@ either <literal>FOLDER</literal> or <literal>DIRECTORY</literal>.
 Both attributes indicate a hybrid folder -
 a folder that contains both messages and subfolders.</para>
 
-      <section>
+      <section id="appendix_reserved_folders_and_descriptions">
 	<title>Reserved folders and descriptions</title>
 
 	<para>
@@ -1093,7 +1093,7 @@ to the user (recall that for regular folders they are one and the same).</para>
       </section>
     </section>
 
-    <section>
+    <section id="appendix_getting_folder_status">
       <title>Getting folder status</title>
 
       <para>
@@ -1151,7 +1151,7 @@ requested message counts.</para>
 
     </section>
 
-      <section>
+      <section id="appendix_access_control_lists">
 	<title>Access Control Lists</title>
 
 	<para>
@@ -1170,7 +1170,7 @@ An SMAP server which implements ACLs will include
 in its capability list. <quote>Method</quote> is the server's
 method for computing ACLs (see below).</para>
 
-	<section>
+	<section id="appendix_identifiers_and_rights">
 	  <title>Identifiers and rights</title>
 
 	  <para>
@@ -1348,7 +1348,7 @@ Presumably, everyone except fred can administer, list, and read the folder;
 while fred can only administer and read it.</para>
 	</section>
 
-	<section>
+	<section id="appendix_computing_access_rights">
 	  <title>Computing access rights</title>
 
 	  <para>
@@ -1407,7 +1407,7 @@ user=fred   al
 	  </variablelist>
 	</section>
 
-	<section>
+	<section id="appendix_obtaining_access_rights">
 	  <title>Obtaining access rights</title>
 
 	  <para>
@@ -1430,7 +1430,7 @@ The server responds with a <quote>* ACL</quote> message, which contains a
 single word that lists the access rights on the given folder.</para>
 	</section>
 
-	<section>
+	<section id="appendix_retrieving_access_control_lists">
 	  <title>Retrieving access control lists</title>
 
 	  <para>
@@ -1462,7 +1462,7 @@ The server may respond with two or more <quote>* GETACL</quote> messages
 when the access control list is very large.</para>
 	</section>
 
-	<section>
+	<section id="appendix_modifying_access_rights">
 	  <title>Modifying access rights</title>
 
 	  <para>
@@ -1513,7 +1513,7 @@ The server responds with zero or more
 access control list for this folder.</para>
 	</section>
 
-	<section>
+	<section id="appendix_deleting_access_rights">
 	  <title>Deleting access rights</title>
 
 	  <para>
@@ -1626,7 +1626,7 @@ remaining folder content notification
 changes, until it receives that status reply for <quote>RESUME</quote>.</para>
     </note>
 
-    <section>
+    <section id="appendix_opening_a_folder">
       <title>Opening a folder</title>
 
       <para>
@@ -1714,7 +1714,7 @@ in the same way as to an <literal>OPEN</literal> command, but enable and make
 snapshots.</para>
     </section>
 
-    <section>
+    <section id="appendix_closing_a_folder">
       <title>Closing a folder</title>
 
       <para>
@@ -1861,7 +1861,7 @@ unless they are very old.</para>
       </note>
     </section>
 
-    <section>
+    <section id="appendix_the_expunge_command">
       <title>The <literal>EXPUNGE</literal> command</title>
 
       <para>
@@ -1889,7 +1889,7 @@ as an <literal>EXPUNGE</literal> that lists all messages that have the
 <literal>DELETED</literal> flag set.</para>
     </section>
 
-    <section>
+    <section id="appendix_the_idle_resume_command">
       <title>The <literal>IDLE</literal>/<literal>RESUME</literal> command</title>
 
       <para>

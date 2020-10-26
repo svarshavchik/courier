@@ -43,7 +43,7 @@ else
     msg-&gt;go();
 </literallayout>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_addmessage_usage">
       <title>USAGE</title>
 
       <para>
@@ -119,7 +119,7 @@ to the folder.</para>
       </variablelist>
     </refsect1>
 
-  <refsect1>
+  <refsect1 id="folder_addmessage_mime_based_message_composition">
     <title>MIME-BASED MESSAGE COMPOSITION</title>
 
   &libmail-mycallback;
@@ -248,7 +248,7 @@ section may be assembled immediately (in which case
 or the function will terminate immediately, and the callback function will
 be called at a later time.</para>
 
-    <refsect2>
+    <refsect2 id="folder_addmessage_copying_attachments_from_other_messages">
       <title>COPYING ATTACHMENTS FROM OTHER MESSAGES</title>
 
       <funcsynopsis>
@@ -333,7 +333,7 @@ invoking <function>assembleRemoveAttachmentsFrom</function>, of course),
 then when that's done remove the original message.</para>
     </refsect2>
   </refsect1>
-    <refsect1>
+    <refsect1 id="folder_addmessage_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       <para>
@@ -374,7 +374,7 @@ Any
 <structname>mail::account</structname> object may be used.</para>
 </note>
     </refsect1>
-    <refsect1>
+    <refsect1 id="folder_addmessage_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-getfolderindexinfo"><citerefentry>

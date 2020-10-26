@@ -30,7 +30,7 @@ mail::ACCOUNT *mail;
       </funcsynopsis>
       &libmail-accterrmsg;
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_readfolderinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -45,13 +45,13 @@ this function:</para>
       &libmail-folderstatus;
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_readfolderinfo_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-account-return;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_readfolderinfo_see_also">
       <title>SEE ALSO</title>
 
       <para>

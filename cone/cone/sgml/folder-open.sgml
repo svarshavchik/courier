@@ -53,7 +53,7 @@ public:
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_open_usage">
       <title>USAGE</title>
 
       <para>
@@ -64,7 +64,7 @@ Opening another folder automatically "closes" the previous folder.</para>
 
       &libmail-open-multiple;
 
-      <refsect2>
+      <refsect2 id="folder_open_folder_updates">
       	<title>Folder Updates</title>
 	<para>
 The <parameter>folderCallback</parameter> object is used to notify the
@@ -179,7 +179,7 @@ to read the current message flags.</para>
 	</variablelist>
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="folder_open_snapshots">
 	<title>Snapshots</title>
 
 	<para>
@@ -328,14 +328,14 @@ Using snapshots saves each message's status, and restores it when the
       </refsect2>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_open_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_open_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="folder-readfolderinfo"><citerefentry>

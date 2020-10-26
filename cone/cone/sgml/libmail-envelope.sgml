@@ -22,7 +22,7 @@
 mail::envelope myEnvelope;
 </literallayout>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="envelope_usage">
       <title>USAGE</title>
 
       <para>
@@ -162,7 +162,7 @@ array will list the addresses from all headers, combined.</para>
 	</varlistentry>
       </variablelist>
     </refsect1>
-    <refsect1>
+    <refsect1 id="envelope_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="address"><citerefentry>

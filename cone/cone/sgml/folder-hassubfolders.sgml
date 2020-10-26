@@ -29,7 +29,7 @@ mail::folder *folder;
 
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="folder_hassubfolders_usage">
       <title>USAGE</title>
 
       <para>
@@ -42,7 +42,7 @@ The
 <parameter>folder</parameter> is capable of containing other folders
 (subfolders).</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="folder_hassubfolders_return_codes">
       <title>Return Codes</title>
 
       <para>
@@ -62,7 +62,7 @@ function may be used
 to create subfolders.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_hassubfolders_see_also">
       <title>SEE ALSO</title>
 
       <para>

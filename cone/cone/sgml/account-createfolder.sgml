@@ -39,7 +39,7 @@ mail::folder *folder;
 
       &libmail-accterrmsg;
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_createfolder_usage">
       <title>USAGE</title>
 
       <para>
@@ -83,7 +83,7 @@ for more information.</para>
       &libmail-foldername;
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_createfolder_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       <para>
@@ -95,7 +95,7 @@ some reason; the second
 <literal>false</literal> if it fails.</para>
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_createfolder_see_also">
       <title>SEE ALSO</title>
 
       <para>

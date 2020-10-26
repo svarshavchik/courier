@@ -47,7 +47,7 @@ bool same= addr1 == addr2;
 bool notsame= addr1 != addr2;
 </literallayout>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="address_usage">
       <title>USAGE</title>
 
       <para>
@@ -120,7 +120,7 @@ still saved in
 Otherwise the addresses are appended to
 <parameter>addressList</parameter>'s existing contents.</para>
 
-      <refsect2>
+      <refsect2 id="address_comparing_addresses">
 	<title>Comparing addresses</title>
 
 	<para>
@@ -147,7 +147,7 @@ ignored), with the
 insensitive</para>
       </refsect2>
     </refsect1>
-    <refsect1>
+    <refsect1 id="address_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="emailaddress"><citerefentry>

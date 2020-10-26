@@ -31,7 +31,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_updatefolderindexflags_usage">
       <title>USAGE</title>
 
       <para>
@@ -54,14 +54,14 @@ See
       &libmail-updateflags;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_updatefolderindexflags_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
       &libmail-updatestatus;
       &libmail-concurrency;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_updatefolderindexflags_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-savefolderindexinfo"><citerefentry>

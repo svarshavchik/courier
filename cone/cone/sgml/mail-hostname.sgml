@@ -27,13 +27,13 @@
       </funcsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="mail_hostname_usage">
       <title>USAGE</title>
 
       <para>
 This function return this machine's network name.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_hostname_return_codes">
       <title>Return Codes</title>
 
       <para>

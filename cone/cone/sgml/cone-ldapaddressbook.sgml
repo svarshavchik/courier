@@ -9,7 +9,7 @@
 If this option is available, pressing <keycap>A</keycap> from the
 main Address Book screen displays the following screen:</para>
 
-    <section>
+    <section id="chapter_add_ldap_address_book_screen">
       <title>Add LDAP Address Book screen</title>
 
       <programlisting>

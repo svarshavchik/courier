@@ -27,7 +27,7 @@
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_isremoteurl_usage">
       <title>USAGE</title>
 
       <para>
@@ -46,7 +46,7 @@ if <parameter>url</parameter> begins with
 <literal>smtps</literal>.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_isremoteurl_see_also">
       <title>SEE ALSO</title>
 
       <para>

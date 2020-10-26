@@ -24,7 +24,7 @@ std::cout &lt;&lt; encoded_header.toString();
 
 </literallayout>
     </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="header_encoded_usage">
     <title>USAGE</title>
 
     <para>
@@ -61,7 +61,7 @@ string: <quote><replaceable>name</replaceable>:
 <replaceable>value</replaceable></quote>.
 Long headers are folded at the nearest whitespace.</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="header_encoded_see_also">
     <title>SEE ALSO</title>
     <para>
 <link linkend="header-addresslist"><citerefentry>

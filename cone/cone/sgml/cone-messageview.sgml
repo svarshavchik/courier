@@ -10,7 +10,7 @@ Highlighting a message in the folder index screen and pressing
 Cursor up/down keys, <keycap>PgUp</keycap> and <keycap>PgDn</keycap> scroll
 the message vertically.</para>
 
-  <section>
+  <section id="chapter_message_view_screen">
     <title>Message View Screen</title>
 
     <programlisting>

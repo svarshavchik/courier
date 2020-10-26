@@ -28,7 +28,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getfolderindexinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -40,13 +40,13 @@ message's current status flags.
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getfolderindexinfo_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-messageinfo;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_getfolderindexinfo_see_also">
       <title>SEE ALSO</title>
 
       <para>

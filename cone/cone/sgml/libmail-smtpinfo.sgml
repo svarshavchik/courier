@@ -1,7 +1,7 @@
 <!-- Copyright 2002-2003 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
 
-      <refsect2>
+      <refsect2 id="_savefolder">
 	<title><parameter>saveFolder</parameter></title>
 
 	<para>
@@ -20,7 +20,7 @@ or
 	      <refentrytitle>mail::ACCOUNT::addMessage</refentrytitle>
 	      <manvolnum>3x</manvolnum></citerefentry></link>.</para>
       </refsect2>
-      <refsect2>
+      <refsect2 id="_the_mail__smtpinfo_object">
 	<title>The <structname>mail::smtpInfo</structname> object</title>
 
 	<para>

@@ -27,7 +27,7 @@
       </funcsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="mail_resume_usage">
       <title>USAGE</title>
 
       <para>
@@ -49,7 +49,7 @@ if the application remained suspended long enough for the remote mail server
 to shut down the connection itself.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_resume_see_also">
       <title>SEE ALSO</title>
 
       <para>

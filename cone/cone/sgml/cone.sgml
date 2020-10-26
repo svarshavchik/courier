@@ -3,7 +3,7 @@
 
 <part id="cone00index">
   <title>&app; mail client</title>
-  <partintro>
+  <partintro id="cone00indexintro">
     <title>Introduction</title>
     <para>
 &app; is a screen-oriented E-mail/News reader and writer.
@@ -33,7 +33,7 @@ The <quote>Online Tutorial</quote> mail account can always be removed, but
 it might be convenient to keep it around for a quick consultation, from time
 to time, even though the full HTML version is a bit easier on the eyes.</para>
 
-    <section>
+    <section id="_overview">
       <title>Overview</title>
 
       <para>

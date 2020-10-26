@@ -100,7 +100,7 @@ following screen.
 This screen also comes up after choosing to edit an existing IMAP/POP3/News
 account, from the Folder Listing screen:</para>
 
-  <section>
+  <section id="chapter_new_edit_account_screen">
     <title>New/Edit Account Screen</title>
 
     <programlisting>
@@ -243,7 +243,7 @@ Close this screen without adding or changing the account.</para>
       </varlistentry>
     </variablelist>
 
-    <section>
+    <section id="chapter_options">
       <title>Options</title>
 
       <para>

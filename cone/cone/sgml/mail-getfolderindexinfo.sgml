@@ -28,7 +28,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_getfolderindexinfo_usage">
       <title>USAGE</title>
 
       <para>
@@ -41,12 +41,12 @@ the return code from
 	    <refentrytitle>mail::account::getFolderIndexSize</refentrytitle>
 	    <manvolnum>3x</manvolnum></citerefentry></link>.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_getfolderindexinfo_return_codes">
       <title>Return Codes</title>
 
       &libmail-messageinfo;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_getfolderindexinfo_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-readmsgattr"><citerefentry>

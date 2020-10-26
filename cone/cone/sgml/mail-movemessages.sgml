@@ -28,7 +28,7 @@
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_movemessagesto_usage">
       <title>USAGE</title>
 
       <para>
@@ -61,7 +61,7 @@ Only <link linkend="smap1">SMAP</link> and maildir-based mail accounts can
 move messages directly between folders; for all other
 accounts the copy/delete implementation will be used automatically.</para>
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_movemessagesto_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
@@ -76,7 +76,7 @@ removed from the original folder.</para>
     </note>
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_movemessagesto_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-copymessagesto"><citerefentry>

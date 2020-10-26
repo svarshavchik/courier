@@ -29,7 +29,7 @@ mail::folder *folderCopy;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_clone_usage">
       <title>USAGE</title>
 
       <para>
@@ -43,14 +43,14 @@ callback methods are usually destroyed as soon as the callback method
 terminates).</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_clone_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-foldernote;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_clone_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="folder-createsubfolder"><citerefentry>

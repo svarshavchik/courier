@@ -85,7 +85,7 @@ Rename the address book entry (change the entry's nickname).</para>
       </varlistentry>
     </variablelist>
 
-    <section>
+    <section id="chapter_import_export_address_book">
       <title>Import/Export address book</title>
 
       <para>

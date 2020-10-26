@@ -26,7 +26,7 @@
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_getmyrights_usage">
       <title>USAGE</title>
 
     &libmail-aclintro;
@@ -36,14 +36,14 @@
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_getmyrights_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_getmyrights_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="folder-delrights"><citerefentry>

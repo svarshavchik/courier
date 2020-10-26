@@ -26,7 +26,7 @@
       </cmdsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="conecmdusage">
       <title>USAGE</title>
 
       <para>
@@ -66,11 +66,11 @@ backups, and offers an option to restore the backup copy.</para>
 	update the new mail count of the folders that it has opened.
       </para>
 
-      <refsect2>
+      <refsect2 id="cone-localmail">
 	&cone-localmail;
       </refsect2>
 
-      <refsect2>
+      <refsect2 id="cone-viewmime">
 	<title>Viewing MIME attachments</title>
 
 	<para>
@@ -90,7 +90,7 @@ For example, a helper script named <quote>IMAGE.GIF.filter</quote>, if
 installed, is invoked to process <literal>image/gif</literal> MIME
 attachments.</para>
 
-	<refsect3>
+	<refsect3 id="cone-helper">
 	  <title>Helper scripts</title>
 
 	  <para>
@@ -158,7 +158,7 @@ necessary.</para>
 	</refsect3>
       </refsect2>
 
-    <refsect2>
+    <refsect2 id="coneactivatingurl">
       <title>Activating <acronym>URL</acronym>s</title>
 
       <para>
@@ -192,7 +192,7 @@ This script checks if <filename>firefox</filename> or
     </refsect2>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="conefiles">
       <title>FILES</title>
 
       <variablelist>
@@ -219,7 +219,7 @@ Default helper scripts distributed with &app;.</para>
       </variablelist>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="coneseealso">
       <title>SEE ALSO</title>
 
       <para>

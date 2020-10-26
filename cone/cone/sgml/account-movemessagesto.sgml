@@ -32,7 +32,7 @@ mail::folder *folder;
       </funcsynopsis>
       &libmail-accterrmsg;
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_movemessagesto_usage">
       <title>USAGE</title>
 
       &libmail-amsglist;
@@ -65,14 +65,14 @@ move messages directly between folders; for all other
 accounts the copy/delete implementation will be used automatically.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_movemessagesto_return_codes">
       <title>Return Codes</title>
 
       &libmail-account-return;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_movemessagesto_see_also">
       <title>SEE ALSO</title>
 
       <para>

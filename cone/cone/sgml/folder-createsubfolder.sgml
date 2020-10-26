@@ -32,7 +32,7 @@ mail::folder *folder;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="folder_createsubfolder_usage">
       <title>USAGE</title>
 
       <para>
@@ -81,7 +81,7 @@ application's character set.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_createsubfolder_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
@@ -145,7 +145,7 @@ new folder directory.</para>
       </note>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_createsubfolder_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="folder-clone"><citerefentry>

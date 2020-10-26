@@ -34,7 +34,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_readmsgcontentdecoded_usage">
       <title>USAGE</title>
 
       <para>
@@ -49,13 +49,13 @@ The <function>mail::callback::message::messageTextCallback</function>
 function receives the decoded, binary, content.</para>
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_readmsgcontentdecoded_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
       &libmail-concurrency;
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_readmsgcontentdecoded_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-readmsgattr"><citerefentry>

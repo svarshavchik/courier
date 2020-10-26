@@ -33,7 +33,7 @@ mail::folder *folder;
       </funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_delrights_usage">
       <title>USAGE</title>
 
     &libmail-aclintro;
@@ -43,7 +43,7 @@ mail::folder *folder;
 removes <replaceable>identifier</replaceable>
 from the folder's access control list.</para>
 
-    <refsect2>
+    <refsect2 id="account_delrights_identifier">
       <title>Identifier</title>
 
       &libmail-aclentities;
@@ -51,13 +51,13 @@ from the folder's access control list.</para>
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="account_delrights_access_rights">
       <title>Access rights</title>
 
       &libmail-aclrights;
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="account_delrights_extended_error_reporting">
       <title>Extended error reporting</title>
 
       &libmail-aclrightsinfo;
@@ -67,14 +67,14 @@ from the folder's access control list.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_delrights_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-account-return;
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_delrights_see_also">
        <title>SEE ALSO</title>
        <para>
 <link linkend="account-getmyrights"><citerefentry>

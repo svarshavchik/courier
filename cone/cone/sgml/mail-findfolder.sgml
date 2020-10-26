@@ -35,7 +35,7 @@ std::string folderPath=folder-&gt;getPath();
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_findfolder_usage">
       <title>USAGE</title>
 
       <para>
@@ -79,7 +79,7 @@ represent the folder referenced by
 <parameter>folderPath</parameter>.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_findfolder_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;
@@ -89,7 +89,7 @@ represent the folder referenced by
       &libmail-foldernote;
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_findfolder_see_also">
       <title>SEE ALSO</title>
 
       <para>

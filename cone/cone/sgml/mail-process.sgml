@@ -54,7 +54,7 @@ for (;;)
 </literallayout>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="mail_process_usage">
       <title>USAGE</title>
 
       <para>
@@ -133,7 +133,7 @@ The application is reponsible for handling any I/O activity from its own
 file descriptors.</para>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="mail_process_return_codes">
     <title>Return Codes</title>
 
     <para>
@@ -154,7 +154,7 @@ or until the application
 calls another &libname; function.</para>
     </note>
   </refsect1>
-    <refsect1>
+    <refsect1 id="mail_process_see_also">
       <title>SEE ALSO</title>
 
       <para>

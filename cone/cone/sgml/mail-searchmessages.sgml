@@ -36,7 +36,7 @@ public:
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_searchmessages_usage">
       <title>USAGE</title>
 
       <para>
@@ -46,7 +46,7 @@ currently-open folder. &libmail-msglist;</para>
       &libmail-search;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_searchmessages_return_codes">
       <title>Return Codes</title>
 
       &libmail-waitcallback;
@@ -64,7 +64,7 @@ The application should make a copy of it for any later use.</para>
       </note>
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="mail_searchmessages_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-getfolderindexinfo"><citerefentry>

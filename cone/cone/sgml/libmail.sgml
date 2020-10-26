@@ -4,7 +4,7 @@
 <part id="libmail">
   <title>&libname; reference </title>
 
-  <partintro>
+  <partintro id="libmailref">
     <para>
 &libname; is a C++ E-mail access library, which
 provides a high-level API for accessing E-mail messages

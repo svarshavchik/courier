@@ -84,7 +84,7 @@ that contains local mail folders.
 Use the main menu screen to add additional mail accounts.
 Here's an example of the <quote>Folder Listing</quote> screen:</para>
 
-  <section>
+  <section id="chapter_folder_listing_screen">
     <title>Folder Listing Screen</title>
 
     <programlisting>
@@ -208,7 +208,7 @@ four entries, described below.</para>
 
     </variablelist>
 
-      <section>
+      <section id="chapter_reading_usenet_newsgroups">
 	<title>Reading Usenet Newsgroups</title>
 
 	<para>
@@ -271,7 +271,7 @@ section.</para>
 	  </varlistentry>
 	</variablelist>
       </section>
-    <section>
+    <section id="chapter_adding_top_level_folders">
       <title>Adding top-level folders</title>
 
       <para>
@@ -422,7 +422,7 @@ the <quote>%</quote> character.</para>
       </variablelist>
     </section>
 
-    <section>
+    <section id="chapter_removing_top_level_folders">
       <title>Removing top-level folders</title>
 
       <para>
@@ -433,7 +433,7 @@ from its top-level placement, and it will now appear in its real location
 in the mail account's folder hierarchy.</para>
     </section>
 
-      <section>
+      <section id="chapter_removing_memorized_headers">
 	<title>Removing memorized headers</title>
 
 	<para>
@@ -460,7 +460,7 @@ The initial header values for this folder
 will now default to the global account defaults.</para>
       </section>
 
-    <section>
+    <section id="chapter_renaming_folders">
       <title>Renaming folders</title>
 
       <para>
@@ -472,7 +472,7 @@ Remove the top-level folder shortcut, find the original folder in its
 regular position in the folder hierarchy, then rename it.</para>
     </section>
 
-    <section>
+    <section id="chapter_creating_new_folders">
       <title>Creating new folders</title>
 
       <para>
@@ -511,7 +511,7 @@ after creating a new folder directory, make sure that its name is highlighted,
 then use this command to create its first subfolder.</para>
     </section>
 
-    <section>
+    <section id="chapter_deleting_folders">
       <title>Deleting folders</title>
 
       <para>
@@ -539,7 +539,7 @@ only the top-level shortcut, and does not remove the actual folder.</para>
 
     </section>
 
-      <section>
+      <section id="chapter_editing_folder_permissions">
 	<title>Editing folder permissions</title>
 
 	<para>
@@ -625,7 +625,7 @@ Check the IMAP server's documentation for more information.</para>
       </note>
          
       </section>
-      <section>
+      <section id="chapter_installing_filters">
 	<title>Installing filters</title>
 
 	<para>
@@ -636,7 +636,7 @@ See <link linkend="cone12filters"><quote>Mail Filters</quote></link> for more
 information.</para>
       </section>
 
-    <section>
+    <section id="chapter_removing_mail_accounts">
       <title>Removing mail accounts</title>
 
       <para>
@@ -646,7 +646,7 @@ This action logs out and removes the mail account.
 New mail accounts are added from the main menu.</para>
     </section>
 
-    <section>
+    <section id="chapter_rearranging_accounts_and_top_level_folders">
       <title>Rearranging accounts and top-level folders</title>
 
       <para>
@@ -668,7 +668,7 @@ or a top-level folder, is highlighted.
 Other folders are always shown in alphabetical order.</para>
     </section>
 
-    <section>
+    <section id="chapter_defining_special_folders">
       <title>Defining special folders</title>
 
       <para>
@@ -780,7 +780,7 @@ once, opening the folder manually will result in unpredictable errors.</para>
 
     </section>
 
-    <section>
+    <section id="chapter_reconfiguring_an_account">
       <title>Reconfiguring an account</title>
 
       <para>
@@ -796,7 +796,7 @@ More details about the process of configuring a mail account can be found in
 the section that describes the process of adding a new mail account.</para>
     </section>
 
-    <section>
+    <section id="chapter_other_commands">
       <title>Other commands</title>
 
       <variablelist>

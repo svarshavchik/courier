@@ -139,7 +139,7 @@ that will work just like the real thing (except that the status flags of
 messages will not be saved when the folder is closed).</para>
       </note>
 
-  <refsect2>
+  <refsect2 id="_search_criteria">
 	<title>Search Criteria</title>
 
 	<para>

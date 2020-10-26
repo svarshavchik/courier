@@ -27,19 +27,19 @@ std::string folderPath=folder-&gt;getPath();
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_translatepath_usage">
       <title>USAGE</title>
 
       &libmail-translatepath1;
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_translatepath_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-translatepath2;
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_translatepath_see_also">
       <title>SEE ALSO</title>
 
       <para>

@@ -28,7 +28,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_logout_usage">
       <title>USAGE</title>
 
       <para>
@@ -42,7 +42,7 @@ Destroying the object without
 the mail account's contents not being permanently saved.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_logout_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
       <para>
 The
@@ -52,7 +52,7 @@ The object should not be recycled, and connected to another mail
  account.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_logout_see_also">
       <title>SEE ALSO</title>
 
       <para>

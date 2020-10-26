@@ -31,7 +31,7 @@ std::cout &lt;&lt; tohdr.toString();
 
 </literallayout>
     </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="header_addresslist_usage">
     <title>USAGE</title>
 
     <para>
@@ -54,7 +54,7 @@ string: <quote><replaceable>name</replaceable>:
 <replaceable>value</replaceable></quote>.
 Long headers are folded accordingly.</para>
 
-    <refsect2>
+    <refsect2 id="header_addresslist_dynamic_address_list_generation">
       <title>Dynamic address list generation</title>
 
       <para>
@@ -70,7 +70,7 @@ Alternatively, a <structname>mail::emailAddress</structname> object may be
 provided.</para>
     </refsect2>
   </refsect1>
-  <refsect1>
+  <refsect1 id="header_addresslist_see_also">
     <title>SEE ALSO</title>
     <para>
 <link linkend="header-encoded"><citerefentry>

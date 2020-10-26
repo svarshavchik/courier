@@ -37,7 +37,7 @@ const mail::folder *folder=folderList[n];
 </literallayout>
 
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_getsubfolders_usage">
       <title>USAGE</title>
 
       <para>
@@ -66,7 +66,7 @@ to check if
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getsubfolders_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
       &libmail-account-return;
 
@@ -78,7 +78,7 @@ See
 for additional notes and instructions on handling folder lists.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_getsubfolders_see_also">
       <title>SEE ALSO</title>
 
       <para>

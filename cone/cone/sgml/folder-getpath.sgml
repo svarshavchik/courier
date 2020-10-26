@@ -27,7 +27,7 @@ mail::folder *folder;</literallayout>
       </funcsynopsis>
     </refsynopsisdiv>
 
-    <refsect1>
+    <refsect1 id="folder_getpath_usage">
       <title>USAGE</title>
 
       <para>
@@ -66,14 +66,14 @@ to determine whether this folder is contained within another folder.</para>
          </listitem>
        </itemizedlist>
     </refsect1>
-    <refsect1>
+    <refsect1 id="folder_getpath_return_codes">
       <title>Return Codes</title>
 
       <para>
 A string that specifies the folder's address on the mail server.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="folder_getpath_see_also">
       <title>SEE ALSO</title>
 
       <para>

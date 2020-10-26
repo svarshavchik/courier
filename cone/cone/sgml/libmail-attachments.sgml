@@ -19,7 +19,7 @@
 #include &lt;libmail/attachments.H&gt;
 </literallayout>
     </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="mail_attachments_usage">
     <title>USAGE</title>
 
     <para>
@@ -29,7 +29,7 @@ Most of the functionality in this class is provided by the constructors.
 <structname>mail::Attachment</structname> provides a variety of constructors
 for creating content MIME entities, and multipart MIME entities.</para>
 
-    <refsect2>
+    <refsect2 id="mail_attachments_creating_content_mime_entities">
       <title>Creating content MIME entities</title>
 
       <funcsynopsis>
@@ -125,7 +125,7 @@ header, which will be provided by the
 class.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="mail_attachments_pre_formatted_mime_content">
       <title>Pre-formatted MIME content</title>
 
       <para>
@@ -154,7 +154,7 @@ specified content.</para>
       </note>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="mail_attachments_creating_multipart_mime_content">
       <title>Creating multipart MIME content</title>
 
       <para>
@@ -197,7 +197,7 @@ when <parameter>multipart_type</parameter> (or an existing
       </note>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="mail_attachments_generating_mime_formatted_messages">
       <title>Generating MIME-formatted messages</title>
 
     <literallayout>
@@ -242,7 +242,7 @@ This header does not need to be explicitly included in the
       </note>
     </refsect2>
   </refsect1>
-  <refsect1>
+  <refsect1 id="mail_attachments_see_also">
     <title>SEE ALSO</title>
     <para>
 <link linkend="header-addresslist"><citerefentry>

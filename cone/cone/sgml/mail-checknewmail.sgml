@@ -28,7 +28,7 @@ mail::account *account;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_checknewmail_usage">
       <title>USAGE</title>
 
       <para>
@@ -37,7 +37,7 @@ With some accounts this request also checks for any messages that were
 removed from the folder by another process or application.</para>
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="mail_checknewmail_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
       &libmail-waitcallback;

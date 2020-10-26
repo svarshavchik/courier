@@ -27,7 +27,7 @@ mail::ACCOUNT *mail;
 	</funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_checknewmail_usage">
       <title>USAGE</title>
 
       <para>
@@ -57,7 +57,7 @@ added or removed from the folder.</para>
 
     </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_checknewmail_return_codes">
       <title>Return Codes</title>
 
       <para>
@@ -80,7 +80,7 @@ call to <function>mail::ACCOUNT::checkNewMail</function> returning
 <literal>true</literal>.</para>
 </note>
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_checknewmail_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="account-savefolderindexinfo"><citerefentry>

@@ -69,7 +69,7 @@ more information.</para>
     </listitem>
   </itemizedlist>
 
-  <section>
+  <section id="chapter_folder_index_screen">
     <title>Folder Index Screen</title>
 
     <programlisting>
@@ -433,7 +433,7 @@ are permanently removed from the folder.</para>
       </para>
     </section>
 
-      <section>
+      <section id="chapter_searching_messages">
 	<title>Searching messages</title>
 
 	<para>
@@ -641,7 +641,7 @@ Any existing replies that are watched will continue to be watched, even
 though the original message is no longer being watched.</para>
 	</note>
 
-	<section>
+	<section id="chapter_watching_e_mail_threads">
 	  <title>Watching E-mail threads</title>
 
 	  <para>
@@ -678,7 +678,7 @@ as time goes on.</para>
 
       </section>
 
-    <section>
+    <section id="chapter_checking_for_new_mail">
       <title>Checking for new mail</title>
 
       <para>
@@ -742,7 +742,7 @@ New mail will be reported only when &app; checks for new mail, or when
 the folder index screen is reopened.</para>
     </section>
 
-    <section>
+    <section id="chapter_concurrent_changes_to_the_current_folder's_contents">
       <title>Concurrent changes to the current folder's contents</title>
 
       <para>

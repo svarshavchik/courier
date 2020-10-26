@@ -32,7 +32,7 @@ mail::folder *folder;
 
       &libmail-accterrmsg;
     </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="account_deletefolder_usage">
       <title>USAGE</title>
 
       <para>
@@ -49,13 +49,13 @@ is no longer needed.</para>
       </note>
    </refsect1>
 
-    <refsect1>
+    <refsect1 id="account_deletefolder_return_codes_and_callbacks">
       <title>RETURN CODES AND CALLBACKS</title>
 
 &libmail-account-return;
 
     </refsect1>
-    <refsect1>
+    <refsect1 id="account_deletefolder_see_also">
       <title>SEE ALSO</title>
 
       <para>

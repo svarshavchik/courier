@@ -54,7 +54,7 @@ mail::account *account;
     </funcsynopsis>
 
   </refsynopsisdiv>
-    <refsect1>
+    <refsect1 id="mail_updatekeywords_usage">
       <title>USAGE</title>
 
       <para>
@@ -65,14 +65,14 @@ This function updates the set of keywords of one or more messages.
 
 &libmail-updatekeywords;
     </refsect1>
-  <refsect1>
+  <refsect1 id="mail_updatekeywords_return_codes">
     <title>Return Codes</title>
 
     &libmail-waitcallback;
     &libmail-updatestatus;
 
   </refsect1>
-    <refsect1>
+    <refsect1 id="mail_updatekeywords_see_also">
       <title>SEE ALSO</title>
       <para>
 <link linkend="mail-savefolderindexinfo"><citerefentry>
