@@ -5,6 +5,9 @@
 */
 
 #include "config.h"
+
+#ifdef USE_ASPELL
+
 #include "spellcheckerAspell.H"
 #include "libmail/mail.H"
 #include <errno.h>
@@ -276,3 +279,5 @@ string SpellChecker::Manager::addToSession(string word)
 #endif
 	return "";
 }
+
+#endif

@@ -173,17 +173,6 @@ PspellConfig *foo=new_pspell_config();
 LIBS="$save_LIBS"
 AC_MSG_RESULT($PSPELL)
 
-ALLSPELLOBJ='spellcheckerNone.$(OBJEXT)'
-if test "$ASPELL" = "yes"
-then
-	ALLSPELLOBJ='spellcheckerAspell.$(OBJEXT)'" $ALLSPELLOBJ"
-fi
-
-if test "$PSPELL" = "yes"
-then
-	ALLSPELLOBJ='spellcheckerPspell.$(OBJEXT)'" $ALLSPELLOBJ"
-fi
-
 AC_ARG_WITH(spellcheck, [  --with-spellcheck=pspell      Use pspell for spell checking
   --with-spellcheck=aspell      Use aspell for spell checking], [
 
@@ -223,21 +212,19 @@ AC_MSG_RESULT(yes)
 
 if test "$ASPELL" = "yes"
 then
-	SPELL_OBJ='spellcheckerAspell.$(OBJEXT)'
 	AC_DEFINE_UNQUOTED(USE_ASPELL, 1, [ Use aspell library for spell checking ])
 	SPELL_LIB='-laspell'
 else
 	if test "$PSPELL" = "yes"
 	then
-		AC_DEFINE_UNQUOTED(USE_PSPELL, 1, [ Use aspell library for spell checking ])
-		SPELL_OBJ='spellcheckerPspell.$(OBJEXT)'
+		AC_DEFINE_UNQUOTED(USE_PSPELL, 1, [ Use pspell library for spell checking ])
 		SPELL_LIB='-lpspell'
 	else
+		AC_DEFINE_UNQUOTED(NO_SPELL, 1, [ Use neither aspell nor pspell for spell checking])
 		AC_MSG_WARN(---------------------------------------------------------------)
 		AC_MSG_WARN(Neither pspell nor aspell was found -- disabling spell checking)
 		AC_MSG_WARN(---------------------------------------------------------------)
 		sleep 5
-		SPELL_OBJ='spellcheckerNone.$(OBJEXT)'
 		SPELL_LIB=''
 	fi
 fi
@@ -255,9 +242,7 @@ AC_SUBST(MAN3)
 AC_SUBST(MAN5)
 AC_SUBST(LIBMAIL)
 
-AC_SUBST(SPELL_OBJ)
 AC_SUBST(SPELL_LIB)
-AC_SUBST(ALLSPELLOBJ)
 
 AC_SUBST(target_cpu)
 AC_SUBST(target_vendor)

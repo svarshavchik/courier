@@ -143,12 +143,6 @@ libmail_la_LDFLAGS=-static -rpath $(libdir)
 #	rm -rf libmail.a.tmp
 #	$(RANLIB) libmail.a
 
-# Spell checker
-
-SPELLSRC=spellcheckerAspell.C spellcheckerAspell.H \
-	spellcheckerPspell.C spellcheckerPspell.H \
-	spellcheckerNone.C spellcheckerNone.H
-
 BUILT_SOURCES=helpfile.H buildversion.H colors_inc.h
 
 if HAVE_SGML
@@ -171,12 +165,13 @@ buildversion.H: config.status
 cone_DEPENDENCIES=../libs/tcpd/libtlsclient.la ../curses/libcurses.a \
 	../libs/gpglib/libgpg.la \
 	libmail.la \
-	dummyspellchecker.a ../libs/soxwrap/libsoxwrap.a \
+	libdummyspellchecker.a ../libs/soxwrap/libsoxwrap.a \
 	@LDAPSEARCH@ \
-	../libs/soxwrap/soxlibs.dep @SPELL_OBJ@
+	../libs/soxwrap/soxlibs.dep
 
-cone_LDADD=@SPELL_OBJ@ $(SPELL_LIB) ../libs/tcpd/libtlsclient.la \
+cone_LDADD=../libs/tcpd/libtlsclient.la \
 	../curses/libcurses.a ../libs/gpglib/libgpg.la libmail.la \
+	libdummyspellchecker.a $(SPELL_LIB) \
 	@LDAPSEARCH@ \
 	../libs/soxwrap/libsoxwrap.a \
 	`cat ../curses/curseslib ../libs/soxwrap/soxlibs.dep` \
@@ -184,11 +179,12 @@ cone_LDADD=@SPELL_OBJ@ $(SPELL_LIB) ../libs/tcpd/libtlsclient.la \
 	`cat ../libs/maildir/maildir.libdeps` \
 	`. ../libs/tcpd/couriertls.config; echo $$cryptlibs`
 
-leaf_DEPENDENCIES=../curses/libcurses.a dummyspellchecker.a @SPELL_OBJ@ \
+leaf_DEPENDENCIES=../curses/libcurses.a libdummyspellchecker.a \
 	../libmail/objectmonitor.o \
 	../libs/maildir/libmaildir.la
 
-leaf_LDADD=@SPELL_OBJ@ $(SPELL_LIB) ../curses/libcurses.a \
+leaf_LDADD=../curses/libcurses.a \
+	libdummyspellchecker.a $(SPELL_LIB) \
 	../libs/maildir/libmaildir.la \
 	../libmail/objectmonitor.o \
 	`cat ../curses/curseslib` \
@@ -201,10 +197,12 @@ pwtest_LDADD=../libs/tcpd/libtlsclient.la ../libs/md5/libmd5.la \
 	`. ../libs/tcpd/couriertls.config; echo $$cryptlibs`
 pwtest_LDFLAGS=-static
 
-dummyspellchecker.a: $(ALLSPELLOBJ)
-	rm -f dummyspellchecker.a
-	$(AR) cr dummyspellchecker.a $(ALLSPELLOBJ)
-	$(RANLIB) dummyspellchecker.a
+noinst_LIBRARIES=libdummyspellchecker.a
+
+libdummyspellchecker_a_SOURCES=\
+	spellcheckerAspell.C spellcheckerAspell.H \
+	spellcheckerPspell.C spellcheckerPspell.H \
+	spellcheckerNone.C spellcheckerNone.H
 
 dist-hook: $(noinst_DATA)
 	$(mkinstalldirs) $(distdir)/html
@@ -280,13 +278,13 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkgdatadir)/https.handler
 
 EXTRA_DIST = ../config.rpath testsuite1 testsuite1.out pwtest.txt colors.txt mkcolors.pl \
-	fixonlinehelp.pl mkhtmlmsg.pl postproc.xsl $(SPELLSRC) \
+	fixonlinehelp.pl mkhtmlmsg.pl postproc.xsl \
 	$(srcdir)/m4/*.m4
 
 colors_inc.h: colors.txt mkcolors.pl
 	@PERL@ $(srcdir)/mkcolors.pl <$(srcdir)/colors.txt >colors_inc.h
 
-CLEANFILES=dummyspellchecker.a libmail.la man.timestamp \
+CLEANFILES=libmail.la man.timestamp \
           helpfile.H help.txt
 DISTCLEANFILES=sgmltimestamp buildversion.H
 

@@ -5,6 +5,9 @@
 */
 
 #include "config.h"
+
+#ifdef NO_SPELL
+
 #include "spellcheckerNone.H"
 #include "gettext.H"
 
@@ -68,3 +71,4 @@ string SpellChecker::Manager::addToSession(string word)
 void SpellChecker::setDictionary(std::string)
 {
 }
+#endif

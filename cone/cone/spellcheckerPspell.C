@@ -5,6 +5,8 @@
 */
 
 #include "config.h"
+
+#ifdef USE_PSPELL
 #include "spellcheckerPspell.H"
 #include "libmail/mail.H"
 #include <errno.h>
@@ -22,7 +24,7 @@ SpellChecker::SpellChecker(string languageArg,
 	{
 		if (language.size() > 0)
 		{
-			pspell_config_replace(configClass, 
+			pspell_config_replace(configClass,
 					      "language-tag", language.c_str()
 					      );
 		}
@@ -169,3 +171,4 @@ string SpellChecker::Manager::addToSession(string word)
 		return pspell_error_message(speller_error);
 	return "";
 }
+#endif
