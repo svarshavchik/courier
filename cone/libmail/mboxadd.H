@@ -28,11 +28,11 @@ class mbox::folder::add : public addMessage,
 	mail::callback &callback;
 	FILE *fp;
 
-	ptr<mbox> mboxAccount;
+	mail::ptr<mbox> mboxAccount;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
-			    
+
 			    size_t messagesCompleted,
 			    size_t messagesEstimatedTotal);
 
@@ -68,4 +68,3 @@ public:
 LIBMAIL_END
 
 #endif
-

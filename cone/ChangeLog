@@ -1,3 +1,8 @@
+2020-10-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Remove bcc headers from the copy of the message used for sending it,
+	instead of relying on the mail server to do it.
+
 1.1
 
 2020-10-23  Sam Varshavchik  <mrsam@courier-mta.com>

@@ -1437,6 +1437,11 @@ class CursesEdit::SaveSink {
 public:
 	SaveSink();
 	virtual SaveSink &operator<<(std::string)=0;
+	virtual void saveheader(std::string header,
+				std::string contents)
+	{
+		(*this) << contents;
+	}
 	virtual ~SaveSink();
 };
 
@@ -2455,6 +2460,8 @@ public:
 	SaveSinkFile(CursesEdit &editArg);
 	SaveSink &operator<<(std::string);
 	virtual ~SaveSinkFile();
+	void saveheader(std::string header,
+			std::string contents);
 
 	void abort(std::string errmsg);
 };
@@ -2518,6 +2525,20 @@ CursesEdit::SaveSink &CursesEdit::SaveSinkFile::operator<<(std::string s)
 	if (postMessage)
 		postMessage->saveMessageContents(s);
 	return *this;
+}
+
+void CursesEdit::SaveSinkFile::saveheader(std::string header,
+					  std::string contents)
+{
+	if (header == "Bcc")
+	{
+		if (saveMessage)
+			saveMessage->saveMessageContents(contents);
+	}
+	else
+	{
+		operator<<(contents);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -3841,10 +3862,11 @@ void CursesEdit::saveheaders(std::string &fromhdr, std::string &replytohdr,
 			replytohdr=mail::address::toString("", addressArray);
 
 		if (sink)
-			(*sink) << mail::Header::addresslist(headerNames[i],
-							     addressArray)
-				.toString()
-				<< "\n";
+			sink->saveheader(headerNames[i],
+					 mail::Header::addresslist
+					 (headerNames[i],
+					  addressArray)
+					 .toString() + "\n");
 	}
 
 	// Also write out custom headers, there.

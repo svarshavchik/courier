@@ -63,8 +63,6 @@ class mbox::MultiLockGenericMessageRead : public callback {
 	bool peek;
 
 	enum mail::readMode readType;
-	bool justHeader;
-	bool justContents;
 	callback::message &callback;
 
 	void reportProgress(size_t bytesCompleted,
