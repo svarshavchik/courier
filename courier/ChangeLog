@@ -1,3 +1,16 @@
+2020-10-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/submit.C (getrcpts): Always remove Bcc header from
+	locally submitted E-mail.
+
+2020-10-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* waitlib: fix testwait.c failure with LTO enabled on F33.
+
+	* pop3login.c: fflush before STARTLS.
+
+	* sqwebmail/webpgp: update for current gpg version.
+
 1.0.14
 
 2020-05-18  Sam Varshavchik  <mrsam@courier-mta.com>

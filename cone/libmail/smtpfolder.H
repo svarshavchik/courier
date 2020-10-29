@@ -84,7 +84,7 @@ public:
 
 class smtpAddMessage : public addMessage {
 
-	ptr<smtp> myServer;
+	mail::ptr<smtp> myServer;
 	smtpInfo myInfo;
 	mail::callback &myCallback;
 
