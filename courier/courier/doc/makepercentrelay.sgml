@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="makepercentrelay">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -21,7 +21,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="makepercentrelay_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -83,7 +83,7 @@ knows how to handle via some other means.  It might be an entry in
 <filename moreinfo="none">@sysconfdir@/esmtproutes</filename>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makepercentrelay_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,

@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 2002-2007 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="courierfax">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -39,7 +39,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="courierfax_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -138,7 +138,7 @@ message in the mailbox.</para>
     </variablelist>
    </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfax_fax_transmission_receipt">
     <title>FAX TRANSMISSION RECEIPT</title>
 
     <para>
@@ -160,7 +160,7 @@ for instructions on requesting ESMTP delivery status notifications.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfax_additional_dialing_options">
     <title>ADDITIONAL DIALING OPTIONS</title>
 
     <para>
@@ -232,7 +232,7 @@ dialing the faxmodem.</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfax_configuration">
     <title>CONFIGURATION</title>
 
     <para>
@@ -257,7 +257,7 @@ that dials any requested phone number, without any editing or
 transformation.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfax_bugs">
     <title>BUGS</title>
 
     <para>
@@ -265,7 +265,7 @@ There is no good way to sleep until a modem lock is released, so we poll
 every minute.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfax_see_also">
     <title>SEE ALSO</title>
 
     <para>

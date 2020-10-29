@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 2006-2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="aliaslookup">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -24,7 +24,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="aliaslookup_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -44,7 +44,7 @@ See
 for more information.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="aliaslookup_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="makealiases.html"><citerefentry><refentrytitle>makealiases</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>

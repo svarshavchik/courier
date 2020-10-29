@@ -51,7 +51,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_getuserinfo_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -71,7 +71,7 @@ retrieve the account particulars and invoke
     </para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_getuserinfo_returns">
     <title>RETURNS</title>
 
     <para>
@@ -90,7 +90,7 @@ return value indicates that this request was processed, but it failed
 
     &authcallback;
   </refsect1>
-  <refsect1>
+  <refsect1 id="auth_getuserinfo_see_also">
     <title>SEE ALSO</title>
 
     <para>

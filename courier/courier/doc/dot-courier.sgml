@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="dot-courier">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -27,7 +27,7 @@ $HOME/.courier-foo
     </informalexample>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="dot-courier_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -82,8 +82,7 @@ from a <filename>.courier</filename> file have access to some environment variab
 file can read those environment variables to determine the exact E-mail
 address the message was delivered to.</para>
 
-    <refsect2>
-
+    <refsect2 id="dot-courier_default_delivery_instructions">
       <title>Default delivery instructions</title>
 
       <para>
@@ -119,7 +118,7 @@ locations of mailboxes.</para>
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="dot-courier_program_mailbox_aliases">
       <title>Program/mailbox aliases</title>
 
       <para>
@@ -154,7 +153,7 @@ creates subdirectories named
 "<replaceable>protocol</replaceable>" is set by the <option>-m</option> option.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="dot-courier_delivery_instructions">
       <title>DELIVERY INSTRUCTIONS</title>
 
       <para>
@@ -210,8 +209,7 @@ Maildir; run an external program; or forward the message to another
 address.</para>
     </refsect2>
 
-    <refsect2>
-
+    <refsect2 id="dot-courier_delivery_to_a_system_mailbox_or_a_maildir">
       <title>DELIVERY TO A SYSTEM MAILBOX OR A MAILDIR</title>
 
       <para>
@@ -250,7 +248,7 @@ locking options.</para>
       </note>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="dot-courier_running_an_external_program">
       <title>RUNNING AN EXTERNAL PROGRAM</title>
 
       <para>
@@ -301,7 +299,7 @@ considered to be successfully delivered.</para>
 	the delivery attempt is considered to be failed, and the next course
 	of action gets selected by <application>Courier</application> mail
 	server's backscatter suppression settings, as described in the
-	
+
 	<quote><ulink url="http://www.courier-mta.org/install.html#backscatter">
 Backscatter Suppression</ulink></quote>
 	section of the installation instructions;
@@ -331,7 +329,7 @@ instructions will be carried out from the beginning of the
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="dot-courier_dynamic_delivery_instructions">
       <title>DYNAMIC DELIVERY INSTRUCTIONS</title>
 
       <para>
@@ -381,7 +379,7 @@ the remaining instructions in the original
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="dot-courier_alias_based_deliveries">
       <title>Alias-based deliveries</title>
 
       <para>
@@ -392,8 +390,7 @@ executed programs or mailboxes are accessed as the <application>Courier</applica
 group.</para>
     </refsect2>
 
-    <refsect2>
-
+    <refsect2 id="dot-courier_environment_variables">
       <title>ENVIRONMENT VARIABLES</title>
 
       <para>
@@ -566,8 +563,7 @@ using a temporary file.</para>
       </note>
     </refsect2>
 
-    <refsect2>
-
+    <refsect2 id="dot-courier_forwarding">
       <title>FORWARDING</title>
 
       <para>
@@ -581,7 +577,7 @@ ignored; this is a legacy compatibility option.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="dot-courier_bugs">
     <title>BUGS</title>
 
     <para>
@@ -604,7 +600,7 @@ the <application>Courier</application> mail server read <filename>$HOME/.qmail</
 <filename>$HOME/.courier</filename>.</para>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="dot-courier_see_also">
     <title>SEE ALSO</title>
 
     <para>

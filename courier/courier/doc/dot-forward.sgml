@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1999 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="dot-forward">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -26,7 +26,7 @@ $ cat $HOME/.courier
 </informalexample>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="dot-forward_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -74,7 +74,7 @@ following section documents the behavior of the <command moreinfo="none">dotforw
 utility in the the <application moreinfo="none">Courier</application>
 mail server mail server.</para>
 
-    <refsect2>
+    <refsect2 id="dot-forward__home__forward_processing">
       <title><filename moreinfo="none">$HOME/.forward</filename> processing</title>
 
       <para>
@@ -144,7 +144,7 @@ delivery instructions it reads from <command moreinfo="none">dotforward</command
     </refsect2>
   </refsect1>
 
-<refsect1>
+<refsect1 id="dot-forward_bugs">
 <title>BUGS</title>
 
 <para>The restrictions and precautions mentioned in
@@ -159,7 +159,7 @@ around.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="dot-forward_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>.</para>

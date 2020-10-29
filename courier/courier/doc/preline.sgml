@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="preline">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -23,7 +23,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="preline_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -62,7 +62,7 @@ by mail loops or by malfunctioning software which expects to see
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="preline_example">
     <title>EXAMPLE</title>
     <informalexample>
       <programlisting format="linespecific">
@@ -75,7 +75,7 @@ This is the normal way to arrange for <command moreinfo="none">procmail</command
 local mail delivery.</para>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="preline_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="courierpop3d.html"><citerefentry><refentrytitle>courierpop3d</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,

@@ -36,7 +36,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_meta_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -147,7 +147,7 @@ struct auth_meta {
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_meta_see_also">
     <title>SEE ALSO</title>
 
     <para>

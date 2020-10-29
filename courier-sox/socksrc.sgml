@@ -23,7 +23,7 @@
     <refpurpose>Socks 5 configuration file</refpurpose>
   </refnamediv>
 
-  <refsect1>
+  <refsect1 id="socksrc_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -71,7 +71,7 @@ file.</para>
 Blank lines in <filename>@sysconfdir@/socksrc</filename> are ignored.
 Comments are introduced by the '#' character, which are also ignored.</para>
 
-    <refsect2>
+    <refsect2 id="socksrc_client_configuration">
       <title>Client Configuration</title>
 
       <variablelist>
@@ -198,7 +198,7 @@ the available candidates.
 It is an error to have the same network prefix listed more than once.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="socksrc_server_configuration">
       <title>Server Configuration</title>
 
       <variablelist>
@@ -402,7 +402,7 @@ found.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="socksrc_example">
     <title>EXAMPLE</title>
 
     <informalexample>
@@ -503,7 +503,7 @@ address <literal>192.168.0.8</literal> instead.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="socksrc_binding_to_reserved_ports">
     <title>BINDING TO RESERVED PORTS</title>
 
     <para>
@@ -516,7 +516,7 @@ to a reserved port, provided that the client is also connecting from a
 reserved port.
 </para>
     </refsect1>
-  <refsect1>
+  <refsect1 id="socksrc_client_troubleshooting">
     <title>CLIENT TROUBLESHOOTING</title>
 
     <para>
@@ -579,7 +579,7 @@ Multiple diagnostic messages may be selected by adding them together.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="socksrc_bugs">
     <title>BUGS</title>
 
     <para>
@@ -588,7 +588,7 @@ The <replaceable>filename</replaceable> in
 may not have spaces.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="socksrc_see_also">
     <title>SEE ALSO</title>
 
     <para>

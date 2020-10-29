@@ -31,7 +31,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_getoption_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -59,7 +59,7 @@ pairs.</para>
 <parameter>keyword</parameter>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_getoption_returns">
     <title>RETURNS</title>
 
     <para>
@@ -79,7 +79,7 @@ the returned buffer.</para>
 <varname>errno</varname> set to <literal>ENOMEM</literal> if it cannot
 allocate a buffer.</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="auth_getoption_see_also">
     <title>SEE ALSO</title>
 
     <para>

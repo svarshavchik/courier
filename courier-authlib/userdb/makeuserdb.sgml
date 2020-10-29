@@ -34,7 +34,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="makeuserdb_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -69,7 +69,7 @@ The <option>-f</option> option creates
 default <filename>@userdb@.dat</filename> from
 <filename>@userdb@</filename>.</para>
 
-    <refsect2>
+    <refsect2 id="makeuserdb_format_of__userdb_">
       <title>Format of <filename>@userdb@</filename></title>
       <para>
 <filename>@userdb@</filename> is a plain text file that can be created using
@@ -89,7 +89,7 @@ Each line takes the following format:</para>
 	</blockquote>
 
 <para><replaceable>name</replaceable> is the account name.
-<replaceable>name</replaceable> MUST contain only lowercase characters 
+<replaceable>name</replaceable> MUST contain only lowercase characters
 If <application>Courier</application> is
 configured to treat lowercase and uppercase account names as
 identical, <replaceable>name</replaceable> is followed by exactly one tab
@@ -162,7 +162,7 @@ See
 for additional information.</para>
       </blockquote>
     </refsect2>
-    <refsect2>
+    <refsect2 id="makeuserdb__userdb_shadow_dat">
       <title><filename>@userdb@shadow.dat</filename></title>
 
       <para>
@@ -176,10 +176,8 @@ if <command>@userdb@</command> has any group
 or world permissions.</para>
     </refsect2>
 
-    <refsect2>
-
-      <title>CONVERTING <filename>/etc/passwd</filename>
-and vpopmail to <filename>@userdb@</filename> format</title>
+    <refsect2 id="makeuserdb_converting__etc_passwd_and_vpopmail_to__userdb__format">
+      <title>CONVERTING <filename>/etc/passwd</filename> and vpopmail to <filename>@userdb@</filename> format</title>
 
       <para>
 <command>pw2userdb</command> reads the <filename>/etc/passwd</filename> and
@@ -286,7 +284,7 @@ cleaning up again, afterwards.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makeuserdb_files">
     <title>FILES</title>
 
     <literallayout>
@@ -298,7 +296,7 @@ cleaning up again, afterwards.</para>
 </literallayout>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="makeuserdb_bugs">
     <title>BUGS</title>
 
 
@@ -308,7 +306,7 @@ Perl's documentation notes that certain combinations of locking options may
 not work with some networks.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makeuserdb_see_also">
     <title>SEE ALSO</title>
 
     <para>
@@ -321,4 +319,3 @@ not work with some networks.</para>
   </refsect1>
 
 </refentry>
-

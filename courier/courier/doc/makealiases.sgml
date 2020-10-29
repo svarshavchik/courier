@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="makealiases">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -30,7 +30,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="makealiases_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -70,7 +70,7 @@ default), all the non-hidden files in this directory are concatenated
 together.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_options">
     <title>OPTIONS</title>
     <variablelist>
       <varlistentry>
@@ -166,7 +166,7 @@ to convert E-mail addresses into a canonical form. If not specified, the
 <literal moreinfo="none">local</literal> module's address rewriting rules will be used.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_protocol_aliases">
 <title>PROTOCOL ALIASES</title>
 
 <para>Addresses in <filename moreinfo="none">@sysconfdir@/aliases.dat</filename> will be checked in every
@@ -188,7 +188,7 @@ access these files instead of <filename moreinfo="none">@sysconfdir@/aliases.dat
 <filename moreinfo="none">@sysconfdir@/aliases</filename>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_alias_specifications">
 <title>ALIAS SPECIFICATIONS</title>
 
     <para>
@@ -253,7 +253,7 @@ any mail, it will all be forwarded to Moe, Curly, and Shemp.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_duplicate_addresses">
     <title>DUPLICATE ADDRESSES</title>
 
     <para>
@@ -264,7 +264,7 @@ them are specified as recipients of the same message, only one copy of the
 message will be delivered to the address.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_virtual_domains">
     <title>VIRTUAL DOMAINS</title>
 
     <para>
@@ -337,7 +337,7 @@ tom: larry-john
     </note>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_program_or_mailbox_aliases">
     <title>PROGRAM OR MAILBOX ALIASES</title>
 
     <para>
@@ -389,7 +389,7 @@ delivers as user "<literal moreinfo="none">@mailuser@</literal>"
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_uucp_virtual_domains">
     <title>UUCP VIRTUAL DOMAINS</title>
 
     <para>
@@ -411,7 +411,7 @@ want.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_delivery_status_notifications">
     <title>DELIVERY STATUS NOTIFICATIONS</title>
 
     <para>
@@ -429,7 +429,7 @@ successful delivery to the aliased address, and each alias recipient address
 will have DSNs set to NEVER.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_bugs">
     <title>BUGS</title>
 
     <para>
@@ -474,7 +474,7 @@ running, and any changes take effect immediately. However, only one instance of
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makealiases_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>

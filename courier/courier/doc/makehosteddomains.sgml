@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="makehosteddomains">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -21,7 +21,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="makehosteddomains_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -64,7 +64,7 @@ The <application moreinfo="none">Courier</application> mail server's
 <literal moreinfo="none">authuserdb</literal> authentication module can also use full E-mail
 addresses.</para>
 
-    <refsect2>
+    <refsect2 id="makehosteddomains_contents_of_hosteddomains">
       <title>Contents of <filename moreinfo="none">hosteddomains</filename></title>
 
       <para>
@@ -106,7 +106,7 @@ addressed to
 mailbox <literal moreinfo="none">&lt;address@domain.com&gt;</literal>.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="makehosteddomains_alias_hosteddomain">
       <title><literal moreinfo="none">alias@hosteddomain</literal></title>
 
       <para>
@@ -141,7 +141,7 @@ directory, userid, and groupid).</para>
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="makehosteddomains_wildcard_dns">
       <title><quote>WILDCARD DNS</quote></title>
 
       <para>
@@ -185,7 +185,7 @@ domain.com
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makehosteddomains_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>.</para>

@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="courierperlfilter">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -27,7 +27,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="courierperlfilter_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -53,7 +53,7 @@ below. Run <command>filterctl start perlfilter</command> to activate filtering (
 necessary, run <command>courierfilter start</command> to start the mail filtering
 subsystem).</para>
 
-    <refsect2>
+    <refsect2 id="courierperlfilter_setting_up_a_perl_script">
 <title>Setting up a Perl script</title>
 
       <para>
@@ -87,7 +87,7 @@ message may not actually come in via SMTP).</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierperlfilter_credits">
     <title>CREDITS</title>
 
 <para>
@@ -95,7 +95,7 @@ A lot of the Perl glue code is based on examples from the
 <literal>perlembed</literal> manual page, and other sources.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierperlfilter_files">
     <title>FILES</title>
 
     <para>
@@ -172,7 +172,7 @@ granted. This may change in the future.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierperlfilter_see_also">
     <title>SEE ALSO</title>
 
     <para>

@@ -31,7 +31,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="mkbl4_description">
     <title>DESCRIPTION</title>
 
 	<para>
@@ -83,7 +83,7 @@ It is safe to run <command>mkbl4</command> while
 same time.</para>
     </note>
   </refsect1>
-  <refsect1>
+  <refsect1 id="mkbl4_see_also">
     <title>SEE ALSO</title>
 
     <para>

@@ -36,7 +36,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="courierlogger_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -69,7 +69,7 @@ captured.</para>
 In either case, each read line of text is sent as a syslog message.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierlogger_options">
     <title>OPTIONS</title>
     <variablelist>
       <varlistentry>
@@ -243,7 +243,7 @@ standard input is closed.</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierlogger_see_also">
     <title>SEE ALSO</title>
 
     <para>

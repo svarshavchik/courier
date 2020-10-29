@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="courieruucp">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -22,7 +22,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="courieruucp_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -55,7 +55,7 @@ plain text file, in which case the contents of all text files in this
 subdirectory is automatically concatenated by the <command moreinfo="none">makeuucpneighbors</command>
 script.</para>
 
-    <refsect2>
+    <refsect2 id="courieruucp_contents_of__sysconfdir__uucpme">
       <title>Contents of <filename moreinfo="none">@sysconfdir@/uucpme</filename></title>
 
       <para>
@@ -65,7 +65,7 @@ does not exist, Courier uses the first node name of the hostname specified by
 the <filename moreinfo="none">@sysconfdir@/me</filename> configuration file.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="courieruucp_contents_of__sysconfdir__uucpneighbors">
       <title>Contents of <filename moreinfo="none">@sysconfdir@/uucpneighbors</filename></title>
 
       <para>
@@ -160,7 +160,7 @@ will request "<command moreinfo="none">uux food!fruits!rmail apple</command>".</
       </variablelist>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="courieruucp_contents_of__sysconfdir__module_uucp">
       <title>Contents of <filename moreinfo="none">@sysconfdir@/module.uucp</filename></title>
 
       <para>
@@ -213,7 +213,7 @@ always handled as separate deliveries.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courieruucp_header_and_address_rewriting">
     <title>HEADER AND ADDRESS REWRITING</title>
 
     <para>
@@ -243,7 +243,7 @@ UUCP address <literal moreinfo="none">domain.com!someone</literal>, and translat
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courieruucp_bugs">
     <title>BUGS</title>
 
     <para>
@@ -251,7 +251,7 @@ Courier does not support defining multiple UUCP node names in
 <filename moreinfo="none">@sysconfdir@/uucpme</filename>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courieruucp_see_also">
     <title>SEE ALSO</title>
 
     <para>

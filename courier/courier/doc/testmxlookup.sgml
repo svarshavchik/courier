@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1999 - 2019 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="testmxlookup">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -39,7 +39,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="testmxlookup_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -60,7 +60,7 @@
       precedes the mail server list.
     </para>
 
-    <refsect2>
+    <refsect2 id="testmxlookup_diagnostics">
       <title>DIAGNOSTICS</title>
 
       <para>
@@ -92,7 +92,7 @@
       </para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="testmxlookup_options">
       <title>OPTIONS</title>
 
       <variablelist>
@@ -237,7 +237,7 @@
       </variablelist>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="testmxlookup_strict_transport_security">
       <title>STRICT TRANSPORT SECURITY</title>
 
       <para>
@@ -275,7 +275,7 @@
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="testmxlookup_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,

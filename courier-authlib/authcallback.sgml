@@ -157,7 +157,7 @@ See below for more information.</para>
   </varlistentry>
 </variablelist>
 
-<refsect2>
+<refsect2 id="authcallback_account_options">
   <title>Account options</title>
 
   <para>

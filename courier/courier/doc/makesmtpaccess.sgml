@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="makesmtpaccess">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -25,7 +25,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="makesmtpaccess_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -64,7 +64,7 @@ files, not the .dat file).  Then, use <command>makesmtpaccess-msa</command>
 instead
 of <command>makesmtpaccess</command> to build the .dat file.</para>
 
-    <refsect2>
+    <refsect2 id="makesmtpaccess_the_smtpaccess_configuration_file">
       <title>The <filename>smtpaccess</filename> configuration file</title>
 
       <para>
@@ -212,7 +212,7 @@ Other useful environment variables are listed in the
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="makesmtpaccess_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="esmtpd.html"><citerefentry><refentrytitle>esmtpd</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,

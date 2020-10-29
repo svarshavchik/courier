@@ -54,7 +54,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_login_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -79,7 +79,7 @@ authentication library's configured back-end module.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_login_returns">
     <title>RETURNS</title>
 
     <para>
@@ -95,7 +95,7 @@ return value indicates that this request was processed, but it failed.</para>
 
     &authcallback;
   </refsect1>
-  <refsect1>
+  <refsect1 id="auth_login_see_also">
     <title>SEE ALSO</title>
 
     <para>

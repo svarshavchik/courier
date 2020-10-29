@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 2017 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="verifyfilter">
   <info>
     <author>
       <firstname>Sam</firstname><surname>Varshavchik</surname>
@@ -34,7 +34,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="verifyfilter_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -81,7 +81,7 @@
       delivery may create large log files, impacting performance.
     </para>
 
-    <refsect2>
+    <refsect2 id="verifyfilter_the_verifysmtp_command">
       <title>The <command>verifysmtp</command> command</title>
 
 
@@ -124,7 +124,7 @@
       </para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="verifyfilter_the_verifyfilter_global_mail_filter">
       <title>The <command>verifyfilter</command> global mail filter</title>
 
       <cmdsynopsis sepchar=" ">
@@ -150,7 +150,7 @@
       </para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="verifyfilter_local_recipient_mail_filter">
       <title>Local recipient mail filter</title>
 
       <informalexample>
@@ -222,7 +222,7 @@ include '@sysconfdir@/maildroprcs/verifysenderfull'</programlisting>
       </para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="verifyfilter_logging_and_caching">
       <title>Logging and caching</title>
 
       <para>
@@ -263,7 +263,7 @@ include '@sysconfdir@/maildroprcs/verifysenderfull'</programlisting>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="verifyfilter_bugs">
     <title>BUGS</title>
 
     <para>
@@ -290,7 +290,7 @@ include '@sysconfdir@/maildroprcs/verifysenderfull'</programlisting>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="verifyfilter_files">
     <title>FILES</title>
 
     <para>
@@ -353,7 +353,7 @@ number of threads is 10.</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="verifyfilter_see_also">
     <title>SEE ALSO</title>
 
     <para>

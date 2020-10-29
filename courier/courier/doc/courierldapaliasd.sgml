@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="courierldapaliasd">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -39,7 +39,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="courierldapaliasd_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -113,7 +113,7 @@ address, such as "<literal moreinfo="none">local</literal>", "<literal moreinfo=
 or "<literal moreinfo="none">uucp</literal>".</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierldapaliasd_configuration">
 <title>CONFIGURATION</title>
 
     <para>
@@ -124,7 +124,7 @@ installation time. The default <filename moreinfo="none">ldapaliasrc</filename>
 contains additional instructions for configuring LDAP-based aliasing.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierldapaliasd_files">
     <title>FILES</title>
 
     <para><filename moreinfo="none">@sbindir@/courierldapaliasd</filename></para>
@@ -132,7 +132,7 @@ contains additional instructions for configuring LDAP-based aliasing.</para>
     <para><filename moreinfo="none">@sysconfdir@/ldapaliasrc</filename></para>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="courierldapaliasd_see_also">
     <title>SEE ALSO</title>
 
     <para>

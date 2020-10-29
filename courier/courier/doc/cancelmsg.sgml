@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="cancelmsg">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -24,7 +24,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="cancelmsg_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -61,7 +61,7 @@ message will be used if
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="cancelmsg_bugs">
     <title>BUGS</title>
 
     <para>
@@ -78,7 +78,7 @@ A non-delivery report will not be sent for recipients whose delivery status
 notification does not include the <literal moreinfo="none">FAIL</literal> notice.</para>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="cancelmsg_see_also">
     <title>SEE ALSO</title>
 
     <para>

@@ -24,7 +24,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="authpasswd_description">
     <title>DESCRIPTION</title>
 
     <para>

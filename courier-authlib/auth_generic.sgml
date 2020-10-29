@@ -57,7 +57,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_generic_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -125,7 +125,7 @@ digits.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_generic_returns">
     <title>RETURNS</title>
 
     <para>
@@ -141,7 +141,7 @@ return value indicates that this request was processed, but it failed.</para>
 
     &authcallback;
   </refsect1>
-  <refsect1>
+  <refsect1 id="auth_generic_see_also">
     <title>SEE ALSO</title>
 
     <para>

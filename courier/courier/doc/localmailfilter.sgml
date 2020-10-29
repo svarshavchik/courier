@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="localmailfilter">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -34,7 +34,7 @@ chmod 600 $HOME/.mailfilters/*
     </informalexample>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="localmailfilter_description">
     <title>DESCRIPTION</title>
 
 
@@ -229,7 +229,7 @@ ESMTP, environment variables are usually set in the
       </varlistentry>
     </variablelist>
 
-    <refsect2>
+    <refsect2 id="localmailfilter_maildrop_implementation">
       <title><command moreinfo="none">maildrop</command> implementation</title>
 
       <para>
@@ -267,7 +267,7 @@ for more
 information.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="localmailfilter_filtering_mail_to_aliases">
       <title>Filtering mail to aliases</title>
 
       <para>
@@ -310,7 +310,7 @@ Unfortunately, currently it is not possible to specify content filters
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="localmailfilter_files">
     <title>FILES</title>
 
     <variablelist>
@@ -332,7 +332,7 @@ Account that is used to filter mail to aliases.</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="localmailfilter_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="courierfilter.html"><citerefentry><refentrytitle>courierfilter</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,

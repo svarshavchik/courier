@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="courierfilter">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -35,7 +35,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="courierfilter_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -81,7 +81,7 @@ shutdown script. It is not necessary to run <command moreinfo="none">courierfilt
 if you do not install a mail filter with <command moreinfo="none">filterctl</command>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfilter_mail_filter_implementation">
     <title>MAIL FILTER IMPLEMENTATION</title>
 
     <para>
@@ -187,7 +187,7 @@ mail filter crashes it will effectively shut down the mail server.  Currently
 crash.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfilter_mail_filter_invocation">
     <title>MAIL FILTER INVOCATION</title>
 
     <para>
@@ -238,7 +238,7 @@ This gives system administrators a choice whether to install selective, or
 mandatory mail filters, or a combination of both.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfilter_bugs">
     <title>BUGS</title>
 
     <para>
@@ -248,7 +248,7 @@ Many filesystem domain socket implementation are buggy.</para>
 Handling of crashed mail filters could be improved.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfilter_files">
     <title>FILES</title>
 
     <variablelist>
@@ -302,7 +302,7 @@ Optional filters.</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courierfilter_see_also">
     <title>SEE ALSO</title>
 
     <para>

@@ -51,7 +51,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="socks_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -62,7 +62,7 @@ This is a generic proxy API.
 This library may be used with other
 applications to establish network connections using a Socks 5 proxy.</para>
 
-    <refsect2>
+    <refsect2 id="socks_explicit_usage">
       <title>Explicit usage</title>
       <para>
 There are several ways to use this API library.  The preferred way is to
@@ -152,7 +152,7 @@ The rest are mapped, using
 but applications should use the <quote>R</quote> functions in order
 to remain upward-compatible with future versions of this library.</para>
       </note>
-      <refsect3>
+      <refsect3 id="socks_capabilities">
 	<title>CAPABILITIES</title>
 
 	<para>This Socks 5 proxy library supports the following
@@ -210,7 +210,7 @@ This is a limitation of the Socks 5 protocol.</para>
       </refsect3>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="socks_implicit_usage">
       <title>Implicit usage</title>
       <informalexample>
 	<programlisting>
@@ -272,7 +272,7 @@ the
 </ulink> configuration file.</para>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="socks_library_wrapper">
       <title>Library wrapper</title>
       <informalexample>
 	<cmdsynopsis>
@@ -338,7 +338,7 @@ available.</para>
 
     </refsect2>
   </refsect1>
-  <refsect1>
+  <refsect1 id="socks_see_also">
     <title>SEE ALSO</title>
 
     <para>

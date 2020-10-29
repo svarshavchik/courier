@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="submit">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -29,7 +29,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="submit_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -157,8 +157,7 @@ time (default: 0 seconds -- immediate delivery).</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
-
+  <refsect1 id="submit_responses_from_submit">
     <title>RESPONSES FROM <command>submit</command></title>
 
     <para>
@@ -177,7 +176,7 @@ failure (the message or the address should be resubmitted later). If the first
 digit is not 4 or 5, the response indicates success, or acceptance.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="submit_message_submission">
     <title>MESSAGE SUBMISSION</title>
 
     <para>
@@ -281,7 +280,7 @@ not the message was accepted for delivery, and terminates.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="submit_address_rewriting">
     <title>ADDRESS REWRITING</title>
     <para>
 Each recipient address (whether specified explicitly, or obtained from the
@@ -299,7 +298,7 @@ system administrator). If the address is found, the recipient address will be
 replaced by the addresses defined in the <filename>aliases.dat</filename> file.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="submit_environment_variables">
     <title>ENVIRONMENT VARIABLES</title>
     <para>
 <command>submit</command> also reads the following environment variables to further
@@ -409,7 +408,7 @@ text that can be representing as 8bit-encoded text, then convert it to
     </variablelist>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="submit_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="courierpop3d.html"><citerefentry><refentrytitle>courierpop3d</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,

@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="pop3d">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -36,7 +36,7 @@ POP3 server</refpurpose>
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="pop3d_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -66,7 +66,7 @@ POP3 server supports Maildir mailboxes only.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="pop3d_see_also">
     <title>SEE ALSO</title>
     <para>
 <ulink url="courierpop3d.html"><citerefentry><refentrytitle>courierpop3d</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,

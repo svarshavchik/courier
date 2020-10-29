@@ -32,7 +32,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_enumerate_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -92,7 +92,7 @@ enumeration, so this function may not be available in all
 configurations.</para>
     </note>
   </refsect1>
-  <refsect1>
+  <refsect1 id="auth_enumerate_see_also">
     <title>SEE ALSO</title>
 
     <para>

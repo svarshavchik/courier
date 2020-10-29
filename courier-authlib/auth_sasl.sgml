@@ -51,7 +51,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_sasl_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -128,7 +128,7 @@ information for the login ID specified by
 <parameter>externalauth</parameter>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_sasl_returns">
     <title>RETURNS</title>
 
     <para>
@@ -173,7 +173,7 @@ Check <varname>errno</varname> for any clues.</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_sasl_see_also">
     <title>SEE ALSO</title>
 
     <para>

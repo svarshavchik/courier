@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="couriermlm">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -25,7 +25,7 @@ mailing list manager</refpurpose>
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="couriermlm_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -41,7 +41,7 @@ administrative oversight.
 <command>couriermlm</command> supports digests, write-only posting aliases,
 and moderated mailing lists.</para>
 
-    <refsect2>
+    <refsect2 id="couriermlm_creating_a_mailing_list">
       <title>CREATING A MAILING LIST</title>
 
       <para>
@@ -569,7 +569,7 @@ list commands</ulink>", below.</para>
       </variablelist>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="couriermlm_configuring_smtp_pre_filtering_of_mailing_list_messages">
       <title>Configuring SMTP pre-filtering of mailing list messages</title>
 
       <para>
@@ -766,7 +766,7 @@ $ chmod 600 $HOME/.mailfilters/*</programlisting>
 	<command>couriermlm</command>'s mail server.
       </para>
     </refsect2>
-    <refsect2>
+    <refsect2 id="couriermlm_manual_commands">
       <title>MANUAL COMMANDS</title>
 
       <para>
@@ -1011,7 +1011,7 @@ Create a digest.  See "<ulink url="#digest">Setting up
       </variablelist>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="couriermlm_manual_subscription_management">
       <title>MANUAL SUBSCRIPTION MANAGEMENT</title>
 
       <para>
@@ -1125,8 +1125,7 @@ database files.</para>
 
     </refsect2>
 
-    <refsect2>
-
+    <refsect2 id="couriermlm_setting_mailing_list_options">
       <title>SETTING MAILING LIST OPTIONS</title>
 
       <anchor id="options"/>
@@ -1470,7 +1469,7 @@ list.</para>
       </note>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="couriermlm_displaying_a_subscription_record">
       <title>DISPLAYING A SUBSCRIPTION RECORD</title>
 
       <para>
@@ -1490,8 +1489,7 @@ typically consists of a copy of the initial subscription request, and
 confirmation.</para>
     </refsect2>
 
-    <refsect2>
-
+    <refsect2 id="couriermlm_sending_messages_to_the_mailing_list">
       <title>SENDING MESSAGES TO THE MAILING LIST</title>
 
       <para>
@@ -1512,7 +1510,7 @@ and are applied to the message, as described previously.</para>
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="couriermlm_mailing_list_commands">
       <title>MAILING LIST COMMANDS</title>
 
       <anchor id="command"/>
@@ -1615,8 +1613,7 @@ mailing list.</para>
 
     </refsect2>
 
-    <refsect2>
-
+    <refsect2 id="couriermlm_write_only_aliases">
       <title>WRITE-ONLY ALIASES</title>
 
       <anchor id="wonly"/>
@@ -1654,7 +1651,7 @@ existing write-only alias,</para>
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="couriermlm_setting_up_a_mailing_list_digest">
       <title>SETTING UP A MAILING LIST DIGEST</title>
 
       <anchor id="digest"/>
@@ -1929,7 +1926,7 @@ from the main mailing list directory.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="couriermlm_bugs">
     <title>BUGS</title>
 
     <para>
@@ -1943,7 +1940,7 @@ from the main mailing list directory.</para>
 extensions is disabled.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="couriermlm_see_also">
     <title>SEE ALSO</title>
 
     <para>

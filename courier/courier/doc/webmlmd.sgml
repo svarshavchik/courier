@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 2007-2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="webmlmd">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
   <refmeta>
     <refentrytitle>webmlmd</refentrytitle>
@@ -26,7 +26,7 @@
       <arg choice="req" rep="norepeat">@sysconfdir@/webmlmrc</arg>
     </cmdsynopsis>
   </refsynopsisdiv>
-  <refsect1>
+  <refsect1 id="webmlmd_description">
     <title>DESCRIPTION</title>
     <para>
     <application moreinfo="none">WebMLM</application> is a service that
@@ -52,7 +52,7 @@ configuration of basic mailing list settings.</para>
     <filename moreinfo="none">.courier</filename> files, that correspond to this
     list, are installed.</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="webmlmd_overview">
     <title>Overview</title>
     <para>
     <application moreinfo="none">WebMLM</application> consists of three
@@ -134,7 +134,7 @@ automatically during the system boot.</para></listitem>
     </orderedlist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="webmlmd_configure_couriermlm_list_options">
     <title>Configure <command moreinfo="none">couriermlm</command> list options</title>
 
     <para>
@@ -235,7 +235,7 @@ contain special shell characters and must be quoted.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="webmlmd_setting_up_the_webmlmrc_configuration_file">
     <title>Setting up the <filename moreinfo="none">webmlmrc</filename> configuration file</title>
 
     <para>
@@ -298,7 +298,7 @@ must be set up.</para>
     </variablelist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="webmlmd_starting_webmlmd">
     <title>Starting <command moreinfo="none">webmlmd</command></title>
 
     <para>
@@ -345,7 +345,7 @@ provided that <envar>PORT</envar>'s directory is writable by the userid.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="webmlmd_installing_webmlm">
     <title>Installing <command moreinfo="none">webmlm</command></title>
 
     <para>Install the <command moreinfo="none">webmlm</command> program by either manually
@@ -357,7 +357,7 @@ have an optional subpackage that installs <command moreinfo="none">webmlm</comma
 directly into the <filename moreinfo="none">cgi-bin</filename> directory</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="webmlmd_multiple_webmlm_instances">
     <title>Multiple <application moreinfo="none">WebMLM</application> instances</title>
 
     <para>
@@ -367,7 +367,7 @@ directories that are owned by different userids.
 This may not be supported by most generic, pre-built,
 <application moreinfo="none">Courier</application> packages, and must be done manually.</para>
 
-    <refsect2>
+    <refsect2 id="webmlmd_install_multiple_copies_of_webmlm">
       <title>Install multiple copies of <command moreinfo="none">webmlm</command></title>
 
       <para>
@@ -416,7 +416,7 @@ file for each copy of the <command moreinfo="none">webmlm</command> command.</pa
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="webmlmd_see_also">
     <title>SEE ALSO</title>
     <para>
       <ulink url="couriermlm.html">

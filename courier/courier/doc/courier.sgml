@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2015 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="courier">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -43,7 +43,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="courier_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -108,7 +108,7 @@ mail for this address for up to two hours.  The "clear" command can be use
 to reenable mail acceptance before then.</para>
 
 
-    <refsect2>
+    <refsect2 id="courier_configuration_files">
       <title>CONFIGURATION FILES</title>
 
       <para>
@@ -2339,7 +2339,7 @@ elapsed.</para>
       </variablelist>
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="courier_webmail_template_files">
       <title>Webmail template files</title>
 
       <para>
@@ -2974,7 +2974,7 @@ See the comments in this file for more information.</para>
     </refsect2>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courier_bugs">
     <title>BUGS</title>
 
     <para>
@@ -2990,7 +2990,7 @@ a minute, before automatically restarting. During this sleep interval courier
 stop does not work.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="courier_see_also">
     <title>SEE ALSO</title>
 
     <para>

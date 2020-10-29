@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="esmtpd">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -49,7 +49,7 @@ mail server ESMTP daemon</refpurpose>
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="esmtpd_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -97,7 +97,7 @@ it manually, yourself. Similarly,
 automatically runs <command moreinfo="none">esmtpd-msa restart</command></para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="esmtpd_files">
     <title>FILES</title>
 
     <variablelist>
@@ -129,7 +129,7 @@ afterwards <filename moreinfo="none">@sysconfdir@/esmtpd-msa</filename>. Any set
       </varlistentry>
     </variablelist>
   </refsect1>
-  <refsect1>
+  <refsect1 id="esmtpd_see_also">
     <title>SEE ALSO</title>
 
     <para>

@@ -33,7 +33,7 @@
 
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="auth_passwd_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -47,7 +47,7 @@ passwords for different services.
 <parameter>service</parameter> is ignored if this is not the case.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="auth_passwd_returns">
     <title>RETURNS</title>
 
     <para>
@@ -55,7 +55,7 @@ passwords for different services.
 succesfully changed.
 A non-0 error code indicates a failure..</para>
   </refsect1>
-  <refsect1>
+  <refsect1 id="auth_passwd_see_also">
     <title>SEE ALSO</title>
 
     <para>

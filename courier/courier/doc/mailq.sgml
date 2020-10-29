@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for -->
 <!-- distribution information. -->
-<refentry>
+<refentry id="mailq">
   <info><author><firstname>Sam</firstname><surname>Varshavchik</surname><contrib>Author</contrib></author><productname>Courier Mail Server</productname></info>
 
   <refmeta>
@@ -23,7 +23,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="mailq_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -55,7 +55,7 @@ else can only see their own messages.</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="mailq_bugs">
     <title>BUGS</title>
 
 
@@ -63,7 +63,7 @@ else can only see their own messages.</para>
 The 80-column limitation forced a somewhat ugly design.</para>
 
   </refsect1>
-  <refsect1>
+  <refsect1 id="mailq_see_also">
     <title>SEE ALSO</title>
 
     <para>

@@ -91,7 +91,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="userdb_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -185,7 +185,8 @@ record. Use
 plus the record itself.</para>
 
 
-    <refsect2><title>DISPLAYING <filename>@userdb@</filename></title>
+    <refsect2 id="userdb_displaying__userdb_">
+      <title>DISPLAYING <filename>@userdb@</filename></title>
 
       <para>
 If the first argument to userdb
@@ -211,7 +212,7 @@ all the fields in <filename>@userdb@</filename> for this
 
     </refsect2>
 
-    <refsect2>
+    <refsect2 id="userdb_international_domains">
       <title>International domains</title>
 
       <para>
@@ -229,7 +230,7 @@ userdb postmaster@test.испытание set \
       </blockquote>
 
     </refsect2>
-    <refsect2>
+    <refsect2 id="userdb_rebuilding__userdb__dat">
       <title>REBUILDING <filename>@userdb@.dat</filename></title>
 
       <para>
@@ -243,7 +244,7 @@ version. After running <command>userdb</command>, execute the
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="userdb_bugs">
     <title>BUGS</title>
 
     <para>
@@ -258,7 +259,7 @@ however the subsequent
 will fail with an error message.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="userdb_files">
     <title>FILES</title>
 
     <para>
@@ -269,7 +270,7 @@ will fail with an error message.</para>
 <filename> .tmp.filename</filename> - temporary file used to create new contents of <filename>filename</filename></para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="userdb_see_also">
     <title>SEE ALSO</title>
 
     <para>

@@ -34,7 +34,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="sockd_description">
     <title>DESCRIPTION</title>
 
     <para>
@@ -75,7 +75,7 @@ Changes to other settings require a <command>sockd stop</command>, followed
 by <command>sockd start</command> to take effect.</para>
     </note>
   </refsect1>
-  <refsect1>
+  <refsect1 id="sockd_see_also">
     <title>SEE ALSO</title>
 
     <para>

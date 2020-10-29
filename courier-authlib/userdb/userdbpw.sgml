@@ -33,7 +33,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="userdbpw_description">
     <title>DESCRIPTION</title>
 
     <para><command>userdbpw</command> enables secure entry of encrypted
@@ -115,7 +115,7 @@ to be specified in a way that cannot be easily viewed by
 <citerefentry><refentrytitle>ps</refentrytitle><manvolnum>1</manvolnum></citerefentry>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="userdbpw_see_also">
     <title>SEE ALSO</title>
 
     <para>
