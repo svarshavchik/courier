@@ -169,6 +169,16 @@ SMAP protocol.
 If enabled, &app; lets the SMAP server take care of sending the message
 (which saves time since the message doesn't need to be transmitted a second
 time, using SMTP, after it is saved in the sent mail folder).</para>
+	  <note>
+	    <para>
+	      This option naturally requires the sent mail folder in the
+	      same, primary mail account, and not in a secondary account.
+	      This option also removes <quote>Bcc</quote> headers from the
+	      copy of the sent message saved in the sent mail folder
+	      (only one copy, for sending and saving, gets sent to the
+	      SMAP server).
+	    </para>
+	  </note>
 	</listitem>
       </varlistentry>
 
