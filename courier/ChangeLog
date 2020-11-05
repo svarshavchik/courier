@@ -1,3 +1,8 @@
+2020-11-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/courierd.C (courierbmain): Fix logical bug in handling
+	a submitdelay-ed message.
+
 2020-10-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* waitlib: fix testwait.c failure with LTO enabled on F33.

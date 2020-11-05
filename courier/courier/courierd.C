@@ -425,7 +425,7 @@ int	doscantmp=1;
 #endif
 
 		while (select(maxfd, &fdc, (fd_set *)0, (fd_set *)0,
-				(next_time && doscantmp == 0 ?
+				(next_time ?
 				 &tv:(struct timeval *)0)) < 0)
 		{
 			if (errno != EINTR)	clog_msg_errno();
