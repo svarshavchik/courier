@@ -5,7 +5,7 @@ dnl distribution information.
 
 AC_PREREQ(2.59)
 
-AC_INIT(courier, 1.0.14, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 1.0.14.20201104, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -21,7 +21,7 @@ AC_PROG_MAKE_SET
 AC_PROG_CXX
 AC_PROG_SYSCONFTOOL
 AC_PATH_PROGS(SETENV, env)
-AX_COURIER_UNICODE_VERSION
+AX_COURIER_UNICODE_VERSION(2.1)
 AC_ARG_ENABLE(root-check, [  --disable-root-check    Allow build as root (make check will fail)],
 	rootcheck="$enableval",
 	rootcheck="yes")

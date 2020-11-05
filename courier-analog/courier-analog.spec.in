@@ -18,6 +18,7 @@ BuildArch: noarch
 %if %need_perl_generators
 BuildRequires: perl-generators
 %endif
+BuildRequires: %{__make}
 
 %description
 The courier-analog script generates log summaries for the Courier mail server.

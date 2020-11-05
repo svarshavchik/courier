@@ -110,9 +110,6 @@ configure-check:
 	@echo "Images will be installed in @imagedir@"
 	@cd sqwebmail && $(MAKE) configure-check
 
-clean-local:
-	rm -f config.rpath
-
 all-recursive: all-make-check
 
 all-make-check:

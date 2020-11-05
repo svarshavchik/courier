@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.71.0],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.71.0.20201104],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -127,7 +127,7 @@ fi
 LIBS="$saveLIBS"
 AC_SUBST(NETLIBS)
 
-AX_COURIER_UNICODE_VERSION
+AX_COURIER_UNICODE_VERSION(2.1)
 
 dnl #########################################################################
 

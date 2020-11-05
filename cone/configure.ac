@@ -5,7 +5,7 @@ dnl Process this file with autoconf to produce a configure script.
 # See COPYING for distribution information.
 #
 AC_PREREQ(2.59)
-AC_INIT(cone,1.1.20201028,[courier-cone@lists.sourceforge.net])
+AC_INIT(cone,1.1.20201104,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)

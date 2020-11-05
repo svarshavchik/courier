@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 5.0.11, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 5.0.11.20201104, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -161,7 +161,7 @@ fi
 courierlogger=$authsbindir/courierlogger$EXEEXT
 AC_SUBST(courierlogger)
 
-AX_COURIER_UNICODE_VERSION
+AX_COURIER_UNICODE_VERSION(2.1)
 
 if test x$prefix = xNONE
 then

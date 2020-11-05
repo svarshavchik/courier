@@ -145,6 +145,7 @@ BuildRequires:      mgetty-sendfax
 BuildRequires:      netpbm-progs
 %endif
 BuildRequires:      pcre-devel
+BuildRequires:      %{__make}
 Obsoletes:	courier-smtpauth < @VERSION@
 
 %define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)

@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(maildrop, 3.0.1, [courier-maildrop@lists.sourceforge.net])
+AC_INIT(maildrop, 3.0.1.20201104, [courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
@@ -135,7 +135,7 @@ then
 	AC_MSG_ERROR([libidn not found])
 fi
 
-AX_COURIER_UNICODE_VERSION
+AX_COURIER_UNICODE_VERSION(2.1)
 
 AC_ARG_WITH(plentyofbeer,
 [  --enable-sendmail=prog       set sendmail location

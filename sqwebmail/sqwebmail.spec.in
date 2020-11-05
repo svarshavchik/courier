@@ -74,6 +74,7 @@ BuildRequires: openldap-devel courier-authlib-devel >= 0.55
 BuildRequires: /etc/mime.types
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
+BuildRequires: %{__make}
 
 %define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
 

@@ -11,6 +11,7 @@ Source: sysconftool-@VERSION@.tar.gz
 BuildRoot: /var/tmp/sysconftool-install
 BuildArch: noarch
 BuildRequires: automake
+BuildRequires: %{__make}
 
 %define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
 

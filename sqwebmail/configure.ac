@@ -3,7 +3,7 @@ dnl Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(sqwebmail, 6.0.4, [courier-sqwebmail@lists.sourceforge.net])
+AC_INIT(sqwebmail, 6.0.4.20201104, [courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -188,7 +188,7 @@ AC_SUBST(USE_GDBM)
 AC_SUBST(USE_DB)
 AC_SUBST(dblibrary)
 
-AX_COURIER_UNICODE_VERSION
+AX_COURIER_UNICODE_VERSION(2.1)
 
 dnl Checks for header files.
 

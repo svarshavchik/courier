@@ -17,6 +17,7 @@ BuildRequires: /usr/include/fam.h gdbm-devel pcre-devel
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: gcc-c++
+BuildRequires: %{__make}
 
 %package devel
 Summary: development tools for handling E-mail messages

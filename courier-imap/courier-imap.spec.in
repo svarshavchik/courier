@@ -53,6 +53,7 @@ BuildRequires: coreutils perl
 BuildRequires: courier-authlib-devel >= 0.60.6.20080629
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
+BuildRequires: %{__make}
 
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 
