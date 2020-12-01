@@ -72,15 +72,13 @@ UNDERLINE_HACK=0
 #
 # OpenSSL:
 #
-# TLSv1 - TLS1
-# TLSv1.1 - TLS1.1
-# TLSv1.2 - TLS1.2
+# TLSv1 - TLS 1.0, or higher.
+# TLSv1.1 - TLS1.1, or higher.
+# TLSv1.1++ TLS1.1, or higher, without client-initiated renegotiation.
+# TLSv1.2 - TLS1.2, or higher.
+# TLSv1.2++ TLS1.2, or higher, without client-initiated renegotiation.
 #
-#
-# TLSv1+, TLSv1.1+, and TLSv1.2+ - the corresponding protocol, and all
-# higher protocols.
-#
-# The default value is TLSv1+
+# The default value is TLSv1
 
 ##NAME: TLS_CIPHER_LIST:0
 #
