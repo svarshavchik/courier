@@ -312,7 +312,9 @@ ESMTP_PREFER_IPV6_MX=1
 #
 # TLSv1 - TLS 1.0, or higher.
 # TLSv1.1 - TLS1.1, or higher.
+# TLSv1.1++ TLS1.1, or higher, without client-initiated renegotiation.
 # TLSv1.2 - TLS1.2, or higher.
+# TLSv1.2++ TLS1.2, or higher, without client-initiated renegotiation.
 #
 # The default value is TLSv1
 
