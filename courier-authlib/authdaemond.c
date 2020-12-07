@@ -55,8 +55,8 @@ struct	sockaddr_un skun;
 
 	if (fd < 0)	return (-1);
 	skun.sun_family=AF_UNIX;
-	strcpy(skun.sun_path, AUTHDAEMONSOCK);
-	strcat(skun.sun_path, ".tmp");
+	memcpy(skun.sun_path, AUTHDAEMONSOCK, sizeof(AUTHDAEMONSOCK)-1);
+	memcpy(&skun.sun_path[0]+sizeof(AUTHDAEMONSOCK)-1, ".tmp", 5);
 	unlink(skun.sun_path);
 	if (bind(fd, (const struct sockaddr *)&skun, sizeof(skun)) ||
 	    listen(fd, SOMAXCONN) ||
