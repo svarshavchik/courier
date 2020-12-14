@@ -109,6 +109,7 @@ struct esmtp_info {
 	char *authsasllist;
 	int auth_error_sent;
 	int quit_needed;
+	int rset_needed;
 	time_t	esmtp_timeout_time;
 
 	time_t net_timeout;

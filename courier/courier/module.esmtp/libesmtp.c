@@ -1766,6 +1766,7 @@ int esmtp_ping(struct esmtp_info *info)
 		esmtp_disconnect(info);
 		return -1;
 	}
+	info->rset_needed=0;
 
 	return 0;
 }
@@ -2849,6 +2850,18 @@ int esmtp_send(struct esmtp_info *info,
 
 	(*info->log_talking)(info, arg);
 	esmtp_timeout(info, info->cmd_timeout);
+
+	if (info->rset_needed)
+	{
+		if (esmtp_ping(info))
+		{
+			(*info->log_sent)(info, "RSET", -1, arg);
+			(*info->log_reply)(info, "<command failed>", -1, arg);
+			return -1;
+		}
+	}
+
+	info->rset_needed=1;
 
 	if (!mailfroms)
 	{
