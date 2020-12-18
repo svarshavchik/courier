@@ -312,9 +312,6 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	/* If we're connected, send a RSET to make sure the socket is working */
 
-	if (esmtp_connected(info))
-		esmtp_ping(info);
-
 	if (!esmtp_connected(info) && info->net_timeout)
 	{
 	time_t	t;
