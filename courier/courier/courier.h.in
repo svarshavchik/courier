@@ -160,6 +160,7 @@ const char *config_msgidhost();		/* msgidhost config file */
 const char *config_defaultdomain();	/* defaultdomain config file */
 const char *config_defaultdomain_ace();	/* defaultdomain config file */
 const char *config_gethostname();	/* gethostname() call */
+char *config_is_gethostname(const char *);
 const char *config_batchsize();		/* Max addresses per message */
 const char *config_defaultdelivery();	/* default delivery instructions */
 const char *config_maildropmda();	/* Location of the maildrop MDA */

@@ -48,21 +48,22 @@ static struct dbobj db;
 
 int config_islocal(const char *address, char **domainp)
 {
-char	*k;
-char	*v;
-size_t	vl;
-size_t	kl;
+	char	*k;
+	char	*v;
+	size_t	vl;
+	size_t	kl;
 
-const char *p;
-size_t	pl;
-char	*lcaddress;
-int	dotcount;
+	const char *p;
+	size_t	pl;
+	char	*lcaddress;
+	int	dotcount;
+	char *address_utf8;
+	char *hlocal;
 
 	if (domainp)	*domainp=0;
 
 	if (config_is_indomain(address, get_control_locals()))
 		return (1);
-
 
 	if (!isinit)
 	{
@@ -78,17 +79,32 @@ int	dotcount;
 	if (!dbobj_isopen(&db))
 		return (0);
 
-	k=ualllower(address);
+	if (idna_to_unicode_8z8z(address, &address_utf8, 0) != IDNA_SUCCESS)
+		address_utf8=courier_strdup(address);
+
+	k=ualllower(address_utf8);
+	free(address_utf8);
+
 	kl=strlen(k);
 
 	lcaddress = k;
 	dotcount = 0;
 
-	while ( (v=dbobj_fetch(&db, k, kl, &vl, "")) == NULL &&
-	        (k = strchr(k+1,'.')) != NULL &&
-	        dotcount++ < ISLOCAL_MAX_DOT_COUNT )
-		    kl = strlen(k);
+	hlocal=config_is_gethostname(k);
 
+	if (hlocal &&
+	    (v=dbobj_fetch(&db, hlocal, strlen(hlocal), &vl, "")) != NULL)
+		;
+	else
+	{
+		while ( (v=dbobj_fetch(&db, k, kl, &vl, "")) == NULL &&
+			(k = strchr(k+1,'.')) != NULL &&
+			dotcount++ < ISLOCAL_MAX_DOT_COUNT )
+			kl = strlen(k);
+	}
+
+	if (hlocal)
+		free(hlocal);
 	if (k) address += k-lcaddress;
 	free(lcaddress);
 	if (!v)	return (0);
@@ -140,6 +156,7 @@ int config_is_indomain(const char *address, const char *localp)
 {
 	char *address_utf8;
 	char *l;
+	char *hlocal;
 	int rc;
 
 	if (idna_to_unicode_8z8z(address, &address_utf8, 0) != IDNA_SUCCESS)
@@ -148,7 +165,14 @@ int config_is_indomain(const char *address, const char *localp)
 	l=ualllower(address_utf8);
 	free(address_utf8);
 
-	rc=config_is_indomainutf8(l, localp);
+	hlocal=config_is_gethostname(l);
+	if (hlocal &&
+	    config_is_indomainutf8(hlocal, localp))
+		rc=1;
+	else
+		rc=config_is_indomainutf8(l, localp);
+	if (hlocal)
+		free(hlocal);
 	free(l);
 	return rc;
 }

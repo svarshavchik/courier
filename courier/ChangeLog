@@ -1,3 +1,8 @@
+2020-12-18  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Additional Unicode fixes. Implement hostname-dependent
+	configuration.
+
 2020-12-15  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fix RSET logic issues.

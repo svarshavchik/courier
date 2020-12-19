@@ -310,9 +310,11 @@ int	i;
 }
 
 static const char *courierdir_arg=0;
+static const char *islocal_arg=0;
 
 static struct courier_args arginfo[]={
 	{"dir", &courierdir_arg},
+	{"islocal", &islocal_arg},
 	{0}
 	} ;
 
@@ -348,6 +350,25 @@ int cppmain(int argc, char **argv)
 	if (courierdir_arg)
 		set_courierdir(courierdir_arg);
 	clog_open_stderr("showconfig");
+
+	if (islocal_arg && *islocal_arg)
+	{
+		char *domainp=0;
+		if (config_islocal(islocal_arg, &domainp))
+		{
+			printf("%s is a %s domain %s%s%s\n",
+			       islocal_arg, domainp ? "hosted":"local",
+			       domainp ? "(":"",
+			       domainp ? domainp:"",
+			       domainp ? ")":"");
+		}
+		else
+		{
+			printf("%s is not a local domain\n", islocal_arg);
+		}
+		exit(0);
+	}
+
 	showconfig();
 	return (0);
 }

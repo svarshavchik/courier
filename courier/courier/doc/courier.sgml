@@ -762,25 +762,48 @@ file is in the same format as the <filename>locals</filename> file. If this file
 missing, the <application>Courier</application> mail server uses the
 single domain specified in <filename>me</filename> (or the
 system machine name).</para>
+	    <para>
+	      See <xref linkend="courier_hostnamedependent_config" />
+	      for more information on hostname-dependent configuration in the
+	      <filename>esmtpacceptmailfor</filename> configuration file.
+	    </para>
+
 	  </listitem></varlistentry>
 
 	<varlistentry>
-	  <term><filename>esmtpacceptmailfor.dat</filename></term>
+	  <term><filename>esmtpacceptmailfor.dat</filename>
+	    and <filename>esmtpacceptmailfor.dir</filename></term>
 	  <listitem>
 
 	    <para>
-This is a binary database file that lists additional domains that the <application>Courier</application> mail server
-accepts mail for, just like <filename>esmtpacceptmailfor</filename>. A binary
-database file will be faster than a flat text file when the number of domains
-is large. The <application>Courier</application> mail server will accept mail for domains listed in either
-<filename>esmtpacceptmailfor</filename> or <filename>esmtpacceptmailfor.dat</filename>.
-<filename>esmtpacceptmailfor.dat</filename> is created by the
-<command>makeacceptmailfor</command> command.  You can use both
-<filename>esmtpacceptmailfor.dat</filename> and <filename>esmtpacceptmailfor</filename> at
-the same time.  Put your most popular domains in
-<filename>esmtpacceptmailfor</filename>, and put the rest of them into
-<filename>esmtpacceptmailfor.dat</filename>.</para>
-	  </listitem></varlistentry>
+	      <filename>esmtpacceptmailfor.dat</filename>
+	      is a binary database file that lists additional domains
+	      that the <application>Courier</application> mail server
+	      accepts mail for, just like
+	      <filename>esmtpacceptmailfor</filename>.
+	      The binary
+	      database file will be faster than a flat text file with a large
+	      number of domains. The <application>Courier</application> mail
+	      server accepts mail for domains listed in either
+	      <filename>esmtpacceptmailfor</filename> or
+	      <filename>esmtpacceptmailfor.dat</filename>.
+	      <filename>esmtpacceptmailfor.dat</filename> is created by the
+	      <command>makeacceptmailfor</command> command
+	      from the contents of the
+	      <filename>esmtpacceptmailfor.dir</filename> directory.
+	      You can use both
+	      <filename>esmtpacceptmailfor.dat</filename> and
+	      <filename>esmtpacceptmailfor</filename> at
+	      the same time.  Put your most popular domains in
+	      <filename>esmtpacceptmailfor</filename>, and put the rest of
+	      them into
+	      <filename>esmtpacceptmailfor.dat</filename>.</para>
+	    <para>
+	      See <xref linkend="courier_hostnamedependent_config" />
+	      for more information on hostname-dependent configuration in the
+	      <filename>esmtpacceptmailfor.dir</filename> configuration files.
+	    </para>
+	</listitem></varlistentry>
 
 	<varlistentry>
 	  <term><filename>esmtpauthclient</filename></term>
@@ -1468,6 +1491,12 @@ See the complete description in the
 <ulink url="makehosteddomains.html"><citerefentry><refentrytitle>makehosteddomains</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
 manual page.</para>
 
+	    <para>
+	      See <xref linkend="courier_hostnamedependent_config" />
+	      for more information on hostname-dependent configuration in the
+	      <filename>locals</filename> configuration file.
+	    </para>
+
 	  </listitem></varlistentry>
 
 	<varlistentry>
@@ -1593,6 +1622,11 @@ If <filename>locals</filename> does not exist, the
 domain, second and subsequent lines are ignored).  Also, see
 <filename>hosteddomains</filename>.</para>
 
+	    <para>
+	      See <xref linkend="courier_hostnamedependent_config" />
+	      for more information on hostname-dependent configuration in the
+	      <filename>locals</filename> configuration file.
+	    </para>
 	  </listitem></varlistentry>
 
 
@@ -1992,19 +2026,26 @@ for more information.</para>
 	  <listitem>
 
 	    <para>
-This file contains one line whose contents is a valid machine name. When a
-single installation of the <application>Courier</application> mail server is shared over a network, each machine that's
-running the <application>Courier</application> mail server must have a unique <filename>me</filename> file. If me is missing,
-The <application>Courier</application> mail server uses the result of the <function>gethostname</function>() system call.</para>
+	      This file contains one line whose contents is a
+	      fully-qualified domain name. When a
+	      single installation of the <application>Courier</application>
+	      mail server is shared over a network, each machine that's
+	      running the <application>Courier</application> mail server must
+	      have a unique <filename>me</filename> file.
+	      A missing <filename>me</filename>
+	      defaults to the <function>gethostname</function>() system
+	      call (see <xref linkend="courier_hostnamedependent_config" />
+	      for more information on hostname-dependent configuration).
+	    </para>
 
 	    <warning>
 	      <para>
-If you change the contents of this configuration file, it may be necessary
-to rerun the <command>makealiases</command> command again,
-else your mail will
-promptly begin to bounce.  If you don't have this configuration file defined,
-and you change the system's network host name, you may also need to run
-<command>makealiases</command>.</para>
+		Changing <filename>me</filename> requires rerunning
+		the <command>makealiases</command> command again,
+		else mail can bounce.
+		Without this configuration file defined changing
+		the system's hostname also requires rerunning
+		<command>makealiases</command>.</para>
 	    </warning>
 	  </listitem></varlistentry>
 
@@ -2339,6 +2380,155 @@ elapsed.</para>
       </variablelist>
     </refsect2>
 
+    <refsect2 id="courier_hostnamedependent_config">
+      <title>Hostname-dependent configuration</title>
+
+      <para>
+	This section describes how to set the various domain-related
+	parameters incorporating the server's system-specified hostname.
+	This makes it possible to create a canned, boilerplate set of
+	<application>Courier</application> configuration files.
+	The configuration files then
+	get replicated, as is, to multiple servers. These servers have their
+	system hostname
+	externally managed, often via <acronym>DHCP</acronym>. The
+	server's assigned hostname gets automatically incorporated into
+	Courier's configuration.
+      </para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><filename>me</filename></term>
+	  <listitem>
+	    <para>
+	      When the contents of the <filename>me</filename>
+	      configuration file begin with <quote>*.</quote>, the
+	      asterisk gets replaced by the system's hostname. For example:
+	    </para>
+
+	    <informalexample>
+	      <itemizedlist>
+		<listitem>
+		  <para><filename>me</filename> contains:</para>
+
+		  <blockquote>
+		    <informalexample>
+		      <programlisting>*.example.com</programlisting>
+		    </informalexample>
+		  </blockquote>
+		</listitem>
+
+		<listitem>
+		  <para>
+		    The system's assigned hostname is <quote>mx1</quote>.
+		  </para>
+		</listitem>
+
+		<listitem>
+		  <para>
+		    The effective contents of the
+		    <filename>me</filename>
+		    configuration file is <quote>mx1.example.com</quote>
+		  </para>
+		</listitem>
+	      </itemizedlist>
+	    </informalexample>
+
+	    <note>
+	      <para>
+		A fully-qualified system hostname does not require an
+		explicit <filename>me</filename> configuration file.
+		If <filename>me</filename> configuration file
+		doesn't exist it defaults to the entire
+		(fully qualified) system
+		hostname.
+	      </para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><filename>locals</filename>,
+	    <filename>esmtpacceptmailfor</filename>/<filename>esmtpacceptmailfor.dir</filename>
+	    and
+	    <filename>hosteddomains</filename></term>
+	  <listitem>
+	    <para>
+	      When a line in these configuration files is <quote>*</quote>
+	      or begins with <quote>*.</quote>, the
+	      asterisk gets replaced by the system's hostname. For example:
+	    </para>
+
+	    <informalexample>
+	      <itemizedlist>
+		<listitem>
+		  <para>A line in
+		    <filename>locals</filename> contains:</para>
+
+		  <blockquote>
+		    <informalexample>
+		      <programlisting>*.example.com</programlisting>
+		    </informalexample>
+		  </blockquote>
+
+		  <itemizedlist>
+		    <listitem>
+		      <para>
+			The system's assigned hostname is <quote>mx1</quote>.
+		      </para>
+		    </listitem>
+
+		    <listitem>
+		      <para>
+			This line in the <filename>locals</filename>
+			configuration file is effectively equivalent
+			to <quote>mx1.example.com</quote>
+		      </para>
+		    </listitem>
+		  </itemizedlist>
+		</listitem>
+	      </itemizedlist>
+	    </informalexample>
+
+	    <informalexample>
+	      <itemizedlist>
+		<listitem>
+		  <para>A line in
+		    <filename>hosteddomains</filename> contains:</para>
+
+		  <blockquote>
+		    <informalexample>
+		      <programlisting>*</programlisting>
+		    </informalexample>
+		  </blockquote>
+
+		  <itemizedlist>
+		    <listitem>
+		      <para>
+			The system's assigned hostname is
+			<quote>mx1.example.com</quote>.
+		      </para>
+		    </listitem>
+
+		    <listitem>
+		      <para>
+			This line in the <filename>hosteddomains</filename>
+			configuration file is effectively equivalent
+			to <quote>mx1.example.com</quote>
+		      </para>
+		    </listitem>
+		  </itemizedlist>
+		</listitem>
+	      </itemizedlist>
+	    </informalexample>
+
+	  </listitem>
+	</varlistentry>
+
+
+
+      </variablelist>
+    </refsect2>
     <refsect2 id="courier_webmail_template_files">
       <title>Webmail template files</title>
 

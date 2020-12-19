@@ -9,7 +9,7 @@
   <link rel="icon" href="icon.gif" type="image/gif" />
 </head>
 <body>
-  <!-- Copyright 1998 - 2019 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
   <p>NOTE: a more readable HTML version of this INSTALL document can be found
   in courier/doc/install.html.</p>
@@ -144,6 +144,8 @@
     log analyzer</a></li>
     <li><a href="#multihomed">OPTIONAL: Configure <em>Courier</em> IP
     address-specific settings for servers with multiple IP addresses</a></li>
+    <li><a href="#hostnamedependent">OPTIONAL: Configure hostname-dependent
+    configuration</a></li>
     <li><a href="#decommission">Decommission your existing mail server</a></li>
     <li><a href="#sample">Sample init script</a></li>
   </ul>
@@ -3583,6 +3585,23 @@ makeuserdb
   <em>Courier</em> adds to each message.</p>
   <p>See the <a href="courier.html#multihomed">"Servers with multiple IP
   addresses" section in the courier(8) manual page</a> for more
+  information.</p>
+  <h2><a name="hostnamedependent" id="hostnamedependent">OPTIONAL: configure
+  hostname-dependent configuration</a></h2>
+  <p>Several <em>Courier</em> configuration files specify settings that
+  reference the server's fully-qualified domain name. It is possible to have a
+  fixed set of configuration files with the key configuration files using a
+  wildcard placeholder for the system hostname, and replicate these
+  configuration files to multiple servers with externally- assigned hostname
+  (and likely IP addresses), such as DHCP-provided ones; with the server's
+  hostname referenced by the relevant placeholders.</p>
+  <p>Example: replicate the same set of configuration files to servers assigned
+  hostnames of "mx1" and "mx2", via DHCP, with <em>Courier</em> recognizing its
+  fully-qualified domain name as "mx1.example.com" and "mx2.example.com",
+  respectively.</p>
+  <p>See the <a href=
+  "courier.html#courier_hostnamedependent_config">"Hostname-dependent
+  configuration"</a> section of the courier(8) manual page for more
   information.</p>
   <h2><a name="decommission" id="decommission">Decommission your existing mail
   server</a></h2>

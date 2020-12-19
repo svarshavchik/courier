@@ -14,6 +14,7 @@
 #include	<string.h>
 #include	<ctype.h>
 #include	<stdlib.h>
+#include	<idna.h>
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif
@@ -173,9 +174,27 @@ static int isindomaindb_utf8(const char *address, struct dbobj *db)
 
 static int isindomaindb(const char *p, struct dbobj *db)
 {
-	char *q=ualllower(p);
-	int ret=isindomaindb_utf8(q, db);
+	char *address_utf8;
+	char *q;
+	int ret;
+	char *hlocal;
 
+	if (idna_to_unicode_8z8z(p, &address_utf8, 0)
+	    != IDNA_SUCCESS)
+		address_utf8=courier_strdup(p);
+
+	q=ualllower(address_utf8);
+	free(address_utf8);
+
+	hlocal=config_is_gethostname(q);
+	if (hlocal &&
+	    isindomaindb_utf8(hlocal, db))
+		ret=1;
+	else
+		ret=isindomaindb_utf8(q, db);
+
+	if (hlocal)
+		free(hlocal);
 	free(q);
 	return ret;
 }
