@@ -103,6 +103,7 @@ BuildRequires:    perl
 BuildRequires:    make
 BuildRequires:    procps-ng
 BuildRequires:    wget
+BuildRequires:    %{__gzip}
 %{?_with_gpg2:  %define with_gpg2 1}
 %{!?_with_gpg2: %define with_gpg2 0}
 
@@ -194,6 +195,7 @@ Summary: Courier @VERSION@ Integrated HTTP (webmail) server
 Group: Applications/Mail
 Requires: %{apache_documentroot} /etc/cron.hourly
 Requires: courier = %{version}-%{release}
+BuildRequires:    %{__gzip}
 %if %with_gpg2
 Requires: gnupg2
 %define gpg_option --with-gpg2

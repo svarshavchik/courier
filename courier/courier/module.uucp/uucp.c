@@ -52,7 +52,7 @@ struct passwd *pwd;
 	if (!pwd)
 	{
 		uucp_is_disabled=
-			"ERROR: no uucp user found, outbound UUCP is DISABLED!",
+			"No uucp user found, outbound UUCP is disabled.",
 		clog_msg_start_err();
 		clog_msg_str(uucp_is_disabled);
 		clog_msg_send();

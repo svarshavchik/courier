@@ -59,6 +59,7 @@ Requires: gnupg >= 1.0.5
 Requires(post):   systemd
 Requires(postun): systemd
 Requires(preun):  systemd
+Requires:    %{__gzip}
 
 %if %is_not_mandrake
 Requires: %{cgibindir}
@@ -74,6 +75,7 @@ BuildRequires: openldap-devel courier-authlib-devel >= 0.55
 BuildRequires: /etc/mime.types
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
+BuildRequires: %{__gzip}
 BuildRequires: %{__make}
 
 %define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)

@@ -1,3 +1,7 @@
+2021-02-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildir/maildircache.c (create_cache_name): Fix UTF-8 addresses.
+
 2020-12-18  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Additional Unicode fixes. Implement hostname-dependent
