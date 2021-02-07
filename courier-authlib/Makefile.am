@@ -341,7 +341,7 @@ libcourierauthsaslclient_la_SOURCES=courierauthsaslclient.h \
 libcourierauthsaslclient_la_LIBADD=libcourierauth.la
 libcourierauthsaslclient_la_LDFLAGS=-export-symbols-regex '^auth_sasl_client$$' -version-info @VERSION_INFO@
 
-include_HEADERS=courier_auth_config.h courierauth.h courierauthsasl.h \
+include_HEADERS=courierauth.h courierauthsasl.h \
 	courierauthsaslclient.h courierauthdebug.h courierauthstaticlist.h
 
 courierauthconfig_SOURCES=authinfo.c

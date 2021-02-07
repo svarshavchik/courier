@@ -6,9 +6,6 @@
 #ifndef	courierauthstaticlist_h
 #define	courierauthstaticlist_h
 
-#if	HAVE_CONFIG_H
-#include	"courier_auth_config.h"
-#endif
 #include	<sys/types.h>
 
 #ifdef	__cplusplus

@@ -5,8 +5,6 @@
 ** Copyright 2002-2004 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
-#include	"courier_auth_config.h"
-
 #ifdef	__cplusplus
 extern "C" {
 #endif

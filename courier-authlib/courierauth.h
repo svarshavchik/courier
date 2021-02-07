@@ -6,7 +6,6 @@
 ** distribution information.
 */
 
-#include	"courier_auth_config.h"
 #include	<sys/types.h>
 
 #ifdef	__cplusplus

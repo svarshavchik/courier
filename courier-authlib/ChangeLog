@@ -1,3 +1,10 @@
+0.71.1
+
+2021-02-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Clean up header files, do not install autoconf-generated
+	courier_auth_config.h
+
 2020-11-04  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* spec file: add BuildRequires: %{__make} (will be required in F34).

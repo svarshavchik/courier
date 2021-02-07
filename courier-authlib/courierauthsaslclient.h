@@ -6,7 +6,6 @@
 ** distribution information.
 */
 
-#include	"courier_auth_config.h"
 #include	"courierauthsasl.h"
 #include	<sys/types.h>
 
