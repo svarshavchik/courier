@@ -1,4 +1,8 @@
+1.0.15
+
 2021-02-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* spec file: explicitly add dependencies on gzip.
 
 	* maildir/maildircache.c (create_cache_name): Fix UTF-8 addresses.
 
