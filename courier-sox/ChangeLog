@@ -1,3 +1,9 @@
+0.15
+
+2021-02-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* spec file: add BuildRequires: %{__make} (will be required in F34).
+
 0.14
 
 2020-06-18  Sam Varshavchik  <mrsam@courier-mta.com>
