@@ -162,7 +162,7 @@ install-exec-hook:
 	mkdir -p $(DESTDIR)$(sysconfdir)/shared.tmp
 	chmod 755 $(DESTDIR)$(sysconfdir)/shared.tmp
 	mkdir -p $(DESTDIR)$(sysconfdir)/imapaccess
-	chmod 755 $(DESTDIR)$(sysconfdir)/shared.tmp
+	chmod 755 $(DESTDIR)$(sysconfdir)/imapaccess
 
 install-data-local: install-man
 	test -d $(DESTDIR)/etc/pam.d || exit 0 ; \
