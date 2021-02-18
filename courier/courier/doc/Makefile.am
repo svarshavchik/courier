@@ -57,6 +57,7 @@ htmlin=\
 		maildirkw.html \
 		maildirmake.html \
 		maildirquota.html \
+		maildirwatch.html \
 		maildropex.html \
 		maildropfilter.html \
 		maildropgdbm.html \
@@ -111,6 +112,9 @@ maildiracl.html: ../../libs/maildir/maildiracl.html
 maildirkw.html: ../../libs/maildir/maildirkw.html
 	cp -f $(srcdir)/../../libs/maildir/maildirkw.html .
 
+maildirwatch.html: ../../libs/maildir/maildirwatch.html
+	cp -f $(srcdir)/../../libs/maildir/maildirwatch.html .
+
 maildirmake.1: ../../libs/maildir/maildirmake.1
 	cp -f ../../libs/maildir/maildirmake.1 .
 
@@ -119,6 +123,9 @@ maildiracl.1: ../../libs/maildir/maildiracl.1
 
 maildirkw.1: ../../libs/maildir/maildirkw.1
 	cp -f $(srcdir)/../../libs/maildir/maildirkw.1 .
+
+maildirwatch.1: ../../libs/maildir/maildirwatch.1
+	cp -f $(srcdir)/../../libs/maildir/maildirwatch.1 .
 
 maildir.html: ../../libs/maildir/maildir.html
 	cp -f $(srcdir)/../../libs/maildir/maildir.html .
@@ -244,6 +251,7 @@ man1=sendmail.1 preline.1 maildirmake.1 cancelmsg.1 lockmail.1 maildrop.1 \
 	mailq.1 mailbot.1 makemime.1 mimegpg.1 maildiracl.1 \
 	makedat.1 reformail.1 reformime.1 couriermlm.1 testmxlookup.1 \
 	dot-forward.1 couriertls.1 couriertcpd.1 maildirkw.1 \
+	maildirwatch.1 \
 	webmlmd.1
 
 man5=dot-courier.5 maildir.5

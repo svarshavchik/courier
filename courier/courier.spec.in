@@ -8,9 +8,6 @@
 %{?_without_fax:    %define with_fax 0}
 %{!?_without_fax:   %define with_fax 1}
 
-%{?_without_fam:    %define with_fam 0}
-%{!?_without_fam:   %define with_fam 1}
-
 %define _missing_doc_files_terminate_build 1
 %define _unpackaged_files_terminate_build 1
 
@@ -120,9 +117,6 @@ BuildRequires:    gdbm-devel
 BuildRequires:    pam-devel
 BuildRequires:	  libidn-devel
 BuildRequires:    courier-unicode-devel
-%if %with_fam
-BuildRequires:      /usr/include/fam.h
-%endif
 BuildRequires:	  perl(ExtUtils::Embed)
 BuildRequires:	  /etc/mime.types
 

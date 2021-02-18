@@ -76,12 +76,6 @@ Obsoletes: %{name}-ldap
 Obsoletes: %{name}-mysql
 Obsoletes: %{name}-pgsql
 
-%if %suse_version
-BuildRequires: rpm >= 3.0.5 /usr/bin/sed %([ %{suse_version} -gt 819 ] && echo /usr/include/fam.h)
-%else
-BuildRequires: rpm >= 4.0.2 sed /usr/include/fam.h
-%endif
-
 #  RH 7.0 resets sysconfdir & mandir, put them back where they belong
 
 %define _sysconfdir %{_prefix}/etc

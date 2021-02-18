@@ -9,7 +9,7 @@
   <link rel="icon" href="icon.gif" type="image/gif" />
 </head>
 <body>
-  <!-- Copyright 1998 - 2020 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
   <p>NOTE: a more readable HTML version of this INSTALL document can be found
   in courier/doc/install.html.</p>
@@ -463,18 +463,6 @@
     <li>
       <p><strong>GDBM or Berkeley DB library</strong></p>
       <p>Either library must be installed.</p>
-    </li>
-    <li>
-      <p><strong><a target="_blank" href=
-      "http://oss.sgi.com/projects/fam/">FAM, the File Alteration
-      Monitor</a></strong>, or its modern Linux-specific replacement
-      <strong><a href="http://www.gnome.org/~veillard/gamin/" target=
-      "_blank">Gamin</a></strong></p>
-      <p>FAM (<code>http://oss.sgi.com/projects/fam/</code>) or <a href=
-      "http://www.gnome.org/~veillard/gamin/" target="_blank">Gamin</a> is
-      optional. If FAM or Gamin is installed, it is used for an enhanced IMAP
-      <code>IDLE</code> implementation that provides real-time folder status
-      updates to concurrent IMAP clients that have the same folder opened.</p>
     </li>
     <li>
       <p><strong>OpenSSL</strong> or <strong>GnuTLS</strong></p>
@@ -2677,12 +2665,9 @@ receive.example.com:  /SECURITY=STARTTLS
   </blockquote>
   <h2><a name="idle" id="idle">OPTIONAL: Configure IMAP realtime folder status
   updates</a></h2>
-  <p>If <a target="_blank" href="http://oss.sgi.com/projects/fam/">FAM, the
-  File Alteration Monitor</a> (<code>http://oss.sgi.com/projects/fam/</code>)
-  or <a href="http://www.gnome.org/~veillard/gamin/" target="_blank">Gamin</a>
-  is installed, it will be possible to allow multiple clients to open the same
-  folder, and have all clients to be simultaneously notified of any changes to
-  the folder contents.</p>
+  <p>It's possible to allow multiple clients to open the same folder, and have
+  all clients to be simultaneously notified of any changes to the folder
+  contents.</p>
   <p>After installing the server see the <code>imapd(8)</code> manual page for
   more information.</p>
   <h2><a name="smap" id="smap">OPTIONAL: Configure SMAP</a></h2>
