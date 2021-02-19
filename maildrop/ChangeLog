@@ -1,3 +1,12 @@
+2021-02-18  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add maildirwatch helper tool.
+
+	* Fully install the maildirwatch tool, its man page, as well as the
+	maildirkw man page and tool, which should be packaged with maildrop
+	too.
+
+
 3.0.2
 
 2020-11-04  Sam Varshavchik  <mrsam@courier-mta.com>

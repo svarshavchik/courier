@@ -2,6 +2,11 @@
 
 	* Replace FAM/Gamin with inotify.
 
+	* Install the maildirwatch tool.
+
+	* Remove the IMAP_ENHANCEDIDLE setting from the imapd configuration
+	file.
+
 1.0.15
 
 2021-02-05  Sam Varshavchik  <mrsam@courier-mta.com>
