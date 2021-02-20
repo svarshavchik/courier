@@ -65,7 +65,7 @@ BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
 Requires:	  /usr/bin/certtool
 %endif
 
-%define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+%define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
 
 %if %is_fedora
 BuildRequires: perl-generators

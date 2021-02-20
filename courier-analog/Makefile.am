@@ -59,11 +59,8 @@ bump.rpm.release: courier-analog.spec
 	mv courier-analog.spec.new courier-analog.spec
 
 upload-beta:
-	test -z "$(SFPASSWD)" && exit 1; exit 0
 	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	socksify ssh grace.speakeasy.net echo @PACKAGE@-@VERSION@.tar.bz2 `ls -l @PACKAGE@-@VERSION@.tar.bz2 | awk ' { print $$5 } '` \>courier-mta.org/@PACKAGE@.beta
-	rsync -aP --progress @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig frs.sourceforge.net:uploads/
-	~/src/sftools/release.pl mrsam $(SFPASSWD) courier @PACKAGE@-devel `echo @VERSION@|sed 's/.*\(........\)/\1/'` "" "" @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
+	~/src/sftools/release.pl mrsam courier analog-devel `echo @VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
 
 distrelease:
 	$(MAKE) -$(MAKEFLAGS) distcheck
@@ -72,7 +69,6 @@ distrelease:
 	$(MAKE) -$(MAKEFLAGS) dist
 
 upload-dist:
-	test -z "$(SFPASSWD)" && exit 1; exit 0
 	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
 	git tag -s @PACKAGE@/@VERSION@/`date +%Y%m%d%H%M%S` -m 'Tag version @VERSION@'
-	~/src/sftools/release.pl mrsam $(SFPASSWD) courier analog @VERSION@ @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
+	~/src/sftools/release.pl mrsam courier analog @VERSION@ @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig

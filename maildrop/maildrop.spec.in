@@ -94,6 +94,8 @@ rm -rf $RPM_BUILD_ROOT%{_docdir}/*/html
 %{_bindir}/reformime
 %{_bindir}/makedat
 %{_bindir}/makedatprog
+%{_bindir}/maildirwatch
+%{_bindir}/maildirkw
 
 %doc libs/maildir/README.maildirquota.html libs/maildir/README.maildirquota.txt
 %doc COPYING README README.postfix INSTALL NEWS UPGRADE ChangeLog maildroptips.txt

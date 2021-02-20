@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2014 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
 # distribution information.
 #
 
@@ -54,6 +54,30 @@
 %define	apache_cgibindir		%{apacheinstdir}/cgi-bin
 %define apache_documentroot		%{apacheinstdir}/html
 
+%define STATEDIR /var/lib/rpm-state
+
+%if %using_systemd
+%define STOP_COURIER \
+        if /usr/bin/systemctl --quiet is-active courier \
+	then \
+	     if test -d %{STATEDIR}/courier \
+	     then \
+		/usr/bin/systemctl stop courier \
+		touch %{STATEDIR}/courier/restart \
+	     fi \
+	fi
+
+%define RESTART_COURIER \
+	if test -f %{STATEDIR}/courier/restart \
+	then \
+	     rm -f %{STATEDIR}/courier/restart \
+	     /usr/bin/systemctl start courier \
+	fi
+%else
+%define STOP_COURIER
+%define RESTART_COURIER
+%endif
+
 # -----------------------------------------------------------------------------
 
 Summary:          Courier @VERSION@ mail server
@@ -71,9 +95,11 @@ Provides:         config(courier) = %{version}-%{release}
 AutoProv:         no
 
 %if %using_systemd
-Requires(post):   systemd
+Requires(pre):      systemd
+Requires(post):     systemd
 Requires(postun):   systemd
-Requires(preun):  systemd
+Requires:           systemd
+
 %define initscript_courier %{nil}
 %else
 Requires(post):   /sbin/chkconfig
@@ -120,6 +146,12 @@ BuildRequires:    courier-unicode-devel
 BuildRequires:	  perl(ExtUtils::Embed)
 BuildRequires:	  /etc/mime.types
 
+%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
+
+%if %need_perl_generators
+BuildRequires: perl-generators
+%endif
+
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 
 %if %use_openssl
@@ -143,10 +175,9 @@ BuildRequires:      pcre-devel
 BuildRequires:      %{__make}
 Obsoletes:	courier-smtpauth < @VERSION@
 
-%define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+%define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
 
 %if %is_fedora
-BuildRequires: perl-generators
 BuildRequires: /usr/lib/locale/locale-archive
 %endif
 
@@ -161,6 +192,10 @@ Requires: courier = %{version}-%{release}
 Summary: Courier @VERSION@ LDAP modules and configuration screen
 Group: Application/Mail
 Requires: courier = %{version}-%{release}
+%if %using_systemd
+Requires(preun): systemd
+Requires(posttrans): systemd
+%endif
 
 %package mysql
 Summary: Courier @VERSION@ MySQL configuration screen
@@ -177,12 +212,20 @@ Summary: Courier @VERSION@ Integrated POP3 server
 Group: Applications/Mail
 Requires: coreutils
 Requires: courier = %{version}-%{release}
+%if %using_systemd
+Requires(preun): systemd
+Requires(posttrans): systemd
+%endif
 
 %package imapd
 Summary: Courier @VERSION@ Integrated IMAP server
 Group: Applications/Mail
 Requires: coreutils
 Requires: courier = %{version}-%{release}
+%if %using_systemd
+Requires(preun): systemd
+Requires(posttrans): systemd
+%endif
 
 %package webmail
 Summary: Courier @VERSION@ Integrated HTTP (webmail) server
@@ -198,6 +241,10 @@ Requires: gnupg >= 1.0.5
 %endif
 %if %is_not_mandrake
 Requires: %{apache_cgibindir}
+%endif
+%if %using_systemd
+Requires(preun): systemd
+Requires(posttrans): systemd
 %endif
 
 %package webadmin
@@ -221,6 +268,10 @@ Requires: %{apache_documentroot}
 Requires: courier-mlm = %{version}-%{release}
 %if %is_not_mandrake
 Requires: %{apache_cgibindir}
+%endif
+%if %using_systemd
+Requires(preun): systemd
+Requires(posttrans): systemd
 %endif
 
 %package maildrop
@@ -358,7 +409,7 @@ This package conains the webadmin PostgreSQL configuration screen for Courier.
 %prep
 %setup -q
 
-rm -f courier.config.cache
+%{__rm} -f courier.config.cache
 PATH=/usr/bin:$PATH %configure %{?notice_option} \
 		    --cache-file=courier.config.cache %{?xflags: %{xflags}}
 
@@ -402,7 +453,7 @@ test "$RPM_BUILD_ROOT" != "" && rm -rf $RPM_BUILD_ROOT
 %{__install} -m 0444 libs/imap/pop3d.pam $RPM_BUILD_ROOT/etc/pam.d/imap
 %{__install} -m 0444 libs/sqwebmail/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
 %{__install} -m 0444 libs/sqwebmail/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/calendar
-rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
+%{__rm} -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
 
 # Create permissions.dat
 
@@ -416,6 +467,9 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
 echo '/etc/profile.d/courier.sh 755 bin bin config' >>permissions.dat
 echo '/etc/profile.d/courier.csh 755 bin bin config' >>permissions.dat
 %if %using_systemd
+mkdir -p $RPM_BUILD_ROOT%{STATEDIR}/courier
+echo '%{STATEDIR}/courier 755 root root' >>permissions.dat
+
 echo '%{_datadir}/courier.sysvinit 755 bin bin' >>permissions.dat
 echo '%{_unitdir}/courier.service 644 root root' >>permissions.dat
 %else
@@ -493,9 +547,9 @@ while (<>)
 %if ! %with_fax
 awk '{print $NF}' filelist.fax |
 while read file; do
-    rm -f $RPM_BUILD_ROOT$file
+    %{__rm} -f $RPM_BUILD_ROOT$file
 done
-rm -f $RPM_BUILD_ROOT/etc/mgetty+sendfax/new_fax
+%{__rm} -f $RPM_BUILD_ROOT/etc/mgetty+sendfax/new_fax
 %endif
 
 # Delete all of the above, AND ldapaddressbook+webmail from the filelist.
@@ -608,12 +662,12 @@ ZZ
 
 sed 's/^chown/echo/' <libs/imap/mkdhparams >libs/imap/mkdhparams.tmp
 TLS_DHPARAMS=$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp %{__spec_rmbuild_shell} libs/imap/mkdhparams.tmp
-rm -f libs/imap/mkdhparams.tmp
+%{__rm} -f libs/imap/mkdhparams.tmp
 cat $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp >>$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist
-rm -f $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp
+%{__rm} -f $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp
 courier/courier-config | grep '^mail' >uidgid
 . ./uidgid
-rm -f uidgid
+%{__rm} -f uidgid
 echo "%attr(600, $mailuser, $mailgroup) %{_datadir}/dhparams.pem.dist" >>filelist
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
@@ -745,7 +799,7 @@ echo '%%attr(4511, root, bin) %{apache_cgibindir}/webadmin' >filelist.webadmin
 if test -f %{initdir}/courier
 then
 	/sbin/chkconfig --del courier
-	/bin/systemctl stop courier.service || :
+	/usr/bin/systemctl stop courier.service || :
 fi
 %endif
 
@@ -771,7 +825,7 @@ fi
 %systemd_post courier.service
 if [ $1 -eq 1 ]
 then
-    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+    /usr/bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 %else
 /sbin/chkconfig --del courier
@@ -802,7 +856,15 @@ fi
 %endif
 
 %if %using_systemd
-%systemd_postun_with_restart courier.service
+
+/usr/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+
+if test "$1" = "0"
+then
+	rm -f %{STATEDIR}/courier/restart
+fi
+
+
 %else
 
 if test "$1" != 0
@@ -812,9 +874,14 @@ fi
 
 %endif
 
+%pre
+%STOP_COURIER
+
 %preun
 %if %using_systemd
 %systemd_preun courier.service
+
+%STOP_COURIER
 %else
 if test "$1" = "0"
 then
@@ -825,50 +892,66 @@ then
         /sbin/chkconfig --del courier
 fi
 %endif
+
+%pre pop3d
+%STOP_COURIER
+
+%pre imapd
+%STOP_COURIER
+
+%pre ldap
+%STOP_COURIER
+
+%pre mlm-web
+%STOP_COURIER
+
+%pre webmail
+%STOP_COURIER
+
+%preun pop3d
+%STOP_COURIER
+
+%preun imapd
+%STOP_COURIER
+
 %preun ldap
-if test "$1" = "0"
-then
-	if test -x %{_sbindir}/courierldapaliasd
-	then
-		%{_sbindir}/courierldapaliasd stop >/dev/null 2>&1 || /bin/true
-	fi
-fi
+%STOP_COURIER
+
+%preun mlm-web
+%STOP_COURIER
+
+%preun webmail
+%STOP_COURIER
+
+%triggerpostun -- courier-pop3d,courier-imapd,courier-ldap,courier-mlm-web,courier-webmail
+%RESTART_COURIER
+
+%posttrans
+%RESTART_COURIER
+
+%posttrans pop3d
+%RESTART_COURIER
+
+%posttrans imapd
+%RESTART_COURIER
+
+%posttrans ldap
+%RESTART_COURIER
+
+%posttrans mlm-web
+%RESTART_COURIER
+
+%posttrans webmail
+%RESTART_COURIER
 
 %post imapd
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist.imap` >/dev/null
 
-%preun imapd
-if test "$1" = "0"
-then
-	%{_sbindir}/imapd stop
-	%{_sbindir}/imapd-ssl stop
-fi
-
 %post pop3d
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist.pop3` >/dev/null
 
-%preun pop3d
-if test "$1" = "0"
-then
-	%{_sbindir}/pop3d stop
-	%{_sbindir}/pop3d-ssl stop
-fi
-
-%preun webmail
-if test "$1" = "0"
-then
-	test ! -x %{_sbindir}/webmaild || %{_sbindir}/webmaild stop
-fi
-
 %post webmail
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist.webmail` >/dev/null
-
-%preun mlm-web
-
-if test "$1" = "0"
-then
-	%{_bindir}/webmlmd stop %{_sysconfdir}/webmlmrc >/dev/null 2>&1 || :
-fi
 
 %post mlm-web
 

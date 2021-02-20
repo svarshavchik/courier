@@ -41,7 +41,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 
 BuildRequires: aspell-devel libxml2-devel
-BuildRequires: zlib-devel /usr/include/fam.h perl
+BuildRequires: zlib-devel perl
 BuildRequires: libstdc++-devel gcc-c++
 BuildRequires: openldap-devel
 BuildRequires: libidn-devel
@@ -57,7 +57,7 @@ BuildRequires:      openssl-devel
 BuildRequires:      gnutls-devel libgcrypt-devel
 %endif
 
-%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "1"; exit 1)
+%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
 
 %if %need_perl_generators
 BuildRequires: perl-generators

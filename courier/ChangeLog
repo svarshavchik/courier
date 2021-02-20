@@ -7,6 +7,9 @@
 	* Remove the IMAP_ENHANCEDIDLE setting from the imapd configuration
 	file.
 
+	* Spec file: use triggers to restart courier after an upgrade, going
+	forward.
+
 1.0.15
 
 2021-02-05  Sam Varshavchik  <mrsam@courier-mta.com>

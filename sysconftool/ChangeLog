@@ -1,3 +1,7 @@
+2021-02-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* spec file: additional fixes.
+
 2019-11-10  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* configure.ac: Update for Fedora 31 RPM.
