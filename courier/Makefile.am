@@ -105,37 +105,6 @@ rpm-build:
 	$(MAKE) dist
 	$(MAKE) dorpm
 
-lpm: lpm-build
-
-lpm-build:
-	$(MAKE) bump.rpm.release
-	$(MAKE) dist
-	rm -rf lpm
-	mkdir lpm
-	lpbuild `test "@REPOSITORY@" == "" || echo --define "repository=1"` --srcbuild -o lpm @PACKAGE@-@VERSION@.tar.bz2
-
-
-publish: publish-@REPOSITORY@
-
-publish-dev:
-	$(MAKE) dopublish SUBDIR=dev
-
-publish-prod:
-	$(MAKE) dopublish SUBDIR=prod
-
-dopublish:
-	lpbuild --resign lpm/*
-	rm -rf lpmtmp
-	mkdir lpmtmp
-	ln lpm/* lpmtmp
-	rm -f lpmtmp/*debuginfo*
-	mv lpmtmp/*.src.lp repository-$(SUBDIR)/`lpm -q --distribution`/sources
-	mv lpmtmp/*.lp repository-$(SUBDIR)/`lpm -q --distribution`/packages
-	rm -rf lpmtmp
-	ls -t repository-$(SUBDIR)/`lpm -q --distribution`/sources | tail -n +6 | xargs -r -n 1 lpm --erase repository-$(SUBDIR)
-	lpm --sync repository-$(SUBDIR)
-	rsync -a -v --delete-after repository-$(SUBDIR)/`lpm -q --distribution`/. headache:lpmtool.com/www/repositories/$(SUBDIR)/courier/`lpm -q --distribution`
-
 dorpm:
 	rm -rf rpm/BUILD/*
 	rm -f rpm/RPMS/*/*
@@ -154,6 +123,7 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		$(RPMFLAGS) @PACKAGE@-@VERSION@.tar.bz2
+	sh $$HOME/repos.sh
 
 bump.rpm.release: courier.spec
 	VERSION="x"; \

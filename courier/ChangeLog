@@ -1,3 +1,7 @@
+2021-02-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Implement support for the TLS ALPN extension.
+
 2021-02-18  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Replace FAM/Gamin with inotify.
