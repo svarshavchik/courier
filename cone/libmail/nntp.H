@@ -57,6 +57,7 @@ private:
 
 	void disconnect(const char *reason);
 
+	const char *application_protocol() const;
 	// Superclass of NNTP tasks.  Methods create subclasses of Task
 	// objects, and push them to the tasks queue.  Replies from the
 	// NNTP server are routed to the foremost Task on the queue.

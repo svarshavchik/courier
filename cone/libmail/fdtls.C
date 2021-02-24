@@ -52,6 +52,11 @@ const char *mail::fdTLS::get_tls_config_var(const char *varname)
 			return "NONE";
 	}
 
+	if (strcmp(varname, "TLS_ALPN") == 0)
+	{
+		return application_protocol;
+	}
+
 	return getenv(varname);
 }
 

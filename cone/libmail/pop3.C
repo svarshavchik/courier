@@ -2011,6 +2011,11 @@ mail::pop3::pop3(string url, string passwd,
 	installTask(new CheckNewMailTask(*this, callback));
 }
 
+const char *mail::pop3::application_protocol() const
+{
+	return "pop3";
+}
+
 void mail::pop3::resumed()
 {
 	if (!tasks.empty())

@@ -58,17 +58,21 @@ public:
 	bool tlsShutdownSent;
 
 	std::vector<std::string> &certs;
+	const char *application_protocol;
 
 	std::string domain;  // Server's known hostname (for cert checking)
 	std::string errmsg;  // Most recent error message.
 
 	fdTLS(bool tlsflagArg,
-	      std::vector<std::string> &certsArg)
+	      std::vector<std::string> &certsArg,
+	      const char *application_protocol
+	      )
 		: tls_info( *tls_get_default_info() ),
 		  tlsflag(tlsflagArg),
 		  ctx(NULL),
 		  ssl(NULL),
-		  fd(-1), tlsShutdownSent(false), certs(certsArg)
+		  fd(-1), tlsShutdownSent(false), certs(certsArg),
+		  application_protocol(application_protocol)
 	{
 		errmsg="";
 	}

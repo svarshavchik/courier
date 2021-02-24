@@ -1,3 +1,7 @@
+2021-02-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Implement support for the TLS ALPN extension.
+
 2021-02-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* spec file: additional fixes.

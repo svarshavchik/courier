@@ -177,6 +177,7 @@ private:
 	int socketRead(const std::string &readbuffer);
 
 	void disconnect(const char *reason);
+	const char *application_protocol() const;
 
 	std::list<Task *> tasks;
 

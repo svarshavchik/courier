@@ -4,7 +4,7 @@ dnl Copyright 2003 - 2021 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(cone,1.1.20210219,[courier-cone@lists.sourceforge.net])
+AC_INIT(cone,1.1.20210223,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)

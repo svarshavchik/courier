@@ -359,7 +359,8 @@ string mail::fd::starttls(mail::loginInfo &loginInfo,
 	if (tls)
 		return "";
 
-	if ((tls=new mail::fdTLS(starttlsFlag, certificates)) == NULL)
+	if ((tls=new mail::fdTLS(starttlsFlag, certificates,
+				 application_protocol())) == NULL)
 		return strerror(errno);
 
 	tls->fd=socketfd;

@@ -209,6 +209,11 @@ mail::imap::~imap()
 	disconnect();
 }
 
+const char *mail::imap::application_protocol() const
+{
+	return "imap";
+}
+
 // Verbotten characters
 
 #if 0

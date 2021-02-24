@@ -465,6 +465,11 @@ mail::smtp::smtp(string url, string passwd,
 	installHandler(&mail::smtp::greetingResponse);
 }
 
+const char *mail::smtp::application_protocol() const
+{
+	return NULL; // TODO: ALPN registration of SMTP
+}
+
 // Login failed
 
 void mail::smtp::error(string errMsg)

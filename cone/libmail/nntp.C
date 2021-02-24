@@ -264,6 +264,11 @@ mail::nntp::nntp(string url, string passwd,
 	}
 }
 
+const char *mail::nntp::application_protocol() const
+{
+	return NULL; // TODO: ALPN registration of NNTP
+}
+
 void mail::nntp::cleartmp()
 {
 	if (genericTmpFp != NULL)
@@ -761,7 +766,7 @@ bool mail::nntp::fixGenericMessageNumber(std::string uid, size_t &msgNum)
 		}
 		--msgNum;
 	}
-			
+
 	while (n > index[msgNum].msgNum)
 		if (++msgNum >= cnt)
 		{
@@ -1314,7 +1319,7 @@ bool mail::nntp::genericCachedUid(string uid)
 {
 	return genericTmpFp && uid == cachedUid;
 }
-	
+
 void mail::nntp::genericGetMessageStruct(string uid,
 					 size_t messageNumber,
 					 struct rfc2045 *&structRet,
@@ -1395,7 +1400,7 @@ void mail::nntp::Task::done()
 			throw;
 		}
 
-		
+
 		myserver=NULL;
 		delete this;
 	}

@@ -179,6 +179,7 @@ public:
 
 private:
 	void timeoutdisconnect();
+	const char *application_protocol() const;
 public:
 	void disconnect(const char *errmsg);
 

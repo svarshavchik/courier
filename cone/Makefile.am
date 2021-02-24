@@ -1,5 +1,5 @@
 #
-# Copyright 2003-2018, Double Precision Inc.
+# Copyright 2003-2021, Double Precision Inc.
 #
 # See COPYING for distribution information.
 #
@@ -126,6 +126,7 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		$(RPMFLAGS) cone-@VERSION@.tar.bz2
+	sh $$HOME/repos.sh
 
 bump.rpm.release: cone.spec
 	VERSION="x"; \

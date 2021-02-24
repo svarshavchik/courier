@@ -50,6 +50,8 @@ class fd : public mail::account {
 
 	std::vector<std::string> certificates;
 
+	virtual const char *application_protocol() const=0;
+
 protected:
 	bool writtenFlag;
 
