@@ -14,6 +14,12 @@
 	* Spec file: use triggers to restart courier after an upgrade, going
 	forward.
 
+1.0.16
+
+2021-03-01  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix handling of bad DNS queries.
+
 1.0.15
 
 2021-02-05  Sam Varshavchik  <mrsam@courier-mta.com>
