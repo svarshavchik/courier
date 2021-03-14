@@ -300,7 +300,7 @@ EXTRA_DIST=$(HTMLFILES) sysconftool COPYING COPYING.GPL\
 	README.authmysql.myownquery \
 	README.authdebug.html.in \
 	courier-authlib.spec \
-	courier-authlib.lpspec pgpkeys.txt \
+	pgpkeys.txt \
 	README_authlib.html.in \
 	authlib.html.in authlib.3.in \
 	authpasswd.html authpasswd.1 \
@@ -602,8 +602,8 @@ distrelease:
 	$(MAKE) rpm
 	$(MAKE)
 	$(MAKE)
-	rm -f @PACKAGE@.spec @PACKAGE@.lpspec
-	$(MAKE) @PACKAGE@.spec @PACKAGE@.lpspec
+	rm -f @PACKAGE_NAME@.spec
+	$(MAKE) @PACKAGE_NAME@.spec
 	$(MAKE) dist
 
 rpm: rpm-build
@@ -612,18 +612,6 @@ rpm-build:
 	$(MAKE) bump.rpm.release
 	$(MAKE) dist
 	$(MAKE) dorpm
-
-lpm: lpm-build
-
-lpm-build:
-	$(MAKE) bump.rpm.release
-	$(MAKE) dist
-	$(MAKE) dolpm
-
-dolpm:
-	rm -rf lpm
-	mkdir lpm
-	lpbuild `test "@REPOSITORY@" == "" || echo --define "repository=1"` --srcbuild -o lpm @PACKAGE@-@VERSION@.tar.bz2
 
 publish: publish-@REPOSITORY@
 
@@ -662,30 +650,27 @@ dorpm:
 		--define '_build_name_fmt %%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
-		@PACKAGE@-@VERSION@.tar.bz2
+		@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
 
-bump.rpm.release: @PACKAGE@.spec @PACKAGE@.lpspec
+bump.rpm.release: @PACKAGE_NAME@.spec
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
 	NEXT_RELEASE=100; \
-	test "$$VERSION" = "@VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
 	RELEASE=`expr $$NEXT_RELEASE + 1`; \
-	echo "VERSION=@VERSION@" >$(srcdir)/rpm.release; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/rpm.release; \
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/rpm.release; \
 	sed 's/^Release: .*/Release: '$$RELEASE'%{?dist}%{?courier_release}/' \
-		<@PACKAGE@.spec >@PACKAGE@.spec.new; \
-	mv @PACKAGE@.spec.new @PACKAGE@.spec; \
-	sed 's/^Release: .*/Release: '$$RELEASE'/' \
-		<@PACKAGE@.lpspec >@PACKAGE@.lpspec.new; \
-	mv @PACKAGE@.lpspec.new @PACKAGE@.lpspec
+		<@PACKAGE_NAME@.spec >@PACKAGE_NAME@.spec.new; \
+	mv @PACKAGE_NAME@.spec.new @PACKAGE_NAME@.spec;
 
 upload-beta:
-	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	~/src/sftools/release.pl mrsam courier authlib-devel `echo @VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
+	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1
+	~/src/sftools/release.pl mrsam courier authlib-devel `echo @PACKAGE_VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2 @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig
 
 upload-dist:
-	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	set -e; v="@PACKAGE@/@VERSION@/`date +%Y%m%d%H%M%S`"; git tag -s $$v -m 'Tag version @VERSION@'; cd libs; git tag -s $$v -m 'Tag version @VERSION@'
-	socksify ~/src/sftools/release.pl mrsam courier authlib @VERSION@ @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
+	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1
+	set -e; v="@PACKAGE_NAME@/@PACKAGE_VERSION@/`date +%Y%m%d%H%M%S`"; git tag -s $$v -m 'Tag version @PACKAGE_VERSION@'; cd libs; git tag -s $$v -m 'Tag version @PACKAGE_VERSION@'
+	socksify ~/src/sftools/release.pl mrsam courier authlib @PACKAGE_VERSION@ @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2 @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig
 
 HTMLDOCFILES=$(HTMLFILES) README.authdebug.html README_authlib.html \
 	$(man3:%.3=%.html) $(man1:%.1=%.html) userdb/userdb.html userdb/makeuserdb.html userdb/userdbpw.html

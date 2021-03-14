@@ -28,7 +28,7 @@ CLEANFILES=cone.sh cone.dist help.txt
 DISTCLEANFILES=coneversion
 
 coneversion:
-	echo "@VERSION@" | cmp -s - coneversion && exit 0; echo "@VERSION@" >coneversion
+	echo "@PACKAGE_VERSION@" | cmp -s - coneversion && exit 0; echo "@PACKAGE_VERSION@" >coneversion
 
 AUTOMAKE_OPTIONS=dist-bzip2
 
@@ -125,16 +125,16 @@ dorpm:
 		--define '_build_name_fmt %%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
-		$(RPMFLAGS) cone-@VERSION@.tar.bz2
+		$(RPMFLAGS) cone-@PACKAGE_VERSION@.tar.bz2
 	sh $$HOME/repos.sh
 
 bump.rpm.release: cone.spec
 	VERSION="x"; \
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
 	NEXT_RELEASE=100; \
-	test "$$VERSION" = "@VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
 	RELEASE=`expr $$NEXT_RELEASE + 1`; \
-	echo "VERSION=@VERSION@" >$(srcdir)/rpm.release; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/rpm.release; \
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/rpm.release; \
 	sed 's/^Release: .*/Release: '$$RELEASE'%{?dist}%{cone_release}/' \
 		<cone.spec >cone.spec.new; \
@@ -151,14 +151,14 @@ distrelease:
 	$(MAKE) dist
 
 upload-beta:
-	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	~/src/sftools/release.pl mrsam courier @PACKAGE@-devel `echo @VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
+	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1
+	~/src/sftools/release.pl mrsam courier @PACKAGE_NAME@-devel `echo @PACKAGE_VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2 @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig
 
 
 upload-dist:
-	rm -f @PACKAGE@-@VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE@-@VERSION@.tar.bz2; test -f @PACKAGE@-@VERSION@.tar.bz2.sig || exit 1
-	git tag -s @PACKAGE@/@VERSION@/`date +%Y%m%d%H%M%S` -m 'Tag version @VERSION@'
-	socksify ~/src/sftools/release.pl mrsam courier cone @VERSION@ @PACKAGE@-@VERSION@.tar.bz2 @PACKAGE@-@VERSION@.tar.bz2.sig
+	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1
+	git tag -s @PACKAGE_NAME@/@PACKAGE_VERSION@/`date +%Y%m%d%H%M%S` -m 'Tag version @PACKAGE_VERSION@'
+	socksify ~/src/sftools/release.pl mrsam courier cone @PACKAGE_VERSION@ @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2 @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig
 
 .PHONY: rpm
 

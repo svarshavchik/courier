@@ -4,7 +4,7 @@
 
 Summary: Courier log analyzer
 Name: courier-analog
-Version: @VERSION@
+Version: @PACKAGE_VERSION@
 Release: 1
 License: GPL
 Group: Applications/System

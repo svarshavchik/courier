@@ -80,16 +80,16 @@
 
 # -----------------------------------------------------------------------------
 
-Summary:          Courier @VERSION@ mail server
+Summary:          Courier @PACKAGE_VERSION@ mail server
 Name:             courier
-Version:          @VERSION@
+Version:          @PACKAGE_VERSION@
 Release:          1%{?dist}%{courier_release}
 
 Group:            Applications/Mail
 License:          GPL
 URL:              http://www.courier-mta.org
 Packager:         %{PACKAGER}
-Source:           http://download.sourceforge.net/courier/courier-@VERSION@.tar.bz2
+Source:           http://download.sourceforge.net/courier/courier-@PACKAGE_VERSION@.tar.bz2
 Provides:         smtpdaemon server(smtp)
 Provides:         config(courier) = %{version}-%{release}
 AutoProv:         no
@@ -111,7 +111,7 @@ Requires(postun): /sbin/service
 Requires:         coreutils
 Requires:	  wget
 %if %alternatives
-Obsoletes:        courier-sendmail-wrapper < @VERSION@
+Obsoletes:        courier-sendmail-wrapper < @PACKAGE_VERSION@
 Provides:         /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail /usr/bin/newaliases
 %endif
 
@@ -173,7 +173,7 @@ BuildRequires:      netpbm-progs
 %endif
 BuildRequires:      pcre-devel
 BuildRequires:      %{__make}
-Obsoletes:	courier-smtpauth < @VERSION@
+Obsoletes:	courier-smtpauth < @PACKAGE_VERSION@
 
 %define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
 
@@ -183,13 +183,13 @@ BuildRequires: /usr/lib/locale/locale-archive
 
 %if ! %alternatives
 %package sendmail-wrapper
-Summary: Courier @VERSION@ soft links for sendmail
+Summary: Courier @PACKAGE_VERSION@ soft links for sendmail
 Group: Applications/Mail
 Requires: courier = %{version}-%{release}
 %endif
 
 %package ldap
-Summary: Courier @VERSION@ LDAP modules and configuration screen
+Summary: Courier @PACKAGE_VERSION@ LDAP modules and configuration screen
 Group: Application/Mail
 Requires: courier = %{version}-%{release}
 %if %using_systemd
@@ -198,17 +198,17 @@ Requires(posttrans): systemd
 %endif
 
 %package mysql
-Summary: Courier @VERSION@ MySQL configuration screen
+Summary: Courier @PACKAGE_VERSION@ MySQL configuration screen
 Group: Application/Mail
 Requires: courier = %{version}-%{release}
 
 %package pgsql
-Summary: Courier @VERSION@ PostgreSQL configuration screen
+Summary: Courier @PACKAGE_VERSION@ PostgreSQL configuration screen
 Group: Application/Mail
 Requires: courier = %{version}-%{release}
 
 %package pop3d
-Summary: Courier @VERSION@ Integrated POP3 server
+Summary: Courier @PACKAGE_VERSION@ Integrated POP3 server
 Group: Applications/Mail
 Requires: coreutils
 Requires: courier = %{version}-%{release}
@@ -218,7 +218,7 @@ Requires(posttrans): systemd
 %endif
 
 %package imapd
-Summary: Courier @VERSION@ Integrated IMAP server
+Summary: Courier @PACKAGE_VERSION@ Integrated IMAP server
 Group: Applications/Mail
 Requires: coreutils
 Requires: courier = %{version}-%{release}
@@ -228,7 +228,7 @@ Requires(posttrans): systemd
 %endif
 
 %package webmail
-Summary: Courier @VERSION@ Integrated HTTP (webmail) server
+Summary: Courier @PACKAGE_VERSION@ Integrated HTTP (webmail) server
 Group: Applications/Mail
 Requires: %{apache_documentroot} /etc/cron.hourly
 Requires: courier = %{version}-%{release}
@@ -248,7 +248,7 @@ Requires(posttrans): systemd
 %endif
 
 %package webadmin
-Summary: Courier @VERSION@ web-based administration tool
+Summary: Courier @PACKAGE_VERSION@ web-based administration tool
 Group: Applications/Mail
 Requires: %{apache_documentroot}
 Requires: courier = %{version}-%{release}
@@ -257,12 +257,12 @@ Requires: %{apache_cgibindir}
 %endif
 
 %package mlm
-Summary: Courier @VERSION@ Integrated Mailing List Manager
+Summary: Courier @PACKAGE_VERSION@ Integrated Mailing List Manager
 Group: Applications/Mail
 Requires: courier = %{version}-%{release}
 
 %package mlm-web
-Summary: Courier @VERSION@ Integrated web-based mailing list interface
+Summary: Courier @PACKAGE_VERSION@ Integrated web-based mailing list interface
 Group: Applications/Mail
 Requires: %{apache_documentroot}
 Requires: courier-mlm = %{version}-%{release}
@@ -275,18 +275,18 @@ Requires(posttrans): systemd
 %endif
 
 %package maildrop
-Summary: Courier @VERSION@ Integrated mail filter
+Summary: Courier @PACKAGE_VERSION@ Integrated mail filter
 Group: Applications/Mail
 Requires: courier = %{version}-%{release}
 
 %package fax
-Summary: Courier @VERSION@ fax support
+Summary: Courier @PACKAGE_VERSION@ fax support
 Group: Application/Mail
 Requires: courier = %{version}-%{release}
 Requires: groff ghostscript netpbm-progs mgetty-sendfax
 
 %package maildrop-wrapper
-Summary: Courier @VERSION@ soft links for maildrop
+Summary: Courier @PACKAGE_VERSION@ soft links for maildrop
 Group: Applications/Mail
 Requires: courier-maildrop = %{version}-%{release}
 
@@ -410,7 +410,7 @@ This package conains the webadmin PostgreSQL configuration screen for Courier.
 %setup -q
 
 %{__rm} -f courier.config.cache
-PATH=/usr/bin:$PATH %configure %{?notice_option} \
+PATH=/usr/bin:$PATH %configure %{?notice_option} --with-gnutls \
 		    --cache-file=courier.config.cache %{?xflags: %{xflags}}
 
 %{__cat} >README.REDHAT <<EOF

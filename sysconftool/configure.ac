@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2000 - 2021 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(sysconftool, 0.17.20219219, [courier-users@lists.sourceforge.net])
+AC_INIT(sysconftool, 0.18, [courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(sysconftool.in)
 AM_INIT_AUTOMAKE

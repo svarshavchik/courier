@@ -3,11 +3,11 @@
 
 Summary: sysconftool configuration tool
 Name: sysconftool
-Version: @VERSION@
+Version: @PACKAGE_VERSION@
 Release: 1%{?dist}
 License: GPL
 Group: Development/Tools
-Source: sysconftool-@VERSION@.tar.gz
+Source: sysconftool-@PACKAGE_VERSION@.tar.gz
 BuildRoot: /var/tmp/sysconftool-install
 BuildArch: noarch
 BuildRequires: automake

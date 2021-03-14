@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.71.1.20210219],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.71.2],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -982,5 +982,5 @@ done
 
 AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
 
-AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h courier-authlib.spec courier-authlib.lpspec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)
+AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h courier-authlib.spec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)
 AC_OUTPUT

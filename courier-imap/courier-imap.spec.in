@@ -26,13 +26,13 @@
 %define _missing_doc_files_terminate_build 1
 %define _unpackaged_files_terminate_build 1
 
-Summary: Courier-IMAP @VERSION@ IMAP server
+Summary: Courier-IMAP @PACKAGE_VERSION@ IMAP server
 Name: @PACKAGE@
-Version: @VERSION@
+Version: @PACKAGE_VERSION@
 Release: 1%{courier_release}
 License: GPL
 Group: Applications/Mail
-Source: %{name}-@VERSION@.tar.bz2
+Source: %{name}-@PACKAGE_VERSION@.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: coreutils sed
 %if %suse_version
@@ -92,7 +92,7 @@ Obsoletes: %{name}-pgsql
 # SuSE specific settings
 %if %suse_version
 # some templates for SuSE distribs.
-%define templdir	${RPM_BUILD_DIR}/%{name}-@VERSION@/packaging/suse
+%define templdir	${RPM_BUILD_DIR}/%{name}-@PACKAGE_VERSION@/packaging/suse
 %define _sysconfdir	/etc/courier-imap
 %define	_mandir		/usr/share/man
 %define initlndir	/usr/sbin

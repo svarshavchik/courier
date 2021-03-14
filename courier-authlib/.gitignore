@@ -55,7 +55,6 @@
 /courierauthconfig
 /courier_auth_config.h
 /courier_auth_config.h.in
-/courier-authlib.lpspec
 /courier-authlib.service
 /courier-authlib.spec
 /courier-authlib.sysvinit

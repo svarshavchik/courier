@@ -19,7 +19,7 @@
 
 Summary: Courier Socks 5 client library.
 Name: courier-sox
-Version: @VERSION@
+Version: @PACKAGE_VERSION@
 Release: 1%{?dist}%{?courier_release}
 License: GPL
 Group: System Environment/Libraries
