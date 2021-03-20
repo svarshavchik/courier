@@ -410,7 +410,7 @@ This package conains the webadmin PostgreSQL configuration screen for Courier.
 %setup -q
 
 %{__rm} -f courier.config.cache
-PATH=/usr/bin:$PATH %configure %{?notice_option} --with-gnutls \
+PATH=/usr/bin:$PATH %configure %{?notice_option} \
 		    --cache-file=courier.config.cache %{?xflags: %{xflags}}
 
 %{__cat} >README.REDHAT <<EOF
