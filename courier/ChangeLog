@@ -1,3 +1,12 @@
+1.1.2
+
+2021-03-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* make*: Individual files that did not end in a newline were
+	not handled correctly.
+
+	* imap: adjust error message.
+
 1.1.1
 
 2021-03-20  Arjen de Korte <build+github@de-korte.org>

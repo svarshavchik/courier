@@ -3,7 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <meta name="MSSmartTagsPreventParsing" content="TRUE" />
   <meta name="author" content="Sam Varshavchik" />
   <title>Installation</title>
   <link rel="icon" href="icon.gif" type="image/gif" />
@@ -151,6 +150,12 @@
   </ul>
   <h2><a name="upgrade" id="upgrade">Upgrading an existing
   installation</a></h2>
+  <h3>Upgrading from the <em>Courier</em> mail server 1.0.16 or earlier</h3>
+  <p>The IMAP server switched to using the inotify kernel API directly instead
+  of the legacy FAM/Gamin daemon. When using virtual mail accounts it will be
+  necessary to increase the kernel's <a href="#imap">configured limit on the
+  maximum number of inotify file descriptors</a>, see the IMAP server
+  configuration notes, below.</p>
   <h3>Upgrading from the <em>Courier</em> mail server 0.73.1, or earlier</h3>
   <p>The unicode library in <em>Courier</em> is now a separate package.
   <a href="http://www.courier-mta.org/download.html#unicode">Download the
@@ -2522,6 +2527,12 @@ receive.example.com:  /SECURITY=STARTTLS
   <p>The <em>Courier</em> mail server includes an integrated IMAP server. The
   following steps set it up:</p>
   <ul>
+    <li>If using virtual mail accounts the system limit on the maximum number
+    of inotify file descriptors,
+    <code>/proc/sys/fs/inotify/max_user_instances</code>, will likely need to
+    be increased, since all IMAP processes will be running under the same
+    userid. Rough metric is the maximum number of concurrent IMAP sessions
+    multiplied by 4.</li>
     <li>Edit <code>/usr/lib/courier/etc/imapd</code>. If you want to use IMAP
     SASL authentication, set up the <code>IMAP_CAPABILITY</code> variable. It
     performs the equivalent function as the <code>ESMTPAUTH</code> variable in
