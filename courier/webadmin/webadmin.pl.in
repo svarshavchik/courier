@@ -666,10 +666,19 @@ if ($cgi->param("do.login"))
     exit (0);
 }
 
+my $secureip = "";
+
+if (-r "$sysconfdir/webadmin/unsecureok")
+{
+    $secureip = ReadOneLineConfigFile("webadmin/unsecureok");
+
+    $secureip = $ENV{'REMOTE_ADDR'} if $secureip eq "";
+}
+
 display_form("unsecure.html")
     unless $ENV{'HTTPS'} ||
     $ENV{'REMOTE_ADDR'} eq $ENV{'SERVER_ADDR'} ||
-    -f "$sysconfdir/webadmin/unsecureok";
+    grep {$ENV{'REMOTE_ADDR'} eq $_} split(/\s+/, $secureip);
 
 {
     my $password=$cgi->cookie(-name=>'courierwebadmin');

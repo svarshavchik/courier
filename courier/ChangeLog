@@ -1,5 +1,8 @@
 2021-03-28  Sam Varshavchik  <mrsam@courier-mta.com>
 
+	* webadmin/webadmin.pl.in: Allow specific IP addresses specified
+	in unsecuredok.
+
 	* pop3d-ssl.dist.in (TLS_STARTTLS_PROTOCOL): Remove duplicate entry
 	in the pop3d-ssl configuration file.
 

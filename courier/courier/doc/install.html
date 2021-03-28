@@ -1549,21 +1549,28 @@ esmtp session required        pam_permit.so
     <li>Execute "<code>make install-webadmin-password</code>". This prompts for
     a password, which is saved in the file
     <code>/usr/lib/courier/etc/webadmin/password</code>.</li>
-    <li>The web server SHOULD be configured to run <code>webadmin</code> from
-    the <code>cgi-bin</code> directory using SSL only. <code>webadmin</code>'s
-    authentication is rather simple: the password is saved in a cookie. Unless
-    SSL is used, the <code>webadmin</code> password can be intercepted in
-    transit. If SSL is not available, an acceptable level of security can be
-    achieved by setting up a firewall that allows web access only from trusted
-    IP addresses, then use a dedicated webadmin password. This is not perfect,
-    but is generally adequate. A firewall is a good idea even if SSL is used.
-    This is not Fort Knox, and <code>webadmin</code> is not going to be
-    publicly accessible, so the only needed security is to keep everyone out
-    except for authorized IP addresses.
+    <li>
+      <p>The web server SHOULD be configured to run <code>webadmin</code> from
+      the <code>cgi-bin</code> directory using SSL only.
+      <code>webadmin</code>'s authentication is rather simple: the password is
+      saved in a cookie. Unless SSL is used, the <code>webadmin</code> password
+      can be intercepted in transit. If SSL is not available, an acceptable
+      level of security can be achieved by setting up a firewall that allows
+      web access only from trusted IP addresses, then use a dedicated webadmin
+      password. This is not perfect, but is generally adequate. A firewall is a
+      good idea even if SSL is used. This is not Fort Knox, and
+      <code>webadmin</code> is not going to be publicly accessible, so the only
+      needed security is to keep everyone out except for authorized IP
+      addresses.</p>
       <p>Note that <code>webadmin</code>, by default, will enforce this
-      restriction: either SSL, or access from a local IP address. Create the
-      file <code>/usr/lib/courier/etc/webadmin/unsecureok</code> to allow
-      non-SSL <code>webadmin</code> connections from remote IP addresses.</p>
+      restriction: either SSL, or access from a local IP address. Create an
+      empty file <code>/usr/lib/courier/etc/webadmin/unsecureok</code> to allow
+      non-SSL <code>webadmin</code> connections from remote IP addresses.
+      Alternative, the <code>unsecuredok</code> file may consist of a single
+      line with one or more IP addresses, separated by spaces. Non-SSL access
+      will get accepted from these IP addresses only:</p>
+      <pre>
+echo 192.168.0.9 192.168.0.10 &gt;unsecuredok</pre>
     </li>
   </ol>
   <p><code>webadmin</code> is designed to be self-explanatory. Configuration
@@ -2532,7 +2539,9 @@ receive.example.com:  /SECURITY=STARTTLS
     <code>/proc/sys/fs/inotify/max_user_instances</code>, will likely need to
     be increased, since all IMAP processes will be running under the same
     userid. Rough metric is the maximum number of concurrent IMAP sessions
-    multiplied by 4.</li>
+    multiplied by 4. On very large servers it may also be necessary to increase
+    <code>/proc/sys/fs/inotify/max_user_watches</code>, a rough metric would be
+    at least 5 times the <code>max_user_instances</code> setting.</li>
     <li>Edit <code>/usr/lib/courier/etc/imapd</code>. If you want to use IMAP
     SASL authentication, set up the <code>IMAP_CAPABILITY</code> variable. It
     performs the equivalent function as the <code>ESMTPAUTH</code> variable in
