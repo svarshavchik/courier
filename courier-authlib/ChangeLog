@@ -1,3 +1,9 @@
+0.71.3
+
+2021-04-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* authldaplib.cpp: Fix authbind authentication failures.
+
 0.71.2
 
 2021-02-19  Sam Varshavchik  <mrsam@courier-mta.com>

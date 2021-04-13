@@ -1411,7 +1411,7 @@ int authldap_lookup::verify_password_authbind(const std::string &dn)
 	if (!bind_connection.bind(dn, pass))
 	{
 		bind_connection.close();
-		return 1;
+		return -1;
 	}
 
 	if (authldaprc.protocol_version == 2)
