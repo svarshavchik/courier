@@ -158,7 +158,7 @@ install-perms-local:
 	@echo $(moduledir)/courieresmtp 550 @mailuser@ @mailgroup@ >>permissions.dat
 	@echo $(moduledir)/courieresmtpd 550 @mailuser@ @mailgroup@ >>permissions.dat
 	@echo $(moduledir)/addcr 555 @mailuser@ @mailgroup@ >>permissions.dat
-	@echo $(sbindir)/courieresmtpd 555 @mailuser@ @mailgroup@ >>permissions.dat
+	@echo $(sbindir)/courieresmtpd 550 @mailuser@ @mailgroup@ >>permissions.dat
 	@echo $(bindir)/addcr 555 @mailuser@ @mailgroup@ >>permissions.dat
 	@for f in $(databin_SCRIPTS) ; do \
 	   echo $(sbindir)/$$f 555 @mailuser@ @mailgroup@ >>permissions.dat ; \
