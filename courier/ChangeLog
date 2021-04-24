@@ -1,3 +1,5 @@
+1.1.3
+
 2021-04-01  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* pop3: pro-forma POP3 LANG extension.

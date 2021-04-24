@@ -499,7 +499,10 @@ $ @defaultprefix@/libexec/imapd.rc stop
   system userid, it will be necessary to adjust the Linux kernel's limit on the
   maximum number of file descriptors per userid,
   <code>/proc/sys/fs/inotify/max_user_instances</code>. A good rough metric
-  would be the maximum number of concurrent IMAP logins multiplied by 4.</p>
+  would be the maximum number of concurrent IMAP logins multiplied by 4. On
+  very large servers it may also be necessary to increase
+  <code>/proc/sys/fs/inotify/max_user_watches</code>, a rough metric would be
+  at least 5 times the <code>max_user_instances</code> setting.</p>
   <h2><a name="imapconfig" id="imapconfig">Configuration file</a></h2>
   <p>The <code>@defaultprefix@/etc/imapd</code> configuration file sets some
   configurable options. Each setting has a brief description. Review each
