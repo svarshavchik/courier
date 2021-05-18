@@ -8,7 +8,7 @@
 #include	<string.h>
 #include	<idna.h>
 
-static const char *me;
+static char *me;
 static const char *me_ace;
 
 const char *config_me()
@@ -19,7 +19,11 @@ const char *config_me()
 		char	*f=config_localfilename("me");
 
 		if ((me=config_read1l(f)) == 0)
-			me=config_gethostname();
+		{
+			const char *p=config_gethostname();
+
+			me=strcpy(courier_malloc(strlen(p)+1), p);
+		}
 		free(f);
 
 		if (strncmp(me, "*.", 2) == 0)
