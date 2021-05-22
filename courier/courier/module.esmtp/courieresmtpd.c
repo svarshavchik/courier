@@ -563,42 +563,22 @@ static int domailfrom(const char *p, const char *q)
 		for (s=r; *s && !isspace((int)(unsigned char)*s); s++)
 			;
 		if (s - r == 4 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "VERP", 4)
-#else
-			strnicmp(r, "VERP", 4)
-#endif
-			== 0)
+			strncasecmp(r, "VERP", 4) == 0)
 		{
 			hasverp=1;
 		}
 		else if (s - r == 17 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "SECURITY=STARTTLS", 17)
-#else
-			strnicmp(r, "SECURITY=STARTTLS", 17)
-#endif
-			== 0)
+			strncasecmp(r, "SECURITY=STARTTLS", 17)	== 0)
 		{
 			hasstarttls=1;
 		}
 		else if (s - r == 6 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "EXDATA", 6)
-#else
-			strnicmp(r, "EXDATA", 6)
-#endif
-			== 0)
+			strncasecmp(r, "EXDATA", 6) == 0)
 		{
 			hasexdata=1;
 		}
 		else if (s - r >= 4 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "RET=", 4)
-#else
-			strnicmp(r, "RET=", 4)
-#endif
-			== 0)
+			strncasecmp(r, "RET=", 4) == 0)
 		{
 			switch (r[4])	{
 			case 'f':
@@ -612,23 +592,13 @@ static int domailfrom(const char *p, const char *q)
 			}
 		}
 		else if (s - r >= 6 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "ENVID=", 6)
-#else
-			strnicmp(r, "ENVID=", 6)
-#endif
-			== 0)
+			strncasecmp(r, "ENVID=", 6) == 0)
 		{
 			envid=r+6;
 			envidlen=s-envid;
 		}
 		else if (s - r >= 5 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "SIZE=", 5)
-#else
-			strnicmp(r, "SIZE=", 5)
-#endif
-			== 0)
+			strncasecmp(r, "SIZE=", 5) == 0)
 		{
 		unsigned long l=0, n;
 
@@ -645,12 +615,7 @@ static int domailfrom(const char *p, const char *q)
 			}
 		}
 		else if (s - r >= 8 &&
-#if HAVE_STRNCASECMP
-			 strncasecmp(r, "SMTPUTF8", 8)
-#else
-			 strnicmp(r, "SMTPUTF8", 8)
-#endif
-			 == 0)
+			 strncasecmp(r, "SMTPUTF8", 8) == 0)
 		{
 			if (s-r == 8 || r[8] == '=')
 			{
@@ -794,12 +759,7 @@ int	rc;
 		for (s=r; *s && !isspace((int)(unsigned char)*s); s++)
 			;
 		if (s - r > 7 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "NOTIFY=", 7)
-#else
-			strnicmp(r, "NOTIFY=", 7)
-#endif
-			== 0)
+			strncasecmp(r, "NOTIFY=", 7) == 0)
 		{
 			r += 7;
 			while (r < s)
@@ -826,12 +786,7 @@ int	rc;
 			hasverp=1;
 		}
 		else if (s - r > 6 &&
-#if HAVE_STRNCASECMP
-			strncasecmp(r, "ORCPT=", 6)
-#else
-			strnicmp(r, "ORCPT=", 6)
-#endif
-			== 0)
+			strncasecmp(r, "ORCPT=", 6) == 0)
 		{
 			char *encoded_orcpt;
 

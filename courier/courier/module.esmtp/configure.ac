@@ -159,8 +159,8 @@ AC_CACHE_CHECK([for caddr_t],courier_cv_CADDR_T_DEFINED,
 	AC_TRY_COMPILE(
 [
 #include <sys/types.h>
+caddr_t p;
 ],[
-caddr_t p=0;
 ],
 	courier_cv_CADDR_T_DEFINED=yes,
 	courier_cv_CADDR_T_DEFINED=no)

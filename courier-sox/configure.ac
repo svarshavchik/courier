@@ -6,7 +6,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-sox],[0.15],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.15.20210522],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AC_CONFIG_HEADERS([courier_socks_config.h])
@@ -67,32 +67,64 @@ AC_SUBST(COURIERAUTHINCLUDE)
 AC_SUBST(COURIERAUTHLINK)
 
 # Checks for libraries.
-USENSL=no
 saveLIBS="$LIBS"
-AC_CHECK_LIB(socket,socket,result=yes,result=no)
-if test $result = yes; then
-        NETLIBS="-lsocket"
-else
-        AC_CHECK_LIB(socket,socket,result=yes,result=no,-lnsl)
-        if test $result = yes; then
-                NETLIBS = "-lsocket -lnsl"
-                USENSL=yes
-        else
-                AC_CHECK_LIB(socket,connect,result=yes,result=no)
-                if test $result = yes; then
-                        NETLIBS="-lsocket"
-                else
-                        AC_CHECK_LIB(socket,connect,result=yes,result=no,-lnsl)
-                        if test $result = yes; then
-                                NETLIBS="-lsocket -lnsl"
-                                USENSL=yes
-                        fi
-                fi
-        fi
-fi
+NETLIBS=""
+USENSL=no
+
+LIBS="$OLDLIBS -lsocket"
+
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)socket(0, 0, 0);
+], [
+   NETLIBS="-lsocket"
+],
+[
+
+LIBS="$saveLIBS -lsocket -lnsl"
+
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)socket(0, 0, 0);
+], [
+   NETLIBS="-lsocket -lnsl"
+   USENSL=yes
+], [
+
+LIBS="$saveLIBS -lsocket"
+
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)connect(0, 0, 0);
+], [
+   NETLIBS="-lsocket"
+],
+[
+
+LIBS="$saveLIBS -lsocket -lnsl"
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)connect(0, 0, 0);
+], [
+   NETLIBS="-lsocket -lnsl"
+   USENSL=yes
+],
+[
+])
+])
+])
+])
 
 if test $USENSL != yes; then
-	LIBS="$LIBS $NETLIBS"
+	LIBS="$saveLIBS $NETLIBS"
 	AC_TRY_LINK_FUNC(inet_addr, [ : ],
 	[
 	        AC_CHECK_LIB(nsl,inet_addr,result=yes,result=no)
@@ -101,6 +133,7 @@ if test $USENSL != yes; then
 	        fi
 	])
 fi
+LIBS="$saveLIBS"
 AC_SUBST(NETLIBS)
 
 AC_CHECK_LIB(dl,dlopen,DLLIB="-ldl",DLLIB="")
@@ -279,21 +312,23 @@ AC_COMPILE_IFELSE([
 AC_LANG_SOURCE( [
 #include "$srcdir/stubfuncs.h"
 
+extern void makeused(void *);
+
 ],[
-	ptr_connect=connect;
-	ptr_bind=bind;
-	ptr_select=select;
-	ptr_getsockopt=getsockopt;
-	ptr_close=close;
-	ptr_fclose=fclose;
-	ptr_listen=listen;
-	ptr_accept=accept;
-	ptr_getsockname=getsockname;
-	ptr_getpeername=getpeername;
-	ptr_dup=dup;
-	ptr_dup2=dup2;
+	ptr_connect=connect; makeused(ptr_connect);
+	ptr_bind=bind; makeused(ptr_bind);
+	ptr_select=select; makeused(ptr_select);
+	ptr_getsockopt=getsockopt; makeused(ptr_getsockopt);
+	ptr_close=close; makeused(ptr_close);
+	ptr_fclose=fclose; makeused(ptr_fclose);
+	ptr_listen=listen; makeused(ptr_listen);
+	ptr_accept=accept; makeused(ptr_accept);
+	ptr_getsockname=getsockname; makeused(ptr_getsockname);
+	ptr_getpeername=getpeername; makeused(ptr_getpeername);
+	ptr_dup=dup; makeused(ptr_dup);
+	ptr_dup2=dup2; makeused(ptr_dup2);
 #if HAVE_POLL
-	ptr_poll=poll;
+	ptr_poll=poll; makeused(ptr_poll)
 #endif
 ])],
 	[ AC_MSG_RESULT(yes) ],

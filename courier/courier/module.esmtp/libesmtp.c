@@ -1154,13 +1154,8 @@ static int esmtp_auth(struct esmtp_info *info,
 
 		if (!auth_key || !q)	continue;
 
-#if	HAVE_STRCASECMP
 		if (strcasecmp(q, auth_key) == 0)
 			break;
-#else
-		if (stricmp(q, auth_key) == 0)
-			break;
-#endif
 	}
 	fclose(configfile);
 

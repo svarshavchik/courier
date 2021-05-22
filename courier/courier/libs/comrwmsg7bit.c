@@ -5,6 +5,8 @@
 #include	"rw.h"
 #include	"rwint.h"
 #include	"rfc2045/rfc2045.h"
+#include	"courier_version.h"
+
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif

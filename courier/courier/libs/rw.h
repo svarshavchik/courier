@@ -96,17 +96,10 @@ void rw_local_defaulthost(struct rw_info *, void (*)(struct rw_info *));
 
 /* If this is ever changed, don't forget to update submit.C */
 
-#if	HAVE_STRNCASECMP
 #define	DO_REWRITE_HEADER(l)	\
 	(strncasecmp((l),"to:", 3) == 0 || strncasecmp((l), "cc:", 3) == 0 || \
 	 strncasecmp((l), "from:", 5) == 0 || \
 	 strncasecmp((l), "reply-to:", 9) == 0)
-#else
-#define	DO_REWRITE_HEADER(l)	\
-	(strnicmp((l),"to:", 3) == 0 || strnicmp((l), "cc:", 3) == 0 || \
-	 strnicmp((l), "from:", 5) == 0 || \
-	 strnicmp((l), "reply-to:", 9) == 0)
-#endif
 
 /* Rewrite headers in an entire message */
 

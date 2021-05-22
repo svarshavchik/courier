@@ -1,14 +1,17 @@
 #
-# Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
 # distribution information.
-
-CLEANFILES=sysconfdir.h localstatedir.h libexecdir.h sbindir.h lcrwstatic.h \
-	permissions.dat
 
 noinst_LTLIBRARIES=libcommon.la libcourier.la libmodule.la
 noinst_PROGRAMS=testaliases
 
-BUILT_SOURCES=sysconfdir.h localstatedir.h libexecdir.h sbindir.h lcrwstatic.h
+BUILT_SOURCES=sysconfdir.h localstatedir.h libexecdir.h sbindir.h lcrwstatic.h \
+	courier_version.h
+
+CLEANFILES=$(BUILT_SOURCES) permissions.dat
+
+courier_version.h: ../../version
+	echo '#define COURIER_VERSION "'`cat ../../version`'"' >courier_version.h
 
 libcommon_la_SOURCES= aliases.h \
 	comaliases1.C comaliases2.C \

@@ -5,7 +5,7 @@ dnl Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.71.3],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.71.3.20210522],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -76,11 +76,17 @@ fi
 CFLAGS="$CFLAGS -Ilibs -I${srcdir}/libs"
 CXXFLAGS="$CXXFLAGS -Ilibs -I${srcdir}/libs"
 
-AC_MSG_CHECKING(whether -lm is needed for floor)
-AC_TRY_LINK_FUNC(floor,
-	AC_MSG_RESULT(no),
-	LIBM="-lm"
-	AC_MSG_RESULT(yes))
+AC_MSG_CHECKING(whether -lm is needed for linking)
+
+OLDLIBS="$LIBS"
+LIBS="$LIBS -lm"
+AC_TRY_LINK([
+], [
+],
+	AC_MSG_RESULT(yes)
+	LIBM="-lm",
+	AC_MSG_RESULT(no))
+LIBS="$OLDLIBS"
 
 AC_ARG_WITH(pkgconfdir,
 [  --with-pkgconfdir=d     Install config files in directory ],
@@ -91,30 +97,60 @@ saveLIBS="$LIBS"
 NETLIBS=""
 USENSL=no
 
-AC_CHECK_LIB(socket,socket,result=yes,result=no)
-if test $result = yes; then
-        NETLIBS="-lsocket"
-else
-        AC_CHECK_LIB(socket,socket,result=yes,result=no,-lnsl)
-        if test $result = yes; then
-                NETLIBS = "-lsocket -lnsl"
-                USENSL=yes
-        else
-                AC_CHECK_LIB(socket,connect,result=yes,result=no)
-                if test $result = yes; then
-                        NETLIBS="-lsocket"
-                else
-                        AC_CHECK_LIB(socket,connect,result=yes,result=no,-lnsl)
-                        if test $result = yes; then
-                                NETLIBS="-lsocket -lnsl"
-                                USENSL=yes
-                        fi
-                fi
-        fi
-fi
+LIBS="$OLDLIBS -lsocket"
+
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)socket(0, 0, 0);
+], [
+   NETLIBS="-lsocket"
+],
+[
+
+LIBS="$saveLIBS -lsocket -lnsl"
+
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)socket(0, 0, 0);
+], [
+   NETLIBS="-lsocket -lnsl"
+   USENSL=yes
+], [
+
+LIBS="$saveLIBS -lsocket"
+
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)connect(0, 0, 0);
+], [
+   NETLIBS="-lsocket"
+],
+[
+
+LIBS="$saveLIBS -lsocket -lnsl"
+AC_TRY_LINK([
+#include <sys/types.h>
+#include <sys/socket.h>
+], [
+(void)connect(0, 0, 0);
+], [
+   NETLIBS="-lsocket -lnsl"
+   USENSL=yes
+],
+[
+])
+])
+])
+])
 
 if test $USENSL != yes; then
-	LIBS="$LIBS $NETLIBS"
+	LIBS="$saveLIBS $NETLIBS"
 	AC_TRY_LINK_FUNC(inet_addr, [ : ],
 	[
 	        AC_CHECK_LIB(nsl,inet_addr,result=yes,result=no)

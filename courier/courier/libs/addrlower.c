@@ -118,12 +118,8 @@ char *ulocallower(const char *c)
 	}
 
 	if ( islocallower > 0 || (
-#if     HAVE_STRNCASECMP
 		strncasecmp(c, "postmaster", 10)
-#else
-		strnicmp(c, "postmaster", 10)
-#endif
-			== 0 && (c[10] == '\0' || c[10] == '@')))
+		== 0 && (c[10] == '\0' || c[10] == '@')))
 	{
 		char *c_copy=courier_strdup(c);
 		char *at=strrchr(c_copy, '@');

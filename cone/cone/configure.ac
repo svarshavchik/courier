@@ -134,11 +134,18 @@ AC_TRY_LINK([
 #include "aspell/config.hh"
 #include "aspell/manager.hh"
 #include "aspell/suggest.hh"
+
 #else
 
 /* New aspell API */
 
 #include <aspell.h>
+
+AspellConfig *config;
+AspellCanHaveError *manager;
+AspellSpeller *speller;
+
+
 #endif
 
 ],
@@ -147,9 +154,9 @@ AC_TRY_LINK([
 #if HAVE_ASPELL_CONFIG_HH
 		aspell::Config new_config;
 #else
-		AspellConfig *config=new_aspell_config();
-		AspellCanHaveError *manager=new_aspell_speller(config);
-		AspellSpeller *speller=to_aspell_speller(manager);
+		config=new_aspell_config();
+		manager=new_aspell_speller(config);
+		speller=to_aspell_speller(manager);
 #endif
 	}
 ], ASPELL=yes, ASPELL=no)
@@ -165,9 +172,10 @@ LIBS="-lpspell $LIBS"
 
 AC_TRY_LINK([
 #include "pspell/pspell.h"
+PspellConfig *foo;
 ],
 [
-PspellConfig *foo=new_pspell_config();
+foo=new_pspell_config();
 ], PSPELL=yes, PSPELL=no)
 
 LIBS="$save_LIBS"
@@ -200,11 +208,10 @@ AC_MSG_CHECKING(for iswalpha)
 
 AC_TRY_LINK([
 #include <wctype.h>
+int w;
 ],
 [
-	{
-	int w=iswalpha('A');
-	}
+	w=iswalpha('A');
 ], [
 AC_DEFINE_UNQUOTED(HAVE_ISWALPHA, 1, [ whether iswalpha() is available ])
 AC_MSG_RESULT(yes)
@@ -256,6 +263,8 @@ AC_ARG_WITH(filterdir, [--with-filterdir=dir   Internal debugging option ],
 AC_DEFINE_UNQUOTED(FILTERDIR, "$filterdir",
 			[ Global filter directory ])
 
+AC_MSG_CHECKING(for LDAP support)
+
 AC_TRY_COMPILE([
 
 #include "../libs/ldapaddressbook/config.h"
@@ -270,8 +279,12 @@ AC_TRY_COMPILE([
 ],
 [
 	;
-],
+],[
 	LDAPSEARCH="../libs/ldapaddressbook/libldapsearch.la"
+        AC_MSG_RESULT(yes)
+],[
+        AC_MSG_RESULT(no)
+]
 )
 
 AC_SUBST(LDAPSEARCH)

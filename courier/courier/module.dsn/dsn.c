@@ -605,13 +605,7 @@ int	cr;
 	while (fgets(buf, sizeof(buf), f))
 	{
 		if (buf[0] == '-' && buf[1] == '-' &&
-
-#if	HAVE_STRNCASECMP
-			strncasecmp(buf+2, b, l)
-#else
-			strnicmp(buf+2, b, l)
-#endif
-			 == 0)	flag=1;
+			strncasecmp(buf+2, b, l) == 0)	flag=1;
 
 		cr=0;
 		for (p=buf; *p; p++)

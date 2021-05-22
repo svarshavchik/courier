@@ -147,11 +147,7 @@ char	*pfrom=From ? strcpy(courier_malloc(strlen(From)+1), From):0;
 				break;
 		}
 
-#if HAVE_STRNCASECMP
 		if (strncasecmp(headerbuf, "from:", 5))
-#else
-		if (strnicmp(headerbuf, "from:", 5))
-#endif
 		{
 			fprintf(submit_to, "%s", headerbuf);
 			if (!p)

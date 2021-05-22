@@ -58,8 +58,8 @@ AC_CACHE_CHECK([for caddr_t],courier_cv_CADDR_T_DEFINED,
 	AC_TRY_COMPILE(
 [
 #include <sys/types.h>
+caddr_t p;
 ],[
-caddr_t p=0;
 ],
 	courier_cv_CADDR_T_DEFINED=yes,
 	courier_cv_CADDR_T_DEFINED=no)
@@ -229,7 +229,7 @@ FILE *fp=fopen("conftestval", "w");
        sprintf(buf, "-%lu", ULONG_MAX);
 #endif
 
-	fprintf(fp, "%d\n", strlen(buf)+1);
+	fprintf(fp, "%d\n", (int)(strlen(buf)+1));
 	fclose(fp);
 	return (0);
 }
@@ -250,9 +250,6 @@ AC_DEFINE_UNQUOTED(COURIERLOGGER, "$courierlogger",
 [Location of the courierlogger binary])
 
 AC_DEFINE_UNQUOTED(MAXLONGSIZE, $MAXLONGSIZE, [ Maximum size of an long value ])
-
-version=`cat ../../version`
-AC_DEFINE_UNQUOTED(COURIER_VERSION,"$version", [ Courier version ])
 
 . ../../dbobj.config
 dblibrary="../../$dblibrary"

@@ -206,7 +206,7 @@ static void rw_del_local2(struct rw_info *rwi,
 	int	i;
 	struct localauthinfo lai;
 #if LOCAL_EXTENSIONS
-	char *atdomain;
+	char *atdomain, *localat;
 #endif
 
 	if (strchr(addr, '!') || *addr == 0)
@@ -238,7 +238,7 @@ static void rw_del_local2(struct rw_info *rwi,
 	}
 
 #if LOCAL_EXTENSIONS
-	atdomain=strrchr(addr, '@');
+	localat=atdomain=strrchr(addr, '@');
 	if (atdomain)
 		*atdomain++=0;
 #endif
@@ -355,8 +355,8 @@ static void rw_del_local2(struct rw_info *rwi,
 	}
 
 #if LOCAL_EXTENSIONS
-	if (atdomain)
-		atdomain[-1]='@';	/* Put back what was taken */
+	if (localat)
+		*localat='@';	/* Put back what was taken */
 #endif
 
 	/* Try to deliver to an alias defined in ${sysconfdir}/aliasdir */
