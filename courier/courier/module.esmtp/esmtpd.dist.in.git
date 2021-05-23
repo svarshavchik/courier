@@ -213,13 +213,13 @@ COURIERTLS=@bindir@/couriertls
 # In all cases, $TLS_CERTFILE needs to be linked to one of the existing
 # certificate files.
 
-TLS_CERTFILE=@mydatadir@/esmtpd.pem
+TLS_CERTFILE=@certsdir@/esmtpd.pem
 
 ##NAME: TLS_DHPARAMS:0
 #
 # TLS_DHPARAMS - DH parameter file.
 #
-TLS_DHPARAMS=@mydatadir@/dhparams.pem
+TLS_DHPARAMS=@certsdir@/dhparams.pem
 
 ##NAME: TLS_TRUSTCERTS:0
 #

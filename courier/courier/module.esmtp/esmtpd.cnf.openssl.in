@@ -1,5 +1,5 @@
 
-RANDFILE = @mydatadir@/esmtpd.rand
+RANDFILE = @certsdir@/esmtpd.rand
 
 [ req ]
 default_bits = 4096

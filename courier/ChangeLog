@@ -1,3 +1,7 @@
+2021-05-23  Milan Obuch <courier-users@dino.sk>
+
+	* configure in module.esmtp respects --with-certsdir
+
 2021-05-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Minor code tweaks, make it compleable with -Wall -Werror.
