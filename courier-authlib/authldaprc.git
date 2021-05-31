@@ -241,6 +241,9 @@ LDAP_TLS		0
 # into the following search string.  "@user@" and "@realm@" are placeholders
 # for the user and the realm portions of the login ID.
 #
+# This is an LDAP search filter, so \40 can be used to represent a literal
+# @ character in the search string.
+#
 # LDAP_EMAILMAP		(&(userid=@user@)(realm=@realm@))
 
 ##NAME: LDAP_EMAILMAP_BASEDN:0
