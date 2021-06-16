@@ -866,6 +866,8 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	mf_info.is8bitmsg=ctlfile_searchfirst(ctf, COMCTLFILE_8BIT) >= 0;
 	mf_info.verp=ctlfile_searchfirst(ctf, COMCTLFILE_VERP) >= 0;
+	mf_info.issmtputf8=
+		ctlfile_searchfirst(ctf, COMCTLFILE_SMTPUTF8) >= 0;
 
 	{
 		int n=ctlfile_searchfirst(ctf, COMCTLFILE_DSNFORMAT);

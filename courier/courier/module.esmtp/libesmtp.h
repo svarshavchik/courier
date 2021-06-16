@@ -149,6 +149,7 @@ extern int esmtp_misccommand(struct esmtp_info *info,
 struct esmtp_mailfrom_info {
 	const char *sender;
 	int is8bitmsg;
+	int issmtputf8;
 	int dsn_format;
 	const char *envid;
 	int verp;

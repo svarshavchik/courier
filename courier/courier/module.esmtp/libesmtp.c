@@ -1908,7 +1908,7 @@ static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
 	if (info->hasverp && mf_info->verp)
 		verpverb=" VERP";	/* ESMTP VERP capability */
 
-	if (info->hassmtputf8)
+	if (info->hassmtputf8 && mf_info->issmtputf8)
 		smtputf8verb=" SMTPUTF8";
 	else
 	{

@@ -1,5 +1,8 @@
 2021-06-15  Sam Varshavchik  <mrsam@courier-mta.com>
 
+	* courier/module.esmtp/libesmtp.c (esmtp_mailfrom_cmd_idna): do not
+	indicate SMTPUTF8 for a non-UTF8 message.
+
 	* pop3login: use unbuffered reads, handle our own buffering.
 
 2021-05-23  Milan Obuch <courier-users@dino.sk>
