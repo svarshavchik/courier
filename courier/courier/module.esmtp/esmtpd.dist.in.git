@@ -302,17 +302,17 @@ PORT=smtp
 
 ##NAME: BLACKLISTS:1
 #
-#  Blacklists we query.
+# Blacklists we query. This variable lists -block options to couriertcpd(1):
 #
-#  The BLOCK environment variable is automatically enforced by submit.
-#  Nobody really does anything about BLOCK2, this is mainly for use by
-#  plug-in mail filters.  If you want Courier to unilaterally block
-#  mail from IP addresses listed by Spamhaus or CBL, and you have a separate
-#  localmailfilter that keys off BLOCK2, uncomment the following.  If you want
-#  to unilaterally block everything listed by Spamhaus or CBL, just replace
-#  BLOCK2 with BLOCK.
+# BLACKLISTS='-block=dnsbl.example.com,BLOCK -block=advisory.example.com,BLOCK2'
 #
-# BLACKLISTS='-block=zen.spamhaus.org,BLOCK2 -block=cbl.abuseat.org,BLOCK2'
+# The BLOCK environment variable is automatically enforced by submit.
+# Nobody really does anything about BLOCK2, this is mainly for use by
+# plug-in mail filters.  If you want Courier to automatically reject mail
+# sent from IP addresses listed by a DNS-based blacklist, set BLOCK to
+# its DNS zone, via the -block option. Multiple -block options query
+# multiple DNSBLs, stopping when the sending IP address is found in one.
+# Different variables are handled independently.
 #
 # The BLACKLISTS setting can also contain -allow options to implement
 # DNS-based whitelists. See the couriertcpd(1) man page for more information.
