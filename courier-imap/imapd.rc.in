@@ -72,7 +72,7 @@ start)
 stop)
 	@courierlogger@ -pid=$PIDFILE -stop
 	;;
-stop)
+restart)
 	@courierlogger@ -pid=$PIDFILE -restart
 	;;
 esac

@@ -74,5 +74,8 @@ start)
 stop)
 	@courierlogger@ -pid=$SSLPIDFILE -stop
 	;;
+restart)
+	@courierlogger@ -pid=$SSLPIDFILE -restart
+	;;
 esac
 exit 0
