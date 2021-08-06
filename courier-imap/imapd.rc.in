@@ -72,5 +72,8 @@ start)
 stop)
 	@courierlogger@ -pid=$PIDFILE -stop
 	;;
+stop)
+	@courierlogger@ -pid=$PIDFILE -restart
+	;;
 esac
 exit 0
