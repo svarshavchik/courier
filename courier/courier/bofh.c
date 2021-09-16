@@ -223,9 +223,9 @@ int bofh_chkspamtrap(const char *pp)
 
 static int chkusersubdom(const char *p, const char *d, const char *name)
 {
-	const char *dn, *dn1, *d1;
-	int lp, ln, ldp, ldn;
-	if (p == NULL || d == NULL || d <= p || d[1] != '.'
+	const char *dn;
+	int lp, ln;
+	if (p == NULL || d == NULL || d <= p || d[1] == '.'
 	    || name == NULL || (dn = strrchr(name, '@')) == NULL)
 	{
 		return (0);
@@ -238,9 +238,19 @@ static int chkusersubdom(const char *p, const char *d, const char *name)
 		return (0);
 	}
 
-	return ((ldn = strlen(dn1 = dn + 1)) > 0
-		&& (ldp = strlen(d1 = d + 1)) <= ldn
-		&& strcmp(dn1 + (ldn - ldp), d1) == 0);
+	++dn;
+	++d;
+
+	if (*dn == '.')
+	{
+		if (strlen(d) <= strlen(dn))
+			return 0;
+
+		d=d+strlen(d)-strlen(dn);
+
+	}
+
+	return strcmp(d, dn) == 0;
 }
 
 static int chkbadlist(const char *pp, struct bofh_list *b)
