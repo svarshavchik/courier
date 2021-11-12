@@ -1,3 +1,8 @@
+2021-11-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* submit: do not reject null MX records when validing the
+	sending IP address against the sender's HELO/EHLO identifier.
+
 2021-09-16  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/bofh.c (chkusersubdom): Fix bofh badfrom checking.
