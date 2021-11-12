@@ -273,6 +273,9 @@ int main(int argc, char **argv)
 	case	RFC1035_MX_BADDNS:
 		printf("%s: bad DNS records (recursive CNAME).\n", q_name);
 		exit(1);
+	case	RFC1035_MX_NONE:
+		printf("%s: no mail.\n", q_name);
+		exit(1);
 	}
 
 	printf("Domain %s:\n", q_name);

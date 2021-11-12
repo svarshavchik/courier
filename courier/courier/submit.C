@@ -859,6 +859,9 @@ static int checkmx(const char *helohost,
 			  << " does not match " << tcpremoteip << std::endl;
 		return 1;
 
+	case RFC1035_MX_NONE:
+		if (bofhcheckhelo) /* Ignore MX . records when checking HELO */
+			break;
 	case RFC1035_MX_HARDERR:
 		std::cout << harderr << " HELO " << helohost
 			  << " does not exist." << std::endl;
