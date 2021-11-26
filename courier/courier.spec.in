@@ -171,7 +171,7 @@ BuildRequires:      ghostscript
 BuildRequires:      mgetty-sendfax
 BuildRequires:      netpbm-progs
 %endif
-BuildRequires:      pcre-devel
+BuildRequires:      pcre2-devel
 BuildRequires:      %{__make}
 Obsoletes:	courier-smtpauth < @PACKAGE_VERSION@
 

@@ -28,7 +28,7 @@
     xBSD already has a gmake port, install it and use it (use gmake everywhere
     this document refers to make).</li>
     <li>GDBM/DB - optional.</li>
-    <li>The PCRE library (<a href="http://www.pcre.org">http:/www.pcre.org</a>)
+    <li>The PCRE2 library (<a href="http://www.pcre.org">http:/www.pcre.org</a>)
     is required.</li>
     <li>The Courier Unicode Library (<a href=
     "http://www.courier-mta.org/unicode">http://www.courier-mta.org/unicode</a>)

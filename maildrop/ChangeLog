@@ -1,3 +1,7 @@
+2021-11-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: update to pcre2
+
 2021-05-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Minor code tweaks, make it compileable with -Wall -Werror.
