@@ -161,7 +161,7 @@ release:
 	$(MAKE) sqwebmail.spec sqwebmail.lpspec
 	$(MAKE) dist
 
-WWW=$$HOME/www/www.courier-mta.org
+WWW=$$HOME/www/hostrocket/courier-mta.org
 
 htmldoc:
 	for f in index.html links.html screenshots.html download.html; do xsltproc --nonet $(WWW)/xsl/sqwebmail.xsl html/$$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/sqwebmail/$$f; done
