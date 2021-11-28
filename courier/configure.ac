@@ -84,17 +84,12 @@ then
 fi
 fi
 
-AC_CHECK_HEADER([pcre.h],
-		[ : ],
-		[
+AC_CHECK_PROG(PCRE2, pcre2-config, yes, no)
 
-		AC_CHECK_HEADER([pcre/pcre.h],
-				[ : ],
-				[
-						AC_MSG_ERROR(pcre.h not found - install PCRE from www.pcre.org)
-				])
-		]
-)
+if test "$PCRE2" = "no"
+then
+	AC_MSG_ERROR([pcre2-config was not found, please install PCRE2])
+fi
 
 if test x$prefix = xNONE
 then
