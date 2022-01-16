@@ -1,3 +1,15 @@
+1.1.6
+
+2022-01-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* imap, sqwebmail: fix minor memory leaks. If valgrind is installed,
+	"make check" will run it to check for memory leaks.
+
+2022-01-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* imap/pop3: use ALARM to kill couriertls if the server process
+	terminates but openssl hangs trying to shut down the socket.
+
 2021-11-26  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: update to pcre2.
