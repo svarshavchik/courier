@@ -1,3 +1,9 @@
+3.0.7
+
+2022-01-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* configure.ac: Fix configure check for pcre2
+
 3.0.6
 
 2022-01-16  Arjen de Korte <build+github@de-korte.org>

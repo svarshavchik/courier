@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(maildrop, 3.0.6, [courier-maildrop@lists.sourceforge.net])
+AC_INIT(maildrop, 3.0.7, [courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
@@ -17,17 +17,12 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AM_PROG_LIBTOOL
 
-AC_CHECK_HEADER([pcre.h],
-		[ : ],
-		[
+AC_CHECK_PROG(PCRE2, pcre2-config, yes, no)
 
-		AC_CHECK_HEADER([pcre/pcre.h],
-				[ : ],
-				[
-						AC_MSG_ERROR(pcre.h not found - install PCRE from www.pcre.org)
-				])
-		]
-)
+if test "$PCRE2" = "no"
+then
+	AC_MSG_ERROR([pcre2-config was not found, please install PCRE2])
+fi
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
