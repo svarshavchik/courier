@@ -1,0 +1,77 @@
+name: Run builds on supported distributions
+
+on:
+  pull_request:
+
+jobs:
+  git_src_build:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.release[0] }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          ${{ matrix.release[1] }}
+
+      - name: Get courier-libs
+        run: |
+          git clone https://github.com/svarshavchik/courier-libs.git libs
+          cp -al libs sysconftool
+          cp -al libs courier-authlib
+          cp -al libs ${{ matrix.project }}
+
+      - name: Build sysconftool
+        run: |
+          cd sysconftool
+          sh ./autobloat
+          ./configure
+          make
+          make install
+
+      - name: Build courier-unicode
+        run: |
+          cd courier-authlib/libs/unicode
+          sh ./autobloat
+          ./configure
+          make
+          make install
+          echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
+          echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf
+          ldconfig
+
+      - name: Build courier-authlib
+        run: |
+          cd courier-authlib
+          env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
+          ./configure
+          make
+          make install
+
+      - name: Build ${{ matrix.project }}
+        run: |
+          cd ${{ matrix.project }}
+          env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
+          ./configure --with-notice=unicode --disable-root-check
+          make
+          make install
+          # "courier" requires an additional step
+          if test "${{ matrix.project }}" == courier ; then make install-configure ; fi
+          #make check
+
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular gcc-c++ sed gawk perl make procps-ng wget gnupg2 expect gdbm-devel pam-devel libidn-devel 'perl(ExtUtils::Embed)' /etc/mime.types perl-generators openssl-devel openssl-perl groff ghostscript mgetty-sendfax netpbm-progs pcre2-devel pcre-devel /usr/lib/locale/locale-archive git autoconf automake libtool gettext-devel libxslt docbook-utils docbook-dtds docbook-style-xsl xhtml1-dtds tidy elinks libtool-ltdl-devel which httpd ncurses-devel aspell-devel libxml2-devel zlib-devel openldap-devel"],
+                  ["centos:7", "yum install -y epel-release ; yum install -y --setopt=tsflags=nodocs gcc-c++ sed gawk perl make procps-ng wget gnupg2 expect gdbm-devel pam-devel libidn-devel 'perl(ExtUtils::Embed)' /etc/mime.types perl-generators openssl-devel openssl-perl groff ghostscript mgetty-sendfax netpbm-progs pcre2-devel pcre-devel /usr/lib/locale/locale-archive git autoconf automake libtool gettext-devel libxslt docbook-utils docbook-dtds docbook-style-xsl xhtml1-dtds tidy elinks libtool-ltdl-devel which httpd ncurses-devel aspell-devel libxml2-devel zlib-devel openldap-devel"],
+                 ]
+        project: ["cone",
+                  "courier-analog",
+                  "courier-imap",
+                  "courier-sox",
+                  "courier",
+                  "maildrop",
+                  "sqwebmail",
+                 ]
