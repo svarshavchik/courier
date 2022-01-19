@@ -1,10 +1,11 @@
 name: Run builds on supported distributions
 
 on:
+  push:
   pull_request:
 
 jobs:
-  git_src_build:
+  make_dist:
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.release[0] }}
@@ -19,8 +20,10 @@ jobs:
       - name: Get courier-libs
         run: |
           git clone https://github.com/svarshavchik/courier-libs.git libs
+          cp -al libs/unicode courier-unicode && ln -sf ../libs/common/autobloat courier-unicode # Treat unicode like a top-level project
           cp -al libs sysconftool
           cp -al libs courier-authlib
+          if [[ ${{ matrix.project }} == sysconftool || ${{ matrix.project }} == courier-authlib || ${{ matrix.project }} == courier-unicode ]] ; then exit 0 ; fi # No need for more copying
           cp -al libs ${{ matrix.project }}
 
       - name: Build sysconftool
@@ -30,14 +33,16 @@ jobs:
           ./configure
           make
           make install
+          make dist
 
       - name: Build courier-unicode
         run: |
-          cd courier-authlib/libs/unicode
+          cd courier-unicode
           sh ./autobloat
           ./configure
           make
           make install
+          make dist
           echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
           echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf
           ldconfig
@@ -49,9 +54,11 @@ jobs:
           ./configure
           make
           make install
+          make dist
 
-      - name: Build ${{ matrix.project }}
+      - name: Build ${{ matrix.project }} dist
         run: |
+          if [[ ${{ matrix.project }} == sysconftool || ${{ matrix.project }} == courier-authlib || ${{ matrix.project }} == courier-unicode ]] ; then exit 0 ; fi # Already done
           cd ${{ matrix.project }}
           env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
           ./configure --with-notice=unicode --disable-root-check
@@ -60,11 +67,124 @@ jobs:
           # "courier" requires an additional step
           if test "${{ matrix.project }}" == courier ; then make install-configure ; fi
           #make check
+          make dist
+
+      - name: Upload dist for ${{ matrix.project }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.project }}
+          path: "${{ matrix.project }}/*.tar.bz2"
 
     strategy:
-      fail-fast: false
       matrix:
-        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular gcc-c++ sed gawk perl make procps-ng wget gnupg2 expect gdbm-devel pam-devel libidn-devel 'perl(ExtUtils::Embed)' /etc/mime.types perl-generators openssl-devel openssl-perl groff ghostscript mgetty-sendfax netpbm-progs pcre2-devel pcre-devel /usr/lib/locale/locale-archive git autoconf automake libtool gettext-devel libxslt docbook-utils docbook-dtds docbook-style-xsl xhtml1-dtds tidy elinks libtool-ltdl-devel which httpd ncurses-devel aspell-devel libxml2-devel zlib-devel openldap-devel"],
+        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular gcc-c++ sed gawk perl make procps-ng wget gnupg2 expect gdbm-devel pam-devel libidn-devel 'perl(ExtUtils::Embed)' /etc/mime.types perl-generators openssl-devel openssl-perl groff ghostscript mgetty-sendfax netpbm-progs pcre2-devel pcre-devel /usr/lib/locale/locale-archive git autoconf automake libtool gettext-devel libxslt docbook-utils docbook-dtds docbook-style-xsl xhtml1-dtds tidy elinks libtool-ltdl-devel which httpd ncurses-devel aspell-devel libxml2-devel zlib-devel openldap-devel bzip2"],
+                 ]
+        project: ["cone",
+                  "courier-analog",
+                  "courier-authlib",
+                  "courier-imap",
+                  "courier-sox",
+                  "courier-unicode",
+                  "courier",
+                  "maildrop",
+                  "sqwebmail",
+                  "sysconftool",
+                 ]
+
+  build_dist:
+    needs: make_dist
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.release[0] }}
+    steps:
+      - name: Download sysconftool
+        uses: actions/download-artifact@v2
+        with:
+          name: sysconftool
+
+      - name: Download courier-unicode
+        uses: actions/download-artifact@v2
+        with:
+          name: courier-unicode
+
+      - name: Download courier-authlib
+        uses: actions/download-artifact@v2
+        with:
+          name: courier-authlib
+
+      - name: Download ${{ matrix.project }}
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.project }}
+
+      - name: Install dependencies
+        run: |
+          ${{ matrix.release[1] }}
+
+      - name: Build sysconftool
+        run: |
+          mkdir build
+          pushd build
+          tar xf ../sysconftool*.tar.bz2
+          pushd *
+          ./configure
+          make
+          make install
+          popd
+          popd
+          rm -rf build
+          rm sysconftool*.tar.bz2
+
+      - name: Build courier-unicode
+        run: |
+          mkdir build
+          pushd build
+          tar xf ../courier-unicode*.tar.bz2
+          pushd *
+          ./configure
+          make
+          make install
+          echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
+          echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf
+          ldconfig
+          popd
+          popd
+          rm -rf build
+          rm courier-unicode*.tar.bz2
+
+      - name: Build courier-authlib
+        run: |
+          mkdir build
+          pushd build
+          tar xf ../courier-authlib*.tar.bz2
+          pushd *
+          ./configure
+          make
+          make install
+          popd
+          popd
+          rm -rf build
+          rm courier-authlib*.tar.bz2
+
+      - name: Build ${{ matrix.project }}
+        run: |
+          mkdir build
+          pushd build
+          tar xf ../${{ matrix.project }}*.tar.bz2
+          pushd *
+          ./configure --with-notice=unicode --disable-root-check
+          make
+          make install
+          # "courier" requires an additional step
+          if test "${{ matrix.project }}" == courier ; then make install-configure ; fi
+          #make check
+          popd
+          popd
+          rm -rf build
+
+    strategy:
+      matrix:
+        release: [
                   ["centos:7", "yum install -y epel-release ; yum install -y --setopt=tsflags=nodocs gcc-c++ sed gawk perl make procps-ng wget gnupg2 expect gdbm-devel pam-devel libidn-devel 'perl(ExtUtils::Embed)' /etc/mime.types perl-generators openssl-devel openssl-perl groff ghostscript mgetty-sendfax netpbm-progs pcre2-devel pcre-devel /usr/lib/locale/locale-archive git autoconf automake libtool gettext-devel libxslt docbook-utils docbook-dtds docbook-style-xsl xhtml1-dtds tidy elinks libtool-ltdl-devel which httpd ncurses-devel aspell-devel libxml2-devel zlib-devel openldap-devel"],
                  ]
         project: ["cone",
