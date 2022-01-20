@@ -19,6 +19,7 @@ jobs:
 
       - name: Get courier-libs
         run: |
+          ${{ matrix.release[2] }}
           git clone https://github.com/svarshavchik/courier-libs.git libs
           cp -al libs/unicode courier-unicode && ln -sf ../libs/common/autobloat courier-unicode # Treat unicode like a top-level project
           cp -al libs sysconftool
@@ -28,6 +29,7 @@ jobs:
 
       - name: Build sysconftool
         run: |
+          ${{ matrix.release[2] }}
           cd sysconftool
           sh ./autobloat
           ./configure
@@ -37,6 +39,7 @@ jobs:
 
       - name: Build courier-unicode
         run: |
+          ${{ matrix.release[2] }}
           cd courier-unicode
           sh ./autobloat
           ./configure
@@ -49,6 +52,7 @@ jobs:
 
       - name: Build courier-authlib
         run: |
+          ${{ matrix.release[2] }}
           cd courier-authlib
           env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
           ./configure
@@ -58,6 +62,7 @@ jobs:
 
       - name: Build ${{ matrix.project }} dist
         run: |
+          ${{ matrix.release[2] }}
           if [[ ${{ matrix.project }} == sysconftool || ${{ matrix.project }} == courier-authlib || ${{ matrix.project }} == courier-unicode ]] ; then exit 0 ; fi # Already done
           cd ${{ matrix.project }}
           env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
@@ -77,7 +82,8 @@ jobs:
 
     strategy:
       matrix:
-        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular gcc-c++ sed gawk perl make procps-ng wget gnupg2 expect gdbm-devel pam-devel libidn-devel 'perl(ExtUtils::Embed)' /etc/mime.types perl-generators openssl-devel openssl-perl groff ghostscript mgetty-sendfax netpbm-progs pcre2-devel pcre-devel /usr/lib/locale/locale-archive git autoconf automake libtool gettext-devel libxslt docbook-utils docbook-dtds docbook-style-xsl xhtml1-dtds tidy elinks libtool-ltdl-devel which httpd ncurses-devel aspell-devel libxml2-devel zlib-devel openldap-devel bzip2"],
+        # release: container image name, container preparation command, step preparation command
+        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular aspell-devel autoconf automake bzip2 docbook-style-xsl elinks /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript git gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed tidy /usr/lib/locale/locale-archive wget which zlib-devel", "eval $(rpm --eval '%{set_build_flags}')"],
                  ]
         project: ["cone",
                   "courier-analog",
@@ -123,6 +129,7 @@ jobs:
 
       - name: Build sysconftool
         run: |
+          ${{ matrix.release[2] }}
           mkdir build
           pushd build
           tar xf ../sysconftool*.tar.bz2
@@ -137,6 +144,7 @@ jobs:
 
       - name: Build courier-unicode
         run: |
+          ${{ matrix.release[2] }}
           mkdir build
           pushd build
           tar xf ../courier-unicode*.tar.bz2
@@ -154,6 +162,7 @@ jobs:
 
       - name: Build courier-authlib
         run: |
+          ${{ matrix.release[2] }}
           mkdir build
           pushd build
           tar xf ../courier-authlib*.tar.bz2
@@ -168,6 +177,7 @@ jobs:
 
       - name: Build ${{ matrix.project }}
         run: |
+          ${{ matrix.release[2] }}
           mkdir build
           pushd build
           tar xf ../${{ matrix.project }}*.tar.bz2
@@ -184,8 +194,10 @@ jobs:
 
     strategy:
       matrix:
+        # release: container image name, container preparation command, step preparation command
         release: [
-                  ["centos:7", "yum install -y epel-release ; yum install -y --setopt=tsflags=nodocs gcc-c++ sed gawk perl make procps-ng wget gnupg2 expect gdbm-devel pam-devel libidn-devel 'perl(ExtUtils::Embed)' /etc/mime.types perl-generators openssl-devel openssl-perl groff ghostscript mgetty-sendfax netpbm-progs pcre2-devel pcre-devel /usr/lib/locale/locale-archive git autoconf automake libtool gettext-devel libxslt docbook-utils docbook-dtds docbook-style-xsl xhtml1-dtds tidy elinks libtool-ltdl-devel which httpd ncurses-devel aspell-devel libxml2-devel zlib-devel openldap-devel"],
+                  ["centos:7", "yum install -y epel-release ; yum install -y epel-rpm-macros ; yum install -y --setopt=tsflags=nodocs aspell-devel automake /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed /usr/lib/locale/locale-archive wget which zlib-devel", "rpm --eval '%{set_build_flags}'; eval $(rpm --eval '%{set_build_flags}')"],
+                  ["archlinux:latest", "pacman -Sy aspell automake apache binutils coreutils expect gawk gcc gdbm ghostscript gnupg groff gzip hylafax libidn libtool libxml2 mailcap make mariadb ncurses netpbm openldap openssl pam pcre pcre2 perl pkgconfig postgresql procps-ng sed sqlite wget zlib zlib --noconfirm; mkdir -p /var/www/cgi-bin /var/www/html", "source /etc/makepkg.conf; export $(egrep '^[[:alnum:]_]+=' /etc/makepkg.conf | cut -f1 -d=)"],
                  ]
         project: ["cone",
                   "courier-analog",
