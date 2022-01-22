@@ -34,6 +34,7 @@ jobs:
           sh ./autobloat
           ./configure
           make
+          make check
           make install
           make dist
 
@@ -44,6 +45,7 @@ jobs:
           sh ./autobloat
           ./configure
           make
+          # make check -- not very useful, burns too much CPU
           make install
           make dist
           echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
@@ -69,9 +71,11 @@ jobs:
           ./configure --with-notice=unicode --disable-root-check
           make
           make install
-          # "courier" requires an additional step
+          # Additional things for "courier":
+          #   - check
+          #   - install-configure
+          if test "${{ matrix.project }}" == courier ; then make check ; fi
           if test "${{ matrix.project }}" == courier ; then make install-configure ; fi
-          #make check
           make dist
 
       - name: Upload dist for ${{ matrix.project }}
@@ -83,7 +87,7 @@ jobs:
     strategy:
       matrix:
         # release: container image name, container preparation command, step preparation command
-        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular aspell-devel autoconf automake bzip2 docbook-style-xsl elinks /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript git gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed tidy /usr/lib/locale/locale-archive wget which zlib-devel", "eval $(rpm --eval '%{set_build_flags}')"],
+        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular aspell-devel autoconf automake bzip2 docbook-style-xsl elinks /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript git gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed tidy /usr/lib/locale/locale-archive valgrind wget which zlib-devel", "eval $(rpm --eval '%{set_build_flags}')"],
                  ]
         project: ["cone",
                   "courier-analog",
@@ -185,9 +189,11 @@ jobs:
           ./configure --with-notice=unicode --disable-root-check
           make
           make install
-          # "courier" requires an additional step
+          # Additional things for "courier":
+          #   - check
+          #   - install-configure
+          if test "${{ matrix.project }}" == courier ; then make check ; fi
           if test "${{ matrix.project }}" == courier ; then make install-configure ; fi
-          #make check
           popd
           popd
           rm -rf build
@@ -196,8 +202,8 @@ jobs:
       matrix:
         # release: container image name, container preparation command, step preparation command
         release: [
-                  ["centos:7", "yum install -y epel-release ; yum install -y epel-rpm-macros ; yum install -y --setopt=tsflags=nodocs aspell-devel automake /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed /usr/lib/locale/locale-archive wget which zlib-devel", "rpm --eval '%{set_build_flags}'; eval $(rpm --eval '%{set_build_flags}')"],
-                  ["archlinux:latest", "pacman -Sy aspell automake apache binutils coreutils expect gawk gcc gdbm ghostscript gnupg groff gzip hylafax libidn libtool libxml2 mailcap make mariadb ncurses netpbm openldap openssl pam pcre pcre2 perl pkgconfig postgresql procps-ng sed sqlite wget zlib zlib --noconfirm; mkdir -p /var/www/cgi-bin /var/www/html", "source /etc/makepkg.conf; export $(egrep '^[[:alnum:]_]+=' /etc/makepkg.conf | cut -f1 -d=)"],
+                  ["centos:7", "yum install -y epel-release ; yum install -y epel-rpm-macros ; yum install -y --setopt=tsflags=nodocs aspell-devel automake /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed /usr/lib/locale/locale-archive valgrind wget which zlib-devel", "rpm --eval '%{set_build_flags}'; eval $(rpm --eval '%{set_build_flags}')"],
+                  ["archlinux:latest", "pacman -Sy aspell automake apache binutils coreutils diffutils expect gawk gcc gdbm ghostscript gnupg groff gzip hylafax libidn libtool libxml2 mailcap make mariadb ncurses netpbm openldap openssl pam pcre pcre2 perl pkgconfig postgresql procps-ng sed sqlite valgrind wget which zlib zlib --noconfirm; mkdir -p /var/www/cgi-bin /var/www/html", "source /etc/makepkg.conf; export $(egrep '^[[:alnum:]_]+=' /etc/makepkg.conf | cut -f1 -d=)"],
                  ]
         project: ["cone",
                   "courier-analog",
