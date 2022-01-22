@@ -1,3 +1,8 @@
+2022-01-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fixes to Makefile to workaround test suite failures related to
+	permission checking when make check runs as root.
+
 1.1.8
 
 2022-01-16  Arjen de Korte <build+github@de-korte.org>
