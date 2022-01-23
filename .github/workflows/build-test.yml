@@ -3,6 +3,7 @@ name: Run builds on supported distributions
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   make_dist:
