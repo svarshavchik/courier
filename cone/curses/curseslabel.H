@@ -31,17 +31,17 @@ public:
 		    Curses::CursesAttr attributeArg=Curses::CursesAttr());
 	~CursesLabel();
 
-	void setRow(int row);
-	void setCol(int col);
-	void setAlignment(Alignment alignment);
+	void setRow(int row) override;
+	void setCol(int col) override;
+	void setAlignment(Alignment alignment) override;
 	void setAttribute(Curses::CursesAttr attr);
 	virtual void setText(std::string textArg);
 
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
-	void draw();
-	void erase();
+	void draw() override;
+	void erase() override;
 };
 
 #endif

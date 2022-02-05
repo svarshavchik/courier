@@ -162,9 +162,9 @@ class nntpCommandFolder::add : public mail::addMessage {
 public:
 	add(mail::callback &cbArg);
 	~add();
-	void saveMessageContents(string);
-	void go();
-	void fail(string errmsg);
+	void saveMessageContents(string) override;
+	void go() override;
+	void fail(string errmsg) override;
 };
 
 mail::addMessage *nntpCommandFolder::addMessage(mail::callback &callback) const
@@ -327,4 +327,3 @@ void nntpCommandFolder::add::go()
 		delete this;
 	}
 }
-

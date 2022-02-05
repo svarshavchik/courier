@@ -233,7 +233,7 @@ class myFolder::FolderIndexUpdate : public mail::callback::message {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	mail::ptr<myFolder> folder;
@@ -249,23 +249,23 @@ public:
 
 	void messageEnvelopeCallback(size_t messageNumber,
 				     const class mail::envelope
-				     &envelope);
+				     &envelope) override;
 
 	void messageReferencesCallback(size_t messageNumber,
 				       const std::vector<std::string>
-				       &references);
+				       &references) override;
 
 	void messageArrivalDateCallback(size_t messageNumber,
-					time_t datetime);
+					time_t datetime) override;
 
 	void messageSizeCallback(size_t messageNumber,
-				 unsigned long size);
+				 unsigned long size) override;
 
 
 	// Inherited from mail::callback
 
-	void success(string);
-	void fail(string);
+	void success(string) override;
+	void fail(string) override;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -278,7 +278,7 @@ class myFolder::NewMailUpdate : public mail::callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	myFolder::FolderIndexUpdate *update_struct;
@@ -286,8 +286,8 @@ public:
 	NewMailUpdate();
 	~NewMailUpdate();
 
-	void success(string);
-	void fail(string);
+	void success(string) override;
+	void fail(string) override;
 };
 
 
@@ -515,7 +515,7 @@ void myFolder::newMessagesReceivedAndFiltered(size_t newMessages)
 
 				n.setTag(keywords);
 			}
-			
+
 			sorted_index.push_back(oldMessages);
 			++oldMessages;
 		}
@@ -1387,7 +1387,7 @@ class OpenDraftCallback : public mail::callback::message,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	FILE *fp;
@@ -1396,9 +1396,9 @@ public:
 	OpenDraftCallback();
 	~OpenDraftCallback();
 
-	void messageTextCallback(size_t n, string text);
-	void success(string message);
-	void fail(string message);
+	void messageTextCallback(size_t n, string text) override;
+	void success(string message) override;
+	void fail(string message) override;
 };
 
 OpenDraftCallback::OpenDraftCallback()
@@ -1698,7 +1698,7 @@ public:
 	myFolderWriteDecoded(ostream &oArg, string cte);
 	~myFolderWriteDecoded();
 
-	void decoded(string);
+	void decoded(string) override;
 };
 
 myFolderWriteDecoded::myFolderWriteDecoded(ostream &oArg, string cte)

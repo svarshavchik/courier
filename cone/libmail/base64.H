@@ -26,7 +26,7 @@ class decodebase64 : public decoder {
 public:
 	decodebase64();
 	virtual ~decodebase64();
-	void decode(std::string text); // text - base64 text
+	void decode(std::string text) override; // text - base64 text
 
 private:
 	virtual void decoded(std::string buffer)=0;
@@ -63,7 +63,7 @@ public:
 	decodebase64str();
 	decodebase64str(std::string);
 	~decodebase64str();
-	void decoded(std::string s);
+	void decoded(std::string s) override;
 
 	operator std::string() const { return (challengeStr); }
 };
@@ -81,7 +81,7 @@ public:
 	encodebase64str(std::string);
 	~encodebase64str();
 
-	void encoded(std::string s);
+	void encoded(std::string s) override;
 
 	operator std::string() const { return (responseStr); }
 };

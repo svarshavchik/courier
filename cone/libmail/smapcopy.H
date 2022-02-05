@@ -16,7 +16,7 @@ LIBMAIL_START
 
 class smapCOPY : public smapHandler {
 
-	const char *getName();
+	const char *getName() override;
 
 	smapUidSet uidSet;
 	smapMsgRange msgRange;
@@ -34,11 +34,11 @@ public:
 
 	~smapCOPY();
 
-	void installed(imap &);
-	bool ok(std::string);
+	void installed(imap &) override;
+	bool ok(std::string) override;
 
 	bool go();
-	bool processLine(imap &imapAccount, std::vector<const char *> &words);
+	bool processLine(imap &imapAccount, std::vector<const char *> &words) override;
 };
 
 LIBMAIL_END

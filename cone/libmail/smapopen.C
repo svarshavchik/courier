@@ -31,10 +31,10 @@ public:
 			      mail::imap &myimapArg);
 	~SnapshotRestoreHelper();
 	void restoreIndex(size_t msgNum,
-			  const mail::messageInfo &info);
+			  const mail::messageInfo &info) override;
 	void restoreKeywords(size_t msgNum,
-			     const std::set<std::string> &set);
-	void abortRestore();
+			     const std::set<std::string> &set) override;
+	void abortRestore() override;
 };
 
 mail::smapOPEN::SnapshotRestoreHelper::
@@ -277,4 +277,3 @@ bool mail::smapOPEN::ok(std::string s)
 
 	return smapHandler::ok(s);
 }
-

@@ -18,7 +18,7 @@ LIBMAIL_START
 
 class smapAdd : public smapHandler {
 
-	const char *getName();
+	const char *getName() override;
 
 	std::vector<std::string> cmds;
 
@@ -30,7 +30,7 @@ class smapAdd : public smapHandler {
 	unsigned long tfilebytecount;
 
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
+			 std::vector<const char *> &words) override;
 
 	class WriteTmpFile : public mail::fd::WriteBuffer {
 	public:
@@ -43,7 +43,7 @@ class smapAdd : public smapHandler {
 		WriteTmpFile(smapAdd *myAddArg);
 		~WriteTmpFile();
 
-		bool fillWriteBuffer();
+		bool fillWriteBuffer() override;
 	};
 
 	bool ready2send;
@@ -54,9 +54,9 @@ public:
 		mail::callback &callback);
 	~smapAdd();
 
-	void installed(imap &);
-	bool ok(std::string);
-	bool fail(std::string);
+	void installed(imap &) override;
+	bool ok(std::string) override;
+	bool fail(std::string message) override;
 
 private:
 
@@ -64,7 +64,7 @@ private:
 	bool failCmd(std::string);
 
 	bool doneok(std::string);
-	bool donefail(std::string);
+	bool donefail(std::string message);
 };
 
 LIBMAIL_END

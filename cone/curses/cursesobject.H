@@ -82,7 +82,7 @@ public:
 
 	bool isDestroyed() const { return ptr == 0; }
 
-	void ptrDestroyed() { ptr=NULL; }
+	void ptrDestroyed() override { ptr=NULL; }
 
 };
 

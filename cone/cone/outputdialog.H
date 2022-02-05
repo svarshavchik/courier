@@ -25,21 +25,21 @@ class OutputDialog : public CursesContainer {
 	CursesButtonRedirect<OutputDialog> okButton;
 
 	void close();
-	void draw();
+	void draw() override;
 
 public:
 	OutputDialog(CursesMainScreen *parent);
 	~OutputDialog();
 
-	int getWidth() const;
-	int getHeight() const;
-	bool isDialog() const;
-	bool processKeyInFocus(const Key &key);
+	int getWidth() const override;
+	int getHeight() const override;
+	bool isDialog() const override;
+	bool processKeyInFocus(const Key &key) override;
 
 	void output(std::string);
 private:
 	bool partialLine;
-	
+
 	void outputLine(std::string);
 public:
 	void outputDone();

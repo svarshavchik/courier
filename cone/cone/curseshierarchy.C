@@ -519,7 +519,7 @@ public:
 	CursesHierarchyFindServerIterator();
 	~CursesHierarchyFindServerIterator();
 
-	bool visit(Hierarchy::Server *s);
+	bool visit(Hierarchy::Server *s) override;
 	static myServer *find(Hierarchy::Entry *e);
 };
 
@@ -894,8 +894,8 @@ public:
 
 	CursesHierarchyAddFolderKeyHandler();
 	~CursesHierarchyAddFolderKeyHandler();
-	bool processKey(const Curses::Key &key);
-	bool listKeys( vector< pair<string, string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( vector< pair<string, string> > &list) override;
 };
 
 
@@ -948,7 +948,7 @@ public:
 						  Hierarchy::Folder
 						  *deletedArg);
 	~CursesHierarchyDeleteFolderVerifyCallback();
-	void success(const vector<const mail::folder *> &folders);
+	void success(const vector<const mail::folder *> &folders) override;
 };
 
 CursesHierarchyDeleteFolderVerifyCallback::

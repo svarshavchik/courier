@@ -42,10 +42,10 @@ class mail::nntp::GroupOpenTask : public mail::nntp::GroupTask {
 		snapshotRestoreHelper(mail::nntp &nntpArg);
 		~snapshotRestoreHelper();
 		void restoreIndex(size_t msgNum,
-				  const mail::messageInfo &);
+				  const mail::messageInfo &) override;
 		void restoreKeywords(size_t msgNum,
-				     const std::set<std::string> &);
-		void abortRestore();
+				     const std::set<std::string> &) override;
+		void abortRestore() override;
 	};
 
 public:
@@ -58,8 +58,8 @@ public:
 
 	void selectedGroup(msgnum_t estimatedCount,
 			   msgnum_t loArticleCount,
-			   msgnum_t hiArticleCount);
-	void processGroup(const char *);
+			   msgnum_t hiArticleCount) override;
+	void processGroup(const char *) override;
 
 private:
 	void processLISTGROUP(const char *);

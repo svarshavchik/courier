@@ -60,27 +60,27 @@ class CursesFileReq : public CursesContainer,
 		// automatically extended to the bottom of its parent.
 		//  Its width is the same as the parent's width.
 
-		int getHeight() const;
-		int getWidth() const;
+		int getHeight() const override;
+		int getWidth() const override;
 
-		bool isFocusable(); // Yes we are.
+		bool isFocusable() override; // Yes we are.
 
-		void focusGained(); // Move to the first row
-		void focusLost();   // Turn off cursor
-		void draw();
+		void focusGained() override; // Move to the first row
+		void focusLost() override;   // Turn off cursor
+		void draw() override;
 
 		// Even though this is a CursesContainer subclass, its focus
 		// behavior must be the same as Curses's focus behavior
 		// (the default CursesContainer implementation doesn't work,
 		// because this object does not have any children).
 
-		Curses *getPrevFocus();
-		Curses *getNextFocus();
+		Curses *getPrevFocus() override;
+		Curses *getNextFocus() override;
 
 		void operator=(std::vector<Direntry> &directoryArg);
 
-		int getCursorPosition(int &row, int &col);
-		bool processKeyInFocus(const Key &key);
+		int getCursorPosition(int &row, int &col) override;
+		bool processKeyInFocus(const Key &key) override;
 
 	};
 
@@ -93,7 +93,7 @@ class CursesFileReq : public CursesContainer,
 
 	void doresized(); // Reset directoryName's contents
 
-	bool isDialog() const;	// Yes we are
+	bool isDialog() const override;	// Yes we are
 
 	CursesMainScreen *parent; // My parent
 
@@ -124,11 +124,11 @@ public:
 	{
 		filenameField.setText(n);
 	}
-	void resized();
-	void draw();
-	void requestFocus();
-	int getWidth() const;
-	int getHeight() const;
+	void resized() override;
+	void draw() override;
+	void requestFocus() override;
+	int getWidth() const override;
+	int getHeight() const override;
 
 	// Select the following entry.
 
@@ -148,7 +148,7 @@ public:
 	virtual void abort();
 
 private:
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 
 	void filenameEnter();	// Enter pressed in the filename field
 
@@ -164,7 +164,8 @@ public:
 	static void expand(std::string pattern,
 			   std::vector<std::string> &filenameList);
 
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list)
+		override;
 
 	std::vector<std::string> &getFilenameList()
 	{

@@ -1173,7 +1173,7 @@ class imapComboFetchCallback
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	imapComboFetchCallback(mail::callback::message &callback,
@@ -1182,9 +1182,9 @@ public:
 			       const mimestruct &msginfo,
 			       imap &imapAccount);
 	~imapComboFetchCallback();
-	void messageTextCallback(size_t n, string text);
-	void fail(string message);
-	void success(string message);
+	void messageTextCallback(size_t n, string text) override;
+	void fail(string message) override;
+	void success(string message) override;
 };
 
 LIBMAIL_END
@@ -1369,15 +1369,15 @@ class imapFolderHeadersCallback : public mail::callback::message {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	imapFolderHeadersCallback(bool, mail::callback::message &);
 	~imapFolderHeadersCallback();
 
-	void messageTextCallback(size_t n, string text);
-	void success(string message);
-	void fail(string message);
+	void messageTextCallback(size_t n, string text) override;
+	void success(string message) override;
+	void fail(string message) override;
 };
 
 LIBMAIL_END

@@ -19,7 +19,7 @@ class smapHandler : public imapHandler {
 protected:
 	mail::callback *defaultCB;
 
-	void timedOut(const char *errmsg);
+	void timedOut(const char *errmsg) override;
 
 	bool doDestroy;
 
@@ -27,7 +27,7 @@ public:
 	smapHandler(int timeoutValArg=0);
 	virtual ~smapHandler();
 
-	int process(imap &imapAccount, std::string &buffer);
+	int process(imap &imapAccount, std::string &buffer) override;
 
 	int singleLineProcess(imap &imapAccount, std::string &buffer);
 	int multiLineProcessDotStuffed(imap &, std::string &);
@@ -44,7 +44,7 @@ public:
 	virtual void endData(imap &imapAccount);
 
 	virtual bool ok(std::string);
-	virtual bool fail(std::string);
+	virtual bool fail(std::string message);
 
 	virtual void existsOrExpungeSeen();
 	// Some subclasses want to know if an EXISTS or EXPUNGE was received

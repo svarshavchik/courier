@@ -121,7 +121,7 @@ public:
 	virtual ~searchCallback();
 
 	virtual void success(const std::vector<size_t> &found)=0;
-	virtual void fail(std::string)=0;
+	virtual void fail(std::string message)=0;
 
 	virtual void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
@@ -159,29 +159,29 @@ class searchOneMessage {
 
 		Callback();
 		~Callback();
-		void success(std::string message);
-		void fail(std::string message);
+		void success(std::string message) override;
+		void fail(std::string message) override;
 
 		void messageEnvelopeCallback(size_t messageNumber,
 					     const class envelope
-					     &envelope);
+					     &envelope) override;
 
 		void messageArrivalDateCallback(size_t messageNumber,
-						time_t datetime);
+						time_t datetime) override;
 
 		void messageSizeCallback(size_t messageNumber,
-					 unsigned long size);
+					 unsigned long size) override;
 
 		void messageStructureCallback(size_t messageNumber,
 					      const class mimestruct
-					      &messageStructure);
-		void messageTextCallback(size_t n, std::string text);
+					      &messageStructure) override;
+		void messageTextCallback(size_t n, std::string text) override;
 
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 	};
 
 	Callback my_callback;
@@ -190,7 +190,7 @@ class searchOneMessage {
 
 	class Searcher : public mail::Search, public unicode::iconvert {
 
-		int converted(const char *str, size_t n);
+		int converted(const char *str, size_t n) override;
 
 	public:
 		using mail::Search::operator bool;
@@ -254,14 +254,14 @@ class searchMessages : public runLater {
 		Callback();
 		~Callback();
 
-		void fail(std::string message);
-		void success(const std::vector<size_t> &found);
+		void fail(std::string message) override;
+		void success(const std::vector<size_t> &found) override;
 
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 	} search_callback;
 
 	ptr<mail::account> server;
@@ -275,7 +275,7 @@ class searchMessages : public runLater {
 	searchParams searchInfo, searchInfoCpy;
 
 	void nextSearch();
-	void RunningLater();
+	void RunningLater() override;
 public:
 
 	friend class Callback;

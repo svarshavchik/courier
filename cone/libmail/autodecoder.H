@@ -29,7 +29,7 @@ class autodecoder : public decoder {
 		base64(autodecoder &meArg);
 		~base64();
 	private:
-		void decoded(std::string);
+		void decoded(std::string) override;
 	};
 
 	class qp : public decodeqp {
@@ -39,7 +39,7 @@ class autodecoder : public decoder {
 		qp(autodecoder &meArg);
 		~qp();
 	private:
-		void decoded(std::string);
+		void decoded(std::string) override;
 	};
 
 	base64 base64Decoder;
@@ -51,7 +51,7 @@ public:
 	autodecoder(std::string contentTransferEncoding);
 	~autodecoder();
 
-	void decode(std::string s);
+	void decode(std::string s) override;
 
 	virtual void decoded(std::string)=0;
 

@@ -75,13 +75,13 @@ class CursesStatusBar : public CursesContainer, public CursesKeyHandler {
 		      std::string initValue);
 		~Field();
 
-		bool processKeyInFocus(const Key &key);
+		bool processKeyInFocus(const Key &key) override;
 
 		bool writeText(const char *text, int row, int col,
-			       const CursesAttr &attr) const;
+			       const CursesAttr &attr) const override;
 		bool writeText(const std::u32string &text,
 			       int row, int col,
-			       const Curses::CursesAttr &attr) const;
+			       const Curses::CursesAttr &attr) const override;
 	};
 
 	Field *fieldActive;      // Not NULL when input takes place
@@ -140,15 +140,15 @@ public:
 
 	static std::string extendedErrorPrompt; // Non empty - wrapped text
 
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
 	void setStatusBarAttr(CursesAttr);
 	void setHotKeyAttr(CursesAttr);
 	void setHotKeyDescr(CursesAttr);
 
-	void draw();
-	void resized();
+	void draw() override;
+	void resized() override;
 
 	void status(std::string statusText, statusLevel level=NORMAL);
 	void progress(std::string progress);
@@ -178,8 +178,9 @@ private:
 
 	void resetRow();
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list)
+		override;
 };
 
 #endif

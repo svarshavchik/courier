@@ -49,8 +49,8 @@ public:
 
 	// Do a NEWGROUPS
 
-	void loggedIn();
-	void processLine(const char *message);
+	void loggedIn() override;
+	void processLine(const char *message) override;
 
 private:
 	void processDateStatus(const char *);

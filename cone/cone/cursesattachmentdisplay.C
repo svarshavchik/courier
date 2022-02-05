@@ -495,7 +495,7 @@ public:
 	KeyImportHelper();
 	~KeyImportHelper();
 
-	void operator()(std::string text); // Read decoded key.
+	void operator()(std::string text) override; // Read decoded key.
 
 	bool finish();
 
@@ -624,5 +624,3 @@ void CursesAttachmentDisplay::open(mail::mimestruct *mime)
 					    mime ? mime->mime_id:"");
 #endif
 }
-
-

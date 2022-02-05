@@ -36,7 +36,7 @@ public:
 	myReadFolders(const myReadFolders &);
 	myReadFolders &operator=(const myReadFolders &);
 
-	void success(const std::vector<const mail::folder *> &folders);
+	void success(const std::vector<const mail::folder *> &folders) override;
 	void success(const std::vector<const mail::folder *> &folders, bool doSort);
 	void add(std::string s) { folder_list.push_back(s); }
 

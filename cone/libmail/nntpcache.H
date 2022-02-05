@@ -41,9 +41,9 @@ public:
 
 	~CacheTask();
 
-	void success(std::string msg);
-	void loggedIn();
-	void fetchedText(std::string);
+	void success(std::string msg) override;
+	void loggedIn() override;
+	void fetchedText(std::string) override;
 };
 
 LIBMAIL_END

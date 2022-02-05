@@ -43,16 +43,16 @@ public:
 	~pop3maildrop();
 
 	// Hook into POP3:
-	void logout(callback &callback);
-	void checkNewMail(callback &callback);
+	void logout(callback &callback) override;
+	void checkNewMail(callback &callback) override;
 
-	bool hasCapability(std::string capability);
-	std::string getCapability(std::string capability);
+	bool hasCapability(std::string capability) override;
+	std::string getCapability(std::string capability) override;
 private:
 	// Inherited from callback::disconnect:
 
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 
 };
 

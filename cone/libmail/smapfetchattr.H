@@ -18,7 +18,7 @@ LIBMAIL_START
 
 class smapFETCHATTR : public smapHandler {
 
-	const char *getName();
+	const char *getName() override;
 
 	smapUidSet uidSet;
 	smapMsgRange fetchList;
@@ -34,24 +34,24 @@ public:
 		      mail::imap &imapAccount);
 	~smapFETCHATTR();
 
-	void installed(imap &);
-	bool ok(std::string);
+	void installed(imap &) override;
+	bool ok(std::string) override;
 
 	bool go();
 
 private:
 	void fetchedMessageSize(size_t msgNum,
-				unsigned long bytes);
+				unsigned long bytes) override;
 
 	void fetchedInternalDate(size_t msgNum,
-				 time_t internalDate);
+				 time_t internalDate) override;
 
 	void beginProcessData(imap &imapAccount,
 			      std::vector<const char *> &words,
-			      unsigned long estimatedSize);
+			      unsigned long estimatedSize) override;
 	void processData(imap &imapAccount,
-			 std::string data);
-	void endData(imap &imapAccount);
+			 std::string data) override;
+	void endData(imap &imapAccount) override;
 
 	std::string fetchingHeader;
 	size_t fetchingMessageNum;

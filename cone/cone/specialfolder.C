@@ -99,7 +99,7 @@ public:
 	DummyCallback();
 	~DummyCallback();
 
-	void fail(string message);
+	void fail(string message) override;
 };
 
 SpecialFolder::DummyCallback::DummyCallback()
@@ -333,4 +333,3 @@ void SpecialFolder::doDeleteAccount(std::string url)
 		n++;
 	}
 }
-

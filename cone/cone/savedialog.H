@@ -25,8 +25,8 @@ public:
 	SaveDialog(std::string defaultName="");
 	~SaveDialog();
 
-	void selected(std::vector<std::string> &);
-	void abort();
+	void selected(std::vector<std::string> &) override;
+	void abort() override;
 
 	operator std::string();
 };

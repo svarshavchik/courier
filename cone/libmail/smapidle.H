@@ -29,22 +29,22 @@ class smapIdleHandler : public smapHandler {
 
 	void terminateIdle(imap &);
 
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
 
-	bool getTimeout(imap &, int &ioTimeout);
+	bool getTimeout(imap &, int &ioTimeout) override;
 
 public:
 	smapIdleHandler(bool idleOnOffArg, mail::callback *callbackArg);
 
 	~smapIdleHandler();
 
-	void installed(imap &);
+	void installed(imap &) override;
 
-	virtual bool ok(std::string);
+	virtual bool ok(std::string) override;
 
-	void anotherHandlerInstalled(imap &imapAccount);
+	void anotherHandlerInstalled(imap &imapAccount) override;
 };
 
 

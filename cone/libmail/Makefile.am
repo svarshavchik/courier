@@ -139,7 +139,7 @@ mailtool_LDADD=libmail.la ../libs/rfc2045/librfc2045.la \
 	../libs/liblock/liblock.la \
 	../libs/libhmac/libhmac.la ../libs/md5/libmd5.la ../libs/sha1/libsha1.la \
 	../libs/numlib/libnumlib.la ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a \
-	`cat ../libs/maildir/maildir.libdeps ../libs/soxwrap/soxlibs.dep`
+	`cat ../libs/soxwrap/soxlibs.dep`
 mailtool_LDFLAGS=-static
 
 testsuite_SOURCES=testsuite.C

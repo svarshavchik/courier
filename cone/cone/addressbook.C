@@ -101,8 +101,8 @@ class AddressBook::disconnect : public mail::callback::disconnect {
 public:
 	disconnect();
 	~disconnect();
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 };
 
 
@@ -601,10 +601,10 @@ class AddAddressBookScreen : public CursesContainer,
 	void save();
 	void cancel();
 
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 
 public:
-	void requestFocus()
+	void requestFocus() override
 	{
 		nickname_field.requestFocus();
 	}
@@ -677,7 +677,7 @@ AddAddressBookScreen::AddAddressBookScreen(CursesMainScreen *mainScreen,
 
 		addresses.push_back(addr);
 	}
-		
+
 	if (addresses.size() == 1)
 	{
 		name_field.setText(addresses[0]
@@ -845,7 +845,7 @@ class AddressBookIndexScreen : public CursesContainer,
 		pair<string, string> myEntry;
 		// first: nickname, second: uid
 
-		bool processKeyInFocus(const Key &key);
+		bool processKeyInFocus(const Key &key) override;
 
 	public:
 		size_t indexNum;
@@ -854,7 +854,7 @@ class AddressBookIndexScreen : public CursesContainer,
 			    pair<string, string> myEntryArg);
 		~indexButton();
 
-		void clicked();
+		void clicked() override;
 	};
 
 	vector<indexButton *> buttons;
@@ -865,10 +865,10 @@ class AddressBookIndexScreen : public CursesContainer,
 				const pair<string, string> &b);
 	};
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( vector< pair<string,  string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( vector< pair<string,  string> > &list) override;
 public:
-	void requestFocus()
+	void requestFocus() override
 	{
 		if (buttons.size() > 0)
 			buttons[0]->requestFocus();
@@ -1362,8 +1362,8 @@ public:
 	AddLdapScreen(CursesMainScreen *mainScreen);
 	~AddLdapScreen();
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( vector< pair<string,  string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( vector< pair<string,  string> > &list) override;
 };
 
 
@@ -1544,7 +1544,7 @@ class ListAddressBookScreen : public CursesContainer ,
 	private:
 		std::list<AddressBook *>::iterator listIterator;
 
-		bool processKeyInFocus(const Key &key);
+		bool processKeyInFocus(const Key &key) override;
 
 	public:
 		addressbookButton(ListAddressBookScreen *parent,
@@ -1554,19 +1554,19 @@ class ListAddressBookScreen : public CursesContainer ,
 
 		~addressbookButton();
 
-		void clicked();
+		void clicked() override;
 	};
 
 	list<addressbookButton *> buttons;
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( vector< pair<string,  string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( vector< pair<string,  string> > &list) override;
 
 public:
 	ListAddressBookScreen(CursesMainScreen *parent);
 	~ListAddressBookScreen();
 
-	void requestFocus();
+	void requestFocus() override;
 
 	void deleteAddressBook(list<AddressBook *>::iterator addressBook);
 	void moveDown(list<AddressBook *>::iterator addressBook);
@@ -1656,7 +1656,7 @@ ListAddressBookScreen::ListAddressBookScreen(CursesMainScreen *parent)
 
 		if (!bp)
 			outofmemory();
-		
+
 		try {
 			buttons.insert(buttons.end(), bp);
 		} catch (...) {
@@ -1867,12 +1867,12 @@ class AddressBookTakeScreen : public CursesContainer,
 			      mail::emailAddress addr);
 		~addressButton();
 
-		void clicked();
+		void clicked() override;
 	};
 
 	vector<addressButton *> buttons;
 
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 
 	class indexSort {
 	public:
@@ -1881,7 +1881,7 @@ class AddressBookTakeScreen : public CursesContainer,
 	};
 
 public:
-	void requestFocus()
+	void requestFocus() override
 	{
 		if (buttons.size() > 0)
 			buttons[0]->requestFocus();

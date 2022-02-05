@@ -52,8 +52,8 @@ public:
 
 private:
 
-	std::vector<MenuEntry> &getMenuVector();
-	std::vector<ShortcutKey> &getKeyVector();
+	std::vector<MenuEntry> &getMenuVector() override;
+	std::vector<ShortcutKey> &getKeyVector() override;
 
 	std::vector<MenuScreen::MenuActionStaticCallback> myAction;
 	std::vector<MenuEntry> myEntries;

@@ -26,7 +26,7 @@ public:
 
 	void reset();
 
-	void loginPrompt(callbackType cbType, std::string prompt);
+	void loginPrompt(callbackType cbType, std::string prompt) override;
 
 	void promptPassword(std::string serverName, std::string &password);
 };

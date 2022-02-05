@@ -41,15 +41,15 @@ public:
 			const char *folder_chset,
 			std::string myHier, bool oneFolderOnlyArg);
 	~imapListHandler();
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 private:
 
-	bool untaggedMessage(imap &imapAccount, std::string name);
+	bool untaggedMessage(imap &imapAccount, std::string name) override;
 	bool taggedMessage(imap &imapAccount, std::string name, std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 };
 
 
@@ -76,13 +76,13 @@ public:
 		 bool oneNameOnlyArg=false);
 	~imapLIST();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	void process(imap &imapAccount, Token t);
+	void process(imap &imapAccount, Token t) override;
 
 	void start_attribute_list(imap &imapAccount, Token t);
 	void get_attribute(imap &imapAccount, Token t);

@@ -19,34 +19,34 @@ class smapACL : public smapHandler {
 
 	std::string folderName;
 	std::string &rights;
-	const char *getName();
+	const char *getName() override;
 
 public:
 	smapACL(std::string folderNameArg,
 		std::string &rightsArg,
 		mail::callback &getCallbackArg);
 	~smapACL();
-	void installed(imap &);
+	void installed(imap &) override;
 
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
+			 std::vector<const char *> &words) override;
 };
 
 class smapGETACL : public smapHandler {
 
 	std::string folderName;
 	std::list<std::pair<std::string, std::string> > &rights;
-	const char *getName();
+	const char *getName() override;
 
 public:
 	smapGETACL(std::string folderNameArg,
 		   std::list<std::pair<std::string, std::string> > &rightsArg,
 		   mail::callback &getCallbackArg);
 	~smapGETACL();
-	void installed(imap &);
+	void installed(imap &) override;
 
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
+			 std::vector<const char *> &words) override;
 };
 
 class smapSETACL : public smapHandler {
@@ -58,7 +58,7 @@ class smapSETACL : public smapHandler {
 	std::string &errorIdentifier;
 	std::vector<std::string> &errorRights;
 
-	const char *getName();
+	const char *getName() override;
 
 public:
 	smapSETACL(std::string folderName,
@@ -69,10 +69,10 @@ public:
 		   std::vector<std::string> &errorRights,
 		   mail::callback &callbackArg);
 	~smapSETACL();
-	void installed(imap &);
+	void installed(imap &) override;
 
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
+			 std::vector<const char *> &words) override;
 };
 
 LIBMAIL_END

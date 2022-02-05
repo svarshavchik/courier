@@ -36,7 +36,7 @@ private:
 
 		pump(PostTask *);
 		~pump();
-		bool fillWriteBuffer();
+		bool fillWriteBuffer() override;
 	};
 
 	pump *myPumper;
@@ -47,8 +47,8 @@ public:
 		     FILE *msgArg);
 	~PostTask();
 
-	virtual void loggedIn();
-	virtual void processLine(const char *message);
+	virtual void loggedIn() override;
+	virtual void processLine(const char *message) override;
 
 private:
 	void doPostStatus(const char *);

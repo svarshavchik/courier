@@ -24,9 +24,9 @@ class CursesMessage::FlowedTextParser : public mail::textplainparser,
 	size_t displayWidth;
 
 	// Inherited from reformatter
-	void parse(std::string text);
-	bool finish();
-	bool conversionError();
+	void parse(std::string text) override;
+	bool finish() override;
+	bool conversionError() override;
 
 	bool conversionErrorFlag;
 
@@ -34,11 +34,11 @@ class CursesMessage::FlowedTextParser : public mail::textplainparser,
 
 	// Inherited from textplainparser
 
-	void line_begin(size_t);
+	void line_begin(size_t) override;
 
-	void line_contents(const char32_t *, size_t);
+	void line_contents(const char32_t *, size_t) override;
 
-	void line_end();
+	void line_end() override;
 
 	unicoderewrapnone norewrapper;
 

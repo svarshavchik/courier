@@ -55,18 +55,18 @@ class copyMessage : public runLater {
 		~FetchCallback();
 
 		void messageArrivalDateCallback(size_t messageNumber,
-						time_t datetime);
+						time_t datetime) override;
 
-		void messageTextCallback(size_t n, std::string text);
+		void messageTextCallback(size_t n, std::string text) override;
 
-		void success(std::string);
-		void fail(std::string);
+		void success(std::string) override;
+		void fail(std::string message) override;
 
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 
 	} fetch_callback;
 
@@ -77,14 +77,14 @@ class copyMessage : public runLater {
 		AddCallback();
 		~AddCallback();
 
-		void success(std::string);
-		void fail(std::string);
+		void success(std::string) override;
+		void fail(std::string message) override;
 
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 
 	} add_callback;
 
@@ -97,7 +97,7 @@ class copyMessage : public runLater {
 	void reportProgress();
 
 	void fetchCompleted();
-	void RunningLater();
+	void RunningLater() override;
 
 	void success(mail::callback &callback, std::string msg);
 
@@ -151,14 +151,14 @@ class copyMessages : public runLater {
 		Callback();
 		~Callback();
 
-		void success(std::string message);
-		void fail(std::string message);
+		void success(std::string message) override;
+		void fail(std::string message) override;
 
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 
 
 	} copy_callback;
@@ -169,7 +169,7 @@ class copyMessages : public runLater {
 			   mail::callback &callback);
 	~copyMessages();
 
-	void RunningLater();
+	void RunningLater() override;
 
 	void doSomething(std::string message);
 

@@ -14,7 +14,7 @@ LIBMAIL_START
 
 class smapNEWMAIL : public smapHandler {
 
-	const char *getName();
+	const char *getName() override;
 
 	bool isOpen;
 
@@ -23,14 +23,14 @@ class smapNEWMAIL : public smapHandler {
 
 	bool noopSent;
 
-	void fetchedIndexInfo();
+	void fetchedIndexInfo() override;
 public:
 	smapNEWMAIL(mail::callback *callbackArg,
 		    bool isOpenArg);
 
-	void installed(imap &);
-	bool ok(std::string);
-	bool fail(std::string);
+	void installed(imap &) override;
+	bool ok(std::string) override;
+	bool fail(std::string message) override;
 
 	~smapNEWMAIL();
 };

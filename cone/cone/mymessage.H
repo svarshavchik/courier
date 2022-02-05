@@ -67,12 +67,12 @@ private:
 	// Subclassed from mail::callback, used by tmpaccount
 	// They are no-ops.
 
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 
-	void newMessages();
-	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &);
-	void messageChanged(size_t);
+	void newMessages() override;
+	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &) override;
+	void messageChanged(size_t) override;
 
 public:
 

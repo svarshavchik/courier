@@ -22,8 +22,8 @@ class AddressBook::Interface::Mail : public AddressBook::Interface,
 	mail::folder *folder;
 	mail::addressbook *addressBook;
 
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 
 	bool serverLogin(std::string uid, std::string pwd,
 			 myServerLoginCallback *callbackPtr);
@@ -33,23 +33,23 @@ public:
 	virtual ~Mail();
 
 	bool open(std::string url, std::string folderStr);
-	void close();
-	bool closed();
-	void done();
+	void close() override;
+	bool closed() override;
+	void done() override;
 	bool add(mail::addressbook::Entry &newEntry,
-		 std::string oldUid);
-	bool import(std::list<mail::addressbook::Entry> &newList);
-	bool del(std::string uid);
+		 std::string oldUid) override;
+	bool import(std::list<mail::addressbook::Entry> &newList) override;
+	bool del(std::string uid) override;
 	bool rename(std::string uid,
-		    std::string newnickname);
+		    std::string newnickname) override;
 
 	bool searchNickname(std::string nickname,
-			    std::vector<mail::emailAddress> &addrListArg);
+			    std::vector<mail::emailAddress> &addrListArg) override;
 	void getIndex(std::list< std::pair<std::string, std::string> >
-		      &listArg);
+		      &listArg) override;
 
 	bool getEntry(std::string uid,
-		      std::vector<mail::emailAddress> &addrList);
+		      std::vector<mail::emailAddress> &addrList) override;
 
 
 };

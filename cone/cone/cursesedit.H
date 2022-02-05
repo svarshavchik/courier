@@ -18,7 +18,7 @@
 // This object does everything needed to write a message, except for the
 // actual text editing stuff: reading/writing the message, spell checking,
 // sending the message, autosaving, attachment handling...
- 
+
 
 #include "config.h"
 #include "libmail/mail.H"
@@ -67,10 +67,10 @@ class CursesEdit : public CursesContainer, public CursesKeyHandler {
 		CursesEditMessageClass(CursesContainer *);
 		~CursesEditMessageClass();
 
-		void modified();
-		std::string getConfigDir();
-		void extedited();
-		void macroDefined();
+		void modified() override;
+		std::string getConfigDir() override;
+		void extedited() override;
+		void macroDefined() override;
 	};
 
 	bool goodexit; // Graceful cleanup, no need to autosave
@@ -83,9 +83,9 @@ class CursesEdit : public CursesContainer, public CursesKeyHandler {
 		AddressList(CursesEdit *parentArg);
 		~AddressList();
 
-		void resized();
+		void resized() override;
 		bool addressLookup(std::vector<mail::emailAddress> &in,
-				   std::vector<mail::emailAddress> &out);
+				   std::vector<mail::emailAddress> &out) override;
 	};
 
 	// Existing attachments:
@@ -101,7 +101,7 @@ class CursesEdit : public CursesContainer, public CursesKeyHandler {
 				 std::string encodingArg);
 		~AttachmentButton();
 
-		bool processKeyInFocus(const Curses::Key &key);
+		bool processKeyInFocus(const Curses::Key &key) override;
 		std::string getFilename() { return filename; }
 		std::string getEncoding() { return encoding; }
 	};
@@ -200,17 +200,17 @@ public:
 	CursesEdit(CursesContainer *parent);
 	~CursesEdit();
 
-	int getWidth() const;
+	int getWidth() const override;
 
 	void init();
 
-	void requestFocus();
-	bool isFocusable();
+	void requestFocus() override;
+	bool isFocusable() override;
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
-	void draw();
-	void erase();
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
+	void draw() override;
+	void erase() override;
 
 	class SaveSink;
 	class SaveSinkAutosave;
@@ -257,10 +257,10 @@ private:
 		dummyFolderCallback();
 		~dummyFolderCallback();
 
-		void newMessages();
+		void newMessages() override;
 		void messagesRemoved(std::vector< std::pair<size_t,
-				     size_t> > &list);
-		void messageChanged(size_t n);
+				     size_t> > &list) override;
+		void messageChanged(size_t n) override;
 	};
 };
 

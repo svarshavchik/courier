@@ -51,13 +51,13 @@ class myFolder : public mail::callback::folder,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 
 	public:
 		DelUndelCallback();
 		~DelUndelCallback();
-		void success(std::string);
-		void fail(std::string);
+		void success(std::string) override;
+		void fail(std::string) override;
 	};
 
 public:
@@ -86,8 +86,8 @@ public:
 		~RestoreSnapshot();
 
 		void getSnapshotInfo(std::string &snapshotId,
-				     size_t &nMessages);
-		void restoreSnapshot(mail::snapshot::restore &);
+				     size_t &nMessages) override;
+		void restoreSnapshot(mail::snapshot::restore &) override;
 	};
 
 	size_t saveFirstRowShown; // Exit/reenter index screen
@@ -408,10 +408,10 @@ public:
 
 	// Inherited from mail::callback::folder:
 
-	void newMessages();
-	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &list);
-	void messageChanged(size_t n);
-	void saveSnapshot(std::string snapshotId);
+	void newMessages() override;
+	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &list) override;
+	void messageChanged(size_t n) override;
+	void saveSnapshot(std::string snapshotId) override;
 
 private:
 	// Don't pile on expunge messages.  Set a timer, if no expunge

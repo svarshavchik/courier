@@ -316,17 +316,17 @@ public:
 		   mail::callback::folderList &callback1Arg,
 		   mail::callback &callback2Arg);
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string msgname);
+	bool untaggedMessage(imap &imapAccount, string msgname) override;
 
 	bool taggedMessage(imap &imapAccount, string msgname,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -512,16 +512,16 @@ public:
 	imapRECREATE(string pathArg, mail::callback &callbackArg);
 	~imapRECREATE();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string msgname);
+	bool untaggedMessage(imap &imapAccount, string msgname) override;
 
 	bool taggedMessage(imap &imapAccount, string msgname,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -587,16 +587,16 @@ public:
 	imapDELETE(mail::callback &callbackArg,
 			 string pathArg);
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
-	bool untaggedMessage(imap &imapAccount, string name);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
+	bool untaggedMessage(imap &imapAccount, string name) override;
 
 	bool taggedMessage(imap &imapAccount, string name,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -1259,7 +1259,7 @@ class imapAPPEND : public imapCommandHandler,
 		Pusher();
 		~Pusher();
 
-		bool fillWriteBuffer();
+		bool fillWriteBuffer() override;
 	};
 
 	Pusher *myPusher;
@@ -1277,21 +1277,21 @@ public:
 			 string pathArg);
 	~imapAPPEND();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 
-	void saveMessageContents(string txt);
-	void go();
-	void fail(string errmsg);
+	void saveMessageContents(string txt) override;
+	void go() override;
+	void fail(string errmsg) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *timedout);
-	bool untaggedMessage(imap &imapAccount, string msgname);
+	const char *getName() override;
+	void timedOut(const char *timedout) override;
+	bool untaggedMessage(imap &imapAccount, string msgname) override;
 	bool taggedMessage(imap &imapAccount, string msgname,
 			   string message,
-			   bool okfail, string errmsg);
-	bool continuationRequest(imap &imapAccount, string msg);
+			   bool okfail, string errmsg) override;
+	bool continuationRequest(imap &imapAccount, string msg) override;
 
 	bool fillWriteBuffer();
 

@@ -118,7 +118,10 @@ public:
 	void operator=(T *classPtr) { myClass=classPtr; }
 	void operator=( void (T::*methodPtr)() ) { myMethod=methodPtr; }
 
-	void alarm() { if (myClass && myMethod) (myClass->*myMethod)(); }
+	void alarm() override
+	{
+		if (myClass && myMethod) (myClass->*myMethod)();
+	}
 };
 
 #endif

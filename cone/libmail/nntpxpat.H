@@ -27,14 +27,14 @@ public:
 	XpatTaskCallback(searchCallback *);
 	~XpatTaskCallback();
 
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 };
 
 class mail::nntp::XpatTask : public mail::nntp::GroupTask {
@@ -58,8 +58,8 @@ public:
 
 	void selectedGroup(msgnum_t estimatedCount,
 			   msgnum_t loArticleCount,
-			   msgnum_t hiArticleCount);
-	void processGroup(const char *);
+			   msgnum_t hiArticleCount) override;
+	void processGroup(const char *) override;
 
 
 private:

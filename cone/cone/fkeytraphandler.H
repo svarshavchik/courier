@@ -30,7 +30,7 @@ public:
 	FKeyTrapHandler(bool onlyfkeysArg=false);
 	~FKeyTrapHandler();
 
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 };
 
 #endif

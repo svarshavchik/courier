@@ -42,10 +42,10 @@ class CursesMessage::HtmlParser : public ::htmlParser,
 
 	bool reply;	// If true, extra level of quoting is prepended.
 
-	void parse(std::string text);
-	bool finish();
+	void parse(std::string text) override;
+	bool finish() override;
 
-	bool conversionError();
+	bool conversionError() override;
 
 	bool conversionErrorFlag;
 public:
@@ -72,7 +72,7 @@ public:
 	~HtmlParser();
 
 private:
-	void parsedLine(std::string line, bool wrapped);
+	void parsedLine(std::string line, bool wrapped) override;
 };
 
 #endif

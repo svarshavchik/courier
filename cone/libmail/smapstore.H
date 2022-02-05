@@ -19,7 +19,7 @@ LIBMAIL_START
 
 class smapSTORE : public smapHandler {
 
-	const char *getName();
+	const char *getName() override;
 
 	smapUidSet uidSet;
 	smapMsgRange msgRange;
@@ -37,9 +37,9 @@ public:
 		  mail::callback &call);
 	~smapSTORE();
 
-	void installed(imap &);
+	void installed(imap &) override;
 
-	bool ok(std::string);
+	bool ok(std::string) override;
 
 	bool go();
 };

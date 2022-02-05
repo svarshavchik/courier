@@ -38,8 +38,8 @@ class CursesHierarchy : public Curses, public HierarchyDisplay,
 			     bool allArg);	// Always return true
 		~DrawIterator();
 
-		bool visit(Hierarchy::Folder *);
-		bool visit(Hierarchy::Server *);
+		bool visit(Hierarchy::Folder *) override;
+		bool visit(Hierarchy::Server *) override;
 	};
 
 	//
@@ -56,8 +56,8 @@ class CursesHierarchy : public Curses, public HierarchyDisplay,
 
 		bool isConsumed() const { return consumed; }
 
-		bool visit(Hierarchy::Folder *);
-		bool visit(Hierarchy::Server *);
+		bool visit(Hierarchy::Folder *) override;
+		bool visit(Hierarchy::Server *) override;
 
 	};
 
@@ -65,8 +65,8 @@ class CursesHierarchy : public Curses, public HierarchyDisplay,
 	private:
 		myServer* cs = NULL;
 	public:
-		bool visit(Hierarchy::Folder* f);
-		bool visit(Hierarchy::Server* s);
+		bool visit(Hierarchy::Folder* f) override;
+		bool visit(Hierarchy::Server* s) override;
 	};
 
 public:
@@ -83,14 +83,14 @@ public:
 
 	// Subclassed
 
-	void requestFocus();
+	void requestFocus() override;
 
 	// Inherited from HierarchyDisplay:
 
-	void drawEraseBelow(Hierarchy::Entry *e, bool doErase);
-	bool drawErase(Hierarchy::Folder *folder, bool doErase);
-	bool drawErase(Hierarchy::Server *server, bool doErase);
-	void visible(Hierarchy::Entry *e);
+	void drawEraseBelow(Hierarchy::Entry *e, bool doErase) override;
+	bool drawErase(Hierarchy::Folder *folder, bool doErase) override;
+	bool drawErase(Hierarchy::Server *server, bool doErase) override;
+	void visible(Hierarchy::Entry *e) override;
 
 	void refreshAllFolders();
 
@@ -102,12 +102,12 @@ private:
 public:
 	// Inherited from Curses:
 
-	int getWidth() const;
-	int getHeight() const;
-	void draw();
-	bool isFocusable();
-	bool processKeyInFocus(const Curses::Key &key);
-	int getCursorPosition(int &row, int &col);
+	int getWidth() const override;
+	int getHeight() const override;
+	void draw() override;
+	bool isFocusable() override;
+	bool processKeyInFocus(const Curses::Key &key) override;
+	int getCursorPosition(int &row, int &col) override;
 
 	bool processKeyInFocus(Hierarchy::Folder *f, const Curses::Key &key);
 	bool processKeyInFocus(Hierarchy::Server *s, const Curses::Key &key);
@@ -124,8 +124,8 @@ public:
 private:
 	// Inherited from CursesKeyHandler:
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 
 	Hierarchy::Folder *getCurrentFolder();
 public:

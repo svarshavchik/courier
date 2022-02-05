@@ -34,8 +34,8 @@ public:
 
 	// Implements:
 
-	void loggedIn();
-	void processLine(const char *message);
+	void loggedIn() override;
+	void processLine(const char *message) override;
 
 	// Subclasses must defined:
 

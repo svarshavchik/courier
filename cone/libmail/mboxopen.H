@@ -41,7 +41,7 @@ public:
 
 	~OpenTask();
 
-	bool doit();
+	bool doit() override;
 };
 
 //
@@ -49,7 +49,7 @@ public:
 
 class mbox::CheckNewMailTask : public mbox::OpenTask {
 
-	void opened(const char *okmsg, mail::callback &callback);
+	void opened(const char *okmsg, mail::callback &callback) override;
 
 public:
 	CheckNewMailTask(mbox &mboxAccount,

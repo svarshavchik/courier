@@ -27,8 +27,8 @@ class maildir : public mail::account, public generic {
 
 	bool calledDisconnected; // Disconnected callback has been called.
 
-	void resumed();
-	void handler(std::vector<pollfd> &fds, int &timeout);
+	void resumed() override;
+	void handler(std::vector<pollfd> &fds, int &timeout) override;
 
 public:
 	std::string path;	// Path to the maildirAccount
@@ -113,8 +113,8 @@ public:
 		std::string pathArg);
 	~maildir();
 
-	void logout(mail::callback &callback);
-	void checkNewMail(mail::callback &callback);
+	void logout(mail::callback &callback) override;
+	void checkNewMail(mail::callback &callback) override;
 
 protected:
 	maildir(mail::callback::disconnect &disconnect_callback);
@@ -124,42 +124,43 @@ protected:
 	virtual void checkNewMail(mail::callback *callback);
 public:
 
-	bool hasCapability(std::string capability);
-	std::string getCapability(std::string capability);
+	bool hasCapability(std::string capability) override;
+	std::string getCapability(std::string capability) override;
 
-	mail::folder *folderFromString(std::string);
+	mail::folder *folderFromString(std::string) override;
 	void readTopLevelFolders(mail::callback::folderList &callback1,
-				 mail::callback &callback2);
+				 mail::callback &callback2) override;
 
 	void findFolder(std::string folder,
 			mail::callback::folderList &callback1,
-			mail::callback &callback2);
-	std::string translatePath(std::string path);
+			mail::callback &callback2) override;
+	std::string translatePath(std::string path) override;
 	void readMessageAttributes(const std::vector<size_t> &messages,
 				   MessageAttributes attributes,
-				   mail::callback::message &callback);
+				   mail::callback::message &callback) override;
 
 	void readMessageContent(const std::vector<size_t> &messages,
 				bool peek,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContent(size_t messageNum,
 				bool peek,
 				const class mimestruct &msginfo,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContentDecoded(size_t messageNum,
 				       bool peek,
 				       const mimestruct &msginfo,
-				       mail::callback::message &callback);
+				       mail::callback::message &callback) override;
 
-	size_t getFolderIndexSize();
-	mail::messageInfo getFolderIndexInfo(size_t);
+	size_t getFolderIndexSize() override;
+	mail::messageInfo getFolderIndexInfo(size_t) override;
 
 	void saveFolderIndexInfo(size_t,
-				 const mail::messageInfo &, mail::callback &);
+				 const mail::messageInfo &, mail::callback &)
+		override;
 
 	static std::string getMaildirFlags(const mail::messageInfo &);
 
@@ -167,21 +168,21 @@ public:
 				    bool doFlip,
 				    bool enableDisable,
 				    const mail::messageInfo &flags,
-				    mail::callback &callback);
+				    mail::callback &callback) override;
 
-	void updateFolderIndexInfo(mail::callback &);
+	void updateFolderIndexInfo(mail::callback &) override;
 	void removeMessages(const std::vector<size_t> &messages,
-			    callback &cb);
+			    callback &cb) override;
 private:
 	void updateFolderIndexInfo(mail::callback *, bool);
 public:
 
-	void getFolderKeywordInfo(size_t, std::set<std::string> &);
+	void getFolderKeywordInfo(size_t, std::set<std::string> &) override;
 	void updateKeywords(const std::vector<size_t> &messages,
 			    const std::set<std::string> &keywords,
 			    bool setOrChange,
 			    bool changeTo,
-			    callback &cb);
+			    callback &cb) override;
 private:
 	bool updateKeywords(std::string dir,
 			    const std::vector<size_t> &messages,
@@ -195,16 +196,16 @@ public:
 
 	void copyMessagesTo(const std::vector<size_t> &messages,
 			    mail::folder *copyTo,
-			    mail::callback &callback);
+			    mail::callback &callback) override;
 
 	void moveMessagesTo(const std::vector<size_t> &messages,
 			    mail::folder *copyTo,
-			    mail::callback &callback);
+			    mail::callback &callback) override;
 
 	void searchMessages(const class mail::searchParams &searchInfo,
-			    class mail::searchCallback &callback);
+			    class mail::searchCallback &callback) override;
 
-	void updateNotify(bool enableDisable, callback &callbackArg);
+	void updateNotify(bool enableDisable, callback &callbackArg) override;
 
 private:
 
@@ -217,33 +218,33 @@ public:
 				size_t messageNumber,
 				bool peek,
 				mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void genericMessageSize(std::string uid,
 				size_t messageNumber,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
 				 int &fdRet,
-				 mail::callback &callback);
+				 mail::callback &callback) override;
 
 	void genericGetMessageStruct(std::string uid,
 				     size_t messageNumber,
 				     struct rfc2045 *&structRet,
-				     mail::callback &callback);
+				     mail::callback &callback) override;
 
-	bool genericCachedUid(std::string uid);
+	bool genericCachedUid(std::string uid) override;
 
 	void genericGetMessageFdStruct(std::string uid,
 				       size_t messageNumber,
 				       bool peek,
 				       int &fdRet,
 				       struct rfc2045 *&structret,
-				       mail::callback &callback);
+				       mail::callback &callback) override;
 
-	void genericMarkRead(size_t messageNumber);
+	void genericMarkRead(size_t messageNumber) override;
 };
 
 LIBMAIL_END

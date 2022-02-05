@@ -23,7 +23,7 @@ class smapCREATE : public smapHandler {
 	bool renameFolder;
 	mail::callback::folderList *listCallback;
 
-	const char *getName();
+	const char *getName() override;
 
 
 public:
@@ -44,9 +44,9 @@ public:
 		   mail::callback &callbackArg);
 
 	~smapCREATE();
-	void installed(imap &);
+	void installed(imap &) override;
 
-	bool ok(std::string);
+	bool ok(std::string) override;
 };
 
 LIBMAIL_END

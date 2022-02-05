@@ -41,7 +41,7 @@ public:
 			      struct rfc2045 **structretArg);
 	~GenericGetMessageTask();
 
-	bool locked(file &file);
+	bool locked(file &file) override;
 };
 
 LIBMAIL_END

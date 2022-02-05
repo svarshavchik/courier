@@ -20,7 +20,7 @@ class smapDELETE : public smapHandler {
 	std::string path;
 	bool deleteDirectory;
 
-	const char *getName();
+	const char *getName() override;
 
 public:
 	smapDELETE(std::string pathArg,
@@ -28,7 +28,7 @@ public:
 		   mail::callback &callbackArg);
 
 	~smapDELETE();
-	void installed(imap &);
+	void installed(imap &) override;
 };
 
 LIBMAIL_END

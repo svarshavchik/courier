@@ -25,8 +25,8 @@ class imapGreetingHandler : public imapHandler {
 private:
 	mail::loginInfo myLoginInfo;
 
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 	int capability_sent;
 	int completed;
 
@@ -35,9 +35,9 @@ public:
 	imapGreetingHandler(mail::loginInfo loginInfo);
 	~imapGreetingHandler();
 
-	void installed(imap &);
+	void installed(imap &) override;
 
-	int process(imap &imapAccount, std::string &buffer);
+	int process(imap &imapAccount, std::string &buffer) override;
 
 	void error(imap &imapAccount, std::string errmsg);
 };

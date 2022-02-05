@@ -180,17 +180,17 @@ public:
 
 	static time_t autosaveInterval;
 
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
 	void load(std::istream &i, bool isflowed, bool delsp);
 	void save(std::ostream &o, bool isflowed);
-	bool isFocusable();
-	bool processKeyInFocus(const Key &key);
-	int getCursorPosition(int &row, int &col);
+	bool isFocusable() override;
+	bool processKeyInFocus(const Key &key) override;
+	int getCursorPosition(int &row, int &col) override;
 
-	void draw();
-	void erase();
+	void draw() override;
+	void erase() override;
 
 	void enterKey();
 
@@ -232,9 +232,9 @@ private:
 			       bool);
 
 	Curses::Key lastKey;
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 	bool listKeys( std::vector< std::pair<std::string, std::string> >
-		       &list);
+		       &list) override;
 
 	virtual void modified()=0;
 	virtual std::string getConfigDir();

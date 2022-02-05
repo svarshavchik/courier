@@ -21,11 +21,11 @@ class smapNoopExpunge : public smapHandler {
 	smapUidSet uidSet;
 	bool expungeSet;
 
-	const char *getName();
+	const char *getName() override;
 
 	bool existsOrExpungeFlag;
 
-	void existsOrExpungeSeen();
+	void existsOrExpungeSeen() override;
 
 public:
 	smapNoopExpunge(const char *cmd,
@@ -37,9 +37,9 @@ public:
 			mail::callback &callbackArg,
 			mail::imap &imapAccount);
 
-	void installed(imap &);
-	bool ok(std::string);
-	bool fail(std::string);
+	void installed(imap &) override;
+	bool ok(std::string) override;
+	bool fail(std::string message) override;
 
 	~smapNoopExpunge();
 };

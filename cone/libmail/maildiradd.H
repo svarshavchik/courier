@@ -38,9 +38,9 @@ public:
 		   mail::callback &callbackArg);
 	~addmessage();
 
-	void saveMessageContents(std::string);
-	void go();
-	void fail(std::string errmsg);
+	void saveMessageContents(std::string) override;
+	void go() override;
+	void fail(std::string errmsg) override;
 };
 
 LIBMAIL_END

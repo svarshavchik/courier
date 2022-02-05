@@ -62,8 +62,8 @@ public:
 		: Header(name), text(textArg) {}
 	~plain();
 
-	std::string toString() const;
-	mail::Header *clone() const;
+	std::string toString() const override;
+	mail::Header *clone() const override;
 };
 
 //
@@ -113,8 +113,8 @@ public:
 		return *this;
 	}
 
-	std::string toString() const;
-	mail::Header *clone() const;
+	std::string toString() const override;
+	mail::Header *clone() const override;
 };
 
 //
@@ -140,7 +140,7 @@ private:
 public:
 
 	~mime();
-	std::string toString() const;
+	std::string toString() const override;
 
 	mime &operator()(std::string name,
 			 std::string value)
@@ -170,7 +170,7 @@ public:
 	{
 		return parameters.end();
 	}
-	mail::Header *clone() const;
+	mail::Header *clone() const override;
 };
 
 //

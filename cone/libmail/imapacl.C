@@ -41,12 +41,12 @@ class imapGetMyRights::parseMyRights : public imapHandlerStructured {
 public:
 	parseMyRights(string folderArg, string &rightsArg);
 	~parseMyRights();
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *);
-	void process(imap &imapAccount, Token t);
+	const char *getName() override;
+	void timedOut(const char *) override;
+	void process(imap &imapAccount, Token t) override;
 
 	void getFolder(imap &imapAccount, Token t);
 	void getRights(imap &imapAccount, Token t);
@@ -70,7 +70,7 @@ public:
 		     string &rightsArg);
 	~listMyRights();
 
-	void processExtendedAttributes(imapFolder &);
+	void processExtendedAttributes(imapFolder &) override;
 };
 
 LIBMAIL_END
@@ -296,12 +296,12 @@ class imapGetRights::parseGetRights : public imapHandlerStructured {
 public:
 	parseGetRights(string folderArg, list<pair<string,string> >&rightsArg);
 	~parseGetRights();
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *);
-	void process(imap &imapAccount, Token t);
+	const char *getName() override;
+	void timedOut(const char *) override;
+	void process(imap &imapAccount, Token t) override;
 
 	void getFolder(imap &imapAccount, Token t);
 	void getIdentifier(imap &imapAccount, Token t);
@@ -327,7 +327,7 @@ public:
 		      list<pair< string, string> > &rightsArg);
 	~listGetRights();
 
-	void processExtendedAttributes(mail::imapFolder &);
+	void processExtendedAttributes(mail::imapFolder &) override;
 };
 
 mail::imapGetRights::imapGetRights(string folderNameArg,
@@ -600,10 +600,10 @@ public:
 			vector<string> &rightsArg);
 	~parseRightsInfo();
 
-	void installed(imap &imapAccount);
-	const char *getName();
-	void timedOut(const char *);
-	void process(imap &imapAccount, Token t);
+	void installed(imap &imapAccount) override;
+	const char *getName() override;
+	void timedOut(const char *) override;
+	void process(imap &imapAccount, Token t) override;
 
 	void get_folder(imap &imapAccount, Token t);
 	void get_identifier(imap &imapAccount, Token t);
@@ -620,13 +620,13 @@ public:
 	parseAclFailed(string &folderNameArg, string &errmsgArg);
 	~parseAclFailed();
 
-	void installed(imap &imapAccount);
-	const char *getName();
-	void timedOut(const char *);
-	void process(imap &imapAccount, Token t);
+	void installed(imap &imapAccount) override;
+	const char *getName() override;
+	void timedOut(const char *) override;
+	void process(imap &imapAccount, Token t) override;
 
 private:
-	int process(imap &imapAccount, std::string &buffer);
+	int process(imap &imapAccount, std::string &buffer) override;
 };
 LIBMAIL_END
 

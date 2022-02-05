@@ -31,8 +31,8 @@ public:
 	disconnectCallback(mail::ACCOUNT &p);
 	~disconnectCallback();
 
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 };
 
 mail::ACCOUNT::disconnectCallback::disconnectCallback(mail::ACCOUNT &p)
@@ -123,7 +123,7 @@ class mail::ACCOUNT::callback : public mail::callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 public:
 	bool failed;
 	bool succeeded;
@@ -133,8 +133,8 @@ public:
 	callback(mail::ACCOUNT &mePtr);
 	~callback();
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 };
 
 mail::ACCOUNT::callback::callback(mail::ACCOUNT &mePtr) : failed(false),
@@ -285,7 +285,7 @@ void mail::ACCOUNT::disconnected(string e)
 	{
 		mail::account *s=ptr;
 
-		
+
 		ptr=NULL;
 		delete s;
 	}
@@ -367,7 +367,7 @@ public:
 	readFoldersCallback(mail::ACCOUNT::FolderList &myList);
 	~readFoldersCallback();
 
-	void success(const vector<const mail::folder *> &folders);
+	void success(const vector<const mail::folder *> &folders) override;
 };
 
 
@@ -680,7 +680,7 @@ bool mail::ACCOUNT::openFolder(const mail::folder *folder,
 
 	if (f)
 		folderModifiedFlag=false; // Clean slate, now.
-	return f;	
+	return f;
 }
 
 size_t mail::ACCOUNT::getFolderIndexSize()
@@ -763,7 +763,7 @@ class mail::ACCOUNT::readMessageCallback : public mail::callback::message ,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 public:
 	map<size_t, mail::envelope> envelopeList;
 	map<size_t, vector<string> > referenceList;
@@ -778,25 +778,25 @@ public:
 			    mail::ACCOUNT::Store *storeArg=NULL);
 	~readMessageCallback();
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 
 	void messageEnvelopeCallback(size_t messageNumber,
-				     const mail::envelope &envelope);
+				     const mail::envelope &envelope) override;
 	void messageReferencesCallback(size_t messageNumber,
-				       const vector<std::string> &references);
+				       const vector<std::string> &references) override;
 
 	void messageArrivalDateCallback(size_t messageNumber,
-					time_t datetime);
+					time_t datetime) override;
 
 	void messageSizeCallback(size_t messageNumber,
-				 unsigned long size);
+				 unsigned long size) override;
 
 	void messageStructureCallback(size_t messageNumber,
 				      const mail::mimestruct
-				      &messageStructure);
+				      &messageStructure) override;
 
-	void messageTextCallback(size_t n, string text);
+	void messageTextCallback(size_t n, string text) override;
 };
 
 
@@ -1029,7 +1029,7 @@ class mail::ACCOUNT::SearchCallback : public mail::searchCallback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	SearchCallback(mail::ACCOUNT::callback &callbackArg,
@@ -1037,8 +1037,8 @@ public:
 
 	~SearchCallback();
 
-	void success(const vector<size_t> &found);
-	void fail(string);
+	void success(const vector<size_t> &found) override;
+	void fail(string) override;
 };
 
 mail::ACCOUNT::SearchCallback

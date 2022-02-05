@@ -97,7 +97,7 @@ class htmlParser {
 
 		virtual void operator()(int, char32_t, textAttributes)=0;
 
-		virtual int callback(int v)
+		virtual int callback(int v) override
 		{
 			std::pair<char32_t, textAttributes>
 				&p=queue.front();
@@ -166,7 +166,8 @@ class htmlParser {
 		}
 
 	private:
-		virtual void operator()(int, char32_t, textAttributes);
+		virtual void operator()(int, char32_t, textAttributes)
+			override;
 
 		size_t wordtoolong(size_t);
 
@@ -185,7 +186,7 @@ class htmlParser {
 		using unicode::iconvert::tou::operator();
 
 	private:
-		int converted(const char32_t *, size_t);
+		int converted(const char32_t *, size_t) override;
 	};
 
 	converter tounicode;

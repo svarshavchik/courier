@@ -101,16 +101,16 @@ class mail::pop3::LoggedInTask : public mail::pop3::Task,
 
 	// Inherited from mail::callback
 
-	void success(string);
-	void fail(string);
+	void success(string) override;
+	void fail(string) override;
 
-	void installedTask();
+	void installedTask() override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	LoggedInTask(mail::callback *callback, mail::pop3 &myserverArg);
@@ -239,9 +239,9 @@ class mail::pop3::LoginTask : public mail::pop3::Task,
 
 	void (LoginTask::*currentHandler)(const char *status);
 
-	void serverResponse(const char *message);
+	void serverResponse(const char *message) override;
 
-	void installedTask();
+	void installedTask() override;
 
 	void greetingHandler(const char *message);
 	void capaHandler(const char *message);
@@ -265,8 +265,8 @@ class mail::pop3::LoginTask : public mail::pop3::Task,
 
 	void (mail::pop3::LoginTask::*login_callback_handler)(std::string);
 
-	void loginInfoCallback(std::string);
-	void loginInfoCallbackCancel();
+	void loginInfoCallback(std::string) override;
+	void loginInfoCallbackCancel() override;
 
 	void loginCallbackUid(std::string);
 	void loginCallbackPwd(std::string);
@@ -881,18 +881,18 @@ public:
 	CheckNewMailTask(mail::pop3 &serverArg, mail::callback &callbackArg);
 	~CheckNewMailTask();
 
-	void loggedIn();
-	void loginFailed(string errmsg);
+	void loggedIn() override;
+	void loginFailed(string errmsg) override;
 
-	void serverResponse(const char *message);
+	void serverResponse(const char *message) override;
 
-	void done();
+	void done() override;
 private:
 	void (CheckNewMailTask::*currentHandler)(const char *status);
 	int next2Download; // When subclass by pop3maildrop, next msg 2 get.
 	bool willReconnectFlag;
 
-	bool willReconnect();
+	bool willReconnect() override;
 
 
 	void doNextDownload();
@@ -1179,10 +1179,10 @@ class mail::pop3::LogoutTask : public mail::pop3::Task {
 
 	void fail(const char *reason);
 
-	void serverResponse(const char *message);
+	void serverResponse(const char *message) override;
 
-	void installedTask();
-	bool isLogoutTask();
+	void installedTask() override;
+	bool isLogoutTask() override;
 
 	mail::callback *disconnectCallback;
 
@@ -1193,7 +1193,7 @@ public:
 		   bool willReconnectFlagArg=false);
 	~LogoutTask();
 
-	bool willReconnect();
+	bool willReconnect() override;
 };
 
 mail::pop3::LogoutTask::LogoutTask(mail::pop3 &server,
@@ -1267,15 +1267,15 @@ class mail::pop3::ForceCheckNewMailTask : public mail::callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	ForceCheckNewMailTask(mail::callback *realCallbackArg,
 			      mail::pop3 *serverArg);
 	~ForceCheckNewMailTask();
 
-	void success(string);
-	void fail(string);
+	void success(string) override;
+	void fail(string) override;
 };
 
 mail::pop3::ForceCheckNewMailTask
@@ -1361,10 +1361,10 @@ public:
 	UpdateTask(mail::pop3 &serverArg, mail::callback &callbackArg);
 	~UpdateTask();
 
-	void loggedIn();
-	void loginFailed(string errmsg);
+	void loggedIn() override;
+	void loginFailed(string errmsg) override;
 
-	void serverResponse(const char *message);
+	void serverResponse(const char *message) override;
 };
 
 mail::pop3::UpdateTask::UpdateTask(mail::pop3 &serverArg,
@@ -1531,10 +1531,10 @@ public:
 			mail::readMode readTypeArg);
 	~ReadMessageTask();
 
-	void loggedIn();
-	void loginFailed(string errmsg);
+	void loggedIn() override;
+	void loginFailed(string errmsg) override;
 
-	void serverResponse(const char *message);
+	void serverResponse(const char *message) override;
 };
 
 mail::pop3::ReadMessageTask::ReadMessageTask(mail::pop3 &serverArg,
@@ -1765,7 +1765,7 @@ class mail::pop3::CacheMessageTask : public mail::callback::message {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	CacheMessageTask(mail::pop3 *myserverArg,
@@ -1777,10 +1777,10 @@ public:
 
 	bool init();
 
-	void success(string);
-	void fail(string);
+	void success(string) override;
+	void fail(string) override;
 
-	void messageTextCallback(size_t n, string text);
+	void messageTextCallback(size_t n, string text) override;
 };
 
 mail::pop3::CacheMessageTask::CacheMessageTask(mail::pop3 *myserverArg,
@@ -1934,10 +1934,10 @@ void mail::pop3::AutologoutCallback::fail(string message)
 class mail::pop3::NoopTask : public mail::pop3::LoggedInTask {
 public:
 	NoopTask(mail::pop3 &myseverArg);
-	~NoopTask();
-	void serverResponse(const char *message);
-	void loggedIn();
-	void loginFailed(string errmsg);
+	~NoopTask() override;
+	void serverResponse(const char *message) override;
+	void loggedIn() override;
+	void loginFailed(string errmsg) override;
 };
 
 mail::pop3::NoopTask::NoopTask(mail::pop3 &serverArg)

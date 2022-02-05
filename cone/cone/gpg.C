@@ -381,25 +381,25 @@ class GPG::dialog : public CursesContainer, public CursesKeyHandler {
 		// automatically extended to the bottom of its parent.
 		//  Its width is the same as the parent's width.
 
-		int getHeight() const;
-		int getWidth() const;
+		int getHeight() const override;
+		int getWidth() const override;
 
-		bool isFocusable(); // Yes we are.
+		bool isFocusable() override; // Yes we are.
 
-		void focusGained(); // Move to the first row
-		void focusLost();   // Turn off cursor
-		void draw();
+		void focusGained() override; // Move to the first row
+		void focusLost() override;   // Turn off cursor
+		void draw() override;
 
 		// Even though this is a CursesContainer subclass, its focus
 		// behavior must be the same as Curses's focus behavior
 		// (the default CursesContainer implementation doesn't work,
 		// because this object does not have any children).
 
-		Curses *getPrevFocus();
-		Curses *getNextFocus();
+		Curses *getPrevFocus() override;
+		Curses *getNextFocus() override;
 
-		int getCursorPosition(int &row, int &col);
-		bool processKeyInFocus(const Key &key);
+		int getCursorPosition(int &row, int &col) override;
+		bool processKeyInFocus(const Key &key) override;
 
 		size_t getCurrentRow() const { return currentRow; }
 	};
@@ -420,12 +420,12 @@ public:
 
 	bool orderlyClose() const { return closing; }
 
-	bool isDialog() const;	// Yes we are
-	void resized();
-	void draw();
-	void requestFocus();
-	int getWidth() const;
-	int getHeight() const;
+	bool isDialog() const override;	// Yes we are
+	void resized() override;
+	void draw() override;
+	void requestFocus() override;
+	int getWidth() const override;
+	int getHeight() const override;
 
 	void selected(size_t);
 
@@ -437,8 +437,8 @@ public:
 	void operator>>(std::vector<std::string> &);
 
 private:
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 };
 
 GPG::dialog::Keylist::Keylist(GPG::dialog *parentArg,
@@ -1100,8 +1100,8 @@ public:
 		      std::string okDescr,
 		      std::string cancelDescr);
 
-	bool isDialog() const;
-	int getWidth() const;
+	bool isDialog() const override;
+	int getWidth() const override;
 
 	operator bool() const;
 	~confirmHelper();

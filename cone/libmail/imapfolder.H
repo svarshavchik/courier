@@ -69,7 +69,8 @@ public:
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal); // TODO
+				    size_t messagesEstimatedTotal)
+			override; // TODO
 
 	public:
 		existsCallback();
@@ -77,8 +78,8 @@ public:
 		class imapFOLDER *me;
 
 	private:
-		void success(std::string message);
-		void fail(std::string message);
+		void success(std::string message) override;
+		void fail(std::string message) override;
 	} *existsNotify;
 
 	std::string uidv;
@@ -91,20 +92,20 @@ public:
 
 	static const char name[];
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 private:
-	const char *getName();
-	void timedOut(const char *);
-	virtual int getTimeout(imap &);
+	const char *getName() override;
+	void timedOut(const char *) override;
+	virtual int getTimeout(imap &) override;
 
-	bool untaggedMessage(imap &imapAccount, std::string name);
+	bool untaggedMessage(imap &imapAccount, std::string name) override;
 	bool taggedMessage(imap &imapAccount, std::string name,
 			   std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 
-	void existsMore(mail::imap &, size_t);
-	void resetMailCheckTimer();
-	void setUid(size_t, std::string);
+	void existsMore(mail::imap &, size_t) override;
+	void resetMailCheckTimer() override;
+	void setUid(size_t, std::string) override;
 };
 
 // The SMAP version
@@ -113,12 +114,12 @@ class smapFOLDER : public imapFOLDERinfo, public imapHandler {
 
 	int mailCheckInterval;
 
-	void installed(imap &);
-	int process(imap &imapAccount, std::string &buffer);
-	const char *getName();
-	void timedOut(const char *errmsg);
+	void installed(imap &) override;
+	int process(imap &imapAccount, std::string &buffer) override;
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	int getTimeout(mail::imap &imapAccount);
+	int getTimeout(mail::imap &imapAccount) override;
 
 	bool openedFlag;
 
@@ -130,9 +131,9 @@ public:
 		   mail::imap &myserver);
 	~smapFOLDER();
 
-	void existsMore(mail::imap &imapAccount, size_t n);
-	void resetMailCheckTimer();
-	void opened();
+	void existsMore(mail::imap &imapAccount, size_t n) override;
+	void resetMailCheckTimer() override;
+	void opened() override;
 };
 
 LIBMAIL_END

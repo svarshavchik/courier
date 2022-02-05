@@ -28,24 +28,24 @@ class mail::addressbook::GetAddressList : public mail::callback::message {
 	mail::callback &callback;
 	mail::mimestruct mimeStructure;
 
-	void success(std::string successMsg);
+	void success(std::string successMsg) override;
 	void (mail::addressbook::GetAddressList<T>::*successFunc)(std::string);
 
 	void readstructure(std::string successMsg);
 	void readContents(std::string successMsg);
 
-	void fail(std::string failMsg);
+	void fail(std::string failMsg) override;
 
 	void messageStructureCallback(size_t messageNumber,
 				      const mail::mimestruct
-				      &messageStructure);
-	void messageTextCallback(size_t n, std::string text);
+				      &messageStructure) override;
+	void messageTextCallback(size_t n, std::string text) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 	std::string linebuffer;
 	// Reading x-libmail-addressbook content; partial line read.

@@ -38,8 +38,8 @@ class file;
 //
 class mbox : public mail::account, public generic {
 
-	void resumed();
-	void handler(std::vector<pollfd> &fds, int &timeout);
+	void resumed() override;
+	void handler(std::vector<pollfd> &fds, int &timeout) override;
 
 	bool calledDisconnected; // True if the disconnect callback was invoked
 	bool magicInbox;	// True if this account uses INBOX
@@ -63,7 +63,8 @@ class mbox : public mail::account, public generic {
 					    size_t bytesEstimatedTotal,
 
 					    size_t messagesCompleted,
-					    size_t messagesEstimatedTotal) {}
+					    size_t messagesEstimatedTotal)
+			override {}
 			//TODO
 
 		public:
@@ -79,8 +80,8 @@ class mbox : public mail::account, public generic {
 				      std::string origPathArg);
 			~closeCallback();
 
-			void success(std::string);
-			void fail(std::string);
+			void success(std::string) override;
+			void fail(std::string message) override;
 		};
 
 		class add;
@@ -96,53 +97,54 @@ class mbox : public mail::account, public generic {
 
 		static std::string defaultName(std::string path);
 
-		void sameServerAsHelperFunc() const;
+		void sameServerAsHelperFunc() const override;
 
-		std::string getName() const;
-		std::string getPath() const;
+		std::string getName() const override;
+		std::string getPath() const override;
 
-		bool hasMessages() const;
-		bool hasSubFolders() const;
+		bool hasMessages() const override;
+		bool hasSubFolders() const override;
 
-		bool isParentOf(std::string path) const;
+		bool isParentOf(std::string path) const override;
 
-		void hasMessages(bool);
-		void hasSubFolders(bool);
+		void hasMessages(bool) override;
+		void hasSubFolders(bool) override;
 
 
 		void getParentFolder(callback::folderList &callback1,
-				     callback &callback2) const;
+				     callback &callback2) const override;
 
 		void readFolderInfo( mail::callback::folderInfo
 				     &callback1,
-				     mail::callback &callback2) const;
+				     mail::callback &callback2) const override;
 
 		void readSubFolders( mail::callback::folderList &callback1,
-				     mail::callback &callback2) const;
+				     mail::callback &callback2) const override;
 
-		mail::addMessage *addMessage(mail::callback &callback) const;
+		mail::addMessage *addMessage(mail::callback &callback) const override;
 
 		void createSubFolder(std::string name, bool isDirectory,
 				     mail::callback::folderList &callback1,
-				     mail::callback &callback2) const;
+				     mail::callback &callback2) const override;
 
 		void create(bool isDirectory,
-			    mail::callback &callback) const;
+			    mail::callback &callback) const override;
 
 		void destroy(mail::callback &callback, bool destroyDir)
-			const;
+			const override;
 
 		void renameFolder(const mail::folder *newParent,
 				  std::string newName,
 				  mail::callback::folderList &callback1,
-				  callback &callback) const;
+				  callback &callback) const override;
 
-		mail::folder *clone() const;
-		std::string toString() const;
+		mail::folder *clone() const override;
+		std::string toString() const override;
 
 		void open(mail::callback &openCallback,
 			  snapshot *restoreSnapshot,
-			  mail::callback::folder &folderCallback) const;
+			  mail::callback::folder &folderCallback)
+			const override;
 	};
 
 	// Special folders
@@ -207,12 +209,12 @@ class mbox : public mail::account, public generic {
 			  mail::callback &callbackArg, int timeoutArg=60);
 		~TimedTask();
 
-		void doit(int &timeout);
+		void doit(int &timeout) override;
 
 		void fail(std::string errmsg);
 		virtual bool doit()=0;
 		virtual void timedOut();
-		virtual void disconnected();
+		virtual void disconnected() override;
 	};
 
 	// This is a wrapper for liblock's locking functions
@@ -352,59 +354,60 @@ public:
 		   mail::callback::disconnect &disconnect_callback);
 	~mbox();
 
-	void logout(mail::callback &callback);
-	void checkNewMail(mail::callback &callback);
+	void logout(mail::callback &callback) override;
+	void checkNewMail(mail::callback &callback) override;
 
-	bool hasCapability(std::string capability);
-	std::string getCapability(std::string capability);
+	bool hasCapability(std::string capability) override;
+	std::string getCapability(std::string capability) override;
 
-	mail::folder *folderFromString(std::string);
+	mail::folder *folderFromString(std::string) override;
 
 	void readTopLevelFolders(mail::callback::folderList &callback1,
-				 mail::callback &callback2);
+				 mail::callback &callback2) override;
 
 	void findFolder(std::string folder,
 			mail::callback::folderList &callback1,
-			mail::callback &callback2);
-	std::string translatePath(std::string path);
+			mail::callback &callback2) override;
+	std::string translatePath(std::string path) override;
 
 	static std::string translatePathCommon(std::string path,
 					       const char *sep);
 
 	void readMessageAttributes(const std::vector<size_t> &messages,
 				   MessageAttributes attributes,
-				   mail::callback::message &callback);
+				   mail::callback::message &callback) override;
 
 	void readMessageContent(const std::vector<size_t> &messages,
 				bool peek,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContent(size_t messageNum,
 				bool peek,
 				const mimestruct &msginfo,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContentDecoded(size_t messageNum,
 				       bool peek,
 				       const mimestruct &msginfo,
-				       mail::callback::message &callback);
+				       mail::callback::message &callback)
+		override;
 
-	size_t getFolderIndexSize();
-	mail::messageInfo getFolderIndexInfo(size_t);
+	size_t getFolderIndexSize() override;
+	mail::messageInfo getFolderIndexInfo(size_t) override;
 
 	void saveFolderIndexInfo(size_t,
-					 const mail::messageInfo &,
-					 mail::callback &);
+				 const mail::messageInfo &,
+				 mail::callback &) override;
 
 	void updateFolderIndexFlags(const std::vector<size_t> &messages,
 				    bool doFlip,
 				    bool enableDisable,
 				    const mail::messageInfo &flags,
-				    mail::callback &callback);
+				    mail::callback &callback) override;
 
-	void updateFolderIndexInfo(mail::callback &);
+	void updateFolderIndexInfo(mail::callback &) override;
 
 
 	void updateKeywords(const std::vector<size_t> &messages,
@@ -412,21 +415,21 @@ public:
 			    bool setOrChange,
 			    // false: set, true: see changeTo
 			    bool changeTo,
-			    callback &cb);
-	void getFolderKeywordInfo(size_t, std::set<std::string> &);
+			    callback &cb) override;
+	void getFolderKeywordInfo(size_t, std::set<std::string> &) override;
 
 	bool genericProcessKeyword(size_t messageNumber,
-				   generic::updateKeywordHelper &helper);
+				   generic::updateKeywordHelper &helper) override;
 
 	void removeMessages(const std::vector<size_t> &messages,
-			    callback &cb);
+			    callback &cb) override;
 
 	void copyMessagesTo(const std::vector<size_t> &messages,
 			    mail::folder *copyTo,
-			    mail::callback &callback);
+			    mail::callback &callback) override;
 
 	void searchMessages(const class mail::searchParams &searchInfo,
-			    class mail::searchCallback &callback);
+			    class mail::searchCallback &callback) override;
 
 	bool verifyUid(std::string uid, size_t &messageNumber,
 		       mail::callback &callback);
@@ -436,32 +439,32 @@ public:
 				size_t messageNumber,
 				bool peek,
 				mail::readMode,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void genericMessageSize(std::string uid,
 				size_t messageNumber,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
 				 int &fdRet,
-				 mail::callback &callback);
+				 mail::callback &callback) override;
 
 	void genericGetMessageStruct(std::string uid,
 				     size_t messageNumber,
 				     struct rfc2045 *&structRet,
-				     mail::callback &callback);
+				     mail::callback &callback) override;
 
-	bool genericCachedUid(std::string uid);
+	bool genericCachedUid(std::string uid) override;
 
 	void genericGetMessageFdStruct(std::string uid,
 				       size_t messageNumber,
 				       bool peek,
 				       int &fdRet,
 				       struct rfc2045 *&structret,
-				       mail::callback &callback);
-	void genericMarkRead(size_t messageNumber);
+				       mail::callback &callback) override;
+	void genericMarkRead(size_t messageNumber) override;
 };
 
 LIBMAIL_END

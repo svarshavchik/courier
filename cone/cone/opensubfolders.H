@@ -26,7 +26,7 @@ public:
 
 	OpenSubFoldersCallback();
 	~OpenSubFoldersCallback();
-	void success(const std::vector<const mail::folder *> &folders);
+	void success(const std::vector<const mail::folder *> &folders) override;
 };
 
 #endif

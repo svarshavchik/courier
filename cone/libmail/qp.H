@@ -24,7 +24,7 @@ public:
 	decodeqp();
 	virtual ~decodeqp();
 
-	void decode(std::string text);
+	void decode(std::string text) override;
 private:
 	virtual void decoded(std::string buffer)=0;
 };

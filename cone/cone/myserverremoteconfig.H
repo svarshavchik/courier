@@ -42,14 +42,14 @@ public:
 
 	// Inherited from callback::disconnect
 
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 
 	// Inherited from callback::folder
 
-	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &);
-	void messageChanged(size_t n);
-	void newMessages();
+	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &) override;
+	void messageChanged(size_t n) override;
+	void newMessages() override;
 
 private:
 	std::string errmsg;
@@ -77,19 +77,19 @@ private:
 		loadCallback(myServer::Callback &callback);
 		~loadCallback();
 
-		void success(std::string message);
-		void fail(std::string message);
+		void success(std::string message) override;
+		void fail(std::string message) override;
 
 		void messageStructureCallback(size_t messageNumber,
 					      const mail::mimestruct
-					      &messageStructure);
+					      &messageStructure) override;
 
-		void messageTextCallback(size_t n, std::string text);
+		void messageTextCallback(size_t n, std::string text) override;
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 	};
 };
 

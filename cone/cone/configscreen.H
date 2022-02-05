@@ -35,7 +35,7 @@ public:
 
 	class CertificateButton : public CursesButton, public CursesKeyHandler {
 
-		bool processKey(const Curses::Key &key);
+		bool processKey(const Curses::Key &key) override;
 
 		void showtext();
 	public:
@@ -44,7 +44,7 @@ public:
 		CertificateButton(std::string certArg);
 		~CertificateButton();
 
-		void clicked();
+		void clicked() override;
 	};
 
 private:
@@ -62,7 +62,7 @@ private:
 		       void (ConfigScreen::*deleteCallbackArg)(Button *),
 		       std::string textArg);
 		~Button();
-		bool processKeyInFocus(const Key &key);
+		bool processKeyInFocus(const Key &key) override;
 	};
 
 	class MacroButton : public CursesButton {
@@ -75,7 +75,7 @@ private:
 			    Macros::name &macroNameArg,
 			    std::string macroNameAsStr);
 		~MacroButton();
-		bool processKeyInFocus(const Key &key);
+		bool processKeyInFocus(const Key &key) override;
 	};
 
 	class MacroButtonSortHelper {
@@ -176,7 +176,7 @@ private:
 		ColorButton(ConfigScreen *parent, struct CustomColor *);
 		~ColorButton();
 
-		void clicked();
+		void clicked() override;
 	};
 
 	std::vector<ColorButton *> colorButtons;
@@ -214,13 +214,13 @@ private:
 		       size_t atRow);
 	void addPrompt(CursesLabel *label,
 		       Curses *field,
-		       size_t atRow);
+		       size_t atRow) override;
 
 	// Inherited from CursesKeyHandler:
 
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 	bool listKeys( std::vector< std::pair<std::string, std::string> >
-		       &list);
+		       &list) override;
 
 	void doSave();
 	void doCancel();
@@ -228,4 +228,3 @@ private:
 };
 
 #endif
-

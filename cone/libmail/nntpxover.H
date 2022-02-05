@@ -48,8 +48,8 @@ public:
 
 	void selectedGroup(msgnum_t estimatedCount,
 			   msgnum_t loArticleCount,
-			   msgnum_t hiArticleCount);
-	void processGroup(const char *);
+			   msgnum_t hiArticleCount) override;
+	void processGroup(const char *) override;
 
 private:
 	void doNextXoverRange();

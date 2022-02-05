@@ -67,7 +67,7 @@ public:
 	virtual void done();
 protected:
 
-	virtual int process(imap &imapAccount, std::string &buffer);
+	virtual int process(imap &imapAccount, std::string &buffer) override;
 private:
 	virtual void process(imap &imapAccount, Token t)=0;
 

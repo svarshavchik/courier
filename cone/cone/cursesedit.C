@@ -1462,7 +1462,7 @@ public:
 	std::string savefilename;
 
 	SaveSinkAutosave();
-	SaveSink &operator<<(std::string);
+	SaveSink &operator<<(std::string) override;
 	virtual ~SaveSinkAutosave();
 };
 
@@ -2458,10 +2458,10 @@ public:
 	mail::addMessage *postMessage;
 
 	SaveSinkFile(CursesEdit &editArg);
-	SaveSink &operator<<(std::string);
+	SaveSink &operator<<(std::string) override;
 	virtual ~SaveSinkFile();
 	void saveheader(std::string header,
-			std::string contents);
+			std::string contents) override;
 
 	void abort(std::string errmsg);
 };
@@ -2570,7 +2570,7 @@ public:
 			CursesMessage::EncryptionInfo &encryptionInfoArg);
 	~EncryptSinkFile();
 
-	SaveSink &operator<<(std::string);
+	SaveSink &operator<<(std::string) override;
 
 	bool init(); // Start the deal going.
 	std::string done(); // Done feeding the message, encrypt it.

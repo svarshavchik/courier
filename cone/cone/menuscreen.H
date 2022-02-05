@@ -88,7 +88,7 @@ public:
 	virtual std::vector<MenuEntry> &getMenuVector()=0;
 	virtual std::vector<ShortcutKey> &getKeyVector()=0;
 
-	void requestFocus(); // Put focus on the first button.
+	void requestFocus() override; // Put focus on the first button.
 
 protected:
 	void init();
@@ -103,8 +103,8 @@ private:
 
 	std::vector<CursesButtonRedirect<MenuEntry> *> buttons;
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 
 public:
 
@@ -117,7 +117,7 @@ public:
 	public:
 		MenuActionStaticCallback(void (*funcArg)(void));
 		~MenuActionStaticCallback();
-		void go();
+		void go() override;
 	};
 
 	// A template that generates callbacks to a particular method
@@ -137,10 +137,10 @@ public:
 			{
 			}
 
-		void go()
-			{
-				(t->*func)();
-			}
+		void go() override
+		{
+			(t->*func)();
+		}
 	};
 
 };

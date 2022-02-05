@@ -17,7 +17,7 @@
 class myParser: public Demoronize,
 		public htmlParser {
 
-	void parsedLine(std::string l, bool dummy);
+	void parsedLine(std::string l, bool dummy) override;
 public:
 	myParser();
 	~myParser();

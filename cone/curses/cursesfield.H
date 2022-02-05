@@ -55,15 +55,15 @@ public:
 	~CursesField();
 
 	void setUnderlined(bool flag) { isUnderlined=flag; }
-	void setRow(int row);
-	void setCol(int col);
+	void setRow(int row) override;
+	void setCol(int col) override;
 	void setText(std::string textArg);
 	void setAttribute(Curses::CursesAttr attr);
 	void setCursorPos(size_t o);
 	std::string getText() const;	// Return entered text
 
-	int getWidth() const;		// Our width is known
-	int getHeight() const;		// We're one row high
+	int getWidth() const override;		// Our width is known
+	int getHeight() const override;		// We're one row high
 
 	void setWidth(int);
 
@@ -81,16 +81,16 @@ public:
 		return optionHelp;
 	}
 
-	void draw();
+	void draw() override;
 
-	int getCursorPosition(int &row, int &col);
-	bool processKeyInFocus(const Key &key);
+	int getCursorPosition(int &row, int &col) override;
+	bool processKeyInFocus(const Key &key) override;
 
-	bool isFocusable();	// Yes we are
-	void focusGained();	// Select old text automatically at entry.
-	void focusLost();	// Unselect any selected text at exit.
+	bool isFocusable() override;	// Yes we are
+	void focusGained() override;	// Select old text automatically at entry.
+	void focusLost() override;	// Unselect any selected text at exit.
 
-	void erase();
+	void erase() override;
 private:
 	void left();
 	void right();
@@ -145,7 +145,7 @@ public:
 	void operator=(T *p) { myClass=p; }
 	void operator=( void (T::*p)(void) ) { myMethod=p; }
 
-	bool processKeyInFocus(const Key &key)
+	bool processKeyInFocus(const Key &key) override
 	{
 		if (key == Key::ENTER && myClass && myMethod)
 		{

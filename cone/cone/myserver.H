@@ -175,8 +175,8 @@ public:
 
 	void disconnect();
 
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 
 	myServer(std::string name, std::string url);
 	~myServer();
@@ -238,7 +238,7 @@ private:
 	void disconnectTasks();
 
 public:
-	void alarm(); // Inherited from Timer
+	void alarm() override; // Inherited from Timer
 
 	void addTopLevelFolderRedraw(std::string path);
 

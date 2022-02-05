@@ -37,8 +37,8 @@ public:
 		  std::string groupNameArg);
 	~CheckNewTask();
 
-	void loggedIn();
-	void processLine(const char *message);
+	void loggedIn() override;
+	void processLine(const char *message) override;
 
 private:
 	void processGroupStatus(const char *);

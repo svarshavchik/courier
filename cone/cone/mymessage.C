@@ -72,7 +72,7 @@ class myMessageCallback : public mail::callback::message,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	myMessageCallback(myMessage *mArg);
@@ -82,15 +82,15 @@ public:
 
 	void messageEnvelopeCallback(size_t messageNumber,
 				     const class mail::envelope
-				     &envelope);
+				     &envelope) override;
 
 	void messageStructureCallback(size_t messageNumber,
 				      const class mail::mimestruct
-				      &messageStructure);
-	void messageTextCallback(size_t n, string text);
+				      &messageStructure) override;
+	void messageTextCallback(size_t n, string text) override;
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 };
 
 myMessageCallback::myMessageCallback(myMessage *mArg)

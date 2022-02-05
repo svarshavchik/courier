@@ -156,7 +156,7 @@ public:
 		   mail::callback::folderInfo &infoArg);
 	~StatusTask();
 
-	bool doit();
+	bool doit() override;
 };
 
 mail::mbox::StatusTask::StatusTask(string folderArg, mail::mbox &mboxAccount,
@@ -623,8 +623,8 @@ public:
 		   string newnameArg);
 	~RenameTask();
 
-	bool locked(mail::mbox::lock &mlock, std::string path);
-	bool locked(mail::file &);
+	bool locked(mail::mbox::lock &mlock, std::string path) override;
+	bool locked(mail::file &) override;
 };
 
 mail::mbox::RenameTask::RenameTask(mbox &mboxAccount,

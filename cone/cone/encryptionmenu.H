@@ -15,8 +15,8 @@ class EncryptionMenu : public MenuScreen {
 public:
 	EncryptionMenu(CursesContainer *);
 	~EncryptionMenu();
-	std::vector<MenuEntry> &getMenuVector();
-	std::vector<ShortcutKey> &getKeyVector();
+	std::vector<MenuEntry> &getMenuVector() override;
+	std::vector<ShortcutKey> &getKeyVector() override;
 
 	std::vector<MenuScreen::MenuActionCallback<EncryptionMenu> > myAction;
 	std::vector<MenuEntry> myEntries;

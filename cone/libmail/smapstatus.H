@@ -20,17 +20,17 @@ class smapSTATUS : public smapHandler {
 	std::string path;
 	mail::callback::folderInfo &infoCallback;
 
-	const char *getName();
+	const char *getName() override;
 
 public:
 	smapSTATUS(std::string pathArg,
 		   mail::callback::folderInfo &infoCallbackArg,
 		   mail::callback &callbackArg);
 	~smapSTATUS();
-	void installed(imap &);
+	void installed(imap &) override;
 
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
+			 std::vector<const char *> &words) override;
 };
 
 LIBMAIL_END

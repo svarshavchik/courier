@@ -238,7 +238,7 @@ class ClearKeyHandler : public CursesKeyHandler {
 public:
 	ClearKeyHandler();
 	~ClearKeyHandler();
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 };
 
 ClearKeyHandler::ClearKeyHandler()

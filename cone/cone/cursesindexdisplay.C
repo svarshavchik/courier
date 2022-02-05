@@ -122,8 +122,8 @@ public:
 	CheckNewMail();
 	~CheckNewMail();
 
-	void success(std::string);
-	void fail(std::string);
+	void success(std::string) override;
+	void fail(std::string) override;
 };
 
 CursesIndexDisplay::CursesIndexDisplay(CursesContainer *parentArg,
@@ -842,7 +842,7 @@ bool CursesIndexDisplay::processKeyInFocus(const Curses::Key &key)
 				delete smtpServer;
 				smtpServer=NULL;
 			}
-			
+
 
 		} catch (...) {
 

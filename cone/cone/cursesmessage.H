@@ -73,7 +73,7 @@ public:
 	bool init(std::string mimeId,
 		  bool allowExternalOpenArg);
 
-	bool isShownMimeId(std::string id);
+	bool isShownMimeId(std::string id) override;
 	// True if this attachment is shown now.
 
 	void beginReformat(size_t w); // Begin step 2.
@@ -133,7 +133,7 @@ public:
 		SaveText(std::ostream &o);
 		virtual ~SaveText();
 
-		virtual void operator()(std::string text);
+		virtual void operator()(std::string text) override;
 	};
 
 	class SaveTextParseMime;
@@ -223,7 +223,7 @@ public:
 
 		ReformatTimer();
 		~ReformatTimer();
-		void alarm();
+		void alarm() override;
 	};
 private:
 	ReformatTimer reformatTimer;
@@ -290,8 +290,8 @@ public:
 				     std::string &name,
 				     std::string &filename,
 				     bool showEncoding);
-	void reply();
-	void forward();
+	void reply() override;
+	void forward() override;
 
 	bool decrypt(std::string passphrase, std::vector<std::string> &opts,
 		     bool &decryptFailed);

@@ -32,7 +32,7 @@ public:
 
 	size_t getSelectedOption() const { return selectedOption; }
 
-	void clicked();
+	void clicked() override;
 };
 
 //////////////////////////////////////////////////////////////////////////

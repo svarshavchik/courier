@@ -26,7 +26,7 @@ public:
 	static time_t lastCtrlC; // When last ctrlc was hit
 
 private:
-	virtual bool processKey(const Curses::Key &key);
+	virtual bool processKey(const Curses::Key &key) override;
 };
 
 #endif

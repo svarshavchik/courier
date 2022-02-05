@@ -20,8 +20,8 @@ public:
 	disconnectCallbackStub();
 	~disconnectCallbackStub();
 
-	void disconnected(const char *errmsg);
-	void servererror(const char *errmsg);
+	void disconnected(const char *errmsg) override;
+	void servererror(const char *errmsg) override;
 };
 
 #endif

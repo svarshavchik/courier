@@ -83,12 +83,12 @@ public:
 	imapSTATUS(string hier, mail::callback::folderInfo &callback);
 	~imapSTATUS();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	void process(imap &imapAccount, Token t);
+	void process(imap &imapAccount, Token t) override;
 
 	void get_hier_name(imap &imapAccount, Token t);
 	void get_attr_list(imap &imapAccount, Token t);

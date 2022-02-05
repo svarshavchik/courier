@@ -74,8 +74,8 @@ private:
 
 	// Catch filter step completions.
 
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 
 	myReadFolders foundFolder;

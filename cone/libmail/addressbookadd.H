@@ -30,7 +30,7 @@ class mail::addressbook::Add : public mail::callback::message {
 	std::string nickname;
 	std::vector<size_t> multipart_params;
 
-	void success(std::string successMsg);
+	void success(std::string successMsg) override;
 	void (mail::addressbook::Add::*successFunc)(std::string);
 	void addedIntro(std::string successMsg);
 	void addedBeef(std::string successMsg);
@@ -39,15 +39,15 @@ class mail::addressbook::Add : public mail::callback::message {
 	void checked(std::string successMsg);
 	void reindexed(std::string successMsg);
 
-	void fail(std::string failMsg);
+	void fail(std::string failMsg) override;
 
 	void messageEnvelopeCallback(size_t messageNumber,
-				     const class mail::envelope &envelope);
+				     const class mail::envelope &envelope) override;
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 public:
 	Add(mail::addressbook *addressBookArg,
 	    mail::addressbook::Entry entryArg,

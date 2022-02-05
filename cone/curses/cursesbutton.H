@@ -41,18 +41,18 @@ public:
 	~CursesButton();
 
 	void setStyle(Style);
-	void draw();
+	void draw() override;
 
-	bool isFocusable();
-	void focusGained();
-	void focusLost();
-	void setText(std::string textArg);
+	bool isFocusable() override;
+	void focusGained() override;
+	void focusLost() override;
+	void setText(std::string textArg) override;
 
-	int getCursorPosition(int &r, int &c);
+	int getCursorPosition(int &r, int &c) override;
 
-	int getWidth() const;
+	int getWidth() const override;
 
-	bool processKeyInFocus(const Curses::Key &key);
+	bool processKeyInFocus(const Curses::Key &key) override;
 	virtual void clicked();
 
 	int getSelected() { return toggleButton < 0; }
@@ -95,7 +95,7 @@ public:
 	void operator=(T *p) { myClass=p; }
 	void operator=(void (T::*p)()) {mymethod=p; }
 
-	void clicked() { (myClass->*mymethod)(); }
+	void clicked() override { (myClass->*mymethod)(); }
 
 	T *getObject() const { return myClass; }
 };

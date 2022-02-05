@@ -32,9 +32,9 @@ public:
 
 	void setAttribute(CursesAttr attr);
 
-	int getWidth() const;
-	int getHeight() const;
-	void draw();
+	int getWidth() const override;
+	int getHeight() const override;
+	void draw() override;
 };
 
 #endif

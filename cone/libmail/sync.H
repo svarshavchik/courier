@@ -53,7 +53,7 @@
 //	mail::folder *f=mail->renameFolder(mail::folder *oldFolder,
 //					mail::folder *newParent,
 //					string newName);
-//                                 
+//
 //      bool ok=mail->deleteFolder(f, bool deleteDirectory);
 //
 //      mail::ACCOUNT::FolderInfo folderInfo;
@@ -62,7 +62,7 @@
 //
 //      bool ok=mail->openFolder(f, snapshot);
 //
-//      size_t nMsgs=mail->getFolderIndexSize();
+//      size_t nMsgs=mail->getFolderIndexSize() override;
 //
 //	mail::messageInfo getFolderIndexInfo(size_t msgNum);
 //
@@ -207,10 +207,10 @@ private:
 		FolderCallback();
 		~FolderCallback();
 	private:
-		void newMessages();
+		void newMessages() override;
 		void messagesRemoved(std::vector< std::pair<size_t,
-				     size_t> > &);
-		void messageChanged(size_t n);
+				     size_t> > &) override;
+		void messageChanged(size_t n) override;
 	} folderCallback;
 
 	bool folderModifiedFlag;

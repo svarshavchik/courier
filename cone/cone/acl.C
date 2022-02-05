@@ -165,8 +165,8 @@ class Acl::EditScreen : public CursesDialog,
 			    std::string identifierArg,
 			    std::string rightsArg);
 		~EntryButton();
-		void clicked();
-		bool processKeyInFocus(const Curses::Key &key);
+		void clicked() override;
+		bool processKeyInFocus(const Curses::Key &key) override;
 	};
 
 	class Entry {
@@ -204,12 +204,12 @@ public:
 	~EditScreen();
 
 	void init();
-	void resized();
+	void resized() override;
 
 	// Inherited from CursesKeyHandler:
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 
 	bool goEditIdentifier; // true: go to edit identifier screen
 	std::string editIdentifier;
@@ -242,8 +242,8 @@ public:
 
 	// Inherited from CursesKeyHandler:
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 
 	bool rightsUpdated;
 private:
@@ -593,7 +593,7 @@ bool Acl::EditScreen::processKey(const Curses::Key &key)
 				identifier="user=" + Gettext::toutf8(prompt);
 				break;
 			}
-					
+
 			if (key_ADDRIGHTSGROUP == promptKey)
 			{
 				prompt=myServer::promptInfo(_("Group: "));

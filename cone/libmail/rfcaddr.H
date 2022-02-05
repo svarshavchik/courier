@@ -134,8 +134,8 @@ public:
 	std::string setDisplayAddr(const std::string &a,
 				   const std::string &charset);
 
-	virtual void setName(std::string s);
-	virtual void setAddr(std::string s);
+	virtual void setName(std::string s) override;
+	virtual void setAddr(std::string s) override;
 
 	bool operator==(const address &a) const
 	{

@@ -31,14 +31,14 @@ class mbox::LockTask : public mbox::TimedTask {
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal)
+				    size_t messagesEstimatedTotal) override
 		{} // TODO
 
 	public:
 		reopenCallback(LockTask *task);
 		~reopenCallback();
-		void success(std::string);
-		void fail(std::string);
+		void success(std::string) override;
+		void fail(std::string message) override;
 	};
 
 	reopenCallback reopen;
@@ -59,7 +59,7 @@ public:
 	// the following:
 
 	virtual bool locked(file &)=0;
-	bool doit();
+	bool doit() override;
 };
 
 LIBMAIL_END

@@ -39,16 +39,16 @@ public:
 private:
 	size_t messageNum;
 
-	void decoded(std::string buffer);
-	void messageTextCallback(size_t n, std::string text);
+	void decoded(std::string buffer) override;
+	void messageTextCallback(size_t n, std::string text) override;
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
-	void fail(std::string message);
-	void success(std::string message);
+	void fail(std::string message) override;
+	void success(std::string message) override;
 };
 
 #endif

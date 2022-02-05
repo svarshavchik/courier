@@ -140,8 +140,8 @@ public:
 
 		virtual ~Folder();
 
-		virtual Entry *clone() const;
-		virtual bool visit(class EntryIterator &);
+		virtual Entry *clone() const override;
+		virtual bool visit(class EntryIterator &) override;
 
 		void setMessageCount(size_t n) { messageCount=n; }
 		void setUnreadCount(size_t n) { unreadCount=n; }
@@ -178,8 +178,8 @@ public:
 		       class myServer *serverArg);
 		~Server();
 
-		virtual Entry *clone() const;
-		virtual bool visit(class EntryIterator &);
+		virtual Entry *clone() const override;
+		virtual bool visit(class EntryIterator &) override;
 
 		virtual myServer *getServer() const { return server; }
 	};
@@ -190,12 +190,12 @@ public:
 	public:
 		Root(Hierarchy &hierarchy);
 		~Root();
-		virtual Entry *clone() const;
-		virtual bool visit(class EntryIterator &);
+		virtual Entry *clone() const override;
+		virtual bool visit(class EntryIterator &) override;
 	};
 
 	// Object passed to Entry::visit.  The subclass invokes the appropriate
-	// visit() method of EntryIterator.			
+	// visit() method of EntryIterator.
 	class EntryIterator {
 	public:
 		EntryIterator();
@@ -221,8 +221,8 @@ public:
 		EntryIteratorAssignRow(int r=0);
 		~EntryIteratorAssignRow();
 
-		bool visit(Folder *f);
-		bool visit(Server *s);
+		bool visit(Folder *f) override;
+		bool visit(Server *s) override;
 	};
 
 	// Safe casting from Entry to the desired object.
@@ -236,8 +236,8 @@ public:
 		CastIterator();
 		~CastIterator();
 
-		bool visit(Hierarchy::Folder *f);
-		bool visit(Hierarchy::Server *s);
+		bool visit(Hierarchy::Folder *f) override;
+		bool visit(Hierarchy::Server *s) override;
 	};
 
 	Hierarchy();
@@ -280,6 +280,6 @@ public:
 
 	virtual void visible(Hierarchy::Entry *e)=0;
 };
- 
+
 
 #endif

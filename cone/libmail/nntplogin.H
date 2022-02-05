@@ -28,13 +28,13 @@ public:
 	LoggedInTask(callback *callbackArg, nntp &myserverArg);
 	~LoggedInTask();
 
-	void serverResponse(const char *message);
-	void installedTask();
+	void serverResponse(const char *message) override;
+	void installedTask() override;
 
 	virtual void loggedIn()=0;
 	virtual void processLine(const char *message)=0;
 
-	void fail(std::string);
+	void fail(std::string message) override;
 private:
 	void doFwdResponse(const char *);
 
@@ -52,8 +52,8 @@ private:
 
 	void gotPassword(std::string);
 
-	void loginInfoCallback(std::string);
-	void loginInfoCallbackCancel();
+	void loginInfoCallback(std::string) override;
+	void loginInfoCallbackCancel() override;
 
 
 	void doTryAgain(const char *);

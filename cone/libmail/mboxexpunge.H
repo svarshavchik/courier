@@ -34,8 +34,8 @@ public:
 		    const std::vector<size_t> *deleteList);
 	~ExpungeTask();
 
-	bool locked(mbox::lock &mlock, std::string path);
-	bool locked(file &file);
+	bool locked(mbox::lock &mlock, std::string path) override;
+	bool locked(file &file) override;
 };
 
 LIBMAIL_END

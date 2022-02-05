@@ -38,7 +38,7 @@ class addMessage;
 
 class pop3Folder : public folder {
 
-	void sameServerAsHelperFunc() const;
+	void sameServerAsHelperFunc() const override;
 
 	pop3 *server;
 
@@ -46,47 +46,47 @@ public:
 	pop3Folder(pop3 *serverArg);
 	~pop3Folder();
 
-	std::string getName() const;
-	std::string getPath() const;
+	std::string getName() const override;
+	std::string getPath() const override;
 
-	bool hasMessages() const;
-	bool hasSubFolders() const;
-	bool isParentOf(std::string path) const;
+	bool hasMessages() const override;
+	bool hasSubFolders() const override;
+	bool isParentOf(std::string path) const override;
 
-	void hasMessages(bool);
-	void hasSubFolders(bool);
+	void hasMessages(bool) override;
+	void hasSubFolders(bool) override;
 
 	void getParentFolder(callback::folderList &callback1,
-			     callback &callback2) const;
+			     callback &callback2) const override;
 
 	void readFolderInfo( class callback::folderInfo
 			     &callback1,
-			     callback &callback2) const;
+			     callback &callback2) const override;
 
 	void readSubFolders( callback::folderList &callback1,
-			     callback &callback2) const;
+			     callback &callback2) const override;
 
-	mail::addMessage *addMessage(callback &callback) const;
+	mail::addMessage *addMessage(callback &callback) const override;
 
 	void createSubFolder(std::string name, bool isDirectory,
 			     class callback::folderList &callback1,
-			     callback &callback2) const;
+			     callback &callback2) const override;
 
 	void create(bool isDirectory,
-		    callback &callback) const;
+		    callback &callback) const override;
 
-	void destroy(callback &callback, bool destroyDir) const;
+	void destroy(callback &callback, bool destroyDir) const override;
 
 	void renameFolder(const mail::folder *newParent, std::string newName,
 			  mail::callback::folderList &callback1,
-			  callback &callback) const;
+			  callback &callback) const override;
 
-	folder *clone() const;
-	std::string toString() const;
+	folder *clone() const override;
+	std::string toString() const override;
 
 	void open(class callback &openCallback,
 		  snapshot *restoreSnapshot,
-		  class callback::folder &folderCallback) const;
+		  class callback::folder &folderCallback) const override;
 };
 
 
@@ -161,12 +161,12 @@ private:
 		~AutologoutCallback();
 
 		void success(std::string message);
-		void fail(std::string message);
+		void fail(std::string message) override;
 	};
 #endif
 
-	void resumed();
-	void handler(std::vector<pollfd> &fds, int &timeout);
+	void resumed() override;
+	void handler(std::vector<pollfd> &fds, int &timeout) override;
 
 	std::map<std::string, std::string> capabilities;
 
@@ -174,10 +174,10 @@ private:
 
 	loginInfo savedLoginInfo;
 
-	int socketRead(const std::string &readbuffer);
+	int socketRead(const std::string &readbuffer) override;
 
-	void disconnect(const char *reason);
-	const char *application_protocol() const;
+	void disconnect(const char *reason) override;
+	const char *application_protocol() const override;
 
 	std::list<Task *> tasks;
 
@@ -258,74 +258,74 @@ public:
 
 	~pop3();
 
-	void logout(callback &callback);
+	void logout(callback &callback) override;
 
-	void checkNewMail(callback &callback);
-	bool hasCapability(std::string capability);
-	std::string getCapability(std::string capability);
+	void checkNewMail(callback &callback) override;
+	bool hasCapability(std::string capability) override;
+	std::string getCapability(std::string capability) override;
 
-	folder *folderFromString(std::string);
+	folder *folderFromString(std::string) override;
 
 	void readTopLevelFolders(callback::folderList &callback1,
-				 callback &callback2);
+				 callback &callback2) override;
 	void findFolder(std::string folder,
 			class callback::folderList &callback1,
-			class callback &callback2);
-	std::string translatePath(std::string path);
+			class callback &callback2) override;
+	std::string translatePath(std::string path) override;
 
 	void readMessageAttributes(const std::vector<size_t> &messages,
 				   MessageAttributes attributes,
-				   callback::message &callback);
+				   callback::message &callback) override;
 
 	void readMessageContent(const std::vector<size_t> &messages,
 				bool peek,
 				enum mail::readMode readType,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void readMessageContent(size_t messageNum,
 				bool peek,
 				const mimestruct &msginfo,
 				enum mail::readMode readType,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void readMessageContentDecoded(size_t messageNum,
 				       bool peek,
 				       const mimestruct &msginfo,
-				       callback::message &callback);
+				       callback::message &callback) override;
 
-	size_t getFolderIndexSize();
-	messageInfo getFolderIndexInfo(size_t);
+	size_t getFolderIndexSize() override;
+	messageInfo getFolderIndexInfo(size_t) override;
 
 	void saveFolderIndexInfo(size_t,
 				 const messageInfo &,
-				 callback &);
-	void getFolderKeywordInfo(size_t, std::set<std::string> &);
+				 callback &) override;
+	void getFolderKeywordInfo(size_t, std::set<std::string> &) override;
 	void updateKeywords(const std::vector<size_t> &messages,
 			    const std::set<std::string> &keywords,
 			    bool setOrChange,
 			    // false: set, true: see changeTo
 			    bool changeTo,
-			    callback &cb);
+			    callback &cb) override;
 private:
 	bool genericProcessKeyword(size_t messageNumber,
-				   updateKeywordHelper &helper);
+				   updateKeywordHelper &helper) override;
 public:
 	void updateFolderIndexFlags(const std::vector<size_t> &messages,
 				    bool doFlip,
 				    bool enableDisable,
 				    const messageInfo &flags,
-				    callback &callback);
+				    callback &callback) override;
 
-	void updateFolderIndexInfo(callback &);
+	void updateFolderIndexInfo(callback &) override;
 	void removeMessages(const std::vector<size_t> &messages,
-			    callback &cb);
+			    callback &cb) override;
 
 	void copyMessagesTo(const std::vector<size_t> &messages,
 			    folder *copyTo,
-			    callback &callback);
+			    callback &callback) override;
 
 	void searchMessages(const searchParams &searchInfo,
-			    searchCallback &callback);
+			    searchCallback &callback) override;
 
 	// Used by pop3Folder:
 
@@ -341,30 +341,30 @@ public:
 
 private:
 
-	void genericMarkRead(size_t messageNumber);
+	void genericMarkRead(size_t messageNumber) override;
 
 	void genericMessageRead(std::string uid,
 				size_t messageNumber,
 				bool peek,
 				mail::readMode readType,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void genericMessageSize(std::string uid,
 				size_t messageNumber,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
 				 int &fdRet,
-				 callback &callback);
+				 callback &callback) override;
 
 	void genericGetMessageStruct(std::string uid,
 				     size_t messageNumber,
 				     struct rfc2045 *&structRet,
-				     callback &callback);
+				     callback &callback) override;
 
-	bool genericCachedUid(std::string uid);
+	bool genericCachedUid(std::string uid) override;
 
 	// One message is cached to a temp file, and parsed.
 
@@ -377,10 +377,10 @@ private:
 	//
 
 	void restoreIndex(size_t msgNum,
-			  const mail::messageInfo &info);
+			  const mail::messageInfo &info) override;
 	void restoreKeywords(size_t msgNum,
-			     const std::set<std::string> &);
-	void abortRestore();
+			     const std::set<std::string> &) override;
+	void abortRestore() override;
 
 	bool restoreAborted;
 

@@ -40,10 +40,10 @@ public:
 
 	// Calculate max size.
 
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
-	void draw();
+	void draw() override;
 
 	// Add a new input field, and its corresponding prompt
 	// (either one may be NULL, both can be NULL to append some useful
@@ -62,12 +62,12 @@ private:
 		       int row);
 public:
 
-	void deleteChild(Curses *child);
+	void deleteChild(Curses *child) override;
 
 	bool writeText(const char *text, int row, int col,
-			       const CursesAttr &attr) const;
+			       const CursesAttr &attr) const override;
 	bool writeText(const std::u32string &text, int row, int col,
-		       const Curses::CursesAttr &attr) const;
+		       const Curses::CursesAttr &attr) const override;
 
 };
 

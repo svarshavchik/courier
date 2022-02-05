@@ -44,18 +44,18 @@ public:
 
 	// Inherited from Curses:
 
-	int getWidth() const;
-	int getHeight() const;
-	void draw();
-	void draw(size_t n);
-	bool isFocusable();
-	bool processKeyInFocus(const Curses::Key &key);
-	int getCursorPosition(int &row, int &col);
+	int getWidth() const override;
+	int getHeight() const override;
+	void draw() override;
+	void draw(size_t n) override;
+	bool isFocusable() override;
+	bool processKeyInFocus(const Curses::Key &key) override;
+	int getCursorPosition(int &row, int &col) override;
 
 	// Inheried from CursesKeyHandler::
 
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
-	bool processKey(const Curses::Key &key);
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
+	bool processKey(const Curses::Key &key) override;
 
 	// Add function keys mapped to external filters to a help list
 	static void listExternalFilterKeys(std::vector< std::pair<std::string,
@@ -93,16 +93,16 @@ public:
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 
 	public:
 		static bool getFilterCmd(int n, std::string &cmd_locale);
 
 		FilterMessageCallback(std::string filtercmdarg);
 		~FilterMessageCallback();
-		void success(std::string message);
-		void fail(std::string message);
-		void messageTextCallback(size_t n, std::string text);
+		void success(std::string message) override;
+		void fail(std::string message) override;
+		void messageTextCallback(size_t n, std::string text) override;
 
 		void finish();
 	};

@@ -25,13 +25,13 @@ public:
 		   bool inactivityTimeoutArg);
 	~LogoutTask();
 
-	void done();
-	void installedTask();
-	void serverResponse(const char *);
+	void done() override;
+	void installedTask() override;
+	void serverResponse(const char *) override;
 
-	void disconnected(const char *reason);
+	void disconnected(const char *reason) override;
 
-	void emptyQueue(); // Override it - do not set inactivity timeout
+	void emptyQueue() override; // Override it - do not set inactivity timeout
 
 };
 

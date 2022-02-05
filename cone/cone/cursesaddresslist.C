@@ -27,9 +27,9 @@ public:
 		     size_t rowNumArg);
 	~AddressField();
 
-	void focusLost();
+	void focusLost() override;
 
-	bool processKeyInFocus(const Key &key);
+	bool processKeyInFocus(const Key &key) override;
 };
 
 CursesAddressList::AddressField::AddressField(CursesAddressList *parentArg,

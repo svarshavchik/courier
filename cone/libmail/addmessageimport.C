@@ -25,16 +25,16 @@ class mail::addMessage::assembleImportHelper : public callback::message {
 	string headers;
 
 	// Imported from mail::callback::message:
-	void messageTextCallback(size_t n, std::string text);
+	void messageTextCallback(size_t n, std::string text) override;
 
 	// Imported from mail::callback:
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	assembleImportHelper(mail::addMessage *addMessagePtr,

@@ -32,14 +32,14 @@ private:
 
 	void dologout(imap &imapAccount, mail::callback &callback);
 
-	const char *getName();
-	void timedOut(const char *errmsg);
-	void installed(imap &imapAccount);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
+	void installed(imap &imapAccount) override;
 
 public:
 	imapLogoutHandler(mail::callback &myCallback);
 	~imapLogoutHandler();
-	int process(imap &imapAccount, string &buffer);
+	int process(imap &imapAccount, string &buffer) override;
 } ;
 LIBMAIL_END
 

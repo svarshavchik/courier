@@ -34,8 +34,8 @@ LIBMAIL_START
 class smtp : public fd, public loginInfo::callbackTarget {
 
 private:
-	void resumed();
-	void handler(std::vector<pollfd> &fds, int &timeout);
+	void resumed() override;
+	void handler(std::vector<pollfd> &fds, int &timeout) override;
 
 	std::set<std::string> capabilities;
 
@@ -43,10 +43,10 @@ private:
 
 	loginInfo smtpLoginInfo;
 
-	int socketRead(const std::string &readbuffer);
+	int socketRead(const std::string &readbuffer) override;
 
-	void disconnect(const char *reason);
-	const char *application_protocol() const;
+	void disconnect(const char *reason) override;
+	const char *application_protocol() const override;
 
 	std::list<std::string> smtpResponse;
 	// SMTP server response being accumulated.
@@ -87,8 +87,8 @@ private:
 	void begin_auth();
 	void begin_auth_nonexternal();
 
-	void loginInfoCallback(std::string str);
-	void loginInfoCallbackCancel();
+	void loginInfoCallback(std::string str) override;
+	void loginInfoCallbackCancel() override;
 
 
 	void loginUseridResponse(int, std::string);
@@ -128,7 +128,7 @@ private:
 		Blast(smtp *smtpArg);
 		~Blast();
 
-		bool fillWriteBuffer();
+		bool fillWriteBuffer() override;
 	};
 
 	Blast *myBlaster;
@@ -147,69 +147,69 @@ public:
 
 	~smtp();
 
-	void logout(mail::callback &callback);
-	void checkNewMail(mail::callback &callback);
-	bool hasCapability(std::string capability);
-	std::string getCapability(std::string capability);
+	void logout(mail::callback &callback) override;
+	void checkNewMail(mail::callback &callback) override;
+	bool hasCapability(std::string capability) override;
+	std::string getCapability(std::string capability) override;
 
-	mail::folder *folderFromString(std::string);
+	mail::folder *folderFromString(std::string) override;
 
 	void readTopLevelFolders(mail::callback::folderList &callback1,
-				 mail::callback &callback2);
+				 mail::callback &callback2) override;
 
 	void findFolder(std::string folder,
 			class mail::callback::folderList &callback1,
-			class mail::callback &callback2);
-	std::string translatePath(std::string path);
+			class mail::callback &callback2) override;
+	std::string translatePath(std::string path) override;
 
 	mail::folder *getSendFolder(const mail::smtpInfo &info,
 				    const mail::folder *folder,
-				    std::string &errmsg);
+				    std::string &errmsg) override;
 
 
 	void readMessageAttributes(const std::vector<size_t> &messages,
 				   MessageAttributes attributes,
-				   mail::callback::message &callback);
+				   mail::callback::message &callback) override;
 
 	void readMessageContent(const std::vector<size_t> &messages,
 				bool peek,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContent(size_t messageNum,
 				bool peek,
 				const mimestruct &msginfo,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContentDecoded(size_t messageNum,
 				       bool peek,
 				       const mimestruct &msginfo,
-				       mail::callback::message &callback);
+				       mail::callback::message &callback) override;
 
-	size_t getFolderIndexSize();
-	mail::messageInfo getFolderIndexInfo(size_t);
+	size_t getFolderIndexSize() override;
+	mail::messageInfo getFolderIndexInfo(size_t) override;
 
 	void saveFolderIndexInfo(size_t,
 				 const mail::messageInfo &,
-				 mail::callback &);
+				 mail::callback &) override;
 
 	void updateFolderIndexFlags(const std::vector<size_t> &messages,
 				    bool doFlip,
 				    bool enableDisable,
 				    const mail::messageInfo &flags,
-				    mail::callback &callback);
+				    mail::callback &callback) override;
 
-	void updateFolderIndexInfo(mail::callback &);
+	void updateFolderIndexInfo(mail::callback &) override;
 	void removeMessages(const std::vector<size_t> &messages,
-			    callback &cb);
+			    callback &cb) override;
 
 	void copyMessagesTo(const std::vector<size_t> &messages,
 			    mail::folder *copyTo,
-			    mail::callback &callback);
+			    mail::callback &callback) override;
 
 	void searchMessages(const searchParams &searchInfo,
-			    searchCallback &callback);
+			    searchCallback &callback) override;
 
 
 	void send(FILE *tmpfile, mail::smtpInfo &info,

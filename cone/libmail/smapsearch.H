@@ -19,7 +19,7 @@ LIBMAIL_START
 
 class smapSEARCH : public smapHandler {
 
-	const char *getName();
+	const char *getName() override;
 
 	searchParams parameters;
 	searchCallback *callback;
@@ -33,11 +33,11 @@ public:
 
 	~smapSEARCH();
 
-	void installed(imap &);
-	bool ok(std::string);
-	bool fail(std::string);
+	void installed(imap &) override;
+	bool ok(std::string) override;
+	bool fail(std::string message) override;
 
-	bool processLine(imap &imapAccount, std::vector<const char *> &words);
+	bool processLine(imap &imapAccount, std::vector<const char *> &words) override;
 };
 
 LIBMAIL_END

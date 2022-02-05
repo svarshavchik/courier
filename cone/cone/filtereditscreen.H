@@ -36,8 +36,8 @@ class Filter::editScreen
 		Button(Filter::editScreen *parentArg, std::string Name,
 		       bool isAddButtonArg);
 		~Button();
-		bool processKeyInFocus(const Key &key);
-		void clicked();
+		bool processKeyInFocus(const Key &key) override;
+		void clicked() override;
 	};
 
 	CursesLabel myTitle;
@@ -71,9 +71,9 @@ private:
 
 	// Inherited from CursesKeyHandler:
 
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 	bool listKeys( std::vector< std::pair<std::string, std::string> >
-		       &list);
+		       &list) override;
 };
 
 #endif

@@ -26,7 +26,7 @@ class myServer::Callback : public mail::callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	bool succeeded;	// Libmail succeeded
@@ -40,8 +40,8 @@ public:
 	~Callback();
 
 	CursesStatusBar::statusLevel getLevel() const;
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 };
 
 
@@ -58,7 +58,7 @@ public:
 	CreateFolderCallback();
 	~CreateFolderCallback();
 
-	void success(const std::vector<const mail::folder *> &folders);
+	void success(const std::vector<const mail::folder *> &folders) override;
 };
 
 #endif

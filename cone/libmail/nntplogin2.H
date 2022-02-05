@@ -28,9 +28,9 @@ public:
 	LoginTask(callback *callbackArg, nntp &myserverArg);
 	~LoginTask();
 
-	void loggedIn();
-	void processLine(const char *message);
-	void fail(std::string);
+	void loggedIn() override;
+	void processLine(const char *message) override;
+	void fail(std::string message) override;
 
 private:
 	void processListStatus(const char *);

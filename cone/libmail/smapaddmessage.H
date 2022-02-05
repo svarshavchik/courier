@@ -32,9 +32,9 @@ public:
 
 	std::vector<std::string> cmds;
 
-	void saveMessageContents(std::string);
-	void go();
-	void fail(std::string);
+	void saveMessageContents(std::string) override;
+	void go() override;
+	void fail(std::string message) override;
 };
 
 LIBMAIL_END

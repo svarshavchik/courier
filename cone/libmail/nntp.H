@@ -51,13 +51,13 @@ private:
 
 	callback::folder *folderCallback;
 
-	void resumed();
-	void handler(std::vector<pollfd> &fds, int &timeout);
-	int socketRead(const std::string &readbuffer);
+	void resumed() override;
+	void handler(std::vector<pollfd> &fds, int &timeout) override;
+	int socketRead(const std::string &readbuffer) override;
 
-	void disconnect(const char *reason);
+	void disconnect(const char *reason) override;
 
-	const char *application_protocol() const;
+	const char *application_protocol() const override;
 	// Superclass of NNTP tasks.  Methods create subclasses of Task
 	// objects, and push them to the tasks queue.  Replies from the
 	// NNTP server are routed to the foremost Task on the queue.
@@ -79,7 +79,7 @@ private:
 		void resetTimeout();
 
 		virtual void success(std::string);
-		virtual void fail(std::string);
+		virtual void fail(std::string message);
 		// success/fail for use by subclasses.  Invoke the callback
 		// method, then done.
 
@@ -213,81 +213,81 @@ public:
 
 	~nntp();
 
-	void logout(callback &callback);
+	void logout(callback &callback) override;
 
-	void checkNewMail(callback &callback);
-	bool hasCapability(std::string capability);
-	std::string getCapability(std::string capability);
+	void checkNewMail(callback &callback) override;
+	bool hasCapability(std::string capability) override;
+	std::string getCapability(std::string capability) override;
 
-	mail::folder *folderFromString(std::string);
+	mail::folder *folderFromString(std::string) override;
 
 	void readTopLevelFolders(callback::folderList &callback1,
-				 callback &callback2);
+				 callback &callback2) override;
 	void findFolder(std::string folder,
 			class callback::folderList &callback1,
-			class callback &callback2);
-	std::string translatePath(std::string path);
+			class callback &callback2) override;
+	std::string translatePath(std::string path) override;
 
 	mail::folder *getSendFolder(const smtpInfo &info,
 				    const mail::folder *folder,
-				    std::string &errmsg);
+				    std::string &errmsg) override;
 
 	void readMessageAttributes(const std::vector<size_t> &messages,
 				   MessageAttributes attributes,
-				   callback::message &callback);
+				   callback::message &callback) override;
 
 	void readMessageContent(const std::vector<size_t> &messages,
 				bool peek,
 				enum mail::readMode readType,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void readMessageContent(size_t messageNum,
 				bool peek,
 				const mimestruct &msginfo,
 				enum mail::readMode readType,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void readMessageContentDecoded(size_t messageNum,
 				       bool peek,
 				       const mimestruct &msginfo,
-				       callback::message &callback);
+				       callback::message &callback) override;
 
-	size_t getFolderIndexSize();
-	messageInfo getFolderIndexInfo(size_t);
+	size_t getFolderIndexSize() override;
+	messageInfo getFolderIndexInfo(size_t) override;
 
 	void saveFolderIndexInfo(size_t,
 				 const messageInfo &,
-				 callback &);
+				 callback &) override;
 
 	void updateFolderIndexFlags(const std::vector<size_t> &messages,
 				    bool doFlip,
 				    bool enableDisable,
 				    const messageInfo &flags,
-				    callback &callback);
+				    callback &callback) override;
 
-	void updateFolderIndexInfo(callback &);
+	void updateFolderIndexInfo(callback &) override;
 
-	void getFolderKeywordInfo(size_t, std::set<std::string> &);
+	void getFolderKeywordInfo(size_t, std::set<std::string> &) override;
 
 	void updateKeywords(const std::vector<size_t> &messages,
 			    const std::set<std::string> &keywords,
 			    bool setOrChange,
 			    // false: set, true: see changeTo
 			    bool changeTo,
-			    callback &cb);
+			    callback &cb) override;
 private:
 	bool genericProcessKeyword(size_t msgNum,
-				   updateKeywordHelper &helper);
+				   updateKeywordHelper &helper) override;
 public:
 	void removeMessages(const std::vector<size_t> &messages,
-			    callback &cb);
+			    callback &cb) override;
 
 	void copyMessagesTo(const std::vector<size_t> &messages,
 			    mail::folder *copyTo,
-			    callback &callback);
+			    callback &callback) override;
 
 	void searchMessages(const searchParams &searchInfo,
-			    searchCallback &callback);
+			    searchCallback &callback) override;
 
 	void saveSnapshot();
 private:
@@ -303,25 +303,25 @@ private:
 				size_t messageNumber,
 				bool peek,
 				mail::readMode readTypeArg,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void genericMessageSize(std::string uid,
 				size_t messageNumber,
-				callback::message &callback);
+				callback::message &callback) override;
 
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
 				 int &fdRet,
-				 callback &callback);
-	void genericMarkRead(size_t messageNumber);
+				 callback &callback) override;
+	void genericMarkRead(size_t messageNumber) override;
 
 	void genericGetMessageStruct(std::string uid,
 				     size_t messageNumber,
 				     struct rfc2045 *&structRet,
-				     callback &callback);
+				     callback &callback) override;
 
-	bool genericCachedUid(std::string uid);
+	bool genericCachedUid(std::string uid) override;
 
 	// One message is cached to a temp file, and parsed.
 

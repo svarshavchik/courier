@@ -36,13 +36,13 @@ public:
 
 	~imapFetchHandler();
 
-	bool untaggedMessage(imap &imapAccount, std::string name);
+	bool untaggedMessage(imap &imapAccount, std::string name) override;
 
 	bool taggedMessage(imap &imapAccount, std::string name,
 			   std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 
-	void installed(imap &imapArg);
+	void installed(imap &imapArg) override;
 
 	void messageTextCallback(size_t messageNum, std::string text);
 	void messageEnvelopeCallback(size_t messageNumber,
@@ -59,14 +59,14 @@ public:
 	void messageSizeCallback(size_t messageNumber,
 				 unsigned long messagesize);
 
-	void timedOut(const char *);
+	void timedOut(const char *) override;
 
 	size_t messageTextEstimatedSize;
 	size_t messageTextCompleted;
 	size_t messageCntDone;
 	size_t messageCntTotal;
 private:
-	const char *getName();
+	const char *getName() override;
 };
 
 LIBMAIL_END

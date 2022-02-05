@@ -38,36 +38,36 @@ private:
 
 	// mail::folder stubs
 
-	void sameServerAsHelperFunc() const;
-	std::string getName() const;
-	std::string getPath() const;
-	bool hasMessages() const;
-	bool hasSubFolders() const;
-	std::string isNewsgroup() const;
-	bool isParentOf(std::string path) const;
-	void hasMessages(bool);
-	void hasSubFolders(bool);
+	void sameServerAsHelperFunc() const override;
+	std::string getName() const override;
+	std::string getPath() const override;
+	bool hasMessages() const override;
+	bool hasSubFolders() const override;
+	std::string isNewsgroup() const override;
+	bool isParentOf(std::string path) const override;
+	void hasMessages(bool) override;
+	void hasSubFolders(bool) override;
 	void readFolderInfo( mail::callback::folderInfo &callback1,
-			     mail::callback &callback2) const;
+			     mail::callback &callback2) const override;
 	void getParentFolder(mail::callback::folderList &callback1,
-			     mail::callback &callback2) const;
+			     mail::callback &callback2) const override;
 	void readSubFolders( mail::callback::folderList &callback1,
-			     mail::callback &callback2) const;
-	mail::addMessage *addMessage(mail::callback &callback) const;
+			     mail::callback &callback2) const override;
+	mail::addMessage *addMessage(mail::callback &callback) const override;
 	void createSubFolder(std::string name, bool isDirectory,
 			     mail::callback::folderList &callback1,
-			     mail::callback &callback2) const;
+			     mail::callback &callback2) const override;
 	void create(bool isDirectory,
-		    mail::callback &callback) const;
-	void destroy(mail::callback &callback, bool destroyDir) const;
+		    mail::callback &callback) const override;
+	void destroy(mail::callback &callback, bool destroyDir) const override;
 	void renameFolder(const mail::folder *newParent, std::string newName,
 			  mail::callback::folderList &callback1,
-			  mail::callback &callback2) const;
-	folder *clone() const;
-	std::string toString() const;
+			  mail::callback &callback2) const override;
+	folder *clone() const override;
+	std::string toString() const override;
 	void open(mail::callback &openCallback,
 		  mail::snapshot *restoreSnapshot,
-		  mail::callback::folder &folderCallback) const;
+		  mail::callback::folder &folderCallback) const override;
 };
 
 #endif

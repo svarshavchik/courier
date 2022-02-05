@@ -40,22 +40,22 @@ public:
 	// getWidth()/getHeight() computes the largest rectangle that
 	// contains all current children.
 
-	virtual int getWidth() const;
-	virtual int getHeight() const;
+	virtual int getWidth() const override;
+	virtual int getHeight() const override;
 
-	virtual Curses *getDialogChild() const;
+	virtual Curses *getDialogChild() const override;
 
 	// draw/erase recursively invoke draw/erase methods of all children,
 	// unless a child CursesObject's isDialog() method returns true, in
 	// which case only that child's draw/erase method is called.
 
-	virtual void draw();
-	virtual void erase();
+	virtual void draw() override;
+	virtual void erase() override;
 
 	// The default resized() method recursively invokes the resized()
 	// method of all children.
 
-	virtual void resized();
+	virtual void resized() override;
 
 	// The constructor and the destructor of a Curses object automatically
 	// calls addChild/deleteChild to register the new child process.
@@ -66,8 +66,8 @@ public:
 	// The default implementation of getNextFocus()/getPrevFocus()
 	// return the pointer to the first or the last child.
 
-	virtual Curses *getNextFocus();
-	virtual Curses *getPrevFocus();
+	virtual Curses *getNextFocus() override;
+	virtual Curses *getPrevFocus() override;
 };
 
 

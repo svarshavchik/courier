@@ -121,7 +121,7 @@ public:
 		rfc2045_free(rfc2045p);
 	}
 
-	void operator()(std::string text)
+	void operator()(std::string text) override
 	{
 		rfc2045_parse(rfc2045p, text.c_str(), text.size());
 		SaveText::operator()(text);
@@ -2119,18 +2119,18 @@ public:
 	{
 	}
 
-	void line_begin(size_t quoteLevelArg)
+	void line_begin(size_t quoteLevelArg) override
 	{
 		quoteLevel=quoteLevelArg+quoteLevelAdjustment;
 		line.clear();
 	}
 
-	void line_contents(const char32_t *uc, size_t cnt)
+	void line_contents(const char32_t *uc, size_t cnt) override
 	{
 		line.insert(line.end(), uc, uc+cnt);
 	}
 
-	void line_end()
+	void line_end() override
 	{
 		size_t n=quoteLevel;
 
@@ -3581,7 +3581,7 @@ public:
 
 	DecryptSaveText();
 	~DecryptSaveText();
-	void operator()(std::string text); // Callback from ReadText
+	void operator()(std::string text) override; // Callback from ReadText
 
 	// Interface to libmail_gpg:
 

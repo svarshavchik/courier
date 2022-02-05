@@ -22,14 +22,14 @@ LIBMAIL_START
 
 class mbox::MultiLock : public mbox::LockTask {
 
-	bool locked(file &fileArg); // No-op
+	bool locked(file &fileArg) override; // No-op
 
 public:
 	MultiLock(mbox &mboxAccount,
 		  mail::callback &callbackArg);
 	~MultiLock();
 
-	bool locked(mbox::lock &mlock, std::string path);
+	bool locked(mbox::lock &mlock, std::string path) override;
 };
 
 class mbox::MultiLockGenericAttributes : public callback {
@@ -43,7 +43,7 @@ class mbox::MultiLockGenericAttributes : public callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	MultiLockGenericAttributes(mbox &mboxAccountArg,
@@ -52,8 +52,8 @@ public:
 				   mail::callback::message &callbackArg);
 	~MultiLockGenericAttributes();
 
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 };
 
 class mbox::MultiLockGenericMessageRead : public callback {
@@ -69,7 +69,7 @@ class mbox::MultiLockGenericMessageRead : public callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	MultiLockGenericMessageRead(mbox &mboxAccountArg,
@@ -78,8 +78,8 @@ public:
 				    enum mail::readMode readTypeArg,
 				    callback::message &callbackArg);
 	~MultiLockGenericMessageRead();
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 };
 
 //
@@ -95,27 +95,27 @@ public:
 			 callback::message &origCallbackArg);
 	~MultiLockRelease();
 
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 	void messageEnvelopeCallback(size_t messageNumber,
-				     const envelope &envelope);
+				     const envelope &envelope) override;
 
 	void messageArrivalDateCallback(size_t messageNumber,
-					time_t datetime);
+					time_t datetime) override;
 
 	void messageSizeCallback(size_t messageNumber,
-				 unsigned long size);
+				 unsigned long size) override;
 
 	void messageStructureCallback(size_t messageNumber,
-				      const mimestruct &messageStructure);
+				      const mimestruct &messageStructure) override;
 
-	void messageTextCallback(size_t n, std::string text);
+	void messageTextCallback(size_t n, std::string text) override;
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 };
 

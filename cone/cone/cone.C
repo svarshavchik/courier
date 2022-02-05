@@ -101,7 +101,7 @@ class myLoginButton : public CursesButton {
 public:
 	myLoginButton(const char *name);
 	~myLoginButton();
-	void clicked();
+	void clicked() override;
 };
 
 myLoginButton::myLoginButton(const char *name)
@@ -120,14 +120,14 @@ void myLoginButton::clicked()
 
 class myCancelButton : public CursesButton, public CursesKeyHandler {
 
-	bool processKey(const Curses::Key &key);
+	bool processKey(const Curses::Key &key) override;
 
 public:
 	bool cancel;
 	myCancelButton();
 	~myCancelButton();
 
-	void clicked();
+	void clicked() override;
 };
 
 

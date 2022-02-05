@@ -21,7 +21,7 @@ protected:
 	std::string path;
 	mail::callback::folderList &listCallback;
 
-	const char *getName();
+	const char *getName() override;
 
 protected:
 
@@ -32,11 +32,11 @@ public:
 		 mail::callback::folderList &listCallbackArg,
 		 mail::callback &callbackArg);
 	~smapLIST();
-	void installed(imap &);
+	void installed(imap &) override;
 
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
-	bool ok(std::string);
+			 std::vector<const char *> &words) override;
+	bool ok(std::string) override;
 };
 
 class smapLISToneFolder : public smapLIST {
@@ -50,8 +50,8 @@ public:
 	~smapLISToneFolder();
 
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
-	bool ok(std::string);
+			 std::vector<const char *> &words) override;
+	bool ok(std::string) override;
 };
 
 LIBMAIL_END

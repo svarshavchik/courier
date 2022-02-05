@@ -54,13 +54,13 @@ public:
 			 Curses *statusBarArg);
 	~CursesMainScreen();
 
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
 	bool writeText(const char *text, int row, int col,
-		       const CursesAttr &attr) const;
+		       const CursesAttr &attr) const override;
 	bool writeText(const std::u32string &text, int row, int col,
-		       const Curses::CursesAttr &attr) const;
+		       const Curses::CursesAttr &attr) const override;
 };
 
 #endif

@@ -25,7 +25,7 @@ class smapOPEN : public smapHandler {
 
 	smapFOLDER *newSmapFolder;
 
-	const char *getName();
+	const char *getName() override;
 
 	size_t exists;
 
@@ -41,14 +41,14 @@ public:
 		 mail::callback::folder &folderCallbackArg);
 
 	~smapOPEN();
-	void installed(imap &);
+	void installed(imap &) override;
 	bool processLine(imap &imapAccount,
-			 std::vector<const char *> &words);
-	bool ok(std::string);
+			 std::vector<const char *> &words) override;
+	bool ok(std::string) override;
 
 	void messagesRemoved(std::vector< std::pair<size_t, size_t> >
-			     &removedList);
-	void messageChanged(size_t msgNum);
+			     &removedList) override;
+	void messageChanged(size_t msgNum) override;
 };
 
 LIBMAIL_END

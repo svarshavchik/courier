@@ -40,8 +40,8 @@ public:
 
 	void selectedGroup(msgnum_t estimatedCount,
 			   msgnum_t loArticleCount,
-			   msgnum_t hiArticleCount);
-	void processGroup(const char *);
+			   msgnum_t hiArticleCount) override;
+	void processGroup(const char *) override;
 
 private:
 	void processStatusResponse(const char *);
@@ -65,7 +65,7 @@ public:
 		  mail::readMode getType);
 
 	~FetchTask();
-	void fetchedText(std::string);
+	void fetchedText(std::string) override;
 };
 
 

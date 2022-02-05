@@ -1,3 +1,8 @@
+2022-02-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update to C++11, make cone buildable with -Wsuggest-override and
+	-Wreturn-type -Werror.
+
 1.5
 
 2022-01-16  Arjen de Korte <build+github@de-korte.org>

@@ -94,17 +94,17 @@ public:
 
 	~imapSELECT();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 	static const char name[];
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 	bool taggedMessage(imap &imapAccount, string name,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -155,14 +155,14 @@ class imapSELECT_FLAGS : public imapHandlerStructured {
 
 public:
 	imapSELECT_FLAGS();
-	~imapSELECT_FLAGS();
-	void installed(imap &imapAccount);
+	~imapSELECT_FLAGS() override;
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	void process(imap &imapAccount, Token t);
+	void process(imap &imapAccount, Token t) override;
 	void start_flags(imap &imapAccount, Token t);
 	void process_flags(imap &imapAccount, Token t);
 };
@@ -214,12 +214,12 @@ public:
 	imapSELECT_COUNT(imapSELECT &mySelect,
 			       size_t myCount);
 	~imapSELECT_COUNT();
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *);
-	void process(imap &imapAccount, Token t);
+	const char *getName() override;
+	void timedOut(const char *) override;
+	void process(imap &imapAccount, Token t) override;
 	void get_count(imap &imapAccount, Token t);
 };
 
@@ -269,13 +269,13 @@ public:
 	imapSELECT_OK(imapSELECT &mySelect,
 			    string typeArg);
 	~imapSELECT_OK();
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	int process(imap &imapAccount, string &buffer);
+	int process(imap &imapAccount, string &buffer) override;
 	void process(string &buffer);
 };
 
@@ -330,18 +330,18 @@ public:
 	imapSYNCHRONIZE(mail::callback &callbackArg);
 	~imapSYNCHRONIZE();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 	void fetchedUID();
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 	bool taggedMessage(imap &imapAccount, string name,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -397,34 +397,35 @@ class imapCHECKMAIL : public imapCommandHandler {
 public:
 	imapCHECKMAIL(mail::callback &myCallback);
 	~imapCHECKMAIL();
-	void installed(imap &imapAccount);
+
+	void installed(imap &imapAccount) override;
 
 	class dummyCallback : public mail::callback {
 	public:
 		dummyCallback();
 		~dummyCallback();
 
-		void success(string);
-		void fail(string);
+		void success(string) override;
+		void fail(string) override;
 
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 	};
 
 private:
 
-	const char *getName();
+	const char *getName() override;
 
-	void timedOut(const char *errmsg);
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 
 	bool taggedMessage(imap &imapAccount, string name,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -689,13 +690,13 @@ class imapSELECTCallback : public mail::callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	imapSELECTCallback(mail::callback &cb);
 	~imapSELECTCallback();
-	void success(string msg);
-	void fail(string msg);
+	void success(string msg) override;
+	void fail(string msg) override;
 };
 LIBMAIL_END
 
@@ -932,15 +933,15 @@ class imapFOLDER_COUNT : public imapHandlerStructured {
 
 	bool accept_largestring;
 
-	bool wantLargeString();
+	bool wantLargeString() override;
 public:
 	imapFOLDER_COUNT(size_t myCount);
 	~imapFOLDER_COUNT();
-	void installed(imap &imapAccount) {}
+	void installed(imap &imapAccount) override {}
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
-	void process(imap &imapAccount, Token t);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
+	void process(imap &imapAccount, Token t) override;
 
 	void get_count(imap &imapAccount, Token t);
 
@@ -1956,16 +1957,16 @@ public:
 	imapSTORE(mail::callback &callbackArg, string storecmdArg);
 	~imapSTORE();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 	bool taggedMessage(imap &imapAccount, string name,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -2120,14 +2121,14 @@ class imapUpdateFlagsCallback : public mail::callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	imapUpdateFlagsCallback(mail::callback &callback);
 	~imapUpdateFlagsCallback();
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 
 	bool failFlag;
 	string message;
@@ -2276,14 +2277,14 @@ class imapMessageCallbackStub : public mail::callback::message {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	imapMessageCallbackStub(mail::callback &callbackArg);
 	~imapMessageCallbackStub();
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 };
 
 LIBMAIL_END
@@ -2419,14 +2420,14 @@ public:
 				mail::imap *myimapArg);
 	~updateImapKeywordHelper();
 
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 };
 
 
@@ -2817,12 +2818,12 @@ class imapSEARCH : public imapCommandHandler {
 		SearchResults(vector<size_t> &);
 		~SearchResults();
 
-		void installed(imap &imapAccount);
+		void installed(imap &imapAccount) override;
 	private:
-		const char *getName();
-		void timedOut(const char *errmsg);
+		const char *getName() override;
+		void timedOut(const char *errmsg) override;
 
-		void process(imap &imapAccount, Token t);
+		void process(imap &imapAccount, Token t) override;
 	};
 
 public:
@@ -2832,15 +2833,15 @@ public:
 			 mail::searchCallback &callbackArg);
 	~imapSEARCH();
 
-	void installed(imap &);
-	const char *getName();
-	void timedOut(const char *errmsg);
+	void installed(imap &) override;
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 	bool taggedMessage(imap &imapAccount, string name,
 			   string message,
-			   bool okfail, string errmsg);
-	bool continuationRequest(imap &imapAccount, string request);
+			   bool okfail, string errmsg) override;
+	bool continuationRequest(imap &imapAccount, string request) override;
 };
 
 LIBMAIL_END
@@ -3234,16 +3235,16 @@ public:
 	imapEXPUNGE(mail::callback &callbackArg);
 	~imapEXPUNGE();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 	bool taggedMessage(imap &imapAccount, string name,
 			   string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 };
 
 LIBMAIL_END
@@ -3358,14 +3359,14 @@ public:
 	void mkVector(mail::imap &, vector<size_t> &);
 
 private:
-	void success(string msg);
-	void fail(string msg);
+	void success(string msg) override;
+	void fail(string msg) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 };
 

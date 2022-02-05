@@ -48,17 +48,17 @@ public:
 
 	void addressFocusLost(size_t rowNum); // Callback from AddressField
 
-	void setRow(int); // Override from CursesContainer
-	void setCol(int); // Override from CursesContainer
+	void setRow(int) override; // Override from CursesContainer
+	void setCol(int) override; // Override from CursesContainer
 
 	CursesAddressList(CursesContainer *parent);
 	~CursesAddressList();
 
-	void resized();	// Resize addressfields accordingly.
+	void resized() override;	// Resize addressfields accordingly.
 	void setWidth(int w); // Resize addressfields accordingly.
-	int getWidth() const;
-	void requestFocus(); // Focus to first field
-	bool isFocusable(); // Yup
+	int getWidth() const override;
+	void requestFocus() override; // Focus to first field
+	bool isFocusable() override; // Yup
 
 	bool getAddresses( std::vector<mail::emailAddress> &addressArray );
 	void setAddresses( std::vector<mail::emailAddress> &addressArray );

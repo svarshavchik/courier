@@ -47,9 +47,10 @@ class addressbook : public mail::obj,
 	// Handle folder update callbacks.
 	//
 
-	void newMessages();
-	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &);
-	void messageChanged(size_t n);
+	void newMessages() override;
+	void messagesRemoved(std::vector< std::pair<size_t, size_t> > &)
+		override;
+	void messageChanged(size_t n) override;
 
 	mail::account *server;
 	mail::folder *folder;
@@ -156,4 +157,3 @@ public:
 LIBMAIL_END
 
 #endif
-

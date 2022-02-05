@@ -22,14 +22,14 @@ public:
 
 private:
 	// Imported from mail::callback:
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
-	void messageTextCallback(size_t n, std::string text);
+			    size_t messagesEstimatedTotal) override;
+	void messageTextCallback(size_t n, std::string text) override;
 
 	size_t &handleRet;
 	mail::ptr<mail::account> acct;

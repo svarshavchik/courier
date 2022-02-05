@@ -31,28 +31,28 @@ class imapIdleHandler : public imapCommandHandler {
 
 	void terminateIdle(imap &);
 
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
 
-	bool getTimeout(imap &, int &);
+	bool getTimeout(imap &, int &) override;
 
 public:
 	imapIdleHandler(bool idleOnOffArg, mail::callback *callbackArg);
 	~imapIdleHandler();
 
-	void installed(imap &);
+	void installed(imap &) override;
 
-	bool untaggedMessage(imap &imapAccount, std::string name);
+	bool untaggedMessage(imap &imapAccount, std::string name) override;
 
 	bool taggedMessage(imap &imapAccount, std::string name,
 			   std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 
 	bool continuationRequest(imap &imapAccount,
-				 std::string request);
+				 std::string request) override;
 
-	void anotherHandlerInstalled(imap &imapAccount);
+	void anotherHandlerInstalled(imap &imapAccount) override;
 };
 
 

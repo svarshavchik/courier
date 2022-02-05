@@ -32,8 +32,8 @@ public:
 		noMultiplesFlag=true;
 	}
 
-	void selected(std::vector<std::string> &);
-	void abort();
+	void selected(std::vector<std::string> &) override;
+	void abort() override;
 
 	std::vector<std::string> &getFilenameList();
 };

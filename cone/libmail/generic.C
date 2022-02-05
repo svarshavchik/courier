@@ -55,7 +55,7 @@ class mail::generic::Attributes : public mail::callback::message,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 
@@ -84,16 +84,16 @@ public:
 		   mail::callback::message *callbackArg);
 	~Attributes();
 
-	void success(string msg);
-	void fail(string msg);
-	void RunningLater();
+	void success(string msg) override;
+	void fail(string msg) override;
+	void RunningLater() override;
 	void go(string);
 
 	string headerBuffer;
-	void messageTextCallback(size_t n, string text);
+	void messageTextCallback(size_t n, string text) override;
 
 	void messageSizeCallback(size_t messageNumber,
-				 unsigned long size);
+				 unsigned long size) override;
 };
 
 mail::generic::Attributes::Attributes(mail::account *accountArg,
@@ -621,20 +621,20 @@ class mail::generic::ReadMultiple : public mail::callback::message,
 		TempFileCallback(ReadMultiple *meArg);
 		~TempFileCallback();
 
-		void success(string);
-		void fail(string);
+		void success(string) override;
+		void fail(string) override;
 
 		void reportProgress(size_t bytesCompleted,
 				    size_t bytesEstimatedTotal,
 
 				    size_t messagesCompleted,
-				    size_t messagesEstimatedTotal);
+				    size_t messagesEstimatedTotal) override;
 
 	};
 
 	TempFileCallback temp_callback;
 
-	void copyto(string);
+	void copyto(string) override;
 
 	string uid;
 	size_t messageNumber;
@@ -643,7 +643,7 @@ class mail::generic::ReadMultiple : public mail::callback::message,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	size_t totalCnt;
@@ -662,10 +662,10 @@ public:
 
 	~ReadMultiple();
 
-	void success(string);
-	void fail(string);
-	void messageTextCallback(size_t n, string text);
-	void RunningLater();
+	void success(string) override;
+	void fail(string) override;
+	void messageTextCallback(size_t n, string text) override;
+	void RunningLater() override;
 
 	void processTempFile(string);
 };
@@ -873,7 +873,7 @@ class mail::generic::ReadMimePart : public mail::callback,
 
 	mail::callback::message *callback;
 
-	void copyto(string);
+	void copyto(string) override;
 
 	bool copyHeaders();
 	bool copyContents();
@@ -882,7 +882,7 @@ class mail::generic::ReadMimePart : public mail::callback,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	int fd;
@@ -896,8 +896,8 @@ public:
 
 	~ReadMimePart();
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 };
 
 mail::generic::ReadMimePart::ReadMimePart(mail::account *accountArg,
@@ -1065,7 +1065,7 @@ class mail::generic::GetMessageFdStruct : public mail::callback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	mail::generic *generic;
@@ -1082,8 +1082,8 @@ public:
 			   struct rfc2045 *&rfc2045pArg);
 	~GetMessageFdStruct();
 
-	void success(string);
-	void fail(string);
+	void success(string) override;
+	void fail(string) override;
 };
 
 mail::generic::GetMessageFdStruct::GetMessageFdStruct(string uidArg,
@@ -1593,11 +1593,11 @@ class mail::generic::Remove : public mail::callback {
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 
 	Remove(mail::account *acctArg,
 	       const vector<size_t> &messages,
@@ -1802,12 +1802,12 @@ public:
 	     mail::callback *callbackArg);
 	~Move();
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 };
 
 mail::generic::Move::Move(mail::account *acctArg,

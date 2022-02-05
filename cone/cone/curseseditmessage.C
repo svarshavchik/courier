@@ -1809,8 +1809,8 @@ class CursesEditMessage::ReplacePrompt : public CursesKeyHandler {
 
 	std::vector<std::string> &wordlist;
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 
 public:
 

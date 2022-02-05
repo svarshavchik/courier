@@ -496,7 +496,7 @@ class HierarchyFolderUpdate : public myServer::Task,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	Hierarchy::Folder *myfolder;
@@ -509,12 +509,12 @@ public:
 
 	// Inherited from myServer::Task
 
-	void start();
+	void start() override;
 
 	// Inherited from mail::callback
 
-	void success(string message);
-	void fail(string message);
+	void success(string message) override;
+	void fail(string message) override;
 };
 
 Hierarchy::Folder::Folder(Hierarchy &hierarchy, Entry *parent,
@@ -710,6 +710,3 @@ void HierarchyFolderUpdate::fail(string message)
 {
 	done();
 }
-
-
-

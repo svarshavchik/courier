@@ -25,7 +25,7 @@ class SearchCallbackHandler : public mail::searchCallback {
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	std::vector<size_t> messageNumbers;
@@ -33,8 +33,8 @@ public:
 	SearchCallbackHandler(myServer::Callback &callbackArg);
 	~SearchCallbackHandler();
 
-	void success(const std::vector<size_t> &found);
-	void fail(std::string);
+	void success(const std::vector<size_t> &found) override;
+	void fail(std::string) override;
 };
 
 #endif

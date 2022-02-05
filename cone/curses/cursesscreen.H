@@ -63,32 +63,32 @@ public:
 	~CursesScreen();
 
 	// Calculate max size.
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
-	void flush();
-	void draw();
+	void flush() override;
+	void draw() override;
 
 	class writetext_iter_helper;
 
 	bool writeText(const char *text, int row, int col,
-		       const Curses::CursesAttr &attr) const;
+		       const Curses::CursesAttr &attr) const override;
 
 	bool writeText(const std::u32string &text, int row, int col,
-		       const Curses::CursesAttr &attr) const;
+		       const Curses::CursesAttr &attr) const override;
 
 	// Return keyboard input.  Returns Key::nokey() if no keyboard input
 	// isavailable.
 	Key getKey();
 
-	void beepError();
+	void beepError() override;
 private:
 
 	Key doGetKey();
 	Key doGetPlainKey(char32_t);
 
 public:
-	void resized();
+	void resized() override;
 };
 
 #endif

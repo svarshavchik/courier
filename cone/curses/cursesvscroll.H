@@ -26,37 +26,37 @@ public:
 	// When something is deleted from the viewport, jump the view port
 	// to the top
 
-	void deleteChild(Curses *child);
+	void deleteChild(Curses *child) override;
 
 	// Automatically scroll the viewport to following keyboard input.
 	// This is done by overriding getCursorPosition(), calling
 	// scrollTo(), then simply subtracting the topmost row shown.
 
-	int getCursorPosition(int &row, int &col);
+	int getCursorPosition(int &row, int &col) override;
 
 	//
 	// Adjust for vertical scroll position:
 	//
 
 	bool writeText(const char *text, int row, int col,
-		       const CursesAttr &attr) const;
+		       const CursesAttr &attr) const override;
 	bool writeText(const std::u32string &text,
 		       int row, int col,
-		       const Curses::CursesAttr &attr) const;
+		       const Curses::CursesAttr &attr) const override;
 
 	//
 	// Make sure the following row is visible right now.
 	//
-	void scrollTo(size_t rowNum);
+	void scrollTo(size_t rowNum) override;
 
 	// Intercept getVerticalViewport(), and return reality.
 
 	void getVerticalViewport(size_t &first_row,
-				 size_t &nrows);
+				 size_t &nrows) override;
 
-	void erase();
+	void erase() override;
 
-	int getWidth() const;
+	int getWidth() const override;
 	size_t getFirstRowShown() const { return firstRowShown; }
 	void setFirstRowShown(size_t rowNum)
 	{

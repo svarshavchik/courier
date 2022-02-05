@@ -27,15 +27,15 @@ public:
 				mail::callback &myCallback2,
 				std::string myHier);
 	~imapStatusHandler();
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 private:
 
-	bool untaggedMessage(imap &imapAccount, std::string name);
+	bool untaggedMessage(imap &imapAccount, std::string name) override;
 	bool taggedMessage(imap &imapAccount, std::string name, std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 };
 
 LIBMAIL_END

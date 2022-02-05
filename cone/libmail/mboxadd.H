@@ -34,7 +34,7 @@ class mbox::folder::add : public addMessage,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 	//
 	// Lock whatever folder's being added to.
@@ -48,7 +48,7 @@ class mbox::folder::add : public addMessage,
 		LockCurrentFolder(add &meArg, std::string pathArg="");
 		~LockCurrentFolder();
 
-		bool locked(file &lockedFile);
+		bool locked(file &lockedFile) override;
 	};
 
 public:
@@ -56,11 +56,11 @@ public:
 		   mail::callback &callbackArg);
 	~add();
 
-	void saveMessageContents(std::string);
-	void go();
-	void fail(std::string);
+	void saveMessageContents(std::string) override;
+	void go() override;
+	void fail(std::string message) override;
 
-	void success(std::string);
+	void success(std::string) override;
 
 	void copyTo(file &file);
 };

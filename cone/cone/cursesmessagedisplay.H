@@ -37,29 +37,29 @@ public:
 	void drawLine(size_t lineNum);
 
 	// Inherited from Curses
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
-	void draw();
+	void draw() override;
 private:
 	void draw2();
 public:
-	void resized();
+	void resized() override;
 
-	bool isFocusable();
+	bool isFocusable() override;
 
-	bool processKeyInFocus(const Curses::Key &key);
-	int getCursorPosition(int &row, int &col);
+	bool processKeyInFocus(const Curses::Key &key) override;
+	int getCursorPosition(int &row, int &col) override;
 
 
 	// Inherited from myMessage::FolderUpdateCallback
 
-	void folderUpdated();
+	void folderUpdated() override;
 
 	// Inherited from CursesKeyHandler
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 
 };
 

@@ -69,16 +69,16 @@ public:
 			);
 		~Manager();
 
-		std::string search(std::string word, bool &found);
+		std::string search(std::string word, bool &found) override;
 
 		bool suggestions(std::string word,
 				 std::vector<std::string> &suggestionList,
-				 std::string &errmsg);
+				 std::string &errmsg) override;
 
-		std::string replace(std::string word, std::string replacement);
+		std::string replace(std::string word, std::string replacement) override;
 
-		std::string addToPersonal(std::string word);
-		std::string addToSession(std::string word);
+		std::string addToPersonal(std::string word) override;
+		std::string addToSession(std::string word) override;
 
 	};
 
@@ -86,9 +86,9 @@ public:
 		     std::string encodingArg);
 	virtual ~SpellChecker();
 
-	virtual void setDictionary(std::string);
+	virtual void setDictionary(std::string) override;
 
-	SpellCheckerBase::Manager *getManager(std::string &errmsg);
+	SpellCheckerBase::Manager *getManager(std::string &errmsg) override;
 };
 
 #endif

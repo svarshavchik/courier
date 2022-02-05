@@ -35,20 +35,20 @@ public:
 			     =Curses::CursesAttr());
 	~CursesMultilineLabel();
 
-	void setRow(int row);
-	void setCol(int col);
-	void resized();
-	void setAlignment(Alignment alignment);
+	void setRow(int row) override;
+	void setCol(int col) override;
+	void resized() override;
+	void setAlignment(Alignment alignment) override;
 	void setAttribute(Curses::CursesAttr attr);
 	virtual void setText(std::string textArg);
 
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
 	void setWidth(int w);
 
-	void draw();
-	void erase();
+	void draw() override;
+	void erase() override;
 };
 
 #endif

@@ -16,7 +16,7 @@ LIBMAIL_START
 
 class smapFETCH : public smapHandler {
 
-	const char *getName();
+	const char *getName() override;
 
 	smapUidSet uidSet;
 	smapMsgRange msgRange;
@@ -42,18 +42,18 @@ public:
 		  mail::imap &imapAccount);
 	~smapFETCH();
 
-	void installed(imap &);
-	bool ok(std::string);
+	void installed(imap &) override;
+	bool ok(std::string) override;
 
 	bool go();
 
 private:
 	void beginProcessData(imap &imapAccount,
 			      std::vector<const char *> &words,
-			      unsigned long estimatedSize);
+			      unsigned long estimatedSize) override;
 	void processData(imap &imapAccount,
-			 std::string data);
-	void endData(imap &imapAccount);
+			 std::string data) override;
+	void endData(imap &imapAccount) override;
 
 };
 

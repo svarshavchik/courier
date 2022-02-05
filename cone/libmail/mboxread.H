@@ -35,7 +35,7 @@ public:
 			mail::readMode readTypeArg);
 	~GenericReadTask();
 
-	bool locked(file &file);
+	bool locked(file &file) override;
 };
 
 LIBMAIL_END

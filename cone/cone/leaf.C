@@ -85,7 +85,7 @@ public:
 	LeafEditMessage(CursesContainer *parent);
 	~LeafEditMessage();
 
-	void modified();
+	void modified() override;
 
 	void setModified(bool);
 	void showModified();
@@ -97,7 +97,7 @@ public:
 	void savedMessage();
 	void saveTo();
 
-	void cursorRowChanged();
+	void cursorRowChanged() override;
 
 	bool checkModified();
 };
@@ -351,8 +351,8 @@ public:
 
 	enum Command { NIL, ABORT, OPEN, SAVE, SAVEAS };
 private:
-	virtual bool processKey(const Curses::Key &key);
-	bool listKeys( vector< pair<string, string> > &list);
+	virtual bool processKey(const Curses::Key &key) override;
+	bool listKeys( vector< pair<string, string> > &list) override;
 };
 
 LeafKeyHandler::LeafKeyHandler()
@@ -406,8 +406,8 @@ public:
 
 	operator bool() { return ctrlTpressed; }
 private:
-	virtual bool processKey(const Curses::Key &key);
-	bool listKeys( vector< pair<string, string> > &list);
+	virtual bool processKey(const Curses::Key &key) override;
+	bool listKeys( vector< pair<string, string> > &list) override;
 };
 
 LeafCtrlTHandler::LeafCtrlTHandler()
@@ -449,8 +449,8 @@ public:
 
 	operator bool() { return ctrlFpressed; }
 private:
-	virtual bool processKey(const Curses::Key &key);
-	bool listKeys( vector< pair<string, string> > &list);
+	virtual bool processKey(const Curses::Key &key) override;
+	bool listKeys( vector< pair<string, string> > &list) override;
 };
 
 LeafCtrlFHandler::LeafCtrlFHandler()

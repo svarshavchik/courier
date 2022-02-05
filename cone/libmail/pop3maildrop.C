@@ -85,14 +85,14 @@ private:
 
 	mail::callback *origCallback;
 
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 
@@ -126,10 +126,10 @@ public:
 	vector<mail::addMessage *> downloadedMsgs;
 	size_t messageCount;
 
-	bool ispop3maildrop();
-	void pop3maildropreset();
-	mail::addMessage *newDownloadMsg();
-	string commitDownloadedMsgs();
+	bool ispop3maildrop() override;
+	void pop3maildropreset() override;
+	mail::addMessage *newDownloadMsg() override;
+	string commitDownloadedMsgs() override;
 
 private:
 	bool errflag;
@@ -137,14 +137,14 @@ private:
 
 	// Inherited from mail::callback
 
-	void success(std::string message);
-	void fail(std::string message);
+	void success(std::string message) override;
+	void fail(std::string message) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 
 };
@@ -336,7 +336,7 @@ string mail::pop3maildrop::getCapability(string capability)
 		}
 	}
 
-	return maildir::getCapability(capability);		
+	return maildir::getCapability(capability);
 }
 
 

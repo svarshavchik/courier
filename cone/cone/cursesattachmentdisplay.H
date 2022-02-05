@@ -59,8 +59,8 @@ class CursesAttachmentDisplay : public CursesContainer,
 			   std::string nameArg);
 		~Attachment();
 
-		void clicked();
-		bool processKeyInFocus(const Curses::Key &key);
+		void clicked() override;
+		bool processKeyInFocus(const Curses::Key &key) override;
 
 		void markDeleted(bool flag);
 	};
@@ -81,16 +81,16 @@ private:
 
 public:
 	// Inherited from Curses
-	int getWidth() const;
-	int getHeight() const;
+	int getWidth() const override;
+	int getHeight() const override;
 
-	bool isFocusable();
-	void requestFocus();
+	bool isFocusable() override;
+	void requestFocus() override;
 
 	// Inherited from CursesKeyHandler
 
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string, std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string, std::string> > &list) override;
 
 	void open(mail::mimestruct *mimePtr);
 	// Open a message/rfc822 attachment

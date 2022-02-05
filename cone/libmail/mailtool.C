@@ -347,7 +347,7 @@ class DisplayHeader : public mail::ACCOUNT::Store {
 public:
 	DisplayHeader();
 	~DisplayHeader();
-	void store(size_t, string);
+	void store(size_t, string) override;
 };
 
 DisplayHeader::DisplayHeader()
@@ -479,7 +479,7 @@ static bool doUploadMessage(mail::ACCOUNT *p, mail::folder *f)
 	class uploadMessage : public mail::addMessagePull {
 	public:
 
-		string getMessageContents()
+		string getMessageContents() override
 		{
 			char buffer[BUFSIZ];
 
@@ -501,7 +501,7 @@ class readStdin : public mail::addMessagePull {
 public:
 	readStdin();
 	~readStdin();
-	string getMessageContents();
+	string getMessageContents() override;
 };
 
 readStdin::readStdin()
@@ -547,7 +547,7 @@ public:
 			size_t bytesEstimatedTotal,
 
 			size_t messagesCompleted,
-			size_t messagesEstimatedTotal);
+			size_t messagesEstimatedTotal) override;
 
 	void operator()();
 };
@@ -832,7 +832,7 @@ public:
 	~pw_prompt();
 
 	void loginPrompt(callbackType cbType,
-			 std::string prompt);
+			 std::string prompt) override;
 };
 
 pw_prompt::pw_prompt()

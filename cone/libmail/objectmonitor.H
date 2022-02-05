@@ -80,7 +80,7 @@ public:
 
 	bool isDestroyed() const { return r == 0; }
 
-	void ptrDestroyed() { r=NULL; }
+	void ptrDestroyed() override { r=NULL; }
 
 };
 

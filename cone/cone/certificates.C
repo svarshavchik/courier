@@ -79,7 +79,7 @@ public:
 			    std::string id);
 		~Certificate();
 
-		bool processKeyInFocus(const Key &key);
+		bool processKeyInFocus(const Key &key) override;
 
 		static void isused(std::string name);
 	};
@@ -93,14 +93,14 @@ public:
 	CertificatesScreen(CursesMainScreen *parent);
 	~CertificatesScreen();
 
-	void requestFocus();
+	void requestFocus() override;
 
 	void addCertificate(std::string name, std::string id);
 	void removeCertificate(std::list<Certificate>::iterator);
 
 private:
-	bool processKey(const Curses::Key &key);
-	bool listKeys( std::vector< std::pair<std::string,std::string> > &list);
+	bool processKey(const Curses::Key &key) override;
+	bool listKeys( std::vector< std::pair<std::string,std::string> > &list) override;
 };
 
 std::string CertificatesScreen::jumpto;
@@ -555,15 +555,15 @@ public:
 		cert(ChooseCertificateScreen *parent, std::string label,
 		     std::string id);
 		~cert();
-		void clicked();
+		void clicked() override;
 	};
 
 	std::list<cert> certs;
 	std::string selected;
 
-	bool isDialog() const;	// Yes we are
-	bool processKey(const Curses::Key &key);
-	void requestFocus();
+	bool isDialog() const override;	// Yes we are
+	bool processKey(const Curses::Key &key) override;
+	void requestFocus() override;
 
 	ChooseCertificateScreen();
 	~ChooseCertificateScreen();

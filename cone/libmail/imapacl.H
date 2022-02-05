@@ -23,17 +23,17 @@ public:
 			mail::callback &callbackArg);
 	~imapGetMyRights();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, std::string msgname);
+	bool untaggedMessage(imap &imapAccount, std::string msgname) override;
 
 	bool taggedMessage(imap &imapAccount, std::string msgname,
 			   std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 
 	class parseMyRights;
 	class listMyRights;
@@ -52,17 +52,17 @@ public:
 		      mail::callback &callbackArg);
 	~imapGetRights();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, std::string msgname);
+	bool untaggedMessage(imap &imapAccount, std::string msgname) override;
 
 	bool taggedMessage(imap &imapAccount, std::string msgname,
 			   std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 
 public:
 	class parseGetRights;
@@ -94,17 +94,17 @@ public:
 		      mail::callback &callbackArg);
 	~imapSetRights();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
-	bool untaggedMessage(imap &imapAccount, std::string msgname);
+	bool untaggedMessage(imap &imapAccount, std::string msgname) override;
 
 	bool taggedMessage(imap &imapAccount, std::string msgname,
 			   std::string message,
-			   bool okfail, std::string errmsg);
+			   bool okfail, std::string errmsg) override;
 
 	class parseRightsInfo;
 	class parseAclFailed;

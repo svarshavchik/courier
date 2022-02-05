@@ -24,14 +24,14 @@ class mail::addressbook::Search : private mail::callback {
 	std::vector<T> &addrList;
 	mail::callback &callback;
 
-	void success(std::string);
-	void fail(std::string);
+	void success(std::string) override;
+	void fail(std::string message) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 
 public:
 	Search(mail::addressbook *addressBookArg,

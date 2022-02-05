@@ -62,7 +62,7 @@ public:
 
 private:
 
-	int socketRead(const std::string &readbuffer);
+	int socketRead(const std::string &readbuffer) override;
 
 	struct ltstr {
 		bool operator()(const char *a, const char *b) const
@@ -179,9 +179,9 @@ public:
 
 private:
 	void timeoutdisconnect();
-	const char *application_protocol() const;
+	const char *application_protocol() const override;
 public:
-	void disconnect(const char *errmsg);
+	void disconnect(const char *errmsg) override;
 
 	void setCapability(std::string capability);
 	void clearCapabilities() { capabilities.clear(); }
@@ -227,13 +227,13 @@ public:
 	imap &operator=(const imap &); // UNDEFINED
 	~imap();
 
-	void resumed();
+	void resumed() override;
 
-	void handler(std::vector<pollfd> &fds, int &timeout);
+	void handler(std::vector<pollfd> &fds, int &timeout) override;
 	// Event loop processing
 
-	bool hasCapability(std::string capability);
-	std::string getCapability(std::string capability);
+	bool hasCapability(std::string capability) override;
+	std::string getCapability(std::string capability) override;
 
 	bool utf8_enabled();
 	const char *folder_chset();
@@ -241,8 +241,8 @@ public:
 	std::string servertype;
 	std::string serverdescr;
 
-	void logout(mail::callback &callback);
-	void checkNewMail(mail::callback &callback);
+	void logout(mail::callback &callback) override;
+	void checkNewMail(mail::callback &callback) override;
 
 	std::string messageFlagStr(const mail::messageInfo &indexInfo,
 			      mail::messageInfo *oldIndexInfo=NULL,
@@ -254,21 +254,21 @@ public:
 
 private:
 
-	mail::folder *folderFromString(std::string);
+	mail::folder *folderFromString(std::string) override;
 	void readTopLevelFolders(mail::callback::folderList &callback1,
-				 mail::callback &callback2);
+				 mail::callback &callback2) override;
 	void findFolder(std::string folder,
 			class mail::callback::folderList &callback1,
-			class mail::callback &callback2);
-	std::string translatePath(std::string path);
+			class mail::callback &callback2) override;
+	std::string translatePath(std::string path) override;
 
 	folder *getSendFolder(const smtpInfo &info,
 			      const mail::folder *folder,
-			      std::string &errmsg);
+			      std::string &errmsg) override;
 
-	size_t getFolderIndexSize();
-	class mail::messageInfo getFolderIndexInfo(size_t);
-	void getFolderKeywordInfo(size_t, std::set<std::string> &);
+	size_t getFolderIndexSize() override;
+	class mail::messageInfo getFolderIndexInfo(size_t) override;
+	void getFolderKeywordInfo(size_t, std::set<std::string> &) override;
 
 public:
 	// NOT public interface, for friends only:
@@ -330,7 +330,7 @@ public:
 		msgSetRange(imap *pArg, const std::vector<size_t> &messages);
 		~msgSetRange();
 
-		bool getNextRange(size_t &first, size_t &last);
+		bool getNextRange(size_t &first, size_t &last) override;
 	};
 
 
@@ -341,23 +341,24 @@ private:
 	void readMessageAttributes(const std::vector<size_t> &messages,
 				   MessageAttributes attributes,
 				   class mail::callback::message
-				   &callback);
+				   &callback) override;
 
 	void readMessageContent(const std::vector<size_t> &messages,
 				bool peek,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContent(size_t messageNum,
 				bool peek,
 				const mimestruct &msginfo,
 				enum mail::readMode readType,
-				mail::callback::message &callback);
+				mail::callback::message &callback) override;
 
 	void readMessageContentDecoded(size_t messageNum,
 				       bool peek,
 				       const mimestruct &msginfo,
-				       mail::callback::message &callback);
+				       mail::callback::message &callback)
+		override;
 
 	void doReadMessageContent(const std::vector<size_t> &messages,
 				  bool peek,
@@ -367,13 +368,13 @@ private:
 
 	void saveFolderIndexInfo(size_t messageNum,
 				 const mail::messageInfo &indexInfo,
-				 mail::callback &callback);
+				 mail::callback &callback) override;
 
 	void updateFolderIndexFlags(const std::vector<size_t> &messages,
 				    bool doFlip,
 				    bool enableDisable,
 				    const mail::messageInfo &flags,
-				    mail::callback &callback);
+				    mail::callback &callback) override;
 
 	void updateFolderIndexFlags(const std::vector<size_t> &messages,
 				    bool enableDisable,
@@ -385,7 +386,7 @@ private:
 			    bool setOrChange,
 			    // false: set, true: see changeTo
 			    bool changeTo,
-			    callback &cb);
+			    callback &cb) override;
 	void updateImapKeywords(const std::vector<size_t> &messages,
 				const std::set<std::string> &keywords,
 				bool changeTo,
@@ -395,22 +396,22 @@ public:
 	friend class updateImapKeywordHelper;
 private:
 
-	void updateNotify(bool enableDisable, callback &callbackArg);
+	void updateNotify(bool enableDisable, callback &callbackArg) override;
 
-	void updateFolderIndexInfo(mail::callback &callback);
+	void updateFolderIndexInfo(mail::callback &callback) override;
 	void removeMessages(const std::vector<size_t> &messages,
-			    callback &cb);
+			    callback &cb) override;
 
 	void copyMessagesTo(const std::vector<size_t> &messages,
 			    mail::folder *copyTo,
-			    mail::callback &callback);
+			    mail::callback &callback) override;
 
 	void moveMessagesTo(const std::vector<size_t> &messages,
 			    mail::folder *copyTo,
-			    mail::callback &callback);
+			    mail::callback &callback) override;
 
 	void searchMessages(const class mail::searchParams &searchInfo,
-			    class mail::searchCallback &callback);
+			    class mail::searchCallback &callback) override;
 
 };
 
@@ -486,7 +487,7 @@ public:
 	~imapCommandHandler();
 
 protected:
-	int process(imap &imapAccount, std::string &buffer);
+	int process(imap &imapAccount, std::string &buffer) override;
 
 private:
 	// Callback: process an untagged message

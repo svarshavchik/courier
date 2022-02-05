@@ -41,8 +41,8 @@ private:
 	string currentCmd;
 	bool preauthenticated;
 
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
 	void (imapLoginHandler::*next_login_func)(imap &imapAccount,
 							string failmsg);
@@ -51,8 +51,8 @@ private:
 
 	string loginMethod;
 
-	void loginInfoCallback(std::string);
-	void loginInfoCallbackCancel();
+	void loginInfoCallback(std::string) override;
+	void loginInfoCallbackCancel() override;
 
 	void (imapLoginHandler::*loginCallbackFunc)(std::string);
 
@@ -67,7 +67,7 @@ public:
 			 bool preauthenticatedArg);
 	~imapLoginHandler();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 	void installedtls(imap &imapAccount);
 	void installedtlsnonext(imap &imapAccount);
 
@@ -79,11 +79,11 @@ private:
 	void logincmd(imap &imapAccount, string errmsg);
 	void failcmd(imap &imapAccount, string message);
 
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 	bool taggedMessage(imap &imapAccount, string name, string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 
-	bool continuationRequest(imap &imapAccount, string msg);
+	bool continuationRequest(imap &imapAccount, string msg) override;
 
 private:
 	list<string> cmds;
@@ -95,8 +95,8 @@ private:
 
 class imapCRAMHandler : public imapCommandHandler {
 
-	const char *getName();
-	void timedOut(const char *errmsg);
+	const char *getName() override;
+	void timedOut(const char *errmsg) override;
 
 	const mail::loginInfo &myLoginInfo;
 	imapLoginHandler &loginHandler;
@@ -108,14 +108,14 @@ public:
 				const imaphmac &hmacArg);
 	~imapCRAMHandler();
 
-	void installed(imap &imapAccount);
+	void installed(imap &imapAccount) override;
 
 private:
-	bool untaggedMessage(imap &imapAccount, string name);
+	bool untaggedMessage(imap &imapAccount, string name) override;
 	bool taggedMessage(imap &imapAccount, string name, string message,
-			   bool okfail, string errmsg);
+			   bool okfail, string errmsg) override;
 
-	bool continuationRequest(imap &imapAccount, string request);
+	bool continuationRequest(imap &imapAccount, string request) override;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -135,12 +135,12 @@ public:
 		: next_func(&imapNAMESPACE::start_namespace_list),
 		  namespace_type(0) {}
 
-	void installed(imap &imapAccount) {}
+	void installed(imap &imapAccount) override {}
 
 private:
-	const char *getName() { return ("NAMESPACE"); }
-	void timedOut(const char *errmsg) {}
-	void process(imap &imapAccount, Token t);
+	const char *getName() override { return ("NAMESPACE"); }
+	void timedOut(const char *errmsg) override {}
+	void process(imap &imapAccount, Token t) override;
 
 
 	void start_namespace_list(imap &imapAccount, Token t);
@@ -644,16 +644,16 @@ class smapNamespace : public mail::callback, public mail::callback::folderList{
 
 public:
 	smapNamespace(imap *imapPtr, mail::callback *origCallbackArg);
-	~smapNamespace();
-	void success(string);
-	void fail(string);
-	void success(const vector<const mail::folder *> &folders);
+	~smapNamespace() override;
+	void success(string) override;
+	void fail(string) override;
+	void success(const vector<const mail::folder *> &folders) override;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
 
 			    size_t messagesCompleted,
-			    size_t messagesEstimatedTotal);
+			    size_t messagesEstimatedTotal) override;
 };
 
 LIBMAIL_END
