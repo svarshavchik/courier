@@ -24,6 +24,7 @@ module.dsn: courier.config
 EXTRA_DIST=courier.config $(DSNTXT)
 
 courierdsn_SOURCES=dsn.c
+nodist_EXTRA_courierdsn_SOURCES=dummy.C
 courierdsn_DEPENDENCIES=@courierdir@/courier/libs/libmodule.la \
 	@courierdir@/courier/libs/libcommon.la \
 	@courierdir@/courier/libs/libcourier.la \

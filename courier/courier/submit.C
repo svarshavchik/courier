@@ -15,6 +15,7 @@
 #include	"rfc1035/rfc1035mxlist.h"
 #include	"rfc1035/spf.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	"dbobj.h"
 #include	"afx/afx.h"
 #include	"aliases.h"

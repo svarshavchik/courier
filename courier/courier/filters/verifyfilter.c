@@ -17,6 +17,7 @@
 #include	"comtrack.h"
 #include	"threadlib/threadlib.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 
 #include	<sys/types.h>
 #if	HAVE_SYS_STAT_H

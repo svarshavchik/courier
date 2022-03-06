@@ -31,6 +31,7 @@
 #include	"comstrtotime.h"
 #include	"comstrtimestamp.h"
 #include	"comverp.h"
+#include	"comuidgid.h"
 #include	<sys/stat.h>
 
 static void uux(struct moduledel *);

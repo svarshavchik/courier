@@ -331,12 +331,6 @@ AC_ARG_WITH(mailuser, [], mailuser="$withval",
 AC_ARG_WITH(mailgroup, [], mailgroup="$withval",
 	AC_MSG_ERROR(--with-mailgroup not set))
 
-AC_ARG_WITH(mailuid, [], mailuid="$withval",
-	AC_MSG_ERROR(--with-mailuid not set))
-
-AC_ARG_WITH(mailgid, [], mailgid="$withval",
-	AC_MSG_ERROR(--with-mailgid not set))
-
 AC_SUBST(mailuser)
 AC_SUBST(mailgroup)
 AC_SUBST(mailuid)
@@ -432,9 +426,6 @@ if test x$GXX = xyes
 then
 	CXXFLAGS="-Wall $CXXFLAGS"
 fi
-
-echo "mailuser=$mailuser" >uidgid
-echo "mailgroup=$mailgroup" >>uidgid
 
 if $SHELL -c 'ulimit -v 0 2>/dev/null'
 then

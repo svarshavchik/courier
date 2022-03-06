@@ -25,6 +25,8 @@
 #include	"waitlib/waitlib.h"
 #include	"liblock/config.h"
 #include	"liblock/liblock.h"
+#include	"numlib/numlib.h"
+#include	"comuidgid.h"
 
 pid_t	couriera, courierb;
 time_t	courierastart, courierbstart;

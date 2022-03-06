@@ -1,3 +1,13 @@
+2022-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Do not use hardcoded uids and gids that are established at
+	compile time, look up courier/mail uid/gid at runtime. Remove
+	--with-mailuid and --with-mailgid internal options, that are
+	used internally. They must always be set to the corresponding
+	user and groupname, and this is now looked up at runtime.
+
+	Based on a patch by Ondřej Surý <ondrej@sury.org>.
+
 2022-03-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* imap/authenticate_auth.c: Fix broken SASL authentication.

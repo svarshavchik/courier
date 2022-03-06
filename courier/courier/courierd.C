@@ -22,6 +22,7 @@
 #include	"courierd.h"
 #include	"mydirent.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	"comsts.h"
 #include	<sys/types.h>
 #if HAVE_SYS_STAT_H

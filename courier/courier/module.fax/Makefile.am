@@ -73,6 +73,7 @@ librewrite_la_SOURCES=faxstub.c
 librewrite_la_LDFLAGS=-static
 
 courierfax_SOURCES=courierfax.c faxconvert.c faxconvert.h
+nodist_EXTRA_courierfax_SOURCES=dummy.C
 courierfax_DEPENDENCIES=@courierdir@/courier/libs/libmodule.la \
 		librewrite.la \
 		@courierdir@/courier/libs/libcommon.la \

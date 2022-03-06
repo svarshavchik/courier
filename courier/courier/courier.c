@@ -30,6 +30,7 @@
 #include	"liblock/config.h"
 #include	"liblock/liblock.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	"wget.h"
 
 void courier_clear_all();

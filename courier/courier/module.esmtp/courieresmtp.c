@@ -32,6 +32,7 @@
 #include	<errno.h>
 #include	"waitlib/waitlib.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	"mybuf.h"
 #include	"esmtpconfig.h"
 #include	"rfc1035/rfc1035.h"

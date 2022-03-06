@@ -30,6 +30,8 @@ INSTALL_PROGRAM=${INSTALL} -m 555
 EXTRA_DIST=courier.config testsuite testsuite.txt
 
 courierlocal_SOURCES=localmail.c
+nodist_EXTRA_courierlocal_SOURCES=dummy.C
+
 courierlocal_DEPENDENCIES=../../courier/libs/libmodule.la \
 			../../courier/libs/libcommon.la \
 			../../courier/libs/libcourier.la \

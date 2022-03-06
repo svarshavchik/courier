@@ -16,8 +16,8 @@
 extern "C" {
 #endif
 
-#define	MAILUID		@mailuid@
-#define	MAILGID		@mailgid@
+#define MAILUID		(courier_mailuid())
+#define MAILGID		(courier_mailgid())
 #define	MAILUSER	"@mailuser@"
 #define	MAILGROUP	"@mailgroup@"
 

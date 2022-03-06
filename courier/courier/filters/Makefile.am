@@ -53,6 +53,8 @@ ratefilter_LDADD=libfilter/libfilter.la ../../afx/libafx.a \
 
 
 verifyfilter_SOURCES=verifyfilter.c
+nodist_EXTRA_verifyfilter_SOURCES=dummy.C
+
 verifyfilter_DEPENDENCIES=libfilter/libfilter.la \
 	../module.esmtp/libesmtp.la \
 	../libs/libcommon.la ../libs/libcourier.la \
@@ -91,6 +93,7 @@ verifyfilter_LDADD=libfilter/libfilter.la \
 verifyfilter_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
 courierfilter_SOURCES=courierfilter.c
+nodist_EXTRA_courierfilter_SOURCES=dummy.C
 courierfilter_DEPENDENCIES=../libs/libcommon.la ../libs/libcourier.la \
 	../../libs/liblock/liblock.la ../../libs/numlib/libnumlib.la
 

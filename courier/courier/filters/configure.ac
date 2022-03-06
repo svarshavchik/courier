@@ -97,12 +97,8 @@ eval "datadir=$datadir"
 
 AC_CHECK_FUNCS(sigsuspend sigpause)
 
-AC_ARG_WITH(mailuid, [], mailuid="$withval")
-AC_ARG_WITH(mailgid, [], mailgid="$withval")
 AC_ARG_WITH(mailuser, [], mailuser="$withval")
 AC_ARG_WITH(mailgroup, [], mailgroup="$withval")
-AC_SUBST(mailuid)
-AC_SUBST(mailgid)
 AC_SUBST(mailuser)
 AC_SUBST(mailgroup)
 

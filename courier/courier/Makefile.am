@@ -17,14 +17,12 @@ CLEANFILES=$(BUILT_SOURCES) modules.lst.la makedat \
 	qutoawarnmsg.example quotawarnmsg.example \
 	sharedindexsplit sharedindexinstall permissions.dat
 
-DISTCLEANFILES=uidgid
-
 DEBUGLIB=@DEBUGLIB@
 
 BUILT_SOURCES=prefix.h exec_prefix.h sysconfdir.h localstatedir.h \
 	wget.h \
 	libexecdir.h bindir.h sbindir.h datadir.h filtersocketdir.h \
-	uidgid.h configargs.h sort.h
+	configargs.h sort.h
 
 if HAVE_SGML
 
@@ -237,8 +235,12 @@ aliaslookup_LDADD=libs/libcommon.la libs/libcourier.la ../afx/libafx.a\
 # ldapaliasd - resolve aliases via LDAP
 
 courierldapaliasd_SOURCES=ldapaliasd.c ldapaliasdrc.h ldapaliasdrc.c
-courierldapaliasd_DEPENDENCIES=../libs/liblock/liblock.la ../libs/numlib/libnumlib.la
-courierldapaliasd_LDADD=../libs/liblock/liblock.la ../libs/numlib/libnumlib.la \
+nodist_EXTRA_courierldapaliasd_SOURCES=dummy.C
+courierldapaliasd_DEPENDENCIES=\
+	../libs/liblock/liblock.la \
+	libs/libcommon.la \
+	../libs/numlib/libnumlib.la
+courierldapaliasd_LDADD=$(courierldapaliasd_DEPENDENCIES) \
 	-lcourierauthcommon @LDAPLIBS@ @NETLIBS@
 courierldapaliasd_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
@@ -251,6 +253,7 @@ submitmkdir_LDADD=libs/libcourier.la
 # sendmail - sendmail wrapper for submit (needs +g privs)
 
 sendmail_SOURCES=sendmail.c sendmail-esmtpd-wrapper.c
+nodist_EXTRA_sendmail_SOURCES=dummy.C
 sendmail_DEPENDENCIES=libs/libcommon.la libs/libcourier.la ../libs/rfc822/librfc822.la\
 	../libs/numlib/libnumlib.la
 sendmail_LDADD=$(sendmail_DEPENDENCIES) -lcourier-unicode
@@ -266,8 +269,11 @@ makedat: ../libs/makedat/makedat
 # testmxlookup - look up MX records
 
 testmxlookup_SOURCES=testmxlookup.c
+nodist_EXTRA_testmxlookup_SOURCES=dummy.C
+
 testmxlookup_DEPENDENCIES= \
 	libs/libcourier.la \
+	libs/libcommon.la \
 	../libs/numlib/libnumlib.la \
 	../libs/liblock/liblock.la \
 	../libs/rfc1035/librfc1035.a \
@@ -277,6 +283,7 @@ testmxlookup_DEPENDENCIES= \
 
 testmxlookup_LDADD= \
 	libs/libcourier.la \
+	libs/libcommon.la \
 	../libs/numlib/libnumlib.la \
 	../libs/liblock/liblock.la \
 	../libs/rfc1035/librfc1035.a \
@@ -341,7 +348,7 @@ courierd_SOURCES=cddrvinfo.C cddrvinfo.h\
 	courierdb.C courierd.C courierd.h mydirent.h
 
 courierd_DEPENDENCIES=$(COURIERDEPENDENCIES) ../afx/libafx.a ../libs/liblock/liblock.la ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a ../libs/soxwrap/soxlibs.dep
-courierd_LDADD=$(COURIERLDADD) ../afx/libafx.a ../libs/liblock/liblock.la ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` $(DEBUGLIB) -lcourierauth
+courierd_LDADD=$(COURIERLDADD) ../afx/libafx.a ../libs/liblock/liblock.la ../libs/tcpd/libspipe.la ../libs/numlib/libnumlib.la ../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` $(DEBUGLIB) -lcourierauth
 courierd_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
 # tcpd
@@ -433,6 +440,9 @@ cancelmsg_LDADD=$(cancelmsg_DEPENDENCIES) -lcourier-unicode @LIBIDN_LIBS@
 # courier-config
 
 courier_config_SOURCES=courier-config.c
+nodist_EXTRA_courier_config_SOURCES=dummy.C
+courier_config_DEPENDENCIES=libs/libcommon.la ../libs/numlib/libnumlib.la
+courier_config_LDADD=$(courier_config_DEPENDENCIES)
 
 EXTRA_DIST= testsuite.alias testsuite.alias1.in testsuite.alias2.in \
 		aliases.config smtpaccess.config \
@@ -445,12 +455,6 @@ sharedindexsplit: ../libs/maildir/sharedindexsplit
 
 sharedindexinstall: ../libs/maildir/sharedindexinstall
 	cp -f ../libs/maildir/sharedindexinstall .
-
-uidgid.h: config.status
-	echo "#define MAILUSER \"$(mailuser)\"" >uidgid.h
-	echo "#define MAILGROUP \"$(mailgroup)\"" >>uidgid.h
-	echo "#define MAILUID $(mailuid)" >>uidgid.h
-	echo "#define MAILGID $(mailgid)" >>uidgid.h
 
 configargs.h: ../configure.args
 	echo "#define CONFIGURE_ARGS \"`cat ../configure.args`\"" >configargs.h

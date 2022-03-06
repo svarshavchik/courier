@@ -15,6 +15,7 @@
 #include	"waitlib/waitlib.h"
 #include	<courier-unicode.h>
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	<stdlib.h>
 #include	<locale.h>
 #include	<langinfo.h>

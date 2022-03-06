@@ -56,6 +56,7 @@ ldaddlibdl=@LIBDL@
 
 courieresmtp_SOURCES=courieresmtp.c esmtpclient.c esmtpconfig.c esmtpconfig.h \
 		staticlist.c
+nodist_EXTRA_courieresmtp_SOURCES=dummy.C
 
 courieresmtpd_SOURCES=courieresmtpd.c esmtpconfig.c esmtpconfig.h esmtpiov.c \
 		esmtpiov.h staticlist.c

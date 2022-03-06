@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier, 1.1.8, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 1.1.8.20220306, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -259,22 +259,8 @@ AC_ARG_WITH(mailgroup, [],
 	ac_configure_args="$ac_configure_args --with-mailgroup=$mailgroup"]
 	)
 
-AC_ARG_WITH(mailuid,[],
-	mailuid="$withval",
-	[ mailuid="$authmailuid"
-	ac_configure_args="$ac_configure_args --with-mailuid=$mailuid"]
-	)
-
-AC_ARG_WITH(mailgid, [],
-	mailgid="$withval",
-	[ mailgid="$authmailgid"
-	ac_configure_args="$ac_configure_args --with-mailgid=$mailgid"]
-	)
-
 AC_SUBST(mailuser)
 AC_SUBST(mailgroup)
-AC_SUBST(mailuid)
-AC_SUBST(mailgid)
 rm -f configtmp
 
 dnl for maildrop subdir
@@ -351,10 +337,6 @@ do
 	--with-mailuser*)
 		;;
 	--with-mailgroup*)
-		;;
-	--with-mailuid*)
-		;;
-	--with-mailgid*)
 		;;
 	*)
 		real_configure_args="$real_configure_args $arg"

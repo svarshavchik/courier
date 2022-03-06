@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #if TIME_WITH_SYS_TIME
 #include        <sys/time.h>
 #include        <time.h>
@@ -929,7 +930,7 @@ int main(int argc, char **argv)
 	}
 
 	libmail_changeuidgid(MAILUID, MAILGID);
-	
+
 #if HAVE_SYSLOG_H
 	openlog("courierldapaliasd", LOG_PID, LOG_MAIL);
 #endif

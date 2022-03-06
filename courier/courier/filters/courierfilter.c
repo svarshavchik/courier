@@ -8,6 +8,7 @@
 #include	"liblock/config.h"
 #include	"liblock/liblock.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	"filtersocketdir.h"
 #include	"filteractivedir.h"
 #include	"pidfile.h"

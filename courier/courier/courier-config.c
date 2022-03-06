@@ -12,10 +12,11 @@
 #include	"bindir.h"
 #include	"sbindir.h"
 #include	"datadir.h"
-#include	"uidgid.h"
 #include	"configargs.h"
 #include	<string.h>
 #include	<stdlib.h>
+#include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif

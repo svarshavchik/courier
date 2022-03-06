@@ -27,6 +27,8 @@
 #include	"sysconfdir.h"
 #include	<courierauth.h>
 #include	<idna.h>
+#include	"numlib/numlib.h"
+#include	"comuidgid.h"
 
 #if	HAVE_SYSLOG_H
 #include	<syslog.h>
@@ -364,8 +366,8 @@ static void rw_del_local2(struct rw_info *rwi,
 toalias:
 
 	{
-	struct	authinfo aa;
-	static const uid_t	mailuid=MAILUID;
+		struct	authinfo aa;
+		uid_t	mailuid=MAILUID;
 
 		memset(&aa, 0, sizeof(aa));
 		aa.homedir= ALIASDIR;

@@ -17,6 +17,7 @@
 #include	"rfc2045/rfc2045charset.h"
 #include	"rfc822/rfc822.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	<stdlib.h>
 #include	<string.h>
 #if	HAVE_UNISTD_H

@@ -29,7 +29,7 @@ libcommon_la_SOURCES= aliases.h \
 	comstrtimestamp.c comstrtimestamp.h comstrtotime.c comstrtotime.h \
 	comsubmitclient.c comsubmitclient.h comsubmitclient2.c comtmpfile.c \
 	comtmpfile2.c comtrack.c comtrack.h \
-	comtrigger.c comverp.c comverp.h mybuf.h
+	comtrigger.c comuidgid.C comuidgid.h comverp.c comverp.h mybuf.h
 libcommon_la_LDFLAGS=-static
 
 libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c courier_malloc.c \

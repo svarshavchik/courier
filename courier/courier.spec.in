@@ -750,8 +750,6 @@ done
 # The following directories are not created by default, but I want them here.
 #
 
-. courier/uidgid || exit 1
-
 #####################
 ##
 ## sysconftool support.  Instead of doing make install-configure, grab all

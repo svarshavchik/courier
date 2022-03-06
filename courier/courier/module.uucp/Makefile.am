@@ -37,6 +37,7 @@ install-data-hook:
 
 
 courieruucp_SOURCES=uucp.c staticlist.c
+nodist_EXTRA_courieruucp_SOURCES=dummy.C
 
 courieruucp_DEPENDENCIES=../../courier/libs/libmodule.la \
 	librewrite.la \

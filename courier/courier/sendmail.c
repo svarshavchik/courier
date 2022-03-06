@@ -10,6 +10,7 @@
 #include	"comsubmitclient.h"
 #include	"maxlongsize.h"
 #include	"numlib/numlib.h"
+#include	"comuidgid.h"
 #include	"sbindir.h"
 #include	<pwd.h>
 #include	<stdio.h>

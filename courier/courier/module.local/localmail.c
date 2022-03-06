@@ -38,6 +38,7 @@
 #include	"waitlib/waitlib.h"
 #include	"numlib/numlib.h"
 #include	"comverp.h"
+#include	"comuidgid.h"
 
 #if	HAVE_SYS_FILE_H
 #include	<sys/file.h>
