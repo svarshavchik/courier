@@ -32,11 +32,6 @@ then
 	AC_MSG_ERROR(courierauthconfig not found)
 fi
 
-AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
-certsdir="$withval", certsdir="$datadir")
-
-AC_SUBST(certsdir)
-
 dnl Checks for libraries.
 PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 AC_ARG_WITH(mailuser, [], mailuser="$withval",
@@ -293,6 +288,12 @@ eval "localstatedir=$localstatedir"
 
 mydatadir="$datadir"
 AC_SUBST(mydatadir)   # Quell automake warning
+
+AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
+certsdir="$withval", certsdir="$datadir")
+
+eval "certsdir=$certsdir"
+AC_SUBST(certsdir)
 
 
 dnl
