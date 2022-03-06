@@ -1,3 +1,7 @@
+2022-03-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* imap/authenticate_auth.c: Fix broken SASL authentication.
+
 2022-01-22  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fixes to Makefile to workaround test suite failures related to

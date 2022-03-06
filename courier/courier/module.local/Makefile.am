@@ -45,6 +45,7 @@ courierlocal_LDADD=../../courier/libs/libmodule.la \
 			-lcourierauth -lcourier-unicode @LIBIDN_LIBS@
 
 courierdeliver_SOURCES=deliver.c
+nodist_EXTRA_courierdeliver_SOURCES=dummy.C
 courierdeliver_DEPENDENCIES=librewrite.la \
 		../../courier/libs/libcommon.la \
 		../../courier/libs/libcourier.la \
