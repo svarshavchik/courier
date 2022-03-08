@@ -154,7 +154,7 @@ int auth_sasl_ex(const char *method,
 
 	if ((*authdata_ptr=strdup(externalauth)) == NULL)
 	{
-		free(authtype_ptr);
+		free(*authtype_ptr);
 		return AUTHSASL_ABORTED;
 	}
 
