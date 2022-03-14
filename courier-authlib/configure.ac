@@ -47,9 +47,12 @@ eval "sysconfdir=$sysconfdir"
 eval "bindir=$bindir"
 eval "sbindir=$sbindir"
 eval "localstatedir=$localstatedir"
+eval "libdir=$libdir"
 eval "libexecdir=$libexecdir"
 eval "datarootdir=$datarootdir"
-eval "datedir=$datadir"
+eval "datadir=$datadir"
+eval "includedir=$includedir"
+eval "mandir=$mandir"
 
 AC_PATH_PROGS(EXPECT, expect, expect, $LPATH)
 
@@ -1016,7 +1019,14 @@ do
     fi
 done
 
+using_systemd=0
+if test -d /etc/systemd
+then
+	using_systemd=1
+fi
+AC_SUBST(using_systemd)
+
 AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
 
-AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h courier-authlib.spec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl)
+AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h courier-authlib.spec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl mkmanifest.sh)
 AC_OUTPUT

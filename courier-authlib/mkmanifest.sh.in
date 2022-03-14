@@ -1,0 +1,138 @@
+>filelist.base
+>filelist.mysql
+>filelist.sqlite
+>filelist.ldap
+>filelist.pgsql
+>filelist.userdb
+>filelist.pipe
+>filelist.devel
+
+cat >>filelist.base <<EOF
+@sysconfdir@/authlib
+@libexecdir@/courier-authlib
+@libdir@/courier-authlib 755 @mailuser@ @mailgroup@ dir
+@localstatedir@/spool/authdaemon 750 @mailuser@ @mailgroup@ dir
+EOF
+
+for f in $DESTDIR@sbindir@/*
+do
+	fn=`basename $f`
+	case "$fn" in
+	*userdb*)
+		echo "@sbindir@/$fn" >>filelist.userdb
+		;;
+	*)
+		echo "@sbindir@/$fn" >>filelist.base
+		;;
+	esac
+done
+
+for f in $DESTDIR@libdir@/courier-authlib/*
+do
+	fn=`basename $f`
+
+	# Remove *.la for authentication modules, keep the ones
+	# for client libraries. Do this before we sort them into buckets,
+	# below.
+
+	case "$fn" in
+	*.la)
+		case "$fn" in
+		libcourierauth*)
+			;;
+		*)
+			rm -f "$f"
+			;;
+		esac
+		continue
+		;;
+	esac
+
+	case "$fn" in
+	*.so)
+		case "$fn" in
+		libcourierauth*)
+			;;
+		*)
+			rm -f "$f"
+			continue
+			;;
+		esac
+		;;
+	esac
+
+	entry="@libdir@/courier-authlib/$fn"
+
+	case "$fn" in
+	    *.so*)
+		if test -f "$f"
+		then
+		    entry="$entry 444 bin bin"
+		fi
+	esac
+
+	case "$fn" in
+	libauthpipe*)
+		echo "$entry" >>filelist.pipe
+		;;
+	libauthldap*)
+		echo "$entry" >>filelist.ldap
+		;;
+	libauthmysql*)
+		echo "$entry" >>filelist.mysql
+		;;
+	libauthsqlite*)
+		echo "$entry" >>filelist.sqlite
+		;;
+	libauthpgsql*)
+		echo "$entry" >>filelist.pgsql
+		;;
+	libauthldap*)
+		echo "$entry" >>filelist.ldap
+		;;
+	libauthuserdb*)
+		echo "$entry" >>filelist.userdb
+		;;
+	*.so)
+		echo "$entry" >>filelist.devel
+		;;
+	*)
+		echo "$entry" >>filelist.base
+		;;
+	esac
+done
+
+if test "@using_systemd@" = "1"
+then
+    :
+else
+echo '/etc/rc.d/init.d/* 755 root root' >>filelist.base
+fi
+
+cat >>filelist.base <<EOF
+@mandir@/man1/* 444 root root
+README - bin bin doc
+README*html - bin bin doc
+README.authmysql.myownquery - bin bin doc
+README.ldap - bin bin doc
+NEWS - bin bin doc
+COPYING* - bin bin doc
+AUTHORS - bin bin doc
+ChangeLog - bin bin doc
+EOF
+
+echo '@mandir@/man8/*userdb*' >>filelist.userdb
+
+cat >>filelist.devel <<EOF
+@bindir@/courierauthconfig 555 root root
+@includedir@/* 444 root root
+@mandir@/man3/* 444 root root
+@libdir@/courier-authlib/*.la 444 root root
+authlib.html - bin bin doc
+auth_*.html - bin bin doc
+EOF
+
+cat >>filelist.ldap <<EOF
+authldap.schema - bin bin doc
+authldap.ldif - bin bin doc
+EOF

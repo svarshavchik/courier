@@ -65,6 +65,7 @@
 /libltdl
 /libs
 /mailusergroup.h
+/mkmanifest.sh
 /NEWS
 /packageversion.h
 /pkgincludedir.h

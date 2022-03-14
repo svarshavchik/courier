@@ -9,8 +9,6 @@
 %define courier_release %{nil}
 %endif
 
-%define using_systemd %(test -d /etc/systemd && echo 1 || echo 0)
-
 ################################################################################
 
 Name:           courier-authlib
@@ -49,10 +47,11 @@ BuildRequires:      redhat-rpm-config
 BuildRequires:      /usr/bin/ps
 %endif
 
-%if %using_systemd
+%if @using_systemd@
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):    systemd
+BuildRequires:		systemd-rpm-macros
 %else
 Requires(post):     /sbin/chkconfig
 Requires(preun):    /sbin/chkconfig
@@ -185,102 +184,34 @@ touch $RPM_BUILD_ROOT%{_localstatedir}/spool/authdaemon/pid.lock || exit 1
 touch $RPM_BUILD_ROOT%{_localstatedir}/spool/authdaemon/pid || exit 1
 %{__chmod} 777 $RPM_BUILD_ROOT%{_localstatedir}/spool/authdaemon/socket || exit 1
 
-cat >configfiles.base <<EOF
-%defattr(-,$mailuser,$mailgroup,-)
-%{_sysconfdir}/authlib
-%{_libexecdir}/courier-authlib
-%dir %{_libdir}/courier-authlib
-%dir %attr(750,$mailuser,$mailgroup) %{_localstatedir}/spool/authdaemon
-EOF
+DESTDIR=$RPM_BUILD_ROOT sh mkmanifest.sh
 
-echo "%defattr(-,$mailuser,$mailgroup,-)" >configfiles.mysql
-echo "%defattr(-,$mailuser,$mailgroup,-)" >configfiles.sqlite
-echo "%defattr(-,$mailuser,$mailgroup,-)" >configfiles.ldap
-echo "%defattr(-,$mailuser,$mailgroup,-)" >configfiles.pgsql
-echo "%defattr(-,$mailuser,$mailgroup,-)" >configfiles.userdb
-echo "%defattr(-,$mailuser,$mailgroup,-)" >configfiles.pipe
-echo "%defattr(-,$mailuser,$mailgroup,-)" >configfiles.devel
-
-for f in $RPM_BUILD_ROOT%{_sbindir}/*
+for ext in base devel mysql sqlite ldap pgsql userdb pipe
 do
-	fn=`basename $f`
-	case "$fn" in
-	*userdb*)
-		echo "%{_sbindir}/$fn" >>configfiles.userdb
-		;;
-	*)
-		echo "%{_sbindir}/$fn" >>configfiles.base
-		;;
-	esac
+	@PERL@ -e '
+print "%defattr(-,@mailuser@,@mailgroup@,-)\n";
+while (<>)
+{
+    chomp;
+    my ($n, $perm, $u, $g, $type) = split(/\s/);
+
+    if ($type)
+    {
+	print "%" . $type . " ";
+    }
+
+    if ($perm)
+    {
+	print "%attr(" . "$perm,$u,$g" . ") ";
+    }
+    print "$n\n";
+}
+' <filelist.$ext >configfiles.$ext || exit 1
 done
 
-for f in $RPM_BUILD_ROOT%{_libdir}/courier-authlib/*
-do
-	fn=`basename $f`
-
-	# Remove *.la for authentication modules, keep the ones
-	# for client libraries. Do this before we sort them into buckets,
-	# below.
-
-	case "$fn" in
-	*.la)
-		case "$fn" in
-		libcourierauth*)
-			;;
-		*)
-			rm -f "$f"
-			;;
-		esac
-		continue
-		;;
-	esac
-
-	case "$fn" in
-	*.so)
-		case "$fn" in
-		libcourierauth*)
-			;;
-		*)
-			rm -f "$f"
-			continue
-			;;
-		esac
-		;;
-	esac
-
-	case "$fn" in
-	libauthpipe*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.pipe
-		;;
-	libauthldap*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.ldap
-		;;
-	libauthmysql*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.mysql
-		;;
-	libauthsqlite*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.sqlite
-		;;
-	libauthpgsql*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.pgsql
-		;;
-	libauthldap*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.ldap
-		;;
-	libauthuserdb*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.userdb
-		;;
-	*.so)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.devel
-		;;
-	*)
-		echo "%{_libdir}/courier-authlib/$fn" >>configfiles.base
-		;;
-	esac
-done
-%if %using_systemd
+%if @using_systemd@
 %{__mkdir_p} $RPM_BUILD_ROOT%{_datadir}
-%{__install} -m 555 courier-authlib.sysvinit $RPM_BUILD_ROOT%{_datadir}
+%{__install} -m 555 courier-authlib.sysvinit $RPM_BUILD_ROOT%{_libexecdir}/courier-authlib
 
 %{__mkdir_p} $RPM_BUILD_ROOT/lib/systemd/system
 %{__install} -m 644 courier-authlib.service $RPM_BUILD_ROOT/lib/systemd/system
@@ -292,7 +223,7 @@ done
 
 %post
 %{_libexecdir}/courier-authlib/sysconftool %{_sysconfdir}/authlib/*.dist >/dev/null
-%if %using_systemd
+%if @using_systemd@
 if test -f /etc/init.d/courier-authlib
 then
 # Upgrade to systemd
@@ -301,10 +232,7 @@ then
         /bin/systemctl stop courier-authlib.service || :
 fi
 %systemd_post courier-authlib.service
-if [ $1 -eq 1 ]
-then
-    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
-fi
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
 %else
 /sbin/chkconfig --del courier-authlib
 /sbin/chkconfig --add courier-authlib
@@ -312,7 +240,7 @@ fi
 %preun
 if test "$1" = "0"
 then
-%if %using_systemd
+%if @using_systemd@
 %systemd_preun courier-authlib.service
 %else
         /sbin/chkconfig --del courier-authlib
@@ -320,7 +248,7 @@ then
 fi
 
 %postun
-%if %using_systemd
+%if @using_systemd@
 if [ $1 -eq 0 ]
 then
     /bin/systemctl daemon-reload
@@ -333,34 +261,18 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files -f configfiles.base
-%defattr(-,root,root,-)
-%doc README README*html README.authmysql.myownquery README.ldap
-%doc NEWS COPYING* AUTHORS ChangeLog
-%if %using_systemd
-/lib/systemd/system/*
-%attr(755, bin, bin) %{_datadir}/courier-authlib.sysvinit
-%else
-/etc/rc.d/init.d/*
+%if @using_systemd@
+%attr(644,root,root) /lib/systemd/system/*
 %endif
 %ghost %attr(600, root, root) %{_localstatedir}/spool/authdaemon/pid.lock
 %ghost %attr(644, root, root) %{_localstatedir}/spool/authdaemon/pid
 %ghost %attr(-, root, root) %{_localstatedir}/spool/authdaemon/socket
-%{_mandir}/man1/*
 
 %files -f configfiles.userdb userdb
-%{_mandir}/man8/*userdb*
 
 %files -f configfiles.devel devel
-%defattr(-,root,root,-)
-%{_bindir}/courierauthconfig
-%{_includedir}/*
-%{_mandir}/man3/*
-%{_libdir}/courier-authlib/*.la
-%doc authlib.html auth_*.html
 
 %files -f configfiles.ldap ldap
-%defattr(-,root,root,-)
-%doc authldap.schema authldap.ldif
 
 %files -f configfiles.mysql mysql
 

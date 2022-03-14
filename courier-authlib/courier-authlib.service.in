@@ -4,8 +4,8 @@ Description=Courier Authentication Library
 [Service]
 Type=forking
 RemainAfterExit=true
-ExecStart=@datadir@/courier-authlib.sysvinit start
-ExecStop=@datadir@/courier-authlib.sysvinit stop
+ExecStart=@libexecdir@/courier-authlib/courier-authlib.sysvinit start
+ExecStop=@libexecdir@/courier-authlib/courier-authlib.sysvinit stop
 
 [Install]
 WantedBy=multi-user.target
