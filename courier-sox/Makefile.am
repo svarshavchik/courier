@@ -1,4 +1,4 @@
-# Copyright 2004-2009 Double Precision, Inc.
+# Copyright 2004-2022 Double Precision, Inc.
 # See COPYING for distribution information.
 #
 AUTOMAKE_OPTIONS=dist-bzip2
@@ -23,7 +23,7 @@ install-exec-local: sockd.rc
 libsocks_la_SOURCES=sox.c connectfunc.h stubfuncs.h parseconfigfile.h toipv4.h
 libsocks_la_LIBADD=@NETLIBS@ @DLLIB@
 libsocks_la_DEPENDENCIES=libsocks.sym
-libsocks_la_LDFLAGS=-export-symbols libsocks.sym
+libsocks_la_LDFLAGS=-export-symbols libsocks.sym -version-info @LIBVERSION_INFO@
 
 libsocks.sym: socks.h
 	@SED@ -n '1,/__BEGIN__/d;/__END__/,$$d;/(/p' <socks.h | \
@@ -55,7 +55,7 @@ testbind_LDADD=libsocks.la
 testcidr_SOURCES=testcidr.c cidr.h
 
 EXTRA_DIST=socksify.html.in socksify.1.in socksrc.html.in socksrc.5.in \
-	socksify.in socks.html socks.3 courier-sox.spec courier-sox.lpspec \
+	socksify.in socks.html socks.3 courier-sox.spec \
 	sockd.html.in sockd.1.in mkbl4.html.in mkbl4.8.in \
 	pgpkeys.txt
 
@@ -137,8 +137,13 @@ socksify: socksify.in libsockswrap.la libsocks.la
 check-am:
 	@SHELL@ ./testcidr.sh
 
+DATE := $(shell date -R)
+
 dist-hook:
 	rm -f $(distdir)/socks.h
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
 
 rpm: rpm-build
 
@@ -164,21 +169,9 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
+	$$HOME/bin/rpmrepos.sh
 
-lpm: lpm-build
-
-lpm-build:
-	$(MAKE) -$(MAKEFLAGS) bump.rpm.release
-	$(MAKE) -$(MAKEFLAGS) dist
-	$(MAKE) -$(MAKEFLAGS) dolpm
-
-dolpm:
-	rm -rf lpm
-	mkdir lpm
-	lpbuild `test "@REPOSITORY@" == "" || echo --define "repository=1"` --srcbuild -o lpm @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
-
-
-bump.rpm.release: @PACKAGE_NAME@.spec @PACKAGE_NAME@.lpspec
+bump.rpm.release: @PACKAGE_NAME@.spec
 	VERSION="x"; \
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
 	NEXT_RELEASE=100; \
@@ -188,31 +181,40 @@ bump.rpm.release: @PACKAGE_NAME@.spec @PACKAGE_NAME@.lpspec
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/rpm.release; \
 	sed 's/^Release: .*/Release: '$$RELEASE'%{?dist}%{courier_release}/' \
 		<courier-sox.spec >courier-sox.spec.new; \
-	mv courier-sox.spec.new courier-sox.spec; \
-	sed 's/^Release: .*/Release: '$$RELEASE'/' \
-		<courier-sox.lpspec >courier-sox.lpspec.new; \
-	mv courier-sox.lpspec.new courier-sox.lpspec
+	mv courier-sox.spec.new courier-sox.spec;
 
-publish: publish-@REPOSITORY@
+EXTRA_DIST += courier-debuild \
+	packaging/debian/auto_install.sh.in \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/libcourier-sox.lintian-overrides \
+	packaging/debian/libcourier-sox.soname.lintian-overrides \
+	packaging/debian/rules \
+	packaging/debian/source/format
 
-publish-dev:
-	$(MAKE) -$(MAKEFLAGS) dopublish SUBDIR=dev
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
 
-publish-prod:
-	$(MAKE) -$(MAKEFLAGS) dopublish SUBDIR=prod
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
 
-dopublish:
-	lpbuild --resign lpm/*
-	rm -rf lpmtmp
-	mkdir lpmtmp
-	ln lpm/* lpmtmp
-	rm -f lpmtmp/*debuginfo*
-	mv lpmtmp/*.src.lp repository-$(SUBDIR)/`lpm -q --distribution`/sources
-	mv lpmtmp/*.lp repository-$(SUBDIR)/`lpm -q --distribution`/packages
-	rm -rf lpmtmp
-	ls -t repository-$(SUBDIR)/`lpm -q --distribution`/sources | tail -n +6 | xargs -r -n 1 lpm --erase repository-$(SUBDIR)
-	lpm --sync repository-$(SUBDIR)
-	rsync -a -v --delete-after repository-$(SUBDIR)/`lpm -q --distribution`/. headache:lpmtool.com/www/repositories/$(SUBDIR)/courier-sox/`lpm -q --distribution`
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
 
 upload-beta:
 	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1
@@ -223,8 +225,8 @@ distrelease:
 	$(MAKE) rpm
 	$(MAKE)
 	$(MAKE)
-	rm -f @PACKAGE_NAME@.spec @PACKAGE_NAME@.lpspec
-	$(MAKE) @PACKAGE_NAME@.spec @PACKAGE_NAME@.lpspec
+	rm -f @PACKAGE_NAME@.spec packaging/debian/changelog
+	$(MAKE) @PACKAGE_NAME@.spec packaging/debian/changelog
 	$(MAKE) dist
 
 upload-dist:

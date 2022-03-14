@@ -1,0 +1,80 @@
+#! @SHELL@
+
+set -ex
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+datarootdir=@datarootdir@
+datadir=@datadir@
+libdir=@libdir@
+libexecdir=@libexecdir@
+bindir=@bindir@
+sbindir=@sbindir@
+mandir=@mandir@
+sysconfdir=@sysconfdir@
+includedir=@includedir@
+localstatedir=@localstatedir@
+
+mkdir -p debian/tmp/etc/pam.d
+cat >debian/tmp/etc/pam.d/socks <<EOF
+@include common-auth
+@include common-account
+@include common-session
+@include common-password
+EOF
+
+sed -i "/dependency_libs/ s/'.*'/''/" debian/tmp@libdir@/*.la
+
+dh_install debian/tmp$bindir/socksify `echo $bindir | cut -c2-`
+dh_install debian/tmp$mandir/man5/* `echo $mandir/man5 | cut -c2-`
+dh_install debian/tmp$mandir/man1/socksify* `echo $mandir/man1 | cut -c2-`
+dh_install debian/tmp$sysconfdir/socksrc `echo $sysconfdir | cut -c2-`
+
+dh_installdocs COPYING README NEWS AUTHORS ChangeLog *.html
+
+dh_install --package libcourier-sox$SOVERSION debian/tmp$libdir/*.so.* `echo $libdir | cut -c2-`
+
+dh_install --package=libcourier-sox-dev debian/tmp$libdir/*.la `echo $libdir | cut -c2-`
+dh_install --package=libcourier-sox-dev debian/tmp$libdir/*.a `echo $libdir | cut -c2-`
+dh_install --package=libcourier-sox-dev debian/tmp$libdir/*.so `echo $libdir | cut -c2-`
+dh_install --package=libcourier-sox-dev debian/tmp$includedir/* `echo $includedir | cut -c2-`
+dh_install --package=libcourier-sox-dev debian/tmp$mandir/man3/* `echo $mandir/man3 | cut -c2-`
+
+dh_install --package=libcourier-sox-server debian/tmp$sbindir/sockd `echo $sbindir | cut -c2-`
+dh_install --package=libcourier-sox-server debian/tmp$libexecdir/sockd `echo $libexecdir | cut -c2-`
+
+dh_install --package=libcourier-sox-server courier-sox.service lib/systemd/system
+dh_install --package=libcourier-sox-server debian/tmp$mandir/man1/sockd* `echo $mandir/man1 | cut -c2-`
+dh_install --package=libcourier-sox-server debian/tmp/etc/pam.d/socks
+
+dh_install --package=libcourier-sox-utils debian/tmp$bindir/mkbl4
+dh_install --package=libcourier-sox-utils debian/tmp$mandir/man8/mkbl4*
+
+cat >debian/libcourier-sox.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	rm -rf $sysconfdir/socksrc
+fi
+
+EOF
+
+
+cat >debian/libcourier-sox-server.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	rm -f $localstatedir/run/sockd.pid
+	rm -f $localstatedir/run/sockd.pid.lock
+fi
+
+EOF

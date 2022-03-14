@@ -25,7 +25,6 @@
 /maildirwatch.html
 /maildrop.1
 /maildrop.html
-/maildrop.lpspec
 /maildrop.spec
 /maildropex.7
 /maildropex.html
@@ -44,4 +43,9 @@
 /reformime.1
 /reformime.html
 /rfc2045.html
+/rfc2045.3
+/rfc2045.h
+/rfc2047.h
 /rfc822.html
+/rfc822.3
+/rfc822.h

@@ -1,0 +1,20 @@
+#
+# Package-specified ownership and permissions
+#
+setgid-binary usr/lib/sqwebmail/libexec/sqwebmail/sqwebpasswd 2755 *
+non-standard-dir-perm var/lib/sqwebmail-calendar/*
+non-standard-dir-perm var/spool/run/*
+#
+# Automatically disable sqwebmail when removing this package
+#
+apache2-reverse-dependency-calls-wrapper-script prerm a2disconf
+#
+# Automatically reload apache when removing this package
+#
+maintainer-script-calls-systemctl prerm:*
+#
+# Package was created directly from the upstream tarball.
+#
+package-contains-upstream-installation-documentation usr/share/doc/sqwebmail/INSTALL.gz
+package-contains-upstream-installation-documentation usr/share/doc/sqwebmail/INSTALL.html
+wrong-name-for-upstream-changelog usr/share/doc/sqwebmail/ChangeLog.gz

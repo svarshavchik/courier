@@ -1,0 +1,15 @@
+Source: courier-analog
+Section: contrib/admin
+Priority: optional
+Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: https://www.courier-mta.org/
+
+Package: courier-analog
+Architecture: all
+Depends: ${misc:Depends},
+	 ${perl:Depends},
+	 libdate-calc-perl
+Description: Courier log analyzer
+ The courier-analog script generates log summaries for the Courier mail server.

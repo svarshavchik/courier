@@ -124,9 +124,12 @@ PATH=/usr/bin:$PATH %configure %{?notice_option} \
 %install
 
 %{__rm} -rf $RPM_BUILD_ROOT
-%{__mkdir_p} $RPM_BUILD_ROOT%{pamconfdir}
 %{__mkdir_p} $RPM_BUILD_ROOT%{initdir}
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
+
+%{__mkdir_p} $RPM_BUILD_ROOT%{pamconfdir}
+%{__install} libs/imap/imapd.pam $RPM_BUILD_ROOT%{pamconfdir}/imap
+%{__install} libs/imap/pop3d.pam $RPM_BUILD_ROOT%{pamconfdir}/pop3
 
 %if %using_systemd
 %{__mkdir_p} $RPM_BUILD_ROOT%{_datadir}
@@ -219,6 +222,7 @@ then
 	:
 else
 	MANPATH="%{_mandir}:\$MANPATH"
+	MANPATH="\`echo \$MANPATH | sed 's/:\$//'\`"
 	export MANPATH
 	PATH="%{_bindir}:\$PATH"
 	if test -w /etc
@@ -240,8 +244,6 @@ endif
 echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
 
 if ( \$? ) then
-	true
-else
 	setenv MANPATH "%{_mandir}:\$MANPATH"
 	setenv PATH "%{_bindir}:\$PATH"
 	test -w /etc
@@ -250,10 +252,12 @@ else
 	else
 		setenv PATH "%{_sbindir}:\$PATH"
 	endif
+
+	setenv MANPATH \`echo \$MANPATH | sed 's/:\$//'\`
+	setenv PATH    \`echo \$PATH | sed 's/:\$//'\`
 endif
 EOF
 
-%{__cp} libs/imap/README README.imap
 %{__cp} libs/imap/README.proxy* .
 %{__cp} libs/maildir/README.maildirquota.txt README.maildirquota
 %{__cp} libs/maildir/README.sharedfolders.txt README.sharedfolders
@@ -308,15 +312,10 @@ fi
 %{_datadir}/sysconftool `%{__cat} %{_datadir}/configlist` >/dev/null
 %endif
 
-# Fix up permissions
-chown --reference=%{_datadir}/dhparams.pem.dist %{_datadir}/dhparams.pem
-for f in %{_datadir}/imapd.pem %{_datadir}/pop3d.pem
-do
-	if test -f "$f"
-	then
-		chown --reference=%{_datadir}/dhparams.pem.dist "$f"
-	fi
-done
+test -f %{_datadir}/dhparams.pem || ln %{_datadir}/dhparams.pem.dist %{_datadir}/dhparams.pem
+
+test -f %{_datadir}/imapd.pem || %{_sbindir}/mkimapdcert
+test -f %{_datadir}/pop3d.pem || %{_sbindir}/mkpop3dcert
 
 %preun
 %if %using_systemd
@@ -382,7 +381,7 @@ fi
 %{_datadir}/mk*
 %{_datadir}/sysconftool
 
-%doc NEWS AUTHORS COPYING libs/imap/BUGS README README.imap README.maildirquota
+%doc NEWS AUTHORS COPYING libs/imap/BUGS README README.maildirquota
 %doc README.sharedfolders
 %doc README.proxy*
 

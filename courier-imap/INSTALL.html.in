@@ -1,8 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta name="generator" content="Bluefish 2.2.12" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Courier-IMAP</title>
   <meta name="MSSmartTagsPreventParsing" content="TRUE" />
@@ -17,31 +15,147 @@
   :active { color: #FF0000 }
   /*]]>*/
   </style>
+  <style type="text/css">
+  /*<![CDATA[*/
+  span.c1 {font-family: monospace}
+  /*]]>*/
+  </style>
 </head>
 <body>
   <!-- Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
   <h1>Courier-IMAP</h1>
-  <p>For a general introduction and configuration settings for some popular
-  IMAP clients, go and read <code>imap/README(.html)</code>.</p>
-  <p>In this document:</p>
   <ul>
-    <li><a href="#requirements">Requirements</a></li>
-    <li><a href="#upgrading">Upgrading</a></li>
-    <li><a href="#install">Installation</a></li>
-    <li><a href="#imapconfig">IMAP configuration file</a></li>
-    <li><a href="#loginexec">Account initialization hook</a></li>
-    <li><a href="#shared">Using shared folders</a></li>
-    <li><a href="#crammd5">CRAM-MD5 Authentication</a></li>
-    <li><a href="#sslcert">Certificate Authentication</a></li>
-    <li><a href="#imapsend">Sending mail via an IMAP connection</a></li>
-    <li><a href="#idle">Realtime folder status updates</a></li>
-    <li><a href="#options">Account OPTIONS</a></li>
-    <li><a href="#smap">SMAP</a></li>
+    <li>
+      <a href="#install">Installation</a>
+    </li>
+    <li>
+      <a href="#requirements">Requirements</a>
+    </li>
+    <li>
+      <a href="#upgrading">Upgrading</a>
+    </li>
+    <li>
+      <a href="#manualcompileinstall">Manual compilation and installation</a>
+    </li>
+    <li>
+      <a href="#imapconfig">IMAP configuration file</a>
+    </li>
+    <li>
+      <a href="#loginexec">Account initialization hook</a>
+    </li>
+    <li>
+      <a href="#shared">Using shared folders</a>
+    </li>
+    <li>
+      <a href="#crammd5">CRAM-MD5 Authentication</a>
+    </li>
+    <li>
+      <a href="#sslcert">Certificate Authentication</a>
+    </li>
+    <li>
+      <a href="#imapsend">Sending mail via an IMAP connection</a>
+    </li>
+    <li>
+      <a href="#options">Account OPTIONS</a>
+    </li>
+    <li>
+      <a href="#smap">SMAP</a>
+    </li>
   </ul>
-  <h2><a name="requirements" id="requirements">Requirements</a></h2>
-  <p>Now is the good time to read the FAQ, before you start. The FAQ is located
-  in the file <code>imap/FAQ(.html?)</code>.</p>
+  <h2><a id="install">INSTALLATION</a></h2>
+  <h3>rpm and deb packages</h3>
+  <p>These are not the same packages as the ones from various distributions'
+  repositories. These packages carry a higher internal revision level in order
+  to prevent them from getting upgraded by the distribution packaging, and
+  their installation layout may differ from the distributions' preferred
+  package installation layout. This packaging exists in order to have a
+  convenient way of updating after a release without waiting for the
+  distribution's package to get built, and to have a better correspondence with
+  the documentation.</p>
+  <p><b>NOTE:</b> If a distribution package is already installed it should be
+  removed completely before switching to the upstream version (<span class=
+  "c1">dnf remove</span> or <span class="c1">apt purge</span>). Preserve any
+  existing configuration files, beforehand, in order to restore it after
+  switching packages. This applies to all Courier packages. A switch to this
+  courier-imap package requires switching the courier-unicode and
+  courier-authlib packages too.</p>
+  <p><b>NOTE:</b> these packages use their own, generic, installation layout
+  that may deviate slightly from the package installation layout that's
+  preferred by the distributions.</p>
+  <h3>rpm</h3>
+  <p>Run <code>dnf install rpm-build</code> if it's not installed already,
+  then:</p>
+  <pre>rpmbuild -ta courier-imap-VERSION.tar.bz2</pre>
+  <p>If this fails due to any missing dependencies, install them.</p>
+  <p>After installing the package, "<span class="c1">systemctl enable
+  courier-imap</span> and <span class="c1">systemctl start courier-imap</span>
+  starts the IMAP and the POP3 servers. Self-signed SSL certificates get
+  generated and installed for the corresponding SSL ports too.</p>
+  <h3>deb</h3>
+  <p>Run "apt install devscripts debhelper", if they're not installed already.
+  Create an empty directory and copy/move the tarball into it:</p>
+  <pre>
+$ mkdir tmp
+$ mv courier-imap-VERSION.tar.bz2 tmp
+$ cd tmp</pre>
+  <p>Unpack the tarball and cd into the unpacked subdirectory:</p>
+  <pre>
+$ tar xvf courier-imap-VERSION.tar.bz2
+$ cd courier-imap-VERSION</pre>
+  <p>Run the <code>courier-debuild</code> script, this is a wrapper for
+  <code>debuild</code>, and it forwards its parameters to it:</p>
+  <pre>$ ./courier-debuild -us -uc</pre>
+  <p>NOTE: the above steps must be followed strictly. The <span class=
+  "c1">courier-debuild</span> script expects the distributed tarball in its
+  parent directory.</p>
+  <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
+  <p>Setting the <code>DEBGCC</code> environment variable selects a non-default
+  gcc version.</p>
+  <p>NOTE: all Courier packages should be built using the same version of
+  gcc.</p>
+  <p>After installing the package, the IMAP and the POP3 servers get
+  automatically started; and self-signed SSL certificates get generated and
+  installed for the corresponding SSL ports too.</p>
+  <h3>Maintainer Mode (see README in the git repository to set up)</h3>
+  <p><span class="c1">make rpm</span> or <span class="c1">make deb</span>, as
+  appropriate, will:</p>
+  <ol>
+    <li>
+      <p>Increment an internal release number.</p>
+    </li>
+    <li>
+      <p>Run <span class="c1">make dist</span>.</p>
+    </li>
+    <li>
+      <p>Proceed and build a new release, creating the native packages in the
+      rpm or deb subdirectory.</p>
+    </li>
+  </ol>
+  <h3>Manual installation</h3>
+  <p>To compile and install the Courier-IMAP server (this is the short version,
+  a longer version follows):</p>
+  <pre>
+
+$ ./configure [ options, see below ]
+$ make
+$ make check       # Note - the --enable-workarounds-for-imap-client-bugs
+                   # option to configure will result in make check FAILING.
+$ su root
+# make install     # Or, make install-strip, to strip the executables.
+# make install-configure   # Install configuration files.
+
+                   # Start the authdaemond process
+</pre>
+  <blockquote>
+    <p><b>NOTE</b></p>
+    <p>You MUST run the <code>configure</code> script as normal user, not root.
+    Did you extract the tarball as root? It won't work. Remove the extracted
+    source code. Log in as a normal user. Extract the source code as a normal
+    user, then run <code>configure</code>. You will do everything as a normal
+    user, except for the final step of installing the compiled software.</p>
+  </blockquote>
+  <h2><a id="requirements">Requirements</a></h2>
   <ul>
     <li>C++ compiler - A C++ compiler is required. The server is written in C,
     but there are some configuration scripts that use C++ code.</li>
@@ -49,26 +163,23 @@
     xBSD already has a gmake port, install it and use it (use gmake everywhere
     this document refers to make).</li>
     <li>GDBM/DB - either the GDBM or the Berkeley DB library is required.</li>
-    <li><a href="http://www.gnu.org/software/libidn/">The GNU IDN library</a>
-    (http://www.gnu.org/software/libidn/).</li>
-    <li><a href="http://www.gnome.org/~veillard/gamin/" target=
-    "_blank">Gamin</a> (<tt>http://www.gnome.org/~veillard/gamin/</tt>) or
-    <a href="http://oss.sgi.com/projects/fam/" target="_blank">FAM</a>
-    (<tt>http://oss.sgi.com/projects/fam/</tt>) -- either one -- is optional.
-    If <code>Gamin</code> or <code>FAM</code> is installed, it is used for an
-    enhanced IMAP <code>IDLE</code> implementation that provides real-time
-    folder status updates to concurrent IMAP clients that have the same folder
-    opened.</li>
+    <li>
+      <a href="http://www.gnu.org/software/libidn/">The GNU IDN library</a>
+      (http://www.gnu.org/software/libidn/).
+    </li>
     <li>The Courier authentication library. Before installing Courier-IMAP,
     download and install <a href=
-    "https://www.courier-mta.org/authlib/">https://www.courier-mta.org/authlib/</a>.</li>
+    "https://www.courier-mta.org/authlib/">https://www.courier-mta.org/authlib/</a>.
+    </li>
     <li>The <a href="http://www.gnu.org/software/libidn/">GNU IDN</a>) library
-    is required.</li>
+    is required.
+    </li>
     <li>The Courier unicode library. Before installing Courier-IMAP, download
     and install <a href=
-    "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.</li>
+    "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.
+    </li>
   </ul>
-  <h2><a name="upgrading" id="upgrading">UPGRADING</a></h2>
+  <h2><a id="upgrading">UPGRADING</a></h2>
   <h3>Upgrading from Courier-IMAP 5.0.13, and earlier</h3>
   <p>Courier-IMAP switched to using the inotify kernel API directly instead of
   the legacy FAM/Gamin daemon. When using virtual mail accounts it will be
@@ -229,38 +340,12 @@ pop3d-ssl.config    pop3d-ssl
   <h3>Upgrading from Courier-IMAP 1.0 or earlier</h3>
   <p>If the server is running, manually stop the server before installing the
   new version.</p>
-  <h2><a name="install" id="install">INSTALLATION</a></h2>
-  <p>To compile and install the Courier-IMAP server (this is the short version,
-  a longer version follows):</p>
-  <pre>
-
-$ ./configure [ options, see below ]
-$ make
-$ make check       # Note - the --enable-workarounds-for-imap-client-bugs
-                   # option to configure will result in make check FAILING.
-$ su root
-# make install     # Or, make install-strip, to strip the executables.
-# make install-configure   # Install configuration files.
-
-                   # Start the authdaemond process
-</pre>
-  <blockquote>
-    <p><b>NOTE</b></p>
-    <p>You MUST run the <code>configure</code> script as normal user, not root.
-    Did you extract the tarball as root? It won't work. Remove the extracted
-    source code. Log in as a normal user. Extract the source code as a normal
-    user, then run <code>configure</code>. You will do everything as a normal
-    user, except for the final step of installing the compiled software.</p>
-  </blockquote>
-  <blockquote>
-    <p><b>NOTE</b></p>
-    <p>Courier-IMAP does not use <code>inetd</code> or <code>xinetd</code>. Any
-    <code>inetd</code> or <code>xinetd</code> configuration settings for the
-    IMAP and POP3 ports must be turned off. Courier-IMAP will not start if
-    <code>inetd</code> or <code>xinetd</code> is listening for IMAP or POP3
-    connections.</p>
-  </blockquote>
-  <hr />
+  <h2 id="manualcompileinstall">Manual compilation and installation</h2>
+  <p>As mentioned above an installable package should be prepared and installed
+  using the system's package manager. If the included script that create
+  installable rpm or deb packages won't work, for some reason, the following
+  instructions provide additional information for manual installation.</p>
+  <h3>Configuration and installation</h3>
   <p>As mentioned in "Requirements", above, if you are using xBSD, you must use
   gmake instead of make.</p>
   <hr />
@@ -493,8 +578,8 @@ $ @defaultprefix@/libexec/imapd.rc stop
   <p>Other familiar configure options, such as <code>--sysconfdir</code> and
   <code>--datadir</code> work too, for those who know how to properly use
   them.</p>
-  <h2><a name="inotify" id="inotify">Configure the maximum number of inotify
-  file descriptors</a></h2>
+  <h2><a id="inotify">Configure the maximum number of inotify file
+  descriptors</a></h2>
   <p>If courier-authlib gets set up to use virtual mail accounts that share the
   system userid, it will be necessary to adjust the Linux kernel's limit on the
   maximum number of file descriptors per userid,
@@ -503,7 +588,7 @@ $ @defaultprefix@/libexec/imapd.rc stop
   very large servers it may also be necessary to increase
   <code>/proc/sys/fs/inotify/max_user_watches</code>, a rough metric would be
   at least 5 times the <code>max_user_instances</code> setting.</p>
-  <h2><a name="imapconfig" id="imapconfig">Configuration file</a></h2>
+  <h2><a id="imapconfig">Configuration file</a></h2>
   <p>The <code>@defaultprefix@/etc/imapd</code> configuration file sets some
   configurable options. Each setting has a brief description. Review each
   setting, and make any necessary adjustments.</p>
@@ -517,16 +602,16 @@ $ @defaultprefix@/libexec/imapd.rc stop
   the POP3 server.</p>
   <p>NOTE: the actual location of the configuration file directory is itself
   configured at compilation time.</p>
-  <h2><a name="loginexec" id="loginexec">ACCOUNT INITIALIZATION HOOK</a></h2>
+  <h2><a id="loginexec">ACCOUNT INITIALIZATION HOOK</a></h2>
   <p>If there is a file or a symbolic link in the maildir called "loginexec",
   and if it is executable, then the executable file will be invoked after a
   succesful login. If the program terminates with an exit code of 0, the
   "loginexec" file (or a symbolic link) will be removed.</p>
-  <h2><a name="shared" id="shared">USING SHARED FOLDERS</a></h2>
+  <h2><a id="shared">USING SHARED FOLDERS</a></h2>
   <p>Courier-IMAP supports shared folders. See the file <a href=
   "README.sharedfolders.html"><code>README.sharedfolders.html</code></a> for
   information on how to set up shared folders.</p>
-  <h2><a name="crammd5" id="crammd5">CRAM-MD5 AUTHENTICATION</a></h2>
+  <h2><a id="crammd5">CRAM-MD5 AUTHENTICATION</a></h2>
   <p>CRAM-MD5 authentication allows IMAP clients to authenticate themselves
   without sending the password in clear-text over the network. Courier-IMAP now
   supports CRAM-MD5 by default, but is not enabled for reasons explained below.
@@ -584,7 +669,7 @@ userdbpw -hmac-md5 | userdb <i>userdb</i> set hmac-md5pw
   specify <code>--without-authcram</code> option to the configure script, or
   simply edit <code>imapd</code> and remove authcram from the AUTHMODULES
   setting.</p>
-  <h2><a name="sslcert" id="sslcert">CERTIFICATE AUTHENTICATION</a></h2>
+  <h2><a id="sslcert">CERTIFICATE AUTHENTICATION</a></h2>
   <p>Courier-IMAP can use SSL certificates for authentication purposes. For
   certificate authentication purposes, one of the fields in your certificates'
   subject must match the login ID in the authentication database. Consider the
@@ -624,8 +709,7 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
       </blockquote>
     </li>
   </ul>
-  <h2><a name="imapsend" id="imapsend">SENDING MAIL VIA AN IMAP
-  CONNECTION</a></h2>
+  <h2><a id="imapsend">SENDING MAIL VIA AN IMAP CONNECTION</a></h2>
   <p>This server allows using the IMAP connection to send E-mail. Normally, the
   IMAP protocol provides only access to mail in an existing mail account, and
   mail clients must use SMTP in order to send mail. The Courier-IMAP server has
@@ -681,16 +765,7 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
     before the mail client sends the message. Make sure that none of this extra
     information is something that should not be mailed out.</p>
   </blockquote>
-  <h2><a name="idle" id="idle">REALTIME FOLDER STATUS UPDATES</a></h2>
-  <p>If <a href="http://www.gnome.org/~veillard/gamin/" target=
-  "_blank">Gamin</a> (<tt>http://www.gnome.org/~veillard/gamin/</tt>) or
-  <a target="_blank" href="http://oss.sgi.com/projects/fam/">FAM</a>
-  (<tt>http://oss.sgi.com/projects/fam/</tt>) is installed it will be possible
-  to allow multiple clients to open the same folder, and have all clients to be
-  simultaneously notified of any changes to the folder contents.</p>
-  <p>After installing the server see the <tt>imapd(8)</tt> manual page for more
-  information.</p>
-  <h2><a name="options" id="options">Account OPTIONS</a></h2>
+  <h2><a id="options">Account OPTIONS</a></h2>
   <p>If the option '<code>disableimap</code>' or '<code>disablepop3</code>' is
   set to a non-zero value, then logins via IMAP or POP3 respectively will be
   disabled for that account. You can use the DEFAULTOPTIONS setting to disable
@@ -700,7 +775,7 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
   <code>disableimap=0</code></p>
   <p>See <code>README_authlib.html</code> in the courier-authlib package for
   information on how to set per-account options.</p>
-  <h2><a name="smap" id="smap">SMAP</a></h2>
+  <h2><a id="smap">SMAP</a></h2>
   <p>Starting with Courier-IMAP 2.0, the server supports an experimental mail
   access protocol, dubbed "Simple Mail Access Protocol". SMAP is an experiment
   to provide enhanced mail processing beyond what's currently possible with

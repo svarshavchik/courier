@@ -1,0 +1,4 @@
+#
+# Package installs specific permissions for every file and directory
+#
+non-standard-file-perm usr/lib/courier/share/*

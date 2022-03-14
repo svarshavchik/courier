@@ -1,0 +1,4 @@
+#
+# Package was created directly from the upstream tarball.
+#
+package-name-doesnt-match-sonames librfc2045-0 librfc822-0

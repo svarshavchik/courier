@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+
+export CXX=g++%DEBGCC%
+export CC=gcc%DEBGCC%
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	dh_auto_install --
+	CONFIG_FILES=debian/auto_install.sh ./config.status
+	chmod +x debian/auto_install.sh
+	CONFIG_FILES=debian/mkinstall.pl ./config.status
+	chmod +x debian/mkinstall.pl
+	rm -f debian/libcourier-auth%SOVERSION%/lintian-overrides
+	ln -s libcourier-auth.soname.lintian-overrides debian/libcourier-auth%SOVERSION%.lintian-overrides
+	debian/auto_install.sh
+
+override_dh_fixperms:
+	:
+
+override_dh_installsystemd:
+	dh_installsystemd --package libcourier-auth --no-start libcourier-auth.service

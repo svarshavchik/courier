@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier, 1.1.8.20220306, [courier-users@lists.sourceforge.net])
+AC_INIT(courier, 1.1.8.20220416, [courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -20,6 +20,7 @@ AC_PROG_MAKE_SET
 AC_PROG_CXX
 AC_PROG_SYSCONFTOOL
 AC_PATH_PROGS(SETENV, env)
+AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 AX_COURIER_UNICODE_VERSION(2.1)
 AC_ARG_ENABLE(root-check, [  --disable-root-check    Allow build as root (make check will fail)],
 	rootcheck="$enableval",
@@ -107,6 +108,9 @@ eval "sysconfdir=$sysconfdir"
 eval "localstatedir=$localstatedir"
 eval "datarootdir=$datarootdir"
 eval "datadir=$datadir"
+eval "bindir=$bindir"
+eval "sbindir=$sbindir"
+eval "mandir=$mandir"
 
 AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
 		      certsdir="$withval", certsdir=$datadir)
@@ -354,4 +358,13 @@ AC_SUBST(REPOSITORY)
 echo $real_configure_args >configure.args
 AC_CONFIG_SUBDIRS(afx libs/gdbmobj libs/bdbobj libs/cgi libs/http11 libs/numlib libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/liblock libs/maildir libs/waitlib libs/threadlib libs/makedat libs/tcpd libs/rootcerts libs/imap libs/maildrop libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail webadmin courier)
 
-AC_OUTPUT(Makefile courier.spec courier.service dbobj.h dbobj.config courier.sysvinit)
+AC_CONFIG_FILES(
+	Makefile
+	courier.spec
+	courier.service
+	dbobj.h
+	dbobj.config
+	courier.sysvinit
+	courier-debuild
+)
+AC_OUTPUT

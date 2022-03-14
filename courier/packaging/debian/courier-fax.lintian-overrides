@@ -1,0 +1,9 @@
+#
+# Sources shell script
+#
+executable-not-elf-or-script usr/lib/courier/share/faxmail/init
+#
+# Package installs specific permissions for every file and directory
+#
+non-standard-executable-perm usr/lib/courier/share/faxmail/*
+non-standard-file-perm usr/lib/courier/share/courierwebadmin/*

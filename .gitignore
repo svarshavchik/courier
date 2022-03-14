@@ -16,6 +16,9 @@ config.sub
 config.log
 config.status
 configure
+courier-debuild
+deb
+deb.release
 depcomp
 install-sh
 stamp-h1

@@ -15,7 +15,7 @@
 #include "cgi/cgi.h"
 #include "sockdir.h"
 
-void run(void *)
+void run(void *ptr)
 {
 	struct group *g;
 	struct passwd *p;

@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2018 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 @SET_MAKE@
@@ -40,7 +40,7 @@ sysconf_DATA=imapd.dist imapd-ssl.dist pop3d.dist pop3d-ssl.dist \
 	imapd.cnf pop3d.cnf quotawarnmsg.example
 libexec_SCRIPTS=imapd.rc imapd-ssl.rc pop3d.rc pop3d-ssl.rc
 
-HTML2TXT=links -dump -no-numbering -no-references
+HTML2TXT=elinks -dump -no-numbering -no-references
 
 NEWS: NEWS.html
 	$(HTML2TXT) NEWS.html >NEWS
@@ -165,14 +165,6 @@ install-exec-hook:
 	chmod 755 $(DESTDIR)$(sysconfdir)/imapaccess
 
 install-data-local: install-man
-	test -d $(DESTDIR)/etc/pam.d || exit 0 ; \
-	test -w $(DESTDIR)/etc/pam.d || exit 0 ; \
-	test -f $(DESTDIR)/etc/pam.d/imap || \
-		$(INSTALL_DATA) $(srcdir)/libs/imap/imapd.pam \
-		$(DESTDIR)/etc/pam.d/imap || exit 1 ;\
-	test -f $(DESTDIR)/etc/pam.d/pop3 || \
-		$(INSTALL_DATA) $(srcdir)/libs/imap/pop3d.pam \
-		$(DESTDIR)/etc/pam.d/pop3 || exit 1
 	for f in $(man_MANS); do chmod a+r $(DESTDIR)$(mandir)/*/$$f; done
 	@echo "Do not forget to run make install-configure"
 
@@ -181,12 +173,11 @@ uninstall-local:
 		do rm -f $(DESTDIR)$(sbindir)/$$f ; done
 	rm -f $(DESTDIR)$(bindir)/couriertls
 
-INSTALL.txt: INSTALL.html
-	$(HTML2TXT) INSTALL.html >INSTALL.txt
-
 #
 # For maintainer's use only
 #
+
+DATE := $(shell date -R)
 
 dist-hook: courier-imap.spec
 	test -f $(srcdir)/rpm.release && cp $(srcdir)/rpm.release $(distdir) \
@@ -194,6 +185,41 @@ dist-hook: courier-imap.spec
 	rm -f $(distdir)/INSTALL
 	$(HTML2TXT) INSTALL.html >$(distdir)/INSTALL
 	cp $(srcdir)/courier-imap.spec $(distdir)
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
+
+EXTRA_DIST += courier-debuild \
+	packaging/debian/auto_install.sh.in \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/courier-imap.lintian-overrides \
+	packaging/debian/rules \
+	packaging/debian/source/format
+
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
 
 if HAVE_HTML
 
@@ -233,25 +259,7 @@ build-rpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
-
-lpm: lpm-build
-
-lpm-build:
-	$(MAKE) -$(MAKEFLAGS) bump.rpm.release
-	$(MAKE) -$(MAKEFLAGS) dist
-	rm -rf lpm
-	mkdir lpm
-	lpbuild --srcbuild -o lpm @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
-
-publish:
-	lpbuild --resign lpm/*
-	rm -rf lpmtmp
-	mkdir lpmtmp
-	ln lpm/* lpmtmp
-	mv lpmtmp/*.src.lp repository/`lpm -q --distribution`/sources
-	mv lpmtmp/*.lp repository/`lpm -q --distribution`/packages
-	rm -rf lpmtmp
-	lpm --sync repository && rsync -a -v --delete-after repository/. headache:lpmtool.com/www/repositories/courier-imap
+	$$HOME/bin/rpmrepos.sh
 
 bump.rpm.release: @PACKAGE_NAME@.spec
 	VERSION="x"; \

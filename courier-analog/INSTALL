@@ -1,0 +1,62 @@
+The courier-analog script generates log summaries for the Courier mail server.
+
+Courier-analog generates log summaries for incoming and outgoing SMTP
+connections, and IMAP and POP3 activity.  courier-analog can generate output
+in text or HTML format.
+
+Courier-analog requires the Date::Calc Perl module.
+See the installed manual page for usage instructions.
+
+rpm and deb packages
+====================
+
+These are not the same packages as the ones from the distributions'
+repositories. These packages carry a higher internal revision level in
+order to prevent them from getting upgraded by the distributions'
+packaging. This packaging exists in order to have a convenient way of
+updating after a release without waiting for the distribution's packages
+to get built.
+
+Installation
+============
+
+rpm
+===
+
+It is not necessary to unpack this tarball in order to build this tarball.
+
+Run "dnf install rpm-build", if it's not installed already, then:
+
+$ rpmbuild -ta courier-analog-VERSION.tar.bz2
+
+If this fails due to any missing dependencies, install them.
+
+This creates courier-analog-VERSION.noarch.rpm and
+courier-analog-VERSION.src.rpm, then install the noarch.rpm with 'rpm -U'.
+
+deb
+===
+
+Run "apt install devscripts debhelper", if they're not installed already.
+Create an empty directory, and copy/move the tarball into it:
+
+$ mkdir tmp
+$ cp courier-analog-VERSION.tar.bz2 tmp
+$ cd tmp
+
+Unpack the tarball and cd into the unpacked subdirectory:
+
+$ tar xjvf courier-analog-VERSION.tar.bz2
+$ cd courier-analog-VERSION
+
+Run the courier-debuild script. Its parameters get forwarded to debuild.
+
+$ ./courier-debuild -us -uc
+
+NOTE: the above steps must be followed strictly. The courier-debuild script
+expects the distributed tarball in its parent directory.
+
+The deb subdirectory now contains a "courier-analog_<VERSION_all.deb" file
+that can be installed with "dpkg -i".
+
+See INSTALL for manual installation instructions.

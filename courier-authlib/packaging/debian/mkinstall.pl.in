@@ -1,0 +1,53 @@
+#! @PERL@
+
+use strict;
+use warnings;
+
+my ($package) = @ARGV;
+
+print "set -evx\n";
+print "cp /dev/null debian/${package}.docs\n";
+
+while (<STDIN>)
+{
+    chomp;
+    my ($file, $perm, $uid, $gid, $type) = split(/\s/);
+
+    $type //= '';
+    $perm //= '-';
+    $uid //= '-';
+    $gid //= '-';
+
+    if ($type eq 'doc')
+    {
+	print "echo $file >>debian/${package}.docs\n";
+	next;
+    }
+    if ($type eq 'dir')
+    {
+	print "dh_installdirs --package $package $file\n";
+    }
+    else
+    {
+	my $dir = $file;
+
+	$dir =~ s@/[^/]+$@@;
+	print "mkdir -p debian/$package$dir\n";
+	print "dh_install --package=$package '$file' $dir\n";
+    }
+
+    if ($perm ne "-")
+    {
+	print "test -L 'debian/$package$file' || chmod -R 0$perm debian/$package$file\n";
+    }
+
+    if ($uid ne "-")
+    {
+	print "chown -h -R $uid debian/$package$file\n";
+    }
+
+    if ($gid ne "-")
+    {
+	print "chgrp -h -R $gid debian/$package$file\n";
+    }
+}

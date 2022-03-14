@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
-dnl Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(sqwebmail, 6.0.9, [courier-sqwebmail@lists.sourceforge.net])
+AC_INIT(sqwebmail, 6.0.9.20220416, [courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -20,7 +20,7 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
-
+AC_PATH_PROGS(PERL, perl5 perl, perl)
 AC_PATH_PROGS(SETENV, env)
 
 dnl Checks for programs.
@@ -194,17 +194,13 @@ AX_COURIER_UNICODE_VERSION(2.1)
 
 dnl Checks for header files.
 
-AC_CHECK_HEADER([pcre.h],
-		[ : ],
-		[
+AC_CHECK_PROG(PCRE2, pcre2-config, yes, no)
 
-		AC_CHECK_HEADER([pcre/pcre.h],
-				[ : ],
-				[
-						AC_MSG_ERROR(pcre.h not found - install PCRE from www.pcre.org)
-				])
-		]
-)
+if test "$PCRE2" = "no"
+then
+	AC_MSG_ERROR([pcre2-config was not found, please install PCRE2])
+fi
+
 
 dnl Checks for library functions.
 
@@ -220,7 +216,7 @@ dnl ***********************************************************************
 cgibindir=""
 imagedir=""
 
-for f in /var/lib/httpd /var/www /home/httpd /usr/local/apache /usr/local/www /var/lib/apache/share
+for f in /var/lib/httpd /var/www /home/httpd /usr/local/apache /usr/local/www /var/lib/apache/share /usr/lib
 do
 	if test -d $f/cgi-bin
 	then
@@ -350,4 +346,10 @@ AC_CONFIG_SUBDIRS(libs/numlib libs/bdbobj libs/gdbmobj libs/md5 libs/sha1
 	libs/rfc822 libs/rfc2045 libs/maildir libs/soxwrap
 	libs/http11 libs/cgi libs/ldapaddressbook
 	libs/gpglib libs/pcp libs/sqwebmail)
-AC_OUTPUT(Makefile dbobj.h dbobj.config sqwebmail.spec sqwebmail.lpspec sqwebmaild.rc)
+AC_CONFIG_FILES(Makefile
+	courier-debuild
+	dbobj.h
+	dbobj.config
+	sqwebmail.spec
+	sqwebmaild.rc)
+AC_OUTPUT

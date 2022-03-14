@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
-dnl Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.71.4],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.71.4.20220416],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -29,7 +29,6 @@ LTDL_INIT
 AC_SUBST(LTDLINCL)
 AC_SUBST(LIBLTDL)
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
-AC_PATH_PROGS(COURIERCONFIG, courier-config, courier-config, $LPATH)
 
 AC_CHECK_HEADER(ltdl.h, [ : ],
 			AC_MSG_ERROR([Unable to find ltdl.h. Please install Libtool's ltdl library]))
@@ -827,18 +826,6 @@ dnl
 
 result=""
 
-if test -x "$COURIERCONFIG"
-then
-	$COURIERCONFIG >conftest.out || exit 1
-	sed -n '/^mail/p' <conftest.out >conftest2.out || exit 1
-	. ./conftest2.out
-	rm -f conftest.out conftest2.out
-
-	cmailuser="$mailuser"
-	cmailgroup="$mailgroup"
-	result=" (from courier-config)"
-fi
-
 if test -x "$bindir/courierauthconfig"
 then
 	$bindir/courierauthconfig --configfiles >conftest.out || exit 1
@@ -1005,8 +992,23 @@ fi
 
 AC_SUBST(courierauth_ldflags)
 
-VERSION_INFO=0:0:0
-AC_SUBST(VERSION_INFO)
+LIBVERSION_CURRENT=0
+LIBVERSION_RELEASE=0
+LIBVERSION_AGE=0
+
+LIBVERSION_INFO=$LIBVERSION_CURRENT:$LIBVERSION_RELEASE:$LIBVERSION_AGE
+AC_SUBST(LIBVERSION_CURRENT)
+AC_SUBST(LIBVERSION_RELEASE)
+AC_SUBST(LIBVERSION_AGE)
+AC_SUBST(LIBVERSION_INFO)
+
+SOVERSION=0
+if test "$LIBVERSION_CURRENT" -ne "$LIBVERSION_AGE"
+then
+	SOVERSION=`expr $LIBVERSION_CURRENT - $LIBVERSION_AGE`
+fi
+
+AC_SUBST(SOVERSION)
 
 # This gets built by the make rule, and is not in the git repo
 
@@ -1028,5 +1030,18 @@ AC_SUBST(using_systemd)
 
 AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
 
-AC_CONFIG_FILES(Makefile authdaemond authdaemonrc authsystem.passwd README.authdebug.html dbobj.config dbobj.h courier-authlib.spec courier-authlib.sysvinit courier-authlib.service userdb-test-cram-md5.pl mkmanifest.sh)
+AC_CONFIG_FILES(Makefile
+	authdaemond
+	authdaemonrc
+	authsystem.passwd
+	README.authdebug.html
+	dbobj.config
+	dbobj.h
+	courier-authlib.spec
+	courier-authlib.sysvinit
+	courier-authlib.service
+	mkmanifest.sh
+	courier-debuild
+)
+
 AC_OUTPUT

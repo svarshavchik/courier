@@ -1,0 +1,172 @@
+Source: courier
+Priority: optional
+Section: contrib/mail
+Origin: Ubuntu
+Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
+Standards-Version: 4.4.1
+Homepage: https://www.courier-mta.org/
+Build-Depends:
+	perl:any,
+	debhelper-compat (= 12),
+	gcc%DEBGCC%,
+	g++%DEBGCC%,
+	libldap2-dev,
+	libcourier-auth-dev,
+	libcourier-unicode-dev,
+	mime-support,
+	wget,
+	gpg ( >= 2),
+	expect,
+	libgdbm-dev,
+	libidn11-dev,
+	mime-support,
+	gnutls-dev,
+	gnutls-bin,
+	libgcrypt-dev,
+	groff-base,
+	ghostscript,
+	mgetty-fax,
+	netpbm,
+	aspell,
+	libpcre2-dev,
+	libaspell-dev,
+	libperl-dev
+
+Package: courier
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 systemd,
+	 perl:any,
+	 libnet-cidr-perl,
+	 gnutls-bin
+Provides: mail-transport-agent
+Conflicts: mail-transport-agent, maildrop
+Replaces: mail-transport-agent
+Description: Mail Server
+ The Courier mail transfer agent (MTA) is an integrated mail/groupware
+ server based on open commodity protocols, such as ESMTP, IMAP, POP3, LDAP,
+ SSL, and HTTP. Courier provides ESMTP, IMAP, POP3, webmail, and mailing list
+ services within a single, consistent, framework.  Individual components can
+ be enabled or disabled at will.
+ .
+ All configuration files get installed in /etc/courier. Purging this package
+ removes /etc/courier and all of its contents.
+
+Package: courier-ldap
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 courier (= ${binary:Version})
+Description: Courier Mail Server LDAP module and configuration screen
+ This package contains LDAP modules and the webadmin configuration screen
+
+Package: courier-mysql
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 courier (= ${binary:Version})
+Description: Courier Mail Server MySQL (MariaDB) configuration screen
+ This package contains the webadmin MySQL configuration screen for Courier.
+
+Package: courier-pgsql
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 courier (= ${binary:Version})
+Description: Courier Mail Server PostgreSQL configuration screen
+ This package contains the webadmin PostgreSQL configuration screen for Courier.
+
+Package: courier-pop3d
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 courier (= ${binary:Version})
+Description: Courier Mail Server - POP3 server
+ This package adds POP3 server access to the Courier mail server.
+ Courier's POP3 server can only be used to access maildir mailboxes.
+ This server does not support mailbox files.  If you do not need the
+ ability to download mail with a POP3 client, you do not need to install
+ this package.
+
+Package: courier-imapd
+Architecture: any
+Conflicts: courier-imap
+Replaces: courier-imap
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 courier (= ${binary:Version})
+Description: Courier Mail Server - IMAP server
+ This package adds IMAP server access to the Courier mail server.
+ Courier's IMAP server can only be used to access maildir mailboxes.
+ This server does not support mailbox files.  If you do not need the
+ ability to access mail with an IMAP client, you do not need to install
+ this package.
+
+Package: courier-webmail
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 gpg ( >= 2),
+	 aspell,
+	 apache2 | httpd-cgi,
+	 courier (= ${binary:Version})
+Conflicts: sqwebmail
+Replaces: sqwebmail
+Description: Courier Mail Server - HTTP (webmail) server
+ This package installs Courier's CGI-based webmail server.
+
+Package: courier-webadmin
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 apache2 | httpd-cgi,
+	 libcgi-pm-perl,
+	 courier (= ${binary:Version})
+Description: Courier Mail Server - web-based administration tool
+ This package installs Courier's CGI-based administration module.
+
+Package: courier-mlm
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 courier (= ${binary:Version})
+Description: Courier Mail Server - Mailing List Manager
+ This package installs couriermlm - a mailing list manager for the
+ Courier mail server.  If you do not need the ability to manage
+ mailing lists, you do not need to install this package.
+
+Package: courier-mlm-web
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 apache2 | httpd-cgi,
+	 courier (= ${binary:Version})
+Description: Courier Mail Server - Mailing List Manager (web interface)
+ This package installs the web-based mini-interface to the Courier
+ mailing list manager.
+
+Package: courier-maildrop
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 courier (= ${binary:Version})
+Conflicts: maildrop
+Replaces: maildrop
+Description: Courier Mail Server - mailrop mail filter
+ This package adds mail filtering abilities to Courier.  Mail filtering
+ is provided via a customized version of the maildrop mail filter.
+
+Package: courier-fax
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 groff-base,
+	 ghostscript,
+	 mgetty-fax,
+	 netpbm,
+	 courier (= ${binary:Version})
+Description: Courier Mail Server - fax support
+ This package adds support for faxing E-mail messages.  You need to install
+ this package if you want the ability to send fax messages simply by
+ Sending an E-mail to phonenumber@fax.

@@ -1,0 +1,7 @@
+#
+# Package installs specific permissions for every file and directory
+#
+non-standard-executable-perm usr/lib/courier/libexec/*
+non-standard-executable-perm usr/lib/courier/share/*
+non-standard-file-perm etc/courier/*
+non-standard-file-perm usr/lib/courier/share/*

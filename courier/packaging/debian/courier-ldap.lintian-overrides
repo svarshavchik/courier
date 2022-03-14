@@ -1,0 +1,5 @@
+#
+# Package installs specific permissions for every file and directory
+#
+executable-is-not-world-readable usr/lib/courier/sbin/*
+non-standard-file-perm usr/lib/courier/share/*

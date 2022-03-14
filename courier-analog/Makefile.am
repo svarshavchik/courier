@@ -45,6 +45,7 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		$(RPMFLAGS) @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
+	$$HOME/bin/rpmrepos.sh
 
 bump.rpm.release: courier-analog.spec
 	VERSION="x"; \
@@ -58,6 +59,48 @@ bump.rpm.release: courier-analog.spec
 		<courier-analog.spec >courier-analog.spec.new; \
 	mv courier-analog.spec.new courier-analog.spec
 
+# deb packaging
+
+EXTRA_DIST += courier-debuild \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/courier-analog.lintian-overrides \
+	packaging/debian/rules \
+	packaging/debian/source/format
+
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && chmod +x ./courier-debuild && ./courier-debuild -us -uc && mv deb ../deb
+	rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^@PACKAGE@.*/@PACKAGE@ (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
+
+.PHONE: deb rpm
+
+DATE := $(shell date -R)
+dist-hook:
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
+
 upload-beta:
 	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1
 	~/src/sftools/release.pl mrsam courier analog-devel `echo @PACKAGE_VERSION@|sed 's/.*\(........\)/\1/'` @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2 @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig
@@ -65,7 +108,8 @@ upload-beta:
 distrelease:
 	$(MAKE) -$(MAKEFLAGS) distcheck
 	$(MAKE) -$(MAKEFLAGS) rpm
-	$(MAKE) -$(MAKEFLAGS) courier-analog.spec
+	rm -f courier-analog.spec packaging/debian/changelog
+	$(MAKE) -$(MAKEFLAGS) courier-analog.spec packaging/debian/changelog
 	$(MAKE) -$(MAKEFLAGS) dist
 
 upload-dist:

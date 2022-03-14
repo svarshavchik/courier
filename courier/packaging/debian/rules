@@ -1,0 +1,36 @@
+#!/usr/bin/make -f
+
+export CXX=g++%DEBGCC%
+export CC=gcc%DEBGCC%
+export imageurl=/webmail-images
+
+%:
+	dh $@
+
+# Note the rm-s in the postrm, wiping out everything in sysconfdir and
+# localstatedir,
+override_dh_auto_configure:
+	dh_auto_configure -- --with-notice=unicode --disable-root-check --with-gnutls --with-gpg2 \
+		--prefix=/usr/lib/courier \
+		--localstatedir=/var/spool/courier \
+		--sysconfdir=/etc/courier \
+		--enable-imageurl=$(imageurl) \
+
+override_dh_auto_install: debian/auto_install.sh debian/mkinstall.pl
+	dh_auto_install --
+	debian/auto_install.sh
+
+debian/auto_install.sh: config.status debian/auto_install.sh.in
+	CONFIG_FILES=debian/auto_install.sh ./config.status
+	chmod +x debian/auto_install.sh
+
+debian/mkinstall.pl: config.status debian/mkinstall.pl.in
+	CONFIG_FILES=debian/mkinstall.pl ./config.status
+	chmod +x debian/mkinstall.pl
+
+# Handled by mkinstall.pl
+override_dh_fixperms:
+	:
+
+override_dh_installsystemd:
+	dh_installsystemd --package courier --no-start courier.service

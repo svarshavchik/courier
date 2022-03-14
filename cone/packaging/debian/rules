@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+export CXX=g++%DEBGCC%
+export CC=gcc%DEBGCC%
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		--with-devel --with-notice=unicode --with-gnutls --with-gpg2
+
+override_dh_auto_install: debian/auto_install.sh
+	dh_auto_install --
+	debian/auto_install.sh
+
+debian/auto_install.sh: config.status debian/auto_install.sh.in
+	CONFIG_FILES=debian/auto_install.sh ./config.status
+	chmod +x debian/auto_install.sh

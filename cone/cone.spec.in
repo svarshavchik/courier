@@ -85,7 +85,7 @@ Requires: %{name} = 0:%{version}-%{release}
 
 
 %description devel
-The %{name}-devel package the header files and library files for developing
+The %{name}-devel package has header files and library files for developing
 application using LibMAIL - a high level, C++ OO library for mail clients.
 
 %prep

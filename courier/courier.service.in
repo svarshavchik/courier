@@ -5,6 +5,9 @@ Wants=courier-authlib.service
 After=network-online.target
 After=courier-authlib.service
 
+# Fedora has a mail-transfer-agent.target
+#
+# Ubuntu/Debian apparently does not, only a multi-user.target
 [Install]
 WantedBy=mail-transfer-agent.target
 WantedBy=multi-user.target

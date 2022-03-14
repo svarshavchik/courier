@@ -1,0 +1,52 @@
+#! @SHELL@
+
+set -e
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+sysconfdir=@sysconfdir@
+bindir=@bindir@
+sbindir=@sbindir@
+libexecdir=@libexecdir@
+libdir=@libdir@
+datarootdir=@datarootdir@
+includedir=@includedir@
+datadir=@datadir@
+mandir=@mandir@
+
+sed -i "/dependency_libs/ s/'.*'/''/" debian/tmp$libdir/*.la
+
+dh_install debian/tmp$sysconfdir
+dh_install debian/tmp$datadir/cone
+dh_install debian/tmp$bindir
+dh_install debian/tmp$libexecdir
+dh_install ./sysconftool "`echo $datadir/cone | cut -c2-`"
+dh_install debian/tmp$mandir/man1
+
+for d in $mandir/man3 $includedir $libdir
+do
+    dh_install --package libmail-cone-dev debian/tmp/$d "`dirname $d | cut -c2-`"
+done
+
+cat >debian/cone.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+$datadir/cone/sysconftool $sysconfdir/cone
+
+#DEBHELPER#
+EOF
+
+cat >debian/cone.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	rm -rf $sysconfdir/cone
+fi
+EOF

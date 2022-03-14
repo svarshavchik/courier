@@ -47,9 +47,6 @@ mailboxes.
 Maildrop mailing list:
 http://lists.sourceforge.net/lists/listinfo/courier-maildrop
 
-This version is compiled with support for GDBM database files,
-maildir enhancements (folders+quotas), and userdb.
-
 %description devel
 The maildrop-devel package contains the libraries and header files
 that can be useful in developing software that works with or processes
@@ -64,7 +61,7 @@ utilities.
 %prep
 
 %setup -q
-%configure --with-devel --enable-userdb --enable-maildirquota --enable-syslog=1 --enable-trusted-users='root mail daemon postmaster qmaild mmdf' --enable-restrict-trusted=0 --enable-sendmail=/usr/sbin/sendmail
+%configure --with-devel --enable-syslog=1 --enable-trusted-users='root mail daemon postmaster qmaild mmdf' --enable-restrict-trusted=0 --enable-sendmail=/usr/sbin/sendmail
 
 %build
 

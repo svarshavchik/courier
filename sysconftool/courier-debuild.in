@@ -1,0 +1,18 @@
+#! /bin/bash
+#
+# Wrapper script for running debuild to build this package.
+
+set -e
+
+f=`cd .. && ls @PACKAGE@-@VERSION@.tar* | sed -n 1p`
+rm -rf deb
+mkdir deb
+cp ../$f deb/`echo $f | sed 's/-/_/;s/.tar./.orig.tar./'`
+cd deb
+tar xf *
+cd @PACKAGE@-@VERSION@
+cp -pr packaging/debian .
+debuild "$@"
+cd ..
+rm -rf @PACKAGE@-@VERSION@
+echo "Built packages in the deb subdirectory."

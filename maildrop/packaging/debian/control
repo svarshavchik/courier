@@ -1,0 +1,63 @@
+Source: maildrop
+Architecture: any
+Section: contrib/admin
+Priority: optional
+Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
+Build-Depends:
+	perl:any,
+	debhelper-compat (= 12),
+	gcc%DEBGCC%,
+	g++%DEBGCC%,
+	libcourier-unicode-dev,
+	libpcre2-dev,
+	libidn11-dev,
+	libgdbm-dev
+Standards-Version: 4.4.1
+Homepage: https://www.courier-mta.org/maildrop/
+
+Package: maildrop
+Architecture: any
+Conflicts: courier
+Depends: ${shlibs:Depends},
+	 ${misc:Depends}
+Description: Standalone Courier mail filter package
+ Maildrop is a combination mail filter/mail delivery agent.
+ Maildrop reads the message to be delivered to your mailbox,
+ optionally reads instructions from a file how filter incoming
+ mail, then based on these instructions may deliver mail to an
+ alternate mailbox, or forward it, instead of dropping the
+ message into your mailbox.
+ .
+ Maildrop uses a structured, real, meta-programming language in
+ order to define filtering instructions.  Its basic features are
+ fast and efficient.  At sites which carry a light load, the
+ more advanced, CPU-demanding, features can be used to build
+ very sophisticated mail filters.  Maildrop deployments have
+ been reported at sites that support as many as 30,000
+ mailboxes.
+ .
+ Maildrop mailing list:
+ http://lists.sourceforge.net/lists/listinfo/courier-maildrop
+
+Package: maildrop-dev
+Architecture: any
+Depends: maildrop (= ${binary:Version}),
+	 ${shlibs:Depends},
+	 ${misc:Depends},
+	 maildrop-dev%SOVERSION%  (= ${binary:Version})
+Description: Development and header files for maildrop
+ The maildrop-devel package contains the libraries and header files
+ that can be useful in developing software that works with or processes
+ E-mail messages.
+ .
+ Install the maildrop-devel package if you want to develop applications
+ which use or process E-mail messages.
+
+Package: maildrop-dev%SOVERSION%
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 maildrop (= ${binary:Version})
+Description: Shared libraries used by the maildrop development library
+ This package installs the runtime shared libraries for the maildrop
+ development library.

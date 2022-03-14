@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+
+export CXX=g++%DEBGCC%
+export CC=gcc%DEBGCC%
+
+export prefix=/usr/lib/courier-imap
+export sysconfdir=$(prefix)/etc
+export mandir=$(prefix)/man
+export localstatedir=/var/run
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- --with-notice=unicode --with-gnutls \
+		--prefix=$(prefix) \
+		--sysconfdir=$(sysconfdir) \
+		--mandir=$(mandir) \
+		--localstatedir=$(localstatedir)
+
+override_dh_auto_install:
+	dh_auto_install --
+	CONFIG_FILES=debian/auto_install.sh ./config.status
+	chmod +x debian/auto_install.sh
+	debian/auto_install.sh
+
+override_dh_fixperms:
+	dh_fixperms
+	set -ex; . debian/fixperms.sh

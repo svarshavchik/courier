@@ -1,16 +1,3 @@
-
-To install this version of sysconftool:
-
-./configure
-make
-make install
-
-That's it.
-
-If you have rpm, you don't need to extract the tarball:
-
-rpm -ta sysconftool-VERSION.tar.gz
-
-This will create sysconftool-VERSION.noarch.rpm and
-sysconftool-VERSION.src.rpm.  Simply install noarch.rpm, and you're all set.
-The RPM build script requires RPM 4.0 or higher.
+The sysconftool package installs the sysconftool script for managing
+configuration files. The sysconftool package needs to be built and
+installed before installing all other Courier packages.

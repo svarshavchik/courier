@@ -1,4 +1,4 @@
-# Copyright 2000-2008 Double Precision, Inc.  See COPYING for
+# Copyright 2000-2022 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 AUTOMAKE_OPTIONS=dist-bzip2
@@ -10,7 +10,7 @@ datascript_DATA=sysconftoolize.am
 acdir=@ACDIR@
 ac_DATA=sysconftool.m4
 
-man_MANS=sysconftool.1 sysconftoolcheck.1 sysconftool.7
+man_MANS=sysconftool.1 sysconftoolize.1 sysconftoolcheck.1 sysconftool.7
 noinst_DATA=sysconftool.1.html sysconftoolcheck.1.html sysconftool.7.html
 
 CLEANFILES=$(man_MANS) $(noinst_DATA)
@@ -21,27 +21,45 @@ EXTRA_DIST= \
   testsuite testsuite.txt sysconftool.spec sysconftoolize.am index.html \
   COPYING COPYING.GPL
 
+# .deb packaging
+
+EXTRA_DIST += \
+	sysconftoolize.1 \
+	courier-debuild \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/rules \
+	packaging/debian/source/format
 
 if HAVE_SGML
-sysconftool.1.html.in: sysconftool1.sgml docbook/sgml2html
-	docbook/sgml2html sysconftool1.sgml sysconftool.1.html.in
+sysconftool.1.html.in: sysconftool1.sgml libs/docbook/sgml2html
+	libs/docbook/sgml2html sysconftool1.sgml sysconftool.1.html.in
 
-sysconftool.1.in: sysconftool1.sgml docbook/sgml2man
-	docbook/sgml2man sysconftool1.sgml sysconftool.1.in
+sysconftool.1.stamp: sysconftool1.sgml libs/docbook/sgml2man
+	libs/docbook/sgml2man sysconftool1.sgml sysconftool.1.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/sysconftool/"
 	mv sysconftool.1 sysconftool.1.in
+	touch sysconftool.1.stamp
 
-sysconftool.7.html.in: sysconftool7.sgml docbook/sgml2html
-	docbook/sgml2html sysconftool7.sgml sysconftool.7.html.in
+sysconftool.1.in: sysconftool.1.stamp
+	touch sysconftool.1.in
 
-sysconftool.7.in: sysconftool7.sgml docbook/sgml2man
-	docbook/sgml2man sysconftool7.sgml sysconftool.7.in
+sysconftoolize.1: sysconftool.1.stamp
+	touch sysconftoolize.1
+
+sysconftool.7.html.in: sysconftool7.sgml libs/docbook/sgml2html
+	libs/docbook/sgml2html sysconftool7.sgml sysconftool.7.html.in
+
+sysconftool.7.in: sysconftool7.sgml libs/docbook/sgml2man
+	libs/docbook/sgml2man sysconftool7.sgml sysconftool.7.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/sysconftool/"
 	mv sysconftool.7 sysconftool.7.in
 
-sysconftoolcheck.1.html.in: sysconftoolcheck.sgml docbook/sgml2html
-	docbook/sgml2html sysconftoolcheck.sgml sysconftoolcheck.1.html.in
+sysconftoolcheck.1.html.in: sysconftoolcheck.sgml libs/docbook/sgml2html
+	libs/docbook/sgml2html sysconftoolcheck.sgml sysconftoolcheck.1.html.in
 
-sysconftoolcheck.1.in: sysconftoolcheck.sgml docbook/sgml2man
-	docbook/sgml2man sysconftoolcheck.sgml sysconftoolcheck.1.in
+sysconftoolcheck.1.in: sysconftoolcheck.sgml libs/docbook/sgml2man
+	libs/docbook/sgml2man sysconftoolcheck.sgml sysconftoolcheck.1.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/sysconftool/"
 	mv sysconftoolcheck.1 sysconftoolcheck.1.in
 endif
 
@@ -77,6 +95,12 @@ install-exec-hook:
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/sysconftoolize $(DESTDIR)$(bindir)/sysconftoolcheck
 
+DATE := $(shell date -R)
+dist-hook:
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
+
 rpm: rpm-build
 
 rpm-build: sysconftool.spec
@@ -101,6 +125,7 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		--target noarch sysconftool-@PACKAGE_VERSION@.tar.bz2
+	$$HOME/bin/rpmrepos.sh
 
 bump.rpm.release: sysconftool.spec
 	VERSION="x"; \
@@ -116,11 +141,33 @@ bump.rpm.release: sysconftool.spec
 
 distrelease:
 	$(MAKE) rpm
-	rm -f sysconftool.spec
-	$(MAKE)
-	$(MAKE)
+	rm -f sysconftool.spec packaging/debian/changelog
+	$(MAKE) sysconftool.spec packaging/debian/changelog
 	$(MAKE) dist
 	$(MAKE) dorpm
+
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && chmod +x ./courier-debuild && ./courier-debuild -us -uc && mv deb ../deb
+	rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^@PACKAGE@.*/@PACKAGE@ (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
 
 upload-beta:
 	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1
@@ -137,3 +184,5 @@ htmldoc: $(noinst_DATA) index.html
 	for f in $^; do d=`basename $$f`; tidy -i -q --tidy-mark no --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml <$$f >$$f.tmp ; xsltproc --nonet $$HOME/www/www.courier-mta.org/xsl/sysconftool.xsl $$f.tmp  >html/$$d; rm -f $$f.tmp; done
 	mv html/* $$HOME/www/www.courier-mta.org/sysconftool
 	rm -rf html
+
+.PHONY: rpm deb

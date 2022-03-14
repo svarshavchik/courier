@@ -1,0 +1,97 @@
+Source: courier-authlib
+Section: contrib/admin
+Priority: optional
+Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
+Build-Depends:
+	perl:any,
+	debhelper-compat (= 12),
+	gcc%DEBGCC%,
+	g++%DEBGCC%,
+	libldap2-dev,
+	libmariadb-dev,
+	libmariadb-dev-compat,
+	libz-dev,
+	libsqlite3-dev,
+	libpq-dev,
+	libgdbm-dev,
+	libpam0g-dev,
+	libltdl-dev,
+	expect
+Standards-Version: 4.4.1
+Homepage: https://www.courier-mta.org/courier-authlib/
+
+Package: libcourier-auth
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 expect,
+	 systemd,
+	 libcourier-auth%SOVERSION% (= ${binary:Version})
+Description: Courier authentication library
+ The Courier authentication library provides authentication services for
+ other Courier applications.
+
+Package: libcourier-auth%SOVERSION%
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Courier authentication library (client library)
+ This package contains shared libraries used by authentication clients.
+
+Package: libcourier-auth-dev
+Section: contrib/libdevel
+Architecture: any
+Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Courier authentication library (development and header files)
+ This package contains the development libraries and files needed to compile
+ Courier packages that use this authentication library.  Install this
+ package in order to build the rest of the Courier packages.  After they are
+ built and installed this package can be removed.  Files in this package
+ are not needed at runtime.
+
+Package: libcourier-auth-userdb
+Architecture: any
+Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Userdb support for the Courier authentication library
+ This package installs the userdb support for the Courier authentication
+ library.  Userdb is a simple way to manage virtual mail accounts using
+ a GDBM-based database file.
+ Install this package in order to be able to authenticate with userdb.
+
+Package: libcourier-auth-ldap
+Architecture: any
+Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: LDAP support for the Courier authentication library
+ This package installs the LDAP support for the Courier authentication
+ library.  Install this package in order to be able to authenticate with LDAP.
+
+Package: libcourier-auth-mysql
+Architecture: any
+Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Mysql (MariaDB) support for the Courier authentication library
+ This package installs the Mysql (MariaDB) support for the Courier
+ authentication library.  Install this package in order to be able to
+ authenticate with Mysql (MariaDB).
+
+Package: libcourier-auth-sqlite
+Architecture: any
+Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: SQLite support for the Courier authentication library
+ This package installs the SQLite support for the Courier
+ authentication library.  Install this package in order to be able to
+ authenticate with SQLite.
+
+Package: libcourier-auth-pgsql
+Architecture: any
+Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: PoistgreSQL support for the Courier authentication library
+ This package installs the PostgreSQL support for the Courier
+ authentication library.  Install this package in order to be able to
+ authenticate with PostgreSQL.
+
+Package: libcourier-auth-pipe
+Architecture: any
+Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: External authentication module that communicates via pipes
+ This package installs the authpipe module, which is a generic plugin
+ that enables authentication requests to be serviced by an external
+ program, then communicates through messages on stdin and stdout.

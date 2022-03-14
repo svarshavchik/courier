@@ -43,7 +43,7 @@ CLEANFILES=authldaprc.h authmysqlrc.h authsqliterc.h authdaemonrc.h \
 DISTCLEANFILES=dbobj.config README_authlib.html
 
 commonlibdep=libcourierauthcommon.la
-commonldflags=-module -rpath $(pkglibdir) -export-symbols-regex 'courier_auth.*_init'  -version-info @VERSION_INFO@ @courierauth_ldflags@
+commonldflags=-module -rpath $(pkglibdir) -export-symbols-regex 'courier_auth.*_init'  -version-info @LIBVERSION_INFO@ @courierauth_ldflags@
 commonlibadd=libcourierauthcommon.la
 
 libcourierauthcommon_t=@CRYPTLIBS@
@@ -62,7 +62,7 @@ libcourierauthcommon_la_SOURCES= \
 
 libcourierauthcommon_la_DEPENDENCIES=libcourierauth.la
 libcourierauthcommon_la_LIBADD=libcourierauth.la
-libcourierauthcommon_la_LDFLAGS=$(libcourierauthcommon_t:%=-Wl,%) -version-info @VERSION_INFO@
+libcourierauthcommon_la_LDFLAGS=$(libcourierauthcommon_t:%=-Wl,%) -version-info @LIBVERSION_INFO@
 
 libcourierauth_la_SOURCES=authdaemon.c authdaemonlib.c preauthdaemon.c \
 	authmoduser2.c authmoduser3.c debug.c \
@@ -70,7 +70,7 @@ libcourierauth_la_SOURCES=authdaemon.c authdaemonlib.c preauthdaemon.c \
 	authoption.c
 libcourierauth_la_LIBADD=libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la libs/numlib/libnumlib.la \
 	libs/random128/librandom128.la libs/rfc822/libencode.la
-libcourierauth_la_LDFLAGS=@NETLIBS@ -version-info @VERSION_INFO@
+libcourierauth_la_LDFLAGS=@NETLIBS@ -version-info @LIBVERSION_INFO@
 
 # The userdb module
 
@@ -316,21 +316,46 @@ EXTRA_DIST=$(HTMLFILES) sysconftool COPYING COPYING.GPL\
 	auth_getoption.html auth_getoption.3 \
 	samplepipe.pl
 
+EXTRA_DIST += \
+	courier-debuild \
+	packaging/debian/auto_install.sh.in \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/libcourier-auth-dev.lintian-overrides \
+	packaging/debian/libcourier-auth-ldap.lintian-overrides \
+	packaging/debian/libcourier-auth-mysql.lintian-overrides \
+	packaging/debian/libcourier-auth-pgsql.lintian-overrides \
+	packaging/debian/libcourier-auth-pipe.lintian-overrides \
+	packaging/debian/libcourier-auth-sqlite.lintian-overrides \
+	packaging/debian/libcourier-auth-userdb.lintian-overrides \
+	packaging/debian/libcourier-auth.lintian-overrides \
+	packaging/debian/libcourier-auth.soname.lintian-overrides \
+	packaging/debian/mkinstall.pl.in \
+	packaging/debian/patches \
+	packaging/debian/rules \
+	packaging/debian/source/format \
+	packaging/debian/source/lintian-overrides
+
 README: README.html
-	links -dump -no-references README.html >README
+	elinks -dump -no-references README.html >README.tmp
+	mv README.tmp README
 
 NEWS: NEWS.html
-	links -dump -no-references NEWS.html >NEWS
+	elinks -dump -no-references NEWS.html >NEWS.tmp
+	mv NEWS.tmp NEWS
 
 INSTALL: INSTALL.html
-	rm -f INSTALL; links -dump -no-references INSTALL.html >INSTALL
+	rm -f INSTALL; elinks -dump -no-references INSTALL.html >INSTALL.tmp
+	mv INSTALL.tmp INSTALL
 
 libcourierauthsasl_la_SOURCES=\
 	authsasl.c courierauthsasl.h \
 	authsaslcram.c authsasllogin.c authsaslplain.c \
 	authsaslfrombase64.c authsasltobase64.c
 libcourierauthsasl_la_LIBADD=libcourierauthcommon.la libcourierauth.la
-libcourierauthsasl_la_LDFLAGS=-export-symbols-regex '^auth_sasl|auth_sasl_ex|auth_sasl_extract_userid$$' -version-info @VERSION_INFO@
+libcourierauthsasl_la_LDFLAGS=-export-symbols-regex '^auth_sasl|auth_sasl_ex|auth_sasl_extract_userid$$' -version-info @LIBVERSION_INFO@
 
 libcourierauthsaslclient_la_SOURCES=courierauthsaslclient.h \
 	authsaslclient.c authsaslclient.h authsaslclientcram.c \
@@ -339,7 +364,7 @@ libcourierauthsaslclient_la_SOURCES=courierauthsaslclient.h \
 	authsaslclientexternal.c \
 	authsaslfrombase64.c authsasltobase64.c
 libcourierauthsaslclient_la_LIBADD=libcourierauth.la
-libcourierauthsaslclient_la_LDFLAGS=-export-symbols-regex '^auth_sasl_client$$' -version-info @VERSION_INFO@
+libcourierauthsaslclient_la_LDFLAGS=-export-symbols-regex '^auth_sasl_client$$' -version-info @LIBVERSION_INFO@
 
 include_HEADERS=courierauth.h courierauthsasl.h \
 	courierauthsaslclient.h courierauthdebug.h courierauthstaticlist.h
@@ -381,7 +406,8 @@ authdaemondprog_DEPENDENCIES=libcourierauthcommon.la \
 authdaemondprog_LDADD=$(LIBLTDL) libcourierauthcommon.la libcourierauth.la libs/liblock/liblock.la \
 	libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la \
 	libs/rfc822/libencode.la libs/numlib/libnumlib.la
-authdaemondprog_LDFLAGS=-export-dynamic $(modules:%=-dlopen %) @NETLIBS@
+authdaemondprog_LDFLAGS=-export-dynamic $(modules:%=-dlopen %) \
+	-rpath $(pkglibdir) @NETLIBS@
 
 authdaemontest_SOURCES=authdaemontest.c
 authdaemontest_DEPENDENCIES=libcourierauthcommon.la
@@ -430,8 +456,12 @@ mailusergroup.h: config.status
 
 noinst_DATA=$(BUILT_SOURCES)
 
+DATE := $(shell date -R)
 dist-hook:
 	for f in $(BUILT1) ; do rm -f $(distdir)/$$f; done
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
 
 # automake still a bit stupid...
 
@@ -461,9 +491,7 @@ install-exec-hook:
 		$(INSTALL_SCRIPT) userdb/userdb.pl \
 				$(DESTDIR)$(sbindir)/userdb ; \
 		$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) userdb/userdbpw \
-				$(DESTDIR)$(sbindir)/userdbpw ; \
-		$(INSTALL_SCRIPT) userdb-test-cram-md5.pl \
-				$(DESTDIR)$(sbindir)/userdb-test-cram-md5
+				$(DESTDIR)$(sbindir)/userdbpw
 
 uninstall-hook: uninstall-authldaprc uninstall-authdaemonrc uninstall-authmysqlrc uninstall-authpgsqlrc uninstall-authsqliterc
 	rm -f $(DESTDIR)$(pkglibexecdir)/authdaemond
@@ -472,8 +500,7 @@ uninstall-hook: uninstall-authldaprc uninstall-authdaemonrc uninstall-authmysqlr
 				$(DESTDIR)$(sbindir)/pw2userdb \
 				$(DESTDIR)$(sbindir)/makeuserdb \
 				$(DESTDIR)$(sbindir)/userdb \
-				$(DESTDIR)$(sbindir)/userdbpw \
-				$(DESTDIR)$(sbindir)/userdb-test-cram-md5
+				$(DESTDIR)$(sbindir)/userdbpw
 
 authlib.html: authlib.html.in
 	$(SHELL) ./config.status --file=authlib.html
@@ -602,8 +629,8 @@ distrelease:
 	$(MAKE) rpm
 	$(MAKE)
 	$(MAKE)
-	rm -f @PACKAGE_NAME@.spec
-	$(MAKE) @PACKAGE_NAME@.spec
+	rm -f @PACKAGE_NAME@.spec packaging/debian/changelog
+	$(MAKE) @PACKAGE_NAME@.spec packaging/debian/changelog
 	$(MAKE) dist
 
 rpm: rpm-build
@@ -612,27 +639,6 @@ rpm-build:
 	$(MAKE) bump.rpm.release
 	$(MAKE) dist
 	$(MAKE) dorpm
-
-publish: publish-@REPOSITORY@
-
-publish-dev:
-	$(MAKE) dopublish SUBDIR=dev
-
-publish-prod:
-	$(MAKE) dopublish SUBDIR=prod
-
-dopublish:
-	lpbuild --resign lpm/*
-	rm -rf lpmtmp
-	mkdir lpmtmp
-	ln lpm/* lpmtmp
-	rm -f lpmtmp/*debuginfo*
-	mv lpmtmp/*.src.lp repository-$(SUBDIR)/`lpm -q --distribution`/sources
-	mv lpmtmp/*.lp repository-$(SUBDIR)/`lpm -q --distribution`/packages
-	rm -rf lpmtmp
-	ls -t repository-$(SUBDIR)/`lpm -q --distribution`/sources | tail -n +6 | xargs -r -n 1 lpm --erase repository-$(SUBDIR)
-	lpm --sync repository-$(SUBDIR)
-	rsync -a -v --delete-after repository-$(SUBDIR)/`lpm -q --distribution`/. headache:lpmtool.com/www/repositories/$(SUBDIR)/courier-authlib/`lpm -q --distribution`
 
 dorpm:
 	rm -rf rpm/BUILD/*
@@ -651,6 +657,7 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
+	$$HOME/bin/rpmrepos.sh
 
 bump.rpm.release: @PACKAGE_NAME@.spec
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
@@ -662,6 +669,29 @@ bump.rpm.release: @PACKAGE_NAME@.spec
 	sed 's/^Release: .*/Release: '$$RELEASE'%{?dist}%{?courier_release}/' \
 		<@PACKAGE_NAME@.spec >@PACKAGE_NAME@.spec.new; \
 	mv @PACKAGE_NAME@.spec.new @PACKAGE_NAME@.spec;
+
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
 
 upload-beta:
 	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1

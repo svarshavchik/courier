@@ -1,0 +1,35 @@
+#! @SHELL@
+
+set -ex
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@
+mandir=@mandir@
+
+SOVERSION=@SOVERSION@
+
+dh_install debian/tmp$bindir/* $bindir
+dh_installdocs debian/tmp$datarootdir/doc/maildrop/html/*
+
+dh_installdocs libs/maildir/README.maildirquota.html libs/maildir/README.maildirquota.txt
+dh_installdocs COPYING README README.postfix INSTALL NEWS UPGRADE ChangeLog maildroptips.txt
+
+dh_install debian/tmp$mandir/man1/* $mandir/man1
+dh_install debian/tmp$mandir/man5/* $mandir/man5
+dh_install debian/tmp$mandir/man7/* $mandir/man7
+dh_install debian/tmp$mandir/man8/* $mandir/man8
+
+sed -i "/dependency_libs/ s/'.*'/''/" debian/tmp$libdir/*.la
+
+dh_install --package maildrop-dev debian/tmp$mandir/man3/* $mandir/man3
+dh_install --package maildrop-dev debian/tmp$libdir/*.a $libdir
+dh_install --package maildrop-dev debian/tmp$libdir/*.la $libdir
+dh_install --package maildrop-dev debian/tmp$libdir/*.so $libdir
+dh_install --package maildrop-dev debian/tmp$includedir/*.h $includedir
+
+dh_install --package maildrop-dev$SOVERSION debian/tmp$libdir/*.so.* $libdir

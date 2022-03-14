@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+export CXX=g++%DEBGCC%
+export CC=gcc%DEBGCC%
+export SOVERSION=%SOVERSION%
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- --with-devel --enable-syslog=1 --enable-trusted-users='root mail daemon postmaster qmaild mmdf' --enable-restrict-trusted=0 --enable-sendmail=/usr/sbin/sendmail
+
+override_dh_auto_install:
+	dh_auto_install --
+	CONFIG_FILES=debian/auto_install.sh ./config.status
+	chmod +x debian/auto_install.sh
+	ln -s maildrop-dev.soname.lintian-overrides debian/maildrop-dev$(SOVERSION).lintian-overrides
+	debian/auto_install.sh

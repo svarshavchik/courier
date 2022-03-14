@@ -1,0 +1,8 @@
+#
+# Upstream naming convention.
+#
+package-name-doesnt-match-sonames libsocks0 libsockswrap0
+#
+# Library does not use any libc symbols
+#
+library-not-linked-against-libc usr/lib/x86_64-linux-gnu/libsockswrap.so*

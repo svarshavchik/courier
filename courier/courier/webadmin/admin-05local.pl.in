@@ -1,4 +1,4 @@
-#! perl
+#! @PERL@
 #
 # TITLE: Local mail delivery setup
 #

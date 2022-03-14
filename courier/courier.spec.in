@@ -296,9 +296,7 @@ The Courier mail transfer agent (MTA) is an integrated mail/groupware
 server based on open commodity protocols, such as ESMTP, IMAP, POP3, LDAP,
 SSL, and HTTP. Courier provides ESMTP, IMAP, POP3, webmail, and mailing list
 services within a single, consistent, framework.  Individual components can
-be enabled or disabled at will. Courier now implements basic web-based
-calendaring and scheduling services integrated in the webmail module.
-Advanced groupware calendaring services will follow soon.
+be enabled or disabled at will.
 
 After installing this RPM, additional information regarding configuring
 and using courier can be found in %{_defaultdocdir}.
@@ -403,7 +401,7 @@ for Courier.
 This package contains the webadmin MySQL configuration screen for Courier.
 
 %description pgsql
-This package conains the webadmin PostgreSQL configuration screen for Courier.
+This package contains the webadmin PostgreSQL configuration screen for Courier.
 
 # -----------------------------------------------------------------------------
 
@@ -418,7 +416,7 @@ PATH=/usr/bin:$PATH %configure %{?notice_option} \
 
 This installation of Courier is configured as follows:
 
-Installation directory:          %{_prefix}
+Main installation directory:     %{_prefix}
 Binary installation directory:   %{_exec_prefix}
 Binaries:                        %{_bindir}
 Superuser binaries:              %{_sbindir}
@@ -440,7 +438,7 @@ LANG=C
 export LANG
 umask 022
 %{__make} -s %{_smp_mflags}
-# %{__make} check
+%{__make} check
 %install
 LANG=C
 export LANG
@@ -536,7 +534,7 @@ while (<>)
 %{__sed} -n '/webmlmd/p' <filelist1 >filelist.webmlm
 %{__sed} -n '/maildrop[^/]*$/p;/mailbot/p;/reformail[^/]*$/p' <filelist1 >filelist.maildrop
 
-%{__sed} -n '/15ldap/p;/ldapsearch/p;/courierldapalias/p' <filelist1 >filelist.ldap
+%{__sed} -n '/15ldap/p;/ldapsearch/p;/courierldapalias/p' <filelist1 | %{__sed} '/sqwebmail/d' >filelist.ldap
 
 %{__sed} -n '/15mysql/p' <filelist1 >filelist.mysql
 
@@ -559,7 +557,7 @@ done
 # Do not install esmtp.authpam, taken care of elsewhere.
 # Do not install htmldoc, taken care of elsewhere
 
-%{__sed} '/imap[\.a-z0-9]*$/d;/imapd-ssl/d;/pop3[\.a-z0-9]*$/d;/pop3d-ssl/d;/couriermlm/d;/webmail/d;/webmlm/d;/authsystem\.passwd/d;/ldapsearch$/d;/ldapaddressbook.dist$/d;/pcpd/d;/calendar/d;/maildrop[^/]*$/d;/mailbot/d;/reformail[^/]*$/d;/15ldap/d;/47webmail/d;/courierldapalias/d;/15mysql/d;/15pgsql/d;/faxmail/d;/35fax/d;/34fax/d;/esmtp\.authpam/d;/htmldoc/d' <filelist1 >filelist
+%{__sed} '/imap[\.a-z0-9]*$/d;/imapd-ssl/d;/pop3[\.a-z0-9]*$/d;/pop3d-ssl/d;/couriermlm/d;/webmail/d;/webmlm/d;/authsystem\.passwd/d;/ldapsearch$/d;/ldapaddressbook.dist$/d;/pcpd/d;/calendar/d;/maildrop[^/]*$/d;/mailbot/d;/reformail[^/]*$/d;/15ldap/d;/47webmail/d;/sqwebpasswd/d;/courierldapalias/d;/15mysql/d;/15pgsql/d;/faxmail/d;/35fax/d;/34fax/d;/esmtp\.authpam/d;/htmldoc/d' <filelist1 >filelist
 
 
 %{__sed} -n '/47webmail/p;/sqwebmail/p;/sqwebpasswd/p;/authsystem\.passwd/p;/webmail-logincache/p;/ldapaddressbook.dist$/p;/pcpd/p;/calendar/p' <filelist1 | sed '/images/d' | sort | uniq >filelist.webmail
@@ -685,32 +683,28 @@ echo "/etc/cron.monthly/courier-mkdhparams" >>filelist
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/profile.d
 %{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier.sh <<EOF
-case :\${PATH}: in
-	*:%{_bindir}:*)
-		;;
-	*)
-		if test \`id -u\` = 0
-		then
-			PATH="%{_sbindir}:\$PATH"
-		fi
-		PATH="%{_bindir}:\$PATH"
-		export PATH
-		;;
-esac
+if echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
+then
+	:
+else
+	if test \`id -u\` = 0
+	then
+		PATH="%{_sbindir}:\$PATH"
+	fi
+	PATH="%{_bindir}:\$PATH"
+	export PATH
+fi
 EOF
 
 %{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier.csh <<EOF
-switch (:\${PATH}:)
-	case *:%{_bindir}:*:
-		breaksw
-	default:
-		test \`id -u\` = 0
-		if ( \$? == 0 ) then
-			setenv PATH "%{_sbindir}:\$PATH"
-		endif
-		setenv PATH "%{_bindir}:\$PATH"
-		breaksw
-endsw
+echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
+if ( \$? ) then
+	test \`id -u\` = 0
+	if ( \$? == 0 ) then
+		setenv PATH "%{_sbindir}:\$PATH"
+	endif
+	setenv PATH "%{_bindir}:\$PATH"
+endif
 EOF
 
 #
@@ -805,16 +799,6 @@ then
 	/usr/bin/systemctl stop courier.service || :
 fi
 %endif
-
-if test -f %{_sysconfdir}/userdb || test -d %{_sysconfdir}/userdb
-then
-	:
-else
-	%{__mkdir_p} %{_sysconfdir}/userdb
-	chmod 700 %{_sysconfdir}/userdb
-	chown --reference=%{_sysconfdir} %{_sysconfdir}/userdb
-fi
-
 
 # Somehow the systemd macro ends up corrupting with_fax
 
@@ -977,7 +961,9 @@ fi
 %post webadmin
 if test ! -f %{_sysconfdir}/webadmin/password
 then
-	dd if=/dev/urandom 2>/dev/null | tr -d -c '[A-Za-z0-9]' 2>/dev/null | dd bs=16 count=1 2>/dev/null >%{_sysconfdir}/webadmin/password
+	dd if=/dev/urandom 2>/dev/null | tr -d -c '[A-Za-z0-9]' 2>/dev/null | dd bs=16 count=1 2>/dev/null >%{_sysconfdir}/webadmin/password.tmp
+	echo >>%{_sysconfdir}/webadmin/password.tmp
+	mv %{_sysconfdir}/webadmin/password.tmp %{_sysconfdir}/webadmin/password
 	chmod 400 %{_sysconfdir}/webadmin/password
 	chown --reference=%{_sysconfdir}/webadmin %{_sysconfdir}/webadmin/password
 fi

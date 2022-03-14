@@ -1,0 +1,9 @@
+#
+# Internal binary.
+#
+binary-without-manpage usr/bin/makedatprog
+#
+# Package was created directly from the upstream tarball.
+#
+package-contains-upstream-installation-documentation usr/share/doc/maildrop/INSTALL.gz
+wrong-name-for-upstream-changelog usr/share/doc/maildrop/ChangeLog.gz

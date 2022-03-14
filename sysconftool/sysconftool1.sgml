@@ -20,6 +20,7 @@
 
   <refnamediv>
     <refname>sysconftool</refname>
+    <refname>sysconftoolize</refname>
     <refpurpose>install configuration files</refpurpose>
   </refnamediv>
 
@@ -28,6 +29,9 @@
       <command>sysconftool</command>
       <arg choice='opt'>options</arg>
       <arg rep='repeat'>filename.dist</arg>
+    </cmdsynopsis>
+    <cmdsynopsis>
+      <command>sysconftoolize</command>
     </cmdsynopsis>
   </refsynopsisdiv>
 
@@ -65,7 +69,7 @@ also checks if <filename>filename</filename> from an older version of the
 application
 already exist. If <filename>filename</filename> an older
 <command>sysconftool</command>-installed
-configuration file, it's configuration settings replace the defaults in
+configuration file, its configuration settings replace the defaults in
 <filename>filename.dist</filename>, which is then subsequently installed
 as <filename>filename</filename>.
 <command>sysconftool</command> is smart enough to:
@@ -171,7 +175,7 @@ symbolic link.
 After running
 <command>sysconftoolize</command> the macro
 <literal>AC_PROG_SYSCONFTOOL</literal> must be manually added to
-<filename>configure.in</filename>, and <filename>Makefile.am</filename> must be modified as
+<filename>configure.ac</filename>, and <filename>Makefile.am</filename> must be modified as
 follows.</para>
 
     <para>

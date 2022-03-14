@@ -1,0 +1,84 @@
+The sysconftool package is only needed when building Courier packages
+from the git repository. Assembled tarballs already include the sysconftool
+script.
+
+rpm and deb packages
+====================
+
+These are not the same packages as the ones from various distributions'
+repositories. These packages carry an higher internal revision level in
+order to prevent them from getting upgraded by the distribution packaging.
+This packaging exists in order to have a convenient way of updating after
+a release without waiting for the distribution's package to get built.
+
+NOTE: If a distribution package is already installed it should be removed
+completely before switching to the upstream version (dnf remove or apt
+purge).
+
+NOTE: These packages use their own, generic, installation layout that may
+deviate slightly from the package installation conventions preferred by
+the distributions.
+
+rpm
+===
+
+It is not necessary to unpack this tarball in order to build this tarball.
+
+Run "dnf install rpm-build", if it's not installed already, then:
+
+$ rpmbuild -ta sysconftool-VERSION.tar.bz2
+
+If this fails due to any missing dependencies, install them.
+
+This creates rpms that can be installed with 'rpm -U'.
+
+deb
+===
+
+Run "apt install devscripts debhelper", if it's not installed already, then:
+
+Create an empty directory, and copy/move the tarball into it:
+
+$ mkdir tmp
+$ cp sysconftool-VERSION.tar.bz2 tmp/sysconftool-VERSION.orig.tar.bz2
+$ cd tmp
+
+Unpack the tarball and cd into the unpacked subdirectory:
+
+$ tar xvf sysconftool-VERSION.tar.bz2
+$ cd sysconftool-VERSION
+
+Run the courier-debuild script. Its parameters get forwarded to debuild.
+
+$ ./courier-debuild -us -uc
+
+NOTE: the above sequence must be followed strictly. The courier-debuild
+script expects the distributed tarball in its parent directory.
+
+The deb subdirectory now contains a deb package that can be installed with
+"dpkg -i".
+
+Maintainer Mode (see README in the git repository to set up)
+
+make rpm or make deb, as appropriate, will:
+
+    1. Increment an internal release number.
+
+    2. Run make dist.
+
+    3. Proceed and build a new release, creating the native packages in the
+       rpm or deb subdirectory.
+
+    4. Execute either $HOME/bin/rpmrepos.sh or $HOME/bin/debrepos.sh. This
+       can be a script that does nothing, or it's intended to be the
+       maintainer's script that pushes out the packages to a repository.
+
+Manual installation
+===================
+
+This package uses the GNU toolchain, and uses the typical installation
+sequence:
+
+./configure [option]
+make
+make install

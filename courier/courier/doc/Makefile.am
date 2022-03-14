@@ -16,7 +16,6 @@ nohtmlinfiles=  aliases.html \
 		courierd.html \
 		courierdsn.html \
 		documentation.html \
-		download.html \
 		esmtp.html \
 		FAQ.html \
 		socks.html \
@@ -657,7 +656,7 @@ install-perms-local:
 	@for f in $(htmldoc_DATA) ; do \
 	echo $(htmldocdir)/$$f 444 bin bin doc >>permissions.dat ; done
 
-htmldocfiles=$(nohtmlinfiles) $(htmlin) \
+htmldocfiles=$(nohtmlinfiles) $(htmlin) download.html \
 	../module.fax/courierfax.html \
 	../filters/courierfilter.html \
 	../filters/courierperlfilter.html \

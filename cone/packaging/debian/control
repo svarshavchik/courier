@@ -1,0 +1,42 @@
+Source: cone
+Priority: optional
+Section: contrib/mail
+Origin: Ubuntu
+Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
+Standards-Version: 4.4.1
+Homepage: https://www.courier-mta.org/
+Build-Depends:
+	perl:any,
+	debhelper-compat (= 12),
+	gcc%DEBGCC%,
+	g++%DEBGCC%,
+	libncurses-dev,
+	libidn11-dev,
+	aspell,
+	libaspell-dev,
+	libcourier-unicode-dev,
+	libxml2-dev,
+	libz-dev,
+	libldap2-dev,
+	gnutls-dev,
+	gnutls-bin,
+	libgcrypt-dev,
+	gpg ( >= 2)
+
+Package: cone
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 gpg ( >= 2),
+	 perl:any
+Description: Text-based E-mail reader and writer
+ CONE is a simple, text-based E-mail reader and writer.
+
+Package: libmail-cone-dev
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 cone (= ${binary:Version})
+Description: LibMAIL mail client development library
+ This package has header files and library files for developing
+ application using LibMAIL - a high level, C++ OO library for mail clients.

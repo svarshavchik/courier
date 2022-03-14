@@ -1,0 +1,30 @@
+Source: courier-imap
+Section: contrib/admin
+Priority: optional
+Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
+Build-Depends:
+	perl:any,
+	debhelper-compat (= 12),
+	gcc%DEBGCC%,
+	g++%DEBGCC%,
+	libcourier-auth-dev,
+	libcourier-unicode-dev,
+	gnutls-dev,
+	gnutls-bin,
+	libgdbm-dev,
+	libpcre2-dev,
+	libidn11-dev
+Standards-Version: 4.4.1
+Homepage: https://www.courier-mta.org/imap/
+
+Package: courier-imap
+Architecture: any
+Conflicts: courier-imapd, courier-pop3d
+Depends: ${shlibs:Depends},
+	 ${misc:Depends}
+Description: Maildir IMAP Server
+ Courier-IMAP is an IMAP server for Maildir mailboxes.  This package contains
+ the standalone version of the IMAP server that's included in the Courier
+ mail server package.  This package is a standalone version for use with
+ other mail servers.  Do not install this package if you intend to install the
+ full Courier mail server.  Install the Courier package instead.

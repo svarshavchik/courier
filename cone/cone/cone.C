@@ -32,6 +32,7 @@
 #include "libmail/fd.H"
 #include "libmail/logininfo.H"
 #include "libmail/misc.H"
+#include "tcpd/tlspasswordcache.h"
 #include "messagesize.H"
 #include "myserver.H"
 #include "myservercallback.H"
@@ -1413,6 +1414,8 @@ int main(int argc, char *argv[])
 		statusBar->clearstatus();
 
 		Curses::setSuspendHook(&mail::account::resume);
+
+		(void)tlspassword_init();
 
 		// Try to load saved configuration
 

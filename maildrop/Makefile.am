@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2009 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 @SET_MAKE@
@@ -8,7 +8,7 @@ AUTOMAKE_OPTIONS=dist-bzip2
 
 DISTCHECK_CONFIGURE_FLAGS=--enable-maildirquota --enable-userdb
 
-HTML2TXT=`which lynx 2>/dev/null && echo "lynx -dump -nolist" && exit; echo "links -dump -no-numbering -no-references"`
+HTML2TXT=elinks -dump -no-numbering -no-references
 
 SUBDIRS=libs/numlib libs/liblock libs/rfc822 libs/rfc2045 @DBSUBDIR@ libs/makedat libs/maildir libs/maildrop
 
@@ -105,8 +105,8 @@ librfc2045_la_SOURCES=
 
 librfc822_la_LIBADD=libs/rfc822/librfc822.la libs/rfc822/libencode.la
 librfc2045_la_LIBADD=libs/rfc2045/librfc2045.la
-librfc822_la_LDFLAGS=-rpath $(libdir)
-librfc2045_la_LDFLAGS=-rpath $(libdir)
+librfc822_la_LDFLAGS=-rpath $(libdir) -version-info @LIBVERSION_INFO@
+librfc2045_la_LDFLAGS=-rpath $(libdir) -version-info @LIBVERSION_INFO@
 
 install-data-local: install-man install-deliverquota install-maildrop
 
@@ -291,12 +291,51 @@ UPGRADE.txt: UPGRADE.html
 maildroptips.txt: libs/maildrop/maildroptips.html
 	$(HTML2TXT) libs/maildrop/maildroptips.html >maildroptips.txt
 
-dist-hook: INSTALL.txt UPGRADE.txt maildrop.spec maildrop.lpspec
+DATE := $(shell date -R)
+
+dist-hook: INSTALL.txt UPGRADE.txt maildrop.spec
 	rm -f $(distdir)/INSTALL $(distdir)/UPGRADE $(distdir)/README
 	$(HTML2TXT) $(srcdir)/README.html >$(distdir)/README
 	cp INSTALL.txt $(distdir)/INSTALL
 	cp UPGRADE.txt $(distdir)/UPGRADE
-	cp maildrop.spec maildrop.lpspec $(distdir)
+	cp maildrop.spec $(distdir)
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
+
+EXTRA_DIST += courier-debuild \
+	packaging/debian/auto_install.sh.in \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/maildrop.lintian-overrides \
+	packaging/debian/maildrop-dev.soname.lintian-overrides \
+	packaging/debian/rules \
+	packaging/debian/source/format
+
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
+
 #
 #  For maintainer's use only
 #
@@ -341,8 +380,9 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
+	$$HOME/bin/rpmrepos.sh
 
-bump.rpm.release: maildrop.spec maildrop.lpspec
+bump.rpm.release: maildrop.spec
 	VERSION="x"; \
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
 	NEXT_RELEASE=0; \
@@ -352,40 +392,7 @@ bump.rpm.release: maildrop.spec maildrop.lpspec
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/rpm.release; \
 	sed 's/^Release: .*/Release: '$$RELEASE'%{courier_release}/' \
 		<maildrop.spec >maildrop.spec.new; \
-	mv maildrop.spec.new maildrop.spec; \
-	sed 's/^Release: .*/Release: '$$RELEASE'/' \
-		<maildrop.lpspec >maildrop.lpspec.new; \
-	mv maildrop.lpspec.new maildrop.lpspec
-
-lpm: lpm-build
-
-lpm-build:
-	$(MAKE) -$(MAKEFLAGS) bump.rpm.release
-	$(MAKE) -$(MAKEFLAGS) dist
-	rm -rf lpm
-	mkdir lpm
-	lpbuild `test "@REPOSITORY@" == "" || echo --define "repository=1"` --srcbuild -o lpm @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
-
-publish: publish-@REPOSITORY@
-
-publish-dev:
-	$(MAKE) -$(MAKEFLAGS) dopublish SUBDIR=dev
-
-publish-prod:
-	$(MAKE) -$(MAKEFLAGS) dopublish SUBDIR=prod
-
-dopublish:
-	lpbuild --resign lpm/*
-	rm -rf lpmtmp
-	mkdir lpmtmp
-	ln lpm/* lpmtmp
-	rm -f lpmtmp/*debuginfo*
-	mv lpmtmp/*.src.lp repository-$(SUBDIR)/`lpm -q --distribution`/sources
-	mv lpmtmp/*.lp repository-$(SUBDIR)/`lpm -q --distribution`/packages
-	rm -rf lpmtmp
-	ls -t repository-$(SUBDIR)/`lpm -q --distribution`/sources | tail +6 | xargs -r -n 1 lpm --erase repository-$(SUBDIR)
-	lpm --sync repository-$(SUBDIR)
-	rsync -a -v --delete-after repository-$(SUBDIR)/`lpm -q --distribution`/. headache:lpmtool.com/www/repositories/$(SUBDIR)/libs/maildrop/`lpm -q --distribution`
+	mv maildrop.spec.new maildrop.spec
 
 upload-beta:
 	rm -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig; gpg --detach-sign --default-key mrsam@courier-mta.com @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2; test -f @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2.sig || exit 1

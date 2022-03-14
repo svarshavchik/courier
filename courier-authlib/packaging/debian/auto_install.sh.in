@@ -1,0 +1,155 @@
+#! @SHELL@
+
+set -ex
+
+cat >debian/libcourier-auth.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure"
+then
+	@libexecdir@/courier-authlib/sysconftool @sysconfdir@/authlib/*.dist
+
+	if test "\$2" = ""
+	then
+		dpkg-trigger courier-authlib-start
+	else
+		dpkg-trigger courier-authlib-restart
+	fi
+fi
+
+if test "\$1" = "triggered"
+then
+	start=0
+
+	for trigger in \$2
+	do
+		if test "\$trigger" = "courier-authlib-start"
+		then
+			start=1
+		fi
+	done
+
+	if test "\$start" = 1
+	then
+		deb-systemd-invoke start 'libcourier-auth.service' || true
+	else
+		deb-systemd-invoke restart 'libcourier-auth.service' || true
+	fi
+fi
+
+#DEBHELPER#
+
+EOF
+chmod +x debian/libcourier-auth.postinst
+
+cat >debian/libcourier-auth.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	rm -f @sysconfdir@/authlib/auth*rc
+fi
+EOF
+
+chmod +x debian/libcourier-auth.postrm
+
+echo "interest-noawait courier-authlib-start" >debian/libcourier-auth.triggers
+echo "interest-noawait courier-authlib-restart" >>debian/libcourier-auth.triggers
+cat >debian/libcourier-auth.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "remove"
+then
+    rm -f @localstatedir@/spool/authdaemon/*
+fi
+EOF
+chmod +x debian/libcourier-auth.prerm
+
+rm -f debian/tmp@libdir@/courier-authlib/*.a
+
+mkdir -p debian/tmp@libexecdir@/courier-authlib
+cp sysconftool debian/tmp@libexecdir@/courier-authlib
+chmod 555 debian/tmp@libexecdir@/courier-authlib/sysconftool
+cp -p courier-authlib.sysvinit debian/tmp@libexecdir@/courier-authlib
+chmod 555 debian/tmp@libexecdir@/courier-authlib/courier-authlib.sysvinit
+
+mkdir -p debian/tmp/lib/systemd/system
+cp courier-authlib.service debian/tmp/lib/systemd/system/libcourier-auth.service
+dh_install --package libcourier-auth debian/tmp/lib/systemd/system/libcourier-auth.service
+
+DESTDIR=debian/tmp @SHELL@ mkmanifest.sh
+
+sed -n '/\/libcourierauth/p' <filelist.base >filelist.libcourierauth
+sed '/\/libcourierauth/d' <filelist.base >filelist.nolibcourierauth
+
+@SHELL@ -ce 'cd debian/tmp/usr/lib/*; ln -s courier-authlib/libcourierauth*.so .'
+
+mkdir -p debian/tmp/etc/ld.so.conf.d
+@SHELL@ -ce 'cd debian/tmp; d="`ls -d usr/lib/*/courier-authlib`"; echo "/$d" >etc/ld.so.conf.d/libcourier-auth-`uname -m`.conf'
+dh_install --package=libcourier-auth debian/tmp/etc/ld.so.conf.d/*
+
+for f in debian/tmp/usr/lib/*/*.so
+do
+    dh_install --package=libcourier-auth-dev $f
+done
+
+for pkg in ldap mysql pgsql pipe sqlite userdb
+do
+    cat >debian/libcourier-auth-$pkg.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "remove"
+then
+	dpkg-trigger courier-authlib-restart
+fi
+
+#DEBHELPER#
+EOF
+
+cat >debian/libcourier-auth-$pkg.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure" -a "\$2" = ""
+then
+	dpkg-trigger courier-authlib-restart
+fi
+
+#DEBHELPER#
+EOF
+    chmod +x debian/libcourier-auth-$pkg.postinst
+done
+
+@PERL@ debian/mkinstall.pl libcourier-auth <filelist.nolibcourierauth >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth%SOVERSION% <filelist.libcourierauth >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth-dev <filelist.devel >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth-ldap <filelist.ldap >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth-mysql <filelist.mysql >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth-pgsql <filelist.pgsql >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth-pipe <filelist.pipe >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth-sqlite <filelist.sqlite >debian/install.sh
+@SHELL@ debian/install.sh
+@PERL@ debian/mkinstall.pl libcourier-auth-userdb <filelist.userdb >debian/install.sh
+@SHELL@ debian/install.sh
+
+sed -i "/dependency_libs/ s/'.*'/''/" debian/libcourier-auth-dev@libdir@/courier-authlib/*.la

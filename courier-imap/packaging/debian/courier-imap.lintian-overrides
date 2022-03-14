@@ -1,0 +1,6 @@
+#
+# Package-specified ownership and permissions
+#
+non-standard-executable-perm usr/lib/courier-imap/share/*
+non-standard-file-perm usr/lib/courier-imap/etc/*.dist*
+non-standard-file-perm usr/lib/courier-imap/share/*.dist*

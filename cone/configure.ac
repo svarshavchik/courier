@@ -4,7 +4,7 @@ dnl Copyright 2003 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(cone,1.5,[courier-cone@lists.sourceforge.net])
+AC_INIT(cone,1.5.20220416,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)
@@ -90,4 +90,9 @@ AC_PATH_PROGS(COURIERCONFIG, courier-config, none, $LPATH)
 
 echo "$VERSION" >coneversion
 AC_CONFIG_SUBDIRS(libs/unicode libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc1035 libs/rfc822 libs/rfc2045 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone)
-AC_OUTPUT(Makefile cone.spec dbobj.config)
+AC_CONFIG_FILES(
+	Makefile
+	cone.spec
+	dbobj.config
+	courier-debuild)
+AC_OUTPUT

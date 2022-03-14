@@ -32,7 +32,7 @@ coneversion:
 
 AUTOMAKE_OPTIONS=dist-bzip2
 
-HTML2TXT=links -dump -no-numbering
+HTML2TXT=elinks -dump -no-numbering -no-references
 
 onlinehelp: help.txt
 	cp help.txt $$HOME/Mail/libmail
@@ -59,11 +59,31 @@ uninstall-local:
 
 EXTRA_DIST = cone.spec COPYING COPYING.GPL AUTHORS
 
+EXTRA_DIST += \
+	courier-debuild \
+	packaging/debian/auto_install.sh.in \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/libmail-cone-dev.lintian-overrides \
+	packaging/debian/rules \
+	packaging/debian/source/format
+
+#
+# For maintainer's use only
+#
+
+DATE := $(shell date -R)
+
 dist-hook:
 	rm -f $(distdir)/NEWS $(distdir)/README $(distdir)/INSTALL
 	$(HTML2TXT) $(srcdir)/cone/html/index.html >$(distdir)/NEWS
 	$(HTML2TXT) $(srcdir)/cone/html/README.html >$(distdir)/README
 	$(HTML2TXT) $(srcdir)/cone/html/INSTALL.html >$(distdir)/INSTALL
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
 
 
 
@@ -126,7 +146,7 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		$(RPMFLAGS) cone-@PACKAGE_VERSION@.tar.bz2
-	sh $$HOME/repos.sh
+	sh $$HOME/bin/rpmrepos.sh
 
 bump.rpm.release: cone.spec
 	VERSION="x"; \
@@ -140,14 +160,36 @@ bump.rpm.release: cone.spec
 		<cone.spec >cone.spec.new; \
 	mv cone.spec.new cone.spec
 
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
+
 distrelease:
 	cd cone/po && make update-po
 	$(MAKE) distcheck 'DISTCHECK_CONFIGURE_FLAGS=CPPFLAGS="-I /usr/include/ncursesw"'
 	$(MAKE) rpm
 	$(MAKE) -$(MAKEFLAGS)
 	$(MAKE) -$(MAKEFLAGS)
-	rm -f cone.spec
-	$(MAKE) cone.spec
+	rm -f cone.spec packaging/debian/changelog
+	$(MAKE) cone.spec packaging/debian/changelog
 	$(MAKE) dist
 
 upload-beta:

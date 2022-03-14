@@ -1,0 +1,18 @@
+#
+# Automatically disable courier-webmail when removing this package
+#
+apache2-reverse-dependency-calls-wrapper-script prerm a2disconf
+#
+# Automatically reload apache when removing this package
+#
+maintainer-script-calls-systemctl prerm:*
+#
+# Package installs specific permissions for every file and directory
+#
+non-standard-dir-perm var/spool/courier/calendar*
+non-standard-dir-perm var/spool/courier/webmail-logincache/*
+non-standard-executable-perm usr/lib/courier/libexec/cgi-bin/*
+non-standard-executable-perm usr/lib/courier/libexec/courier/*
+non-standard-file-perm usr/lib/courier/share/*
+non-standard-setuid-executable-perm usr/lib/courier/libexec/courier/sqwebpasswd 2555
+setgid-binary usr/lib/courier/libexec/courier/sqwebpasswd 2555*

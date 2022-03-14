@@ -1,3 +1,103 @@
+rpm and deb packages
+====================
+
+These are not the same packages as the ones from various distributions'
+repositories. They carry an internal higher revision level in order to
+prevent them from getting upgraded by the distribution packaging. This
+packaging exists in order to have a convenient way of updating after a
+release without waiting for the distribution's package to get built.
+
+NOTE: If a distribution package is already installed it should be removed
+completely before switching to the upstream version (dnf remove or apt
+purge). Preserve any existing configuration files, beforehand, in order to
+reconfigure the package
+
+NOTE: These packages use their own, generic, installation layout that may
+deviate slightly from the package installation conventions preferred by
+the distributions.
+
+rpm
+===
+
+It is not necessary to unpack this tarball in order to build this tarball.
+
+Run "dnf install rpm-build", if it's not installed already, then:
+
+$ rpmbuild -ta courier-sox-VERSION.tar.bz2
+
+If this fails due to any missing dependencies, install them.
+
+This creates rpms that can be installed with 'rpm -U':
+
+- the main "courier-sox" package installs configuration files, scripts, and
+  shared libraries
+
+- the "courier-sox-server" package installs the Socks server.
+
+- The "courier-sox-deve;" package installs development libraries and header
+  files for building software that uses the Socks library.
+
+- The "courier-sox-utils" package installs an additional script that has
+dependencies on other Perl modules.
+
+deb
+===
+
+Run "apt install devscripts debhelper", if it's not installed already, then:
+
+Create an empty directory, and copy/move the tarball into it:
+
+$ mkdir tmp
+$ cp courier-sox-VERSION.tar.bz2 tmp/courier-sox-VERSION.orig.tar.bz2
+$ cd tmp
+
+Unpack the tarball and cd into the unpacked subdirectory:
+
+$ tar xvf courier-sox-VERSION.tar.bz2
+$ cd courier-sox-VERSION
+
+Run the courier-debuild script. Its parameters get forwarded to debuild.
+
+$ ./courier-debuild -us -uc
+
+NOTE: the above sequence must be followed strictly. The courier-debuild
+script expects the distributed tarball in its parent directory.
+
+The deb subdirectory now contains *deb packages that can be installed with
+"dpkg -i":
+
+- The "libcourier-sox" package installs configuration files and scripts.
+
+- The "libcourier-sox" package installs the Socks server.
+
+- The "libcourier-soxN" package installs shared libraries.
+
+- The "libcourier-sox-dev" package installs development libraries and header
+files for building software that uses the Socks library.
+
+- The "libcourier-sox-utils" package installs an additional script that has
+dependencies on other Perl modules.
+
+Maintainer Mode (see README in the git repository to set up)
+============================================================
+
+make rpm or make deb, as appropriate, will:
+
+    1. Increment an internal release number.
+
+    2. Run make dist.
+
+    3. Proceed and build a new release, creating the native packages in the
+       rpm or deb subdirectory.
+
+    4. Execute either $HOME/bin/rpmrepos.sh or $HOME/bin/debrepos.sh. This
+       can be a script that does nothing, or it's intended to be the
+       maintainer's script that pushes out the packages to a repository.
+
+
+Manual installation
+===================
+
 You need to install the following software before building this package
 (if it's not already installed).
 
@@ -70,7 +170,7 @@ ways to configure PAM services.  In most situations you need to install
 be:
 
 #%PAM-1.0
- 
+
 auth       required     pam_nologin.so
 auth       required     pam_stack.so service=system-auth
 account    required     pam_stack.so service=system-auth

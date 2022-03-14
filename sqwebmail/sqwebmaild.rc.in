@@ -26,7 +26,6 @@ startpcp() {
 		sbindir=${sbindir} ;
 		libexecdir=${libexecdir} ;
 		. @sysconfdir@/sqwebmaild ; \
-		mkdir `dirname $PIDFILE` ; \
 		@courierlogger@ -pid=${PIDFILE}.pcp $LOGGEROPTS -start \
 			${libexecdir}/sqwebmail/pcpd server"
 		;;

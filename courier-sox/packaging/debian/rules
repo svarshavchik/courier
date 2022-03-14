@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+export CXX=g++%DEBGCC%
+export CC=gcc%DEBGCC%
+export SOVERSION=%SOVERSION%
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	dh_auto_install --
+	CONFIG_FILES=debian/auto_install.sh ./config.status
+	chmod +x debian/auto_install.sh
+	rm -f debian/libcourier-sox$(SOVERSION)/lintian-overrides
+	ln -s libcourier-sox.soname.lintian-overrides debian/libcourier-sox$(SOVERSION).lintian-overrides
+	debian/auto_install.sh
+
+override_dh_installsystemd:
+	dh_installsystemd --package libcourier-sox-server courier-sox.service

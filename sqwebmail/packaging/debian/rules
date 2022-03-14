@@ -1,0 +1,39 @@
+#!/usr/bin/make -f
+
+export CXX=g++%DEBGCC%
+export CC=gcc%DEBGCC%
+
+export cgibindir=/usr/lib/sqwebmail/cgi-bin
+export imagedir=/usr/lib/sqwebmail/webmail
+export imageurl=/sqwebmail-images
+export cachedir=/var/spool/run/sqwebmail
+export calendardir=/var/lib/sqwebmail-calendar
+export cacheowner=bin
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- --with-notice=unicode \
+		--prefix=/usr/lib/sqwebmail \
+		--sysconfdir=/usr/lib/sqwebmail/etc \
+		--mandir=/usr/lib/sqwebmail/man \
+		--enable-cgibindir=$(cgibindir) \
+		--enable-imagedir=$(imagedir) \
+		--enable-imageurl=$(imageurl) \
+		--with-calendardir=$(calendardir) \
+		--with-cachedir=$(cachedir) \
+		--with-cacheowner=$(cacheowner) \
+		--with-gpg2
+
+override_dh_auto_install:
+	dh_auto_install --
+	CONFIG_FILES=debian/auto_install.sh ./config.status
+	chmod +x debian/auto_install.sh
+	debian/auto_install.sh
+
+override_dh_fixperms:
+	dh_fixperms
+	CONFIG_FILES=debian/auto_fixperms.sh ./config.status
+	chmod +x debian/auto_fixperms.sh
+	debian/auto_fixperms.sh

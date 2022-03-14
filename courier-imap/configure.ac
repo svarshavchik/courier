@@ -4,7 +4,7 @@ dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
 AC_PREREQ(2.59)
-AC_INIT(courier-imap, 5.1.7, [courier-imap@lists.sourceforge.net])
+AC_INIT(courier-imap, 5.1.7.20220416, [courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -20,6 +20,7 @@ AC_PROG_SYSCONFTOOL
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
+AC_PATH_PROGS(PERL, perl5 perl, perl)
 AC_PATH_PROGS(SETENV, env)
 
 defaultprefix="/usr/lib/courier-imap"
@@ -325,6 +326,7 @@ AC_CONFIG_FILES(Makefile dbobj.h dbobj.config imapd.rc imapd-ssl.rc
 		pop3d.rc pop3d-ssl.rc makeimapaccess
 		authconfig
 		courier-imap.spec
+		courier-debuild
 		INSTALL.html
 		packaging/suse/courier-imap.init
 		packaging/systemd/courier-imap.sysvinit

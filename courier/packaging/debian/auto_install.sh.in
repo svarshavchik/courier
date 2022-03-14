@@ -1,0 +1,856 @@
+#! @SHELL@
+
+set -evx
+
+apache_cgibindir=@libexecdir@/cgi-bin
+
+mkdir -p debian/tmp/etc/pam.d
+
+cp libs/imap/imapd.pam debian/tmp/etc/pam.d/imap
+cp libs/imap/pop3d.pam debian/tmp/etc/pam.d/pop3
+cp courier/module.esmtp/esmtp.authpam debian/tmp/etc/pam.d/esmtp
+cp libs/sqwebmail/webmail.authpam debian/tmp/etc/pam.d/webmail
+cp libs/sqwebmail/webmail.authpam debian/tmp/etc/pam.d/calendar
+
+cat >README.Debian <<EOF
+
+This installation of Courier is configured as follows:
+
+Main installation directory:     @prefix@
+Binary installation directory:   @exec_prefix@
+Binaries:                        @bindir@
+Superuser binaries:              @sbindir@
+Program executables:             @libexecdir@
+Configuration files:             @sysconfdir@
+Scripts, other non-binaries:     @datadir@
+Mail queue, temporary files:     @localstatedir@
+Manual pages:                    @mandir@
+
+This Courier package is aligned to its upstream packaging, with most of it
+installed in @prefix@, with a minimal footprint outside that integrates
+with the rest of the system.
+
+A script gets installed in /etc/profile.d to add @bindir@ to
+the default search path. Note that sudo sanitizes the shell PATH by default.
+The simplest tweak is to manually add
+
+PATH=@sbindir@:@bindir@:$PATH
+
+to root's ~/.bash_aliases
+
+A default Maildir directory gets added to /etc/skel, to automatically set up
+maildirs for all new accounts. Any existing accounts should have their
+maildir created manually via maildirmake.
+
+Courier gets automatically started after installation, but the SMTP server
+does not get started. Edit @sysconfdir/esmtpd and @sysconfdir@/esmtpd-ssl,
+setting ESMTPDSTART and ESMTPDSSLSTART, then "systemctl restart courier".
+The IMAP, POP3, and webmail servers get started automatically when
+installing their respective sub-packages.
+
+"apt purge courier" removes @sysconfdir@, save anything there beforehand,
+manually.
+
+EOF
+
+dh_installdocs README.Debian
+
+# Create permissions.dat
+
+make install-perms
+
+awk '$5 == "man" { print $1 }' <permissions.dat >filelist.man
+
+#
+# We're going to create some more config files later, so let's just make
+# sure they're processed as all other Courier config files
+#
+
+echo '/etc/profile.d/courier.sh 755 bin bin config' >>permissions.dat
+echo '/etc/profile.d/courier.csh 755 bin bin config' >>permissions.dat
+echo '@datadir@/courier.sysvinit 755 bin bin' >>permissions.dat
+
+#
+#  Translate permissions.dat to spec file format
+#
+
+@PERL@ -e '
+$buildroot="debian/tmp";
+$prefix="@prefix@";
+$exec_prefix="@exec_prefix@";
+
+while (<>)
+{
+	chop if /\n$/;
+	my ($file,$mode,$uid,$gid,$special)=split(/ +/);
+	$file=$prefix if $file eq "$prefix/.";
+
+	next if $special eq "doc";
+	next if $file eq "$prefix/doc";
+
+	# Ignore dir/. entries
+
+	next if $file =~ /\/\.$/;
+
+	# Ignore man directories
+
+	next if $file eq "@mandir@";
+	next if substr($file, 0, length("@mandir@")) eq "@mandir@"
+		&& substr($file, length("@mandir@")) =~ /^\/man[1-9]$/;
+
+	$special="dir" if ! -l "$buildroot/$file" && -d "$buildroot/$file";
+
+	my $islink = -l "$buildroot/$file";
+
+	$special //= "file";
+
+	if ($islink)
+	{
+		$special="link";
+		$mode=$uid=$gid="-";
+        }
+
+        print "$file $mode $uid $gid $special\n";
+}
+
+' <permissions.dat >filelist1 || exit 1
+
+############################################################################
+#
+# Break up a single filelist into multiple packages right here.  This is
+# going to be ugly.
+#
+
+sed -n '/imap[\.a-z0-9]* /p;/imapd-ssl/p' <filelist1 | grep -v authpam >filelist.imap
+sed -n '/pop3[\.a-z0-9]* /p;/pop3d-ssl/p' <filelist1 | grep -v authpam >filelist.pop3
+sed -n '/couriermlm/p' <filelist1 >filelist.mlm
+sed -n '/webmlmd/p' <filelist1 >filelist.webmlm
+sed -n '/maildrop[^/]* /p;/mailbot/p;/reformail[^/]* /p' <filelist1 >filelist.maildrop
+
+sed -n '/15ldap/p;/ldapsearch/p;/courierldapalias/p' <filelist1 | sed '/sqwebmail/d' >filelist.ldap
+
+sed -n '/15mysql/p' <filelist1 >filelist.mysql
+
+sed -n '/15pgsql/p' <filelist1 >filelist.pgsql
+
+sed -n '/faxmail/p;/35fax/p;/34fax/p' <filelist1 >filelist.fax
+
+# Delete all of the above, AND ldapaddressbook+webmail from the filelist.
+# Do not install esmtp.authpam, taken care of elsewhere.
+# Do not install htmldoc, taken care of elsewhere
+
+sed '/imap[\.a-z0-9]* /d;/imapd-ssl/d;/pop3[\.a-z0-9]* /d;/pop3d-ssl/d;/couriermlm/d;/webmail/d;/webmlm/d;/authsystem\.passwd/d;/ldapsearch/d;/ldapaddressbook.dist /d;/pcpd/d;/calendar/d;/maildrop[^/]* /d;/mailbot/d;/reformail[^/]* /d;/15ldap/d;/47webmail/d;/sqwebpasswd/d;/courierldapalias/d;/15mysql/d;/15pgsql/d;/faxmail/d;/35fax/d;/34fax/d;/esmtp\.authpam/d;/htmldoc/d' <filelist1 >filelist
+
+sed -n '/47webmail/p;/sqwebmail/p;/sqwebpasswd/p;/authsystem\.passwd/p;/webmail-logincache/p;/ldapaddressbook.dist /p;/pcpd/p;/calendar/p' <filelist1 | sort | uniq >filelist.webmail
+echo "@sbindir@/webmaild 755 root bin file" >>filelist.webmail
+
+# Note that we delete all 'webmail's, but extract only 'sqwebmail's.
+# This removes all webmail-related stuff from the main filelist,
+# and adds everything except the executable, webmail, to filelist.webmail.
+# Here's why, we move the webmail binary directly into the cgibindir.
+
+echo "$apache_cgibindir 755 bin bin dir" >>filelist
+
+mkdir -p debian/tmp$apache_cgibindir
+cp debian/tmp@libexecdir@/courier/webmail/webmail \
+	debian/tmp$apache_cgibindir/webmail
+cp debian/tmp@libexecdir@/courier/webmail/webadmin \
+	debian/tmp$apache_cgibindir/webadmin
+cp debian/tmp@libexecdir@/courier/webmail/webmlm \
+	debian/tmp$apache_cgibindir/webmlm
+rm -rf debian/tmp@libexecdir@/courier/webmail
+
+echo "systemctl try-restart courier.service &" >debian/tmp@sysconfdir@/webadmin/restartcmd
+echo "systemctl restart libcourier-auth.service" >debian/tmp@sysconfdir@/webadmin/restartauthcmd
+
+# Remove the webadmin wrapper from filelist (but keep all html and pl files
+# there.
+
+sed '/courier\/webmail\/webadmin /d' <filelist >filelist.tmp
+mv filelist.tmp filelist
+
+# Do we need to install a cron job to clean out webmail's cache?
+
+if test -f libs/sqwebmail/cron.cmd
+then
+    rm -f debian/courier-webmail.cron.hourly
+    cat >debian/courier-webmail.cron.hourly <<EOF
+#! @SHELL@
+
+su - bin -s @SHELL@ -c @datadir@/sqwebmail/cleancache.pl
+EOF
+fi
+
+#
+# Move .html documentation back to build dir, so that RPM will move it to
+# the appropriate docdir
+#
+
+rm -rf htmldoc
+mkdir htmldoc
+chmod 755 htmldoc
+cp debian/tmp@datadir@/htmldoc/* htmldoc
+chmod a-wx htmldoc/*
+rm -rf debian/tmp@datadir@/htmldoc
+
+#
+# Update /etc/skel
+
+mkdir -p debian/tmp/etc/skel
+libs/maildir/maildirmake debian/tmp/etc/skel/Maildir
+
+############################################################################
+#
+# Some configuration file tweaking.
+#
+# Manually set POP3DSTART and IMAPDSTART to yes, they'll go into a separate
+# package, so after it's installed they should be runnable.
+
+sed 's/^POP3DSTART.*/POP3DSTART=YES/' <debian/tmp@sysconfdir@/pop3d.dist >debian/tmp@sysconfdir@/pop3d.new
+mv debian/tmp@sysconfdir@/pop3d.new debian/tmp@sysconfdir@/pop3d.dist
+
+sed 's/^POP3DSSLSTART.*/POP3DSSLSTART=YES/' <debian/tmp@sysconfdir@/pop3d-ssl.dist >debian/tmp@sysconfdir@/pop3d-ssl.new
+mv debian/tmp@sysconfdir@/pop3d-ssl.new debian/tmp@sysconfdir@/pop3d-ssl.dist
+
+sed 's/^IMAPDSTART.*/IMAPDSTART=YES/' <debian/tmp@sysconfdir@/imapd.dist >debian/tmp@sysconfdir@/imapd.new
+mv debian/tmp@sysconfdir@/imapd.new debian/tmp@sysconfdir@/imapd.dist
+
+sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <debian/tmp@sysconfdir@/imapd-ssl.dist >debian/tmp@sysconfdir@/imapd.new-ssl
+mv debian/tmp@sysconfdir@/imapd.new-ssl debian/tmp@sysconfdir@/imapd-ssl.dist
+
+# Convenient init file.
+
+cp courier.sysvinit debian/tmp@datadir@/courier.sysvinit
+@PERL@ -p -i -e 's@^webadmin=.*@webadmin="'$apache_cgibindir/webadmin'"@' \
+	      debian/tmp@datadir@/courier.sysvinit
+
+mkdir -p debian/tmp/lib/systemd/system
+sed '/mail-transfer-agent.target/d' <courier.service  >debian/tmp/lib/systemd/system/courier.service
+dh_install --package courier debian/tmp/lib/systemd/system/courier.service
+
+# Create an initial default DH paramter file, and install a
+# monthly script to generate DH parameters
+
+cat >debian/tmp@datadir@/dhparams.pem.dist <<ZZ
+This file contains default DH parameters for initial use on a new
+installation. The startup script copies this file to dhparams.pem,
+unless it already exists.
+
+ZZ
+
+sed 's/^chown/echo/' <libs/imap/mkdhparams >libs/imap/mkdhparams.tmp
+TLS_DHPARAMS=debian/tmp@datadir@/dhparams.pem.dist.tmp @SHELL@ libs/imap/mkdhparams.tmp
+rm -f libs/imap/mkdhparams.tmp
+cat debian/tmp@datadir@/dhparams.pem.dist.tmp >>debian/tmp@datadir@/dhparams.pem.dist
+rm -f debian/tmp@datadir@/dhparams.pem.dist.tmp
+courier/courier-config | grep '^mail' >uidgid
+. ./uidgid
+rm -f uidgid
+echo "@datadir@/dhparams.pem.dist 600 $mailuser $mailgroup file" >>filelist
+
+rm -f debian/courier.cron.monthly
+cat >debian/courier.cron.monthly <<EOF
+#! @SHELL@
+exec @sbindir@/mkdhparams
+EOF
+
+#
+# Make up some /etc/profile.d scripts
+#
+
+mkdir -p debian/tmp/etc/profile.d
+cat >debian/tmp/etc/profile.d/courier.sh <<EOF
+if echo "\${PATH}" | tr ':' '\012' | fgrep -qx @bindir@
+then
+	:
+else
+	if test \`id -u\` = 0
+	then
+		PATH="@sbindir@:\$PATH"
+	fi
+	PATH="@bindir@:\$PATH"
+	export PATH
+fi
+EOF
+
+cat >debian/tmp/etc/profile.d/courier.csh <<EOF
+echo "\${PATH}" | tr ':' '\012' | fgrep -qx @bindir@
+if ( \$? ) then
+	test \`id -u\` = 0
+	if ( \$? == 0 ) then
+		setenv PATH "@sbindir@:\$PATH"
+	endif
+	setenv PATH "@bindir@:\$PATH"
+endif
+EOF
+
+echo "/etc/pam.d/esmtp 644 root root file" >>filelist
+echo "AUTHORS 444 bin bin doc" >>filelist
+echo "COPYING 444 bin bin doc" >>filelist
+echo 'htmldoc/* 444 bin bin doc' >>filelist
+echo '@datadir@/sysconftool 555 bin bin' >>filelist
+echo '@datadir@/configlist 444 bin bin' >>filelist
+echo '/etc/skel/Maildir - root root' >>filelist
+echo '/etc/profile.d/courier.sh 644 root root' >>filelist
+echo '/etc/profile.d/courier.csh 644 root root' >>filelist
+
+echo '/etc/pam.d/pop3 644 root root' >>filelist.pop3
+echo '@datadir@/configlist.pop3 444 bin bin' >>filelist.pop3
+
+echo '/etc/pam.d/imap 644 root root' >>filelist.imap
+echo '@datadir@/configlist.imap 444 bin bin' >>filelist.imap
+
+cat >README.new_fax <<EOF
+To have new faxes sent via Courier:
+
+Replace /etc/mgetty/new_fax with a symbolic link to:
+
+@datadir@/faxmail/new_fax
+
+EOF
+
+echo 'README.new_fax 644 bin bin doc' >>filelist.fax
+
+#####################
+##
+## sysconftool support.  Instead of doing make install-configure, grab all
+## the config .dists from the filelists, and arrange to run sysconftool in
+## the postinstallation scripts.  This is done by saving the .dists into
+## a file that's included in the installation package.  sysconftool is also
+## added to the installation package, and we run the whole thing from
+## post
+
+for f in filelist filelist.pop3 filelist.imap filelist.webmail
+do
+	ff=`echo $f | sed 's/filelist/configlist/'`
+
+	/usr/bin/perl -e '
+		while (<>)
+		{
+			chop;
+			next unless /(.*\.dist) .*config$/;
+			print "$1\n";
+		} ' < $f >debian/tmp@datadir@/$ff
+done
+
+cp sysconftool debian/tmp@datadir@/sysconftool
+
+mkdir -p debian/tmp/etc/apache2/conf-available
+cat >debian/tmp/etc/apache2/conf-available/courier-webmail.conf <<EOF
+<IfModule mod_alias.c>
+  <IfModule mod_cgi.c>
+    Define ENABLE_COURIER_WEBMAIL
+  </IfModule>
+
+  <IfModule mod_cgid.c>
+    Define ENABLE_COURIER_WEBMAIL
+  </IfModule>
+
+  <IfDefine ENABLE_COURIER_WEBMAIL>
+    Alias /webmail $apache_cgibindir/webmail
+    Alias $imageurl @datadir@/sqwebmail/images
+
+    <Directory $apache_cgibindir>
+      SetHandler cgi-script
+      Options +ExecCGI
+
+      <Files "webmail">
+        Require all granted
+      </Files>
+    </Directory>
+
+    <Directory @datadir@/sqwebmail/images>
+      Require all granted
+    </Directory>
+  </IfDefine>
+</IfModule>
+EOF
+
+cat >README.Debian <<EOF
+You must configure and enable Apache's CGI module, separately.
+
+Enable the webmail server after installing this package:
+
+a2enmod alias
+a2enmod cgi
+a2enconf courier-webmail
+systemctl reload apache2
+
+Then access it as http(s)://host/webmail
+
+Enabling the courier-webmail apache2 configuration module redirects the URLs
+/webmail and /webmail-images to the webmail module.
+EOF
+
+dh_installdocs --package courier-webmail README.Debian
+
+cat <<ZZ >>filelist.webmail
+$apache_cgibindir/webmail 555 bin bin file
+/etc/pam.d/webmail 644 root root config
+/etc/pam.d/calendar 644 root root config
+@datadir@/configlist.webmail 444 bin bin file
+/etc/apache2/conf-available/courier-webmail.conf 644 root root file
+ZZ
+
+cat >debian/tmp/etc/apache2/conf-available/courier-mlm-web.conf <<EOF
+<IfModule mod_alias.c>
+  <IfModule mod_cgi.c>
+    Define ENABLE_COURIER_WEBMLM
+  </IfModule>
+
+  <IfModule mod_cgid.c>
+    Define ENABLE_COURIER_WEBMLM
+  </IfModule>
+
+  <IfDefine ENABLE_COURIER_WEBMLM>
+    Alias /webmlm $apache_cgibindir/webmlm
+
+    <Directory $apache_cgibindir>
+      SetHandler cgi-script
+      Options +ExecCGI
+
+      <Files "webmlm">
+        Require all granted
+      </Files>
+    </Directory>
+  </IfDefine>
+</IfModule>
+EOF
+
+cat >README.Debian <<EOF
+You must configure and enable Apache's CGI module, separately.
+
+Enable the webmlm server after installing this package:
+
+a2enmod alias
+a2enmod cgi
+a2enconf courier-mlm-web
+systemctl reload apache2
+
+Then access it as http(s)://host/webmlm
+
+Enabling the courier-mlm-web apache2 configuration module redirects the
+/webmlm URL.
+EOF
+
+dh_installdocs --package courier-mlm-web README.Debian
+
+cat >>filelist.webmlm <<EOF
+$apache_cgibindir/webmlm 555 bin bin file
+@sysconfdir@/webmlmrc.dist 644 root root file
+/etc/apache2/conf-available/courier-mlm-web.conf 644 root root file
+EOF
+
+cat >debian/tmp/etc/apache2/conf-available/courier-webadmin.conf <<EOF
+<IfModule mod_alias.c>
+  <IfModule mod_cgi.c>
+    Define ENABLE_COURIER_WEBADMIN
+  </IfModule>
+
+  <IfModule mod_cgid.c>
+    Define ENABLE_COURIER_WEBADMIN
+  </IfModule>
+
+  <IfDefine ENABLE_COURIER_WEBADMIN>
+    Alias /webadmin $apache_cgibindir/webadmin
+
+    <Directory $apache_cgibindir>
+      SetHandler cgi-script
+      Options +ExecCGI
+
+      <Files "webadmin">
+        Require all granted
+      </Files>
+    </Directory>
+  </IfDefine>
+</IfModule>
+
+EOF
+echo "$apache_cgibindir/webadmin 511 root bin file" >filelist.webadmin
+echo "/etc/apache2/conf-available/courier-webadmin.conf 644 root root file" >>filelist.webadmin
+
+cat >README.Debian <<EOF
+You must configure and enable Apache's CGI module, separately.
+
+Enable the webmlm server after installing this package:
+
+a2enmod alias
+a2enmod cgi
+a2enconf courier-webadmin
+systemctl reload apache2
+
+Then access it as http(s)://host/webadmin
+
+Enabling the courier-webadmin apache2 configuration module redirects the
+/webadmin URL.
+EOF
+
+dh_installdocs --package courier-webadmin README.Debian
+
+echo "interest-noawait courier-restart" >debian/courier.triggers
+echo "interest-noawait courier-start" >>debian/courier.triggers
+
+cat >debian/courier.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure"
+then
+	@datadir@/sysconftool \`cat @datadir@/configlist\`
+
+	update-alternatives \
+	  --install /usr/sbin/sendmail-mta sendmail-mta @bindir@/sendmail 25 \
+	  --slave /usr/bin/mailq mailq @bindir@/mailq \
+	  --slave /usr/sbin/newaliases newaliases @sbindir@/makealiases
+
+	update-alternatives \
+	  --install /usr/sbin/sendmail-msp sendmail-msp @bindir@/sendmail 25 \
+	  --slave /usr/sbin/sendmail sendmail @bindir@/sendmail \
+	  --slave /usr/lib/sendmail lib.sendmail @bindir@/sendmail
+
+	if test "\$2" = "" -o -f @sysconfdir@/dpkg-update-trigger
+	then
+		# 1)
+		#
+		# Initial installation. We can't start just yet, we must
+		# wait for all sub-packages to configure themselves.
+		#
+		# 2)
+		#
+		# Courier was stopped in the previous version's
+		# prerm trigger.
+		#
+		# Schedule a courier-start trigger.
+
+		dpkg-trigger courier-start
+	fi
+
+	rm -f @sysconfdir@/dpkg-update-trigger
+fi
+
+if test "\$1" = "triggered"
+then
+	start=0
+
+	# An upgrade results in one of the prerm scripts stopping courier
+	# if it's active, and emitting a courier-start trigger.
+	#
+	# A separate installation of a sub-package sends a courier-restart
+	# trigger. Initial installation is indistinguishable from a
+	# separate installation, so for an initial installation we'll end
+	# up having to deal with both triggers.
+
+	for trigger in \$2
+	do
+		if test "\$trigger" = "courier-start"
+		then
+			start=1
+		fi
+	done
+
+	if test "\$start" = 1
+	then
+		echo "Starting Courier..."
+		deb-systemd-invoke start 'courier.service' || true
+	else
+		if systemctl -q is-active courier
+		then
+			echo "Restarting Courier..."
+			deb-systemd-invoke restart 'courier.service' || true
+		fi
+	fi
+fi
+
+#DEBHELPER#
+EOF
+
+cat >debian/courier.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+# If courier is active stop it ourselves, and schedule a start trigger.
+#
+# We can't schedule it via dpkg-trigger, that'll just trigger the
+# old package that's getting removed. So we'll set the dpkg-update-trigger
+# flag.
+
+if systemctl -q is-active courier
+then
+	echo "Stopping Courier before update..."
+	deb-systemd-invoke stop courier.service
+	touch @sysconfdir@/dpkg-update-trigger
+fi
+
+if test "\$1" = "remove"
+then
+	update-alternatives --remove sendmail-mta @bindir@/sendmail
+	update-alternatives --remove sendmail-msp @bindir@/sendmail
+fi
+
+#DEBHELPER#
+EOF
+
+cat >debian/courier.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	rm -rf @sysconfdir@/*
+	rm -rf @localstatedir@/*
+	rm -rf @datadir@/*
+fi
+EOF
+
+# Subpackages:
+#
+# In the prerm trigger: check if Courier is active, if so stop it and schedule
+# a courier-start trigger to restart it after the upgrade is complete.
+#
+# In the postinst trigger: update the subpackage's configuration. Emit a
+# courier-restart trigger to restart Courier, if this sub-package is
+# getting installed separately. If it's getting installed as part of an
+# upgrade the courier-start trigger will also get emitted, and it will
+# cause a restart.
+
+cat >debian/courier-imapd.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+if systemctl -q is-active courier
+then
+	echo "Stopping Courier..."
+	deb-systemd-invoke stop courier.service
+	dpkg-trigger courier-start
+fi
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/courier-imapd.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure"
+then
+	echo "Updating Courier IMAP configuration"
+	@datadir@/sysconftool \`cat @datadir@/configlist.imap\`
+
+	dpkg-trigger courier-restart
+fi
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/courier-pop3d.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+if systemctl -q is-active courier
+then
+	echo "Stopping Courier..."
+	deb-systemd-invoke stop courier.service
+	dpkg-trigger courier-start
+fi
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/courier-pop3d.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure"
+then
+	echo "Updating Courier POP3 configuration"
+	@datadir@/sysconftool \`cat @datadir@/configlist.pop3\`
+	dpkg-trigger courier-restart
+fi
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/courier-webmail.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+if systemctl -q is-active courier
+then
+	echo "Stopping Courier..."
+	deb-systemd-invoke stop courier.service
+	dpkg-trigger courier-start
+fi
+
+#DEBHELPER#
+
+if test "\$1" = "remove"
+then
+	a2disconf -q courier-webmail
+	systemctl reload apache2
+fi
+EOF
+
+cat >debian/courier-webmail.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	rm -rf @localstatedir@/calendar/localcache/*
+	rm -rf @localstatedir@/calendar/private/*
+	rm -rf @localstatedir@/calendar/public/*
+	rm -rf @localstatedir@/webmail-logincache/*
+fi
+EOF
+
+cat >debian/courier-webmail.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure"
+then
+	echo "Updating Courier Webmail configuration"
+	@datadir@/sysconftool \`cat @datadir@/configlist.webmail\`
+	dpkg-trigger courier-restart
+fi
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/courier-mlm-web.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+if systemctl -q is-active courier
+then
+	echo "Stopping Courier..."
+	deb-systemd-invoke stop courier.service
+	dpkg-trigger courier-start
+fi
+
+#DEBHELPER#
+
+if test "\$1" = "remove"
+then
+	a2disconf -q courier-mlm-web
+	systemctl reload apache2
+fi
+
+EOF
+
+cat >debian/courier-mlm-web.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure"
+then
+	echo "Updating Courier Mailing List Manager configuration"
+	@datadir@/sysconftool @sysconfdir@/webmlmrc
+	dpkg-trigger courier-restart
+fi
+
+#DEBHELPER#
+EOF
+
+cat >debian/courier-webadmin.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+if systemctl -q is-active courier
+then
+	echo "Stopping Courier..."
+	deb-systemd-invoke stop courier.service
+	dpkg-trigger courier-start
+fi
+
+#DEBHELPER#
+
+if test "\$1" = "remove"
+then
+	a2disconf -q courier-webadmin
+	systemctl reload apache2
+fi
+
+EOF
+
+cat >debian/courier-webadmin.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+if test "\$1" = "configure"
+then
+	if test ! -f @sysconfdir@/webadmin/password
+	then
+		dd if=/dev/urandom 2>/dev/null | tr -d -c '[A-Za-z0-9]' 2>/dev/null | dd bs=16 count=1 2>/dev/null >@sysconfdir@/webadmin/password.tmp
+		echo >>@sysconfdir@/webadmin/password.tmp
+		mv @sysconfdir@/webadmin/password.tmp @sysconfdir@/webadmin/password
+		chmod 400 @sysconfdir@/webadmin/password
+		chown --reference=@sysconfdir@/webadmin @sysconfdir@/webadmin/password
+	fi
+
+	dpkg-trigger courier-restart
+fi
+
+#DEBHELPER#
+EOF
+
+debian/mkinstall.pl courier <filelist >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-pop3d <filelist.pop3 >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-imapd <filelist.imap >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-webmail <filelist.webmail >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-mlm-web <filelist.webmlm >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-webadmin <filelist.webadmin >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-maildrop <filelist.maildrop >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-mlm <filelist.mlm >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-ldap <filelist.ldap >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-mysql <filelist.mysql >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-pgsql <filelist.pgsql >install.sh
+@SHELL@ install.sh
+
+debian/mkinstall.pl courier-fax <filelist.fax >install.sh
+@SHELL@ install.sh
+
+rm -f debian/tmp/etc/courier/*.authpam

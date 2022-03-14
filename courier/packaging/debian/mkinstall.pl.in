@@ -1,0 +1,64 @@
+#! @PERL@
+
+use strict;
+use warnings;
+
+my ($package) = @ARGV;
+
+print "set -evx\n";
+print "cp /dev/null debian/${package}.docs\n";
+print "cp /dev/null filelist.${package}.man\n";
+
+while (<STDIN>)
+{
+    chomp;
+    my ($file, $perm, $uid, $gid, $type) = split(/\s/);
+
+    $type //= '';
+    $perm //= '-';
+    $uid //= '-';
+    $gid //= '-';
+
+    print "echo $file >>filelist.${package}.man\n"
+	if $type eq 'man';
+
+    if ($type eq 'doc')
+    {
+	print "echo $file >>debian/${package}.docs\n";
+	next;
+    }
+
+    my $rec = "-R";
+
+    if ($type eq 'dir')
+    {
+	print "dh_installdirs --package $package $file\n";
+	$rec = "";
+    }
+    else
+    {
+	my $dir = $file;
+
+	$dir =~ s@/[^/]+$@@;
+	print "mkdir -p debian/$package$dir\n";
+	print "dh_install --package=$package '$file' $dir\n";
+    }
+
+    if ($perm ne "-")
+    {
+	print "test -L 'debian/$package$file' || chmod $rec 0$perm debian/$package$file\n";
+    }
+
+    if ($uid ne "-")
+    {
+	print "chown -h $rec $uid debian/$package$file\n";
+    }
+
+    if ($gid ne "-")
+    {
+	print "chgrp -h $rec $gid debian/$package$file\n";
+    }
+}
+
+print "dh_compress --package ${package} `cat filelist.${package}.man`\n";
+print "rm -f filelist.${package}.man\n";

@@ -1,0 +1,5 @@
+courier-sox (@VERSION@-100) devel; urgency=medium
+
+  * Upstream release
+
+ -- Sam Varshavchik <mrsam@courier-mta.com>  @DATE@

@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<xsl:stylesheet  
+<xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <xsl:include href="http://docbook.sourceforge.net/release/xsl/current/xhtml/chunk.xsl"/>
@@ -27,11 +27,11 @@
 <xsl:template name="user.head.content">
 
   <link rel="icon" href="icon.gif" type="image/gif"/>
-   
+
    <meta name="MSSmartTagsPreventParsing" content="TRUE" />
     <xsl:comment>
 
-Copyright 2002 - 2013 Double Precision, Inc.  See COPYING for distribution
+Copyright 2002 - 2022 Double Precision, Inc.  See COPYING for distribution
 information.
 
 </xsl:comment>

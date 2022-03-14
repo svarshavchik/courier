@@ -231,226 +231,361 @@ E-mail software.</para>
       <title>Installing &app;</title>
 
       <para>
-First, make sure that all the necessary requirements
-(<link linkend="README">README</link>) are satisfied.
-See RPM instructions below if building for Red Hat Linux.
-See additional notes below for upgrade instructions.
-Otherwise:</para>
+	First, make sure that all the necessary requirements
+	(<link linkend="README">README</link>) are satisfied.
+	  See additional notes below for upgrade instructions.
+      </para>
 
-      <itemizedlist>
+      <section id="rpmdeb">
+	<title>RPM and DEB packages</title>
 
-	<listitem>
+	<para>
+	  These are not the same packages as the ones from various
+	  distributions' repositories. These packages carry a higher internal
+	  revision level in order to prevent them from getting upgraded
+	  by the distribution packaging. This packaging exists in order to
+	  have a convenient way of updating after a release without waiting
+	  for the distribution's package to get built.
+	</para>
+	<note>
 	  <para>
-	    The <ulink url="http://www.gnu.org/software/libidn/">GNU IDN</ulink>)
-	    library is required.</para>
-	</listitem>
-	<listitem>
+	    If a distribution package is already installed it should be
+	    removed completely before switching to the upstream version
+	    (<quote><command>dnf remove</command></quote> or
+	    <quote><command>apt purge</command></quote>). Preserve any
+	    existing configuration files, beforehand, in order to restore
+	    it after switching packages. This applies to all Courier packages.
+	    A switch to this cone package requires switching the
+	    courier-unicode and too.
+	  </para>
 	  <para>
+	    If a distribution package is already installed it should be removed
+	    completely before switching to the upstream version (dnf remove or
+	    apt purge). Preserve any existing configuration files, beforehand,
+	    in order to reconfigure the package.
+	  </para>
+	</note>
+	<note>
+	  <para>
+	    These packages use their own, generic, installation layout that may
+	    deviate slightly from the package installation conventions that's
+	    preferred by the
+	    distributions.
+	  </para>
+	</note>
+
+	<section id="rpmbuild">
+	  <title>RPM builds</title>
+
+	  <para>
+	    It is not necessary to unpack this tarball in order to build
+	    this tarball.
+	  </para>
+
+	  <para>
+	    Run <quote><command>dnf install rpm-build</command></quote>
+	    if it's not installed already, then:
+	  </para>
+
+	  <blockquote>
+	    <informalexample>
+	      <programlisting><![CDATA[
+$ rpmbuild -ta cone-VERSION.tar.bz2]]></programlisting>
+	    </informalexample>
+	  </blockquote>
+
+	  <para>
+	      If this fails due to any missing dependencies, install them.
+	  </para>
+	</section>
+
+	<section id="debbuild">
+	  <title>DEB builds</title>
+	  <para>
+	    Run <quote><command>apt install devscripts
+		debhelper</command></quote>, if they're not installed already.
+	    Create an empty directory and copy/move the tarball into it:
+	  </para>
+	  <blockquote>
+	    <informalexample>
+	      <programlisting><![CDATA[
+$ mkdir tmp
+$ mv cone-VERSION.tar.bz2 tmp
+$ cd tmp]]></programlisting>
+	    </informalexample>
+	  </blockquote>
+
+	  <para>
+	    Unpack the tarball and cd into the unpacked subdirectory:
+	  </para>
+	  <blockquote>
+	    <informalexample>
+	      <programlisting><![CDATA[
+$ tar xvf cone-VERSION.tar.bz2
+$ cd cone-VERSION]]></programlisting>
+	    </informalexample>
+	  </blockquote>
+
+	  <para>
+	    Run the <command>courier-debuild</command> script, which is a
+	    wrapper for <command>debuild</command>, and forwards its
+	    parameters to it:
+	  </para>
+
+	  <blockquote>
+	    <informalexample>
+	      <programlisting><![CDATA[
+$ ./courier-debuild -us -uc]]></programlisting>
+	    </informalexample>
+	  </blockquote>
+	  <note>
+	    <para>
+	      The above steps must be followed strictly. The
+	      <command>courier-debuild</command> script expects the distributed
+	      tarball in its parent directory.
+	    </para>
+	  </note>
+	  <para>
+	    The eventually produces a
+	    <filename>deb</filename> subdirectory with
+	    <filename>.deb</filename> packages that can be
+	    installed with <quote>dpkg -i</quote>:
+	  </para>
+
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+		<filename>cone-<replaceable>VERSION</replaceable>.deb</filename>
+		is the main package.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		<filename>libmail-cone-dev-<replaceable>VERSION</replaceable>.deb</filename>
+		is a standalone package containing &app;'s mail library and
+		header files. It is not needed to run &app; itself.
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	</section>
+      </section>
+
+      <section id="manualbuild">
+	<title>Building &app; manually</title>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      Cone requires several common libraries, like
+	      <quote>libxml</quote> and the
+	      <ulink url="http://www.gnu.org/software/libidn/">libidn</ulink>
+	      library is also required.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Download the Courier Socks 5 proxy client library from <ulink
 url="http://www.courier-mta.org/download.php#sox">http://www.courier-mta.org/download.php#sox</ulink>
-and follow its installation instructions. Binary RPMs can be built from the
-source code tarball by following the procedure outlined in <ulink
-url="http://www.courier-mta.org/FAQ.html#rpm">http://www.courier-mta.org/FAQ.html#rpm</ulink>
-using the <quote>courier-sox-<replaceable>version</replaceable></quote>
-tarball, and installing the
-<quote>courier-sox</quote> and
-<quote>courier-sox-devel</quote> binary RPMs afterwards.</para>
+and follow its installation instructions.</para>
 
-	  <para>
+	    <para>
 This step can be omitted if Socks 5 support is not required.
 &app; will compile without the Socks 5 proxy toolkit.</para>
-        </listitem>
+          </listitem>
 
-	<listitem>
-	  <para>
+	  <listitem>
+	    <para>
 Download and install the Courier-Unicode library from
 <ulink url="http://www.courier-mta.org/download.html#unicode">http://www.courier-mta.org/download.html#unicode</ulink> and install it.</para>
-	</listitem>
-	<listitem>
-	  <para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Download the source code tarball from
 <ulink url="http://www.courier-mta.org/download.php#cone">http://www.courier-mta.org/download.php#cone</ulink> and unpack it.</para>
-	</listitem>
+	  </listitem>
 
-	<listitem>
-	  <para>
+	  <listitem>
+	    <para>
 Set the appropriate environment variables if the compiler or linker
 needs any custom command line flags.
 Run <quote><command>./configure --help</command></quote> to list the
 available environment variables that specify additional arbitrary parameters
 for the C/C++ compiler.</para>
-	</listitem>
+	  </listitem>
 
-	<listitem>
-	  <para>
+	  <listitem>
+	    <para>
 Run <quote><command>./configure
 <replaceable>[options]</replaceable></command></quote>.
 See below for a list of available options.</para>
 	</listitem>
 
-	<listitem>
-	  <para>
+	  <listitem>
+	    <para>
 Run <command>make</command>.</para>
 
-	  <note>
-	    <para>
+	    <note>
+	      <para>
 The GNU version of the <literal>command</literal> is required.
 On BSD systems it's the <command>gmake</command>.
 Use <command>gmake</command> in this, and the following steps.</para>
-	  </note>
-	</listitem>
+	    </note>
+	  </listitem>
 
-	<listitem>
+	  <listitem>
+	    <para>
+	      Run <command>make check</command>.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+	      Run <command>make install</command>.</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+	      Run <command>make install-configure</command>.</para>
+	  </listitem>
+	</itemizedlist>
+
+	<note>
 	  <para>
-Run <command>make check</command>.</para>
-	</listitem>
-
-	<listitem>
-	  <para>
-Run <command>make install</command>.</para>
-	</listitem>
-
-	<listitem>
-	  <para>
-Run <command>make install-configure</command>.</para>
-	</listitem>
-      </itemizedlist>
-
-      <note>
-	<para>
 Do not forget <quote><command>make install-configure</command></quote>.
 It is required.</para>
-      </note>
+	</note>
 
-      <para>
-Unless other options are used, &app; installs in
-<filename>/usr/local</filename>:</para>
+	<para>
+	  Unless other options are used, &app; installs in
+	  <filename>/usr/local</filename>:</para>
 
-      <variablelist>
-	<varlistentry>
-	  <term><filename>/usr/local/etc</filename></term>
-	  <listitem>
-	    <para>
-The configuration file.</para>
-	  </listitem>
-	</varlistentry>
+	<variablelist>
+	  <varlistentry>
+	    <term><filename>/usr/local/etc</filename></term>
+	    <listitem>
+	      <para>
+		The configuration file.</para>
+	    </listitem>
+	  </varlistentry>
 
-	<varlistentry>
-	  <term><filename>/usr/local/bin</filename></term>
-	  <listitem>
-	    <para>
-The shell script that runs &app;.</para>
-	  </listitem>
-	</varlistentry>
+	  <varlistentry>
+	    <term><filename>/usr/local/bin</filename></term>
+	    <listitem>
+	      <para>
+		The shell script that runs &app;.</para>
+	    </listitem>
+	  </varlistentry>
 
-	<varlistentry>
-	  <term><filename>/usr/local/libexec</filename></term>
-	  <listitem>
-	    <para>
-The &app; program itself.</para>
-	  </listitem>
-	</varlistentry>
+	  <varlistentry>
+	    <term><filename>/usr/local/libexec</filename></term>
+	    <listitem>
+	      <para>
+		The &app; program itself.</para>
+	    </listitem>
+	  </varlistentry>
 
-	<varlistentry>
-	  <term><filename>/usr/local/share</filename></term>
-	  <listitem>
-	    <para>
-Documentation, online help, other files.</para>
-	  </listitem>
-	</varlistentry>
+	  <varlistentry>
+	    <term><filename>/usr/local/share</filename></term>
+	    <listitem>
+	      <para>
+		Documentation, online help, other files.</para>
+	    </listitem>
+	  </varlistentry>
 
-	<varlistentry>
-	  <term><filename>/usr/local/lib</filename>
-and <filename>/usr/local/include</filename></term>
-	  <listitem>
-	    <para>
+	  <varlistentry>
+	    <term><filename>/usr/local/lib</filename>
+	      and <filename>/usr/local/include</filename></term>
+	    <listitem>
+	      <para>
 The development libraries and include files
 (only if <parameter>--with-devel</parameter> was specified to the
 <command>configure</command> script).</para>
-	  </listitem>
-	</varlistentry>
-      </variablelist>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
 
-      <para>
+	<para>
 These installation directories, and other options, may be controlled by
 additional options to the <command>configure</command> script:</para>
 
-      <variablelist>
-	<varlistentry>
-	  <term><parameter>--prefix</parameter>, <parameter>--bindir</parameter>,
+	<variablelist>
+	  <varlistentry>
+	    <term><parameter>--prefix</parameter>, <parameter>--bindir</parameter>,
 and others...</term>
-	  <listitem>
-	    <para>
+	    <listitem>
+	      <para>
 <command>./configure --help</command> lists about a dozen parameters to the
 <command>./configure</command> that specify the directories where various
 files should be installed.</para>
-	  </listitem>
-	</varlistentry>
+	    </listitem>
+	  </varlistentry>
 
-	<varlistentry>
-	  <term>
-	    <parameter>--with-certdb=<replaceable>pathname</replaceable></parameter>
-	  </term>
+	  <varlistentry>
+	    <term>
+	      <parameter>--with-certdb=<replaceable>pathname</replaceable></parameter>
+	    </term>
 
-	  <listitem>
-	    <para>
-	      Sets a non-default location for the systemwide trusted SSL
-	      certificate authorities.
-	      If not specified, a default list of directories and files is
-	      searched for:
-	    </para>
-	    <itemizedlist>
-	      <listitem>
-		<filename>/etc/ssl/certs</filename>
-	      </listitem>
-	      <listitem>
-		<filename>/etc/ssl/cert.pem</filename>
-	      </listitem>
-	      <listitem>
-		<filename>/etc/pki/tls/cert.pem</filename>
-	      </listitem>
-	    </itemizedlist>
-	  </listitem>
-	</varlistentry>
+	    <listitem>
+	      <para>
+		Sets a non-default location for the systemwide trusted SSL
+		certificate authorities.
+		If not specified, a default list of directories and files is
+		searched for:
+	      </para>
+	      <itemizedlist>
+		<listitem>
+		  <filename>/etc/ssl/certs</filename>
+		</listitem>
+		<listitem>
+		  <filename>/etc/ssl/cert.pem</filename>
+		</listitem>
+		<listitem>
+		  <filename>/etc/pki/tls/cert.pem</filename>
+		</listitem>
+		<listitem>
+		  <filename>/etc/ssl/certs/ca-certificates.crt</filename>
+		</listitem>
+	      </itemizedlist>
+	    </listitem>
+	  </varlistentry>
 
-        <varlistentry>
-          <term><parameter>--with-gnutls</parameter></term>
+          <varlistentry>
+            <term><parameter>--with-gnutls</parameter></term>
 
-          <listitem>
-            <para>
+            <listitem>
+              <para>
 Select the GnuTLS library even if
     the OpenSSL library is also installed. The <command>configure</command>
 script automatically selects
     whichever one is available. The OpenSSL library is selected if
     both are present. Use this option to override and select GnuTLS
     instead.</para>
-          </listitem>
-        </varlistentry>
+            </listitem>
+          </varlistentry>
 
-	<varlistentry>
-	  <term><parameter>--with-devel</parameter></term>
-	  <listitem>
-	    <para>
+	  <varlistentry>
+	    <term><parameter>--with-devel</parameter></term>
+	    <listitem>
+	      <para>
 Install <link linkend="libmail">&libname;</link>,
 the mail library used by
 &app; to access and handle E-mail messages.</para>
-	  </listitem>
-	</varlistentry>
+	    </listitem>
+	  </varlistentry>
 
-	<varlistentry>
-	  <term><parameter>--with-spellcheck=pspell</parameter></term>
-	  <listitem>
-	    <para>
+	  <varlistentry>
+	    <term><parameter>--with-spellcheck=pspell</parameter></term>
+	    <listitem>
+	      <para>
 &app;
 can use either <command>aspell</command> or <command>pspell</command>
 for spell checking.
 <command>aspell</command> is used if both are installed.
 This option selects
 <command>pspell</command> instead.</para>
-	  </listitem>
-	</varlistentry>
-      </variablelist>
-
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </section>
       <section id="upgradefrom">
 	<title>Upgrading from an earlier version of &app;</title>
 	<para>
@@ -503,40 +638,6 @@ If &app; is later downgraded to an earlier version, addresses in an address
 book that contain non-English characters will not be shown correctly.</para>
 	</section>
       </section>
-      <section id="rpmbuild">
-	<title>RPM builds</title>
-
-	<para>
-Use the following procedure to build &app;.</para>
-
-	<para>
-The first step is to create a work area for building RPMs.
-Skip this step
-if an RPM build directory is already configured.</para>
-
-	<programlisting>
-echo "%_topdir    $HOME/rpm" &gt; $HOME/.rpmmacros
-mkdir $HOME/rpm
-cd $HOME/rpm
-mkdir SOURCES SPECS BUILD SRPMS RPMS
-</programlisting>
-
-	<para>
-Finally, download the source code to &app; from
-<ulink url="http://www.courier-mta.org/download.php#cone">http://www.courier-mta.org/download.php#cone</ulink>.
-Do not unpack the tarball.
-Execute <quote><command>rpmbuild -ta
-cone-<replaceable>version</replaceable>.tar.bz2</command></quote>.
-Two binary RPMs will be created: the main binary package contains &app;.
-The <quote>devel</quote> package contains
-the &libname; library
-and development files.
-It is only necessary to install the main package to run &app; the
-<quote>devel</quote> subpackage is only needed for additional development
-with
-&libname;.</para>
-      </section>
-
       <section id="gitrepo">
 	<title>Git repository</title>
 

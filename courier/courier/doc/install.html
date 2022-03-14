@@ -2,36 +2,154 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <meta name="generator" content="Bluefish 2.2.12" />
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta name="author" content="Sam Varshavchik" />
   <title>Installation</title>
   <link rel="icon" href="icon.gif" type="image/gif" />
 </head>
 <body>
-  <!-- Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
   <p>NOTE: a more readable HTML version of this INSTALL document can be found
   in courier/doc/install.html.</p>
   <h1>Installation</h1>
+  <h2>Building rpm and deb packages</h2>
+  <p>These are not the same packages as the ones from various distributions'
+  repositories. These packages carry a higher internal revision level in order
+  to prevent them from getting upgraded by the distribution packaging. These
+  packages exist in order to have a convenient way of updating after a release
+  without waiting for the distribution's package to get built.</p>
+  <p><b>NOTE:</b> If a distribution package is already installed it should be
+  removed completely before switching to the upstream version (<tt>dnf
+  remove</tt> or <tt>apt purge</tt>). Preserve any existing configuration
+  files, beforehand, in order to restore it after switching packages. This
+  applies to all Courier packages. A switch to this courier package requires
+  switching the courier-unicode and courier-authlib packages too.</p>
+  <p><b>NOTE:</b> These packages use their own, generic, installation layout
+  that may deviate slightly from the package installation conventions preferred
+  by the distributions:</p>
+  <ul>
+    <li>
+      <p>The main "courier" package. This installs the main mail server that
+      starts locally but does not listen on the smtp port until the appropriate
+      <tt>esmtpd</tt> configuration files enable the smtp port listener(s).</p>
+    </li>
+    <li>
+      <p>The "courier-maildrop" package. This package installs the
+      <tt>maildrop</tt> mail filter.</p>
+    </li>
+    <li>
+      <p>The "courier-imapd" and "courier-pop3d" packages. Installing them
+      results in the IMAP and the POP3 server getting started and listening on
+      the respective ports, and a self-signed SSL certificate gets
+      automatically generated, for testing purposes, until it gets replaced by
+      your real one.</p>
+    </li>
+    <li>
+      <p>The "courier-webmail" package. This package installs the
+      <tt>sqwebmail</tt> webmail server.</p>
+    </li>
+    <li>
+      <p>The "courier-mlm" package. This package installs the
+      <tt>couriermlm</tt> mailing list manager.</p>
+    </li>
+    <li>
+      <p>The "courier-mlm-web" package. This package installs
+      <tt>couriermlm</tt>'s web-based gateway.</p>
+    </li>
+    <li>
+      <p>The "courier-webadmin" package. This installs the webadmin module, for
+      a basic browser-based configuration module. The "courier-ldap" module
+      installs the LDAP-based alias daemon and the webadmin page for
+      configuring it. The "courier-mysql" and "courier-pgsql" packages install
+      webadmin pages for configuring mysql and postgres-based account
+      authentication. The "courier-fax" package installs webadmin pages and
+      scripts for integrating with the mgetty+sendfax gateway.</p>
+    </li>
+  </ul>
+  <p>The main "courier" package starts all modules, whichever modules are
+  installed. Depending on the distribution installing the main "courier"
+  package may or may not automatically start it. Installing or uninstalling an
+  additional package with a service may or may not result in an appropriate
+  restart.</p>
+  <h3>rpm</h3>
+  <p>Run <code>dnf install rpm-build</code> if it's not installed already,
+  then:</p>
+  <pre>rpmbuild -ta courier-<i>version</i>.tar.bz2</pre>
+  <p>If this fails due to any missing dependencies, install them. This will
+  eventually create source and binary RPM packages. This works for all Courier
+  packages.</p>
+  <h3>Changing the options that the RPMs are built with</h3>
+  <p>Building the RPMs directly from the source tarball uses the default
+  options programmed into the tarball. Sometimes you may want to use different
+  options. For example, you might want to enable fixes for certain bugs in some
+  IMAP clients. Use the following procedure to build the RPMs with different
+  options:</p>
+  <ul>
+    <li>First, build the RPM packages using the default options.</li>
+    <li>In addition to binary RPM packages, <code>rpmbuild</code> will create a
+    source RPM package (<i>filename</i>.src.rpm)</li>
+    <li>Install the source RPM package: <code>rpm -i
+    courier-<i>version</i>.src.rpm</code>.</li>
+    <li>The contents of the source RPM package get installed into your rpm
+    build directory, which is usually
+    <code>$HOME/rpm/<i>package</i></code>.</li>
+    <li>Edit the <i>.spec</i> file, modifying the default configuration. You
+    will need to have some understanding of how RPM spec files work, then use
+    the modified spec file to build your custom package: <code>rpmbuild -ba
+    <i>filename</i>.spec</code></li>
+  </ul>
+  <h2>Building DEB packages</h2>
+  <p>Create an empty directory and copy/move the tarball into it:</p>
+  <pre>
+$ mkdir tmp
+$ mv courier-VERSION.tar.bz2 tmp
+$ cd tmp</pre>
+  <p>Unpack the tarball and cd into the unpacked subdirectory:</p>
+  <pre>
+$ tar xvf courier-VERSION.tar.bz2
+$ cd courier-VERSION</pre>
+  <p>Run the <code>courier-debuild</code> script, which is a wrapper for
+  <code>debuild</code>, and forwards its parameters to it:</p>
+  <pre>$ courier-debuild -us -uc</pre>
+  <p>NOTE: the above steps must be followed strictly. The
+  <tt>courier-debuild</tt> script expects the distributed tarball in its parent
+  directory.</p>
+  <p>This eventually produces a deb subdirectory with .deb packages that can be
+  installed with "dpkg -i".</p>
+  <h2>Maintainer Mode (see README in the git repository to set up)</h2>
+  <p><tt>make rpm</tt> or <tt>make deb</tt>, as appropriate, will:</p>
+  <ol>
+    <li>
+      <p>Increment an internal release number.</p>
+    </li>
+    <li>
+      <p>Run <tt>make dist</tt>.</p>
+    </li>
+    <li>
+      <p>Proceed and build a new release, creating the native packages in the
+      rpm or deb subdirectory.</p>
+    </li>
+  </ol>
+  <h2>Manual installation</h2>
   <blockquote>
     <hr />
     <p><b>NOTE:</b></p>
     <p>This documentation describes manual installation of the <em>Courier</em>
     mail server. This is a somewhat involved process that may overwhelm people
     that do not have prior experience with installing large software packages.
-    Many Linux-based distributions and BSD-family systems have
-    separately-maintained, preconfigured, ready-to-install packages that can be
-    loaded with much less investment of time. Installing a pre-built package
-    would probably be the best approach in this case.</p>
+    Many distributions have a separately-maintained, preconfigured,
+    ready-to-install packages that can be loaded with much less investment of
+    time. Installing a pre-built package would probably be the best approach in
+    this case.</p>
     <p>Should you choose to install a platform-specific prebuilt package, you
     should carefully read any custom documentation files that are included in
     the package. Most platform-specific packages provide custom, non-default
-    configuration settings that are optimized for that platform unique needs
-    and requirements. Feedback about platform-specific precompiled packages
-    should be copied to the development group that maintains the package, in
-    additional to the platform-neutral <code>courier-users</code> mailing list.
-    They will appreciate the feedback, and take it into consideration when
-    preparing the next revision of the platform-specific package.</p>
+    configuration settings that are optimized for that platform's unique
+    policies. Feedback about platform-specific precompiled packages should be
+    copied to the development group that maintains the package, in additional
+    to the platform-neutral <code>courier-users</code> mailing list.</p>
     <hr />
   </blockquote>
   <p>Read this document in its entirety before entering a single command.
@@ -62,8 +180,7 @@
   almost everyone. In every case using at least a couple of non-default
   parameters will make the <em>Courier</em> mail server work better on your
   system. You should anticipate going through several trial-and-error installs,
-  tweaking the options to see what works better for you. Even my own
-  pre-configured RPM package uses a number of non-default parameters.</p>
+  tweaking the options to see what works better for you.</p>
   <p>NOTE: older versions of the <code>linuxconf</code> configuration tool are
   hardwired for sendmail. They like to change the permission of the
   <code>sendmail</code> wrapper to match the permissions they think the real
@@ -365,8 +482,8 @@
   <p>All configuration files are installed in the same directory,
   "<em>sysconfdir</em>". <em>sysconfdir</em> is a configurable parameter, it's
   usually <code>/usr/lib/courier/etc</code>. <em>sysconfdir</em> is
-  <code>/etc/courier</code> in the RPM version of the <em>Courier</em> mail
-  server.</p>
+  <code>/etc/courier</code> in the RPM and the DEB version of the
+  <em>Courier</em> mail server.</p>
   <h4>Back up your existing <em>sysconfdir</em></h4>
   <p>Make a backup copy of your current <em>sysconfdir</em>, then delete the
   old version of the <em>Courier</em> mail server. "<code>rm -rf
@@ -654,8 +771,8 @@
   <code>/usr/lib/courier/man</code> by adding this directory to the MANPATH
   environment variable. You will also need to add
   <code>/usr/lib/courier/bin</code> and <code>/usr/lib/courier/sbin</code> (for
-  the root user only) to the default PATH. The <em>Courier</em> mail server RPM
-  package installs a script that automatically implements that.</p>
+  the root user only) to the default PATH. The <em>Courier</em> mail server's
+  RPM and DEB packages install a script that automatically implements that.</p>
   <p>Note that this installation layout is nothing more than a basic default,
   chosen because this simple arrangement works for everyone. The installation
   layout can be easily changed. For example, binaries can go to
@@ -673,15 +790,15 @@
   means that different packages will install in different places, and even have
   different file ownerships!</p>
   <p>For example, The <em>Courier</em> mail server's source code tarball can be
-  built by RPM version 3.0.3 or higher, into a binary RPM package. The binary
-  RPM package installs configuration files in <code>/etc/courier</code>, the
-  mail queue in <code>/var/spool/courier</code>, and everything else in
-  <code>/usr/lib/courier</code>. If you install my package, and later decide to
-  either create your own package or use someone else's, you will have to make
-  sure to use the same settings, or remove my package completely, before
+  built into a binary RPM package. The binary RPM package installs
+  configuration files in <code>/etc/courier</code>, the mail queue in
+  <code>/var/spool/courier</code>, and everything else in
+  <code>/usr/lib/courier</code>. If you install this package, and later decide
+  to either create your own package or use someone else's, you will have to
+  make sure to use the same settings, or remove this package completely, before
   installing your new package. I mean it when I say "remove my package
   completely". That includes the mail queue containing any unsent messages. The
-  <em>Courier</em> mail server will not function if you reinstall it using a
+  <em>Courier</em> mail server will not function if it's reinstalled using a
   different user/group ID, or if you use a different value for any other
   option.</p>
   <ul>
@@ -697,17 +814,17 @@
   installed before installing the <em>Courier</em> mail server. Download the
   Socks 5 proxy client library from <a target="_blank" href=
   "http://www.courier-mta.org/download.html#sox">http://www.courier-mta.org/download.html#sox</a>
-  and follow its installation instructions. Binary RPMs can be built from the
+  and follow its installation instructions. RPMs and DEBs can be built from the
   source code tarball by following the procedure outlined in <a target="_blank"
   href=
-  "http://www.courier-mta.org/FAQ.html#rpm">http://www.courier-mta.org/FAQ.html#rpm</a>
+  "http://www.courier-mta.org/FAQ.html#rpmdeb">http://www.courier-mta.org/FAQ.html#rpmdeb</a>
   using the "courier-sox-<em>version</em>" tarball, and installing the
   "courier-sox" and "courier-sox-devel" binary RPMs afterwards.</p>
   <blockquote>
     <p><b>NOTE:</b> Be sure to read the <code>README</code>, <code>NEWS</code>,
     and <code>INSTALL</code> files in the <em>Courier</em> mail server Socks 5
     library toolkit, before attempting to install it for the first time (unless
-    using the RPM build method).</p>
+    using the RPM or DEB build method).</p>
   </blockquote>
   <p>Socks proxying must be implemented in relatively low-level manner, and may
   not work on all operating systems. This is why it is packaged separately, in
@@ -1337,23 +1454,25 @@ esmtp auth    required        pam_unix.so      try_first_pass
 esmtp account required        pam_unix.so
 esmtp session required        pam_permit.so
 </pre>
-  <h3>Building RPM packages</h3>
-  <p>NOTE: If you build an RPM package directly from the source tarball, the
-  resulting RPMs may not install if you have an existing IMAP or an existing
-  POP3 server installed. The RPM packages will contain these PAM configuration
-  files, and they will conflict with any PAM configuration files installed by
-  another IMAP or POP3 server. If you manually installed an IMAP or a POP3
-  server without packaging them up into an RPM, the <em>Courier</em> mail
-  server RPM package will install and the old configuration files will be
-  silently removed, since they were not installed using RPM.</p>
+  <h3>Building RPM and DEB packages</h3>
+  <p>NOTE: If an RPM or a DEB package gets built as per <a target="_blank"
+  href="http://www.courier-mta.org/FAQ.html#rpmdeb">http://www.courier-mta.org/FAQ.html#rpmdeb</a>
+  resulting packages may not install if you have an existing IMAP or an
+  existing POP3 server installed. The RPM packages will contain these PAM
+  configuration files, and they will conflict with any PAM configuration files
+  installed by another IMAP or POP3 server. If you manually installed an IMAP
+  or a POP3 server without creating a distribution package, the
+  <em>Courier</em> mail server package will install and the old configuration
+  files will get silently removed, since they were not installed using
+  <code>rpm</code> or <code>dpkg</code>.</p>
   <p>The <em>Courier</em> mail server includes integrated POP3, IMAP, and
   webmail servers, however they only work with maildirs. Decide if you want to
   keep using your current server, or switch to the <em>Courier</em> mail
   server's IMAP/POP3/webmail servers. If you want to keep your existing
   servers, back up the contents of your <code>/etc/pam.d</code> directory
-  before installing the RPM, install it, then restore the overwritten files. If
-  you want to switch to the <em>Courier</em> mail server, blow away your
-  current server before running <code>make install</code>.</p>
+  before installing the RPM or the DEB package, install it, then restore the
+  overwritten files. If you want to switch to the <em>Courier</em> mail server,
+  blow away your current server before running <code>make install</code>.</p>
   <h2><a name="suid" id="suid">Adjust system paranoia level</a></h2>
   <p>There are four setuid binaries in the <em>Courier</em> mail server that
   are owned by root: <code>sendmail</code>, <code>maildrop</code>,
@@ -2851,19 +2970,6 @@ Subject: C=US,ST=New York,L=New York,O=Acme Widgets Inc,CN=John Smith,emailAddre
   <p>Note that the webmail server is used to access mail in existing accounts
   only. There is no provision to create accounts through the webmail interface
   (nor there should be).</p>
-  <p>Your web server also needs to be configured to use HTTP/1.0 when talking
-  to any MSIE browser. The MSIE browser has a number of bugs in its HTTP/1.1
-  implementation, at least as of MSIE 4.x and 5.x. You must configure your web
-  server to use HTTP/1.0 when talking to any MSIE browser (at least until MSIE
-  gets fixed). The problem has to do with downloading attachments. Apparently,
-  MSIE forgets how MIME works, when it uses HTTP/1.1. For the Apache server,
-  insert the following directive in httpd.conf:</p>
-  <pre>
-BrowserMatch "MSIE" nokeepalive downgrade-1.0 force-response-1.0
-</pre>
-  <p>Recent versions of Apache already have a similar directive for a specific
-  version of MSIE, MSIE 4.0b2. Just replace it with a browsermatch for any MSIE
-  version.</p>
   <h3>SELinux</h3>
   <p>The following extension may be necessary to make webmail work when SELinux
   kernel extensions are turned on:</p>
@@ -3677,8 +3783,8 @@ makeuserdb
   mail server at system boot time (and shut it down at system shutdown). If
   your system uses system-V init scripts, here's a sample script that you can
   install in your <code>/etc/rc?.d</code>directories. This is a slightly
-  modified version of the init script that's used in my RPM package
-  (<code>courier.sysvinit</code> file in the source code tarball).</p>
+  modified version of the init script that's used in the Courier RPM or DEB
+  package (<code>courier.sysvinit</code> file in the source code tarball).</p>
   <p><strong>NOTE:</strong> the following script may take a long time to
   finish, the very first time it runs. That's because the script automatically
   creates test SSL certificates the first time the script runs (provided that

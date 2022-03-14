@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta name="generator" content="Bluefish 2.2.10" />
+  <meta name="generator" content="Bluefish 2.2.12" />
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>Installing maildrop</title>
   <meta name="MSSmartTagsPreventParsing" content="TRUE" />
@@ -28,15 +28,16 @@
     xBSD already has a gmake port, install it and use it (use gmake everywhere
     this document refers to make).</li>
     <li>GDBM/DB - optional.</li>
-    <li>The PCRE2 library (<a href="http://www.pcre.org">http:/www.pcre.org</a>)
-    is required.</li>
+    <li>The PCRE2 library (<a href=
+    "http://www.pcre.org">http:/www.pcre.org</a>) is required.</li>
     <li>The Courier Unicode Library (<a href=
     "http://www.courier-mta.org/unicode">http://www.courier-mta.org/unicode</a>)
     must be installed first.</li>
     <li>The <a href="http://www.gnu.org/software/libidn/">GNU IDN</a>) library
     is required.</li>
-    <li>Courier Authentication Library - optional, for LDAP, MySQL, or
-    PostgreSQL support.
+    <li>
+      <p>Courier Authentication Library - optional, for LDAP, MySQL, or
+      PostgreSQL support.</p>
       <p>If the <code>configure</code> script detects that the Courier
       Authentication Library is installed, support for courier-authlib gets
       automatically compiled. Use the <code>--disable-authlib</code> option to
@@ -95,10 +96,72 @@
       </blockquote>
     </li>
   </ul>
-  <h1>Installing maildrop</h1>The typical sequence of commands to install
-  <i>maildrop</i> is as follows. You will likely need to use the GNU version of
-  make. Other makes may not work. See below for definition of various options
-  to the <code>configure</code> script:
+  <h1>Installing maildrop</h1>
+  <h2>rpm and deb packages</h2>
+  <p>These are not the same packages as the ones from various distributions'
+  repositories. These packages carry a higher internal revision level in order
+  to prevent them from getting upgraded by the distribution packaging, and
+  their installation layout may differ from the distributions' preferred
+  package installation layout. This packaging exists in order to have a
+  convenient way of updating after a release without waiting for the
+  distribution's package to get built, and to have a better correspondence with
+  the documentation.</p>
+  <p><b>NOTE:</b> If a distribution package is already installed it should be
+  removed completely before switching to the upstream version (<span class=
+  "c1">dnf remove</span> or <span class="c1">apt purge</span>). Preserve any
+  existing configuration files, beforehand, in order to restore it after
+  switching packages. This applies to all Courier packages. A switch to this
+  maildrop package requires switching the courier-unicode package (and
+  possibility courier-authlib package) too.</p>
+  <p><b>NOTE:</b> These packages use their own, generic, installation layout
+  that may deviate slightly from the package installation conventions preferred
+  by the distributions.</p>
+  <h2>rpm</h2>
+  <p>Run <code>dnf install rpm-build</code> if it's not installed already,
+  then:</p>
+  <pre>rpmbuild -ta maildrop-VERSION.tar.bz2</pre>
+  <p>If this fails due to any missing dependencies, install them.</p>
+  <h2>deb</h2>
+  <p>Run "apt install devscripts debhelper", if they're not installed already.
+  Create an empty directory and copy/move the tarball into it:</p>
+  <pre>
+$ mkdir tmp
+$ mv maildrop-VERSION.tar.bz2 tmp
+$ cd tmp</pre>
+  <p>Unpack the tarball and cd into the unpacked subdirectory:</p>
+  <pre>
+$ tar xvf maildrop-VERSION.tar.bz2
+$ cd maildrop-VERSION</pre>
+  <p>Run the <code>courier-debuild</code> script, this is a wrapper for
+  <code>debuild</code>, and it forwards its parameters to it:</p>
+  <pre>$ ./courier-debuild -us -uc</pre>
+  <p>NOTE: the above steps must be followed strictly. The
+  <tt>courier-debuild</tt> script expects the distributed tarball in its parent
+  directory.</p>
+  <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
+  <p>Setting the <code>DEBGCC</code> environment variable selects a non-default
+  gcc version.</p>
+  <p>NOTE: all Courier packages should be built using the same version of
+  gcc.</p>
+  <h2>Maintainer Mode (see README in the git repository to set up)</h2>
+  <p><tt>make rpm</tt> or <tt>make deb</tt>, as appropriate, will:</p>
+  <ol>
+    <li>
+      <p>Increment an internal release number.</p>
+    </li>
+    <li>
+      <p>Run <tt>make dist</tt>.</p>
+    </li>
+    <li>
+      <p>Proceed and build a new release, creating the native packages in the
+      rpm or deb subdirectory.</p>
+    </li>
+  </ol>
+  <h2>Manual installation</h2>
+  <p>The typical sequence of commands to install <i>maildrop</i> is as follows.
+  You will likely need to use the GNU version of make. Other makes may not
+  work. See below for definition of various options to the
+  <code>configure</code> script:</p>
   <pre>
 <code>   ./configure [options]
    make
@@ -566,9 +629,8 @@ also be used to override compiler flags that <code>configure</code> selects.
   automatically append the user's name.
   <p>If it doesn't begin with a slash, <i>maildrop</i> will prepend the user's
   home directory to <code>DEFAULT_DEF</code>. To use <i>maildrop</i> with
-  qmail, which normally delivers to
-  <code>$HOME/Mailbox</code>, set <code>DEFAULT_DEF</code> to
-  <b><code>./Mailbox</code></b>.</p>
+  qmail, which normally delivers to <code>$HOME/Mailbox</code>, set
+  <code>DEFAULT_DEF</code> to <b><code>./Mailbox</code></b>.</p>
   <p>The '=' character in DEFAULT_DEF gets replaced by progressive characters
   from the user name of the user whose mail is being delivered. For example, if
   mail to the user name "john" is delivered to <code>/var/mail/j/jo/john</code>

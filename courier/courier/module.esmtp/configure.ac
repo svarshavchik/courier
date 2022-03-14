@@ -332,6 +332,11 @@ then
 	fi
 fi
 
+if test -f /etc/pam.d/common-auth
+then
+	cp -f $srcdir/../../libs/imap/common.authpam esmtp.authpam
+fi
+
 . ../../libs/rootcerts/rootcertsdir.cnf
 AC_SUBST(cacerts)
 

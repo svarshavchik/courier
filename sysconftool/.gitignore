@@ -1,5 +1,4 @@
 /libs
-/INSTALL
 /install-sh
 /missing
 /sysconftool
@@ -7,6 +6,7 @@
 /sysconftool.1.in
 /sysconftool.1.html
 /sysconftool.1.html.in
+/sysconftool.1.stamp
 /sysconftool.7
 /sysconftool.7.in
 /sysconftool.7.html
@@ -19,3 +19,4 @@
 /sysconftoolcheck.1.html
 /sysconftoolcheck.1.html.in
 /sysconftoolize.pl
+/sysconftoolize.1

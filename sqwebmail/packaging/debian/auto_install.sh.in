@@ -1,0 +1,197 @@
+#! @SHELL@
+
+set -ex
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+sbindir=@sbindir@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@
+libexecdir=@libexecdir@
+sysconfdir=@sysconfdir@
+
+scriptdir="$datadir/sqwebmail"
+htmldir="$datadir/sqwebmail/html"
+
+if test -z "$cgibindir" \
+	-o -z "$imagedir" \
+	-o -z "$imageurl" \
+	-o -z "$cachedir" \
+	-o -z "$calendardir" \
+	-o -z "$cacheowner"
+then
+    echo "Run me from rules file."
+    exit 1
+fi
+
+mkdir -p debian/tmp/etc/pam.d
+cp libs/sqwebmail/webmail.authpam debian/tmp/etc/pam.d/webmail
+cp libs/sqwebmail/webmail.authpam debian/tmp/etc/pam.d/calendar
+
+dh_install debian/tmp/etc/pam.d/* etc/pam.d
+
+mkdir -p debian/tmp/etc/cron.hourly
+cat >debian/tmp/etc/cron.hourly/sqwebmail-cron-cleancache <<EOF
+#! /bin/sh
+
+su - $cacheowner -s /bin/sh -c $scriptdir/cleancache.pl
+EOF
+chmod +x debian/tmp/etc/cron.hourly/sqwebmail-cron-cleancache
+
+dh_install debian/tmp/etc/cron.hourly/* etc/cron.hourly
+
+mkdir -p debian/tmp/lib/systemd/system
+cat >debian/tmp/lib/systemd/system/sqwebmail.service <<EOF
+[Unit]
+Description=SqWebMail
+Wants=network.target
+Wants=libcourier-auth.service
+After=network.target
+After=libcourier-auth.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=forking
+RemainAfterExit=true
+ExecStart=$libexecdir/sqwebmaild.rc start
+ExecStop=$libexecdir/sqwebmaild.rc stop
+EOF
+
+dh_install debian/tmp/lib/systemd/system/sqwebmail.service
+
+mkdir -p debian/tmp$scriptdir
+cp sysconftool debian/tmp$scriptdir
+cp libs/pcp/README.html pcp_README.html
+
+. libs/pcp/uids
+
+mkdir -p debian/sqwebmail$calendardir
+cp -pr debian/tmp$calendardir/. debian/sqwebmail$calendardir
+dh_install debian/tmp$libexecdir
+dh_install debian/tmp$sbindir
+dh_install debian/tmp$cachedir
+
+for f in `ls debian/tmp/$scriptdir`
+do
+    case $f in
+	ldapsearch)
+	    :
+	    ;;
+	*)
+	    dh_install debian/tmp$scriptdir/$f $scriptdir
+	    ;;
+    esac
+done
+
+dh_install debian/tmp$cgibindir/*
+dh_install debian/tmp$imagedir
+dh_install debian/tmp$sysconfdir/*.dist $sysconfdir
+
+dh_installdocs AUTHORS libs/sqwebmail/BUGS COPYING INSTALL NEWS README libs/sqwebmail/SECURITY libs/sqwebmail/TODO libs/gpglib/README.html
+dh_installdocs libs/sqwebmail/BUGS.html INSTALL.html NEWS README.html libs/sqwebmail/SECURITY.html libs/sqwebmail/TODO.html libs/sqwebmail/ChangeLog pcp_README.html
+dh_installdocs libs/maildir/README*.html
+
+dh_install --package sqwebmail-ldap $scriptdir/ldapsearch
+
+mkdir -p debian/tmp/etc/apache2/conf-available
+cat >debian/tmp/etc/apache2/conf-available/sqwebmail.conf <<EOF
+<IfModule mod_alias.c>
+  <IfModule mod_cgi.c>
+    Define ENABLE_SQWEBMAIL
+  </IfModule>
+
+  <IfModule mod_cgid.c>
+    Define ENABLE_SQWEBMAIL
+  </IfModule>
+
+  <IfDefine ENABLE_SQWEBMAIL>
+    Alias /sqwebmail $cgibindir/sqwebmail
+    Alias $imageurl $imagedir
+
+    <Directory $cgibindir>
+      SetHandler cgi-script
+      Options +ExecCGI
+
+      <Files "sqwebmail">
+        Require all granted
+      </Files>
+    </Directory>
+
+    <Directory $imagedir>
+      Require all granted
+    </Directory>
+  </IfDefine>
+</IfModule>
+EOF
+
+dh_install debian/tmp/etc/apache2/conf-available/sqwebmail.conf
+
+cat >debian/sqwebmail.postinst <<EOF
+#! @SHELL@
+set -e
+
+$scriptdir/sysconftool $sysconfdir/ldapaddressbook.dist
+$scriptdir/sysconftool $sysconfdir/sqwebmaild.dist
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/sqwebmail.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "remove"
+then
+	a2disconf -q sqwebmail
+	systemctl reload apache2
+fi
+
+EOF
+
+cat >debian/sqwebmail.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	. $sysconfdir/sqwebmaild
+	rm -rf $sysconfdir/*
+	rm -f $calendardir/50pcpdlocal*
+	rm -rf $calendardir/localcache/*
+	rm -rf $calendardir/private/*
+	rm -rf $calendardir/public/*
+	rm -rf $cachedir/*
+	rm -f \${PIDFILE}
+	rm -f \${PIDFILE}.lock
+	rm -f \${PIDFILE}.pcp
+	rm -f \${PIDFILE}.pcp.lock
+fi
+EOF
+
+cat >README.Debian <<EOF
+To enable SqWebmail after installing this package:
+
+a2enmod alias
+a2enmod cgi
+a2enconf sqwebmail
+systemctl reload apache
+
+Then access it as http(s)://host/sqwebmail
+
+Enabling the sqwebmail apache2 configuration module redirects the URLs
+/sqwebmail and /sqwebmail-images to the SqWebmail module.
+EOF
+
+dh_installdocs README.Debian

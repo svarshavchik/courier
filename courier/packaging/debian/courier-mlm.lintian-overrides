@@ -1,0 +1,4 @@
+#
+# Package installs specific permissions for every file and directory
+#
+non-standard-executable-perm usr/lib/courier/bin/couriermlm*

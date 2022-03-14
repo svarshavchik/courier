@@ -1,0 +1,52 @@
+#! /bin/bash
+#
+# Wrapper script for running debuild to build this package.
+#
+# export DEBGCC=10
+#
+# Set DEBGCC to use a non-default version of gcc
+
+set -e
+shopt -s extglob
+
+f=`cd .. && ls @PACKAGE@-@VERSION@.tar* | sed -n 1p`
+
+rm -rf deb
+mkdir deb
+cp ../$f deb/`echo $f | sed 's/@PACKAGE@-/@PACKAGE@_/;s/.tar./.orig.tar./'`
+cd deb
+tar xf *
+cd @PACKAGE@-@VERSION@
+cp -pr packaging/debian .
+
+if test "$DEBGCC" = ""
+then
+	DEBGCC=`readlink /usr/bin/gcc | sed 's/gcc-//'`
+
+	case "$DEBGCC" in
+	[1-9]*([0-9]))
+		      ;;
+	*)
+	    echo "Cannot determine gcc version"
+	    exit 1
+	    ;;
+	esac
+fi
+
+DEBGCC="-$DEBGCC"
+
+for f in debian/rules debian/control debian/auto_install.sh.in
+do
+	sed "
+s/%SOVERSION%/@SOVERSION@/g
+s~%DEBGCC%~$DEBGCC~g
+" <packaging/$f >$f.tmp
+mv $f.tmp $f
+done
+
+chmod +x debian/rules
+
+debuild "$@"
+cd ..
+rm -rf @PACKAGE@-@VERSION@
+echo "Built packages in the deb subdirectory."

@@ -3,10 +3,10 @@ dnl
 dnl Copyright 2000 - 2021 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(sysconftool, 0.18, [courier-users@lists.sourceforge.net])
+AC_INIT(sysconftool, 0.18.20220416, [courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(sysconftool.in)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(foreign)
 
 dnl Checks for programs.
 AC_PROG_INSTALL
@@ -40,6 +40,14 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
-AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/docbook)
+AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/libs/docbook)
 
-AC_OUTPUT(Makefile sysconftool sysconftoolcheck sysconftool.spec sysconftool.m4 sysconftoolize.pl)
+AC_OUTPUT(
+		Makefile
+		sysconftool
+		sysconftoolcheck
+		sysconftool.spec
+		sysconftool.m4
+		sysconftoolize.pl
+		courier-debuild
+)

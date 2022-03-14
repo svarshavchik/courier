@@ -98,7 +98,6 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir_p} $RPM_BUILD_ROOT%{_datadir}
 %{__mkdir_p} $RPM_BUILD_ROOT/lib/systemd/system
 
-%{__cp} courier-sox.sysvinit $RPM_BUILD_ROOT%{_datadir}
 %{__cp} courier-sox.service $RPM_BUILD_ROOT/lib/systemd/system
 %else
 %{__mkdir_p} $RPM_BUILD_ROOT%{initdir}
@@ -202,7 +201,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/sockd
 %attr(644,root,root) %ghost %verify(not size mtime md5) %{_localstatedir}/run/sockd.pid
 %if %using_systemd
-%{_datadir}/courier-sox.sysvinit
 /lib/systemd/system/*
 %else
 %attr(555,root,root) %{initdir}/*

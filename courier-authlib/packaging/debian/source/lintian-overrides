@@ -1,0 +1,4 @@
+#
+# The file permissions are specified by the package's install script
+#
+override_dh_fixperms-does-not-call-dh_fixperms

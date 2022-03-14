@@ -140,50 +140,6 @@ su - %{cacheowner} -s /bin/sh -c %{scriptdir}/cleancache.pl
 EOF
 
 #
-# Red Hat /etc/profile.d scripts
-#
-
-%{__mkdir} -p $RPM_BUILD_ROOT/etc/profile.d
-%{__cat} >$RPM_BUILD_ROOT/etc/profile.d/sqwebmail.sh <<EOF
-if echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
-then
-	:
-else
-	MANPATH="%{_mandir}:\$MANPATH"
-	export MANPATH
-
-	if test -w /etc
-	then
-		PATH="%{_sbindir}:\$PATH"
-	fi
-	export PATH
-fi
-EOF
-
-%{__cat} >$RPM_BUILD_ROOT/etc/profile.d/sqwebmail.csh <<EOF
-
-if ( \$?MANPATH ) then
-	true
-else
-	setenv MANPATH ""
-endif
-
-echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
-
-if ( \$? ) then
-	true
-else
-	setenv MANPATH "%{_mandir}:\$MANPATH"
-	test -w /etc
-	if ( \$? ) then
-		true
-        else
-		setenv PATH "%{_sbindir}:\$PATH"
-	endif
-endif
-EOF
-
-#
 # Red Hat init.d file
 #
 
@@ -194,10 +150,8 @@ EOF
 Description=SqWebMail
 Wants=network.target
 Wants=courier-authlib.service
-Wants=mail-transfer-agent.target
 After=network.target
 After=courier-authlib.service
-After=mail-transfer-agent.target
 
 [Install]
 WantedBy=multi-user.target
@@ -268,7 +222,6 @@ test -d %{htmldir}/en || %{__rm} -f %{htmldir}/en
 %{_sysconfdir}/*.dist
 
 %{_sbindir}
-%{_mandir}
 
 %attr(644, root, root) /lib/systemd/system/*
 
@@ -276,8 +229,6 @@ test -d %{htmldir}/en || %{__rm} -f %{htmldir}/en
 %attr(644, root, root) %config(noreplace) /etc/pam.d/*
 
 %attr(755, bin, bin) /etc/cron.hourly/sqwebmail-cron-cleancache
-%attr(755, bin, bin) /etc/profile.d/sqwebmail.sh
-%attr(755, bin, bin) /etc/profile.d/sqwebmail.csh
 
 %attr(-, bin, bin) %doc AUTHORS libs/sqwebmail/BUGS COPYING INSTALL NEWS README libs/sqwebmail/SECURITY libs/sqwebmail/TODO libs/gpglib/README.html
 %attr(-, bin, bin) %doc libs/sqwebmail/BUGS.html INSTALL.html NEWS README.html libs/sqwebmail/SECURITY.html libs/sqwebmail/TODO.html libs/sqwebmail/ChangeLog pcp_README.html

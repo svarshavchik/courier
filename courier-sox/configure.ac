@@ -1,12 +1,12 @@
 #
-# Copyright 2004-2021 Double Precision, Inc.
+# Copyright 2004-2022 Double Precision, Inc.
 # See COPYING for distribution information.
 #
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.63)
-AC_INIT([courier-sox],[0.15.20210522],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.15.20220416],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AC_CONFIG_HEADERS([courier_socks_config.h])
@@ -65,6 +65,25 @@ COURIERAUTHINCLUDE="`$COURIERAUTHCONFIG --cppflags`"
 COURIERAUTHLINK="`$COURIERAUTHCONFIG --ldflags`"
 AC_SUBST(COURIERAUTHINCLUDE)
 AC_SUBST(COURIERAUTHLINK)
+
+
+LIBVERSION_CURRENT=0
+LIBVERSION_RELEASE=0
+LIBVERSION_AGE=0
+
+LIBVERSION_INFO=$LIBVERSION_CURRENT:$LIBVERSION_RELEASE:$LIBVERSION_AGE
+AC_SUBST(LIBVERSION_CURRENT)
+AC_SUBST(LIBVERSION_RELEASE)
+AC_SUBST(LIBVERSION_AGE)
+AC_SUBST(LIBVERSION_INFO)
+
+SOVERSION=0
+if test "$LIBVERSION_CURRENT" -ne "$LIBVERSION_AGE"
+then
+	SOVERSION=`expr $LIBVERSION_CURRENT - $LIBVERSION_AGE`
+fi
+
+AC_SUBST(SOVERSION)
 
 # Checks for libraries.
 saveLIBS="$LIBS"
@@ -373,5 +392,14 @@ AC_SUBST(REPOSITORY)
 AC_ARG_WITH(socks, [], [ : ], [ac_configure_args="$ac_configure_args --without-socks"])
 
 AC_CONFIG_SUBDIRS(libs/soxwrap)
-AC_CONFIG_FILES(Makefile testcidr.sh courier-sox.spec courier-sox.lpspec courier-sox.sysvinit courier-sox.service socks.h system sockd.rc mkbl4)
+AC_CONFIG_FILES(Makefile
+	testcidr.sh
+	courier-debuild
+	courier-sox.spec
+	courier-sox.sysvinit
+	courier-sox.service
+	socks.h
+	system
+	sockd.rc
+	mkbl4)
 AC_OUTPUT

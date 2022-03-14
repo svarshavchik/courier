@@ -1,0 +1,15 @@
+Index: libcourier-auth-0.71.4/authinfo.c
+===================================================================
+--- libcourier-auth-0.71.4.orig/authinfo.c
++++ libcourier-auth-0.71.4/authinfo.c
+@@ -105,8 +105,10 @@ int main(int argc, char **argv)
+ 			       
+ 		if (strcmp(argv[n], "--ldflags") == 0)
+ 		{
++		  /*
+ 			printf("-L%s\n",
+ 			       PKGLIBDIR);
++		  */
+ 		}
+ 		if (strcmp(argv[n], "--cppflags") == 0)
+ 		{

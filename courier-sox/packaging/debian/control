@@ -1,0 +1,64 @@
+Source: courier-sox
+Section: contrib/admin
+Priority: optional
+Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
+Build-Depends:
+	perl:any,
+	debhelper-compat (= 12),
+	gcc%DEBGCC%,
+	g++%DEBGCC%,
+	libcourier-auth-dev,
+	libcourier-unicode-dev,
+	libgdbm-dev,
+	libltdl-dev
+Standards-Version: 4.4.1
+Homepage: https://www.courier-mta.org/sox/
+
+Package: libcourier-sox
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 expect,
+	 systemd,
+	 libcourier-sox%SOVERSION% (= ${binary:Version})
+Description: Courier Socks 5 client library.
+ This package installs a Socks 5 client support library that allows applications
+ to establish network connections through a Socks 5 proxy running on a firewall.
+
+Package: libcourier-sox%SOVERSION%
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Courier authentication library (client library)
+ This package contains shared libraries used by authentication clients.
+
+Package: libcourier-sox-dev
+Section: contrib/libdevel
+Architecture: any
+Depends: libcourier-sox (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Socks 5 client development files
+ This package installs a Socks 5 client support library that allows applications
+ to establish network connections through a Socks 5 proxy running on a firewall.
+
+Package: libcourier-sox-server
+Architecture: any
+Depends: libcourier-sox (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Socks 5 server
+ This package contains the Courier Socks 5 server.
+ Install this package if you want to run a Socks 5 server.
+
+Package: libcourier-sox-utils
+Architecture: any
+Depends: libcourier-sox (= ${binary:Version}),
+	 libnet-cidr-perl,
+	 ${shlibs:Depends},
+	 ${misc:Depends}
+Description: Socks 5 server utilities
+ This package installs a utility script that creates blacklisted IPv4
+ addresses.
+ .
+ The Courier Socks 5 server can optionally block connections to addresses
+ listed in a blacklist.
+ .
+ This package installs a script that converts a text file in the common
+ IPv4 blacklist format to a fast binary database format that the
+ Courier Socks 5 server uses to vet connection attempts.

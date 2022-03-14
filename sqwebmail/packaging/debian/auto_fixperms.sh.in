@@ -1,0 +1,40 @@
+#! @SHELL@
+
+set -ex
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+sbindir=@sbindir@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@
+libexecdir=@libexecdir@
+sysconfdir=@sysconfdir@
+
+scriptdir="$datadir/sqwebmail"
+htmldir="$datadir/sqwebmail/html"
+
+if test -z "$cgibindir" \
+	-o -z "$imagedir" \
+	-o -z "$imageurl" \
+	-o -z "$cachedir" \
+	-o -z "$calendardir" \
+	-o -z "$cacheowner"
+then
+    echo "Run me from rules file."
+    exit 1
+fi
+
+. libs/pcp/uids
+chown -R $localcacheowner:$mailgroup debian/sqwebmail$calendardir
+chmod 700 debian/sqwebmail$calendardir/localcache
+chmod 750 debian/sqwebmail$calendardir/private
+
+courierauthconfig --configfiles >configtmp
+. ./configtmp
+chown -R $cacheowner:bin debian/sqwebmail$cachedir
+chmod 700 debian/sqwebmail$cachedir
+chown -R $mailuser:$mailgroup debian/sqwebmail$libexecdir
+chmod g+s debian/sqwebmail$libexecdir/sqwebmail/sqwebpasswd

@@ -1,0 +1,12 @@
+#
+# Automatically disable courier-webmail when removing this package
+#
+apache2-reverse-dependency-calls-wrapper-script prerm a2disconf
+#
+# Automatically reload apache when removing this package
+#
+maintainer-script-calls-systemctl prerm:17
+#
+# Package installs specific permissions for every file and directory
+#
+executable-is-not-world-readable usr/lib/courier/libexec/cgi-bin/webadmin*

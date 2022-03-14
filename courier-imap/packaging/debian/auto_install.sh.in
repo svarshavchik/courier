@@ -1,0 +1,194 @@
+#! @SHELL@
+
+set -ex
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+sbindir=@sbindir@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@
+libexecdir=@libexecdir@
+sysconfdir=@sysconfdir@
+localstatedir=@localstatedir@
+mandir=@mandir@
+
+DESTDIR=debian/courier-imap
+
+>debian/fixperms.sh
+
+dh_installdirs /etc/pam.d
+cp libs/imap/imapd.pam $DESTDIR/etc/pam.d/imap
+cp libs/imap/pop3d.pam $DESTDIR/etc/pam.d/pop3
+
+dh_installdirs /etc/profile.d
+dh_installdirs $datadir
+dh_installdirs /lib/systemd/system
+
+dh_install packaging/systemd/courier-imap.sysvinit $datadir
+echo "chmod 555 $DESTDIR$datadir/courier-imap.sysvinit" >>debian/fixperms.sh
+dh_install packaging/systemd/courier-imap.service /lib/systemd/system
+
+@PERL@ -p -i -e 's/courier-authlib/libcourier-auth/;$_="" if /mail-transfer-agent.target/' $DESTDIR/lib/systemd/system/courier-imap.service
+
+cat >$DESTDIR$datadir/dhparams.pem.dist <<EOF
+This file contains default DH parameters for initial use on a new
+installation. The startup script copies this file to dhparams.pem,
+unless it already exists.
+EOF
+
+TLS_DHPARAMS=$DESTDIR$datadir/dhparams.pem.dist.tmp @SHELL@ libs/imap/mkdhparams
+cat $DESTDIR$datadir/dhparams.pem.dist.tmp >>$DESTDIR$datadir/dhparams.pem.dist
+rm -f $DESTDIR$datadir/dhparams.pem.dist.tmp
+
+mkdir -p $DESTDIR/etc/cron.monthly
+ln -s $sbindir/mkdhparams $DESTDIR/etc/cron.monthly/courier-imap-mkdhparams
+#
+# Fix imapd.dist
+#
+
+sed 's/^IMAPDSTART=.*/IMAPDSTART=YES/' \
+	<$DESTDIR$sysconfdir/imapd.dist \
+	>$DESTDIR$sysconfdir/imapd.dist.tmp
+
+mv $DESTDIR$sysconfdir/imapd.dist.tmp \
+	$DESTDIR$sysconfdir/imapd.dist
+
+sed 's/^IMAPDSSLSTART=.*/IMAPDSSLSTART=YES/' \
+	<$DESTDIR$sysconfdir/imapd-ssl.dist \
+	>$DESTDIR$sysconfdir/imapd-ssl.dist.tmp
+
+mv $DESTDIR$sysconfdir/imapd-ssl.dist.tmp \
+	$DESTDIR$sysconfdir/imapd-ssl.dist
+
+echo chmod 600 $DESTDIR$sysconfdir/imapd.dist >>debian/fixperms.sh
+echo chmod 600 $DESTDIR$sysconfdir/imapd-ssl.dist >>debian/fixperms.sh
+
+sed 's/^POP3DSTART=.*/POP3DSTART=YES/' \
+	<$DESTDIR$sysconfdir/pop3d.dist \
+	>$DESTDIR$sysconfdir/pop3d.dist.tmp
+
+mv $DESTDIR$sysconfdir/pop3d.dist.tmp \
+	$DESTDIR$sysconfdir/pop3d.dist
+
+sed 's/^POP3DSSLSTART=.*/POP3DSSLSTART=YES/' \
+	<$DESTDIR$sysconfdir/pop3d-ssl.dist \
+	>$DESTDIR$sysconfdir/pop3d-ssl.dist.tmp
+
+mv $DESTDIR$sysconfdir/pop3d-ssl.dist.tmp \
+	$DESTDIR$sysconfdir/pop3d-ssl.dist
+
+echo chmod 600 $DESTDIR$sysconfdir/pop3d.dist >>debian/fixperms.sh
+echo chmod 600 $DESTDIR$sysconfdir/pop3d-ssl.dist >>debian/fixperms.sh
+
+mkdir -p $DESTDIR/etc/profile.d
+cat >$DESTDIR/etc/profile.d/courier-imap.sh <<EOF
+if echo "\$MANPATH" | tr ':' '\012' | fgrep -qx $mandir
+then
+	:
+else
+	MANPATH="$mandir:\$MANPATH"
+	MANPATH="\`echo \$MANPATH | sed 's/:\$//'\`"
+	export MANPATH
+	PATH="$bindir:\$PATH"
+	if test -w /etc
+	then
+		PATH="$sbindir:\$PATH"
+	fi
+	export PATH
+fi
+EOF
+
+cat >$DESTDIR/etc/profile.d/courier-imap.csh <<EOF
+
+if ( \$?MANPATH ) then
+	true
+else
+	setenv MANPATH ""
+endif
+
+echo "\$MANPATH" | tr ':' '\012' | fgrep -qx $mandir
+
+if ( \$? ) then
+	setenv MANPATH "$mandir:\$MANPATH"
+	setenv PATH "$bindir:\$PATH"
+	test -w /etc
+	if ( \$? ) then
+		true
+	else
+		setenv PATH "$sbindir:\$PATH"
+	endif
+
+	setenv MANPATH \`echo \$MANPATH | sed 's/:\$//'\`
+	setenv PATH    \`echo \$PATH | sed 's/:\$//'\`
+endif
+EOF
+
+cp libs/imap/README.proxy* .
+cp libs/maildir/README.maildirquota.txt README.maildirquota
+cp libs/maildir/README.sharedfolders.txt README.sharedfolders
+
+####
+## Create config files for sysconftool-rpmupgrade (see below)
+
+cp -f sysconftool $DESTDIR$datadir/sysconftool
+echo chmod 555 $DESTDIR$datadir/sysconftool >>debian/fixperms.sh
+cat >$DESTDIR$datadir/configlist <<EOF
+$sysconfdir/imapd.dist
+$sysconfdir/imapd-ssl.dist
+$sysconfdir/pop3d.dist
+$sysconfdir/pop3d-ssl.dist
+EOF
+
+echo chmod 644 $DESTDIR$datadir/configlist* >>debian/fixperms.sh
+
+. ./authconfig
+echo "chown $authmailuser:$authmailgroup $DESTDIR$datadir/dhparams.pem.dist" >>debian/fixperms.sh
+echo "chmod 600 $DESTDIR$datadir/dhparams.pem.dist" >>debian/fixperms.sh
+
+cat >debian/courier-imap.postinst <<EOF
+#! @SHELL@
+
+set -e
+
+$datadir/sysconftool \`cat $datadir/configlist\`
+
+test -f $datadir/dhparams.pem || ln $datadir/dhparams.pem.dist $datadir/dhparams.pem
+
+test -f $datadir/imapd.pem || $sbindir/mkimapdcert
+test -f $datadir/pop3d.pem || $sbindir/mkpop3dcert
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/courier-imap.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test "\$1" = "purge"
+then
+	rm -rf $sysconfdir/*
+	rm -f $datadir/dhparams.pem
+	rm -f $datadir/imapd.pem
+	rm -f $datadir/pop3d.pem
+	rm -f $localstatedir/imapd.pid
+	rm -f $localstatedir/imapd-ssl.pid
+	rm -f $localstatedir/imapd.pid.lock
+	rm -f $localstatedir/imapd-ssl.pid.lock
+	rm -f $localstatedir/couriersslimapcache
+
+	rm -f $localstatedir/pop3d.pid
+	rm -f $localstatedir/pop3d-ssl.pid
+	rm -f $localstatedir/pop3d.pid.lock
+	rm -f $localstatedir/pop3d-ssl.pid.lock
+	rm -f $localstatedir/couriersslpop3cache
+fi
+EOF
+
+dh_compress $DESTDIR$mandir/*/*

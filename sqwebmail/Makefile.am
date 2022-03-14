@@ -11,14 +11,14 @@ AM_DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
 
 DISTCHECK_CONFIGURE_FLAGS=--enable-cgibindir=$$dc_install_base/cgi-bin --enable-imagedir=$$dc_install_base/images
 
-HTML2TXT=links -dump -no-numbering --no-references
+HTML2TXT=elinks -dump -no-numbering --no-references
 
 SUBDIRS=libs/numlib libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 \
 	libs/random128 libs/libhmac libs/rfc822 libs/rfc2045 \
 	libs/liblock libs/maildir libs/soxwrap libs/cgi \
 	libs/http11 libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail
 
-noinst_SCRIPTS= sqwebmail.spec sqwebmail.lpspec
+noinst_SCRIPTS= sqwebmail.spec
 
 EXTRA_DIST=INSTALL.html README NEWS README.html README.pam \
 	sysconftool COPYING.GPL README.logindomainlist.html \
@@ -39,12 +39,6 @@ EXTRA_PROGRAMS=
 CLEANFILES=$(pkgman1_DATA) $(pkgman8_DATA) $(sysconf_DATA) \
 	sharedindexinstall sharedindexsplit
 
-pkgman8dir=@mandir@/man8
-pkgman8_DATA=deliverquota.8
-
-pkgman1dir=@mandir@/man1
-pkgman1_DATA=maildirmake.1
-
 sqwebmaild.dist: libs/sqwebmail/sqwebmaild.dist
 	cp libs/sqwebmail/sqwebmaild.dist .
 
@@ -54,14 +48,8 @@ pcpd: libs/pcp/pcpd
 maildirmake: libs/maildir/maildirmake
 	cp libs/maildir/maildirmake .
 
-maildirmake.1: libs/maildir/maildirmake.1
-	cp libs/maildir/maildirmake.1 .
-
 deliverquota: libs/maildir/deliverquota
 	cp libs/maildir/deliverquota .
-
-deliverquota.8: libs/maildir/deliverquota.8
-	cp libs/maildir/deliverquota.8 .
 
 reformime: libs/rfc2045/reformime
 	cp libs/rfc2045/reformime .
@@ -155,10 +143,11 @@ rpm-build:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		$(RPMFLAGS) @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
+	$$HOME/bin/rpmrepos.sh
 
 release:
-	rm -f sqwebmail.spec sqwebmail.lpspec
-	$(MAKE) sqwebmail.spec sqwebmail.lpspec
+	rm -f sqwebmail.spec
+	$(MAKE) sqwebmail.spec
 	$(MAKE) dist
 
 WWW=$$HOME/www/hostrocket/courier-mta.org
@@ -180,15 +169,54 @@ INSTALL.txt: INSTALL.html
 	rm -f INSTALL
 	cp INSTALL.txt INSTALL
 
+DATE := $(shell date -R)
+
 dist-hook:
 	rm -f $(distdir)/INSTALL $(distdir)/README
 	$(HTML2TXT) $(srcdir)/README.html >$(distdir)/README
 	$(HTML2TXT) $(srcdir)/INSTALL.html >$(distdir)/INSTALL
-	cp sqwebmail.spec sqwebmail.lpspec $(distdir)
+	cp sqwebmail.spec $(distdir)
 	test -f $(srcdir)/rpm.release && cp $(srcdir)/rpm.release $(distdir) \
 		; exit 0
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
 
-bump.rpm.release: sqwebmail.spec sqwebmail.lpspec
+EXTRA_DIST += courier-debuild \
+	packaging/debian/auto_fixperms.sh.in \
+	packaging/debian/auto_install.sh.in \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/rules \
+	packaging/debian/source/format \
+	packaging/debian/sqwebmail.lintian-overrides
+
+
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
+
+bump.rpm.release: sqwebmail.spec
 	VERSION="x"; \
 	test -f $(srcdir)/rpm.release && . $(srcdir)/rpm.release; \
 	NEXT_RELEASE=0; \
@@ -198,39 +226,7 @@ bump.rpm.release: sqwebmail.spec sqwebmail.lpspec
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/rpm.release; \
 	sed 's/^Release: .*/Release: '$$RELEASE'%{?dist}%{courier_release}/' \
 		<sqwebmail.spec >sqwebmail.spec.new; \
-	mv sqwebmail.spec.new sqwebmail.spec; \
-	sed 's/^Release: .*/Release: '$$RELEASE'/' \
-		<sqwebmail.lpspec >sqwebmail.lpspec.new; \
-	mv sqwebmail.lpspec.new sqwebmail.lpspec
-
-lpm: lpm-build
-
-lpm-build:
-	$(MAKE) -$(MAKEFLAGS) bump.rpm.release
-	$(MAKE) -$(MAKEFLAGS) dist
-	rm -rf lpm
-	mkdir lpm
-	lpbuild `test "@REPOSITORY@" == "" || echo --define "repository=1"` --srcbuild -o lpm @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
-
-publish: publish-@REPOSITORY@
-
-publish-dev:
-	$(MAKE) -$(MAKEFLAGS) dopublish SUBDIR=dev
-
-publish-prod:
-	$(MAKE) -$(MAKEFLAGS) dopublish SUBDIR=prod
-
-dopublish:
-	lpbuild --resign lpm/*
-	rm -rf lpmtmp
-	mkdir lpmtmp
-	ln lpm/* lpmtmp
-	mv lpmtmp/*.src.lp repository-$(SUBDIR)/`lpm -q --distribution`/sources
-	mv lpmtmp/*.lp repository-$(SUBDIR)/`lpm -q --distribution`/packages
-	rm -rf lpmtmp
-	ls -t repository-$(SUBDIR)/`lpm -q --distribution`/sources | tail -n +6 | xargs -r -n 1 lpm --erase repository-$(SUBDIR)
-	lpm --sync repository-$(SUBDIR)
-	rsync -a -v --delete-after repository-$(SUBDIR)/`lpm -q --distribution`/. headache:lpmtool.com/www/repositories/$(SUBDIR)/libs/sqwebmail/`lpm -q --distribution`
+	mv sqwebmail.spec.new sqwebmail.spec;
 
 install-configure:
 	list="ldapaddressbook.dist sqwebmaild.dist"; \

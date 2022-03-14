@@ -21,20 +21,44 @@ DIST_SUBDIRS=afx libs/gdbmobj libs/bdbobj libs/numlib libs/soxwrap \
 	libs/imap libs/maildrop libs/cgi libs/http11 libs/ldapaddressbook \
 	libs/gpglib libs/pcp libs/sqwebmail webadmin courier
 
-HTML2TXT=links -dump -no-numbering -no-references
-
 INSTALL: courier/doc/install.html
 	rm -f INSTALL
-	$(HTML2TXT) courier/doc/install.html >INSTALL
-
+	elinks -dump -no-numbering -no-references courier/doc/install.html >INSTALL.tmp
+	mv -f INSTALL.tmp INSTALL
 
 NEWS: NEWS.html
-	$(HTML2TXT) NEWS.html >NEWS
+	elinks -dump -no-numbering -no-references NEWS.html >NEWS.tmp
+	mv NEWS.tmp NEWS
 
 EXTRA_DIST=BENCHMARKS sysconftool ChangeLog.2001 \
 	COPYING.GPL NEWS.html pgpkeys.txt config.rpath
 
 DISTCLEANFILES=version configure.args
+
+EXTRA_DIST += \
+	courier-debuild \
+	packaging/debian/auto_install.sh.in \
+	packaging/debian/changelog \
+	packaging/debian/changelog.in \
+	packaging/debian/control \
+	packaging/debian/copyright \
+	packaging/debian/courier.lintian-overrides \
+	packaging/debian/courier-fax.lintian-overrides \
+	packaging/debian/courier-imapd.lintian-overrides \
+	packaging/debian/courier-ldap.lintian-overrides \
+	packaging/debian/courier-maildrop.lintian-overrides \
+	packaging/debian/courier-mlm.lintian-overrides \
+	packaging/debian/courier-mlm-web.lintian-overrides \
+	packaging/debian/courier-mysql.lintian-overrides \
+	packaging/debian/courier-pgsql.lintian-overrides \
+	packaging/debian/courier-pop3d.lintian-overrides \
+	packaging/debian/courier-webadmin.lintian-overrides \
+	packaging/debian/courier-webmail.lintian-overrides \
+	packaging/debian/mkinstall.pl.in \
+	packaging/debian/rules \
+	packaging/debian/source/format \
+	packaging/debian/source/lintian-overrides
+
 #
 # install-perms creates permissions.dat, listing all files and directories,
 # and their corresponding permissions.  This is used to build an RPM.
@@ -81,11 +105,16 @@ all-gmake-check:
 # For maintainer's use only
 #
 
+DATE := $(shell date -R)
+
 dist-hook:
 	test -f $(srcdir)/rpm.release && cp $(srcdir)/rpm.release $(distdir) ; \
 		exit 0
 	$(MAKE) -$(MAKEFLAGS) courier.spec
 	cp courier.spec $(distdir)
+	chmod +x $(distdir)/courier-debuild
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog.in
+	@PERL@ -p -i -e 's/\@DATE\@/'"$(DATE)"'/' $(distdir)/packaging/debian/changelog
 
 release: dist
 
@@ -94,8 +123,8 @@ distrelease:
 	$(MAKE) rpm
 	$(MAKE)
 	$(MAKE)
-	rm -f INSTALL courier.spec
-	$(MAKE) INSTALL courier.spec
+	rm -f INSTALL courier.spec packaging/debian/changelog
+	$(MAKE) INSTALL courier.spec packaging/debian/changelog
 	$(MAKE) dist
 
 rpm: rpm-build
@@ -123,7 +152,7 @@ dorpm:
 		--define '_tmppath %{_var}/tmp' \
 		--define '__spec_prep_pre %{___build_pre}' \
 		$(RPMFLAGS) @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
-	sh $$HOME/repos.sh
+	sh $$HOME/bin/rpmrepos.sh
 
 bump.rpm.release: courier.spec
 	VERSION="x"; \
@@ -136,6 +165,28 @@ bump.rpm.release: courier.spec
 	sed 's/^Release: .*/Release: '$$RELEASE'%{?dist}%{courier_release}/' \
 		<courier.spec >courier.spec.new; \
 	mv courier.spec.new courier.spec
+
+packaging/debian/changelog: packaging/debian/changelog.in configure.ac
+	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
+
+deb: bump.deb.release
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
+	$$HOME/bin/debrepos.sh
+
+bump.deb.release: packaging/debian/changelog
+	VERSION="x"; \
+	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
+	NEXT_RELEASE=100; \
+	test "$$VERSION" = "@PACKAGE_VERSION@" && NEXT_RELEASE="$$RELEASE"; \
+	RELEASE=`expr $$NEXT_RELEASE + 1`; \
+	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
+	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
 
 install-configure:
 	@$(MAKE) install-perms
