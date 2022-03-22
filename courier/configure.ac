@@ -105,6 +105,7 @@ fi
 eval "libexecdir=$libexecdir"
 eval "sysconfdir=$sysconfdir"
 eval "localstatedir=$localstatedir"
+eval "datarootdir=$datarootdir"
 eval "datadir=$datadir"
 
 AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],

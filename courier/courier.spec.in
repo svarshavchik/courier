@@ -127,6 +127,7 @@ BuildRequires:    make
 BuildRequires:    procps-ng
 BuildRequires:    wget
 BuildRequires:    %{__gzip}
+BuildRequires:    aspell-devel
 %{?_with_gpg2:  %define with_gpg2 1}
 %{!?_with_gpg2: %define with_gpg2 0}
 
@@ -448,9 +449,9 @@ test "$RPM_BUILD_ROOT" != "" && rm -rf $RPM_BUILD_ROOT
 
 %{__make} -s install DESTDIR=$RPM_BUILD_ROOT
 
-%{__install} -m 0444 libs/imap/imapd.pam $RPM_BUILD_ROOT/etc/pam.d/pop3
+%{__install} -m 0444 libs/imap/imapd.pam $RPM_BUILD_ROOT/etc/pam.d/imap
 %{__install} -m 0444 courier/module.esmtp/esmtp.authpam $RPM_BUILD_ROOT/etc/pam.d/esmtp
-%{__install} -m 0444 libs/imap/pop3d.pam $RPM_BUILD_ROOT/etc/pam.d/imap
+%{__install} -m 0444 libs/imap/pop3d.pam $RPM_BUILD_ROOT/etc/pam.d/pop3
 %{__install} -m 0444 libs/sqwebmail/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
 %{__install} -m 0444 libs/sqwebmail/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/calendar
 %{__rm} -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
