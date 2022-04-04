@@ -96,7 +96,7 @@ if ($cgi->param("Save"))
       $section{'faxrc'}=$rc;
 
       SaveKWConfigFile("faxrc", \%section);
-      changed("courier restart");
+      changed(restart_cmd());
       $changed=1;
     }
 }

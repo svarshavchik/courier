@@ -5,6 +5,7 @@
 
 use CGI;
 use FileHandle;
+use POSIX;
 
 open (STDERR, ">&STDOUT");
 local $cgi=new CGI;
@@ -17,7 +18,6 @@ local $bindir="@bindir@";
 local $sbindir="@sbindir@";
 local $libexecdir="@libexecdir@";
 
-local $authdaemond="@authdaemond@";
 local $authdaemonrc="@authdaemonrc@";
 local $authmysqlrc="@authmysqlrc@";
 local $authpgsqlrc="@authpgsqlrc@";
@@ -38,7 +38,10 @@ sub display_form {
     die ($cgi->header("text/plain") . "Cannot open form $formname: $!\n")
 	unless $fh->open("$webadmindir/$formname");
 
-    print $cgi->header("text/html");
+    print $cgi->header(
+	-type => "text/html",
+	-charset => "utf8",
+	);
 
     if (! defined $args)
     {
@@ -120,6 +123,32 @@ sub createdirs {
     }
 
     return 1;
+}
+
+sub authlib_restart_cmd {
+
+    my $cmd = "@authdaemond@ restart";
+
+    my $nfh = new FileHandle "@sysconfdir@/webadmin/restartauthcmd";
+
+    if (defined $nfh)
+    {
+	$cmd = <$nfh>;
+	chomp $cmd;
+    }
+    return $cmd;
+}
+
+sub restart_cmd {
+    my $nfh = new FileHandle "@sysconfdir@/webadmin/restartcmd";
+
+    my $cmd = "courier restart";
+    if (defined $nfh)
+    {
+	$cmd = <$nfh>;
+	chomp $cmd;
+    }
+    return $cmd;
 }
 
 sub changed {

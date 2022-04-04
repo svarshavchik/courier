@@ -72,7 +72,7 @@ lcrwstatic.h: config.status
 	@echo 'struct rw_static_info rw_static[] = {' >>lcrwstatic.h
 	@for t in @transport@ ; do echo "LIST_STATICFUNCS($$t)," >>lcrwstatic.h ; done
 	@echo ' {0, 0, 0} };' >>lcrwstatic.h
-	@rm -f lcrwstaticlist.o
+	@rm -f lcrwstaticlist.lo
 
 
 # Define dependencies on lcrwstatic.o

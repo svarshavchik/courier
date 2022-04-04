@@ -183,7 +183,7 @@ if ($cgi->param("VDelAlias"))
 if ($changeflag)
 {
     savealiases($aliases);
-    changed("makealiases");
+    changed("$sbindir/makealiases");
 }
 
 my $aliaslist="";

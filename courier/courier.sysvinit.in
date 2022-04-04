@@ -16,6 +16,8 @@ sbindir="@sbindir@"
 bindir="@bindir@"
 libexecdir="@libexecdir@"
 datadir="@datadir@"
+localstatedir="@localstatedir@"
+webadmin="${libexecdir}/courier/webmail/webadmin"
 
 if test ! -f ${sysconfdir}/esmtpd
 then
@@ -75,6 +77,14 @@ start)
 	then
 		${sbindir}/webmaild start
 		echo -n " webmail"
+	fi
+
+	if test -f $webadmin
+	then
+		@SETENV@ -i @SHELL@ -c " set -a ;
+			@courierlogger@ -pid=$localstatedir/webadmin.pid \
+				-name=webadmin -start $webadmin daemon"
+		echo -n " webadmin"
 	fi
 
 	${sbindir}/courier start
@@ -256,6 +266,12 @@ stop)
 	then
 		${sbindir}/webmaild stop
 		echo -n " webmail"
+	fi
+
+	if test -f $webadmin
+	then
+		@courierlogger@ -pid=$localstatedir/webadmin.pid -stop
+		echo -n " webadmin"
 	fi
 
 	if test -x ${sbindir}/courierldapaliasd

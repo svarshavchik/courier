@@ -51,7 +51,7 @@ if ($cgi->param("submit"))
     }
 
     my $authdaemonvars=ReadEnvVarConfigFile("authdaemonrc");
- 
+
     my %defaultoptions;
 
     foreach (split(/,/, $$authdaemonvars{'DEFAULTOPTIONS'}))
@@ -95,7 +95,7 @@ if ($cgi->param("submit"))
     }
 
     ReplaceEnvVarConfigFile("authdaemonrc", "DEFAULTOPTIONS", $v);
-    changed("$authdaemond stop; $authdaemond start");
+    changed(authlib_restart_cmd());
 
     my @logindomainlist=split(/\n/, $cgi->param("logindomainlist"));
 
@@ -155,7 +155,7 @@ sub cexists {
 
 
 my $authdaemonvars=ReadEnvVarConfigFile("authdaemonrc");
- 
+
 my %defaultoptions;
 
 foreach (split(/,/, $$authdaemonvars{'DEFAULTOPTIONS'}))

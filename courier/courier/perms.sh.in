@@ -63,7 +63,7 @@ PERMS="
 @libexecdir@/courier/webmail/webmlm	555	x	root	bin
 @libexecdir@/courier/sqwebmaild		555
 @libexecdir@/courier/sqwebpasswd	2555
-@libexecdir@/courier/webmail/webadmin	4511	x	root	bin
+@libexecdir@/courier/webmail/webadmin	511	x	root	root
 
 @sbindir@			755	x	bin	bin
 @sbindir@/courier		555

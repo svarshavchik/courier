@@ -9,11 +9,13 @@
 #include <grp.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 #include "config.h"
+#include "cgi/cgi.h"
+#include "sockdir.h"
 
-
-int main()
+void run(void *)
 {
 	struct group *g;
 	struct passwd *p;
@@ -69,4 +71,13 @@ int main()
 
 	execl(INSTDIR "/webadmin.pl", INSTDIR "/webadmin.pl", (char *)0);
 	exit(0);
+}
+
+int main(int argc, char **argv)
+{
+	if (argc > 1 && strcmp(argv[1], "daemon") == 0)
+		cgi_daemon(0, SOCKDIR "/webadmin", NULL, run, NULL);
+
+	cgi_connectdaemon(SOCKDIR "/webadmin", 1);
+	return 0;
 }

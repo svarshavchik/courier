@@ -30,7 +30,7 @@ if (defined ($ME=$cgi->param("ME")))
 	    else
 	    {
 		SaveOneLineConfigFile("me", lc($ME));
-		changed("makealiases", "courier restart");
+		changed("$sbindir/makealiases", restart_cmd());
 	    }
 	}
 	else
@@ -47,7 +47,7 @@ if (defined ($ME=$cgi->param("ME")))
 	else
 	{
 	    DeleteConfigFile("me");
-	    changed("makealiases", "courier restart");
+	    changed("$sbindir/makealiases", restart_cmd());
 	}
     }
 
@@ -71,7 +71,7 @@ if (defined $remlocal)
     }
 
     delacceptmailfor($remlocal);
-    changed("makealiases", "courier restart");
+    changed("$sbindir/makealiases", restart_cmd());
 }
 
 my $remhosted=$cgi->param("remhosted");
@@ -92,7 +92,7 @@ if (defined $remhosted)
     }
 
     delacceptmailfor($remhosted);
-    changed("makehosteddomains", "courier restart");
+    changed("$bindir/makehosteddomains", restart_cmd());
 }
 
 my $newdomain=lc($cgi->param("newlocaldomain"));
@@ -142,7 +142,7 @@ if ($newdomain)
 	if (! $found)
 	{
 	    SaveMultiLineConfigFile("locals", \@new_locals);
-	    changed("makealiases", "courier restart");
+	    changed("$sbindir/makealiases", restart_cmd());
 	}
     }
     else
@@ -196,7 +196,7 @@ if ($newdomain)
 	if (! $found)
 	{
 	    SaveMultiLineConfigFile("hosteddomains/webadmin", \@new_hosted);
-	    changed("makehosteddomains", "courier restart");
+	    changed("$bindir/makehosteddomains", restart_cmd());
 	}
     }
     else

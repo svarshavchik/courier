@@ -1543,12 +1543,58 @@ esmtp session required        pam_permit.so
   server with a complete CGI implementation (PHP is not required). Installing
   <code>webadmin</code> is a three step process:</p>
   <ol>
-    <li>Move <code>/usr/lib/courier/libexec/courier/webmail/webadmin</code> to
-    your web server's SSL <code>cgi-bin</code> directory. Take care to preserve
-    the binary's ownership and permissions.</li>
-    <li>Execute "<code>make install-webadmin-password</code>". This prompts for
-    a password, which is saved in the file
-    <code>/usr/lib/courier/etc/webadmin/password</code>.</li>
+    <li>
+      <p>Move <code>/usr/lib/courier/libexec/courier/webmail/webadmin</code> to
+      your web server's SSL <code>cgi-bin</code> directory.</p>
+    </li>
+    <li>
+      <p>Add the following command to your system startup script:</p>
+      <pre>
+/var/www/cgi-bin/webadmin daemon &amp;
+</pre>
+      <p>(or the actual cgi-bin directory). Executing the cgi-bin
+      <code>webadmin</code> with a "daemon" parameter starts the daemon
+      process.</p>
+      <p>It might be useful to manage <code>webadmin</code> with
+      <code>courierlogger</code>: using "<code>courierlogger
+      -pid=/usr/lib/courier/var/webadmin.pid -start .../webadmin daemon</code>"
+      to start <code>webadmin</code> and "<code>courierlogger
+      -pid=/usr/lib/courier/var/webadmin.pid -stop</code>" to stop it.</p>
+    </li>
+    <li>
+      <p>Execute "<code>make install-webadmin-password</code>". This prompts
+      for a password, which is saved in the file
+      <code>/usr/lib/courier/etc/webadmin/password</code>.</p>
+    </li>
+    <li>
+      <p>Edit "<code>/usr/lib/courier/etc/webadmin/restartcmd</code>", this
+      file contains one line, a command that webadmin runs to restart courier.
+      This defaults to "<code>courier restart</code>". If Courier gets set up
+      to run under systemd this should be changed to like:</p>
+      <pre>
+systemctl restart courier.service &amp;</pre>
+      <p>... or <code>try-restart</code>. It is important to use
+      <code>&amp;</code> to run <code>systemctl</code> in the background.
+      <code>webadmin</code> uses this as an indication for proper signal
+      handling setup. <code>webadmin</code> blocks signals when installing an
+      updated configuration, but commands executed in the background have their
+      signal handling reset to default. <code>systemd</code> will signal
+      processes to terminate when restarting them. <code>webadmin</code>'s
+      blocked signals permit it to finish installing any remaining updates.
+      <code>systemctl</code> will wait for the restart to finish, but it's part
+      of the service that's getting restarted, so this process needs to run in
+      a background, with default signal handling so that <code>systemctl</code>
+      itself gets terminated.</p>
+    </li>
+    <li>
+      <p>Edit "<code>/usr/lib/courier/etc/webadmin/restartauthcmd</code>", this
+      file contains one line, a command that webadmin runs to restart the
+      Courier authentication library service. This defaults to
+      "<code>authdaemond restart</code>". If courier-authlib gets set up to run
+      under systemd this should be changed to an "systemctl restart", or maybe
+      "systemctl try-restart", for example: <code>systemctl try-restart
+      courier-authlib.service</code>.</p>
+    </li>
     <li>
       <p>The web server SHOULD be configured to run <code>webadmin</code> from
       the <code>cgi-bin</code> directory using SSL only.

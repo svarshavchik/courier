@@ -68,7 +68,7 @@ if ($cgi->param("Save"))
     {
 	$errstr="\@SAVED\@";
     }
-    changed("$authdaemond restart");
+    changed(authlib_restart_cmd());
 }
 
 my $ldap=ReadKWConfigFile("authldaprc");

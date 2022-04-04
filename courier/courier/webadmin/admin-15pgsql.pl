@@ -55,7 +55,7 @@ if ($cgi->param("Save"))
     {
 	$errstr="\@SAVED\@";
     }
-    changed("$authdaemond restart");
+    changed(authlib_restart_cmd());
 }
 
 my $pgsql=ReadKWConfigFile("authpgsqlrc");

@@ -1,11 +1,18 @@
 #
 #
-# Copyright 2001 Double Precision, Inc.  See COPYING for
+# Copyright 2001-2022 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 my $fh=new FileHandle;
 
 my $pid;
+
+# If we're getting restarted by systemd, ignore signals to let us wrap things
+# up.
+
+$SIG{'TERM'} =
+    $SIG{'QUIT'} =
+    $SIG{'INT'} = 'IGNORE';
 
 die $cgi->header("text/plain") . "Cannot start process: $!\n"
     unless (defined $fh) && (defined ($pid=open($fh, "-|")));
@@ -86,9 +93,46 @@ if (! $pid)
 	    next unless $line =~ /(.+)/;
 
 	    $line=$1;
-
 	    print "Executing $line...\n";
-	    $errflag=1 if system($line) != 0;
+
+	    my $pid = fork;
+
+	    if (! defined $pid)
+	    {
+		print "   Fork failed\n";
+		$errflag = 1;
+	    }
+	    else
+	    {
+		if ($pid == 0)
+		{
+		    # If the command ends in a &, the shell will put it
+		    # in a background. This is used with systemctl restart,
+		    # and for that one we want to reset signal handlers to
+		    # DEFAULT. systemctl waits for systemd to finish, but
+		    # systemd will want to kill the entire service including
+		    # systemctl itself.
+		    #
+		    # We're blocking signals, we're finishing up, but
+		    # let systemctl run in the background with default signal
+		    # handlers, which will SIGTERM that process.
+
+		    if ($line =~ /&$/)
+		    {
+			$SIG{'TERM'} =
+			    $SIG{'QUIT'} =
+			    $SIG{'INT'} = 'DEFAULT';
+		    }
+
+		    exec($ENV{'SHELL'}, "-c", $line);
+		    print " ... command execution failed.\n";
+		    exit(1);
+		}
+
+		waitpid $pids, 0;
+
+		$errflag = 1 unless $? == 0;
+	    }
 	}
 	close($fh);
     }

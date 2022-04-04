@@ -143,9 +143,12 @@ fi
 
 $COURIERAUTHCONFIG --configfiles | sed 's/^/auth/' >configtmp
 . ./configtmp
-AC_ARG_WITH(courierlogger, [], : ,
+
+courierlogger="$authsbindir/courierlogger"
+AC_ARG_WITH(courierlogger, [courierlogger="$withval"], : ,
 			   [
 			   ac_configure_args="$ac_configure_args --with-courierlogger=$authsbindir/courierlogger"])
+AC_SUBST(courierlogger)
 
 if test `$COURIERAUTHCONFIG --version=0.70.0.20200518` = "no"
 then

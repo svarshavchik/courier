@@ -21,6 +21,7 @@ AC_PROG_AWK
 AC_PROG_LN_S
 AC_PATH_PROGS(PERL, perl5 perl, /usr/bin/perl, $LPATH)
 AC_PATH_PROG(PROCMAIL, procmail, /usr/bin/procmail, $LPATH)
+AM_PROG_LIBTOOL
 
 AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
 
@@ -62,6 +63,9 @@ eval "exec_prefix=$exec_prefix"
 eval "bindir=$bindir"
 eval "sysconfdir=$sysconfdir"
 eval "datadir=$datadir"
+eval "localstatedir=$localstatedir"
+
+CPPFLAGS="$CPPFLAGS -I$srcdir/../libs"
 
 AC_ARG_WITH(webadmindir, [], webadmindir="$withval",
 	webadmindir="$datadir/webadmin")

@@ -32,7 +32,7 @@ if ($cgi->param("Up") && $authmodule_param)
 
 	    ReplaceEnvVarConfigFile("authdaemonrc", "authmodulelist",
 				    join(" ", @mods));
-	    changed("$authdaemond restart");
+	    changed(authlib_restart_cmd());
 	    $selected= $i-1;
 	    last;
 	}
@@ -54,7 +54,7 @@ if ($cgi->param("Down") && $authmodule_param)
 
 	    ReplaceEnvVarConfigFile("authdaemonrc", "authmodulelist",
 				    join(" ", @mods));
-	    changed("$authdaemond restart");
+	    changed(authlib_restart_cmd());
 	    $selected=$i+1;
 	    last;
 	}
@@ -72,7 +72,7 @@ if ($cgi->param("Delete") && $authmodule_param)
 	splice @mods, $i, 1;
 	ReplaceEnvVarConfigFile("authdaemonrc", "authmodulelist",
 				join(" ", @mods));
-	changed("$authdaemond restart");
+	changed(authlib_restart_cmd());
 	last;
     }
 }
@@ -82,7 +82,7 @@ if ($authmodule_param=$cgi->param("authmodulelistorig"))
     push @mods, $authmodule_param;
     ReplaceEnvVarConfigFile("authdaemonrc", "authmodulelist",
 			    join(" ", @mods));
-    changed("$authdaemond restart");
+    changed(authlib_restart_cmd());
     $errstr="\@SAVED\@";
 }
 

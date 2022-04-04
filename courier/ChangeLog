@@ -1,3 +1,13 @@
+2022-04-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier: Webadmin refresh: convert the UI to UTF-8, integrate with
+	systemd. Replace the suid root cgi-bin binary with a sqwebmail-style
+	daemon that communicates with a non-privileged cgi-bin-invoked
+	binary over a filesystem socket. Update courier.sysvinit to start
+	webadmin accordingly.
+
+	Other makefile fixes.
+
 2022-03-06  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Do not use hardcoded uids and gids that are established at

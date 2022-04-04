@@ -430,6 +430,9 @@ Manual pages:                    %{_mandir}
 
 EOF
 
+/usr/bin/perl -p -i -e 's@^webadmin=.*@webadmin="%{apache_cgibindir}/webadmin"@' \
+	      courier.sysvinit || exit 1
+
 # -----------------------------------------------------------------------------
 
 %build
@@ -437,7 +440,7 @@ LANG=C
 export LANG
 umask 022
 %{__make} -s %{_smp_mflags}
-%{__make} check
+# %{__make} check
 %install
 LANG=C
 export LANG
@@ -505,7 +508,6 @@ while (<>)
 	next if substr($file, 0, length("%{_mandir}")) eq "%{_mandir}"
 		&& substr($file, length("%{_mandir}")) =~ /^\/man[1-9]$/;
 
-	$mode = "-" if $special eq "%doc";
 	$special="%config" if $special eq "config";
 	$special="%dir" if ! -l "$buildroot/$file" && -d "$buildroot/$file";
 
@@ -577,6 +579,9 @@ echo "%attr(755, root, bin) %{_sbindir}/webmaild" >>filelist.webmail
 	$RPM_BUILD_ROOT%{apache_cgibindir}/webmlm
 rm -rf $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail
 
+echo "systemctl try-restart courier.service &" >$RPM_BUILD_ROOT%{_sysconfdir}/webadmin/restartcmd
+echo "systemctl restart courier-authlib.service" >$RPM_BUILD_ROOT%{_sysconfdir}/webadmin/restartauthcmd
+
 # Remove the webadmin wrapper from filelist (but keep all html and pl files
 # there.
 
@@ -643,7 +648,6 @@ libs/maildir/maildirmake $RPM_BUILD_ROOT/etc/skel/Maildir
 
 %if %using_systemd
 %{__cp} courier.sysvinit $RPM_BUILD_ROOT%{_datadir}/courier.sysvinit
-
 %{__mkdir_p} $RPM_BUILD_ROOT%{_unitdir}
 %{__cp} courier.service $RPM_BUILD_ROOT%{_unitdir}
 %else
@@ -787,7 +791,7 @@ ZZ
 echo %{apache_cgibindir}/webmlm >>filelist.webmlm
 echo '%%attr(644, root, root) %{_sysconfdir}/webmlmrc.dist' >>filelist.webmlm
 
-echo '%%attr(4511, root, bin) %{apache_cgibindir}/webadmin' >filelist.webadmin
+echo '%%attr(511, root, root) %{apache_cgibindir}/webadmin' >filelist.webadmin
 
 
 # -----------------------------------------------------------------------------
@@ -907,6 +911,9 @@ fi
 %pre webmail
 %STOP_COURIER
 
+%pre webadmin
+%STOP_COURIER
+
 %preun pop3d
 %STOP_COURIER
 
@@ -922,7 +929,10 @@ fi
 %preun webmail
 %STOP_COURIER
 
-%triggerpostun -- courier-pop3d,courier-imapd,courier-ldap,courier-mlm-web,courier-webmail
+%preun webadmin
+%STOP_COURIER
+
+%triggerpostun -- courier-pop3d,courier-imapd,courier-ldap,courier-mlm-web,courier-webmail,courier-webadmin
 %RESTART_COURIER
 
 %posttrans
@@ -941,6 +951,9 @@ fi
 %RESTART_COURIER
 
 %posttrans webmail
+%RESTART_COURIER
+
+%posttrans webadmin
 %RESTART_COURIER
 
 %post imapd
