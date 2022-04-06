@@ -5,7 +5,11 @@
 #
 
 noinst_LTLIBRARIES=libmail.la
-noinst_PROGRAMS=mailtool testsuite
+noinst_PROGRAMS=mailtool testsuite autodeps
+
+BUILT_SOURCES=
+DISTCLEANFILES=
+EXTRA_DIST=
 
 AM_CFLAGS = $(LIBIDN_CFLAGS)
 AM_CXXFLAGS = @COURIER_UNICODE_CXXFLAGS@
@@ -147,7 +151,7 @@ testsuite_DEPENDENCIES=$(mailtool_DEPENDENCIES)
 testsuite_LDADD=$(mailtool_LDADD)
 testsuite_LDFLAGS=-static
 
-EXTRA_DIST=autodeps.C testsuite.txt
+EXTRA_DIST += testsuite.txt
 
 check-am:
 	./testsuite | cmp -s - $(srcdir)/testsuite.txt
@@ -156,31 +160,39 @@ install-data-hook: @INSTINCLUDES@
 
 uninstall-local: @UNINSTINCLUDES@
 
-install-includes:
-	set -x ; \
-	source=autodeps.C object=autodeps.o libtool=no \
-	depfile=autodeps.P tmpdepfile=autodeps.tP \
-	$(CXXDEPMODE) $(depcomp) \
-	$(CXXCOMPILE) -c -o autodeps.o `test -f 'autodeps.C' || echo '$(srcdir)/'`autodeps.C
-	rm -f autodeps.o
-	$(mkinstalldirs) $(DESTDIR)$(includedir)/libmail
-	for f in `sed 's/.*://' <autodeps.P | tr -d '\\\\' | tr ' ' '\\012' | sed '/^\//d;/autodeps.C/d' | sort | uniq` ; do \
-	    $(INSTALL_DATA) $$f $(DESTDIR)$(includedir)/libmail ; case $$f in \
-		*/*) \
-			n=`echo $$f | sed 's:.*/::'` ; \
-			f=`echo $$f | sed 's:/[^/]*$$::'` ;\
-			f=`echo $$f | sed 's:.*/::'` ;\
-			$(mkinstalldirs) $(DESTDIR)$(includedir)/libmail/$$f ;\
-			mv -f $(DESTDIR)$(includedir)/libmail/$$n $(DESTDIR)$(includedir)/libmail/$$f ;\
+autodeps_SOURCES=autodeps.C
+
+# Build autodeps.includes in maintainer mode, and include it in the tarball
+# so it does not have to be rebuilt.
+
+BUILT_SOURCES += autodeps.includes
+DISTCLEANFILES += autodeps.includes
+EXTRA_DIST    += autodeps.includes
+
+autodeps.includes: autodeps.o
+	test -f .deps/autodeps.Po || test -f autodeps.includes
+	test -f .deps/autodeps.Po || touch autodeps.includes
+	test -f .deps/autodeps.Po || exit 0; \
+	set -x; rm -f autodeps.includes.tmp; \
+	for f in `sed 's/.*://' <.deps/autodeps.Po | tr -d '\\\\' | tr ' ' '\\012' | sed '/^\//d;/autodeps.C/d' | sort | uniq` ; do \
+		origf="$$f"; case $$f in \
+		*) \
+			f="`echo $$f | sed 's:../libs/::'`" ;\
+			echo $$origf libmail/$$f >> autodeps.includes.tmp;\
 			;; \
-		esac ; done
-	rm -f autodeps.P
+		esac ; done; \
+	mv -f autodeps.includes.tmp autodeps.includes
+
+install-includes: autodeps.includes
+	cat $(srcdir)/autodeps.includes | while read F T; do \
+		$(MKDIR_P) "`dirname $(DESTDIR)$(includedir)/$$T`"; \
+		$(INSTALL_DATA) `test -f $$F || echo $(srcdir)/`$$F $(DESTDIR)$(includedir)/$$T; done
 
 uninstall-includes:
 	rm -rf $(DESTDIR)$(includedir)/libmail
 
-BUILT_SOURCES=libcouriertls.h
-DISTCLEANFILES=libcouriertls.h mimetypefiles.h
+BUILT_SOURCES += libcouriertls.h
+DISTCLEANFILES += libcouriertls.h mimetypefiles.h
 
 libcouriertls.h: ../libs/tcpd/couriertls.config
 	cp /dev/null libcouriertls.h ; . ../libs/tcpd/couriertls.config ; \

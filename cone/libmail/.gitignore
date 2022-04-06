@@ -1,3 +1,5 @@
+/autodeps
+/autodeps.includes
 /libmail_config.h.in
 /libcouriertls.h
 /libmail_config.h

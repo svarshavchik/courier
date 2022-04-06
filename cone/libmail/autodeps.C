@@ -24,3 +24,7 @@
 #include "snapshot.H"
 #include "sync.H"
 
+int main()
+{
+	return 0;
+}

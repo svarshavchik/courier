@@ -11,7 +11,7 @@ AC_INIT(libmail, 0.10, [courier-cone@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(mail.C)
 AC_CONFIG_AUX_DIR(..)
 AC_CONFIG_HEADERS(libmail_config.h)
-AM_INIT_AUTOMAKE([no-define])
+AM_INIT_AUTOMAKE([foreign no-define])
 
 dnl Checks for programs.
 AC_PROG_CXX

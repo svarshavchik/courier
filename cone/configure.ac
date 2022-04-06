@@ -8,7 +8,7 @@ AC_INIT(cone,1.5,[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(foreign)
 
 ALL_LINGUAS=
 LPATH="$PATH:/usr/local/bin"

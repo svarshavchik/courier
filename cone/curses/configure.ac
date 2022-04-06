@@ -10,7 +10,7 @@ AC_INIT(curses, 0.11, courier-cone@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(mycurses.H)
 AC_CONFIG_AUX_DIR(..)
 AC_CONFIG_HEADERS(curses_config.h)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(foreign)
 >confdefs.h
 
 dnl Checks for programs.
