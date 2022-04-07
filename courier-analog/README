@@ -14,4 +14,5 @@ Courier-analog generates log summaries for incoming and outgoing SMTP
 connections, and IMAP and POP3 activity.  courier-analog can generate output
 in text or HTML format.
 
+Courier-analog requires the Date::Calc Perl module.
 See the installed manual page for usage instructions.

@@ -1,7 +1,7 @@
 #! @PERL@
 #
 #
-# Copyright 2004-2019 Double Precision, Inc.  See COPYING for
+# Copyright 2004-2022 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 # Courier log analyzer
@@ -9,6 +9,8 @@
 use strict;
 use Getopt::Long;
 use Math::BigInt;
+use Date::Calc qw(Today Add_Delta_Days);
+use IO::File;
 
 BEGIN
 {
@@ -39,28 +41,30 @@ my $imapbyxfer;
 my $pop3bylength;
 my $pop3byuser;
 my $pop3byxfer;
+my $journal;
 
 GetOptions("noise=i" => \$main::NOISE,
-	   "noisy" => \$main::NOISY,
-	   "html=s" => \$html,
-	   "smtpinet" => \$bynet,
-	   "smtpitime" => \$bytime,
-	   "smtpierr" => \$smtperr,
-	   "smtpos" => \$outsuccess,
-	   "smtpod" => \$outdefer,
-	   "smtpof" => \$outfail,
-	   "title=s" => \$main::REPORTTITLE,
-	   "imapnet" => \$imapbynet,
-	   "imaptime" => \$imapbytime,
-	   "pop3net" => \$pop3bynet,
-	   "pop3time" => \$pop3bytime,
-	   "imapbylength" => \$imapbylength,
-	   "imapbyuser" => \$imapbyuser,
-	   "imapbyxfer" => \$imapbyxfer,
-	   "pop3bylength" => \$pop3bylength,
-	   "pop3byuser" => \$pop3byuser,
-	   "pop3byxfer" => \$pop3byxfer,
-	   "help", \$help);
+    "noisy" => \$main::NOISY,
+    "html=s" => \$html,
+    "smtpinet" => \$bynet,
+    "smtpitime" => \$bytime,
+    "smtpierr" => \$smtperr,
+    "smtpos" => \$outsuccess,
+    "smtpod" => \$outdefer,
+    "smtpof" => \$outfail,
+    "title=s" => \$main::REPORTTITLE,
+    "imapnet" => \$imapbynet,
+    "imaptime" => \$imapbytime,
+    "pop3net" => \$pop3bynet,
+    "pop3time" => \$pop3bytime,
+    "imapbylength" => \$imapbylength,
+    "imapbyuser" => \$imapbyuser,
+    "imapbyxfer" => \$imapbyxfer,
+    "pop3bylength" => \$pop3bylength,
+    "pop3byuser" => \$pop3byuser,
+    "pop3byxfer" => \$pop3byxfer,
+    "JOURNAL=i" => \$journal,
+    "help", \$help);
 
 $bynet=1 unless $bytime || $smtperr || $outfail || $outsuccess || $outdefer
     || $pop3bynet || $pop3bytime || $imapbynet || $imapbytime
@@ -70,6 +74,8 @@ $bynet=1 unless $bytime || $smtperr || $outfail || $outsuccess || $outdefer
 if ($help)
 {
     print "Usage: $0 [options]\n";
+    print "  --journal=n  Retrieve n previous days' worth of system logs.\n";
+    print "               Otherwise pass a filename or pipe to standard input.\n";
     print "  --noise=n    Consider <= n connections to be background noise (10).\n";
     print "  --noisy      Include background noise (off).\n";
     print "  --html=dir   HTML report to dir, creating it.  Default is\n";
@@ -1210,7 +1216,39 @@ $CONN_POP3{"user"}={};
 
 my $linenum=0;
 
-while (<>)
+my $source;
+
+if ($journal)
+{
+    my ($year, $month, $day) = Today;
+
+    my ($pyear, $pmonth, $pday) = Add_Delta_Days($year, $month, $day,
+	-$journal);
+
+    my $fh = IO::File->new;
+
+    my $child_pid = open($fh, "-|");
+
+    die "Cannot fork\n" unless defined $child_pid;
+
+    unless ($child_pid)
+    {
+	exec (
+	    "journalctl", "--facility=mail",
+	    sprintf("--since=%04d-%02d-%02d", $pyear, $pmonth, $pday),
+	    sprintf("--until=%04d-%02d-%02d", $year, $month, $day),
+	    );
+	die "Cannot exec journalctl";
+    }
+
+    $source = sub { <$fh> };
+}
+else
+{
+    $source = sub { <> };
+};
+
+while (defined($_ = $source->()))
 {
     chomp;
 

@@ -1,3 +1,7 @@
+2022-04-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add --journal option, to read from journalctl.
+
 0.19
 
 2021-02-19  Sam Varshavchik  <mrsam@courier-mta.com>
