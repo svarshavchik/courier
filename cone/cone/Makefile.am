@@ -176,7 +176,6 @@ cone_LDADD=../libs/tcpd/libtlsclient.la \
 	../libs/soxwrap/libsoxwrap.a \
 	`cat ../curses/curseslib ../libs/soxwrap/soxlibs.dep` \
 	 @LIBINTL@ @XMLLIBS@ \
-	`cat ../libs/maildir/maildir.libdeps` \
 	`. ../libs/tcpd/couriertls.config; echo $$cryptlibs`
 
 leaf_DEPENDENCIES=../curses/libcurses.a libdummyspellchecker.a \
