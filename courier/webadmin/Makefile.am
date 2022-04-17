@@ -34,10 +34,14 @@ install-exec-hook:
 	-chgrp @mailgroup@ $(DESTDIR)$(sysconfdir)/webadmin/removed
 
 install-data-hook:
+	-$(mkinstalldirs) $(DESTDIR)$(webadmindir)
 	chmod 755 $(DESTDIR)$(webadmindir)
 	echo '$(authdaemond) restart' >>$(DESTDIR)$(sysconfdir)/webadmin/restartauthcmd
 	-chown @mailuser@ $(DESTDIR)$(sysconfdir)/webadmin/restartcmd
 	-chgrp @mailgroup@ $(DESTDIR)$(sysconfdir)/webadmin/restartcmd
+
+uninstall-local:
+	rm -f $(DESTDIR)$(sysconfdir)/webadmin/restartauthcmd
 
 install-perms:
 	@echo $(sysconfdir)/webadmin 700 @mailuser@ @mailgroup@ >permissions.dat

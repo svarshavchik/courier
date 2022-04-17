@@ -65,7 +65,7 @@ eval "sysconfdir=$sysconfdir"
 eval "datadir=$datadir"
 eval "localstatedir=$localstatedir"
 
-CPPFLAGS="$CPPFLAGS -I$srcdir/../libs"
+CPPFLAGS="$CPPFLAGS -I../libs -I$srcdir/../libs"
 
 AC_ARG_WITH(webadmindir, [], webadmindir="$withval",
 	webadmindir="$datadir/webadmin")

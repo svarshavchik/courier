@@ -63,7 +63,7 @@ GetOptions("noise=i" => \$main::NOISE,
     "pop3bylength" => \$pop3bylength,
     "pop3byuser" => \$pop3byuser,
     "pop3byxfer" => \$pop3byxfer,
-    "JOURNAL=i" => \$journal,
+    "journal=i" => \$journal,
     "help", \$help);
 
 $bynet=1 unless $bytime || $smtperr || $outfail || $outsuccess || $outdefer
