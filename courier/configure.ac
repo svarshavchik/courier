@@ -22,9 +22,6 @@ AC_PROG_SYSCONFTOOL
 AC_PATH_PROGS(SETENV, env)
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 AX_COURIER_UNICODE_VERSION(2.1)
-AC_ARG_ENABLE(root-check, [  --disable-root-check    Allow build as root (make check will fail)],
-	rootcheck="$enableval",
-	rootcheck="yes")
 AC_ARG_WITH(notice,[AS_HELP_STRING([--with-notice=unicode],
 [The --with-notice=unicode option is required, and indicates that you
 are aware of the instructions in INSTALL for upgrading to this
@@ -68,22 +65,6 @@ with this option.
 ************************************************************************])
 	;;
 esac
-
-if test "$rootcheck" = "yes"
-then
-if test `id -u` = 0
-then
-	AC_MSG_WARN(=== Do not compile Courier as root.  Compile)
-	AC_MSG_WARN(=== Courier as a non-root user then su to)
-	AC_MSG_WARN(=== root before running make install.  You must now)
-	AC_MSG_WARN(=== remove this entire directory and then extract the)
-	AC_MSG_WARN(=== source code from the tarball as a non-root user)
-	AC_MSG_WARN(=== and rerun the configure script.  If you have read)
-	AC_MSG_WARN(=== the INSTALL file you should have known this.  So)
-	AC_MSG_WARN(=== you better read INSTALL again, as well.)
-	AC_MSG_ERROR(aborted.)
-fi
-fi
 
 AC_CHECK_PROG(PCRE2, pcre2-config, yes, no)
 

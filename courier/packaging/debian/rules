@@ -10,7 +10,7 @@ export imageurl=/webmail-images
 # Note the rm-s in the postrm, wiping out everything in sysconfdir and
 # localstatedir,
 override_dh_auto_configure:
-	dh_auto_configure -- --with-notice=unicode --disable-root-check --with-gnutls --with-gpg2 \
+	dh_auto_configure -- --with-notice=unicode --with-gnutls --with-gpg2 \
 		--prefix=/usr/lib/courier \
 		--localstatedir=/var/spool/courier \
 		--sysconfdir=/etc/courier \

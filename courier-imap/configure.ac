@@ -69,26 +69,6 @@ with this option.
 	;;
 esac
 
-AC_ARG_ENABLE(root-check, [  --disable-root-check    Allow build as root (make check will fail)],
-	rootcheck="$enableval",
-	rootcheck="yes")
-
-if test "$rootcheck" = "yes"
-then
-if test -w /etc
-then
-	AC_MSG_WARN(=== Do not compile Courier-IMAP as root.  Compile)
-	AC_MSG_WARN(=== Courier-IMAP as a non-root user then su to)
-	AC_MSG_WARN(=== root before running make install.  You must now)
-	AC_MSG_WARN(=== remove this entire directory and then extract the)
-	AC_MSG_WARN(=== source code from the tarball as a non-root user)
-	AC_MSG_WARN(=== and rerun the configure script.  If you have read)
-	AC_MSG_WARN(=== the INSTALL file you should have known this.  So)
-	AC_MSG_WARN(=== you better read INSTALL again.)
-	AC_MSG_ERROR(aborted.)
-fi
-fi
-
 PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 if test "$libidn" != "yes"
 then
