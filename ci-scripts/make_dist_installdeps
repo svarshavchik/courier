@@ -1,0 +1,54 @@
+set -evx
+
+dnf install -y --setopt=install_weak_deps=false \
+    --setopt=tsflags=nodocs \
+    --setopt=deltarpm=false \
+    --disablerepo=*modular \
+    aspell-devel \
+    autoconf \
+    automake \
+    bzip2 \
+    docbook-style-xsl \
+    elinks \
+    /etc/mime.types \
+    expect \
+    gawk \
+    gcc-c++ \
+    gdbm-devel \
+    gettext-devel \
+    ghostscript \
+    git \
+    gnupg2 \
+    groff \
+    httpd \
+    libidn-devel \
+    libtool \
+    libtool-ltdl-devel \
+    libxml2-devel \
+    xhtml1-dtds \
+    libxslt \
+    make \
+    mgetty-sendfax \
+    ncurses-devel \
+    netpbm-progs \
+    openldap-devel \
+    mysql-devel \
+    openssl-devel \
+    openssl-perl \
+    pam-devel \
+    pcre2-devel \
+    pcre-devel \
+    perl \
+    'perl(ExtUtils::Embed)' \
+    perl-generators \
+    postgresql-devel \
+    procps-ng \
+    rpm-build \
+    sed \
+    sqlite-devel \
+    tidy \
+    /usr/lib/locale/locale-archive \
+    valgrind \
+    wget \
+    which \
+    zlib-devel

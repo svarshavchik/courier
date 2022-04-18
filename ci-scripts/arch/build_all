@@ -1,0 +1,31 @@
+set -evx
+
+project="$1"
+
+source /etc/makepkg.conf; export $(egrep '^[[:alnum:]_]+=' /etc/makepkg.conf | cut -f1 -d=)
+
+for pkg in sysconftool*bz2 courier-unicode*bz2 courier-authlib*bz2 courier-sox*bz2
+do
+	rm -rf build
+	mkdir build
+	mv $pkg build
+	cd build
+	tar xf *
+	cd */.
+	./configure --with-notice=unicode
+	make
+	make install
+	ldconfig
+	cd ../..
+done
+
+rm -rf build
+mkdir build
+mv *.bz2 build
+cd build
+tar xf *
+cd */.
+./configure --with-notice=unicode
+make
+make check
+make install

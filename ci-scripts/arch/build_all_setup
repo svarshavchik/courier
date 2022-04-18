@@ -1,0 +1,46 @@
+set -evx
+
+pacman -Sy \
+    aspell \
+    automake \
+    apache \
+    binutils \
+    coreutils \
+    diffutils \
+    expect \
+    gawk \
+    gcc \
+    gdbm \
+    ghostscript \
+    gnupg \
+    groff \
+    gzip \
+    libidn \
+    libtool \
+    libxml2 \
+    mailcap \
+    make \
+    mariadb \
+    ncurses \
+    netpbm \
+    openldap \
+    openssl \
+    pam \
+    pcre \
+    pcre2 \
+    perl \
+    pkgconfig \
+    postgresql \
+    procps-ng \
+    sed \
+    sqlite \
+    valgrind \
+    icu \
+    wget \
+    which \
+    zlib \
+    --noconfirm
+
+mkdir -p /var/www/cgi-bin /var/www/html
+echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
+echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf

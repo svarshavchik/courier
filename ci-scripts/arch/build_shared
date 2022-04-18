@@ -1,0 +1,5 @@
+set -evx
+
+# For arch we'll just repackage the shared tarballs
+
+mv build/* packages

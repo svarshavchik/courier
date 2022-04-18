@@ -1,0 +1,6 @@
+set -evx
+
+sh ci-scripts/centos/build_shared_setup
+
+rpm -ivhf *.rpm
+rm -f *.rpm

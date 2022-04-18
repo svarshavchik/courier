@@ -51,7 +51,7 @@ BuildRequires:      /usr/bin/ps
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):    systemd
-BuildRequires:		systemd-rpm-macros
+BuildRequires:	    /usr/lib/rpm/macros.d/macros.systemd
 %else
 Requires(post):     /sbin/chkconfig
 Requires(preun):    /sbin/chkconfig

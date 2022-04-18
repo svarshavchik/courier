@@ -99,6 +99,7 @@ Requires(pre):      systemd
 Requires(post):     systemd
 Requires(postun):   systemd
 Requires:           systemd
+BuildRequires:	    /usr/lib/rpm/macros.d/macros.systemd
 
 %define initscript_courier %{nil}
 %else

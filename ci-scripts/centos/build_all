@@ -1,0 +1,9 @@
+set -evx
+
+project="$1"
+
+mkdir rpm
+
+rpmbuild -ta --clean \
+   --define 'notice_option --with-notice=unicode' \
+   --define "_topdir `pwd`/rpm" *.tar.bz2

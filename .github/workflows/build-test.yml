@@ -6,211 +6,302 @@ on:
   workflow_dispatch:
 
 jobs:
-  make_dist:
+  # Bootstrap tarballs of common packages:
+  #    sysconftool, courier-unicode, courier-authlib and courier-sox
+  #
+  # Upload their constructed tarballs as artifacts
+  #
+  # Build them into rpms, and upload an artifact of the common rpms.
+
+  make_common_dist_rpms:
     runs-on: ubuntu-latest
     container:
-      image: ${{ matrix.release[0] }}
+      image: "fedora:latest"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
 
       - name: Install dependencies
         run: |
-          ${{ matrix.release[1] }}
+          sh ci-scripts/make_dist_installdeps
 
       - name: Get courier-libs
         run: |
-          ${{ matrix.release[2] }}
           git clone https://github.com/svarshavchik/courier-libs.git libs
-          cp -al libs/unicode courier-unicode && ln -sf ../libs/common/autobloat courier-unicode # Treat unicode like a top-level project
           cp -al libs sysconftool
           cp -al libs courier-authlib
-          if [[ ${{ matrix.project }} == sysconftool || ${{ matrix.project }} == courier-authlib || ${{ matrix.project }} == courier-unicode ]] ; then exit 0 ; fi # No need for more copying
-          cp -al libs ${{ matrix.project }}
+          cp -al libs courier-sox
+          mkdir rpm
+          mkdir -p $HOME/bin
+          echo '#! /bin/sh' >$HOME/bin/rpmrepos.sh
+          chmod +x $HOME/bin/rpmrepos.sh
 
       - name: Build sysconftool
         run: |
-          ${{ matrix.release[2] }}
+          set -evx
+          . ci-scripts/make_dist_environment
           cd sysconftool
           sh ./autobloat
           ./configure
           make
           make check
-          make install
           make dist
+          make rpm
+          rpm -ivh rpm/RPMS/noarch/*.rpm
+          mv rpm/RPMS/*/*.rpm ../rpm/.
 
       - name: Build courier-unicode
         run: |
-          ${{ matrix.release[2] }}
-          cd courier-unicode
+          set -evx
+          . ci-scripts/make_dist_environment
+          cd libs/unicode
           sh ./autobloat
           ./configure
-          make
+          make -j2
           # make check -- not very useful, burns too much CPU
-          make install
           make dist
-          echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
-          echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf
-          ldconfig
+          make rpm
+          rm -f rpm/RPMS/*/*debuginfo*
+          rm -f rpm/RPMS/*/*debugsource*
+          rpm -ivh rpm/RPMS/*/*rpm
+          mv rpm/RPMS/*/*rpm ../../rpm/.
 
       - name: Build courier-authlib
         run: |
-          ${{ matrix.release[2] }}
+          set -evx
+          . ci-scripts/make_dist_environment
           cd courier-authlib
           env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
           ./configure
-          make
-          make install
+          make -j2
           make dist
+          make rpm
+          rm -f rpm/RPMS/*/*debuginfo*
+          rm -f rpm/RPMS/*/*debugsource*
+          mv rpm/RPMS/*/courier-authlib-devel*rpm ../rpm/.
+          rm -f rpm/RPMS/*/courier-authlib-*-*-*rpm
+          mv rpm/RPMS/*/courier-authlib*rpm ../rpm/.
+          rpm -ivh ../rpm/courier-authlib*rpm
+
+      - name: Build courier-sox
+        run: |
+          set -evx
+          . ci-scripts/make_dist_environment
+          cd courier-sox
+          env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
+          ./configure
+          make -j2
+          make dist
+          make rpm
+          rm -f rpm/RPMS/*/*debuginfo*
+          rm -f rpm/RPMS/*/*debugsource*
+          rm -f rpm/RPMS/*/*server*
+          rm -f rpm/RPMS/*/*utils*
+          mv rpm/RPMS/*/*rpm ../rpm/.
+          rpm -ivh ../rpm/courier-sox*rpm
+
+      - name: Upload sysconftool tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: sysconftool
+          path: "sysconftool/*.tar.bz2"
+
+      - name: Upload courier-unicode tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: courier-unicode
+          path: "libs/unicode/*.tar.bz2"
+
+      - name: Upload courier-authlib tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: courier-authlib
+          path: "courier-authlib/*.tar.bz2"
+
+      - name: Upload courier-sox tarball
+        uses: actions/upload-artifact@v3
+        with:
+          name: courier-sox
+          path: "courier-sox/*.tar.bz2"
+
+      - name: Upload common dist rpms
+        uses: actions/upload-artifact@v3
+        with:
+          name: distrpms
+          path: "rpm/*.rpm"
+
+      - name: Uninstall rpms
+        run: |
+          dnf remove -y sysconftool courier-authlib courier-unicode courier-sox
+
+  # Bootstrap tarballs of projects
+  #
+  # Download the artifact of common rpms and install them before building
+  # each project. Build the tarballs and rpms.
+  #
+  # Upload each project's tarball
+  make_dist:
+    needs: make_common_dist_rpms
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sh ci-scripts/make_dist_installdeps
+
+      - name: Download common dist rpms
+        uses: actions/download-artifact@v3
+        with:
+          name: distrpms
+
+      - name: Install common dist rpms and get courier-libs
+        run: |
+          set -evx
+          rpm -ivh *.rpm
+          git clone https://github.com/svarshavchik/courier-libs.git libs
+          mkdir -p $HOME/bin
+          echo '#! /bin/sh' >$HOME/bin/rpmrepos.sh
+          chmod +x $HOME/bin/rpmrepos.sh
 
       - name: Build ${{ matrix.project }} dist
         run: |
-          ${{ matrix.release[2] }}
-          if [[ ${{ matrix.project }} == sysconftool || ${{ matrix.project }} == courier-authlib || ${{ matrix.project }} == courier-unicode ]] ; then exit 0 ; fi # Already done
+          set -evx
+          cp -al libs ${{ matrix.project }}
           cd ${{ matrix.project }}
           env ACLOCAL_PATH=/usr/local/share/aclocal sh ./autobloat
           ./configure --with-notice=unicode --disable-root-check
-          make
-          make install
-          # Additional things for "courier":
-          #   - check
-          #   - install-configure
-          if test "${{ matrix.project }}" == courier ; then make check ; fi
-          if test "${{ matrix.project }}" == courier ; then make install-configure ; fi
+          make -j2
+          # courier rpm build runs make check
           make dist
+          make rpm
 
       - name: Upload dist for ${{ matrix.project }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.project }}
           path: "${{ matrix.project }}/*.tar.bz2"
 
     strategy:
       matrix:
-        # release: container image name, container preparation command, step preparation command
-        release: [["fedora:latest", "dnf install -y --setopt=install_weak_deps=false --setopt=tsflags=nodocs --setopt=deltarpm=false --disablerepo=*modular aspell-devel autoconf automake bzip2 docbook-style-xsl elinks /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript git gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel xhtml1-dtds libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed tidy /usr/lib/locale/locale-archive valgrind wget which zlib-devel", "eval $(rpm --eval '%{set_build_flags}')"],
-                 ]
-        project: ["cone",
-                  "courier-analog",
-                  "courier-authlib",
-                  "courier-imap",
-                  "courier-sox",
-                  "courier-unicode",
-                  "courier",
-                  "maildrop",
-                  "sqwebmail",
-                  "sysconftool",
-                 ]
+        project:
+          - cone
+          - courier-analog
+          - courier-imap
+          - courier
+          - maildrop
+          - sqwebmail
 
-  build_dist:
-    needs: make_dist
+  # Build common packages, upload <platform>-shared-packages artifact
+  #
+  # Centos: contains rpms of common packages
+  #
+  # Arch: contains the same common packages tarballs, in one artifact
+
+  build_common_packages:
+    needs: make_common_dist_rpms
     runs-on: ubuntu-latest
     container:
-      image: ${{ matrix.release[0] }}
+      image: ${{ matrix.platform[0] }}
     steps:
-      - name: Download sysconftool
-        uses: actions/download-artifact@v2
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Download sysconftool tarball
+        uses: actions/download-artifact@v3
         with:
           name: sysconftool
 
-      - name: Download courier-unicode
-        uses: actions/download-artifact@v2
+      - name: Download courier-unicode tarball
+        uses: actions/download-artifact@v3
         with:
           name: courier-unicode
 
-      - name: Download courier-authlib
-        uses: actions/download-artifact@v2
+      - name: Download courier-authlib tarball
+        uses: actions/download-artifact@v3
         with:
           name: courier-authlib
 
-      - name: Download ${{ matrix.project }}
-        uses: actions/download-artifact@v2
+      - name: Download courier-sox tarball
+        uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.project }}
+          name: courier-sox
 
-      - name: Install dependencies
+      - name: Build shared packages
         run: |
-          ${{ matrix.release[1] }}
-
-      - name: Build sysconftool
-        run: |
-          ${{ matrix.release[2] }}
-          mkdir build
-          pushd build
-          tar xf ../sysconftool*.tar.bz2
-          pushd *
-          ./configure
-          make
-          make install
-          popd
-          popd
+          set -evx
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared_setup
+          rm -rf packages
+          mkdir packages
           rm -rf build
-          rm sysconftool*.tar.bz2
-
-      - name: Build courier-unicode
-        run: |
-          ${{ matrix.release[2] }}
           mkdir build
-          pushd build
-          tar xf ../courier-unicode*.tar.bz2
-          pushd *
-          ./configure
-          make
-          make install
-          echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
-          echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf
-          ldconfig
-          popd
-          popd
+          mv sysconftool-* build
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
           rm -rf build
-          rm courier-unicode*.tar.bz2
-
-      - name: Build courier-authlib
-        run: |
-          ${{ matrix.release[2] }}
           mkdir build
-          pushd build
-          tar xf ../courier-authlib*.tar.bz2
-          pushd *
-          ./configure
-          make
-          make install
-          popd
-          popd
+          mv courier-unicode-* build
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
           rm -rf build
-          rm courier-authlib*.tar.bz2
-
-      - name: Build ${{ matrix.project }}
-        run: |
-          ${{ matrix.release[2] }}
           mkdir build
-          pushd build
-          tar xf ../${{ matrix.project }}*.tar.bz2
-          pushd *
-          ./configure --with-notice=unicode --disable-root-check
-          make
-          make install
-          # Additional things for "courier":
-          #   - check
-          #   - install-configure
-          if test "${{ matrix.project }}" == courier ; then make check ; fi
-          if test "${{ matrix.project }}" == courier ; then make install-configure ; fi
-          popd
-          popd
+          mv courier-authlib-* build
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
           rm -rf build
+          mkdir build
+          mv courier-sox-* build
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
+
+      - name: Upload shared for ${{ matrix.platform[1] }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.platform[1] }}-shared-packages
+          path: "packages/*"
 
     strategy:
       matrix:
-        # release: container image name, container preparation command, step preparation command
-        release: [
-                  ["centos:7", "yum install -y epel-release ; yum install -y epel-rpm-macros ; yum install -y --setopt=tsflags=nodocs aspell-devel automake /etc/mime.types expect gawk gcc-c++ gdbm-devel gettext-devel ghostscript gnupg2 groff httpd libidn-devel libtool libtool-ltdl-devel libxml2-devel libxslt make mgetty-sendfax ncurses-devel netpbm-progs openldap-devel openssl-devel openssl-perl pam-devel pcre2-devel pcre-devel perl 'perl(ExtUtils::Embed)' perl-generators procps-ng sed /usr/lib/locale/locale-archive valgrind wget which zlib-devel", "rpm --eval '%{set_build_flags}'; eval $(rpm --eval '%{set_build_flags}')"],
-                  ["archlinux:latest", "pacman -Sy aspell automake apache binutils coreutils diffutils expect gawk gcc gdbm ghostscript gnupg groff gzip libidn libtool libxml2 mailcap make mariadb ncurses netpbm openldap openssl pam pcre pcre2 perl pkgconfig postgresql procps-ng sed sqlite valgrind icu wget which zlib --noconfirm; mkdir -p /var/www/cgi-bin /var/www/html", "source /etc/makepkg.conf; export $(egrep '^[[:alnum:]_]+=' /etc/makepkg.conf | cut -f1 -d=)"],
-                 ]
-        project: ["cone",
-                  "courier-analog",
-                  "courier-imap",
-                  "courier-sox",
-                  "courier",
-                  "maildrop",
-                  "sqwebmail",
-                 ]
+        platform:
+           - ["centos:7",         "centos"]
+           - ["archlinux:latest", "arch"]
+
+
+  build_all:
+    needs: [ build_common_packages, make_dist ]
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.platform[0] }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Download shared packages
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.platform[1] }}-shared-packages
+
+      - name: Install dependencies and shared packages
+        run: |
+          sh ci-scripts/${{ matrix.platform[1] }}/build_all_setup
+
+      - name: Download package
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.project }}
+
+      - name: Build package
+        run: |
+          sh ci-scripts/${{ matrix.platform[1] }}/build_all ${{ matrix.project }}
+
+    strategy:
+      matrix:
+        platform:
+           - ["centos:7",         "centos"]
+           - ["archlinux:latest", "arch"]
+        project:
+          - cone
+          - courier-analog
+          - courier-imap
+          - courier
+          - maildrop
+          - sqwebmail
