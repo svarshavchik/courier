@@ -7,7 +7,7 @@ Version: @PACKAGE_VERSION@
 Release: 1%{?dist}
 License: GPL
 Group: Development/Tools
-Source: sysconftool-@PACKAGE_VERSION@.tar.gz
+Source: sysconftool-@PACKAGE_VERSION@.tar.bz2
 BuildRoot: /var/tmp/sysconftool-install
 BuildArch: noarch
 BuildRequires: automake
