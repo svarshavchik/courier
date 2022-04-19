@@ -366,6 +366,8 @@ cat >debian/tmp/etc/apache2/conf-available/courier-webmail.conf <<EOF
 </IfModule>
 EOF
 
+dh_install --package courier-webmail-apache2 debian/tmp/etc/apache2/conf-available/courier-webmail.conf
+
 cat >README.Debian <<EOF
 You must configure and enable Apache's CGI module, separately.
 
@@ -382,14 +384,13 @@ Enabling the courier-webmail apache2 configuration module redirects the URLs
 /webmail and /webmail-images to the webmail module.
 EOF
 
-dh_installdocs --package courier-webmail README.Debian
+dh_installdocs --package courier-webmail-apache2 README.Debian
 
 cat <<ZZ >>filelist.webmail
 $apache_cgibindir/webmail 555 bin bin file
 /etc/pam.d/webmail 644 root root config
 /etc/pam.d/calendar 644 root root config
 @datadir@/configlist.webmail 444 bin bin file
-/etc/apache2/conf-available/courier-webmail.conf 644 root root file
 ZZ
 
 cat >debian/tmp/etc/apache2/conf-available/courier-mlm-web.conf <<EOF
@@ -417,6 +418,8 @@ cat >debian/tmp/etc/apache2/conf-available/courier-mlm-web.conf <<EOF
 </IfModule>
 EOF
 
+dh_install --package courier-mlm-web-apache2 debian/tmp/etc/apache2/conf-available/courier-mlm-web.conf
+
 cat >README.Debian <<EOF
 You must configure and enable Apache's CGI module, separately.
 
@@ -433,12 +436,11 @@ Enabling the courier-mlm-web apache2 configuration module redirects the
 /webmlm URL.
 EOF
 
-dh_installdocs --package courier-mlm-web README.Debian
+dh_installdocs --package courier-mlm-web-apache2 README.Debian
 
 cat >>filelist.webmlm <<EOF
 $apache_cgibindir/webmlm 555 bin bin file
 @sysconfdir@/webmlmrc.dist 644 root root file
-/etc/apache2/conf-available/courier-mlm-web.conf 644 root root file
 EOF
 
 cat >debian/tmp/etc/apache2/conf-available/courier-webadmin.conf <<EOF
@@ -464,10 +466,11 @@ cat >debian/tmp/etc/apache2/conf-available/courier-webadmin.conf <<EOF
     </Directory>
   </IfDefine>
 </IfModule>
-
 EOF
+
+dh_install --package courier-webadmin-apache2 debian/tmp/etc/apache2/conf-available/courier-webadmin.conf
+
 echo "$apache_cgibindir/webadmin 511 root bin file" >filelist.webadmin
-echo "/etc/apache2/conf-available/courier-webadmin.conf 644 root root file" >>filelist.webadmin
 
 cat >README.Debian <<EOF
 You must configure and enable Apache's CGI module, separately.
@@ -485,7 +488,7 @@ Enabling the courier-webadmin apache2 configuration module redirects the
 /webadmin URL.
 EOF
 
-dh_installdocs --package courier-webadmin README.Debian
+dh_installdocs --package courier-webadmin-apache2 README.Debian
 
 echo "interest-noawait courier-restart" >debian/courier.triggers
 echo "interest-noawait courier-start" >>debian/courier.triggers
@@ -697,6 +700,15 @@ fi
 
 #DEBHELPER#
 
+EOF
+
+cat >debian/courier-webmail-apache2.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
 if test "\$1" = "remove"
 then
 	a2disconf -q courier-webmail
@@ -750,6 +762,15 @@ fi
 
 #DEBHELPER#
 
+EOF
+
+cat >debian/courier-mlm-web-apache2.prerm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
 if test "\$1" = "remove"
 then
 	a2disconf -q courier-mlm-web
@@ -784,6 +805,15 @@ then
 	deb-systemd-invoke stop courier.service
 	dpkg-trigger courier-start
 fi
+
+#DEBHELPER#
+
+EOF
+
+cat >debian/courier-webadmin-apache2.prerm <<EOF
+#! @SHELL@
+
+set -e
 
 #DEBHELPER#
 

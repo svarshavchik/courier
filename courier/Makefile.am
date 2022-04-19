@@ -49,11 +49,14 @@ EXTRA_DIST += \
 	packaging/debian/courier-maildrop.lintian-overrides \
 	packaging/debian/courier-mlm.lintian-overrides \
 	packaging/debian/courier-mlm-web.lintian-overrides \
+	packaging/debian/courier-mlm-web-apache2.lintian-overrides \
 	packaging/debian/courier-mysql.lintian-overrides \
 	packaging/debian/courier-pgsql.lintian-overrides \
 	packaging/debian/courier-pop3d.lintian-overrides \
 	packaging/debian/courier-webadmin.lintian-overrides \
+	packaging/debian/courier-webadmin-apache2.lintian-overrides \
 	packaging/debian/courier-webmail.lintian-overrides \
+	packaging/debian/courier-webmail-apache2.lintian-overrides \
 	packaging/debian/mkinstall.pl.in \
 	packaging/debian/rules \
 	packaging/debian/source/format \

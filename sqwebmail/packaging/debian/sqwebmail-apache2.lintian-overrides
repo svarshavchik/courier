@@ -1,0 +1,16 @@
+#
+# Automatically disable sqwebmail when removing this package
+#
+apache2-reverse-dependency-calls-wrapper-script prerm a2disconf
+#
+# Automatically reload apache when removing this package
+#
+maintainer-script-calls-systemctl prerm:*
+#
+# Separate subpackage, for convenience. Dependency specified.
+#
+non-standard-apache2-configuration-name sqwebmail.conf*
+#
+# This subpackage is specifically for apache2
+#
+web-application-should-not-depend-unconditionally-on-apache2

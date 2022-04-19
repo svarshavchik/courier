@@ -21,8 +21,20 @@ Architecture: any
 Conflicts: courier-webmail
 Depends: ${shlibs:Depends},
 	 ${misc:Depends}
+Recommends: sqwebmail-apache2 (= ${binary:Version})
 Description: Maildir Webmail CGI client
  SqWebmail CGI for Maildir mailboxes.
+
+Package: sqwebmail-apache2
+Architecture: any
+Depends: sqwebmail (= ${binary:Version}),
+	 apache2,
+	 systemd,
+         ${shlibs:Depends},
+	 ${misc:Depends}
+Description: Configure and enable apache for sqwebmail
+ This package installs an apache2 configuration that enables the
+ sqwebmail webmail server.
 
 Package: sqwebmail-ldap
 Architecture: any

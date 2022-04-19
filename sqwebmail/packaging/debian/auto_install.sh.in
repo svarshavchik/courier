@@ -129,7 +129,7 @@ cat >debian/tmp/etc/apache2/conf-available/sqwebmail.conf <<EOF
 </IfModule>
 EOF
 
-dh_install debian/tmp/etc/apache2/conf-available/sqwebmail.conf
+dh_install --package sqwebmail-apache2 debian/tmp/etc/apache2/conf-available/sqwebmail.conf
 
 cat >debian/sqwebmail.postinst <<EOF
 #! @SHELL@
@@ -142,7 +142,7 @@ $scriptdir/sysconftool $sysconfdir/sqwebmaild.dist
 
 EOF
 
-cat >debian/sqwebmail.prerm <<EOF
+cat >debian/sqwebmail-apache2.prerm <<EOF
 #! @SHELL@
 
 set -e
@@ -194,4 +194,4 @@ Enabling the sqwebmail apache2 configuration module redirects the URLs
 /sqwebmail and /sqwebmail-images to the SqWebmail module.
 EOF
 
-dh_installdocs README.Debian
+dh_installdocs --package sqwebmail-apache2 README.Debian

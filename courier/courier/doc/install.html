@@ -2,7 +2,6 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta name="generator" content="Bluefish 2.2.12" />
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta name="author" content="Sam Varshavchik" />
   <title>Installation</title>
@@ -66,6 +65,10 @@
       webadmin pages for configuring mysql and postgres-based account
       authentication. The "courier-fax" package installs webadmin pages and
       scripts for integrating with the mgetty+sendfax gateway.</p>
+    </li>
+    <li>
+      <p><code>deb</code> only: the "-apache2" deb packages install apache2
+      configuration files that enable each corresponding module.</p>
     </li>
   </ul>
   <p>The main "courier" package starts all modules, whichever modules are
@@ -814,12 +817,7 @@ $ cd courier-VERSION</pre>
   installed before installing the <em>Courier</em> mail server. Download the
   Socks 5 proxy client library from <a target="_blank" href=
   "http://www.courier-mta.org/download.html#sox">http://www.courier-mta.org/download.html#sox</a>
-  and follow its installation instructions. RPMs and DEBs can be built from the
-  source code tarball by following the procedure outlined in <a target="_blank"
-  href=
-  "http://www.courier-mta.org/FAQ.html#rpmdeb">http://www.courier-mta.org/FAQ.html#rpmdeb</a>
-  using the "courier-sox-<em>version</em>" tarball, and installing the
-  "courier-sox" and "courier-sox-devel" binary RPMs afterwards.</p>
+  and follow its installation instructions.</p>
   <blockquote>
     <p><b>NOTE:</b> Be sure to read the <code>README</code>, <code>NEWS</code>,
     and <code>INSTALL</code> files in the <em>Courier</em> mail server Socks 5
@@ -1455,8 +1453,7 @@ esmtp account required        pam_unix.so
 esmtp session required        pam_permit.so
 </pre>
   <h3>Building RPM and DEB packages</h3>
-  <p>NOTE: If an RPM or a DEB package gets built as per <a target="_blank"
-  href="http://www.courier-mta.org/FAQ.html#rpmdeb">http://www.courier-mta.org/FAQ.html#rpmdeb</a>
+  <p>NOTE: If an RPM or a DEB package gets built as per this INSTALL file
   resulting packages may not install if you have an existing IMAP or an
   existing POP3 server installed. The RPM packages will contain these PAM
   configuration files, and they will conflict with any PAM configuration files

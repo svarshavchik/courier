@@ -109,22 +109,42 @@ Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 gpg ( >= 2),
 	 aspell,
-	 apache2 | httpd-cgi,
 	 courier (= ${binary:Version})
+Recommends: courier-webmail-apache2 (= ${binary:Version})
 Conflicts: sqwebmail
 Replaces: sqwebmail
 Description: Courier Mail Server - HTTP (webmail) server
  This package installs Courier's CGI-based webmail server.
 
+Package: courier-webmail-apache2
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 apache2, systemd,
+	 courier-webmail (= ${binary:Version})
+Description: Configure and enable apache for courier-webmail
+ This package installs an apache2 configuration that enables the
+ courier-webmail server.
+
 Package: courier-webadmin
 Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
-	 apache2 | httpd-cgi,
 	 libcgi-pm-perl,
 	 courier (= ${binary:Version})
+Recommends: courier-webadmin-apache2 (= ${binary:Version})
 Description: Courier Mail Server - web-based administration tool
  This package installs Courier's CGI-based administration module.
+
+Package: courier-webadmin-apache2
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 apache2, systemd,
+	 courier-webadmin (= ${binary:Version})
+Description: Configure and enable apache for courier-admin
+ This package installs an apache2 configuration that enables the
+ courier-webadmin server.
 
 Package: courier-mlm
 Architecture: any
@@ -140,11 +160,21 @@ Package: courier-mlm-web
 Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
-	 apache2 | httpd-cgi,
 	 courier (= ${binary:Version})
+Recommends: courier-mlm-web-apache2 (= ${binary:Version})
 Description: Courier Mail Server - Mailing List Manager (web interface)
  This package installs the web-based mini-interface to the Courier
  mailing list manager.
+
+Package: courier-mlm-web-apache2
+Architecture: any
+Depends: ${shlibs:Depends},
+	 ${misc:Depends},
+	 apache2, systemd,
+	 courier-mlm-web (= ${binary:Version})
+Description: Configure and enable apache for courier-mlm-web
+ This package installs an apache2 configuration that enables the
+ courier-mlm-web server.
 
 Package: courier-maildrop
 Architecture: any

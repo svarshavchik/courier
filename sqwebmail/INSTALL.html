@@ -139,15 +139,17 @@ $ cd sqwebmail-VERSION</pre>
   gcc version.</p>
   <p>NOTE: all Courier packages should be built using the same version of
   gcc.</p>
-  <p>This ends up producing the <span class="c1">sqwebmail</span> binary deb
-  and an <span class="c1">sqwebmail-ldap</span> deb with an additional LDAP
-  dependency (for the LDAP address book hook described below). After installing
-  the binary deb: "<span class="c1">a2enmod alias</span>", "<span class=
-  "c1">a2enmod cgi</span>" and "<span class="c1">a2enmod sqwebmail</span>"
-  enables the webmail server by configuring Apache to redirect the URL
-  <span class="c1">http(s)://server/sqwebmail</span> to the webmail server. The
-  <span class="c1">http(s)://server/sqwebmail-images</span> URL also gets
-  redirected internally to the webmail server's UI images.</p>
+  <p>This ends up producing the <span class="c1">sqwebmail</span> binary deb,
+  an <span class="c1">sqwebmail-ldap</span> deb with an additional LDAP
+  dependency (for the LDAP address book hook described below), and an
+  <span class="c1">sqwebmail-apache2</span> deb that provides an apache2
+  configuration for sqwebmail. After installing it: "<span class="c1">a2enmod
+  alias</span>", "<span class="c1">a2enmod cgi</span>" and "<span class=
+  "c1">a2enmod sqwebmail</span>" enables the webmail server by configuring
+  Apache to redirect the URL <span class="c1">http(s)://server/sqwebmail</span>
+  to the webmail server. The <span class=
+  "c1">http(s)://server/sqwebmail-images</span> URL also gets redirected
+  internally to the webmail server's UI images.</p>
   <h3>Maintainer Mode (see README in the git repository to set up)</h3>
   <p><span class="c1">make rpm</span> or <span class="c1">make deb</span>, as
   appropriate, will:</p>

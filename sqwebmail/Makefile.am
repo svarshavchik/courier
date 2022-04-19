@@ -191,8 +191,8 @@ EXTRA_DIST += courier-debuild \
 	packaging/debian/copyright \
 	packaging/debian/rules \
 	packaging/debian/source/format \
-	packaging/debian/sqwebmail.lintian-overrides
-
+	packaging/debian/sqwebmail.lintian-overrides \
+	packaging/debian/sqwebmail-apache2.lintian-overrides
 
 packaging/debian/changelog: packaging/debian/changelog.in configure.ac
 	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status
