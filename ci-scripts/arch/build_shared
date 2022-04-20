@@ -1,5 +1,19 @@
 set -evx
 
-# For arch we'll just repackage the shared tarballs
+project="$1"
 
-mv build/* packages
+source /etc/makepkg.conf; export $(egrep '^[[:alnum:]_]+=' /etc/makepkg.conf | cut -f1 -d=)
+
+cd build
+
+tar xf *.tar.bz2
+cd */.
+./configure --with-notice=unicode
+make
+make install
+ldconfig
+mkdir ../inst
+make install DESTDIR=`cd ../inst; pwd`
+cd ../inst
+
+tar cjvf ../../packages/$project.img.tar.bz2 `find . ! -type d -print`

@@ -199,7 +199,7 @@ jobs:
   #
   # Centos: contains rpms of common packages
   #
-  # Arch: contains the same common packages tarballs, in one artifact
+  # Arch: contains *.img.tar.bz2 of 'make install' of common packages
 
   build_common_packages:
     needs: make_common_dist_rpms
@@ -239,19 +239,19 @@ jobs:
           rm -rf build
           mkdir build
           mv sysconftool-* build
-          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared sysconftool
           rm -rf build
           mkdir build
           mv courier-unicode-* build
-          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared courier-unicode
           rm -rf build
           mkdir build
           mv courier-authlib-* build
-          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared courier-authlib
           rm -rf build
           mkdir build
           mv courier-sox-* build
-          sh ci-scripts/${{ matrix.platform[1] }}/build_shared
+          sh ci-scripts/${{ matrix.platform[1] }}/build_shared courier-sox
 
       - name: Upload shared for ${{ matrix.platform[1] }}
         uses: actions/upload-artifact@v3
@@ -265,6 +265,9 @@ jobs:
            - ["centos:7",         "centos"]
            - ["archlinux:latest", "arch"]
 
+  # Build the main packages
+  #
+  # Download <platform>-shared-package, install them, build each main package.
 
   build_all:
     needs: [ build_common_packages, make_dist ]
