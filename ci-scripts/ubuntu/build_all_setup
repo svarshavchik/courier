@@ -1,0 +1,6 @@
+set -evx
+
+sh ci-scripts/ubuntu/build_shared_setup
+
+dpkg -i *.deb
+rm -f *.deb

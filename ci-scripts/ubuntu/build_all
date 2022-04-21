@@ -1,0 +1,13 @@
+set -evx
+
+export DEBIAN_FRONTEND=noninteractive
+
+project="$1"
+
+rm -rf build
+mkdir build
+cd build
+mv ../*.tar.bz2 .
+tar xf *
+cd */.
+./courier-debuild -us -uc

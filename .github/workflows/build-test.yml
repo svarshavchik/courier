@@ -263,6 +263,7 @@ jobs:
       matrix:
         platform:
            - ["centos:7",         "centos"]
+           - ["ubuntu:20.04",     "ubuntu"]
            - ["archlinux:latest", "arch"]
 
   # Build the main packages
@@ -300,6 +301,7 @@ jobs:
       matrix:
         platform:
            - ["centos:7",         "centos"]
+           - ["ubuntu:20.04",     "ubuntu"]
            - ["archlinux:latest", "arch"]
         project:
           - cone

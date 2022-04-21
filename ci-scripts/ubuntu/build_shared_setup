@@ -1,0 +1,43 @@
+set -evx
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt-get update
+
+apt install -y gnupg pbuilder ubuntu-dev-tools apt-file debhelper systemd
+apt install -y \
+	aspell 	      		\
+	expect			\
+	ghostscript		\
+	gnutls-bin		\
+	gnutls-dev		\
+	groff-base		\
+	libaspell-dev		\
+	libgcrypt-dev		\
+	libgdbm-dev		\
+	libidn11-dev		\
+	libldap2-dev		\
+	libltdl-dev		\
+	libmariadb-dev		\
+	libmariadb-dev-compat   \
+	libnet-cidr-perl        \
+	libncurses-dev		\
+	locales			\
+	libpam0g-dev		\
+	libpcre2-dev		\
+	libperl-dev		\
+	libpq-dev		\
+	libsqlite3-dev		\
+	libxml2-dev		\
+	libz-dev		\
+	libz-dev		\
+	mgetty-fax		\
+	mime-support		\
+	netpbm			\
+	wget
+
+localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+mkdir -p $HOME/bin
+echo '#! /bin/sh' >$HOME/bin/debrepos.sh
+chmod +x $HOME/bin/debrepos.sh
