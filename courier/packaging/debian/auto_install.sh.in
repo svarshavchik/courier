@@ -514,6 +514,7 @@ then
 
 	if test "\$2" = "" -o -f @sysconfdir@/dpkg-update-trigger
 	then
+		echo "Triggering Courier start after update"
 		# 1)
 		#
 		# Initial installation. We can't start just yet, we must
@@ -546,6 +547,7 @@ then
 
 	for trigger in \$2
 	do
+		echo "Courier trigger: \$trigger"
 		if test "\$trigger" = "courier-start"
 		then
 			start=1
@@ -554,13 +556,15 @@ then
 
 	if test "\$start" = 1
 	then
-		echo "Starting Courier..."
+		echo "Starting Courier after update..."
 		deb-systemd-invoke start 'courier.service' || true
 	else
 		if systemctl -q is-active courier
 		then
 			echo "Restarting Courier..."
 			deb-systemd-invoke restart 'courier.service' || true
+		else
+			echo "Courier was not started before update, not starting."
 		fi
 	fi
 fi
@@ -581,13 +585,14 @@ set -e
 
 if systemctl -q is-active courier
 then
-	echo "Stopping Courier before update..."
+	echo "Stopping Courier before uninstallation..."
 	deb-systemd-invoke stop courier.service
 	touch @sysconfdir@/dpkg-update-trigger
 fi
 
 if test "\$1" = "remove"
 then
+	echo "Removing sendmail symlinks"
 	update-alternatives --remove sendmail-mta @bindir@/sendmail
 	update-alternatives --remove sendmail-msp @bindir@/sendmail
 fi
@@ -604,22 +609,26 @@ set -e
 
 if test "\$1" = "purge"
 then
+	echo "Removing @sysconfdir@"
 	rm -rf @sysconfdir@/*
+	echo "Removing @localstatedir@"
 	rm -rf @localstatedir@/*
+	echo "Removing @datadir@"
 	rm -rf @datadir@/*
 fi
 EOF
 
 # Subpackages:
 #
-# In the prerm trigger: check if Courier is active, if so stop it and schedule
-# a courier-start trigger to restart it after the upgrade is complete.
+# In the prerm trigger: check if Courier is active, if so stop it and set
+# the dpkg-update-trigger flag.
+#
+# In the postrm trigger: if dpkg-update-trigger flag is set: send the
+# courier-start trigger unless it's being called for an "update"
 #
 # In the postinst trigger: update the subpackage's configuration. Emit a
-# courier-restart trigger to restart Courier, if this sub-package is
-# getting installed separately. If it's getting installed as part of an
-# upgrade the courier-start trigger will also get emitted, and it will
-# cause a restart.
+# courier-restart trigger to restart Courier. If the dpkg-update-trigger
+# flag is set emit the courier-start trigger.
 
 cat >debian/courier-imapd.prerm <<EOF
 #! @SHELL@
@@ -628,13 +637,28 @@ set -e
 
 if systemctl -q is-active courier
 then
-	echo "Stopping Courier..."
+	echo "Stopping Courier before uninstalling courier-imapd..."
 	deb-systemd-invoke stop courier.service
-	dpkg-trigger courier-start
+	touch @sysconfdir@/dpkg-update-trigger
 fi
 
 #DEBHELPER#
 
+EOF
+
+cat >debian/courier-imapd.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test -f @sysconfdir@/dpkg-update-trigger -a "\$1" != "upgrade"
+then
+	echo "Triggering Courier start after uninstalling courier-imapd"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
 EOF
 
 cat >debian/courier-imapd.postinst <<EOF
@@ -642,11 +666,17 @@ cat >debian/courier-imapd.postinst <<EOF
 
 set -e
 
+if test -f @sysconfdir@/dpkg-update-trigger
+then
+	echo "Triggering Courier start after updating courier-imapd"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
+
 if test "\$1" = "configure"
 then
 	echo "Updating Courier IMAP configuration"
 	@datadir@/sysconftool \`cat @datadir@/configlist.imap\`
-
 	dpkg-trigger courier-restart
 fi
 
@@ -661,19 +691,41 @@ set -e
 
 if systemctl -q is-active courier
 then
-	echo "Stopping Courier..."
+	echo "Stopping Courier before uninstalling courier-pop3d..."
 	deb-systemd-invoke stop courier.service
-	dpkg-trigger courier-start
+	touch @sysconfdir@/dpkg-update-trigger
 fi
 
 #DEBHELPER#
 
 EOF
 
+cat >debian/courier-pop3d.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test -f @sysconfdir@/dpkg-update-trigger -a "\$1" != "upgrade"
+then
+	echo "Triggering Courier restart after updating courier-pop3d"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
+EOF
+
 cat >debian/courier-pop3d.postinst <<EOF
 #! @SHELL@
 
 set -e
+
+if test -f @sysconfdir@/dpkg-update-trigger
+then
+	echo "Triggering Courier start after updating courier-pop3d"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
 
 if test "\$1" = "configure"
 then
@@ -693,9 +745,9 @@ set -e
 
 if systemctl -q is-active courier
 then
-	echo "Stopping Courier..."
+	echo "Stopping Courier before uninstalling courier-webmail..."
 	deb-systemd-invoke stop courier.service
-	dpkg-trigger courier-start
+	touch @sysconfdir@/dpkg-update-trigger
 fi
 
 #DEBHELPER#
@@ -711,6 +763,7 @@ set -e
 
 if test "\$1" = "remove"
 then
+	echo "Removing courier-webmail configuration and restarting apache"
 	a2disconf -q courier-webmail
 	systemctl reload apache2
 fi
@@ -723,11 +776,20 @@ set -e
 
 #DEBHELPER#
 
+if test -f @sysconfdir@/dpkg-update-trigger -a "\$1" != "upgrade"
+then
+	echo "Triggering Courier start after uninstalling courier-webmail"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
+
 if test "\$1" = "purge"
 then
+	echo "Removing @localstatedir@/calendar"
 	rm -rf @localstatedir@/calendar/localcache/*
 	rm -rf @localstatedir@/calendar/private/*
 	rm -rf @localstatedir@/calendar/public/*
+	echo "Removing @localstatedir@/webmail-logincache"
 	rm -rf @localstatedir@/webmail-logincache/*
 fi
 EOF
@@ -736,6 +798,13 @@ cat >debian/courier-webmail.postinst <<EOF
 #! @SHELL@
 
 set -e
+
+if test -f @sysconfdir@/dpkg-update-trigger
+then
+	echo "Triggering Courier start after updating courier-webmail"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
 
 if test "\$1" = "configure"
 then
@@ -755,9 +824,9 @@ set -e
 
 if systemctl -q is-active courier
 then
-	echo "Stopping Courier..."
+	echo "Stopping Courier before uninstalling courier-mlm-web..."
 	deb-systemd-invoke stop courier.service
-	dpkg-trigger courier-start
+	touch @sysconfdir@/dpkg-update-trigger
 fi
 
 #DEBHELPER#
@@ -773,16 +842,39 @@ set -e
 
 if test "\$1" = "remove"
 then
+	echo "Removing courier-mlm-web configuration and restarting apache"
 	a2disconf -q courier-mlm-web
 	systemctl reload apache2
 fi
 
 EOF
 
+cat >debian/courier-mlm-web.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test -f @sysconfdir@/dpkg-update-trigger -a "\$1" != "upgrade"
+then
+	echo "Triggering Courier start after uninstalling courier-mlm-web"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
+EOF
+
 cat >debian/courier-mlm-web.postinst <<EOF
 #! @SHELL@
 
 set -e
+
+if test -f @sysconfdir@/dpkg-update-trigger
+then
+	echo "Triggering Courier start after updating courier-mlm-web"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
 
 if test "\$1" = "configure"
 then
@@ -801,9 +893,9 @@ set -e
 
 if systemctl -q is-active courier
 then
-	echo "Stopping Courier..."
+	echo "Stopping Courier before uninstalling courier-webadmin..."
 	deb-systemd-invoke stop courier.service
-	dpkg-trigger courier-start
+	touch @sysconfdir@/dpkg-update-trigger
 fi
 
 #DEBHELPER#
@@ -819,16 +911,39 @@ set -e
 
 if test "\$1" = "remove"
 then
+	echo "Removing courier-webadmin configuration and restarting apache"
 	a2disconf -q courier-webadmin
 	systemctl reload apache2
 fi
 
 EOF
 
+cat >debian/courier-webadmin.postrm <<EOF
+#! @SHELL@
+
+set -e
+
+#DEBHELPER#
+
+if test -f @sysconfdir@/dpkg-update-trigger -a "\$1" != "upgrade"
+then
+	echo "Triggering Courier start after uninstalling courier-webadmin"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
+EOF
+
 cat >debian/courier-webadmin.postinst <<EOF
 #! @SHELL@
 
 set -e
+
+if test -f @sysconfdir@/dpkg-update-trigger
+then
+	echo "Triggering Courier start after updating courier-webadmin"
+	rm -f @sysconfdir@/dpkg-update-trigger
+	dpkg-trigger courier-start
+fi
 
 if test "\$1" = "configure"
 then
