@@ -75,6 +75,7 @@ BuildRequires: openldap-devel courier-authlib-devel >= 0.55
 BuildRequires: /etc/mime.types
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
+BuildRequires: gdbm-devel pcre2-devel
 BuildRequires: %{__gzip}
 BuildRequires: %{__make}
 
@@ -105,7 +106,9 @@ This package installes the SqWebMail LDAP address book lookup module.
 
 %prep
 %setup -q
-PATH=/usr/bin:$PATH %configure %{?notice_option} \
+
+%build
+%configure -C %{?notice_option} \
 	--enable-cgibindir=%{cgibindir} \
 	--enable-imagedir=%{imagedir} \
 	--enable-imageurl=%{imageurl} \
@@ -119,7 +122,6 @@ PATH=/usr/bin:$PATH %configure %{?notice_option} \
 #  --sysconfdir needed for RH 7.x
 #
 
-%build
 %{__make} %{_smp_mflags}
 %{__make} check
 %install

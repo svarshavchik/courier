@@ -434,7 +434,7 @@ bool mail::imapCREATE::taggedMessage(mail::imap &imapAccount, string msgname,
 							 unicode_default_chset(),
 							 NULL);
 
-			if (!p && strchr(p, *hiersep[0].getHierSep().c_str())
+			if (!p || strchr(p, *hiersep[0].getHierSep().c_str())
 			    != NULL)
 			{
 				if (p)

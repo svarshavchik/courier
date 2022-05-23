@@ -258,24 +258,42 @@ std::string myServer::remoteConfig::saveconfig(std::string filename,
 	return "";
 }
 
+namespace {
+
+	struct scoped_fp {
+		FILE *fp;
+
+		scoped_fp(const char *filename)
+			: fp{fopen(filename, "r")}
+		{
+		}
+
+		~scoped_fp()
+		{
+			if (fp)
+				fclose(fp);
+		}
+	};
+}
+
 bool myServer::remoteConfig::saveconfig2(std::string filename,
 					 std::string subjmarker,
 					 std::ifstream &cachedContents)
 {
 	if (filename.size() > 0)
 	{
-		FILE *fp=fopen(filename.c_str(), "r");
+		scoped_fp fp{filename.c_str()};
 
-		if (!fp)
+		if (!fp.fp)
 		{
 			errmsg=strerror(errno);
 			return false;
 		}
 
-		if (configFileUnchanged(cachedContents, fp))
+		if (configFileUnchanged(cachedContents, fp.fp))
 			return true;
 
-		if (fseek(fp, 0L, SEEK_SET) < 0)
+		if (fseek(fp.fp, 0L, SEEK_SET) < 0)
 		{
 			errmsg=strerror(errno);
 			return false;
@@ -291,7 +309,6 @@ bool myServer::remoteConfig::saveconfig2(std::string filename,
 			if (!add)
 			{
 				errmsg=callback.msg;
-				fclose(fp);
 				return false;
 			}
 
@@ -307,7 +324,7 @@ bool myServer::remoteConfig::saveconfig2(std::string filename,
 				<< mail::Header::plain("Content-Type",
 						       CONTENTTYPE);
 
-			mail::Attachment att(headers, fileno(fp));
+			mail::Attachment att(headers, fileno(fp.fp));
 
 			{
 				size_t dummy;
@@ -321,16 +338,10 @@ bool myServer::remoteConfig::saveconfig2(std::string filename,
 			{
 				errmsg=strerror(errno);
 				add->fail("Aborted");
-				fclose(fp);
 				return false;
 			}
 
-			fclose(fp);
-			fp=NULL;
-
 		} catch (...) {
-			if (fp)
-				fclose(fp);
 			if (add)
 				add->fail("Aborted");
 			throw;

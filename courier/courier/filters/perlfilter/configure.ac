@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2000-2001 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(perlfilter, 0.10, [courier-users@lists.sourceforge.net])
+AC_INIT([perlfilter],[0.10],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -17,10 +17,9 @@ AC_CONFIG_HEADERS(config.h)
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_LIBTOOL
+LT_INIT
 
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 
@@ -99,4 +98,5 @@ dnl Checks for library functions.
 CFLAGS="-I${srcdir}/.. -I.. -I${srcdir}/../.. -I../.. -I${srcdir}/../../.. -I ../../.. -I${srcdir}/../../../libs -I../../../libs $CFLAGS"
 
 INSTALL_SCRIPT='${INSTALL} -m 500'
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

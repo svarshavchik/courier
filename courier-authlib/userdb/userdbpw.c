@@ -16,15 +16,9 @@
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif
-#if TIME_WITH_SYS_TIME
-#include <sys/time.h>
 #include <time.h>
-#else
 #if HAVE_SYS_TIME_H
 #include <sys/time.h>
-#else
-#include <time.h>
-#endif
 #endif
 #if	HAVE_MD5
 #include	"md5/md5.h"
@@ -75,15 +69,12 @@ char *userdb_mkmd5pw(const char *);
 static struct termios tios;
 static int have_tios;
 
-static RETSIGTYPE sighandler(int signum)
+static void sighandler(int signum)
 {
 	if (write(1, "\n", 1) < 0)
 		; /* ignore gcc warning */
 	tcsetattr(0, TCSANOW, &tios);
 	_exit(0);
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 #endif
 

@@ -839,6 +839,7 @@ void mail::mbox::folder::closeCallback::success(string msg)
 	{
 		origCallback.success(msg);
 		delete this;
+		return;
 	}
 
 	try {

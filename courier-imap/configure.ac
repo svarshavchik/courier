@@ -3,22 +3,19 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_PREREQ(2.59)
-AC_INIT(courier-imap, 5.1.7.20220416, [courier-imap@lists.sourceforge.net])
+AC_INIT([courier-imap],[5.1.8],[courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
 >confdefs.h # Kill PACKAGE_ macros
 
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_SYSCONFTOOL
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+LT_INIT
 
 AC_PATH_PROGS(PERL, perl5 perl, perl)
 AC_PATH_PROGS(SETENV, env)
@@ -73,43 +70,6 @@ PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 if test "$libidn" != "yes"
 then
 	AC_MSG_ERROR([libidn not found])
-fi
-
-AC_ARG_WITH(redhat, [], [ redhat=$withval ], [redhat=no])
-
-if test "$srcdir" = "."
-then
-	case `./config.guess` in
-	*-redhat-*)
-		if test "$redhat" = "no"
-		then
-			hash='#'
-			AC_MSG_WARN(=== I think you are trying to run this configure script)
-			AC_MSG_WARN([=== on Red Hat/Fedora.  You're doing too much work!])
-			AC_MSG_WARN([=== It's much faster to create installable binary RPMs])
-			AC_MSG_WARN([=== like this: http://www.courier-mta.org/FAQ.html${hash}rpm])
-			AC_MSG_WARN(=== When you do this you may find that RPM will tell you)
-			AC_MSG_WARN([=== to install some other software first, before trying to])
-			AC_MSG_WARN([=== build this one, and even tell you the name of RPMs you])
-			AC_MSG_WARN([=== need to install from the distribution CD.  That's much])
-			AC_MSG_WARN([=== easier than trying to figure out the same from some])
-			AC_MSG_WARN([=== cryptic error message.])
-			AC_MSG_WARN([])
-			AC_MSG_WARN([=== Even if you don't intend to use everything you need to])
-			AC_MSG_WARN([=== have in order to build via RPM, you should still do as])
-			AC_MSG_WARN([=== you're told.  All the extra stuff (LDAP, SQL, etc...)])
-			AC_MSG_WARN([=== goes into RPM sub-packages, which do not need to be])
-			AC_MSG_WARN([=== installed.])
-			AC_MSG_WARN([=== But, if you insist, you can simply add '--with-redhat'])
-			AC_MSG_WARN(=== parameter to this configure script and not see this)
-			AC_MSG_WARN(=== error message.  You should also do this when upgrading)
-			AC_MSG_WARN([=== and you didn't use RPM with the older version.])
-			AC_MSG_ERROR(... in either case you better know what you're doing!)
-		fi
-		;;
-	*)
-		;;
-	esac
 fi
 
 AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)

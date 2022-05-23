@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(module.uucp, 0.11, [courier-users@lists.sourceforge.net])
+AC_INIT([module.uucp],[0.11],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -17,14 +17,12 @@ dnl Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 version=`cat ../../version`
 AC_SUBST(version)
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+LT_INIT
 AC_ARG_WITH(db, [], db="$withval", db="")
 
 . ../../dbobj.config
@@ -50,8 +48,7 @@ AC_CHECK_HEADERS(unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
-AC_SIZE_T
-AC_TYPE_SIGNAL
+AC_TYPE_SIZE_T
 AC_SYS_LARGEFILE
 
 dnl Checks for library functions.
@@ -94,4 +91,5 @@ INSTALL_SCRIPT='${INSTALL} -m 755'
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
 
-AC_OUTPUT(Makefile staticlist.c makeuucpneighbors)
+AC_CONFIG_FILES([Makefile staticlist.c makeuucpneighbors])
+AC_OUTPUT

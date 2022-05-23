@@ -107,11 +107,11 @@ int domodsub(const char *address)
 	std::string::iterator b=filename.begin(), e=filename.end();
 
 	std::string::iterator p=
-		std::find_if(b, e, std::not1(std::ptr_fun(::isalpha)));
+		std::find_if(b, e, [](char c){return !::isalpha(c);});
 
 	if (p == e)
 	{
-		std::transform(b, e, b, std::ptr_fun(::toupper));
+		std::transform(b, e, b, [](char c){return ::toupper(c);});
 
                 filename=COMMANDS "/sub." + filename;
 
@@ -403,11 +403,11 @@ int dosubunsubconfirm(const char *address, const char *pfix,
 	std::string::iterator b=filename.begin(), e=filename.end();
 
 	std::string::iterator p=
-		std::find_if(b, e, std::not1(std::ptr_fun(::isalpha)));
+		std::find_if(b, e, [](char c){return !::isalpha(c);});
 
 	if (p == e)
 	{
-		std::transform(b, e, b, std::ptr_fun(::toupper));
+		std::transform(b, e, b, [](char c){return ::toupper(c);});
 
 		filename=COMMANDS "/" + (pfix + ("." + filename));
 

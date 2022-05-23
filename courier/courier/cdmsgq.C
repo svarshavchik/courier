@@ -488,9 +488,7 @@ int msgq::queuescan2(std::string s)
 	int	rc;
 	int	flag=0;
 
-	std::sort(filename_array.begin(), filename_array.end(),
-		  std::ptr_fun(sort_by_qtime));
-
+	std::sort(filename_array.begin(), filename_array.end(), sort_by_qtime);
 
 	std::vector<std::string>::iterator b, e;
 

@@ -28,8 +28,8 @@ new ones, but preserving any custom changes contained in the old versions.
 
 %prep
 %setup
-%configure
 %build
+%configure
 %{__make}
 %install
 rm -rf $RPM_BUILD_ROOT

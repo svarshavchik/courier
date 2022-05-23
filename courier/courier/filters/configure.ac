@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2000-2001 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(courier, 0.14, [courier-users@lists.sourceforge.net])
+AC_INIT([courier],[0.14],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -15,11 +15,10 @@ AC_CONFIG_HEADERS(config.h)
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AM_PROG_LIBTOOL
+LT_INIT
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 
 dnl Checks for libraries.
@@ -32,13 +31,14 @@ fi
 dnl Checks for header files.
 
 AC_CHECK_HEADERS(unistd.h sys/stat.h sys/time.h fcntl.h)
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+# End of obsolete code.
+
 AC_HEADER_DIRENT
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
 AC_TYPE_UID_T
-AC_TYPE_SIGNAL
 AC_SYS_LARGEFILE
 
 dnl Checks for library functions.
@@ -136,5 +136,6 @@ AC_CONFIG_SUBDIRS(libfilter perlfilter)
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
 
-AC_OUTPUT(Makefile filterctl courierfilter.start verifysender verifysenderfull
-		   verifysmtp)
+AC_CONFIG_FILES([Makefile filterctl courierfilter.start verifysender verifysenderfull
+		   verifysmtp])
+AC_OUTPUT

@@ -3,8 +3,7 @@ dnl
 dnl Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_PREREQ(2.59)
-AC_INIT(libcourier, 0.11, [courier-users@lists.sourceforge.net])
+AC_INIT([libcourier],[0.11],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -22,7 +21,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_LIBTOOL
+LT_INIT
 
 if test x$GCC = xyes
 then
@@ -40,9 +39,10 @@ dnl Checks for libraries.
 PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+
 AC_CHECK_HEADERS(strings.h fcntl.h limits.h unistd.h syslog.h sys/types.h sys/stat.h sys/time.h sys/ioctl.h sys/statfs.h sys/param.h sys/mount.h sys/select.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -50,19 +50,15 @@ AC_C_CONST
 AC_TYPE_PID_T
 AC_TYPE_UID_T
 AC_TYPE_SIZE_T
-AC_TYPE_SIGNAL
 AC_SYS_LARGEFILE
 
 AC_CACHE_CHECK([for caddr_t],courier_cv_CADDR_T_DEFINED,
 
-	AC_TRY_COMPILE(
-[
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 caddr_t p;
-],[
-],
-	courier_cv_CADDR_T_DEFINED=yes,
-	courier_cv_CADDR_T_DEFINED=no)
+]], [[
+]])],[courier_cv_CADDR_T_DEFINED=yes],[courier_cv_CADDR_T_DEFINED=no])
 )
 
 if test "$courier_cv_CADDR_T_DEFINED" = "no"
@@ -76,13 +72,13 @@ AC_CHECK_FUNCS(gethostname strerror strcasecmp strncasecmp setgroups initgroups 
 
 dnl Linux has sighold, but it's not prototyped by default.
 
-AC_TRY_COMPILE( [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include	<signal.h>
 
 extern int sighold(char *);
-],[
+]], [[
 int i=0;
-], , AC_DEFINE_UNQUOTED(HAVE_SIGHOLD,1,[ Whether sighold() is available ]))
+]])],[],[AC_DEFINE_UNQUOTED(HAVE_SIGHOLD,1, Whether sighold() is available )])
 
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
@@ -99,7 +95,7 @@ int main()
 
 AC_CACHE_CHECK([for missing gethostname prototype],courier_cv_SYS_GETHOSTNAME,
 
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #if HAVE_UNISTD_H
 #include	<unistd.h>
 #endif
@@ -108,9 +104,9 @@ AC_TRY_COMPILE([
 extern "C"
 #endif
 int gethostname(int,int);
-],[
-],courier_cv_SYS_GETHOSTNAME=yes,courier_cv_SYS_GETHOSTNAME=no
-)
+]], [[
+]])],[courier_cv_SYS_GETHOSTNAME=yes],[courier_cv_SYS_GETHOSTNAME=no
+])
 
 )
 
@@ -182,15 +178,13 @@ AC_MSG_RESULT($dirlist)
 AC_SUBST(dirlist)
 AC_SUBST(transport)
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CACHE_CHECK([if the C++ compiler needs -fhandle-exceptions],
 	ac_cv_need_handlexceptions,
 
-AC_TRY_COMPILE([],
-[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 throw;
-], ac_cv_need_handlexceptions=no,
-ac_cv_need_handlexceptions=yes)
+]])],[ac_cv_need_handlexceptions=no],[ac_cv_need_handlexceptions=yes])
 )
 
 if test "$ac_cv_need_handlexceptions" = "yes"
@@ -204,9 +198,9 @@ then
 		;;
 	esac
 fi
-AC_LANG_C
+AC_LANG([C])
 
-AC_TRY_RUN( [
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 
 #include	<stdio.h>
 #include	<stdlib.h>
@@ -233,16 +227,14 @@ FILE *fp=fopen("conftestval", "w");
 	fclose(fp);
 	return (0);
 }
-]
-	, [ MAXLONGSIZE=`cat conftestval` ],
-	[
+
+	]])],[ MAXLONGSIZE=`cat conftestval` ],[
 		AC_MSG_ERROR(Unable to run test program.)
-	] ,
-	[
+	 ],[
 		MAXLONGSIZE=60
 		AC_MSG_WARN([Cross compiling, setting MAXLONGSIZE to $MAXLONGSIZE])
-	]
-		)
+
+		])
 
 AC_ARG_WITH(courierlogger, [], courierlogger="$withval",
 			   AC_MSG_ERROR([Error - no --with-courierlogger?]))
@@ -255,4 +247,5 @@ AC_DEFINE_UNQUOTED(MAXLONGSIZE, $MAXLONGSIZE, [ Maximum size of an long value ])
 dblibrary="../../$dblibrary"
 AC_SUBST(dblibrary)
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

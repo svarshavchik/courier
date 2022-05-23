@@ -1903,7 +1903,7 @@ char	*sender=rfc822_gettok(addresst);
 		std::transform(headername.begin(),
 			       headername.end(),
 			       headername.begin(),
-			       std::ptr_fun(::tolower));
+			       [](char c){return ::tolower(c);});
 
 		if (headername == "received")	++received_cnt;
 

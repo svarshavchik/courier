@@ -5,15 +5,9 @@
 */
 #include "libmail_config.h"
 #include "runlater.H"
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
+#include        <time.h>
+#if HAVE_SYS_TIME_H
+#include        <sys/time.h>
 #endif
 
 std::queue<mail::ptr<mail::runLater> > mail::runLater::runningLater;

@@ -216,7 +216,7 @@ static int doexpaliases(std::string line, struct rw_transport *module)
 
 	std::string::iterator b=std::find_if(line.begin(),
 					     line.end(),
-					     std::not1(std::ptr_fun(isspace)));
+					     [](char c){return !isspace(c);});
 	std::string::iterator e=line.end();
 
 	while (b < e && isspace(e[-1]))
@@ -244,7 +244,7 @@ static int doexpaliases(std::string line, struct rw_transport *module)
 	std::cout << '<' << norm_addr << '>' << std::endl;
 
 	line=std::string(std::find_if(line.begin(), line.end(),
-				      std::not1(std::ptr_fun(isspace))),
+				      [](char c){return !isspace(c);}),
 			 line.end());
 
 	const char *linep=line.c_str();

@@ -132,13 +132,13 @@ template<typename iterator_t, typename comp_t>
 inline void TrimLeft(std::string &s)
 {
 	s=std::string(std::find_if(s.begin(), s.end(),
-				   std::not1(std::ptr_fun(::isspace))), s.end());
+				   [](char c){return !::isspace(c);}), s.end());
 }
 
 inline void TrimRight(std::string &s)
 {
 	s=std::string(s.begin(), find_last_if(s.begin(), s.end(),
-					 std::not1(std::ptr_fun(::isspace)))
+					 [](char c){return !::isspace(c);})
 		      );
 }
 

@@ -3,12 +3,12 @@ dnl
 dnl Copyright 1998 - 2017 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(courier, 1.1, [courier-users@lists.sourceforge.net])
+AC_INIT([courier],[1.1],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
 AC_CONFIG_SRCDIR(submit.C)
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign])
 LPATH="$PATH:/usr/local/bin"
 AC_CONFIG_HEADERS(config.h)
@@ -17,13 +17,11 @@ dnl Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+LT_INIT
 
 AC_PATH_PROG(PROCMAIL, procmail, /usr/bin/procmail, $LPATH)
 AC_PATH_PROG(CAT, cat, cat, $LPATH)
@@ -264,16 +262,16 @@ AC_SUBST(HAVE_LDAP)
 AC_CONFIG_SUBDIRS( libs filters doc webadmin module.dsn module.esmtp module.fax module.local module.uucp )
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(sys/types.h sys/time.h sys/stat.h sys/wait.h sys/file.h sysexits.h unistd.h fcntl.h syslog.h locale.h langinfo.h sys/ioctl.h ldap.h lber.h)
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
-AC_PID_T
+AC_TYPE_PID_T
 AC_TYPE_UID_T
-AC_TYPE_SIGNAL
 AC_SYS_LARGEFILE
 
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([
@@ -371,7 +369,7 @@ for f in $AUTHMODULELIST x
 do
 	if test "$f" = "authldap"
 	then
-		AC_ERROR(You must use authdaemon with authldap)
+		AC_MSG_ERROR(You must use authdaemon with authldap)
 	fi
 done
 
@@ -381,15 +379,13 @@ INSTALL_PROGRAM='${INSTALL} -m 700'
 INSTALL_SCRIPT='${INSTALL} -m 700'
 INSTALL_DATA='${INSTALL} -m 600'
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CACHE_CHECK([if the C++ compiler needs -fhandle-exceptions],
 	ac_cv_need_handlexceptions,
 
-AC_TRY_COMPILE([],
-[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 throw;
-], ac_cv_need_handlexceptions=no,
-ac_cv_need_handlexceptions=yes)
+]])],[ac_cv_need_handlexceptions=no],[ac_cv_need_handlexceptions=yes])
 )
 
 if test "$ac_cv_need_handlexceptions" = "yes"
@@ -403,20 +399,20 @@ then
 		;;
 	esac
 fi
-AC_LANG_C
+AC_LANG([C])
 
-AC_TRY_COMPILE( [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <signal.h>
 #include <string.h>
 #include <stdio.h>
-],[
+]], [[
 struct sigaction sa;
 
 memset(&sa, 0, sizeof(sa));
 sa.sa_handler=SIG_IGN;
 sa.sa_flags=SA_NOCLDWAIT;
 sigaction(SIGCHLD, &sa, NULL);
-], AC_DEFINE_UNQUOTED(USE_NOCLDWAIT,1, [ Whether to use SA_NOCLDWAIT ]))
+]])],[AC_DEFINE_UNQUOTED(USE_NOCLDWAIT,1,  Whether to use SA_NOCLDWAIT )],[])
 
 if test x$GCC = xyes
 then
@@ -504,7 +500,7 @@ do
     fi
 done
 
-AC_OUTPUT(Makefile courier.h \
+AC_CONFIG_FILES([Makefile courier.h \
 	courierctl.start \
 	couriermlm-rcptfilter-ctlmsg \
 	couriermlm-rcptfilter-msg \
@@ -519,4 +515,5 @@ AC_OUTPUT(Makefile courier.h \
 	makehosteddomains \
 	makeimapaccess \
 	mkmodules.sh perms.sh setperms.sh \
-	perftest1 webmaild webmlmd.rc)
+	perftest1 webmaild webmlmd.rc])
+AC_OUTPUT

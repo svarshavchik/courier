@@ -102,11 +102,11 @@ int main(int argc, char **argv)
 			       versioncmp(argv[n]+10, PKGVERSION) <= 0
 			       ? "yes":"no");
 		}
-			       
+
 		if (strcmp(argv[n], "--ldflags") == 0)
 		{
-			printf("-L%s\n",
-			       PKGLIBDIR);
+			printf("-L%s -Wl,-rpath -Wl,%s\n",
+			       PKGLIBDIR, PKGLIBDIR);
 		}
 		if (strcmp(argv[n], "--cppflags") == 0)
 		{

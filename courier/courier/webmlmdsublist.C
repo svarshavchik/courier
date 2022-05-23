@@ -254,7 +254,7 @@ bool WSubList::getLocation(size_t n, off_t &pos, std::string &addr)
 	std::getline(sublist, addr);
 
 	if (std::find_if(addr.begin(), addr.end(),
-			 std::not1(std::ptr_fun(::isspace)))
+			 [](char c){return !::isspace(c);})
 	    != addr.end())
 		return true;
 	
@@ -341,7 +341,7 @@ static void show_list_address(size_t n, std::string orig_address,
 	std::string infolink;
 
 	if (std::find_if(orig_address.begin(), orig_address.end(),
-			 std::not1(std::ptr_fun(::isspace)))
+			 [](char c){return !::isspace(c);})
 	    == orig_address.end())
 	{
 		orig_address="***";   // Show in place of an erased address
@@ -470,7 +470,7 @@ HANDLER("SUBLIST", emit_sublist)
 		std::string search=cgi("searchaddr");
 
 		std::transform(search.begin(), search.end(),
-			       search.begin(), std::ptr_fun(tolower));
+			       search.begin(), [](char c){return tolower(c);});
 
 		std::string address;
 
@@ -479,7 +479,7 @@ HANDLER("SUBLIST", emit_sublist)
 			std::string orig_address=address;
 
 			std::transform(address.begin(), address.end(),
-				       address.begin(), std::ptr_fun(tolower));
+				       address.begin(), [](char c){return tolower(c);});
 
 			if (std::search(address.begin(), address.end(),
 					search.begin(), search.end())
@@ -561,7 +561,7 @@ HANDLER("SUBINFO", emit_subinfo)
 	}
 
 	if (std::find_if(address.begin(), address.end(),
-			 std::not1(std::ptr_fun(::isspace)))
+			 [](char c){return !::isspace(c);})
 	    == address.end())
 		return;
 

@@ -5,4 +5,4 @@
 
 override_dh_auto_install:
 	dh_auto_install
-	dh_installdocs AUTHORS ChangeLog NEWS INSTALL COPYING courier-analog.html manpage.css
+	dh_installdocs AUTHORS ChangeLog NEWS COPYING courier-analog.html manpage.css

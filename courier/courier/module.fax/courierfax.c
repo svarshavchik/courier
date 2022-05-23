@@ -59,13 +59,10 @@ static void fax(struct moduledel *);
 **  Kill the child process.
 */
 
-static RETSIGTYPE killit(int n)
+static void killit(int n)
 {
 	module_signal(SIGKILL);
 	exit(0);
-#if RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 /*
@@ -135,13 +132,10 @@ int main(int argc, char **argv)
 **  All righty - pick up a message to deliver.
 */
 
-static RETSIGTYPE faxabort(int n)
+static void faxabort(int n)
 {
 	signal(SIGTERM, SIG_IGN);
 	kill(-getpid(), SIGTERM);
-#if RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 static int read_childerrmsg(pid_t child_proc,

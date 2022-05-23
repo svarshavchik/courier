@@ -3,8 +3,7 @@ dnl
 dnl Copyright 2003 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_PREREQ(2.59)
-AC_INIT(cone,1.5.20220416,[courier-cone@lists.sourceforge.net])
+AC_INIT([cone],[1.6],[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)
@@ -28,7 +27,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_SYSCONFTOOL
 AC_USE_SYSTEM_EXTENSIONS
-AM_PROG_LIBTOOL
+LT_INIT
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 
 AC_ARG_WITH(notice,[AS_HELP_STRING([--with-notice=unicode],

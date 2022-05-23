@@ -5,8 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.63)
-AC_INIT([courier-sox],[0.15.20220416],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.16],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AC_CONFIG_HEADERS([courier_socks_config.h])
@@ -17,7 +16,6 @@ LT_INIT(dlopen)
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_C99
 LT_INIT(dlopen)
 LTDL_INIT
 AC_SUBST(LTDLINCL)
@@ -92,51 +90,48 @@ USENSL=no
 
 LIBS="$OLDLIBS -lsocket"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)socket(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket"
-],
-[
+],[
 
 LIBS="$saveLIBS -lsocket -lnsl"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)socket(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket -lnsl"
    USENSL=yes
-], [
+],[
 
 LIBS="$saveLIBS -lsocket"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)connect(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket"
-],
-[
+],[
 
 LIBS="$saveLIBS -lsocket -lnsl"
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)connect(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket -lnsl"
    USENSL=yes
-],
-[
+],[
 ])
 ])
 ])
@@ -160,7 +155,7 @@ AC_SUBST(DLLIB)
 
 # Checks for header files.
 AC_HEADER_DIRENT
-AC_HEADER_STDC
+
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h sys/select.h sys/poll.h pthread.h])
 AC_CHECK_HEADER([sys/select.h], [sys_select_h=1], [sys_select_h=0])
 AC_CHECK_HEADER([sys/poll.h], [sys_poll_h]=1, [sys_poll_h=0])

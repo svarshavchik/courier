@@ -35,15 +35,12 @@ static void (*log_error_prefix_func)(void);
 #define	PRINT_CRLF	2
 #define	PRINT_ERRORS	4
 
-static RETSIGTYPE sighandler(int signum)
+static void sighandler(int signum)
 {
 	submit_cancel_async();
 	signal(signum, SIG_DFL);
 	kill(getpid(), signum);
 	_exit(0);
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 void submit_set_teergrube( void (*funcarg)(void))
@@ -474,14 +471,11 @@ void submit_write_message(const char *msg)
 
 static int alarmflag;
 
-static RETSIGTYPE sigtrap(int signum)
+static void sigtrap(int signum)
 {
 	alarmflag=1;
 	signal(SIGALRM, sigtrap);
 	alarm(1);
-#if RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 void submit_cancel_async()

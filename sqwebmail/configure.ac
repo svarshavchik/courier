@@ -4,8 +4,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_PREREQ(2.59)
-AC_INIT(sqwebmail, 6.0.9.20220420, [courier-sqwebmail@lists.sourceforge.net])
+AC_INIT([sqwebmail],[6.0.10],[courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -17,9 +16,8 @@ AC_PROG_MAKE_SET
 AC_PROG_LN_S
 AC_PROG_SYSCONFTOOL
 AC_PROG_CC
-AC_PROG_CC_C99
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+
+LT_INIT
 AC_PATH_PROGS(PERL, perl5 perl, perl)
 AC_PATH_PROGS(SETENV, env)
 

@@ -1123,14 +1123,11 @@ int	rc;
 	flag=1;
 }
 
-static RETSIGTYPE sighandler(int signum)
+static void sighandler(int signum)
 {
 	SubmitFile::interrupt();
 	signal(SIGINT, SIG_DFL);
 	kill(getpid(), SIGKILL);
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 void SubmitFile::trapsignals()

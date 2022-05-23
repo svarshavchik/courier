@@ -467,14 +467,11 @@ bool checkconfirm(std::string msg)
 static const char *fn;
 static const char *fn2;
 
-static RETSIGTYPE sighandler(int n)
+static void sighandler(int n)
 {
 	unlink(fn);
 	if (fn2)	unlink(fn2);
 	_exit(EX_OSERR);
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 void trapsigs(const char *p)
@@ -800,7 +797,7 @@ int savemsg(std::istream &msgs, savemsg_sink &sink)
 				std::transform(header_name.begin(),
 					       header_name.end(),
 					       header_name.begin(),
-					       std::ptr_fun(::tolower));
+					       [](char c){return ::tolower(c);});
 
 				TrimLeft(header_name);
 				TrimRight(header_name);
@@ -837,7 +834,7 @@ int savemsg(std::istream &msgs, savemsg_sink &sink)
 
 		h=buf.substr(0, ++colon_pos);
 		std::transform(h.begin(), h.end(), h.begin(),
-			       std::ptr_fun(::tolower));
+			       [](char c){return ::tolower(c);});
 
 		if (h == "subject:")
 		{
@@ -850,16 +847,14 @@ int savemsg(std::istream &msgs, savemsg_sink &sink)
 							 .begin(),
 							 firstword
 							 .end(),
-							 std::not1
-							 (std::ptr_fun
-							  (::isalpha)))
+							 [](char c){return !::isalpha(c);})
 					    );
 
 
 			std::transform(firstword.begin(),
 				       firstword.end(),
 				       firstword.begin(),
-				       std::ptr_fun(::tolower));
+				       [](char c){return ::tolower(c);});
 
 			size_t i;
 
@@ -964,11 +959,10 @@ int savemsg(std::istream &msgs, savemsg_sink &sink)
 		std::string firstword(buf.begin(),
 				      std::find_if(buf.begin(),
 						   buf.end(),
-						   std::not1(std::ptr_fun
-							     (::isalpha))));
+						   [](char c){return !::isalpha(c);}));
 
 		std::transform(firstword.begin(), firstword.end(),
-			       firstword.begin(), std::ptr_fun(::tolower));
+			       firstword.begin(), [](char c){return ::tolower(c);});
 
 		for (n=0; admin_keywords[n]; n++)
 		{

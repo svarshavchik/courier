@@ -236,20 +236,14 @@ struct dirent *de;
   }
 }
 
-static RETSIGTYPE sighuphandler(int signum)
+static void sighuphandler(int signum)
 {
 	sighup_received=1;
-#if     RETSIGTYPE != void
-        return (0);
-#endif
 }
 
-static RETSIGTYPE sigtermhandler(int signum)
+static void sigtermhandler(int signum)
 {
 	sigterm_received=1;
-#if     RETSIGTYPE != void
-        return (0);
-#endif
 }
 
 /*

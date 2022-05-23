@@ -83,9 +83,9 @@ Courier Socks 5 server uses to vet connection attempts.
 
 %prep
 %setup -q
-PATH=/usr/bin:$PATH %configure
 
 %build
+%configure
 %{__make} %{_smp_mflags}
 
 %install
@@ -127,6 +127,7 @@ session    include      system-auth
 EOF
 fi
 %{__rm} -f $RPM_BUILD_ROOT%{_libdir}/*.so.0
+%{__rm} -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %post -p /sbin/ldconfig
 
@@ -189,7 +190,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root,-)
-%{_libdir}/*.la
 %{_libdir}/*.a
 %{_libdir}/*.so
 %{_includedir}/*

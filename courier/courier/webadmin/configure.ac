@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2001 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(webadmin, 0.1, [courier-users@lists.sourceforge.net])
+AC_INIT([webadmin],[0.1],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -54,4 +54,5 @@ AC_ARG_WITH(version, [], VERSION="$withval")
 AC_SUBST(VERSION)
 
 INSTALL_SCRIPT='${INSTALL}'
-AC_OUTPUT(Makefile admin-05local.pl)
+AC_CONFIG_FILES([Makefile admin-05local.pl])
+AC_OUTPUT

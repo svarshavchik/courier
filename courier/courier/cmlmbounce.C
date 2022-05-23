@@ -307,7 +307,7 @@ static std::string getbounceaddr(const char *n)
 	ns=ns.substr(i); // Bounce token
 
 	std::transform(ns.begin(), ns.end(), ns.begin(),
-		       std::ptr_fun(::toupper));
+		       [](char c){return ::toupper(c);});
 
 	ns=buf + ns;
 

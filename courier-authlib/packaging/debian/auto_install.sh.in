@@ -152,4 +152,4 @@ done
 @PERL@ debian/mkinstall.pl libcourier-auth-userdb <filelist.userdb >debian/install.sh
 @SHELL@ debian/install.sh
 
-sed -i "/dependency_libs/ s/'.*'/''/" debian/libcourier-auth-dev@libdir@/courier-authlib/*.la
+rm -f debian/libcourier-auth-dev@libdir@/courier-authlib/*.la

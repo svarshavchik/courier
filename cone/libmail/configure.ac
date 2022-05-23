@@ -5,7 +5,7 @@
 #
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libmail, 0.10, [courier-cone@lists.sourceforge.net])
+AC_INIT([libmail],[0.10],[courier-cone@lists.sourceforge.net])
 >confdefs.h # Kill PACKAGE_MACROS
 
 AC_CONFIG_SRCDIR(mail.C)
@@ -17,10 +17,9 @@ dnl Checks for programs.
 AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AM_PROG_LIBTOOL
+LT_INIT
 
 AX_COURIER_UNICODE_CXXFLAGS
 AC_SUBST(COURIER_UNICODE_CXXFLAGS)
@@ -34,8 +33,7 @@ AC_DEFINE_UNQUOTED(SENDMAIL, "$SENDMAIL",
 
 dnl Checks for libraries.
 
-AC_ARG_WITH(libidn, AC_HELP_STRING([--with-libidn=[DIR]],
-		    [Support IDN (needs GNU Libidn)]),
+AC_ARG_WITH(libidn, AS_HELP_STRING([--with-libidn=[DIR]],[Support IDN (needs GNU Libidn)]),
 		    libidn=$withval, libidn=yes)
 
 if test "$libidn" != "no"
@@ -55,13 +53,13 @@ AC_MSG_RESULT($libidn)
 
 dnl Checks for header files.
 AC_CHECK_HEADERS(sys/time.h sys/wait.h unistd.h sys/select.h fcntl.h utime.h termios.h)
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+
 AC_HEADER_DIRENT
 AC_HEADER_SYS_WAIT
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
-AC_TYPE_SIGNAL
 AC_SYS_LARGEFILE
 
 dnl Checks for library functions.
@@ -135,4 +133,5 @@ esac
 
 AC_DEFINE_UNQUOTED(LIBMAIL_THROW_DEBUG, $debugging, [ Debugging purposes ])
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

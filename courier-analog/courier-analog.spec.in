@@ -26,9 +26,9 @@ The courier-analog script generates log summaries for the Courier mail server.
 
 %prep
 %setup -q
-%configure
 
 %build
+%configure
 %{__make}
 
 %install

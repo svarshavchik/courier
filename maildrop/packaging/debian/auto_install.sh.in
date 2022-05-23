@@ -24,11 +24,10 @@ dh_install debian/tmp$mandir/man5/* $mandir/man5
 dh_install debian/tmp$mandir/man7/* $mandir/man7
 dh_install debian/tmp$mandir/man8/* $mandir/man8
 
-sed -i "/dependency_libs/ s/'.*'/''/" debian/tmp$libdir/*.la
+rm -f debian/tmp$libdir/*.la
 
 dh_install --package maildrop-dev debian/tmp$mandir/man3/* $mandir/man3
 dh_install --package maildrop-dev debian/tmp$libdir/*.a $libdir
-dh_install --package maildrop-dev debian/tmp$libdir/*.la $libdir
 dh_install --package maildrop-dev debian/tmp$libdir/*.so $libdir
 dh_install --package maildrop-dev debian/tmp$includedir/*.h $includedir
 

@@ -456,7 +456,7 @@ std::string header_s(std::string msgbuf, const char *header)
 		std::string name(b, p);
 
 		std::transform(name.begin(), name.end(), name.begin(),
-			       std::ptr_fun(::tolower));
+			       [](char c){return ::tolower(c);});
 
 		if (name != header)
 			continue;
@@ -466,7 +466,7 @@ std::string header_s(std::string msgbuf, const char *header)
 
 		std::string
 			buf(std::find_if(p, e,
-					 std::not1(std::ptr_fun(::isspace))),
+					 [](char c){return !::isspace(c);}),
 			    e);
 
 		while (std::getline(i, line).good())
@@ -475,7 +475,7 @@ std::string header_s(std::string msgbuf, const char *header)
 			e=line.end();
 
 			p=std::find_if(b, e,
-				       std::not1(std::ptr_fun(::isspace)));
+				       [](char c){return !::isspace(c);});
 
 			if (b == p)
 				break;

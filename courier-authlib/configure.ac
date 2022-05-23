@@ -4,8 +4,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_PREREQ(2.63)
-AC_INIT([courier-authlib],[0.71.4.20220416],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.71.5],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -18,7 +17,6 @@ LPATH="$PATH:/usr/local/bin"
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_INSTALL
@@ -82,12 +80,10 @@ AC_MSG_CHECKING(whether -lm is needed for linking)
 
 OLDLIBS="$LIBS"
 LIBS="$LIBS -lm"
-AC_TRY_LINK([
-], [
-],
-	AC_MSG_RESULT(yes)
-	LIBM="-lm",
-	AC_MSG_RESULT(no))
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+]], [[
+]])],[AC_MSG_RESULT(yes)
+	LIBM="-lm"],[AC_MSG_RESULT(no)])
 LIBS="$OLDLIBS"
 
 AC_ARG_WITH(pkgconfdir,
@@ -101,51 +97,50 @@ USENSL=no
 
 LIBS="$OLDLIBS -lsocket"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)socket(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket"
-],
-[
+],[
 
 LIBS="$saveLIBS -lsocket -lnsl"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)socket(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket -lnsl"
    USENSL=yes
-], [
+],[
 
 LIBS="$saveLIBS -lsocket"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)connect(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket"
-],
-[
+],[
 
 LIBS="$saveLIBS -lsocket -lnsl"
-AC_TRY_LINK([
+
+
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
-], [
+]], [[
 (void)connect(0, 0, 0);
-], [
+]])],[
    NETLIBS="-lsocket -lnsl"
    USENSL=yes
-],
-[
+],[
 ])
 ])
 ])
@@ -759,7 +754,7 @@ AC_SUBST(LIBAUTHPIPE)
 
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(sys/stat.h sys/time.h sys/wait.h sys/select.h unistd.h fcntl.h crypt.h termios.h)
 
@@ -838,7 +833,7 @@ then
 	result=" (from previous courierauthconfig)"
 fi
 
-changequote()
+changequote(`(',`)')
 
 LB='['
 RB=']'
@@ -1022,7 +1017,7 @@ do
 done
 
 using_systemd=0
-if test -d /etc/systemd
+if test -d /lib/systemd
 then
 	using_systemd=1
 fi

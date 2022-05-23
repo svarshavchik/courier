@@ -117,13 +117,10 @@ struct uucprwinfo *arg= (struct uucprwinfo *)voidarg;
 	(*arg->rewrite_func)(i, func);
 }
 
-static RETSIGTYPE alarm_sig(int n)
+static void alarm_sig(int n)
 {
 	n=n;
 	kill(pid, SIGKILL);
-#if	RETSIGTYPE != void
-	return (0)
-#endif
 }
 
 static void adderrbuf(const char *msg, unsigned l)

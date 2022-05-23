@@ -14,7 +14,7 @@
 %define alternatives %(test -x /usr/sbin/alternatives && echo 1 || echo 0)
 %define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
 
-%define using_systemd %(test -d /etc/systemd && echo 1 || echo 0)
+%define using_systemd %(test -d /lib/systemd && echo 1 || echo 0)
 
 %if 0%{!?dist:1}
 %if %is_not_mandrake
@@ -74,8 +74,8 @@
 	     /usr/bin/systemctl start courier \
 	fi
 %else
-%define STOP_COURIER
-%define RESTART_COURIER
+%define STOP_COURIER		%{nil}
+%define RESTART_COURIER		%{nil}
 %endif
 
 # -----------------------------------------------------------------------------
@@ -409,9 +409,8 @@ This package contains the webadmin PostgreSQL configuration screen for Courier.
 %prep
 %setup -q
 
-%{__rm} -f courier.config.cache
-PATH=/usr/bin:$PATH %configure %{?notice_option} \
-		    --cache-file=courier.config.cache %{?xflags: %{xflags}}
+%build
+%configure -C %{?notice_option} %{?xflags: %{xflags}}
 
 %{__cat} >README.REDHAT <<EOF
 
@@ -434,7 +433,6 @@ EOF
 
 # -----------------------------------------------------------------------------
 
-%build
 LANG=C
 export LANG
 umask 022

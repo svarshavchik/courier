@@ -162,13 +162,9 @@ static void reap_child(pid_t pid, int exit_status)
 	}
 }
 
-static RETSIGTYPE	reap_children(int signum)
+static void	reap_children(int signum)
 {
 	wait_reap(reap_child, reap_children);
-
-#if     RETSIGTYPE != void
-        return (0);
-#endif
 }
 
 

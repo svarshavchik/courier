@@ -4,7 +4,7 @@ dnl Process this file with autoconf to produce a configure script.
 #
 # See COPYING for distribution information.
 #
-AC_INIT(cone, 1.5, [courier-cone@lists.sourceforge.net])
+AC_INIT([cone],[1.6],[courier-cone@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(cone.C)
 AC_CONFIG_AUX_DIR(..)
@@ -33,10 +33,9 @@ AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AM_PROG_LIBTOOL
+LT_INIT
 AM_GNU_GETTEXT([external])
 
 AX_COURIER_UNICODE_CXXFLAGS
@@ -84,7 +83,7 @@ dnl Checks for libraries.
 dnl Replace `main' with a function in -lefence:
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(fcntl.h strings.h sys/time.h unistd.h langinfo.h utime.h sys/select.h sys/wait.h)
 AC_HEADER_SYS_WAIT
@@ -94,12 +93,11 @@ AC_C_CONST
 AC_C_INLINE
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+
 AC_STRUCT_TM
 
 dnl Checks for library functions.
-
-AC_TYPE_SIGNAL
 AC_SYS_LARGEFILE
 
 dnl Check whether we should use gdbm, or db.
@@ -117,7 +115,7 @@ AM_CONDITIONAL(HAVE_SGML, test -d "$srcdir/../libs/docbook")
 # Spell checker
 #
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CHECK_HEADERS(aspell/config.hh)
 
 AC_MSG_CHECKING(for aspell)
@@ -125,7 +123,7 @@ AC_MSG_CHECKING(for aspell)
 save_LIBS="$LIBS"
 LIBS="-laspell $LIBS"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 
 #if HAVE_ASPELL_CONFIG_HH
 
@@ -148,8 +146,7 @@ AspellSpeller *speller;
 
 #endif
 
-],
-[
+]], [[
 	{
 #if HAVE_ASPELL_CONFIG_HH
 		aspell::Config new_config;
@@ -159,8 +156,8 @@ AspellSpeller *speller;
 		speller=to_aspell_speller(manager);
 #endif
 	}
-], ASPELL=yes, ASPELL=no)
-AC_LANG_C
+]])],[ASPELL=yes],[ASPELL=no])
+AC_LANG([C])
 
 LIBS="$save_LIBS"
 AC_MSG_RESULT($ASPELL)
@@ -170,13 +167,12 @@ AC_MSG_CHECKING(for pspell)
 save_LIBS="$LIBS"
 LIBS="-lpspell $LIBS"
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include "pspell/pspell.h"
 PspellConfig *foo;
-],
-[
+]], [[
 foo=new_pspell_config();
-], PSPELL=yes, PSPELL=no)
+]])],[PSPELL=yes],[PSPELL=no])
 
 LIBS="$save_LIBS"
 AC_MSG_RESULT($PSPELL)
@@ -206,16 +202,15 @@ esac
 
 AC_MSG_CHECKING(for iswalpha)
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <wctype.h>
 int w;
-],
-[
+]], [[
 	w=iswalpha('A');
-], [
+]])],[
 AC_DEFINE_UNQUOTED(HAVE_ISWALPHA, 1, [ whether iswalpha() is available ])
 AC_MSG_RESULT(yes)
-], AC_MSG_RESULT(no))
+],[AC_MSG_RESULT(no)])
 
 if test "$ASPELL" = "yes"
 then
@@ -265,7 +260,7 @@ AC_DEFINE_UNQUOTED(FILTERDIR, "$filterdir",
 
 AC_MSG_CHECKING(for LDAP support)
 
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 
 #include "../libs/ldapaddressbook/config.h"
 
@@ -276,16 +271,15 @@ AC_TRY_COMPILE([
 #error no openLDAP
 #endif
 
-],
-[
+]], [[
 	;
-],[
+]])],[
 	LDAPSEARCH="../libs/ldapaddressbook/libldapsearch.la"
         AC_MSG_RESULT(yes)
 ],[
         AC_MSG_RESULT(no)
-]
-)
+
+])
 
 AC_SUBST(LDAPSEARCH)
 
@@ -302,4 +296,5 @@ done
 
 CFLAGS="-I../libs -I${srcdir}/../libs $CFLAGS"
 CXXFLAGS="-I../libs -I${srcdir}/../libs $CXXFLAGS"
-AC_OUTPUT(Makefile cone.dist cone.sh IMAGE.filter APPLICATION.PDF.filter http.handler po/Makefile.in)
+AC_CONFIG_FILES([Makefile cone.dist cone.sh IMAGE.filter APPLICATION.PDF.filter http.handler po/Makefile.in])
+AC_OUTPUT

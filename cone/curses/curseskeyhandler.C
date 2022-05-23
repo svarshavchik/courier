@@ -37,7 +37,10 @@ CursesKeyHandler::~CursesKeyHandler()
 {
 	list<CursesKeyHandler *>::iterator me=
 		find_if(handlers.begin(), handlers.end(),
-			bind2nd(equal_to<CursesKeyHandler *>(), this));
+			[this](CursesKeyHandler *h)
+			{
+				return h == this;
+			});
 
 	handlers.erase(me);
 	handlerListModified=true;

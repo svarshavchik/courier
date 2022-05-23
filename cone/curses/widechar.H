@@ -271,14 +271,17 @@ public:
 // widecharbuf::grapheme_t::wcwidth() is hot. Saving the output of
 // towidechar() into a vector is very expensive.
 
-class towidechar_wcwidth_iter
-	: public std::iterator<std::output_iterator_tag, void, void, void, void>
-{
+class towidechar_wcwidth_iter {
 
 	size_t col;
 	size_t w;
 
 public:
+	typedef std::output_iterator_tag       iterator_category;
+	typedef void                           value_type;
+	typedef void                           difference_type;
+	typedef void                           pointer;
+	typedef void                           reference;
 
 	towidechar_wcwidth_iter(size_t colArg) : col(colArg), w(0) {}
 
@@ -515,9 +518,15 @@ public:
 */
 
 template<typename output_sink_t,
-	 typename rewrap_helper_t=unicoderewrapnone> class unicodewordwrapper :
-	public std::iterator<std::output_iterator_tag, void, void, void, void> {
+	 typename rewrap_helper_t=unicoderewrapnone> class unicodewordwrapper {
+public:
+	typedef std::output_iterator_tag       iterator_category;
+	typedef void                           value_type;
+	typedef void                           difference_type;
+	typedef void                           pointer;
+	typedef void                           reference;
 
+private:
 	// State maintained by the iterator. This iterator is copyable.
 	// The state is associated with only one iterator instance. Copying
 	// an iterator copies the state from the original iterator into the

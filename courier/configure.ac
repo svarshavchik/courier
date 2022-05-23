@@ -3,8 +3,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_PREREQ(2.59)
-AC_INIT(courier, 1.1.8.20220427, [courier-users@lists.sourceforge.net])
+AC_INIT([courier],[1.1.9],[courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -13,8 +12,7 @@ AM_INIT_AUTOMAKE
 LPATH="$PATH:/usr/local/bin"
 
 AC_PROG_CC
-AC_PROG_CC_C99
-AM_PROG_LIBTOOL
+LT_INIT
 
 AC_PROG_MAKE_SET
 AC_PROG_CXX

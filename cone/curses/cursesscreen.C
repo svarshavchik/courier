@@ -30,7 +30,7 @@
 
 static unsigned char termStopKey= 'Z' & 31;
 
-static RETSIGTYPE bye(int dummy)
+static void bye(int dummy)
 {
 	endwin();
 	kill( getpid(), SIGKILL);
@@ -227,15 +227,19 @@ bool CursesScreen::writeText(const char *ctext, int row, int col,
 // As a bonus, any NUL character gets also replaced with a space.
 //
 
-class CursesScreen::repltabs_spaces :
-	public std::iterator<std::random_access_iterator_tag,
-			     const char32_t> {
+class CursesScreen::repltabs_spaces {
 
 	const char32_t *p;
 
 	char32_t tmp;
 
 public:
+	typedef std::random_access_iterator_tag iterator_category;
+	typedef const char32_t                 value_type;
+	typedef std::ptrdiff_t                 difference_type;
+	typedef value_type *                   pointer;
+	typedef value_type &                   reference;
+
 	repltabs_spaces() : p(0), tmp(0) {}
 
 	repltabs_spaces(const char32_t *pVal) : p(pVal), tmp(0) {}
@@ -298,14 +302,19 @@ public:
 // multiple times. Corresponds to logic in widecharbuf::charwidth().
 //
 
-class CursesScreen::writetext_iter_helper
-	: public std::iterator<std::input_iterator_tag,
-			       char, void, void, void> {
+class CursesScreen::writetext_iter_helper {
 
 	const char32_t *uptr;
 	size_t multcnt;
 
 public:
+
+	typedef std::input_iterator_tag        iterator_category;
+	typedef char                           value_type;
+	typedef void                           difference_type;
+	typedef void                           pointer;
+	typedef void                           reference;
+
 	writetext_iter_helper(const char32_t *uptrArg)
 		: uptr(uptrArg), multcnt(0) {}
 
@@ -615,8 +624,8 @@ int Curses::runCommand(std::vector<const char *> &argv,
 
 #ifdef WIFSTOPPED
 
-	RETSIGTYPE (*save_tstp)(int)=signal(SIGTSTP, SIG_IGN);
-	RETSIGTYPE (*save_cont)(int)=signal(SIGCONT, SIG_IGN);
+	void (*save_tstp)(int)=signal(SIGTSTP, SIG_IGN);
+	void (*save_cont)(int)=signal(SIGCONT, SIG_IGN);
 #endif
 
 	editor_pid=fork();

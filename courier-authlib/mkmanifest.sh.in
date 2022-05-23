@@ -31,19 +31,11 @@ for f in $DESTDIR@libdir@/courier-authlib/*
 do
 	fn=`basename $f`
 
-	# Remove *.la for authentication modules, keep the ones
-	# for client libraries. Do this before we sort them into buckets,
-	# below.
+	# Remove *.la files
 
 	case "$fn" in
 	*.la)
-		case "$fn" in
-		libcourierauth*)
-			;;
-		*)
-			rm -f "$f"
-			;;
-		esac
+		rm -f "$f"
 		continue
 		;;
 	esac
@@ -127,7 +119,6 @@ cat >>filelist.devel <<EOF
 @bindir@/courierauthconfig 555 root root
 @includedir@/* 444 root root
 @mandir@/man3/* 444 root root
-@libdir@/courier-authlib/*.la 444 root root
 authlib.html - bin bin doc
 auth_*.html - bin bin doc
 EOF

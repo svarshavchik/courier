@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(module.esmtp, 0.11, [courier-users@lists.sourceforge.net])
+AC_INIT([module.esmtp],[0.11],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -18,10 +18,8 @@ AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CXX
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+LT_INIT
 
 
 
@@ -122,12 +120,11 @@ AC_SUBST(NETLIBS)
 
 dnl Checks for header files.
 AC_CHECK_HEADERS(sys/types.h sys/time.h sys/stat.h sys/wait.h netinet/tcp.h sysexits.h unistd.h fcntl.h syslog.h utime.h locale.h)
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
-AC_SIZE_T
-AC_TYPE_SIGNAL
+AC_TYPE_SIZE_T
 AC_SYS_LARGEFILE
 
 AC_CACHE_CHECK([for socklen_t],
@@ -157,14 +154,11 @@ fi
 
 AC_CACHE_CHECK([for caddr_t],courier_cv_CADDR_T_DEFINED,
 
-	AC_TRY_COMPILE(
-[
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 caddr_t p;
-],[
-],
-	courier_cv_CADDR_T_DEFINED=yes,
-	courier_cv_CADDR_T_DEFINED=no)
+]], [[
+]])],[courier_cv_CADDR_T_DEFINED=yes],[courier_cv_CADDR_T_DEFINED=no])
 )
 
 if test "$courier_cv_CADDR_T_DEFINED" = "no"
@@ -360,7 +354,8 @@ do
     fi
 done
 
-AC_OUTPUT(Makefile esmtpd esmtpd-ssl \
+AC_CONFIG_FILES([Makefile esmtpd esmtpd-ssl \
 	esmtpd.dist esmtpd-msa.dist esmtpd-ssl.dist  \
 	makesmtpaccess makeacceptmailfor \
-	makepercentrelay staticlist.c mkesmtpdcert esmtpd.cnf.openssl)
+	makepercentrelay staticlist.c mkesmtpdcert esmtpd.cnf.openssl])
+AC_OUTPUT

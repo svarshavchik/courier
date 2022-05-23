@@ -162,9 +162,9 @@ program, then communicates through messages on stdin and stdout.
 
 %prep
 %setup -q
-PATH=/usr/bin:$PATH %configure -C --with-redhat
 
 %build
+%configure
 %{__make} -s %{_smp_mflags}
 
 %install
@@ -202,7 +202,8 @@ while (<>)
 
     if ($perm)
     {
-	print "%attr(" . "$perm,$u,$g" . ") ";
+	print "%attr(" . "$perm,$u,$g" . ") "
+	      unless -l "$ENV{RPM_BUILD_ROOT}/$n";
     }
     print "$n\n";
 }

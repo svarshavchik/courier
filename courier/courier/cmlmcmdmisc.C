@@ -257,7 +257,7 @@ static int insertalias(std::string addr, std::string a)
 	std::string::iterator domain_p=std::find(a.begin(), a.end(), '@');
 
 
-	std::transform(domain_p, a.end(), domain_p, std::ptr_fun(::tolower));
+	std::transform(domain_p, a.end(), domain_p, [](char c){return ::tolower(c);});
 
 SubExclusiveLock subscription_lock;
 

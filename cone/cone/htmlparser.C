@@ -254,12 +254,17 @@ void htmlParser::tag::getAttribute(std::string name,
 	w.clear();
 }
 
-class htmlParser::linebuf::towidth_iter :
-	public std::iterator<std::input_iterator_tag, char32_t> {
+class htmlParser::linebuf::towidth_iter {
 
 	const enhanced_char *p;
 
 public:
+	typedef std::input_iterator_tag        iterator_category;
+	typedef char32_t                       value_type;
+	typedef std::ptrdiff_t                 difference_type;
+	typedef value_type *                   pointer;
+	typedef value_type &                   reference;
+
 	towidth_iter(const enhanced_char *pArg) : p(pArg)
 	{
 	}

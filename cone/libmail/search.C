@@ -651,8 +651,6 @@ void mail::searchOneMessage::checkSearch()
 void mail::searchOneMessage::success(mail::searchCallback &callback,
 				     size_t n, bool result)
 {
-	delete this;
-
 	try {
 		vector<size_t> msgSet;
 
@@ -660,8 +658,13 @@ void mail::searchOneMessage::success(mail::searchCallback &callback,
 			msgSet.push_back(n);
 
 		callback.success(msgSet);
+
+		delete this;
+
 	} catch (...) {
 		my_callback.fail("An exception has occured processing search results.");
+		delete this;
+
 		return;
 	}
 }

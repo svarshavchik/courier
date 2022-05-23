@@ -138,7 +138,7 @@ int updatelistheaders()
 
 				std::transform(p.begin(), p.end(),
 					       p.begin(),
-					       std::ptr_fun(::tolower));
+					       [](char c){return ::tolower(c);});
 
 				if (p.substr(0, 5) == "list-")
 					continue;

@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl Copyright 1998 - 2001 Double Precision, Inc.  See COPYING for
 dnl distribution information.
-AC_INIT(courier-doc, 0.10, [courier-users@lists.sourceforge.net])
+AC_INIT([courier-doc],[0.10],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -63,4 +63,5 @@ eval "libexecdir=\"$libexecdir\""
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
 
-AC_OUTPUT( Makefile )
+AC_CONFIG_FILES([Makefile ])
+AC_OUTPUT

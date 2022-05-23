@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2000 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(libfilter, 0.10, [courier-users@lists.sourceforge.net])
+AC_INIT([libfilter],[0.10],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -14,13 +14,12 @@ AC_CONFIG_HEADERS(config.h)
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_C99
-AC_PROG_LIBTOOL
+LT_INIT
 
 dnl Checks for libraries.
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -61,4 +60,5 @@ then
 	CFLAGS="-Wall $CFLAGS"
 fi
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

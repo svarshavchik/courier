@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(courier, 0.10, [courier-users@lists.sourceforge.net])
+AC_INIT([courier],[0.10],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -18,9 +18,7 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_CC
-AC_PROG_CC_C99
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+LT_INIT
 
 AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
 
@@ -35,13 +33,12 @@ PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
 dnl Checks for header files.
 
 AC_CHECK_HEADERS(fcntl.h sys/file.h sys/stat.h sys/time.h sys/wait.h sysexits.h unistd.h syslog.h)
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
-AC_SIZE_T
+AC_TYPE_SIZE_T
 AC_TYPE_OFF_T
-AC_TYPE_SIGNAL
 AC_SYS_LARGEFILE
 
 dnl Checks for library functions.
@@ -152,4 +149,5 @@ esac
 AC_DEFINE_UNQUOTED(testmode,$testmode, [ Testing flag ])
 
 echo "$CFLAGS" >cflags
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

@@ -66,7 +66,7 @@ static std::string get_mod_token(std::string n)
 		return "";
 
 	return std::string(std::find_if(l.begin()+14, l.end(),
-					std::not1(std::ptr_fun(isspace))),
+					[](char c){return !isspace(c);}),
 			   l.end());
 }
 

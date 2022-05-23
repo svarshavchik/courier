@@ -1,9 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright 2000 - 2021 Double Precision, Inc.  See COPYING for
+dnl Copyright 2000 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(sysconftool, 0.18.20220416, [courier-users@lists.sourceforge.net])
+AC_INIT([sysconftool],[0.19],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(sysconftool.in)
 AM_INIT_AUTOMAKE(foreign)
@@ -15,14 +15,14 @@ AC_PATH_PROGS(PERL, perl5 perl, perl)
 
 if test "$PERL" = "perl"
 then
-	AC_ERROR(Perl program not found.)
+	AC_MSG_ERROR(Perl program not found.)
 fi
 
 ACDIR=`aclocal --print-ac-dir`
 
 if test "$ACDIR" = ""
 then
-	AC_ERROR(aclocal not installed - please install aclocal)
+	AC_MSG_ERROR(aclocal not installed - please install aclocal)
 fi
 
 if test "$prefix" != "NONE"
@@ -42,12 +42,12 @@ dnl Checks for library functions.
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/libs/docbook)
 
-AC_OUTPUT(
-		Makefile
+AC_CONFIG_FILES([Makefile
 		sysconftool
 		sysconftoolcheck
 		sysconftool.spec
 		sysconftool.m4
 		sysconftoolize.pl
 		courier-debuild
-)
+])
+AC_OUTPUT

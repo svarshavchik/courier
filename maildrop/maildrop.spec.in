@@ -61,9 +61,8 @@ utilities.
 %prep
 
 %setup -q
-%configure --with-devel --enable-syslog=1 --enable-trusted-users='root mail daemon postmaster qmaild mmdf' --enable-restrict-trusted=0 --enable-sendmail=/usr/sbin/sendmail
-
 %build
+%configure --with-devel --enable-syslog=1 --enable-trusted-users='root mail daemon postmaster qmaild mmdf' --enable-restrict-trusted=0 --enable-sendmail=/usr/sbin/sendmail
 
 %{__make} %{_smp_mflags}
 %install

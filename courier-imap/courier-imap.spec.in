@@ -21,7 +21,7 @@
 %endif
 %endif
 
-%define using_systemd %(test -d /etc/systemd && echo 1 || echo 0)
+%define using_systemd %(test -d /lib/systemd && echo 1 || echo 0)
 
 %define _missing_doc_files_terminate_build 1
 %define _unpackaged_files_terminate_build 1
@@ -49,6 +49,7 @@ Requires(preun):  systemd
 Requires: courier-authlib >= 0.60.6.20080629
 BuildRequires: gcc-c++
 BuildRequires: procps-ng
+BuildRequires: gdbm-devel
 BuildRequires: coreutils perl
 BuildRequires: courier-authlib-devel >= 0.60.6.20080629
 BuildRequires: libidn-devel
@@ -113,11 +114,10 @@ full Courier mail server.  Install the Courier package instead.
 %define xflags %{nil}
 %endif
 
-PATH=/usr/bin:$PATH %configure %{?notice_option} \
-	--with-redhat \
-	%{?xflags: %{xflags}}
-
 %build
+
+%configure %{?notice_option} -C %{?xflags: %{xflags}}
+
 %{__make} %{_smp_mflags}
 %{__make} check
 

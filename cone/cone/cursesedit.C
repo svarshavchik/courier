@@ -3741,7 +3741,6 @@ bool CursesEdit::save(SaveSink &sink,
 
 		if (!z)
 		{
-			fclose(fp2);
 			statusBar->clearstatus();
 			statusBar->status(errmsg, statusBar->SYSERROR);
 			return false;

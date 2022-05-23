@@ -3,19 +3,17 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_PREREQ(2.59)
-AC_INIT(maildrop, 3.0.7.20220416, [courier-maildrop@lists.sourceforge.net])
+AC_INIT([maildrop],[3.0.8],[courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
 
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AM_PROG_LIBTOOL
+LT_INIT
 
 AC_PATH_PROGS(PERL, perl5 perl, perl)
 AC_CHECK_PROG(PCRE2, pcre2-config, yes, no)
@@ -207,10 +205,11 @@ AC_SUBST(REPOSITORY)
 
 AC_CONFIG_SUBDIRS(libs/numlib libs/liblock libs/rfc822 libs/rfc2045 libs/gdbmobj libs/bdbobj libs/makedat libs/maildir libs/maildrop)
 
-AC_OUTPUT(Makefile
+AC_CONFIG_FILES([Makefile
 	courier-debuild
 	dbobj.h
 	dbobj.config
 	maildrop.spec
 	README.html
-	INSTALL.html)
+	INSTALL.html])
+AC_OUTPUT

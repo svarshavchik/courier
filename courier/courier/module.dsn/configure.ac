@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(module.dsn, 0.11, [courier-users@lists.sourceforge.net])
+AC_INIT([module.dsn],[0.11],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -19,14 +19,12 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_CC
-AC_PROG_CC_C99
 
 dnl Checks for libraries.
 
 version=`cat ../../version`
 AC_SUBST(version)
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+LT_INIT
 
 dnl Checks for header files.
 
@@ -35,8 +33,7 @@ AC_CHECK_HEADERS(unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
-AC_SIZE_T
-AC_TYPE_SIGNAL
+AC_TYPE_SIZE_T
 AC_SYS_LARGEFILE
 
 dnl Checks for library functions.
@@ -70,4 +67,5 @@ AC_ARG_WITH(mailgroup, [--with-mailgroup=group    Specify mail group name (defau
 AC_SUBST(mailuser)
 AC_SUBST(mailgroup)
 
-AC_OUTPUT(Makefile dsnheader.txt)
+AC_CONFIG_FILES([Makefile dsnheader.txt])
+AC_OUTPUT

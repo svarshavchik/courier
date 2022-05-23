@@ -545,9 +545,15 @@ void CursesEditMessage::insertKeyPos(char32_t k)
 // them to unicode characters.
 //
 
-class CursesEditMessage::get_file_helper
-	: public std::iterator<std::input_iterator_tag, CursesFlowedLine> {
+class CursesEditMessage::get_file_helper {
+public:
 
+	typedef std::input_iterator_tag        iterator_category;
+	typedef CursesFlowedLine               value_type;
+	typedef std::ptrdiff_t                 difference_type;
+	typedef value_type *                   pointer;
+	typedef value_type &                   reference;
+private:
 	std::istream *i;
 
 	CursesFlowedLine line;
@@ -703,9 +709,7 @@ public:
 // Iterator over unjustified text, for unicodewordwrap()
 //
 
-class CursesEditMessage::unicode_wordwrap_iterator
-	: public std::iterator<std::input_iterator_tag,
-			       char32_t> {
+class CursesEditMessage::unicode_wordwrap_iterator {
 
 	CursesEditMessage *msg;
 	size_t start_row, end_row;
@@ -714,6 +718,13 @@ class CursesEditMessage::unicode_wordwrap_iterator
 	size_t cnt;
 
 public:
+
+	typedef std::input_iterator_tag        iterator_category;
+	typedef char32_t                       value_type;
+	typedef std::ptrdiff_t                 difference_type;
+	typedef value_type *                   pointer;
+	typedef value_type &                   reference;
+
 	unicode_wordwrap_iterator() // Ending iterator
 		: msg(NULL), start_row(0), end_row(0),
 		  rewrapper(NULL), cnt(0)
@@ -818,15 +829,20 @@ public:
 
 // Collect wrapped content into a flowed line list
 
-class CursesEditMessage::unicode_wordwrap_oiterator
-	: public std::iterator<std::output_iterator_tag, void, void, void, void>
-{
+class CursesEditMessage::unicode_wordwrap_oiterator {
 
 	unicode_wordwrap_oiterator(const unicode_wordwrap_oiterator &);
 	unicode_wordwrap_oiterator &operator=(const unicode_wordwrap_oiterator
 					      &);
 
 public:
+
+	typedef std::output_iterator_tag       iterator_category;
+	typedef void                           value_type;
+	typedef void                           difference_type;
+	typedef void                           pointer;
+	typedef void                           reference;
+
 	std::list<CursesFlowedLine> wrapped;
 
 	unicode_wordwrap_oiterator() {}

@@ -2075,12 +2075,18 @@ class CursesMessage::newmsgformatter : public mail::textplainparser {
 	std::u32string line;
 	bool written;
 
-	class writeoiter : public std::iterator<std::u32string,
-						void, void, void, void> {
+	class writeoiter {
 
 		newmsgformatter *r;
 
 	public:
+
+		typedef std::output_iterator_tag       iterator_category;
+		typedef void                           value_type;
+		typedef void                           difference_type;
+		typedef void                           pointer;
+		typedef void                           reference;
+
 		writeoiter(newmsgformatter *rArg) : r(rArg)
 		{
 		}
@@ -2223,11 +2229,11 @@ void CursesMessage::reply()
 		std::string name=std::string(line.begin(), colon);
 
 		std::transform(name.begin(), name.end(),
-			       name.begin(), std::ptr_fun(::tolower));
+			       name.begin(), [](char c){return ::tolower(c);});
 
 		std::string::iterator value_start=
 			std::find_if(colon, line.end(),
-				     std::not1(std::ptr_fun(::unicode_isspace))),
+				     [](char c){return !::unicode_isspace(c);}),
 			value_end=value_start, p;
 
 		for (p=value_start; p != line.end(); ++p)

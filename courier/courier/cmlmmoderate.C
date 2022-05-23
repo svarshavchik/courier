@@ -266,7 +266,7 @@ static int cmdmoderate(afxipipestream &tmpfile)
 
 		name=buf.substr(0, i);
 		std::transform(name.begin(), name.end(),
-			       name.begin(), std::ptr_fun(::tolower));
+			       name.begin(), [](char c){return ::tolower(c);});
 		if (name != "subject")	continue;
 
 		buf=buf.substr(i+1);

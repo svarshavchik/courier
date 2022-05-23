@@ -3,7 +3,7 @@
 # distribution information.
 #
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(module.fax, 0.10, [courier-users@lists.sourceforge.net])
+AC_INIT([module.fax],[0.10],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -16,13 +16,11 @@ AC_CONFIG_HEADERS(config.h)
 dnl Checks for programs.
 AC_PROG_MAKE_SET
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+LT_INIT
 
 version=`cat ../../version`
 AC_SUBST(version)
@@ -125,7 +123,7 @@ AC_SUBST(PNMTOPNG)
 dnl Checks for libraries.
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_CHECK_HEADER(sys/wait.h)
 AC_HEADER_DIRENT
 AC_HEADER_SYS_WAIT
@@ -183,7 +181,7 @@ AC_SUBST(faxtmpdir)
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
 
-AC_OUTPUT(Makefile
+AC_CONFIG_FILES([Makefile
 	init
 	application-postscript.filter
 	application-pdf.filter
@@ -193,4 +191,5 @@ AC_OUTPUT(Makefile
 	text-plain.filter
 	coverpage
 	new_fax
-)
+])
+AC_OUTPUT

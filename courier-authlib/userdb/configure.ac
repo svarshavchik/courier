@@ -4,7 +4,7 @@ dnl
 dnl Copyright 1998 - 2007 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(libuserdb, 0.10, [courier-users@lists.sourceforge.net])
+AC_INIT([libuserdb],[0.10],[courier-users@lists.sourceforge.net])
 
 >confdefs.h # Kill PACKAGE_ macros.
 
@@ -18,10 +18,9 @@ AC_CONFIG_HEADERS(config.h)
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
 
 if test "$PERL" = "perl"
@@ -89,15 +88,16 @@ fi
 AC_SUBST(HMACLIB)
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_CHECK_HEADERS(sys/stat.h sys/time.h unistd.h fcntl.h termios.h crypt.h)
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
-AC_PID_T
+AC_TYPE_PID_T
 AC_TYPE_UID_T
-AC_TYPE_SIGNAL
+
 AC_SYS_LARGEFILE
 
 dnl Other checks
@@ -110,7 +110,7 @@ AC_CHECK_FUNC(crypt, AC_DEFINE_UNQUOTED(HAVE_CRYPT,1,
 LIBS="$saveLIBS"
 AC_CACHE_CHECK([for crypt() prototype],userdb_cv_NEED_CRYPT_PROTOTYPE,
 
-	AC_TRY_COMPILE( [
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 	       #if HAVE_CRYPT_H
 	       #include <crypt.h>
 	       #endif
@@ -119,8 +119,7 @@ AC_CACHE_CHECK([for crypt() prototype],userdb_cv_NEED_CRYPT_PROTOTYPE,
 	       #endif
 	       int crypt(int, int);
 
-		], [], userdb_cv_NEED_CRYPT_PROTOTYPE=1,
-			userdb_cv_NEED_CRYPT_PROTOTYPE=0 )
+		]], [[]])],[userdb_cv_NEED_CRYPT_PROTOTYPE=1],[userdb_cv_NEED_CRYPT_PROTOTYPE=0 ])
 
 	)
 
@@ -168,4 +167,5 @@ fi
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../libs/docbook)
 
-AC_OUTPUT(Makefile userdb.pl makeuserdb pw2userdb)
+AC_CONFIG_FILES([Makefile userdb.pl makeuserdb pw2userdb])
+AC_OUTPUT

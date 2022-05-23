@@ -479,7 +479,7 @@ HANDLER("ADMINUPDATE", do_admin_update)
 		std::string setting=p;
 
 		std::transform(setting.begin(), setting.end(),
-			       setting.begin(), std::ptr_fun(toupper));
+			       setting.begin(), [](char c){return toupper(c);});
 
 		std::string varname("opt");
 
@@ -507,7 +507,7 @@ HANDLER("ADMINUPDATE", do_admin_update)
 		std::string setting=plains[i];
 
 		std::transform(setting.begin(), setting.end(),
-			       setting.begin(), std::ptr_fun(toupper));
+			       setting.begin(), [](char c){return toupper(c);});
 
 		std::string varname("opt");
 
@@ -537,7 +537,7 @@ HANDLER("ADMINUPDATE", do_admin_update)
 		std::string setting=numerical[i].name;
 
 		std::transform(setting.begin(), setting.end(),
-			       setting.begin(), std::ptr_fun(toupper));
+			       setting.begin(), [](char c){return toupper(c);});
 
 		std::string varname("opt");
 
@@ -1063,10 +1063,10 @@ static void listrequest2(std::string list_name, std::string path_info)
 		std::string errmsg="Confirmation failed.  No further information is available.";
 
 		if (std::find_if(method.begin(), method.end(),
-				 std::not1(std::ptr_fun(::isalpha))) ==
+				 [](char c){return !::isalpha(c);}) ==
 		    method.end() &&
 		    std::find_if(token.begin(), token.end(),
-				 std::not1(std::ptr_fun(::isalpha))) ==
+				 [](char c){return !::isalpha(c);}) ==
 		    token.end())
 		{
 			webmlmd::cmlm confirm;

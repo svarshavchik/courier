@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2001 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(webadmin, 0.1, [courier-users@lists.sourceforge.net])
+AC_INIT([webadmin],[0.1],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
@@ -15,13 +15,12 @@ LPATH="$PATH:/usr/local/bin"
 AC_CONFIG_HEADERS(config.h)
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_INSTALL
 AC_PROG_AWK
 AC_PROG_LN_S
 AC_PATH_PROGS(PERL, perl5 perl, /usr/bin/perl, $LPATH)
 AC_PATH_PROG(PROCMAIL, procmail, /usr/bin/procmail, $LPATH)
-AM_PROG_LIBTOOL
+LT_INIT
 
 AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
 
@@ -93,4 +92,5 @@ AC_SUBST(PACKAGE)
 
 INSTALL_SCRIPT='${INSTALL}'
 
-AC_OUTPUT(Makefile webadmin.pl dumpenv.pl)
+AC_CONFIG_FILES([Makefile webadmin.pl dumpenv.pl])
+AC_OUTPUT

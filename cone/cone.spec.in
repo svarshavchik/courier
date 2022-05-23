@@ -47,6 +47,7 @@ BuildRequires: openldap-devel
 BuildRequires: libidn-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: %{__make}
+BuildRequires: procps-ng
 
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 
@@ -98,8 +99,8 @@ LDFLAGS="$LDFLAGS -L %{curses_lib_dir}"
 export LDFLAGS
 %endif
 
-%configure -C --with-devel %{?gpg_option} %{?notice_option}
 %build
+%configure -C --with-devel %{?gpg_option} %{?notice_option}
 %{__make} -s %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -111,6 +112,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cone
 
 ls cone/html | ( cd $RPM_BUILD_ROOT%{_datadir}/cone && xargs -n10 rm -f )
 
+rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -142,7 +144,6 @@ fi
 %files devel
 %defattr(-,root,root)
 %{_libdir}/*.a
-%{_libdir}/*.la
 %{_mandir}/man[35]/*
 %{_includedir}/libmail
 %doc cone/html

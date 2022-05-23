@@ -186,7 +186,7 @@ static int hup_restart = 0;
 static int respawn = 0;
 static int child_pid = -1;
 
-static RETSIGTYPE sighup(int n)
+static void sighup(int n)
 {
 	if (child_pid > 0)
 	{
@@ -197,20 +197,14 @@ static RETSIGTYPE sighup(int n)
 		kill (child_pid, SIGHUP);
 	}
 	signal(SIGHUP, sighup);
-#if	RETSIGTYPE != void
-	return (1);
-#endif
 }
 
-static RETSIGTYPE sigalrm(int n)
+static void sigalrm(int n)
 {
 	if (child_pid > 0) kill(child_pid, SIGKILL);
-#if	RETSIGTYPE != void
-	return (1);
-#endif
 }
 
-static RETSIGTYPE sigterm(int n)
+static void sigterm(int n)
 {
 	if (child_pid > 0)
 	{
@@ -221,9 +215,6 @@ static RETSIGTYPE sigterm(int n)
 		alarm(8);
 	}
 	else exit(0);
-#if	RETSIGTYPE != void
-	return (1);
-#endif
 }
 
 static void checkfd(int actual, int exp)
@@ -251,7 +242,7 @@ static void setuidgid(const char *userarg,
 	{
 	gid_t gid = 0;
 	struct group *gr;
-	
+
 		if (isid(grouparg))
 			gid=atoi(grouparg);
 		else if ((gr=getgrnam(grouparg)) == 0)
@@ -354,7 +345,7 @@ int tmp;
  *   courierlogger -pid=/var/run/foo.pid -stop      (or receive a SIGTERM)
  *   courierlogger -pid=/var/run/foo.pid -restart   (or receive a SIGHUP)
  */
- 
+
 int main(int argc, char **argv)
 {
 int facility = LOG_DEST;

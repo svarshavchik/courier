@@ -14,15 +14,9 @@
 #include	<signal.h>
 
 #include	<sys/types.h>
-#if TIME_WITH_SYS_TIME
-#include        <sys/time.h>
 #include        <time.h>
-#else
 #if HAVE_SYS_TIME_H
 #include        <sys/time.h>
-#else
-#include        <time.h>
-#endif
 #endif
 #if	HAVE_SYS_SELECT_H
 #include	<sys/select.h>
@@ -178,7 +172,7 @@ static int get_stdin(void *dummy)
 
 			if (n <= 0)
 				break;
-			
+
 			stdin_p=stdin_buf;
 			stdin_left=n;
 		}
@@ -237,7 +231,7 @@ int	n;
 		}
 }
 
-static RETSIGTYPE childsig(int);
+static void childsig(int);
 
 void module_blockset()
 {
@@ -254,15 +248,12 @@ void module_restore()
 	wait_restore();
 }
 
-static RETSIGTYPE childsig(int n)
+static void childsig(int n)
 {
 	n=n;
 
 	wait_reap(terminated, childsig);
 
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 void module_init(void (*func)(unsigned, unsigned))

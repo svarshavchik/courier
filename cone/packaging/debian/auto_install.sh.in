@@ -14,7 +14,7 @@ includedir=@includedir@
 datadir=@datadir@
 mandir=@mandir@
 
-sed -i "/dependency_libs/ s/'.*'/''/" debian/tmp$libdir/*.la
+rm -f debian/tmp$libdir/*.la
 
 dh_install debian/tmp$sysconfdir
 dh_install debian/tmp$datadir/cone

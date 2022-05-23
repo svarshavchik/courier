@@ -1,3 +1,15 @@
+2022-05-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* openssl 3.0 updates.
+
+2022-05-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* gcc 12 and autotools update. Fix minor use after free bugs:
+	when showing links to decoded PGP attachments, and if the
+	calendar module is enabled, and the calendaring server runs out
+	of disk space; when updating the index file. Freed memory was
+	read before any additional allocations took place.
+
 2022-04-17  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier, courier-imap: remove the --disable-root-check configure

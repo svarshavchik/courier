@@ -3,14 +3,13 @@ dnl
 dnl Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT(afx,1.60, [courier-users@lists.sourceforge.net])
+AC_INIT([afx],[1.60],[courier-users@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(afx.h)
 AM_INIT_AUTOMAKE([foreign no-define])
 AC_CONFIG_HEADERS(config.h)
 dnl Checks for programs.
 AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CPP
 AC_PROG_RANLIB
 AC_PROG_CXX
@@ -24,7 +23,7 @@ fi
 dnl Checks for libraries.
 
 dnl Checks for header files.
-AC_HEADER_STDC
+
 AC_CHECK_HEADERS(unistd.h strings.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -53,15 +52,13 @@ CXXFLAGS="-I.. -I${srcdir}/.. $CXXFLAGS"
 dnl Checks for library functions.
 AC_CHECK_FUNCS(regcomp)
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CACHE_CHECK([if the C++ compiler needs -fhandle-exceptions],
 	ac_cv_need_handlexceptions,
 
-AC_TRY_COMPILE([],
-[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 throw;
-], ac_cv_need_handlexceptions=no,
-ac_cv_need_handlexceptions=yes)
+]])],[ac_cv_need_handlexceptions=no],[ac_cv_need_handlexceptions=yes])
 )
 
 if test "$ac_cv_need_handlexceptions" = "yes"
@@ -76,4 +73,5 @@ then
 	esac
 fi
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

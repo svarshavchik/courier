@@ -322,7 +322,7 @@ static int makealiases(std::istream &is)
 			new_list.Init(addr);
 
 			dumpbuf=addr + ":";
-		
+
 			std::string dumpsep=dumpbuf;
 
 			dumplist="";
@@ -383,34 +383,25 @@ static void cleanup()
 	unlink(tmpfilename);
 }
 
-static RETSIGTYPE sigint_sig(int signum)
+static void sigint_sig(int signum)
 {
 	cleanup();
 	signal(SIGINT, SIG_DFL);
 	kill(getpid(), SIGINT);
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 
-static RETSIGTYPE sigterm_sig(int signum)
+static void sigterm_sig(int signum)
 {
 	cleanup();
 	signal(SIGTERM, SIG_DFL);
 	kill(getpid(), SIGTERM);
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 
-static RETSIGTYPE sighup_sig(int signum)
+static void sighup_sig(int signum)
 {
 	cleanup();
 	signal(SIGHUP, SIG_DFL);
 	kill(getpid(), SIGHUP);
-#if	RETSIGTYPE != void
-	return (0);
-#endif
 }
 
 int cppmain(int argc, char **argv)

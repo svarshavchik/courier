@@ -16,15 +16,9 @@
 #include <sys/types.h>
 #include	"numlib/numlib.h"
 #include	"comuidgid.h"
-#if TIME_WITH_SYS_TIME
-#include        <sys/time.h>
-#include        <time.h>
-#else
+#include	<time.h>
 #if HAVE_SYS_TIME_H
-#include        <sys/time.h>
-#else
-#include        <time.h>
-#endif
+#include	<sys/time.h>
 #endif
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -632,44 +626,28 @@ static int sigterm_received;
 static int sighup_received;
 static int sigchild_received;
 
-static RETSIGTYPE sigalarm(int signum)
+static void sigalarm(int signum)
 {
 	signal(SIGALRM, sigalarm);
 	alarm(2);
-
-#if     RETSIGTYPE != void
-        return (0);
-#endif
 }
 
-static RETSIGTYPE sigterm(int signum)
+static void sigterm(int signum)
 {
 	sigterm_received=1;
-
-#if     RETSIGTYPE != void
-        return (0);
-#endif
 }
 
-static RETSIGTYPE sighup(int signum)
+static void sighup(int signum)
 {
 	sighup_received=1;
 
 	signal(SIGHUP, sighup);
-
-#if     RETSIGTYPE != void
-        return (0);
-#endif
 }
 
-static RETSIGTYPE sigchild(int signum)
+static void sigchild(int signum)
 {
 	sigchild_received=1;
 	alarm(1);
-
-#if     RETSIGTYPE != void
-        return (0);
-#endif
 }
 
 static void loop(int fd)

@@ -22,7 +22,7 @@ cat >debian/tmp/etc/pam.d/socks <<EOF
 @include common-password
 EOF
 
-sed -i "/dependency_libs/ s/'.*'/''/" debian/tmp@libdir@/*.la
+rm -f debian/tmp@libdir@/*.la
 
 dh_install debian/tmp$bindir/socksify `echo $bindir | cut -c2-`
 dh_install debian/tmp$mandir/man5/* `echo $mandir/man5 | cut -c2-`
@@ -33,7 +33,6 @@ dh_installdocs COPYING README NEWS AUTHORS ChangeLog *.html
 
 dh_install --package libcourier-sox$SOVERSION debian/tmp$libdir/*.so.* `echo $libdir | cut -c2-`
 
-dh_install --package=libcourier-sox-dev debian/tmp$libdir/*.la `echo $libdir | cut -c2-`
 dh_install --package=libcourier-sox-dev debian/tmp$libdir/*.a `echo $libdir | cut -c2-`
 dh_install --package=libcourier-sox-dev debian/tmp$libdir/*.so `echo $libdir | cut -c2-`
 dh_install --package=libcourier-sox-dev debian/tmp$includedir/* `echo $includedir | cut -c2-`
