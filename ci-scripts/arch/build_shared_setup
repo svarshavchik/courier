@@ -1,5 +1,7 @@
 set -evx
 
+# valgrind does not get installed, valgrind on arch is broken.
+
 pacman -Sy \
     aspell \
     automake \
@@ -34,7 +36,6 @@ pacman -Sy \
     procps-ng \
     sed \
     sqlite \
-    valgrind \
     icu \
     wget \
     which \
