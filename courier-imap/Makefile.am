@@ -335,7 +335,7 @@ id=$(dollar)Id
 
 WWW=$$HOME/www/hostrocket/courier-mta.org
 
-htmldoc: INSTALL.html libs/imap/README.html libs/maildir/README.maildirquota.html libs/maildir/README.sharedfolders.html libs/maildir/README.imapkeywords.html libs/imap/BUGS.html libs/imap/README.proxy.html libs/imap/README.html
+htmldoc: INSTALL.html libs/maildir/README.maildirquota.html libs/maildir/README.sharedfolders.html libs/maildir/README.imapkeywords.html libs/imap/BUGS.html libs/imap/README.proxy.html
 	for f in $^; do xsltproc --nonet $(srcdir)/imap-format.xsl $$f | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$(WWW)/imap/`basename $$f`; done
 	rm -rf doc
 	mkdir doc

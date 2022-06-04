@@ -1,3 +1,15 @@
+1.1.10
+
+2022-06-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/submit2.C (SubmitFile::trapsignals): Remove signal-unsafe
+	signal handling code.
+
+	* Update deliverquota man page.
+
+
+1.1.9
+
 2022-05-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* openssl 3.0 updates.

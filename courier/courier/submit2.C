@@ -1123,18 +1123,11 @@ int	rc;
 	flag=1;
 }
 
-static void sighandler(int signum)
-{
-	SubmitFile::interrupt();
-	signal(SIGINT, SIG_DFL);
-	kill(getpid(), SIGKILL);
-}
-
 void SubmitFile::trapsignals()
 {
-	signal(SIGINT, sighandler);
-	signal(SIGTERM, sighandler);
-	signal(SIGHUP, sighandler);
-	signal(SIGALRM, sighandler);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGTERM, SIG_DFL);
+	signal(SIGHUP, SIG_DFL);
+	signal(SIGALRM, SIG_DFL);
 	if (atexit(SubmitFile::interrupt)) clog_msg_errno();
 }

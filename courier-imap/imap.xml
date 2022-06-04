@@ -249,9 +249,6 @@ The binary RPM will not install if you have another &imap;
 
     <listitem><simpara><ulink url="http://www.courier-mta.org/FAQ.html" target="_blank">Courier FAQ</ulink></simpara></listitem>
 
-    <listitem><simpara><ulink url="README.html">imap/README: Hints on configuring
-    &imap; clients</ulink></simpara></listitem>
-
     <listitem><simpara><ulink url="README.maildirquota.html">README.maildirquota:
     Enhancements by the &ci; to the traditional Maildir
     format</ulink>, <ulink url="README.sharedfolders.html">README.sharedfolders: How
