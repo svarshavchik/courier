@@ -20,7 +20,7 @@ rm -f rpm/RPMS/*/*userdb*
 # Do not install courier-sox-server either
 
 rm -f rpm/RPMS/*/courier-sox-utils*
-rm -f rpm/RPMS/*/courier-sox-server
+rm -f rpm/RPMS/*/courier-sox-server*
 
 rm -f rpm/RPMS/*/*debug*
 

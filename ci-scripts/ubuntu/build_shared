@@ -19,7 +19,7 @@ rm -f deb/*userdb*
 
 # Do not install courier-sox-server
 
-rm -f deb/courier-sox-server
+rm -f deb/*courier-sox-server*
 
 dpkg -i deb/*.deb
 mv deb/*.deb ../../packages

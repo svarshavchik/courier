@@ -2,6 +2,8 @@ name: Run builds on supported distributions
 
 on:
   push:
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -18,16 +20,21 @@ jobs:
     container:
       image: "fedora:latest"
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
+      - name: Check out the courier repository
+        uses: actions/checkout@v3
+
+      - name: Check out the courier-libs repository
+        uses: actions/checkout@v3
+        with:
+          repository: svarshavchik/courier-libs
+          path: libs
 
       - name: Install dependencies
         run: |
           sh ci-scripts/make_dist_installdeps
 
-      - name: Get courier-libs
+      - name: Install the courier-libs repository
         run: |
-          git clone https://github.com/svarshavchik/courier-libs.git libs
           cp -al libs sysconftool
           cp -al libs courier-authlib
           cp -al libs courier-sox
@@ -147,7 +154,13 @@ jobs:
       image: fedora:latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Check out the courier-libs repository
+        uses: actions/checkout@v3
+        with:
+          repository: svarshavchik/courier-libs
+          path: libs
 
       - name: Install dependencies
         run: |
@@ -158,11 +171,10 @@ jobs:
         with:
           name: distrpms
 
-      - name: Install common dist rpms and get courier-libs
+      - name: Install common dist rpms
         run: |
           set -evx
           rpm -ivh *.rpm
-          git clone https://github.com/svarshavchik/courier-libs.git libs
           mkdir -p $HOME/bin
           echo '#! /bin/sh' >$HOME/bin/rpmrepos.sh
           chmod +x $HOME/bin/rpmrepos.sh
@@ -199,6 +211,8 @@ jobs:
   #
   # Centos: contains rpms of common packages
   #
+  # Ubuntu: contains debs of common packages
+  #
   # Arch: contains *.img.tar.bz2 of 'make install' of common packages
 
   build_common_packages:
@@ -208,7 +222,7 @@ jobs:
       image: ${{ matrix.platform[0] }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download sysconftool tarball
         uses: actions/download-artifact@v3
@@ -277,7 +291,7 @@ jobs:
       image: ${{ matrix.platform[0] }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download shared packages
         uses: actions/download-artifact@v3
