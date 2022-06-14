@@ -1,0 +1,55 @@
+name: Debug docker containers
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    container:
+      image: "rockylinux:8"
+    steps:
+      - name: Debug job
+        run: |
+          dnf install -y rocky-release
+          dnf install -y --enablerepo=powertools --setopt=tsflags=nodocs \
+              aspell-devel \
+              automake \
+              /etc/mime.types \
+              expect \
+              gawk \
+              gcc-c++ \
+              gdbm-devel \
+              gettext-devel \
+              ghostscript \
+              gnupg2 \
+              groff \
+              httpd \
+              libidn-devel \
+              libtool \
+              libtool-ltdl-devel \
+              libxml2-devel \
+              libxslt \
+              make \
+              mysql-devel \
+              ncurses-devel \
+              netpbm-progs \
+              openldap-devel \
+              openssl-devel \
+              openssl-perl \
+              pam-devel \
+              pcre2-devel \
+              pcre-devel \
+              perl \
+              'perl(ExtUtils::Embed)' \
+              perl-generators \
+              postgresql-devel \
+              procps-ng \
+              rpm-build \
+              sed \
+              /usr/lib/locale/locale-archive \
+              sqlite-devel \
+              valgrind \
+              wget \
+              which \
+              zlib-devel

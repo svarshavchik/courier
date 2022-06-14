@@ -8,20 +8,14 @@
 %{?_without_fax:    %define with_fax 0}
 %{!?_without_fax:   %define with_fax 1}
 
-%define _missing_doc_files_terminate_build 1
-%define _unpackaged_files_terminate_build 1
-
 %define alternatives %(test -x /usr/sbin/alternatives && echo 1 || echo 0)
-%define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
+
+%define is_rocky %(test -e /etc/rocky-release && echo 1 || echo 0)
 
 %define using_systemd %(test -d /lib/systemd && echo 1 || echo 0)
 
 %if 0%{!?dist:1}
-%if %is_not_mandrake
 %define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
-%else
-%define courier_release mdk
-%endif
 %else
 %define courier_release %{nil}
 %endif
@@ -159,9 +153,7 @@ BuildRequires: perl-generators
 %if %use_openssl
 BuildRequires:      openssl
 BuildRequires:      openssl-devel
-%if %is_not_mandrake
 BuildRequires:      openssl-perl
-%endif
 %else
 BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
 Requires:	  /usr/bin/certtool
@@ -170,7 +162,12 @@ Requires:	  /usr/bin/certtool
 %if %with_fax
 BuildRequires:      groff
 BuildRequires:      ghostscript
+
+%if %is_rocky
+
+%else
 BuildRequires:      mgetty-sendfax
+%endif
 BuildRequires:      netpbm-progs
 %endif
 BuildRequires:      pcre2-devel
@@ -241,9 +238,7 @@ Requires: gnupg2
 %else
 Requires: gnupg >= 1.0.5
 %endif
-%if %is_not_mandrake
 Requires: %{apache_cgibindir}
-%endif
 %if %using_systemd
 Requires(preun): systemd
 Requires(posttrans): systemd
@@ -254,9 +249,7 @@ Summary: Courier @PACKAGE_VERSION@ web-based administration tool
 Group: Applications/Mail
 Requires: %{apache_documentroot}
 Requires: courier = %{version}-%{release}
-%if %is_not_mandrake
 Requires: %{apache_cgibindir}
-%endif
 
 %package mlm
 Summary: Courier @PACKAGE_VERSION@ Integrated Mailing List Manager
@@ -268,9 +261,7 @@ Summary: Courier @PACKAGE_VERSION@ Integrated web-based mailing list interface
 Group: Applications/Mail
 Requires: %{apache_documentroot}
 Requires: courier-mlm = %{version}-%{release}
-%if %is_not_mandrake
 Requires: %{apache_cgibindir}
-%endif
 %if %using_systemd
 Requires(preun): systemd
 Requires(posttrans): systemd

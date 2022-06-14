@@ -1,0 +1,28 @@
+set -evx
+
+cd build
+mkdir rpm
+
+rpmbuild -ta --clean \
+   --define 'notice_option --with-notice=unicode' \
+   --define "_topdir `pwd`/rpm" *.tar.bz2
+
+# Do not install courier-authlib modules
+
+rm -f rpm/RPMS/*/*ldap*
+rm -f rpm/RPMS/*/*mysql*
+rm -f rpm/RPMS/*/*pgsql*
+rm -f rpm/RPMS/*/*pipe*
+rm -f rpm/RPMS/*/*sqlite*
+rm -f rpm/RPMS/*/*userdb*
+
+# Do not install courier-sox-utils, Rocky does not have Net::CIDR
+# Do not install courier-sox-server either
+
+rm -f rpm/RPMS/*/courier-sox-utils*
+rm -f rpm/RPMS/*/courier-sox-server*
+
+rm -f rpm/RPMS/*/*debug*
+
+rpm -ivh rpm/RPMS/*/*.rpm
+mv rpm/RPMS/*/*.rpm ../packages
