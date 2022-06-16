@@ -3,6 +3,16 @@ name: Build courier and courier-libs
 on:
   workflow_call:
     inputs:
+      thisrepo:
+        description: 'courier repository'
+        required: false
+        type: string
+        default: ${{ github.repository }}
+      thisbranch:
+        description: 'courier repository branch'
+        required: false
+        type: string
+        default: ${{ github.ref }}
       libsrepo:
         description: 'courier-libs repository'
         required: true
@@ -25,10 +35,14 @@ jobs:
     container:
       image: "fedora:latest"
     steps:
-      - name: Check out the courier repository
+      - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
         uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.thisrepo }}
+          ref: ${{ inputs.thisbranch }}
+          path: '.'
 
-      - name: Check out the ${{ inputs.libsrepo }}/${{ inputs.libsbranch }} repository
+      - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
         uses: actions/checkout@v3
         with:
           repository: ${{ inputs.libsrepo }}
@@ -159,10 +173,14 @@ jobs:
     container:
       image: fedora:latest
     steps:
-      - name: Check out repository code
+      - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
         uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.thisrepo }}
+          ref: ${{ inputs.thisbranch }}
+          path: '.'
 
-      - name: Check out the ${{ inputs.libsrepo }}/${{ inputs.libsbranch }} repository
+      - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
         uses: actions/checkout@v3
         with:
           repository: ${{ inputs.libsrepo }}
@@ -228,8 +246,12 @@ jobs:
     container:
       image: ${{ matrix.platform[0] }}
     steps:
-      - name: Check out repository code
+      - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
         uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.thisrepo }}
+          ref: ${{ inputs.thisbranch }}
+          path: '.'
 
       - name: Download sysconftool tarball
         uses: actions/download-artifact@v3
@@ -299,8 +321,12 @@ jobs:
     container:
       image: ${{ matrix.platform[0] }}
     steps:
-      - name: Check out repository code
+      - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
         uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.thisrepo }}
+          ref: ${{ inputs.thisbranch }}
+          path: '.'
 
       - name: Download shared packages
         uses: actions/download-artifact@v3
