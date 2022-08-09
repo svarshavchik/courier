@@ -45,3 +45,6 @@ pacman -Sy \
 mkdir -p /var/www/cgi-bin /var/www/html
 echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
 echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf
+
+echo 'en_US.UTF-8 UTF-8' >>/etc/locale.gen
+locale-gen
