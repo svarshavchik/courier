@@ -16,6 +16,9 @@ Build-Depends:
 	libgdbm-dev,
 	libpam0g-dev,
 	libltdl-dev,
+	libidn11-dev,
+	libcourier-unicode-dev,
+	sysconftool,
 	expect
 Standards-Version: 4.4.1
 Homepage: https://www.courier-mta.org/courier-authlib/

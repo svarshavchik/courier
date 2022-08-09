@@ -89,7 +89,8 @@ bump.deb.release: packaging/debian/changelog
 	RELEASE=`expr $$NEXT_RELEASE + 1`; \
 	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
-	sed 's/^@PACKAGE@.*/@PACKAGE@ (@VERSION@-'$$RELEASE') devel; urgency=medium/' \
+	. /etc/lsb-release; \
+	sed 's/^@PACKAGE@.*/@PACKAGE@ (@VERSION@-'$$RELEASE'.'$$DISTRIB_RELEASE') devel; urgency=medium/' \
 		<packaging/debian/changelog >packaging/debian/changelog.new; \
 	mv packaging/debian/changelog.new packaging/debian/changelog
 

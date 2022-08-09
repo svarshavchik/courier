@@ -13,6 +13,7 @@ Build-Depends:
 	libldap2-dev,
 	libcourier-auth-dev,
 	libcourier-unicode-dev,
+	sysconftool,
 	mime-support,
 	wget,
 	gpg ( >= 2),
