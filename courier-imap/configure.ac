@@ -6,7 +6,7 @@ dnl distribution information.
 AC_INIT([courier-imap],[5.1.8],[courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(foreign)
 >confdefs.h # Kill PACKAGE_ macros
 
 AC_PROG_CC

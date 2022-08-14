@@ -17,3 +17,6 @@ override_dh_auto_install: debian/auto_install.sh
 debian/auto_install.sh: config.status debian/auto_install.sh.in
 	CONFIG_FILES=debian/auto_install.sh ./config.status
 	chmod +x debian/auto_install.sh
+
+override_dh_builddeb:
+	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

@@ -3,3 +3,5 @@
 %:
 	dh $@
 
+override_dh_builddeb:
+	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

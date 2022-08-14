@@ -6,3 +6,6 @@
 override_dh_auto_install:
 	dh_auto_install
 	dh_installdocs AUTHORS ChangeLog NEWS COPYING courier-analog.html manpage.css
+
+override_dh_builddeb:
+	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

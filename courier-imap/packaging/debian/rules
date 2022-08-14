@@ -27,3 +27,6 @@ override_dh_auto_install:
 override_dh_fixperms:
 	dh_fixperms
 	set -ex; . debian/fixperms.sh
+
+override_dh_builddeb:
+	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

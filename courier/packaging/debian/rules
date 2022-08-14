@@ -34,3 +34,6 @@ override_dh_fixperms:
 
 override_dh_installsystemd:
 	dh_installsystemd --package courier --no-start courier.service
+
+override_dh_builddeb:
+	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

@@ -16,3 +16,6 @@ override_dh_auto_install:
 	chmod +x debian/auto_install.sh
 	ln -s maildrop-dev.soname.lintian-overrides debian/maildrop-dev$(SOVERSION).lintian-overrides
 	debian/auto_install.sh
+
+override_dh_builddeb:
+	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

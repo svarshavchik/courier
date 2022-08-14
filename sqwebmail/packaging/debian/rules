@@ -37,3 +37,6 @@ override_dh_fixperms:
 	CONFIG_FILES=debian/auto_fixperms.sh ./config.status
 	chmod +x debian/auto_fixperms.sh
 	debian/auto_fixperms.sh
+
+override_dh_builddeb:
+	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

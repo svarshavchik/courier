@@ -204,6 +204,19 @@ deb: bump.deb.release
 	cd @PACKAGE@-@VERSION@ && ./courier-debuild -us -uc && mv deb ../deb && cd .. && rm -rf @PACKAGE@-@VERSION@
 	$$HOME/bin/debrepos.sh
 
+deb-pbuild: bump.deb.release
+	@test -z "$(PBUILD)" || exit 0; echo "Set PBUILD please"; exit 1
+	. deb.release; \
+	R="`echo $(PBUILD) | tr '.' '+'`"; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE'+'$$R') devel; urgency=medium/' \
+		<packaging/debian/changelog >packaging/debian/changelog.new; \
+	mv packaging/debian/changelog.new packaging/debian/changelog
+	$(MAKE) dist
+	rm -rf @PACKAGE@-@VERSION@ deb/pbuild
+	tar xf @PACKAGE@-@VERSION@.tar.bz2
+	cd @PACKAGE@-@VERSION@ && chmod +x ./courier-debuild && ./courier-debuild -us -uc && mv deb ../deb/pbuild
+	rm -rf @PACKAGE@-@VERSION@
+
 bump.deb.release: packaging/debian/changelog
 	VERSION="x"; \
 	test -f $(srcdir)/deb.release && . $(srcdir)/deb.release; \
@@ -213,7 +226,8 @@ bump.deb.release: packaging/debian/changelog
 	echo "VERSION=@PACKAGE_VERSION@" >$(srcdir)/deb.release; \
 	echo "RELEASE=$$RELEASE" >>$(srcdir)/deb.release; \
 	. /etc/lsb-release; \
-	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE'.'$$DISTRIB_RELEASE') devel; urgency=medium/' \
+	R=`echo $$DISTRIB_RELEASE | tr '.' '+'`; \
+	sed 's/^\([^ ][^ ]*\).*/\1 (@VERSION@-'$$RELEASE'+'$$R') devel; urgency=medium/' \
 		<packaging/debian/changelog >packaging/debian/changelog.new; \
 	mv packaging/debian/changelog.new packaging/debian/changelog
 
