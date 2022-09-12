@@ -240,7 +240,7 @@ mailtool -delete INBOX.lists.announcements maildir:Maildir
 	<para>
 <literal>-renames</literal> renames an existing
 <replaceable>oldfolder</replaceable>.
-The folder is renamed as 
+The folder is renamed as
 <replaceable>name</replaceable>, as a subfolder of
 <replaceable>folder</replaceable>.
 <replaceable>folder</replaceable> may be an empty string if the folder should
@@ -282,6 +282,32 @@ and size.</para>
 	<informalexample>
 	  <programlisting>
 mailtool -index INBOX imap://john@mail.example.com/novalidate-cert
+</programlisting>
+	</informalexample>
+      </refsect2>
+
+      <refsect2 id="mailtool_message_headers">
+	<title>Message headers</title>
+
+	<cmdsynopsis>
+	  <command>mailtool</command>
+	  <arg choice='plain'>-headers</arg>
+	  <arg choice='plain'><replaceable>folder</replaceable></arg>
+	  <arg choice='plain'><replaceable>n</replaceable></arg>
+	  <arg choice='plain'><replaceable>account</replaceable></arg>
+	</cmdsynopsis>
+	<para>
+	  <literal>-headers</literal> retrieves and shows the headers of
+	  message #<replaceable>n</replaceable>
+	  (ranging from 1 to the number of messages in the folder) in
+	  <replaceable>folder</replaceable>, in
+	  <replaceable>account</replaceable>.
+	  The message numbers may be obtained by using
+	  <literal>-index</literal>.
+	</para>
+	<informalexample>
+	  <programlisting>
+mailtool -headers INBOX 28 imap://john@mail.example.com/novalidate-cert
 </programlisting>
 	</informalexample>
       </refsect2>
