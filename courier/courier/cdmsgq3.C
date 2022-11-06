@@ -52,8 +52,8 @@ void msgq::logmsgid(msgq *q)
 
 void msgq::startdelivery(drvinfo *drvp, delinfo *delp)
 {
-rcptinfo *ri=delp->rcptlist;
-int i;
+	rcptinfo *ri=delp->rcptlist;
+	int i;
 
 	++inprogress;
 	++stat_nattempts;
@@ -177,7 +177,7 @@ void msgq::process_completed()
 
 void msgq::process_completion(drvinfo &drvp, size_t delnum)
 {
-delinfo *di;
+	delinfo *di;
 
 	--inprogress;
 	if (delnum >= drvp.delinfo_list.size() ||
@@ -196,8 +196,8 @@ delinfo *di;
 
 	di=&drvp.delinfo_list[delnum];
 
-dlvrhost *hostp=di->dlvrphost;
-rcptinfo *rcptlist=di->rcptlist;
+	dlvrhost *hostp=di->dlvrphost;
+	rcptinfo *rcptlist=di->rcptlist;
 
 	di->dlvrphost=0;
 	di->rcptlist=0;
@@ -262,7 +262,7 @@ clog_msg_send();
 		if (hostp->dlvrcount >= drvp.maxhost)	continue;
 		if (hostp->pending_list == 0)	continue;
 
-	delinfo *newdi=drvp.delpfreefirst;
+		delinfo *newdi=drvp.delpfreefirst;
 
 		if (newdi == 0)
 			break;	// Cancel the show - no free delivery slots
@@ -302,7 +302,7 @@ clog_msg_send();
 
 		if (pi.hostp)	continue;	// We would've gotten it above
 
-	delinfo *newdi=drvp.delpfreefirst;
+		delinfo *newdi=drvp.delpfreefirst;
 
 		if (newdi == 0)
 			break;	// Stop - no available delivery slots
@@ -380,14 +380,14 @@ clog_msg_send();
 
 void msgq::done(msgq *p, int truecompletion)
 {
-struct ctlfile	ctlinfo;
-unsigned failcnt, successcnt, completedcnt, i;
-time_t	current_time;
-struct	iovec iov[3];
-static char completed[1]={COMCTLFILE_DELCOMPLETE};
-const char *t;
-int	j;
-int	isdsncompletion;
+	struct ctlfile	ctlinfo;
+	unsigned failcnt, successcnt, completedcnt, i;
+	time_t	current_time;
+	struct	iovec iov[3];
+	static char completed[1]={COMCTLFILE_DELCOMPLETE};
+	const char *t;
+	int	j;
+	int	isdsncompletion;
 
 	clog_msg_start_info();
 	clog_msg_str("completed,id=");
@@ -472,8 +472,8 @@ int	isdsncompletion;
 
 	j=ctlfile_searchfirst(&ctlinfo, COMCTLFILE_EXPIRES);
 
-int	reschedule=0;
-int	cancelled=0;
+	int	reschedule=0;
+	int	cancelled=0;
 
 	if (isdsncompletion)
 	{
@@ -654,8 +654,8 @@ unsigned j;
 
 const char *msgq::needs_warndsn(struct ctlfile *ctlinfo)
 {
-const char *p;
-unsigned	j;
+	const char *p;
+	unsigned	j;
 
 	for (j=0; j<ctlinfo->nreceipients; j++)
 		if ((p=dsn_sender(ctlinfo, j, 1)) != 0)	return (p);
@@ -670,8 +670,8 @@ unsigned	j;
 
 void msgq::flushmsg(ino_t n, const char *msgid)
 {
-msgq	*mp;
-struct	ctlfile ctf;
+	msgq	*mp;
+	struct	ctlfile ctf;
 
 	for (mp=msgq::queuehead; mp; mp=mp->next)
 		if (mp->msgnum == n)
