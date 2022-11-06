@@ -309,7 +309,9 @@ jobs:
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
-           - ["archlinux:latest", "arch",      "arch"]
+           # Arch is broken right now, someone else is free to try it to
+           # see if it works.
+           # - ["archlinux:latest", "arch",      "arch"]
 
   # Build the main packages
   #
@@ -353,7 +355,9 @@ jobs:
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
-           - ["archlinux:latest", "arch",      "arch"]
+           # Arch is broken right now, someone else is free to try it to
+           # see if it works.
+           # - ["archlinux:latest", "arch",      "arch"]
         project:
           - cone
           - courier-analog
