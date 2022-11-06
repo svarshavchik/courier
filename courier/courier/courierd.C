@@ -528,7 +528,9 @@ int	doscantmp=1;
 					if (c >= '0' && c <= '9')
 						delnum=delnum * 10 + (c-'0');
 				}
-				msgq::completed(drvinfo::modules[nd], delnum);
+				msgq::queue_completed(drvinfo::modules[nd],
+						      delnum);
+				msgq::process_completed();
 			} while (mybuf_more(p));
 			if (!shutdown_flag)	shutdown_time=0;
 		}

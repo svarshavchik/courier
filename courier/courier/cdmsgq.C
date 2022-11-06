@@ -51,6 +51,8 @@ unsigned msgq::queuedelivering, msgq::queuewaiting, msgq::inprogress;
 drvinfo *msgq::backup_relay_driver;
 std::string msgq::backup_relay;
 
+std::vector<std::tuple<drvinfo *, size_t>> msgq::completed_queue;
+
 extern time_t flushtime;
 extern time_t delaytime;
 
@@ -988,6 +990,7 @@ clog_msg_send();
 			ri.pending=0;
 			hostp->dlvrcount++;
 			startdelivery(drvp, newdi);
+			process_completed();
 			continue;
 		}
 //

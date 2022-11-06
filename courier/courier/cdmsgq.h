@@ -19,6 +19,7 @@
 
 #include	<string>
 #include	<vector>
+#include	<tuple>
 
 class drvinfo;
 struct rfc822token;
@@ -81,7 +82,13 @@ public:
 	void removewq();
 	void start_message();
 
-static	void completed(drvinfo &, size_t);
+
+	static std::vector<std::tuple<drvinfo *, size_t>> completed_queue;
+
+	static void queue_completed(drvinfo &, size_t);
+	static void process_completed();
+
+	static void process_completion(drvinfo &, size_t);
 
 private:
 static void startdelivery(drvinfo *, delinfo *);

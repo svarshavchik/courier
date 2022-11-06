@@ -104,7 +104,7 @@ int i;
 			ctlfile_close(&ctf);
 		}
 
-		completed(*drvp, delp->delid);
+		queue_completed(*drvp, delp->delid);
 		return;
 	}
 
@@ -150,13 +150,32 @@ clog_msg_send();
 	fflush(drvp->module_to);
 }
 
+void msgq::queue_completed(drvinfo &drvp, size_t delnum)
+{
+	completed_queue.emplace_back(&drvp, delnum);
+}
+
+void msgq::process_completed()
+{
+	while (!completed_queue.empty())
+	{
+		auto last=completed_queue.back();
+		completed_queue.pop_back();
+
+		auto &drvp=std::get<0>(last);
+		auto &delnum=std::get<1>(last);
+
+		process_completion(*drvp, delnum);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 // We've been told that the following delivery attempt has been completed
 //
 //////////////////////////////////////////////////////////////////////////
 
-void msgq::completed(drvinfo &drvp, size_t delnum)
+void msgq::process_completion(drvinfo &drvp, size_t delnum)
 {
 delinfo *di;
 
