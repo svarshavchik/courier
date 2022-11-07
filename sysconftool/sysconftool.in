@@ -1,9 +1,11 @@
 #!@PERL@
 # Copyright 2000 Double Precision, Inc.  See COPYING for
 # distribution information.
- 
+
 use IO::File;
 use Getopt::Long;
+use strict;
+use warnings;
 
 my $exitcode=0;
 
@@ -106,7 +108,7 @@ sub sysconftool {
 		if ($line =~ /^\#\#NAME:(.*):(.*)/)
 		{
 		    ($configname, $configversion)=($1, $2);
-		    
+
 		    $configname =~ s/[ \t]//g;
 		    $configversion =~ s/[ \t]//g;
 
@@ -209,6 +211,9 @@ sub sysconftool_writeout {
 
     my $last_setting=undef;
     my $prev_setting=undef;
+
+    my $configname;
+    my $configversion;
 
     while (defined($line=<$oldfile>))
     {
