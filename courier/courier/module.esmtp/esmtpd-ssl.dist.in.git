@@ -358,3 +358,9 @@ MAXPERC=5
 #  Maximum number of connections accepted from the same IP address
 
 MAXPERIP=5
+
+##MISC: MISC:0
+#
+# Any custom options can be added below. This "MISC" configuration setting
+# will remain unchanged, and is a convenient place to stash away
+# unchanged config settings.
