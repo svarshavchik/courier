@@ -4,7 +4,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([sqwebmail],[6.0.10],[courier-sqwebmail@lists.sourceforge.net])
+AC_INIT([sqwebmail],[6.0.11],[courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE

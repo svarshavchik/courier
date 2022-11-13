@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier],[1.1.10.20221106],[courier-users@lists.sourceforge.net])
+AC_INIT([courier],[1.1.11],[courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE

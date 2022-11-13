@@ -1,3 +1,16 @@
+0.71.6
+
+2022-11-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Adjust deb packaging. Check /etc/lsb-release and include the
+	distribution release in the deb package version, to faciliate
+	updating to the same version of the package in an updated release.
+
+	Fix build dependencies.
+
+	Remove obsolete setting from authpgsqlrc, update connection string
+	template.
+
 0.71.5
 
 2022-05-22  Sam Varshavchik  <mrsam@courier-mta.com>

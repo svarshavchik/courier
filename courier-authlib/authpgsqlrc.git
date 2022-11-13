@@ -29,14 +29,9 @@
 PGSQL_CONNECTION        \
           host=pgsql.example.com \
 	  port=5400              \
+	  dbname=template1       \
 	  user=admin             \
 	  password=admin
-
-##NAME: PGSQL_DATABASE:0
-#
-# The name of the PostgreSQL database we will open:
-
-PGSQL_DATABASE		template1
 
 ##NAME: PGSQL_CHARACTER_SET:0
 #

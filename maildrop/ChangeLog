@@ -1,3 +1,10 @@
+3.0.9
+	* Adjust deb packaging. Check /etc/lsb-release and include the
+	distribution release in the deb package version, to faciliate
+	updating to the same version of the package in an updated release.
+
+	Fix build dependencies.
+
 2022-06-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Update deliverquota man page.

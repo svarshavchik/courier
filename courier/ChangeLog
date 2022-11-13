@@ -1,3 +1,20 @@
+1.1.11
+
+2022-11-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Add a MISC section in the esmtpd-ssl configuration file, for
+	stashing any custom config settings.
+
+	* Adjust deb packaging. Check /etc/lsb-release and include the
+	distribution release in the deb package version, to faciliate
+	updating to the same version of the package in an updated release.
+
+	Fix build dependencies.
+
+	* Update rpm packaging. Remove constructs for historical rpm-based
+	Linux distributions.
+
+
 2022-11-06  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Courier: fix potential crash when multiple messages are cancelled
