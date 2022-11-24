@@ -533,7 +533,7 @@ while (<>)
 %{__sed} -n '/faxmail/p;/35fax/p;/34fax/p' <filelist1 >filelist.fax
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/mgetty+sendfax
-%{__ln_s} %{_datadir}/faxmail/new_fax $RPM_BUILD_ROOT/etc/mgetty+sendfax/new_fax
+%{__ln_s} `realpath --relative-to /etc/mgetty+sendfax -m %{_datadir}/faxmail/new_fax` $RPM_BUILD_ROOT/etc/mgetty+sendfax/new_fax
 
 %if ! %with_fax
 awk '{print $NF}' filelist.fax |
@@ -664,7 +664,7 @@ courier/courier-config | grep '^mail' >uidgid
 echo "%attr(600, $mailuser, $mailgroup) %{_datadir}/dhparams.pem.dist" >>filelist
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
-%{__ln_s} %{_sbindir}/mkdhparams $RPM_BUILD_ROOT/etc/cron.monthly/courier-mkdhparams
+%{__ln_s} `realpath --relative-to /etc/cron.monthly -m %{_sbindir}/mkdhparams` $RPM_BUILD_ROOT/etc/cron.monthly/courier-mkdhparams
 echo "/etc/cron.monthly/courier-mkdhparams" >>filelist
 
 #
@@ -719,9 +719,9 @@ EOF
 %attr(-, root, root) /usr/lib/sendmail
 EOF
 
-	%{__ln_s} %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
-	%{__ln_s} %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
-	%{__ln_s} %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/bin/sendmail
+	%{__ln_s} `realpath --relative-to /usr/sbin -m %{_bindir}/sendmail` $RPM_BUILD_ROOT/usr/sbin/sendmail
+	%{__ln_s} `realpath --relative-to /usr/lib -m %{_bindir}/sendmail` $RPM_BUILD_ROOT/usr/lib/sendmail
+	%{__ln_s} `realpath --relative-to /usr/bin -m %{_bindir}/sendmail` $RPM_BUILD_ROOT/usr/bin/sendmail
 %endif
 
 #
@@ -732,7 +732,7 @@ EOF
 
 for f in maildirmake maildrop makedat reformail reformime mimegpg deliverquota
 do
-	%{__ln_s} %{_bindir}/$f $RPM_BUILD_ROOT/usr/local/bin/$f
+	%{__ln_s} `realpath --relative-to /usr/local/bin -m %{_bindir}/$f` $RPM_BUILD_ROOT/usr/local/bin/$f
 done
 
 #
@@ -1014,3 +1014,8 @@ fi
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
+
+%changelog
+
+* Tue Nov 22 2022 Sam Varshavchik <mrsam@courier-mta.com>
+- Update Makefile

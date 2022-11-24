@@ -44,7 +44,7 @@ cat $DESTDIR$datadir/dhparams.pem.dist.tmp >>$DESTDIR$datadir/dhparams.pem.dist
 rm -f $DESTDIR$datadir/dhparams.pem.dist.tmp
 
 mkdir -p $DESTDIR/etc/cron.monthly
-ln -s $sbindir/mkdhparams $DESTDIR/etc/cron.monthly/courier-imap-mkdhparams
+ln -s `realpath -m --relative-to /etc/cron.monthly $sbindir/mkdhparams` $DESTDIR/etc/cron.monthly/courier-imap-mkdhparams
 #
 # Fix imapd.dist
 #

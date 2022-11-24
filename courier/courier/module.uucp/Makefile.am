@@ -28,13 +28,13 @@ install-data-hook:
 	chmod 755 $(DESTDIR)$(moduledir)
 	@test `id -u` = 0 || exit 0 ; cd $(DESTDIR)$(moduledir) || exit 1 ; chown @mailuser@ . ; chgrp @mailgroup@ .
 	rm -f $(DESTDIR)$(sbindir)/makeuucpneighbors ; \
-		$(LN_S) $(datadir)/makeuucpneighbors \
+		$(LN_S) `realpath --relative-to $(sbindir) -m $(datadir)/makeuucpneighbors` \
 			$(DESTDIR)$(sbindir)/makeuucpneighbors
+
 	rm -f $(DESTDIR)$(man8dir)/makeuucpneighbors.8
 	$(LN_S) courieruucp.8 $(DESTDIR)$(man8dir)/makeuucpneighbors.8
 	for f in $(htmldoc_DATA); do chmod 444 $(DESTDIR)$(htmldocdir)/$$f ; done
 	test `id -u` = 0 || exit 0; for f in $(htmldoc_DATA); do chown bin $(DESTDIR)$(htmldocdir)/$$f ; chgrp bin $(DESTDIR)$(htmldocdir)/$$f ; done
-
 
 courieruucp_SOURCES=uucp.c staticlist.c
 nodist_EXTRA_courieruucp_SOURCES=dummy.C

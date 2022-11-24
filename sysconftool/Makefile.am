@@ -89,8 +89,8 @@ install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	rm -f $(DESTDIR)$(bindir)/sysconftoolize
 	rm -f $(DESTDIR)$(bindir)/sysconftoolcheck
-	$(LN_S) $(datadir)/sysconftool/sysconftoolize.pl $(DESTDIR)$(bindir)/sysconftoolize
-	$(LN_S) $(datadir)/sysconftool/sysconftoolcheck $(DESTDIR)$(bindir)/sysconftoolcheck
+	$(LN_S) `realpath --relative-to $(bindir) -m $(datadir)/sysconftool/sysconftoolize.pl` $(DESTDIR)$(bindir)/sysconftoolize
+	$(LN_S) `realpath --relative-to $(bindir) -m $(datadir)/sysconftool/sysconftoolcheck` $(DESTDIR)$(bindir)/sysconftoolcheck
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/sysconftoolize $(DESTDIR)$(bindir)/sysconftoolcheck

@@ -115,7 +115,7 @@ install-data-hook:
 	-$(mkinstalldirs) $(DESTDIR)$(bindir)
 	chmod 500 $(DESTDIR)$(datadir)/filterctl
 	rm -f $(DESTDIR)$(sbindir)/filterctl
-	$(LN_S) $(datadir)/filterctl $(DESTDIR)$(sbindir)/filterctl
+	$(LN_S) `realpath -m --relative-to $(sbindir) $(datadir)/filterctl` $(DESTDIR)$(sbindir)/filterctl
 	chmod 755 $(DESTDIR)$(filterbindir)
 	chmod 750 $(DESTDIR)$(filtersocketdir)
 	chmod 750 $(DESTDIR)$(allfiltersocketdir)

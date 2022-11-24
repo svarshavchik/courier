@@ -43,3 +43,8 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %doc AUTHORS COPYING ChangeLog NEWS README *.html
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%changelog
+
+* Tue Nov 22 2022 Sam Varshavchik <mrsam@courier-mta.com>
+- Use relative symlinks

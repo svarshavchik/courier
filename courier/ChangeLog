@@ -1,3 +1,7 @@
+2022-11-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* make install: replace absolute links with relative links.
+
 1.1.11
 
 2022-11-12  Sam Varshavchik  <mrsam@courier-mta.com>

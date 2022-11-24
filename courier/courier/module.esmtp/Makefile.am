@@ -117,15 +117,15 @@ courieresmtpd_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 addcr_SOURCES=addcr.c
 
 install-data-local:
-	test -f $(DESTDIR)$(sbindir)/courieresmtpd && exit 0; $(mkinstalldirs) $(DESTDIR)$(sbindir) || :; rm -f $(DESTDIR)$(sbindir)/courieresmtpd && $(LN_S) $(moduledir)/courieresmtpd $(DESTDIR)$(sbindir)/courieresmtpd
+	test -f $(DESTDIR)$(sbindir)/courieresmtpd && exit 0; $(mkinstalldirs) $(DESTDIR)$(sbindir) || :; rm -f $(DESTDIR)$(sbindir)/courieresmtpd && $(LN_S) `realpath --relative-to $(sbindir) -m $(moduledir)/courieresmtpd` $(DESTDIR)$(sbindir)/courieresmtpd
 	-$(mkinstalldirs) $(DESTDIR)$(bindir)
-	test -f $(DESTDIR)$(bindir)/addcr && exit 0; rm -f $(DESTDIR)$(bindir)/addcr && $(LN_S) $(moduledir)/addcr $(DESTDIR)$(bindir)/addcr
+	test -f $(DESTDIR)$(bindir)/addcr && exit 0; rm -f $(DESTDIR)$(bindir)/addcr && $(LN_S) `realpath -m --relative-to $(bindir) $(moduledir)/addcr` $(DESTDIR)$(bindir)/addcr
 	-$(mkinstalldirs) $(DESTDIR)$(sysconfdir)/esmtpacceptmailfor.dir
 	-$(mkinstalldirs) $(DESTDIR)$(sysconfdir)/esmtppercentrelay.dir
 	-$(mkinstalldirs) $(DESTDIR)$(sbindir)
 	for f in $(databin_SCRIPTS) ; do \
 		rm -f $(DESTDIR)$(sbindir)/$$f ; \
-		$(LN_S) $(datadir)/$$f $(DESTDIR)$(sbindir)/$$f ; done
+		$(LN_S) `realpath -m --relative-to $(sbindir) $(datadir)/$$f` $(DESTDIR)$(sbindir)/$$f ; done
 	cat </dev/null >>$(DESTDIR)$(sysconfdir)/esmtpauthclient
 	chmod 600 $(DESTDIR)$(sysconfdir)/esmtpauthclient
 	test `id -u` = 0 || exit 0; \

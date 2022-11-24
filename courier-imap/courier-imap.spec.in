@@ -171,7 +171,7 @@ cat $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp >>$RPM_BUILD_ROOT/%{_datad
 rm -f $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
-%{__ln_s} %{_sbindir}/mkdhparams $RPM_BUILD_ROOT/etc/cron.monthly/courier-imap-mkdhparams
+%{__ln_s} `realpath -m --relative-to /etc/cron.monthly %{_sbindir}/mkdhparams` $RPM_BUILD_ROOT/etc/cron.monthly/courier-imap-mkdhparams
 
 #
 # Fix imapd.dist
