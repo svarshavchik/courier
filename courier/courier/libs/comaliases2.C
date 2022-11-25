@@ -94,7 +94,9 @@ void AliasRecord::Add(std::list<std::string> &addlist, bool removedeleted)
 		{
 			update();
 			++recnum;
-			list="";
+
+			// TODO: spurious gcc 12 warning
+			list=std::string{""};
 		}
 		list +=  *b;
 		list += '\n';

@@ -660,7 +660,11 @@ static int sts_download2(const char *url, pid_t *pidptr)
 	if (*pidptr == 0)
 	{
 		close(1);
-		dup(pipefd[1]);
+		if (dup(pipefd[1]) != 1)
+		{
+			fprintf(stderr, "Cannot dup pipefd[1]\n");
+			exit(1);
+		}
 		close(pipefd[1]);
 		close(pipefd[0]);
 

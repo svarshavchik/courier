@@ -23,7 +23,11 @@ int sts_cache_size()
 
 	if (fp)
 	{
-		fgets(buffer, sizeof(buffer), fp);
+		if (fgets(buffer, sizeof(buffer), fp) == NULL)
+		{
+			strcpy(buffer, "1000"); /* Default cache size */
+		}
+
 		fclose(fp);
 	}
 	n=atoi(buffer);
