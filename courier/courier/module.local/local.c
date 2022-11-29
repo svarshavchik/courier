@@ -26,7 +26,7 @@
 #include	"modulelist.h"
 #include	"sysconfdir.h"
 #include	<courierauth.h>
-#include	<idna.h>
+#include	<idn2.h>
 #include	"numlib/numlib.h"
 #include	"comuidgid.h"
 

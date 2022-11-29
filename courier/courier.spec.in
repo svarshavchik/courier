@@ -137,7 +137,7 @@ Requires: gnupg >= 1.0.5
 BuildRequires:    expect
 BuildRequires:    gdbm-devel
 BuildRequires:    pam-devel
-BuildRequires:	  libidn-devel
+BuildRequires:	  libidn2-devel
 BuildRequires:    courier-unicode-devel
 BuildRequires:	  perl(ExtUtils::Embed)
 BuildRequires:	  /etc/mime.types

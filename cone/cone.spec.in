@@ -44,7 +44,7 @@ BuildRequires: aspell-devel libxml2-devel
 BuildRequires: zlib-devel perl
 BuildRequires: libstdc++-devel gcc-c++
 BuildRequires: openldap-devel
-BuildRequires: libidn-devel
+BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: %{__make}
 BuildRequires: procps-ng

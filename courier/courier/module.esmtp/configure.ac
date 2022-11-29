@@ -31,7 +31,7 @@ then
 fi
 
 dnl Checks for libraries.
-PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+PKG_CHECK_MODULES(LIBIDN, libidn2 >= 0.0.0, [libidn=yes], [libidn=no])
 AC_ARG_WITH(mailuser, [], mailuser="$withval",
 	AC_MSG_ERROR(--with-mailuser missing))
 AC_ARG_WITH(mailgroup, [], mailgroup="$withval",

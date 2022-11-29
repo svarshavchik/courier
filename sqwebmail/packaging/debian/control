@@ -18,7 +18,7 @@ Build-Depends:
 	gnutls-dev,
 	gnutls-bin,
 	sysconftool,
-	libidn11-dev
+	libidn2-dev
 Standards-Version: 4.4.1
 Homepage: https://www.courier-mta.org/sqwebmail/
 

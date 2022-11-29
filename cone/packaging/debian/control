@@ -11,7 +11,7 @@ Build-Depends:
 	gcc%DEBGCC%,
 	g++%DEBGCC%,
 	libncurses-dev,
-	libidn11-dev,
+	libidn2-dev,
 	aspell,
 	libaspell-dev,
 	sysconftool,

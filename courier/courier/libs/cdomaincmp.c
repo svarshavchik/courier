@@ -9,7 +9,7 @@
 #include	"courier.h"
 #include	<string.h>
 #include	<stdlib.h>
-#include	<idna.h>
+#include	<idn2.h>
 
 /* Compare domains */
 

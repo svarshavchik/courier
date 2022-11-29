@@ -14,7 +14,7 @@
 #include	<string.h>
 #include	<ctype.h>
 #include	<stdlib.h>
-#include	<idna.h>
+#include	<idn2.h>
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif

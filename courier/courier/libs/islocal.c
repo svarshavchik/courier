@@ -8,7 +8,7 @@
 #include	<string.h>
 #include	<stdlib.h>
 #include	<ctype.h>
-#include	<idna.h>
+#include	<idn2.h>
 
 #ifndef ISLOCAL_MAX_DOT_COUNT
 #define ISLOCAL_MAX_DOT_COUNT 5

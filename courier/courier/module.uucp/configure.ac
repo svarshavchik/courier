@@ -39,7 +39,7 @@ AC_PATH_PROG(UUX, uux, /usr/bin/uux, $LPATH)
 AC_DEFINE_UNQUOTED(UUX, "$UUX", [ Path to uux ])
 
 dnl Checks for libraries.
-PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+PKG_CHECK_MODULES(LIBIDN, libidn2 >= 0.0.0, [libidn=yes], [libidn=no])
 
 dnl Checks for header files.
 

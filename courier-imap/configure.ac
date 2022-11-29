@@ -66,7 +66,7 @@ with this option.
 	;;
 esac
 
-PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+PKG_CHECK_MODULES(LIBIDN, libidn2 >= 0.0.0, [libidn=yes], [libidn=no])
 if test "$libidn" != "yes"
 then
 	AC_MSG_ERROR([libidn not found])

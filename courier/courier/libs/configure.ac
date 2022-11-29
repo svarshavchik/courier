@@ -36,7 +36,7 @@ CFLAGS="-I.. -I$srcdir/.. -I../.. -I$srcdir/../.. -I$srcdir/../../libs -I../../l
 CXXFLAGS="-I.. -I$srcdir/.. -I../.. -I$srcdir/../.. -I$srcdir/../../libs -I../../libs $CXXFLAGS"
 
 dnl Checks for libraries.
-PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+PKG_CHECK_MODULES(LIBIDN, libidn2 >= 0.0.0, [libidn=yes], [libidn=no])
 
 dnl Checks for header files.
 

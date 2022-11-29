@@ -21,7 +21,7 @@
 #include	"tcpd/tlsclient.h"
 #include	"rfc2045/rfc2045.h"
 #include	"rw.h"
-#include	<idna.h>
+#include	<idn2.h>
 #include	<courierauthsaslclient.h>
 
 static void esmtp_wait_rw(struct esmtp_info *info, int *waitr, int *waitw);

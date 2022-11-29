@@ -6,7 +6,7 @@
 #include	"courier.h"
 #include	<stdlib.h>
 #include	<string.h>
-#include	<idna.h>
+#include	<idn2.h>
 
 static const char *esmtpidstring;
 

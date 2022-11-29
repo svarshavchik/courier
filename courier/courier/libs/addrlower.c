@@ -8,7 +8,7 @@
 #include	<stdlib.h>
 #include	<string.h>
 #include	<courier-unicode.h>
-#include	<idna.h>
+#include	<idn2.h>
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif

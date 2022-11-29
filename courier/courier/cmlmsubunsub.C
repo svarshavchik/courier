@@ -21,7 +21,7 @@
 #include	<courier-unicode.h>
 #include	<ctype.h>
 #include	<sysexits.h>
-#include	<idna.h>
+#include	<idn2.h>
 
 void uaddrlower(std::string &s)
 {

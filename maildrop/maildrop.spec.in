@@ -14,7 +14,7 @@ Source: maildrop-@PACKAGE_VERSION@.tar.bz2
 Url: http://www.courier-mta.org/maildrop/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: gdbm-devel pcre2-devel
-BuildRequires: libidn-devel
+BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: gcc-c++
 BuildRequires: %{__make}

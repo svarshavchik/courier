@@ -27,7 +27,7 @@
 #include	<ctype.h>
 #include	<errno.h>
 #include	<utime.h>
-#include	<idna.h>
+#include	<idn2.h>
 #include	<iostream>
 #if	HAVE_LOCALE_H
 #include	<locale.h>

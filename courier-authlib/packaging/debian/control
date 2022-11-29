@@ -16,7 +16,7 @@ Build-Depends:
 	libgdbm-dev,
 	libpam0g-dev,
 	libltdl-dev,
-	libidn11-dev,
+	libidn2-dev,
 	libcourier-unicode-dev,
 	sysconftool,
 	expect

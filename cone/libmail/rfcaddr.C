@@ -17,8 +17,7 @@
 #include <algorithm>
 
 #if LIBIDN
-#include <idna.h>
-#include <stringprep.h>
+#include <idn2.h>
 
 namespace mail {
 	class libidn_init {
@@ -33,13 +32,6 @@ namespace mail {
 
 mail::libidn_init::libidn_init()
 {
-	if (!stringprep_check_version(STRINGPREP_VERSION))
-	{
-		std::cerr << "Required stringprep version "
-			  << STRINGPREP_VERSION << " is not installed"
-			  << std::endl;
-		abort();
-	}
 }
 
 mail::libidn_init::~libidn_init()
@@ -342,7 +334,7 @@ std::string mail::emailAddress::setDisplayAddr(const std::string &s,
 
 	char *ascii_ptr;
 
-	int rc=idna_to_ascii_4z(reinterpret_cast<const uint32_t *>
+	int rc=idn2_to_ascii_4z(reinterpret_cast<const uint32_t *>
 				(&ucbuf[addr_start]), &ascii_ptr, 0);
 
 	if (rc != IDNA_SUCCESS)
@@ -412,7 +404,7 @@ void mail::emailAddress::decode()
 
 		uint32_t *ucbuf;
 
-		int rc=idna_to_unicode_4z4z(reinterpret_cast
+		int rc=idn2_to_unicode_4z4z(reinterpret_cast
 					    <const uint32_t *>(&ucaddr[at]),
 					    &ucbuf, 0);
 

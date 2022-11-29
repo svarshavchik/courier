@@ -14,7 +14,7 @@ dnf install -y --enablerepo=powertools --setopt=tsflags=nodocs \
     gnupg2 \
     groff \
     httpd \
-    libidn-devel \
+    libidn2-devel \
     libtool \
     libtool-ltdl-devel \
     libxml2-devel \

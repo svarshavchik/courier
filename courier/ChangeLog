@@ -1,3 +1,7 @@
+2022-11-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Switch to libidn2.
+
 2022-11-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* make install: replace absolute links with relative links.

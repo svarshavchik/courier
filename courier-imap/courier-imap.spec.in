@@ -52,7 +52,7 @@ BuildRequires: procps-ng
 BuildRequires: gdbm-devel
 BuildRequires: coreutils perl
 BuildRequires: courier-authlib-devel >= 0.60.6.20080629
-BuildRequires: libidn-devel
+BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: %{__make}
 

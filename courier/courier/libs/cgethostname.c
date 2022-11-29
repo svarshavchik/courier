@@ -13,7 +13,7 @@
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
-#include	<idna.h>
+#include	<idn2.h>
 
 #if     HAS_GETHOSTNAME
 #else

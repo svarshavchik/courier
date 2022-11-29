@@ -73,7 +73,7 @@ BuildRequires: rpm >= 4.0.2 coreutils grep perl
 BuildRequires: %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
 BuildRequires: openldap-devel courier-authlib-devel >= 0.55
 BuildRequires: /etc/mime.types
-BuildRequires: libidn-devel
+BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: gdbm-devel pcre2-devel
 BuildRequires: %{__gzip}

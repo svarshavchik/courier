@@ -13,7 +13,7 @@
 #endif
 
 #include	<string>
-#include	<idna.h>
+#include	<idn2.h>
 
 extern	time_t	submit_time;
 
@@ -22,7 +22,7 @@ std::string	mkmessageidheader()
 	char	timebuf[sizeof(time_t)*2+1], pidbuf[sizeof(pid_t)*2+1];
 	static const char hex[]="0123456789ABCDEF";
 	const char *mhostname;
-	char *idna_hostname=0;
+	char *idn2_hostname=0;
 
 	timebuf[sizeof(timebuf)-1]=0;
 	pidbuf[sizeof(pidbuf)-1]=0;
@@ -53,14 +53,14 @@ std::string	mkmessageidheader()
 
 	mhostname=config_msgidhost();
 
-	if (idna_to_ascii_8z(mhostname, &idna_hostname, 0) == IDNA_SUCCESS)
-		mhostname=idna_hostname;
+	if (idna_to_ascii_8z(mhostname, &idn2_hostname, 0) == IDNA_SUCCESS)
+		mhostname=idn2_hostname;
 	else
-		idna_hostname=0;
+		idn2_hostname=0;
 
 	hdrbuf += mhostname;
 	hdrbuf += ">\n";
-	if (idna_hostname)
-		free(idna_hostname);
+	if (idn2_hostname)
+		free(idn2_hostname);
 	return (hdrbuf);
 }

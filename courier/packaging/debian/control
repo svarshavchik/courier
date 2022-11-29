@@ -19,7 +19,7 @@ Build-Depends:
 	gpg ( >= 2),
 	expect,
 	libgdbm-dev,
-	libidn11-dev,
+	libidn2-dev,
 	mime-support,
 	gnutls-dev,
 	gnutls-bin,

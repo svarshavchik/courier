@@ -5,7 +5,7 @@
 
 #include	"courier.h"
 #include	<stdlib.h>
-#include	<idna.h>
+#include	<idn2.h>
 
 static const char *defaultdomain;
 static const char *defaultdomain_ace;

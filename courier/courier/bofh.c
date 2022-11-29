@@ -10,7 +10,7 @@
 #include	<unistd.h>
 #include	<stdlib.h>
 #include	<ctype.h>
-#include	<idna.h>
+#include	<idn2.h>
 
 unsigned max_bofh=100;
 int max_bofh_ishard=0;

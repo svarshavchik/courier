@@ -16,7 +16,7 @@
 #include	<stdio.h>
 #include	<ctype.h>
 #include	<signal.h>
-#include	<idna.h>
+#include	<idn2.h>
 #if	HAVE_SYSEXITS_H
 #include	<sysexits.h>
 #else

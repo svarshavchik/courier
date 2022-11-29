@@ -15,7 +15,7 @@ apt install -y \
 	libaspell-dev		\
 	libgcrypt-dev		\
 	libgdbm-dev		\
-	libidn11-dev		\
+	libidn2-dev		\
 	libldap2-dev		\
 	libltdl-dev		\
 	libmariadb-dev		\

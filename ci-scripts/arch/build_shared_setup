@@ -17,7 +17,7 @@ pacman -Sy \
     gnupg \
     groff \
     gzip \
-    libidn \
+    libidn2 \
     libtool \
     libxml2 \
     mailcap \

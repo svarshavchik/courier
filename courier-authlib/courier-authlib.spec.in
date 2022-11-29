@@ -34,7 +34,7 @@ BuildRequires:      mysql-devel zlib-devel sqlite-devel
 BuildRequires:      postgresql-devel
 BuildRequires:      gdbm-devel
 BuildRequires:      pam-devel
-BuildRequires:      libidn-devel
+BuildRequires:      libidn2-devel
 BuildRequires:      expect
 BuildRequires:      gcc-c++
 BuildRequires:	    redhat-rpm-config

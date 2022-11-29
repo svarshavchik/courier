@@ -38,7 +38,7 @@ AC_ARG_WITH(libidn, AS_HELP_STRING([--with-libidn=[DIR]],[Support IDN (needs GNU
 
 if test "$libidn" != "no"
 then
-	PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+	PKG_CHECK_MODULES(LIBIDN, libidn2 >= 0.0.0, [libidn=yes], [libidn=no])
         if test "$libidn" != "yes"
 	then
 		libidn=no
