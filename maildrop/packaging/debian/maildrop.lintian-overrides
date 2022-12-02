@@ -1,7 +1,7 @@
 #
 # Internal binary.
 #
-binary-without-manpage usr/bin/makedatprog
+no-manual-page usr/bin/makedatprog
 #
 # Package was created directly from the upstream tarball.
 #

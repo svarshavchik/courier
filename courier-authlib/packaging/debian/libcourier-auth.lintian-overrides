@@ -1,11 +1,15 @@
 #
-# Internal daemon
+# Not invoked directly
 #
-binary-without-manpage usr/sbin/authdaemond
+no-manual-page usr/sbin/authdaemond
 #
-# Documented in INSTALL
+# Documentation elsewhere
 #
-binary-without-manpage usr/sbin/authenumerate
+no-manual-page usr/sbin/authenumerate
+#
+# File permissions are specified by the package.
+#
+odd-permissions-on-shared-library usr/lib/*/courier-authlib/*
 #
 # Required permissions by the security model.
 #
@@ -26,10 +30,6 @@ non-standard-file-perm usr/lib/*/courier-authlib/*
 # Debhelper/lintian bug
 #
 package-has-unnecessary-activation-of-ldconfig-trigger
-#
-# File permissions are specified by the package
-#
-shlib-with-bad-permissions usr/lib/*/courier-authlib/*
 #
 # Keep package-provided changelog
 #

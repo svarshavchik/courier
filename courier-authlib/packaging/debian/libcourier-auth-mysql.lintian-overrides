@@ -2,11 +2,8 @@
 # File permissions are specified by the package
 #
 non-standard-file-perm usr/lib/*/courier-authlib/*
+odd-permissions-on-shared-library usr/lib/*/courier-authlib/*
 #
 # Debhelper/lintian bug
 #
 package-has-unnecessary-activation-of-ldconfig-trigger
-#
-# File permissions are specified by the package
-#
-shlib-with-bad-permissions usr/lib/*/courier-authlib/*
