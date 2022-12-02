@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2004 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier-analog],[0.21],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-analog],[0.22],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE(foreign)
 LPATH="$PATH:/usr/local/bin"
 

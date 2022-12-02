@@ -378,7 +378,7 @@ $ ./courier-debuild -us -uc]]></programlisting>
 	    <para>
 	      Cone requires several common libraries, like
 	      <quote>libxml</quote> and the
-	      <ulink url="http://www.gnu.org/software/libidn/">libidn</ulink>
+	      <ulink url="https://www.gnu.org/software/libidn/">libidn2</ulink>
 	      library is also required.
 	    </para>
 	  </listitem>

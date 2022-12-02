@@ -2,7 +2,6 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta name="generator" content="Bluefish 2.2.12" />
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>Installing maildrop</title>
   <meta name="MSSmartTagsPreventParsing" content="TRUE" />
@@ -33,7 +32,7 @@
     <li>The Courier Unicode Library (<a href=
     "http://www.courier-mta.org/unicode">http://www.courier-mta.org/unicode</a>)
     must be installed first.</li>
-    <li>The <a href="http://www.gnu.org/software/libidn/">GNU IDN</a>) library
+    <li>The <a href="https://www.gnu.org/software/libidn/">libidn2</a> library
     is required.</li>
     <li>
       <p>Courier Authentication Library - optional, for LDAP, MySQL, or

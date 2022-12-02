@@ -164,8 +164,8 @@ $ su root
     this document refers to make).</li>
     <li>GDBM/DB - either the GDBM or the Berkeley DB library is required.</li>
     <li>
-      <a href="http://www.gnu.org/software/libidn/">The GNU IDN library</a>
-      (http://www.gnu.org/software/libidn/).
+      <a href="https://www.gnu.org/software/libidn/">The GNU IDN library</a>
+      (https://www.gnu.org/software/libidn/).
     </li>
     <li>The Courier authentication library. Before installing Courier-IMAP,
     download and install <a href=

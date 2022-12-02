@@ -1,7 +1,15 @@
 set -evx
 
 dnf install -y rocky-release
-dnf install -y --enablerepo=powertools --setopt=tsflags=nodocs \
+
+extrarepo="crb"
+
+if test -f /etc/yum.repos.d/Rocky-PowerTools.repo
+then
+	extrarepo=powertools
+fi
+
+dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     aspell-devel \
     automake \
     /etc/mime.types \

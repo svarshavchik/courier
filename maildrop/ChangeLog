@@ -1,6 +1,10 @@
+3.1.0
+
 2022-11-28  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Switch to libidn2.
+
+	* Debian/Ubuntu: update lintian overrides
 
 3.0.9
 	* Adjust deb packaging. Check /etc/lsb-release and include the

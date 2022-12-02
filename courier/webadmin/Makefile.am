@@ -36,6 +36,8 @@ install-exec-hook:
 install-data-hook:
 	-$(mkinstalldirs) $(DESTDIR)$(webadmindir)
 	chmod 755 $(DESTDIR)$(webadmindir)
+	-$(mkinstalldirs) $(DESTDIR)$(sysconfdir)/webadmin
+	chmod 700 $(DESTDIR)$(sysconfdir)/webadmin
 	echo '$(authdaemond) restart' >>$(DESTDIR)$(sysconfdir)/webadmin/restartauthcmd
 	-chown @mailuser@ $(DESTDIR)$(sysconfdir)/webadmin/restartcmd
 	-chgrp @mailgroup@ $(DESTDIR)$(sysconfdir)/webadmin/restartcmd
