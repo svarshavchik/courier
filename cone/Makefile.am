@@ -219,7 +219,7 @@ upload-dist:
 
 .PHONY: rpm
 
-pub:
+htmldoc:
 	rm -rf tmp
 	mkdir tmp
 	set -e; for f in `cd cone/html; ls *.html`; \

@@ -95,9 +95,9 @@ body div.main { height: 100%; width: 100%; overflow: auto;
                              {
                                      $httpurl="https://sourceforge.net/projects/courier/files/";
 
-                                     print "<tr><th>Date</th><th>Version</th><th>Filename</th><th>Size</th></tr>";
-                                     print "<tr><td>$date</td><td>$version</td>";
-                                     print "<td><a href='$httpurl$package/$version/$filename/download'>$filename</a><br />";
+                                     print "<tr><th>Date</th><th>Version</th><th>Filename</th><th>Size</th></tr>\n";
+                                     print "<tr><td>$date</td><td>$version</td>\n";
+                                     print "<td><a href='$httpurl$package/$version/$filename/download'>$filename</a><br />\n";
                                      print "<span class='siglink'>(<a href='$httpurl$package/$version/$filename.sig/download'>PGP signature</a>)</span>";
 
                                      print "</td><td>$size</td></tr>";

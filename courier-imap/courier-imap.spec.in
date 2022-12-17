@@ -73,9 +73,9 @@ BuildRequires: perl-generators
 BuildRequires: /usr/lib/locale/locale-archive
 %endif
 
-Obsoletes: %{name}-ldap
-Obsoletes: %{name}-mysql
-Obsoletes: %{name}-pgsql
+Obsoletes: %{name}-ldap < 99.99
+Obsoletes: %{name}-mysql < 99.99
+Obsoletes: %{name}-pgsql < 99.99
 
 #  RH 7.0 resets sysconfdir & mandir, put them back where they belong
 
@@ -142,7 +142,7 @@ full Courier mail server.  Install the Courier package instead.
 # Create SuSE courier-imap start script and a link in /usr/sbin
 %{__mkdir_p} ${RPM_BUILD_ROOT}%{initlndir}
 install -Dm 744 %{templdir}/courier-imap.init ${RPM_BUILD_ROOT}/%{initdir}/courier-imap && \
-ln -sf %{initdir}/courier-imap ${RPM_BUILD_ROOT}%{initlndir}/rccourier-imap \
+ln -sf `realpath --relative-to %{initlndir} -m %{initdir}/courier-imap` ${RPM_BUILD_ROOT}%{initlndir}/rccourier-imap \
 #
 # Fix for SuSE like pam file look.
 install -Dm 644 %{templdir}/pop3.pam $RPM_BUILD_ROOT%{pamconfdir}/pop3
@@ -397,3 +397,7 @@ fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%changelog
+* Sat Dec 17 2022 Sam Varshavchik <mrsam@courier-mta.com> -
+- Makefile and spec file fixes

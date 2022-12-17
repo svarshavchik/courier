@@ -1,3 +1,11 @@
+1.2.1
+
+2022-12-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd/libcouriertls.c (load_dh_params): OpenSSL 3 does not
+	report an error when PEM_read_bio_Parameters_ex does not find
+	any DH parameters, handle that.
+
 1.2.0
 
 2022-11-28  Sam Varshavchik  <mrsam@courier-mta.com>

@@ -152,7 +152,7 @@ install-exec-local:
 	$(mkinstalldirs) $(DESTDIR)$(sbindir)
 	for f in mkimapdcert mkpop3dcert mkdhparams; \
 		do rm -f $(DESTDIR)$(sbindir)/$$f ; \
-		$(LN_S) `realpath -m --relative-to $(sbindir)` $(databindir)/$$f $(DESTDIR)$(sbindir)/$$f ; done
+		$(LN_S) `realpath --relative-to $(sbindir) -m $(databindir)/$$f` $(DESTDIR)$(sbindir)/$$f ; done
 	$(mkinstalldirs) $(DESTDIR)$(localstatedir)
 
 install-exec-hook:
