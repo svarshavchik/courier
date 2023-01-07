@@ -31,12 +31,12 @@ SHELL=@SHELL@
 #
 # SYSLOGNAME=courieresmtpd
 
-##NAME: ULIMIT:0
+##NAME: ULIMIT:1
 #
 #  Sets the maximum size of courieresmtpd's data segment
 #
 
-ULIMIT=16384
+ULIMIT=65536
 
 ##NAME: BOFHCHECKDNS:0
 #
