@@ -2,3 +2,4 @@
 # Package installs specific permissions for every file and directory
 #
 executable-is-not-world-readable usr/lib/courier/libexec/cgi-bin/webadmin*
+non-standard-executable-perm usr/lib/courier/libexec/cgi-bin/webadmin*

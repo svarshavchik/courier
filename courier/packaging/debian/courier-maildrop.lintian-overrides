@@ -3,4 +3,5 @@
 #
 executable-is-not-world-readable usr/lib/courier/bin/*
 non-standard-executable-perm usr/lib/courier/bin/*
-setuid-binary usr/lib/courier/bin/maildrop 4511*
+elevated-privileges usr/lib/courier/bin/*
+non-standard-setuid-executable-perm usr/lib/courier/bin/*

@@ -7,4 +7,4 @@ non-standard-executable-perm usr/lib/courier/libexec/cgi-bin/*
 non-standard-executable-perm usr/lib/courier/libexec/courier/*
 non-standard-file-perm usr/lib/courier/share/*
 non-standard-setuid-executable-perm usr/lib/courier/libexec/courier/sqwebpasswd 2555
-setgid-binary usr/lib/courier/libexec/courier/sqwebpasswd 2555*
+elevated-privileges usr/lib/courier/libexec/courier/sqwebpasswd 2555 daemon/daemon

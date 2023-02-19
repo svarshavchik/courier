@@ -1,5 +1,9 @@
 #
+# DOCUMENT ME
+#
+#
 # Package installs specific permissions for every file and directory
 #
 executable-is-not-world-readable usr/lib/courier/sbin/*
 non-standard-file-perm usr/lib/courier/share/*
+non-standard-executable-perm usr/lib/courier/sbin/*

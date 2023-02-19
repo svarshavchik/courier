@@ -1,7 +1,7 @@
 #
 # Package-specified ownership and permissions
 #
-setgid-binary usr/lib/sqwebmail/libexec/sqwebmail/sqwebpasswd 2755 *
+elevated-privileges usr/lib/sqwebmail/libexec/sqwebmail/*
 non-standard-dir-perm var/lib/sqwebmail-calendar/*
 non-standard-dir-perm var/spool/run/*
 #

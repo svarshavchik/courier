@@ -8,26 +8,18 @@ executable-is-not-world-readable usr/lib/courier/share/*
 non-standard-dir-perm etc/courier/*
 non-standard-dir-perm etc/skel/Maildir/*
 non-standard-dir-perm var/spool/courier/*
-non-standard-executable-perm usr/lib/courier/bin/*
-non-standard-executable-perm usr/lib/courier/libexec/*
-non-standard-executable-perm usr/lib/courier/sbin/*
 non-standard-executable-perm usr/lib/courier/*
 non-standard-file-perm etc/courier/*
 non-standard-file-perm usr/lib/courier/share/*
 non-standard-setuid-executable-perm usr/lib/courier/bin/cancelmsg 6555
 non-standard-setuid-executable-perm usr/lib/courier/bin/mailq 2555
+elevated-privileges usr/lib/courier/bin/*
+elevated-privileges usr/lib/courier/libexec/courier/*
+non-standard-setuid-executable-perm usr/lib/courier/bin/*
+non-standard-setuid-executable-perm usr/lib/courier/libexec/courier/*
+script-not-executable [usr/lib/courier/share/courierwebadmin/admin-05local.pl]
+
 #
 # Automatically create $HOME/Maildir for everyone.
 #
 package-contains-file-in-etc-skel etc/skel/Maildir*
-#
-# Not directly executable, but is included in a different Perl script
-#
-script-not-executable usr/lib/courier/share/courierwebadmin/admin-05local.pl
-#
-# Package installs specific permissions for every file and directory
-#
-setgid-binary usr/lib/courier/bin/mailq 2555*
-setuid-binary usr/lib/courier/bin/sendmail 4511*
-setuid-binary usr/lib/courier/libexec/courier/submitmkdir 4550*
-setuid-gid-binary usr/lib/courier/bin/cancelmsg 6555*
