@@ -1,3 +1,15 @@
+1.2.2
+
+2023-02-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: remove unsafe SIGALRM handler.
+
+2023-02-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* imap: No longer accept a non-standard single
+	flag name instead of a parenthesized flag list to APPEND, due to
+	ambiguity with the UTF8 extension.
+
 1.2.1
 
 2022-12-17  Sam Varshavchik  <mrsam@courier-mta.com>
