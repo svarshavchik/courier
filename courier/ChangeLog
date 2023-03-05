@@ -1,3 +1,15 @@
+2023-03-04  Hanno Böck <hanno@gentoo.org>
+
+	* Various fixes for calls to getgrnam_r/getpwnam_r
+
+2023-03-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: Update to C++11, replacing internal classes with
+	modern C++ library classes.
+
+	* maildrop: Fix the -V command line option to also explicitly
+	set VERBOSE, fix assorted -V logging bugs.
+
 2023-02-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* all: update configure.ac to require at least version 2.0.5 of

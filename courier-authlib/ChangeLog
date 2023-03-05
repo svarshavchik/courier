@@ -1,3 +1,7 @@
+2023-03-04  Hanno Böck <hanno@gentoo.org>
+
+	* Various fixes for calls to getgrnam_r/getpwnam_r
+
 0.72.0
 
 2022-11-28  Sam Varshavchik  <mrsam@courier-mta.com>

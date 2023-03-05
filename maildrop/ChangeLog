@@ -1,3 +1,11 @@
+2023-03-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update to C++11, replacing internal classes with modern C++
+	library classes.
+
+	* Fix the -V command line option to also explicitly set VERBOSE,
+	fix assorted -V logging bugs.
+
 2023-02-19  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* all: update configure.ac to require at least version 2.0.5 of
