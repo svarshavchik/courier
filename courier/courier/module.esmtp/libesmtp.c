@@ -1469,6 +1469,10 @@ static int do_esmtp_connect_to(struct esmtp_info *info,
 		(*info->log_smtp_error)(info, "No such domain.", '5',
 					arg);
 		return -1;
+	case RFC1035_MX_NONE:
+		(*info->log_smtp_error)(info, "Domain does not receive mail.",
+					'5', arg);
+		return -1;
 	case RFC1035_MX_BADDNS:
 		(*info->log_smtp_error)(info,
 					"This domain's DNS violates RFC 1035.",

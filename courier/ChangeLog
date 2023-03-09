@@ -1,3 +1,8 @@
+2023-03-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/libesmtp.c: tread RFC1035_MX_NONE as a
+	permanent failure.
+
 2023-03-04  Hanno Böck <hanno@gentoo.org>
 
 	* Various fixes for calls to getgrnam_r/getpwnam_r
