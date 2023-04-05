@@ -1,3 +1,11 @@
+3.2.3
+
+2023-04-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix build with Dovecot authentication turned on.
+
+3.2.2
+
 2023-03-04  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Update to C++11, replacing internal classes with modern C++
