@@ -51,6 +51,8 @@
 %define STATEDIR /var/lib/rpm-state
 
 %if %using_systemd
+BuildRequires: systemd-rpm-macros
+
 %define STOP_COURIER \
         if /usr/bin/systemctl --quiet is-active courier \
 	then \
@@ -673,7 +675,7 @@ echo "/etc/cron.monthly/courier-mkdhparams" >>filelist
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/profile.d
 %{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier.sh <<EOF
-if echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
+if echo "\$PATH" | tr ':' '\012' | grep -F -qx %{_bindir}
 then
 	:
 else
@@ -687,7 +689,7 @@ fi
 EOF
 
 %{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier.csh <<EOF
-echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
+echo "\$PATH" | tr ':' '\012' | grep -F -qx %{_bindir}
 if ( \$? ) then
 	test \`id -u\` = 0
 	if ( \$? == 0 ) then

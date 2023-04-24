@@ -260,7 +260,7 @@ EOF
 
 mkdir -p debian/tmp/etc/profile.d
 cat >debian/tmp/etc/profile.d/courier.sh <<EOF
-if echo "\${PATH}" | tr ':' '\012' | fgrep -qx @bindir@
+if echo "\${PATH}" | tr ':' '\012' | grep -F -qx @bindir@
 then
 	:
 else
@@ -274,7 +274,7 @@ fi
 EOF
 
 cat >debian/tmp/etc/profile.d/courier.csh <<EOF
-echo "\${PATH}" | tr ':' '\012' | fgrep -qx @bindir@
+echo "\${PATH}" | tr ':' '\012' | grep -F -qx @bindir@
 if ( \$? ) then
 	test \`id -u\` = 0
 	if ( \$? == 0 ) then
