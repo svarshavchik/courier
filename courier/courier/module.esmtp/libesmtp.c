@@ -734,7 +734,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 				continue;
 			}
 			q=p+4;
-			for (l=0; q[l] && q[l] != ' '; l++)
+			for (l=0; q[l] && q[l] != ' ' && q[l] != '='; l++)
 			{
 				if (l >= sizeof(hellobuf)-1)	break;
 				hellobuf[l]=toupper(q[l]);
@@ -754,8 +754,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 			if (strcmp(hellobuf, "STARTTLS") == 0)
 				info->hasstarttls=1;
 
-			if (strcmp(hellobuf, "AUTH") == 0
-				|| strncmp(hellobuf, "AUTH=", 5) == 0)
+			if (strcmp(hellobuf, "AUTH") == 0)
 			{
 			const char *p=q+4;
 
@@ -782,39 +781,64 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 				}
 			}
 
-
 #define	KEYWORD(x)	(strcmp(hellobuf, x) == 0)
-#define KEYWORDARG(x)	(strncmp(hellobuf, x, sizeof(x)-1) == 0)
+
+			if (IS_COURIER_EXTENSIONS)
+				info->hascourier=1;
 
 			if (IS_EXDATA_KEYWORD)
 				info->hasexdata=1;
 
 			if (IS_VERP_KEYWORD)
 			{
-				char *p=strchr(hellobuf, '=');
+				p += 4;
 
-				if (p)
+				while (*p && *p != '=' && *p != ' ')
+					++p;
+
+				while (*p++)
 				{
-					for (++p; (p=strtok(p, ",")) != 0; p=0)
-						if (strcasecmp(p, "Courier")
-						    == 0)
-							info->hasverp=1;
-				}
-			}
+					const char *q;
 
-			if (IS_COURIER_EXTENSIONS)
-				info->hascourier=1;
+					if (*p == ',')
+						continue;
+
+					q=p;
+
+					while (*p && *p != ',')
+						++p;
+
+					if (p-q == 7 &&
+					    strcasecmp(q, "Courier") == 0)
+						info->hasverp=1;
+				}
+				continue;
+			}
 
 			if (IS_SECURITY_KEYWORD)
 			{
-				char *p=strchr(hellobuf, '=');
+				p += 4;
 
-				if (p)
+				while (*p && *p != '=' && *p != ' ')
+					++p;
+
+				while (*p++)
 				{
-					for (++p; (p=strtok(p, ",")) != 0; p=0)
-						if (strcmp(p, "STARTTLS") == 0)
-							info->hassecurity_starttls=1;
+					const char *q;
+
+					if (*p == ',')
+						continue;
+
+					q=p;
+
+					while (*p && *p != ',')
+						++p;
+
+					if (p-q == 8 &&
+					    strcmp(q, "STARTTLS") == 0)
+						info->hassecurity_starttls=1;
 				}
+				continue;
 			}
 		} while (!ISFINALLINE(p));
 
