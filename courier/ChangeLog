@@ -1,3 +1,21 @@
+1.2.4
+
+2023-04-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix spurious gcc 13 compiler warnings. Have configure script
+	include the standardized location of the CA certificate bundle,
+	in addition to various legacy compatibility paths.
+
+	* update the ESMTP server to recognize alternative Courier
+	ESMTP extension names, in addition to the current ones. A future
+	version of Courier will switch the syntax of its custom ESMTP extension
+	names to be strictly compliant with the ESMTP specification. The names
+	remain unchanged for now, but this version of Courier recognizes both
+	the existing names and the new names.
+
+	update internal scripts, replace deprecated fgrep alias
+	with grep -F.
+
 1.2.3
 
 2023-03-09  Sam Varshavchik  <mrsam@courier-mta.com>
