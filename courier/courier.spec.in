@@ -51,7 +51,9 @@
 %define STATEDIR /var/lib/rpm-state
 
 %if %using_systemd
-BuildRequires: systemd-rpm-macros
+
+# systemd-rpm-macros
+BuildRequires: /usr/lib/rpm/macros.d/macros.systemd
 
 %define STOP_COURIER \
         if /usr/bin/systemctl --quiet is-active courier \

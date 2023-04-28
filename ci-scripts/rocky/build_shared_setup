@@ -46,6 +46,7 @@ dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     sed \
     /usr/lib/locale/locale-archive \
     sqlite-devel \
+    systemd-rpm-macros \
     valgrind \
     wget \
     which \

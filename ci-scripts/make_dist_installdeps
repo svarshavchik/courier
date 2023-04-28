@@ -46,6 +46,7 @@ dnf install -y --setopt=install_weak_deps=false \
     rpm-build \
     sed \
     sqlite-devel \
+    systemd-rpm-macros \
     tidy \
     /usr/lib/locale/locale-archive \
     valgrind \
