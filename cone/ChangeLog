@@ -1,3 +1,8 @@
+1.10
+	* Fix spurious gcc 13 compiler warnings. Have configure script
+	include the standardized location of the CA certificate bundle,
+	in addition to various legacy compatibility paths.
+
 1.9
 
 2023-02-19  Sam Varshavchik  <mrsam@courier-mta.com>
