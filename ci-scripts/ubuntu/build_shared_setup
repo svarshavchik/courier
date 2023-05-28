@@ -6,13 +6,12 @@ apt-get update
 
 apt install -y gnupg pbuilder ubuntu-dev-tools apt-file debhelper systemd
 apt install -y \
-	aspell 	      		\
+	hunspell 	      		\
 	expect			\
 	ghostscript		\
 	gnutls-bin		\
 	gnutls-dev		\
 	groff-base		\
-	libaspell-dev		\
 	libgcrypt-dev		\
 	libgdbm-dev		\
 	libidn2-dev		\

@@ -13,8 +13,7 @@ Build-Depends:
 	g++%DEBGCC%,
 	libncurses-dev,
 	libidn2-dev,
-	aspell,
-	libaspell-dev,
+	hunspell,
 	sysconftool,
 	libcourier-unicode-dev,
 	libxml2-dev,
@@ -30,6 +29,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 gpg ( >= 2),
+	 hunspell,
 	 perl:any
 Description: Text-based E-mail reader and writer
  CONE is a simple, text-based E-mail reader and writer.

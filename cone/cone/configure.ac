@@ -4,7 +4,7 @@ dnl Process this file with autoconf to produce a configure script.
 #
 # See COPYING for distribution information.
 #
-AC_INIT([cone],[1.10],[courier-cone@lists.sourceforge.net])
+AC_INIT([cone],[1.11],[courier-cone@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(cone.C)
 AC_CONFIG_AUX_DIR(..)
@@ -37,6 +37,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 LT_INIT
 AM_GNU_GETTEXT([external])
+PKG_PROG_PKG_CONFIG
 
 AX_COURIER_UNICODE_CXXFLAGS
 AC_SUBST(COURIER_UNICODE_CXXFLAGS)
@@ -118,6 +119,8 @@ AM_CONDITIONAL(HAVE_SGML, test -d "$srcdir/../libs/docbook")
 AC_LANG([C++])
 AC_CHECK_HEADERS(aspell/config.hh)
 
+PKG_CHECK_MODULES(hunspell,hunspell,[HUNSPELL="yes"],[HUNSPELL="no"])
+
 AC_MSG_CHECKING(for aspell)
 
 save_LIBS="$LIBS"
@@ -177,22 +180,35 @@ foo=new_pspell_config();
 LIBS="$save_LIBS"
 AC_MSG_RESULT($PSPELL)
 
-AC_ARG_WITH(spellcheck, [  --with-spellcheck=pspell      Use pspell for spell checking
+AC_ARG_WITH(spellcheck,
+[  --with-spellcheck=hunspell    Use hunspell for spell checking
+  --with-spellcheck=pspell      Use pspell for spell checking
   --with-spellcheck=aspell      Use aspell for spell checking], [
 
 case "$withval" in
+hunspell)
+	if test "$HUNSPELL" = "no"
+	then
+		AC_MSG_ERROR(hunspell library not found)
+	fi
+	ASPELL="no"
+	PSPELL="no"
+	;;
 pspell)
 	if test "$PSPELL" = "no"
 	then
 		AC_MSG_ERROR(pspell library not found)
 	fi
 	ASPELL="no"
+	HUNSPELL="no"
 	;;
 aspell)
 	if test "$ASPELL" = "no"
 	then
 		AC_MSG_ERROR(aspell library not found)
 	fi
+	PSPELL="no"
+	HUNSPELL="no"
 	;;
 *)
 	AC_MSG_ERROR(Invalid --with-spellcheck option)
@@ -212,23 +228,41 @@ AC_DEFINE_UNQUOTED(HAVE_ISWALPHA, 1, [ whether iswalpha() is available ])
 AC_MSG_RESULT(yes)
 ],[AC_MSG_RESULT(no)])
 
+if test "$HUNSPELL" = "yes"
+then
+	AC_DEFINE_UNQUOTED(USE_HUNSPELL, 1, [Use hunspell library for spell checking ])
+	ASPELL="no"
+	PSPELL="no"
+
+	HUNSPELLPROG="`which hunspell`"
+	if test "$HUNSPELLPROG" = ""
+	then
+		AC_MSG_ERROR([hunspell program not found])
+	fi
+	AC_DEFINE_UNQUOTED(HUNSPELLPROG,["]$HUNSPELLPROG["], [Path to hunspell executable])
+	SPELL_LIB=' '
+fi
+
 if test "$ASPELL" = "yes"
 then
 	AC_DEFINE_UNQUOTED(USE_ASPELL, 1, [ Use aspell library for spell checking ])
 	SPELL_LIB='-laspell'
-else
-	if test "$PSPELL" = "yes"
-	then
-		AC_DEFINE_UNQUOTED(USE_PSPELL, 1, [ Use pspell library for spell checking ])
-		SPELL_LIB='-lpspell'
-	else
-		AC_DEFINE_UNQUOTED(NO_SPELL, 1, [ Use neither aspell nor pspell for spell checking])
-		AC_MSG_WARN(---------------------------------------------------------------)
-		AC_MSG_WARN(Neither pspell nor aspell was found -- disabling spell checking)
-		AC_MSG_WARN(---------------------------------------------------------------)
-		sleep 5
-		SPELL_LIB=''
-	fi
+	PSPELL="no"
+fi
+
+if test "$PSPELL" = "yes"
+then
+	AC_DEFINE_UNQUOTED(USE_PSPELL, 1, [ Use pspell library for spell checking ])
+	SPELL_LIB='-lpspell'
+fi
+
+if test "$SPELL_LIB" = ""
+then
+	AC_DEFINE_UNQUOTED(NO_SPELL, 1, [Use neither aspell, pspell or hunspell for spell checking])
+	AC_MSG_WARN(-------------------------------------------------------------------------)
+	AC_MSG_WARN([Neither pspell, aspell, or hunspell was found -- disabling spell checking])
+	AC_MSG_WARN(-------------------------------------------------------------------------)
+	sleep 5
 fi
 
 AC_ARG_WITH(devel, [  --with-devel                  Install development libraries],

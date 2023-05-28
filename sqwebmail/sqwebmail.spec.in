@@ -7,14 +7,8 @@
 #  Need to version-upgrade RH builds due to different directory locations.
 #
 
-%define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
-
 %if 0%{!?dist:1}
-%if %is_not_mandrake
 %define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
-%else
-%define courier_release mdk
-%endif
 %else
 %define courier_release %{nil}
 %endif
@@ -61,9 +55,7 @@ Requires(postun): systemd
 Requires(preun):  systemd
 Requires:    %{__gzip}
 
-%if %is_not_mandrake
 Requires: %{cgibindir}
-%endif
 Obsoletes: %{name}-mysql
 Obsoletes: %{name}-pgsql
 
@@ -76,6 +68,7 @@ BuildRequires: /etc/mime.types
 BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: gdbm-devel pcre2-devel
+BuildRequires: hunspell
 BuildRequires: %{__gzip}
 BuildRequires: %{__make}
 
@@ -241,3 +234,8 @@ test -d %{htmldir}/en || %{__rm} -f %{htmldir}/en
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
+
+%changelog
+
+* Sun May 28 2023 Sam Varshavchik <mrsam@courier-mta.com>
+- Update spec file

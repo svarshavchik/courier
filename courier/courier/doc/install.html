@@ -1163,15 +1163,17 @@ $ cd courier-VERSION</pre>
       test programs to give a correct result for your system.</p>
     </li>
     <li>
-      <code>--without-ispell, --with-ispell=<em>program</em></code>
-      <p>The <em>Courier</em> mail server's webmail server can use spell
-      checking, if the ispell program is available (aspell can be used too). If
-      configure finds ispell, spell checking is enabled. Use
-      <code>--without-ispell</code> to forcefully disable spell checking. If
-      ispell is not in the current search path, use
-      <code>--with-ispell=<em>program</em></code> to explicitly set the
-      location of ispell. See "<a href="#webmail">Configure the webmail
-      server</a>" for more information on ispell or aspell.</p>
+      <code>--without-spellcheck</code>
+      <p>Do not compile spell checking support in the <em>Courier</em> mail
+      server's webmail server, which can use hunspell, ispell, or aspell spell
+      checking utility. <code>configure</code> automatically checks which spell
+      checking tool is available. An explicit
+      <code>--with-spellcheck=hunspell</code>,
+      <code>--with-spellcheck=aspell</code>, or
+      <code>--with-spellcheck=ispell</code> directly selects a specific spell
+      checking tool when two or more are available. See "<a href=
+      "#webmail">Configure the webmail server</a>" for more information on
+      spell checking.</p>
     </li>
     <li>
       <code>--enable-imageurl=<em>/url</em></code>
@@ -2975,14 +2977,14 @@ allow httpd_sys_script_t var_t:sock_file write;
 allow httpd_sys_script_t unconfined_t:unix_stream_socket connectto;
 </pre>
   <h3><a name="spellcheck" id="spellcheck">Spell checking</a></h3>
-  <p>The webmail server can use either the ispell or the aspell package for
-  spell checking. Install ispell or aspell before installing the
-  <em>Courier</em> mail server.</p>
+  <p>The webmail server can use either the hunspell, the ispell or the aspell
+  package for spell checking. Install hunspell, ispell or aspell before
+  installing the <em>Courier</em> mail server.</p>
   <p>NOTE: <em>Courier</em> mail server assumes that the spell checking
-  dictionary is called "english". Some systems use a different name for the
-  default spell checking dictionary. To change the name of the spell checking
-  dictionary used by the webmail server, put the name of the dictionary into
-  the file
+  dictionary is called "english", for ispell or aspell, and "en_US" for
+  hunspell. Some systems use a different name for the default spell checking
+  dictionary. To change the name of the spell checking dictionary used by the
+  webmail server, put the name of the dictionary into the file
   <code>/usr/lib/courier/share/sqwebmail/html/en-us/ISPELLDICT</code>.</p>
   <h3>Images</h3>
   <p>It is also necessary to install the static icon images used by the webmail

@@ -126,7 +126,7 @@ BuildRequires:    make
 BuildRequires:    procps-ng
 BuildRequires:    wget
 BuildRequires:    %{__gzip}
-BuildRequires:    aspell-devel
+BuildRequires:    hunspell
 %{?_with_gpg2:  %define with_gpg2 1}
 %{!?_with_gpg2: %define with_gpg2 0}
 
@@ -235,6 +235,7 @@ Summary: Courier @PACKAGE_VERSION@ Integrated HTTP (webmail) server
 Group: Applications/Mail
 Requires: %{apache_documentroot} /etc/cron.hourly
 Requires: courier = %{version}-%{release}
+Requires: hunspell
 BuildRequires:    %{__gzip}
 %if %with_gpg2
 Requires: gnupg2

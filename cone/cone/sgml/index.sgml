@@ -51,7 +51,8 @@ An online tutorial provides a quick overview of &app;'s main features.</para>
 	    <para>
 A built-in <link linkend="leaf">text editor</link>
 for editing new messages, with search/replace and
-spell checking (requires <command>aspell</command> or
+spell checking (requires <command>hunspell</command>,
+<command>aspell</command> or
 <command>pspell</command>).</para>
 	    <para>
 Shortcuts - assign frequently used text to a function key, or to an
@@ -573,15 +574,17 @@ the mail library used by
 	  </varlistentry>
 
 	  <varlistentry>
-	    <term><parameter>--with-spellcheck=pspell</parameter></term>
+	    <term><parameter>--with-spellcheck=pspell</parameter>,
+	      <parameter>--with-spellcheck=aspell</parameter></term>
 	    <listitem>
 	      <para>
 &app;
-can use either <command>aspell</command> or <command>pspell</command>
+can use
+<command>hunspell</command>,
+<command>aspell</command> or <command>pspell</command>
 for spell checking.
-<command>aspell</command> is used if both are installed.
-This option selects
-<command>pspell</command> instead.</para>
+This parameter specifies which package gets used if more than one is
+installed, if different from the default one.</para>
 	    </listitem>
 	  </varlistentry>
 	</variablelist>
@@ -722,8 +725,9 @@ Partial searches are also possible.</para>
 
 	<listitem>
 	  <para>
-<ulink url="http://aspell.sourceforge.net/">aspell</ulink> or
-<ulink url="http://pspell.sourceforge.net/">pspell</ulink></para>
+	    <ulink url="http://hunspell.github.io/">hunspell</ulink>,
+<ulink url="https://aspell.net/">aspell</ulink> or
+<ulink url="https://sourceforge.net/projects/pspell/">pspell</ulink></para>
 	</listitem>
 
 	<listitem>

@@ -27,11 +27,10 @@ Build-Depends:
 	libgcrypt-dev,
 	groff-base,
 	ghostscript,
+	hunspell,
 	mgetty-fax,
 	netpbm,
-	aspell,
 	libpcre2-dev,
-	libaspell-dev,
 	libperl-dev
 
 Package: courier
@@ -110,7 +109,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 gpg ( >= 2),
-	 aspell,
+	 hunspell,
 	 courier (= ${binary:Version})
 Recommends: courier-webmail-apache2 (= ${binary:Version})
 Conflicts: sqwebmail

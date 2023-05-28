@@ -200,6 +200,7 @@ noinst_LIBRARIES=libdummyspellchecker.a
 
 libdummyspellchecker_a_SOURCES=\
 	spellcheckerAspell.C spellcheckerAspell.H \
+	spellcheckerHunspell.C spellcheckerHunspell.H \
 	spellcheckerPspell.C spellcheckerPspell.H \
 	spellcheckerNone.C spellcheckerNone.H
 

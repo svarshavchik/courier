@@ -3,7 +3,6 @@ set -evx
 # valgrind does not get installed, valgrind on arch is broken.
 
 pacman -Sy \
-    aspell \
     automake \
     apache \
     binutils \
@@ -17,6 +16,7 @@ pacman -Sy \
     gnupg \
     groff \
     gzip \
+    hunspell \
     libidn2 \
     libtool \
     libxml2 \

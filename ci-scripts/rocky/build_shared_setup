@@ -10,7 +10,6 @@ then
 fi
 
 dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
-    aspell-devel \
     automake \
     /etc/mime.types \
     expect \
@@ -22,6 +21,7 @@ dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     gnupg2 \
     groff \
     httpd \
+    hunspell \
     libidn2-devel \
     libtool \
     libtool-ltdl-devel \

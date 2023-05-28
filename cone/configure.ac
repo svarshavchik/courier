@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2003 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([cone],[1.10],[courier-cone@lists.sourceforge.net])
+AC_INIT([cone],[1.11],[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)

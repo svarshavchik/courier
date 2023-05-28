@@ -657,12 +657,19 @@ BrowserMatch "MSIE" nokeepalive downgrade-1.0 force-response-1.0
   page. Try to log in to a test account. Review the rest of this configuration
   file in order to enable optional features that you want to use.</p>
   <h2><a id="spellcheck">Spell checking</a></h2>
-  <p>SqWebMail can use either the ispell or the aspell package for spell
-  checking messages. Install ispell or aspell before installing SqWebMail.</p>
+  <p>The <code>configure</code> script checks if the hunspell, ispell, or
+  aspell package is installed, to use for spell-checking messages.
+  <code>--without-spellcheck</code> disables spell checking.
+  <code>--with-spellcheck=hunspell</code>,
+  <code>--with-spellcheck=aspell</code>, or
+  <code>--with-spellcheck=ispell</code> directly selects a specific spell
+  checking package when two or more are available. Install hunspell, ispell or
+  aspell before installing SqWebMail.</p>
   <p>NOTE: SqWebMail assumes that the spell checking dictionary is called
-  "english". Some systems use a different name for the default spell checking
-  dictionary. To change the name of the spell checking dictionary used by
-  SqWebMail, put the name of the dictionary into the file
+  "english", with ispell or aspell, and "en_US" for hunspell. Some systems use
+  a different name for the default spell checking dictionary. To change the
+  name of the spell checking dictionary used by SqWebMail, put the name of the
+  dictionary into the file
   <code>/usr/lib/sqwebmail/share/sqwebmail/html/en-us/ISPELLDICT</code>.</p>
   <h2><a id="pam">PAM authentication</a></h2>
   <p>SqWebMail uses the "webmail" service with the Courier authentication

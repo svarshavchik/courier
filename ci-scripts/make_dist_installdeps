@@ -4,7 +4,6 @@ dnf install -y --setopt=install_weak_deps=false \
     --setopt=tsflags=nodocs \
     --setopt=deltarpm=false \
     --disablerepo=*modular \
-    aspell-devel \
     autoconf \
     automake \
     bzip2 \
@@ -21,6 +20,7 @@ dnf install -y --setopt=install_weak_deps=false \
     gnupg2 \
     groff \
     httpd \
+    hunspell \
     libidn2-devel \
     libtool \
     libtool-ltdl-devel \
