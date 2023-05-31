@@ -1351,8 +1351,7 @@ void ConfigScreen::doSave()
 
 	string newDictionaryName=dictionaryField.getText();
 
-	if (newDictionaryName != spellCheckerBase->dictionaryName &&
-	    newDictionaryName.size() > 0)
+	if (newDictionaryName != spellCheckerBase->dictionaryName)
 		spellCheckerBase->setDictionary(newDictionaryName);
 
 	Curses::suspendCommand=suspendCommand.getText();
