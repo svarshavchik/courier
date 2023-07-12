@@ -1,3 +1,7 @@
+2023-07-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: fix compilation error.
+
 3.1.5
 
 2023-04-24  Sam Varshavchik  <mrsam@courier-mta.com>

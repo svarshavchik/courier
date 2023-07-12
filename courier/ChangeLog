@@ -1,3 +1,7 @@
+2023-07-12  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: fix compilation error.
+
 2023-07-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fix logic that unnecessarily rewrites MIME headers, in some
