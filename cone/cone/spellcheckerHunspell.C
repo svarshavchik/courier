@@ -103,7 +103,8 @@ SpellCheckerBase::Manager *SpellChecker::getManager(std::string &errmsg)
 	{
 		if (fcntl(fork_pipe[1], F_SETFD, FD_CLOEXEC) < 0)
 		{
-			write(fork_pipe[1], "1", 1);
+			if (write(fork_pipe[1], "1", 1) < 0)
+				;
 			_exit(1);
 		}
 
@@ -111,7 +112,8 @@ SpellCheckerBase::Manager *SpellChecker::getManager(std::string &errmsg)
 
 		if (p < 0)
 		{
-			write(fork_pipe[1], "1", 1);
+			if (write(fork_pipe[1], "1", 1) < 0)
+				;
 			_exit(1);
 		}
 
@@ -127,7 +129,8 @@ SpellCheckerBase::Manager *SpellChecker::getManager(std::string &errmsg)
 		if (dup(stdin_pipe[0]) != 0 ||
 		    dup(stdout_pipe[1]) != 1)
 		{
-			write(fork_pipe[1], "1", 1);
+			if (write(fork_pipe[1], "1", 1) < 0)
+				;
 			_exit(1);
 		}
 
@@ -138,7 +141,8 @@ SpellCheckerBase::Manager *SpellChecker::getManager(std::string &errmsg)
 		      (dictionaryName.empty() ? nullptr:"-d"),
 		      dictionaryName.c_str(), nullptr);
 
-		write(fork_pipe[1], "1", 1);
+		if (write(fork_pipe[1], "1", 1) < 0)
+			;
 		_exit(1);
 	}
 

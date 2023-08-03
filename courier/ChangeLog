@@ -1,6 +1,14 @@
+1.3.3
+
+2023-08-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Recognize newer EC-based public key algorithms when displaying
+	available PGP keys.
+
 2023-07-12  Sam Varshavchik  <mrsam@courier-mta.com>
 
-	* maildrop: fix compilation error.
+	* maildrop: fix compilation error caused by non-default configure
+	script options.
 
 2023-07-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
