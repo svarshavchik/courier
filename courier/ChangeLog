@@ -1,3 +1,10 @@
+2023-08-16  Jaco Kroon <jaco@uls.co.za>
+
+	* Turn off IMAP_TLS_REQUIRED if IMAP_TLS is already set.
+
+	* Compiling with -DMAILDIR_SKIP_SYMLINK_CHECKS turns off checking for
+	rogue symlinks in maildirs.
+
 1.3.3
 
 2023-08-03  Sam Varshavchik  <mrsam@courier-mta.com>
