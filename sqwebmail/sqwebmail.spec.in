@@ -56,8 +56,8 @@ Requires(preun):  systemd
 Requires:    %{__gzip}
 
 Requires: %{cgibindir}
-Obsoletes: %{name}-mysql
-Obsoletes: %{name}-pgsql
+Obsoletes: %{name}-mysql > 0.0
+Obsoletes: %{name}-pgsql > 0.0
 
 BuildRequires: gcc-c++
 BuildRequires: procps-ng
@@ -161,6 +161,7 @@ EOF
 %{__cp} sysconftool $RPM_BUILD_ROOT%{scriptdir}/sysconftool
 
 %{__cp} libs/pcp/README.html pcp_README.html
+%{__cp} libs/gpglib/README.html gpglib_README.html
 
 . libs/pcp/uids
 echo '%attr(-, ' "$localcacheowner, $mailgroup) $calendardir" >filelist
@@ -225,7 +226,7 @@ test -d %{htmldir}/en || %{__rm} -f %{htmldir}/en
 
 %attr(755, bin, bin) /etc/cron.hourly/sqwebmail-cron-cleancache
 
-%attr(-, bin, bin) %doc AUTHORS libs/sqwebmail/BUGS COPYING INSTALL NEWS README libs/sqwebmail/SECURITY libs/sqwebmail/TODO libs/gpglib/README.html
+%attr(-, bin, bin) %doc AUTHORS libs/sqwebmail/BUGS COPYING INSTALL README libs/sqwebmail/SECURITY libs/sqwebmail/TODO gpglib_README.html
 %attr(-, bin, bin) %doc libs/sqwebmail/BUGS.html INSTALL.html NEWS README.html libs/sqwebmail/SECURITY.html libs/sqwebmail/TODO.html libs/sqwebmail/ChangeLog pcp_README.html
 %attr(-, bin, bin) %doc libs/maildir/README*.html
 
