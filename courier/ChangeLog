@@ -1,3 +1,8 @@
+2023-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/esmtpd.dist.in.git: Add missing
+	TLS_PRIVATE_KEYFILE setting.
+
 1.3.4
 
 2023-08-28  Sam Varshavchik  <mrsam@courier-mta.com>
