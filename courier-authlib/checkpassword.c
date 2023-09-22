@@ -63,7 +63,7 @@ static int do_authcheckpassword(const char *password, const char *encrypted_pass
 		return safe_strcmp(encrypted_password, cpass);
 	}
 #else
-	return safe_strcmp(encrypted_password, password)
+	return safe_strcmp(encrypted_password, password);
 #endif
 }
 
