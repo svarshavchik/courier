@@ -1,7 +1,13 @@
+1.3.5
+
 2023-11-17  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rfc822: use tm_gmtoff in preference over daylight, for determining
 	TZ offset.
+
+2023-11-09  Jaco Kroon <jaco@uls.co.za>
+
+	* pop3+imap: log stls=1 (pop3) and starttls=1 (imap) on LOGIN lines.
 
 2023-09-19  Sam Varshavchik  <mrsam@courier-mta.com>
 

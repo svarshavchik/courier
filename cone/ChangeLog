@@ -1,3 +1,5 @@
+1.13
+
 2023-11-17  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rfc822: use tm_gmtoff in preference over daylight, for determining
