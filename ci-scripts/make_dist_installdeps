@@ -48,7 +48,7 @@ dnf install -y --setopt=install_weak_deps=false \
     sqlite-devel \
     systemd-rpm-macros \
     tidy \
-    /usr/lib/locale/locale-archive \
+    glibc-langpack-en \
     valgrind \
     wget \
     which \

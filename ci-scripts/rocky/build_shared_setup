@@ -44,7 +44,7 @@ dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     procps-ng \
     rpm-build \
     sed \
-    /usr/lib/locale/locale-archive \
+    glibc-langpack-en \
     sqlite-devel \
     systemd-rpm-macros \
     valgrind \

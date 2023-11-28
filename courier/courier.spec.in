@@ -10,7 +10,8 @@
 
 %define alternatives %(test -x /usr/sbin/alternatives && echo 1 || echo 0)
 
-%define is_rocky %(test -e /etc/rocky-release && echo 1 || echo 0)
+%define is_rhel %(grep -q 'ID_LIKE=.*rhel\\b' /etc/os-release && echo 1 || echo 0)
+%define is_rhel7 %(grep -q 'ID_LIKE=.*rhel\\b' /etc/os-release && grep -q -F 'VERSION_ID="7"' /etc/os-release && echo 1 || echo 0)
 
 %define using_systemd %(test -d /lib/systemd && echo 1 || echo 0)
 
@@ -115,6 +116,11 @@ Provides:         /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail /usr/bin/newa
 %endif
 
 BuildRequires:    gcc-c++
+%if %is_rhel7
+BuildRequires:    glibc-common
+%else
+BuildRequires:    glibc-langpack-en
+%endif
 BuildRequires:	  courier-authlib-devel >= 0.55
 BuildRequires:    rpm >= 4.0.2
 BuildRequires:    coreutils
@@ -167,7 +173,7 @@ Requires:	  /usr/bin/certtool
 BuildRequires:      groff
 BuildRequires:      ghostscript
 
-%if %is_rocky
+%if %is_rhel
 
 %else
 BuildRequires:      mgetty-sendfax
