@@ -38,7 +38,7 @@ yum install -y --setopt=tsflags=nodocs \
     procps-ng \
     rpm-build \
     sed \
-    /usr/lib/locale/locale-archive \
+    glibc-common \
     sqlite-devel \
     valgrind \
     wget \

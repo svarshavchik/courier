@@ -29,6 +29,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ################################################################################
 
 BuildRequires:      libtool
+BuildRequires:      procps-ng
 BuildRequires:      openldap-devel
 BuildRequires:      mysql-devel zlib-devel sqlite-devel
 BuildRequires:      postgresql-devel
