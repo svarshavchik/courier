@@ -1,21 +1,6 @@
-
-# Custom build against libcurses-5.3
-
-%define custom_curses %(test -d /usr/include/ncurses53w >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
-
-%if %custom_curses
-%define curses_include_dir  /usr/include/ncurses53w
-%define curses_lib_dir /usr/lib/ncurses53
-
-BuildRequires: %{curses_include_dir}
-BuildRequires: %{curses_lib_dir}
-
-%else
 BuildRequires: ncurses-devel
 
 %define curses_include_dir  /usr/include/ncursesw
-
-%endif
 
 %if 0%{!?dist:1}
 %define cone_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
@@ -88,10 +73,6 @@ application using LibMAIL - a high level, C++ OO library for mail clients.
 
 CPPFLAGS="$CPPFLAGS -I %{curses_include_dir}"
 export CPPFLAGS
-%if %custom_curses
-LDFLAGS="$LDFLAGS -L %{curses_lib_dir}"
-export LDFLAGS
-%endif
 
 %build
 %configure -C --with-devel %{?gpg_option} %{?notice_option}
