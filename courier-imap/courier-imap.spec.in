@@ -46,12 +46,12 @@ Requires(postun):   systemd
 Requires(preun):  systemd
 %endif
 %endif
-Requires: courier-authlib >= 0.60.6.20080629
 BuildRequires: gcc-c++
 BuildRequires: procps-ng
 BuildRequires: gdbm-devel
 BuildRequires: coreutils perl
-BuildRequires: courier-authlib-devel >= 0.60.6.20080629
+BuildRequires: courier-authlib-devel
+BuildRequires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: %{__make}
@@ -98,6 +98,8 @@ Obsoletes: %{name}-pgsql < 99.99
 %define	_mandir		/usr/share/man
 %define initlndir	/usr/sbin
 %endif
+
+Requires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 
 %description
 Courier-IMAP is an IMAP server for Maildir mailboxes.  This package contains

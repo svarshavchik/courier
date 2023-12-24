@@ -121,7 +121,8 @@ BuildRequires:    glibc-common
 %else
 BuildRequires:    glibc-langpack-en
 %endif
-BuildRequires:	  courier-authlib-devel >= 0.55
+BuildRequires:    courier-authlib-devel
+BuildRequires:    courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 BuildRequires:    rpm >= 4.0.2
 BuildRequires:    coreutils
 BuildRequires:    binutils
@@ -189,6 +190,8 @@ Obsoletes:	courier-smtpauth < @PACKAGE_VERSION@
 %if %is_fedora
 BuildRequires: /usr/lib/locale/locale-archive
 %endif
+
+Requires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 
 %if ! %alternatives
 %package sendmail-wrapper

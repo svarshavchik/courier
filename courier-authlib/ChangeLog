@@ -1,3 +1,9 @@
+2023-12-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Create a courier-authlib-config rpm subpackage to prevent
+	updates to versioned configured for different user and group
+	names.
+
 2023-03-04  Hanno Böck <hanno@gentoo.org>
 
 	* Various fixes for calls to getgrnam_r/getpwnam_r

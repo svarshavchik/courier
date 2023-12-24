@@ -63,7 +63,9 @@ BuildRequires: gcc-c++
 BuildRequires: procps-ng
 BuildRequires: rpm >= 4.0.2 coreutils grep perl
 BuildRequires: %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)
-BuildRequires: openldap-devel courier-authlib-devel >= 0.55
+BuildRequires: openldap-devel
+BuildRequires: courier-authlib-devel
+BuildRequires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 BuildRequires: /etc/mime.types
 BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
@@ -78,6 +80,8 @@ BuildRequires: %{__make}
 BuildRequires: perl-generators
 BuildRequires: /usr/lib/locale/locale-archive
 %endif
+
+Requires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 
 %description
 SqWebMail is a Webmail CGI for Maildir mailboxes.

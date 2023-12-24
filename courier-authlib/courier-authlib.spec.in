@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2017 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2024 Double Precision, Inc.  See COPYING for
 # distribution information.
 
 # No dist tag from mock; detect mandrake, redhat, etc. the old fashioned way
@@ -7,6 +7,17 @@
 %define courier_release %(test -e /etc/mandrake-release -o -e /etc/mandriva-release && release="mdk" ; if test $? != 0; then release="`rpm -q --queryformat='.rh%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.fc%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; fi ; echo "$release")
 %else
 %define courier_release %{nil}
+%endif
+
+# --define 'mailuser courier'
+# --define `mailgroup courier'
+
+%if 0%{!?mailuser:1}
+%define mailuser daemon
+%endif
+
+%if 0%{!?mailgroup:1}
+%define mailgroup daemon
 %endif
 
 ################################################################################
@@ -19,6 +30,7 @@ Summary:        Courier authentication library
 Group:          System Environment/Daemons
 License:        GPLv3
 URL:            http://www.courier-mta.org
+Requires:       courier-authlib-config-%{mailuser}-%{mailgroup} = 0:%{version}-%{release}
 
 ################################################################################
 
@@ -41,7 +53,7 @@ BuildRequires:      gcc-c++
 BuildRequires:	    redhat-rpm-config
 BuildRequires:      courier-unicode-devel
 BuildRequires:      %{__make}
-
+BuildRequires:      shadow-utils
 BuildRequires:      %{_includedir}/ltdl.h
 
 %if 0%(rpm -q redhat-release >/dev/null 2>&1 || rpm -q fedora-release >/dev/null 2>&1 || exit 0; echo "1")
@@ -73,6 +85,21 @@ The Courier authentication library provides authentication services for
 other Courier applications.
 
 ################################################################################
+
+%package config-%{mailuser}-%{mailgroup}
+Provides:   courier-authlib-uidgid
+Conflicts:  courier-authlib-uidgid
+Summary:    Courier-authlib configuration package
+Group:      System Environment/Daemons
+Requires(pre): shadow-utils
+
+%description config-%{mailuser}-%{mailgroup}
+This courier-authlib package was configured to use system
+user "%{mailuser}" and system group "%{mailgroup}".
+
+This config sub-package ensures that this user/group exists,
+and prevents unintentional courier-authlib updates to versions
+that was built with a different user/group configuration.
 
 %package devel
 Summary:    Development libraries for the Courier authentication library
@@ -166,8 +193,13 @@ program, then communicates through messages on stdin and stdout.
 %prep
 %setup -q
 
+getent group %{mailgroup} >/dev/null || groupadd -r %{mailgroup}
+getent passwd %{mailuser} >/dev/null || useradd -r -g %{mailgroup} -d %{_exec_prefix}/lib/courier -s /sbin/nologin -c "Courier Mail Server" %{mailuser}
 %build
-%configure
+%configure \
+    --with-mailuser=%{mailuser} \
+    --with-mailgroup=%{mailgroup} \
+    %{?extra_options}
 %{__make} -s %{_smp_mflags}
 
 %install
@@ -241,6 +273,10 @@ fi
 /sbin/chkconfig --del courier-authlib
 /sbin/chkconfig --add courier-authlib
 %endif
+%pre config-%{mailuser}-%{mailgroup}
+getent group %{mailgroup} >/dev/null || groupadd -r %{mailgroup}
+getent passwd %{mailuser} >/dev/null || useradd -r -g %{mailgroup} -d %{_exec_prefix}/lib/courier -s /sbin/nologin -c "Courier Mail Server" %{mailuser}
+
 %preun
 if test "$1" = "0"
 then
@@ -285,6 +321,8 @@ rm -rf $RPM_BUILD_ROOT
 %files -f configfiles.pgsql pgsql
 
 %files -f configfiles.pipe pipe
+
+%files config-%{mailuser}-%{mailgroup}
 
 %changelog
 

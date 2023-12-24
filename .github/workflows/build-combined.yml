@@ -106,6 +106,7 @@ jobs:
           rm -f rpm/RPMS/*/*debuginfo*
           rm -f rpm/RPMS/*/*debugsource*
           mv rpm/RPMS/*/courier-authlib-devel*rpm ../rpm/.
+          mv rpm/RPMS/*/courier-authlib-config*rpm ../rpm/.
           rm -f rpm/RPMS/*/courier-authlib-*-*-*rpm
           mv rpm/RPMS/*/courier-authlib*rpm ../rpm/.
           rpm -ivh ../rpm/courier-authlib*rpm
@@ -159,7 +160,7 @@ jobs:
 
       - name: Uninstall rpms
         run: |
-          dnf remove -y sysconftool courier-authlib courier-unicode courier-sox
+          dnf remove -y sysconftool courier-authlib courier-authlib-uidgid courier-unicode courier-sox
 
   # Bootstrap tarballs of projects
   #
