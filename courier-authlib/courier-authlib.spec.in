@@ -29,7 +29,7 @@ Summary:        Courier authentication library
 
 Group:          System Environment/Daemons
 License:        GPLv3
-URL:            http://www.courier-mta.org
+URL:            https://www.courier-mta.org
 Requires:       courier-authlib-config-%{mailuser}-%{mailgroup} = 0:%{version}-%{release}
 
 ################################################################################

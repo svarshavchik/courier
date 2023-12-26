@@ -161,7 +161,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
                                          ?>
 
     <p>This package includes the entire source code for the
-    <a href="http://www.courier-mta.org">Courier mail server</a> -
+    <a href="https://www.courier-mta.org">Courier mail server</a> -
     the mail server, IMAP server, webmail server, and the maildrop
     mail filter. You do not need to install those individual
     packages if you download this package.</p>
@@ -201,7 +201,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
                                                           "http://sourceforge.net/p/courier/courier-libs.git/ci/master/tree/unicode/ChangeLog");
                                          ?>
 
-    <p>The <a href="http://www.courier-mta.org/unicode/">Courier
+    <p>The <a href="https://www.courier-mta.org/unicode/">Courier
     Unicode Library</a> is used by most other Courier packages, and
     needs to be installed in order to use them or build them.</p>
 
@@ -238,7 +238,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     Courier-IMAP is provided here as a separate package that can be
     used with other mail servers as well.</p>
 
-    <p><a href="http://www.courier-mta.org/imap/">More information
+    <p><a href="https://www.courier-mta.org/imap/">More information
     about the Courier-IMAP server</a>.</p>
 
     <p><font size="-1">(<a href=
@@ -258,7 +258,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     local mailboxes. SqWebMail is provided here as a separate
     package that can be used with other mail servers as well.</p>
 
-    <p><a href="http://www.courier-mta.org/sqwebmail/">More
+    <p><a href="https://www.courier-mta.org/sqwebmail/">More
     information about SqWebMail</a>.</p>
 
     <p><font size="-1">(<a href=
@@ -278,7 +278,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     provided here as a separate package that can be used with other
     mail servers as well.</p>
 
-    <p><a href="http://www.courier-mta.org/maildrop/">More
+    <p><a href="https://www.courier-mta.org/maildrop/">More
     information about maildrop</a>.</p>
 
     <p><font size="-1">(<a href=
@@ -312,7 +312,7 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     text-based mail client based, in part, on Courier
     libraries.</p>
 
-    <p><a href="http://www.courier-mta.org/cone/index.html">More
+    <p><a href="https://www.courier-mta.org/cone/index.html">More
     information about <span style=
     "font-family: serif; font-style: italic">Cone</span></a>.</p>
 
@@ -333,26 +333,12 @@ body div.main { height: 100%; width: 100%; overflow: auto;
     from Git. You do not need to install sysconftool in
     order to compile and install tarballed releases.</p>
 
-    <p><a href="http://www.courier-mta.org/sysconftool/">More
+    <p><a href="https://www.courier-mta.org/sysconftool/">More
     information about sysconftool</a>.</p>
 
     <p><font size="-1">(<a href=
     "http://sourceforge.net/project/showfiles.php?group_id=5404">Download
     older/other releases</a>)</font></p>
-  </div>
-
-  <div class='banner'>
-    <script type="text/javascript">
-<![CDATA[
-    google_ad_client = "ca-pub-3196826191648604";
-    /* download */
-    google_ad_slot = "9611116675";
-    google_ad_width = 160;
-    google_ad_height = 600;
-    ]]>
-    </script> <script type="text/javascript" src=
-    "http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
   </div>
 </body>
 </html>

@@ -14,4 +14,3 @@ installation directories.  The standard options to configure, --prefix,
 Additionally, development libraries are also installed.  The development
 libraries contain functions that may be useful for programs and applications
 that parse E-mail and MIME headers.
-

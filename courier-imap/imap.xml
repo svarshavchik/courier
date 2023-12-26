@@ -19,12 +19,10 @@
 <book id="index2">
   <title>The <application>Courier</application> IMAP server</title>
 
-  <para>Copyright 1999-2015, Double Precision, Inc.
+  <para>Copyright 1999-2024, Double Precision, Inc.
   This software is distributed under the terms of the GNU General
   Public License. See COPYING for additional
   information.</para>
-
-  <para id="g-a-start-1"></para>
 
   <para>The &ci; is a fast, scalable, enterprise &imap; server that
   uses Maildirs. Many E-mail service providers use the &ci; to
@@ -47,15 +45,13 @@
 
   <para>
 This is the same &imap; server that's included in the
-<ulink url="http://www.courier-mta.org/">Courier mail
+<ulink url="https://www.courier-mta.org/">Courier mail
   server</ulink>, but configured as a standalone &imap; server that can
   be used with other mail servers - such as Qmail, Exim, or Postfix
   - that deliver to maildirs. If you already have Courier installed,
 you do not need
   to download this version. If you install this version, you must
   remove it if you later install the entire Courier server.</para>
-
-  <para id="g-a-end-1"></para>
 
   <para>The following pages provide additional background and supporting
   documentation.  You can jump anytime to the download page
@@ -99,7 +95,7 @@ Consult your mail server's documentation for help on how to get it to
 deliver mail in the "maildir" format.</para>
 
     <para>"Maildir" is a
-<ulink url="http://www.courier-mta.org/maildir.html">directory-based mail
+<ulink url="https://www.courier-mta.org/maildir.html">directory-based mail
   storage format</ulink> originally introduced in the Qmail mail
   server, and adopted as an alternative mail storage format by both
   <ulink url="http://www.exim.org/">Exim</ulink> and
@@ -108,7 +104,7 @@ deliver mail in the "maildir" format.</para>
   configured to use maildirs. The primary advantage of maildirs is
   that multiple applications can access the same Maildir
   simultaneously without requiring any kind of locking whatsoever.
-  <ulink url="http://www.courier-mta.org/mbox-vs-maildir/">Maildir is a faster
+  <ulink url="https://www.courier-mta.org/mbox-vs-maildir/">Maildir is a faster
   and more efficient way to store mail</ulink>. It works particularly
   well over NFS, which has a long history of locking-related
   woes.</para>
@@ -119,8 +115,8 @@ deliver mail in the "maildir" format.</para>
   way that's backwards compatible with the standard Maildir users
   (although, of course, they will ignore the additional features).
   Other software that understands and uses the same Maildir
-  extensions is <ulink url="http://www.courier-mta.org/sqwebmail/">SqWebMail</ulink>, and
-  <ulink url="http://www.courier-mta.org/maildrop/">maildrop</ulink>.</para>
+  extensions is <ulink url="https://www.courier-mta.org/sqwebmail/">SqWebMail</ulink>, and
+  <ulink url="https://www.courier-mta.org/maildrop/">maildrop</ulink>.</para>
   </section>
 
   <section id="features">
@@ -129,10 +125,10 @@ deliver mail in the "maildir" format.</para>
     <itemizedlist>
       <listitem><simpara>Extremely small footprint. On x86, the &ci;'s main
     daemon is a fraction of the size of the UW-IMAP server, and has
-    <ulink url="http://www.courier-mta.org/mbox-vs-maildir/">a greatly reduced
+    <ulink url="https://www.courier-mta.org/mbox-vs-maildir/">a greatly reduced
     memory footprint</ulink>.</simpara></listitem>
 
-      <listitem><simpara>Uses the <ulink url="http://www.courier-mta.org/authlib/">Courier Authentication
+      <listitem><simpara>Uses the <ulink url="https://www.courier-mta.org/authlib/">Courier Authentication
     Library</ulink> for authenticating mail accounts.</simpara></listitem>
 
       <listitem><simpara>Ability to restrict the maximum number of &imap; logins, and
@@ -188,7 +184,7 @@ or <ulink url="http://www.gnutls.org/"><application>GnuTLS</application></ulink>
 
     <para>
 Before downloading the &ci;, you MUST download and install
-the <ulink url="http://www.courier-mta.org/authlib/">Courier
+the <ulink url="https://www.courier-mta.org/authlib/">Courier
 Authentication Library</ulink>.
 This library is standalone module that maps login IDs and passwords to
 their mailboxes.
@@ -198,14 +194,14 @@ and displays the correct mailbox location.
 Until you get the authentication library working first, you will not
 be able to use the &ci;.</para>
 
-    <para>Download the &ci; from: <ulink url="http://www.courier-mta.org/download.html#imap">http://www.courier-mta.org/download.html#imap</ulink>, then
+    <para>Download the &ci; from: <ulink url="https://www.courier-mta.org/download.html#imap">https://www.courier-mta.org/download.html#imap</ulink>, then
 read its <filename>INSTALL</filename> file for more instructions.</para>
 
     <section id='links'>
       <title>Source Code Repository</title>
 	  <para>
 See
-<ulink url="http://www.courier-mta.org/status.html">http://www.courier-mta.org/status.html</ulink>
+<ulink url="https://www.courier-mta.org/status.html">https://www.courier-mta.org/status.html</ulink>
   for more information.</para>
     </section>
 
@@ -215,7 +211,7 @@ See
       <para>
 It is possible to create binary RPM packages directly from the
 source code tarball. Follow the instructions in the
-<ulink url="http://www.courier-mta.org/FAQ.html#rpm">Courier FAQ</ulink>
+<ulink url="https://www.courier-mta.org/FAQ.html#rpm">Courier FAQ</ulink>
 for building the RPM packages as a non-root user.</para>
 
       <note>
@@ -247,7 +243,7 @@ The binary RPM will not install if you have another &imap;
     <listitem><simpara><ulink url="README.proxy.html">README.proxy: Configuring and
     using the &imap;/<acronym>POP3</acronym> aggregator proxy</ulink></simpara></listitem>
 
-    <listitem><simpara><ulink url="http://www.courier-mta.org/FAQ.html" target="_blank">Courier FAQ</ulink></simpara></listitem>
+    <listitem><simpara><ulink url="https://www.courier-mta.org/FAQ.html" target="_blank">Courier FAQ</ulink></simpara></listitem>
 
     <listitem><simpara><ulink url="README.maildirquota.html">README.maildirquota:
     Enhancements by the &ci; to the traditional Maildir
@@ -702,6 +698,6 @@ and must be explicitly
 
     <para>SMAP is disabled by default. Uncomment the
   <literal>SMAP_CAPABILITY</literal> setting in the <filename>imapd</filename>
-  configuration file in order to enable SMAP. The <ulink url="http://www.courier-mta.org/cone/index.html">Cone</ulink> mail client supports SMAP.</para>
+  configuration file in order to enable SMAP. The <ulink url="https://www.courier-mta.org/cone/index.html">Cone</ulink> mail client supports SMAP.</para>
   </section>
 </book>

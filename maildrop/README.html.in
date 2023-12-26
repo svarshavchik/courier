@@ -19,7 +19,7 @@
 License. See <code>COPYING</code> for additional information.</p>
 
 <p><a
-href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a></p>
+href="https://www.courier-mta.org/maildrop/">https://www.courier-mta.org/maildrop/</a></p>
 
 <h2>Building RPMs</h2>
 
@@ -44,7 +44,7 @@ spec file.</p>
 
 <p><i>maildrop</i> includes documentation in HTML, as well as traditional man
 pages. The HTML versions may also be found at <code><a
-href="maildrop.html">http://www.courier-mta.org/maildrop/maildrop.html</a>.</code>
+href="maildrop.html">https://www.courier-mta.org/maildrop/maildrop.html</a>.</code>
 <br />
  </p>
 
@@ -57,7 +57,7 @@ install build a binary RPM directly from the source code.
 Maildrop can be easily used as sendmail's local delivery agent, instead of
 procmail. Here is the suggested entry for sendmail.cf, courtesy of Eric J.
 Schwertfeger &lt;ejs<code>@</code>bfd.com&gt;:
-<pre> 
+<pre>
 Mlocal,         P=/usr/local/bin/maildrop, F=lsAw5:/|@SPfhn, S=10/30, R=20/40,
                 T=DNS/RFC822/X-Unix,
                 A=maildrop -d $u</pre>

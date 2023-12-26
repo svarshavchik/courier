@@ -44,7 +44,7 @@ then
 	hash='#'
 	AC_MSG_WARN(=== Courier authentication library version $AUTHVER is required.)
 	AC_MSG_WARN(=== You need to download and install)
-	AC_MSG_WARN([=== http://www.courier-mta.org/download.php${hash}authlib first.])
+	AC_MSG_WARN([=== https://www.courier-mta.org/download.php${hash}authlib first.])
 	AC_MSG_WARN(=== If courier-authlib is installed in a non-default)
 	AC_MSG_WARN([=== directory, set the COURIERAUTHCONFIG environment])
 	AC_MSG_WARN(=== variable to the full path to the courierauthconfig)

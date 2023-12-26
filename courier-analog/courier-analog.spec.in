@@ -8,7 +8,7 @@ Version: @PACKAGE_VERSION@
 Release: 1
 License: GPL
 Group: Applications/System
-URL: http://www.courier-mta.org
+URL: https://www.courier-mta.org
 Source0: %{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: perl

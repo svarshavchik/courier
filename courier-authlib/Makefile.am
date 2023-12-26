@@ -530,69 +530,69 @@ authlib.3.in: authlib.sgml libs/docbook/sgml2man
 	mv authlib.3 authlib.3.in
 
 README_authlib.html.in: README_authlib.sgml optionlist.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html README_authlib.sgml README_authlib.html.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html README_authlib.sgml README_authlib.html.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_generic.html: auth_generic.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_generic.sgml auth_generic.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_generic.sgml auth_generic.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_generic.3: auth_generic_meta.3
 	touch $@
 
 auth_generic_meta.3: auth_generic.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_generic.sgml auth_generic_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_generic.sgml auth_generic_meta.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_login.html: auth_login.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_login.sgml auth_login.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_login.sgml auth_login.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_login.3: auth_login_meta.3
 	touch $@
 
 auth_login_meta.3: auth_login.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_login.sgml auth_login_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_login.sgml auth_login_meta.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_getuserinfo.html: auth_getuserinfo.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_getuserinfo.sgml auth_getuserinfo.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_getuserinfo.sgml auth_getuserinfo.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 auth_getuserinfo.3: auth_getuserinfo_meta.3
 	touch $@
 
 auth_getuserinfo_meta.3: auth_getuserinfo.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_getuserinfo.sgml auth_getuserinfo_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_getuserinfo.sgml auth_getuserinfo_meta.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_meta.3: auth_meta.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_meta.sgml auth_meta.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_meta.sgml auth_meta.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_meta.html: auth_meta.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_meta.sgml auth_meta.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_meta.sgml auth_meta.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_mkhomedir.html: auth_mkhomedir.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_mkhomedir.sgml auth_mkhomedir.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_mkhomedir.sgml auth_mkhomedir.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_mkhomedir.3: auth_mkhomedir.sgml authcallback.sgml optionlist.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_mkhomedir.sgml auth_mkhomedir.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_mkhomedir.sgml auth_mkhomedir.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_enumerate.html: auth_enumerate.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_enumerate.sgml auth_enumerate.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_enumerate.sgml auth_enumerate.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_enumerate.3: auth_enumerate.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_enumerate.sgml auth_enumerate.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_enumerate.sgml auth_enumerate.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_passwd.html: auth_passwd.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_passwd.sgml auth_passwd.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_passwd.sgml auth_passwd.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_passwd.3: auth_passwd.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_passwd.sgml auth_passwd.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_passwd.sgml auth_passwd.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_getoption.html: auth_getoption.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_getoption.sgml auth_getoption.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_getoption.sgml auth_getoption.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_getoption.3: auth_getoption.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_getoption.sgml auth_getoption.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_getoption.sgml auth_getoption.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_sasl.html: auth_sasl.sgml libs/docbook/sgml2html
-	libs/docbook/sgml2html auth_sasl.sgml auth_sasl.html "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2html auth_sasl.sgml auth_sasl.html "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_sasl.3: auth_sasl.sgml libs/docbook/sgml2man
-	libs/docbook/sgml2man auth_sasl.sgml auth_sasl.3 "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/authlib/"
+	libs/docbook/sgml2man auth_sasl.sgml auth_sasl.3 "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/authlib/"
 
 auth_sasl_ex.3: auth_sasl.3
 	touch $@
@@ -720,4 +720,4 @@ HTMLDOCFILES=$(HTMLFILES) README.authdebug.html README_authlib.html \
 	$(man3:%.3=%.html) $(man1:%.1=%.html) userdb/userdb.html userdb/makeuserdb.html userdb/userdbpw.html
 
 htmldoc: $(HTMLDOCFILES)
-	for f in $^; do d=`basename $$f`; test "$$d" = "README.html" && d="index.html"; tidy -i -q --tidy-mark no --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml <$$f >$$f.tmp ; xsltproc --nonet $$HOME/www/www.courier-mta.org/xsl/authlib.xsl $$f.tmp | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$HOME/www/www.courier-mta.org/authlib/$$d; rm -f $$f.tmp; done
+	for f in $^; do d=`basename $$f`; test "$$d" = "README.html" && d="index.html"; tidy -i -q --tidy-mark no --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml <$$f >$$f.tmp ; xsltproc --nonet $$HOME/www/hostrocket/courier-mta.org/xsl/authlib.xsl $$f.tmp | perl -ne 's~\$(id):.*\$$~\$(id):'"$$h"'\$$~; print' >$$HOME/www/hostrocket/courier-mta.org/authlib/$$d; rm -f $$f.tmp; done

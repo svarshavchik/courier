@@ -30,7 +30,7 @@
     <li>The PCRE2 library (<a href=
     "http://www.pcre.org">http:/www.pcre.org</a>) is required.</li>
     <li>The Courier Unicode Library (<a href=
-    "http://www.courier-mta.org/unicode">http://www.courier-mta.org/unicode</a>)
+    "https://www.courier-mta.org/unicode">https://www.courier-mta.org/unicode</a>)
     must be installed first.</li>
     <li>The <a href="https://www.gnu.org/software/libidn/">libidn2</a> library
     is required.</li>
@@ -47,7 +47,7 @@
       LDAP, MySQL, or a PostgreSQL database. See the courier-authlib
       documentation for more information.</p>
       <p>See <a href=
-      "http://www.courier-mta.org/authlib/">http://www.courier-mta.org/authlib/</a>
+      "https://www.courier-mta.org/authlib/">https://www.courier-mta.org/authlib/</a>
       for more information.</p>
       <blockquote>
         <p><strong>NOTE:</strong></p>

@@ -89,7 +89,7 @@ Here's an example of the <quote>Folder Listing</quote> screen:</para>
 
     <programlisting>
 ::B::
- FOLDERS                              CONE                                   
+ FOLDERS                              CONE
 
     Main Account: Courier-IMAP server
       New Mail (5 messages)
@@ -111,7 +111,7 @@ Here's an example of the <quote>Folder Listing</quote> screen:</para>
 
 
 ::B::
-  LIST completed                                                             
+  LIST completed
  A Add          ^D Move down     M Main Menu     U Use special   W Write Msg
  D Delete        E Edit Acct     R Rename       ^U Move up
 </programlisting>
@@ -134,7 +134,7 @@ use <keycap>CTRL</keycap>-<keycap>O</keycap> to cycle through the complete
 As shown in the illustration above, &app; lists the hierarchy of available
 folders in a natural, tree-like format.
 The list of folders in each mail account begins with a list called
-<quote>top-level folders</quote>; the 
+<quote>top-level folders</quote>; the
 <keycap>ENTER</keycap> and <keycap>+</keycap>
 keys will then display the contents of each folder.</para>
 
@@ -161,7 +161,7 @@ The default top-level folder list initially contains two entries:
 <quote>INBOX</quote> - messages; and
 <quote>Folders</quote> - folders
 (&app; implements the <quote>Maildir++</quote> folder extension, as
-implemented by the <ulink url="http://www.courier-mta.org"><application>Courier
+implemented by the <ulink url="https://www.courier-mta.org"><application>Courier
 Mail Server</application></ulink>).</para>
 	</listitem>
       </varlistentry>
@@ -623,7 +623,7 @@ Depending on the server, the error message which rejects an invalid access
 rights combination may or may not be informative.
 Check the IMAP server's documentation for more information.</para>
       </note>
-         
+
       </section>
       <section id="chapter_installing_filters">
 	<title>Installing filters</title>

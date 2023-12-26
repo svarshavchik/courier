@@ -196,8 +196,8 @@ upload-dist:
 htmldoc: $(noinst_DATA) index.html
 	rm -rf html
 	mkdir html
-	for f in $^; do d=`basename $$f`; tidy -i -q --tidy-mark no --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml <$$f >$$f.tmp ; xsltproc --nonet $$HOME/www/www.courier-mta.org/xsl/sysconftool.xsl $$f.tmp  >html/$$d; rm -f $$f.tmp; done
-	mv html/* $$HOME/www/www.courier-mta.org/sysconftool
+	for f in $^; do d=`basename $$f`; tidy -i -q --tidy-mark no --doctype transitional --input-encoding utf8 --output-encoding utf8 -asxml <$$f >$$f.tmp ; xsltproc --nonet $$HOME/www/hostrocket/courier-mta.org/xsl/sysconftool.xsl $$f.tmp  >html/$$d; rm -f $$f.tmp; done
+	mv html/* $$HOME/www/hostrocket/courier-mta.org/sysconftool
 	rm -rf html
 
 .PHONY: rpm deb

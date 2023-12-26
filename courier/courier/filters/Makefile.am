@@ -203,35 +203,35 @@ courierfilter.html.in: courierfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courierfilter.sgml courierfilter.html.in
 
 courierfilter.8.in: courierfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courierfilter.sgml courierfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+	../../libs/docbook/sgml2man courierfilter.sgml courierfilter.8.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/"
 	mv courierfilter.8 courierfilter.8.in
 
 courierperlfilter.html.in: courierperlfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html courierperlfilter.sgml courierperlfilter.html.in
 
 courierperlfilter.8.in: courierperlfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man courierperlfilter.sgml courierperlfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+	../../libs/docbook/sgml2man courierperlfilter.sgml courierperlfilter.8.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/"
 	mv courierperlfilter.8 courierperlfilter.8.in
 
 dupfilter.html.in: dupfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html dupfilter.sgml dupfilter.html.in
 
 dupfilter.8.in: dupfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man dupfilter.sgml dupfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+	../../libs/docbook/sgml2man dupfilter.sgml dupfilter.8.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/"
 	mv dupfilter.8 dupfilter.8.in
 
 ratefilter.html.in: ratefilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html ratefilter.sgml ratefilter.html.in
 
 ratefilter.8.in: ratefilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man ratefilter.sgml ratefilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+	../../libs/docbook/sgml2man ratefilter.sgml ratefilter.8.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/"
 	mv ratefilter.8 ratefilter.8.in
 
 verifyfilter.html.in: verifyfilter.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html verifyfilter.sgml verifyfilter.html.in
 
 verifyfilter.stamp: verifyfilter.sgml ../../libs/docbook/sgml2man
-	../../libs/docbook/sgml2man verifyfilter.sgml verifyfilter.8.in "--stringparam man.base.url.for.relative.links http://www.courier-mta.org/"
+	../../libs/docbook/sgml2man verifyfilter.sgml verifyfilter.8.in "--stringparam man.base.url.for.relative.links https://www.courier-mta.org/"
 	touch verifyfilter.stamp
 
 verifyfilter.8.in: verifyfilter.stamp

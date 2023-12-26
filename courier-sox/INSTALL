@@ -103,7 +103,7 @@ You need to install the following software before building this package
 
 GNU make (gmake)
 GNU libtool
-Courier Authentication Library (http://www.courier-mta.org/authlib).
+Courier Authentication Library (https://www.courier-mta.org/authlib).
 Net::CIDR Perl module from www.cpan.org (required for blacklist support)
 
 This package uses the GNU toolchain, and uses the typical installation

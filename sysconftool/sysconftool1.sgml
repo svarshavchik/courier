@@ -35,7 +35,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="sysconftool_DESCRIPTION">
     <title>DESCRIPTION</title>
 
     <para>
@@ -152,7 +152,7 @@ nothing is lost.  However, the next upgrade will see
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_ADD">
     <title>ADDING SYSCONFTOOL SUPPORT TO AN EXISTING APPLICATION</title>
 
     <para>
@@ -236,7 +236,7 @@ install-configure</command> should be saved into a file, and reviewed.</para>
     </orderedlist>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_SEEALSO">
     <title>SEE ALSO</title>
 
     <para>

@@ -365,7 +365,7 @@ htmldoc: INSTALL.html libs/maildir/README.maildirquota.html libs/maildir/README.
 		xsltproc --nonet $(srcdir)/imap-format.xsl \
 			 $$f.tmp2 >$$f; \
 		rm -f $$f.tmp*; done
-	mv -f doc/*.html $(WWW)/imap
+	cp -f doc/*.html $(WWW)/imap
 	cp -f courier-imap.png bg.png $(WWW)/imap
 	rm -rf doc
 

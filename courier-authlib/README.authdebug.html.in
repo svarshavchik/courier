@@ -224,7 +224,7 @@ Apr 14 14:07:15 billdog authdaemond: authpam: ACCEPT, username brian
   well documented with comments.</p>
 
   <p>For the nitty-gritty details of authentication modules, see
-  <a href="http://www.courier-mta.org/authlib.html">man
+  <a href="https://www.courier-mta.org/authlib.html">man
   authlib</a>. There is probably a copy of this manpage installed
   on your system; if that command doesn't work, try one of
   these:</p>
@@ -251,7 +251,7 @@ or
 
   <p>If you still cannot work out what the problem is, then you can
   ask on the appropriate <a href=
-  "http://www.courier-mta.org/links.html">mailing list</a>. But
+  "https://www.courier-mta.org/links.html">mailing list</a>. But
   before you post, please gather together all the following
   information:</p>
 
@@ -291,7 +291,7 @@ or
   <h2>Frequently seen authentication problems and solutions</h2>
 
   <p>See also the <a href=
-  "http://www.courier-mta.org/FAQ.html">Courier MTA FAQ</a></p>
+  "https://www.courier-mta.org/FAQ.html">Courier MTA FAQ</a></p>
 
   <h3>When I try to login with POP3 using telnet, the server
   disconnects immediately after the "PASS" command, without giving

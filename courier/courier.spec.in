@@ -86,7 +86,7 @@ Release:          1%{?dist}%{courier_release}
 
 Group:            Applications/Mail
 License:          GPL
-URL:              http://www.courier-mta.org
+URL:              https://www.courier-mta.org
 Packager:         %{PACKAGER}
 Source:           http://download.sourceforge.net/courier/courier-@PACKAGE_VERSION@.tar.bz2
 Provides:         smtpdaemon server(smtp)

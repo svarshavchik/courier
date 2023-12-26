@@ -3482,7 +3482,7 @@ bool CursesEdit::save(SaveSink &sink,
 					      "<" + h + ">",
 					      unicode_default_chset())
 			.toString()
-		     << "\nX-Mailer: http://www.courier-mta.org/cone/\n";
+		     << "\nX-Mailer: https://www.courier-mta.org/cone/\n";
 	}
 
 	std::string xfcc=getFcc(saveFcc ? &sink:NULL);

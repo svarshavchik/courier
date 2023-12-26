@@ -51,7 +51,7 @@ the only way to build &libname; is by building
     <para>
 &libname; is partially based on libraries used
 in implementing the
-<ulink url="http://www.courier-mta.org">Courier mail server</ulink>.
+<ulink url="https://www.courier-mta.org">Courier mail server</ulink>.
 As such, the library contains both C and C++ code; although the
 published
 API consists of C++ objects only.

@@ -48,7 +48,7 @@
     </informalexample>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="sysconftool_DESCRIPTION">
 
     <title>DESCRIPTION</title>
 
@@ -94,7 +94,7 @@ The additional information used by <command>sysconftool</command> is encoded as
 specially-formatted comment lines that begin with two '#' characters.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_FILENAMES">
     <title>FILENAMES</title>
 
     <para>
@@ -128,7 +128,7 @@ new file, that are supposedly known to be good, and leave it up to a physical
 being to sort out any conflicts and make any manual decisions.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_VERSIONING">
     <title>FILE VERSIONING</title>
 
     <para>
@@ -195,7 +195,7 @@ to <filename>filename.bak</filename>, and
 of this configuration file.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_CONFIG">
     <title>CONFIGURATION SETTING VERSIONING</title>
 
     <para>
@@ -288,7 +288,7 @@ configuration setting.  For example, this is correct:</para>
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_CREATE">
     <title>CONFIGURATION FILE CREATION</title>
 
     <para>
@@ -328,7 +328,7 @@ potentially replaced), what's left becomes the new
 
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_RESULT">
     <title>THE END RESULT</title>
 
     <para>
@@ -350,7 +350,7 @@ reason.</para>
   </refsect1>
 
 
-  <refsect1>
+  <refsect1 id="sysconftool_SETVERSION">
     <title>CONFIGURATION SETTING VERSION</title>
 
     <para>
@@ -429,7 +429,7 @@ the reader should consider whether to manually restore the configuration value
 from the old configuration.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_MISC">
     <title>MISCELLANEA</title>
 
     <para>
@@ -441,7 +441,7 @@ effect, reminding the reader to check the default in
 <filename>filename.dist</filename>.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftool_SEEALSO">
     <title>SEE ALSO</title>
 
     <para>

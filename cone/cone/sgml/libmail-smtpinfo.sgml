@@ -135,7 +135,7 @@ then a delivery status notification for
 "<replaceable>recipient</replaceable>@<replaceable>recipientdomain</replaceable>"
 will be sent to "<replaceable>sender</replaceable>-<replaceable>recipient</replaceable>=<replaceable>recipientdomain</replaceable>@<replaceable>senddomain</replaceable>" (with certain additional details).
 This option is currently implemented only by the
-<ulink url="http://www.courier-mta.org">Courier
+<ulink url="https://www.courier-mta.org">Courier
 mail server</ulink>.</para>
 	    </listitem>
 	  </varlistentry>
@@ -147,7 +147,7 @@ mail server</ulink>.</para>
 The message must be sent via TLS, and the recipient's server must present
 a certificate signed by a trusted, private, certificate authority.
 This option is currently implemented only by the
-<ulink url="http://www.courier-mta.org">Courier
+<ulink url="https://www.courier-mta.org">Courier
 mail server</ulink>.</para>
 	      <note>
 		<para>

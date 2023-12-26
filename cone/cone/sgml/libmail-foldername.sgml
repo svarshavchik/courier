@@ -24,7 +24,7 @@ This is, unfortunately, a design flaw in the IMAP protocol.</para>
 Maildir folders created by
 are compatible
 and can be read by the
-<ulink url="http://www.courier-mta.org">Courier-IMAP</ulink>
+<ulink url="https://www.courier-mta.org">Courier-IMAP</ulink>
 server.
 Names of maildir folders may contain any character, including
 the characters
@@ -61,4 +61,3 @@ However if mbox folders are exported
 via IMAP, folders whose name includes
 these characters may not be readable by some IMAP clients.</para>
       </note>
-

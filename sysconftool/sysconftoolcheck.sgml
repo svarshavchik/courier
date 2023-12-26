@@ -31,7 +31,7 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1>
+  <refsect1 id="sysconftoolcheck_DESCRIPTION">
     <title>DESCRIPTION</title>
 
     <para>
@@ -46,7 +46,7 @@ be used to flag some obvious errors and omissions.
 <command>sysconftoolcheck</command> abilities will increase, over time.</para>
   </refsect1>
 
-  <refsect1>
+  <refsect1 id="sysconftoolcheck_SEEALSO">
     <title>SEE ALSO</title>
 
     <para>

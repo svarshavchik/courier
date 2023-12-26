@@ -41,7 +41,7 @@ option.
 
 This indicates that you've read the instructions in the maildirmake
 manual page (see "Converting pre-unicode format maildirs" at
-http://www.courier-mta.org/maildirmake.html, or in the man page in
+https://www.courier-mta.org/maildirmake.html, or in the man page in
 this package) about updating from earlier versions; specifically the
 need to convert any existing maildirs to a Unicode naming scheme,
 and the need to update any other Courier packages together with
@@ -79,7 +79,7 @@ then
 	hash='#'
 	AC_MSG_WARN(=== Courier authentication library not found.)
 	AC_MSG_WARN(=== You need to download and install)
-	AC_MSG_WARN([=== http://www.courier-mta.org/download.php${hash}authlib first.])
+	AC_MSG_WARN([=== https://www.courier-mta.org/download.php${hash}authlib first.])
 	AC_MSG_WARN(=== If courier-authlib is installed in a non-default)
 	AC_MSG_WARN([=== directory, set the COURIERAUTHCONFIG environment])
 	AC_MSG_WARN(=== variable to the full path to the courierauthconfig)

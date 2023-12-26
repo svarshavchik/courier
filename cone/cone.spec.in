@@ -12,7 +12,7 @@ Summary: CONE mail reader
 Name: cone
 Version: @PACKAGE_VERSION@
 Release: 1%{?dist}%{cone_release}
-URL: http://www.courier-mta.org/cone
+URL: https://www.courier-mta.org/cone
 Source0: %{name}-%{version}.tar.bz2
 License: GPL
 Group: Applications/Internet

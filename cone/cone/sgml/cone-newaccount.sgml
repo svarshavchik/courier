@@ -257,7 +257,7 @@ following options, each one preceded with a slash:</para>
 	    <para>
 Use IMAP only, do not use SMAP.
 SMAP is an experimental protocol, currently implemented in the
-<ulink url="http://www.courier-mta.org">Courier mail server</ulink> that
+<ulink url="https://www.courier-mta.org">Courier mail server</ulink> that
 offers some additional bells and whistles over IMAP.
 A mail account on Courier is set up as a normal IMAP account; after connecting
 &app; would normally select and use SMAP automatically.

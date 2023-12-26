@@ -49,7 +49,7 @@
     work.</li>
     <li>Courier Unicode Library. Before installing this package, download and
     install <a onclick="" href=
-    "http://www.courier-mta.org/unicode/">http://www.courier-mta.org/unicode/</a>.</li>
+    "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.</li>
   </ul>
   <p>Courier-authlib uses Libtool to build shared libraries. Libtool must be
   installed, together with its <code>libltdl</code> library and its header
@@ -103,10 +103,10 @@
     authentication modules.</li>
     <li>The "courier-authlib-devel" package with development libraries and
       header files.</li>
-    <li>The "courier-authlib-config-<replaceable>username</replaceable>-<replaceable>groupname</replaceable>
+    <li>The "courier-authlib-config-<i>username</i>-<i>groupname</i>
       package. This is a metapackage that captures the user/group used by the
       authentication library
-      (<literal>daemon</literal>/<literal>daemon</literal>) by default.
+      (<tt>daemon</tt>/<tt>daemon</tt>) by default.
       The dependencies on the metapackage are set up in a way to prevent
       unitended updates to an incompatible newer version that's configured
       with different user and group names.
@@ -115,8 +115,8 @@
   </ul>
   <h4>Using non-default courier username and groupname</h4>
   <p>
-    Pass <quote>--define "mailuser courier"</quote> and
-    <quote>--define "mailgroup courier"</quote> options to
+    Pass <tt>--define "mailuser courier"</tt> and
+    <tt>--define "mailgroup courier"</tt> options to
     <command>rpmbuild</command> to build the library with a non-default
     user and group name.
   </p>

@@ -300,7 +300,7 @@ considered to be successfully delivered.</para>
 	of action gets selected by <application>Courier</application> mail
 	server's backscatter suppression settings, as described in the
 
-	<quote><ulink url="http://www.courier-mta.org/install.html#backscatter">
+	<quote><ulink url="https://www.courier-mta.org/install.html#backscatter">
 Backscatter Suppression</ulink></quote>
 	section of the installation instructions;
 	see

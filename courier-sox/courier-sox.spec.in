@@ -23,7 +23,7 @@ Version: @PACKAGE_VERSION@
 Release: 1%{?dist}%{?courier_release}
 License: GPL
 Group: System Environment/Libraries
-URL: http://www.courier-mta.org
+URL: https://www.courier-mta.org
 Source0: %{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: libtool

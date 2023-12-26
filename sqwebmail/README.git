@@ -14,11 +14,10 @@ not be needed).  Then, you will need to rebuild configure and Makefile.in
 by yourself.
 
 NOTE: You will also need to install the sysconftool utility.  Download
-sysconftool from http://www.courier-mta.org/sysconftool/.  This is a short
+sysconftool from https://www.courier-mta.org/sysconftool/.  This is a short
 autoconf macro.
 
 The autobloat script will hopefully take care of this for you.  Cross your
 fingers, and run 'sh autobloat' in the checked out top directory.  It will
 recursively run autoconf, automake, libtool, and sysconftool, in the current
 directory, and all subdirectories.
-

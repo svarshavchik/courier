@@ -34,7 +34,7 @@ Release: 1%{?dist}%{courier_release}
 License: GPL
 Group: Applications/Mail
 Source: http://download.sourceforge.net/courier/@PACKAGE@-@PACKAGE_VERSION@.tar.bz2
-Url: http://www.courier-mta.org/sqwebmail
+Url: https://www.courier-mta.org/sqwebmail
 BuildRoot: %{_tmppath}/sqwebmail-install
 Requires: /etc/cron.hourly expect
 

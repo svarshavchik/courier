@@ -95,51 +95,9 @@ if (x != myname)
       </xsl:element>
     </xsl:element>
 
-    <xsl:element name="table">
-      <xsl:attribute name="class">advert</xsl:attribute>
-      <xsl:element name="tbody">
-        <xsl:element name="tr">
-          <xsl:element name="td">
-            <xsl:attribute name="width">100%</xsl:attribute>
-            <xsl:text> </xsl:text>
-          </xsl:element>
-          <xsl:element name="td">
-	    <xsl:element name="script">
-	      <xsl:attribute name="async">async</xsl:attribute>
-	      <xsl:attribute name="src">//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js</xsl:attribute>
-	      <xsl:text>&#32;</xsl:text>
-	    </xsl:element>
-	    <xsl:element name="ins">
-	      <xsl:attribute name="class">adsbygoogle</xsl:attribute>
-	      <xsl:attribute name="style">display:inline-block;width:728px;height:90px</xsl:attribute>
-	      <xsl:attribute name="data-ad-client">ca-pub-3196826191648604</xsl:attribute>
-	      <xsl:attribute name="data-ad-slot">1265524507</xsl:attribute>
-		  <xsl:text>&#32;</xsl:text>
-	    </xsl:element>
-
-	    <xsl:element name="script">
-	      <xsl:text>(adsbygoogle = window.adsbygoogle || []).push({});</xsl:text>
-	    </xsl:element>
-          </xsl:element>
-        </xsl:element>
-      </xsl:element>
-    </xsl:element>
-
     <xsl:apply-templates select="node()"/>
 
   </xsl:copy>
-</xsl:template>
-
-<xsl:template match="xhtml:p[xhtml:a[starts-with(@id,'g-a-start')]]">
-
-   <xsl:comment> google_ad_section_start </xsl:comment>
-
-</xsl:template>
-
-<xsl:template match="xhtml:p[xhtml:a[starts-with(@id,'g-a-end')]]">
-
-   <xsl:comment> google_ad_section_end </xsl:comment>
-
 </xsl:template>
 
 <xsl:template match="@*|node()">

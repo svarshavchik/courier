@@ -3,31 +3,6 @@
 
     <title>&app;: COnsole Newsreader And Emailer</title>
 
-<!--
-    <informaltable pgwide='1' frame='none'>
-      <tgroup align='right' cols='1'>
-	<tbody>
-	  <row>
-	    <entry>
-<para>
-<ulink url="http://sourceforge.net/projects/courier/">
-<inlinemediaobject>
-	<imageobject>
-	  <imagedata width='88' depth='31' fileref="http://sourceforge.net/sflogo.php?group_id=5404&amp;amp;type=1&amp;amp;dummy=" format="PNG" />
-	</imageobject>
-	<textobject>
-	  <phrase>Sourceforge</phrase>
-	</textobject>
-      </inlinemediaobject>
-</ulink>
-</para>
-  </entry>
-  </row>
-  </tbody>
-  </tgroup>
-  </informaltable>
--->
-
     <section id="intro">
       <title>Introduction</title>
 
@@ -165,7 +140,7 @@ also handles access to passphrase-protected keys.</para>
 	  <listitem>
 	    <para>
 &app; shares a lot of its code base with the
-<ulink url="http://www.courier-mta.org">Courier mail server</ulink>,
+<ulink url="https://www.courier-mta.org">Courier mail server</ulink>,
 which is why they share the same web site together.</para>
 	  </listitem>
 
@@ -386,7 +361,7 @@ $ ./courier-debuild -us -uc]]></programlisting>
 	  <listitem>
 	    <para>
 Download the Courier Socks 5 proxy client library from <ulink
-url="http://www.courier-mta.org/download.php#sox">http://www.courier-mta.org/download.php#sox</ulink>
+url="https://www.courier-mta.org/download.php#sox">https://www.courier-mta.org/download.php#sox</ulink>
 and follow its installation instructions.</para>
 
 	    <para>
@@ -397,12 +372,12 @@ This step can be omitted if Socks 5 support is not required.
 	  <listitem>
 	    <para>
 Download and install the Courier-Unicode library from
-<ulink url="http://www.courier-mta.org/download.html#unicode">http://www.courier-mta.org/download.html#unicode</ulink> and install it.</para>
+<ulink url="https://www.courier-mta.org/download.html#unicode">https://www.courier-mta.org/download.html#unicode</ulink> and install it.</para>
 	  </listitem>
 	  <listitem>
 	    <para>
 Download the source code tarball from
-<ulink url="http://www.courier-mta.org/download.php#cone">http://www.courier-mta.org/download.php#cone</ulink> and unpack it.</para>
+<ulink url="https://www.courier-mta.org/download.php#cone">https://www.courier-mta.org/download.php#cone</ulink> and unpack it.</para>
 	  </listitem>
 
 	  <listitem>
@@ -612,7 +587,7 @@ Special upgrade instructions are given below.</para>
 	  </para>
 
 	  <para>
-	    Refer to <ulink url="http://www.courier-mta.org/maildirmake.html">http://www.courier-mta.org/maildirmake.html</ulink>
+	    Refer to <ulink url="https://www.courier-mta.org/maildirmake.html">https://www.courier-mta.org/maildirmake.html</ulink>
 	    for additional information; specifically
 	    the <quote>Converting pre-Unicode maildirs</quote> section.
 	    When updating &app; together with Courier, Courier-IMAP, or
@@ -650,7 +625,7 @@ requirements apply.
 Besides the usual prerequisites for building &app;, additional development
 software must be installed.
 See the <quote>Source code repository</quote> instructions at
-<ulink url="http://www.courier-mta.org/status.html">http://www.courier-mta.org/status.html</ulink>.</para>
+<ulink url="https://www.courier-mta.org/status.html">https://www.courier-mta.org/status.html</ulink>.</para>
       </section>
     </section>
 
@@ -750,7 +725,7 @@ The Courier Socks 5 proxy client API toolkit is required for Socks 5
 support.
 Other Socks 5 proxy client libraries may or may not work.
 Download the Courier Socks 5 proxy client library from <ulink
-url="http://www.courier-mta.org/download.php#sox">http://www.courier-mta.org/download.php#sox</ulink>
+url="https://www.courier-mta.org/download.php#sox">https://www.courier-mta.org/download.php#sox</ulink>
 and follow its installation instructions.</para>
 	</listitem>
       </itemizedlist>
@@ -761,7 +736,7 @@ but &app; should build on other POSIX platforms; and any problems are likely
 to be minor, and trivial to resolve.
 A large portion of
 &app;'s code base comes from
-<ulink url="http://www.courier-mta.org">Courier</ulink>, which builds on
+<ulink url="https://www.courier-mta.org">Courier</ulink>, which builds on
 many platforms.</para>
 
       <note>

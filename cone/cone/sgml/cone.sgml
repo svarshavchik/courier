@@ -20,7 +20,7 @@ Press <keycap>N</keycap> and
 It might be more convenient to
 browse the full HTML documentation using your favorite web browser,
 at
-<ulink url="http://www.courier-mta.org/cone/cone00index.html">http://www.courier-mta.org/cone/cone00index.html</ulink>.
+<ulink url="https://www.courier-mta.org/cone/cone00index.html">https://www.courier-mta.org/cone/cone00index.html</ulink>.
 When &app; starts for the first time, it automatically creates a fake
 mail account called <quote>Online Tutorial</quote>.
 This fake mail account contains a stripped-down HTML version of
@@ -71,7 +71,7 @@ Experimental SMAP mail server accounts.</para>
 &app; contains an experimental implementation of a new remote mail access
 protocol, <quote>SMAP</quote>.
 At this time, SMAP is implemented by the
-<ulink url="http://www.courier-mta.org">Courier-IMAP</ulink> server.
+<ulink url="https://www.courier-mta.org">Courier-IMAP</ulink> server.
 SMAP offers several improvements over traditional IMAP-based mail accounts,
 namely:</para>
 
