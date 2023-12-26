@@ -122,7 +122,6 @@ BuildRequires:    glibc-common
 BuildRequires:    glibc-langpack-en
 %endif
 BuildRequires:    courier-authlib-devel
-BuildRequires:    courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 BuildRequires:    rpm >= 4.0.2
 BuildRequires:    coreutils
 BuildRequires:    binutils
@@ -153,12 +152,6 @@ BuildRequires:    courier-unicode-devel
 BuildRequires:	  perl(ExtUtils::Embed)
 BuildRequires:	  /etc/mime.types
 
-%define need_perl_generators %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
-
-%if %need_perl_generators
-BuildRequires: perl-generators
-%endif
-
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 
 %if %use_openssl
@@ -185,13 +178,12 @@ BuildRequires:      pcre2-devel
 BuildRequires:      %{__make}
 Obsoletes:	courier-smtpauth < @PACKAGE_VERSION@
 
-%define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
-
-%if %is_fedora
+%if %{?fedora}
 BuildRequires: /usr/lib/locale/locale-archive
+BuildRequires: perl-generators
 %endif
 
-Requires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
+Requires: courier-authlib-config-%(eval `courierauthconfig --configfiles`; echo "$mailuser-$mailgroup")
 
 %if ! %alternatives
 %package sendmail-wrapper

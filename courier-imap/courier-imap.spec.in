@@ -51,7 +51,7 @@ BuildRequires: procps-ng
 BuildRequires: gdbm-devel
 BuildRequires: coreutils perl
 BuildRequires: courier-authlib-devel
-BuildRequires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
+Requires: courier-authlib-config-%(eval `courierauthconfig --configfiles`; echo "$mailuser-$mailgroup")
 BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: %{__make}
@@ -66,9 +66,7 @@ BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
 Requires:	  /usr/bin/certtool
 %endif
 
-%define is_fedora %(if rpm -q fedora-release >/dev/null 2>/dev/null; then echo "1"; exit 0; fi; echo "0"; exit 1)
-
-%if %is_fedora
+%if %{?fedora}
 BuildRequires: perl-generators
 BuildRequires: /usr/lib/locale/locale-archive
 %endif
@@ -98,8 +96,6 @@ Obsoletes: %{name}-pgsql < 99.99
 %define	_mandir		/usr/share/man
 %define initlndir	/usr/sbin
 %endif
-
-Requires: courier-authlib-config-%(courierauthconfig --configfiles >authconfig; . ./authconfig; echo "$mailuser-$mailgroup")
 
 %description
 Courier-IMAP is an IMAP server for Maildir mailboxes.  This package contains
