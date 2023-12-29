@@ -74,9 +74,9 @@ BuildRequires: hunspell
 BuildRequires: %{__gzip}
 BuildRequires: %{__make}
 
-%if %{?fedora}
+%if 0%{?fedora}
 BuildRequires: perl-generators
-BuildRequires: /usr/lib/locale/locale-archive
+BuildRequires: /usr/lib/locale/en_US.utf8
 %endif
 
 %description

@@ -178,8 +178,8 @@ BuildRequires:      pcre2-devel
 BuildRequires:      %{__make}
 Obsoletes:	courier-smtpauth < @PACKAGE_VERSION@
 
-%if %{?fedora}
-BuildRequires: /usr/lib/locale/locale-archive
+%if 0%{?fedora}
+BuildRequires: /usr/lib/locale/en_US.utf8
 BuildRequires: perl-generators
 %endif
 

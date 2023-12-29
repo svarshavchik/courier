@@ -6,7 +6,8 @@ apt-get update
 
 apt install -y gnupg pbuilder ubuntu-dev-tools apt-file debhelper systemd
 apt install -y \
-	hunspell 	      		\
+	hunspell	      	\
+	libhunspell-dev       	\
 	expect			\
 	ghostscript		\
 	gnutls-bin		\

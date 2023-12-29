@@ -6,6 +6,11 @@ export CC=gcc%DEBGCC%
 %:
 	dh $@
 
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		--with-mailuser=%MAILUSER% \
+		--with-mailgroup=%MAILGROUP%
+
 override_dh_auto_install:
 	dh_auto_install --
 	CONFIG_FILES=debian/auto_install.sh ./config.status

@@ -9,6 +9,12 @@
 set -e
 shopt -s extglob
 
+mailuser=${mailuser-@mailuser@}
+mailgroup=${mailgroup-@mailgroup@}
+
+getent group ${mailgroup} >/dev/null || groupadd -r ${mailgroup}
+getent passwd ${mailuser} >/dev/null || useradd -r -g ${mailgroup} -d @exec_prefix@/lib/courier -s /bin/nologin -c "Courier Mail Server" ${mailuser}
+
 f=`cd .. && ls @PACKAGE@-@VERSION@.tar* | sed -n 1p`
 
 rm -rf deb
@@ -39,6 +45,8 @@ for f in debian/rules debian/control debian/auto_install.sh.in
 do
 	sed "
 s/%SOVERSION%/@SOVERSION@/g
+s/%MAILUSER%/$mailuser/g
+s/%MAILGROUP%/$mailgroup/g
 s~%DEBGCC%~$DEBGCC~g
 " <packaging/$f >$f.tmp
 mv $f.tmp $f

@@ -10,6 +10,7 @@ Build-Depends:
 	g++%DEBGCC%,
 	gpg ( >= 2),
 	hunspell,
+	libhunspell-dev,
 	libgdbm-dev,
 	libldap2-dev,
 	libpcre2-dev,
@@ -29,6 +30,7 @@ Conflicts: courier-webmail
 Depends: ${shlibs:Depends},
 	 hunspell,
 	 ${misc:Depends}
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
 Recommends: sqwebmail-apache2 (= ${binary:Version})
 Description: Maildir Webmail CGI client
  SqWebmail CGI for Maildir mailboxes.

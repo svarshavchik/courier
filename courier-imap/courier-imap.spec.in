@@ -66,9 +66,9 @@ BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
 Requires:	  /usr/bin/certtool
 %endif
 
-%if %{?fedora}
+%if 0%{?fedora}
 BuildRequires: perl-generators
-BuildRequires: /usr/lib/locale/locale-archive
+BuildRequires: /usr/lib/locale/en_US.utf8
 %endif
 
 Obsoletes: %{name}-ldap < 99.99

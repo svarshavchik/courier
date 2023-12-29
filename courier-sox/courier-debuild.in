@@ -9,6 +9,7 @@
 set -e
 shopt -s extglob
 
+eval `courierauthconfig --configfiles`
 f=`cd .. && ls @PACKAGE@-@VERSION@.tar* | sed -n 1p`
 
 rm -rf deb
@@ -40,6 +41,8 @@ do
 	sed "
 s/%SOVERSION%/@SOVERSION@/g
 s~%DEBGCC%~$DEBGCC~g
+s/%MAILUSER%/$mailuser/g
+s/%MAILGROUP%/$mailgroup/g
 " <packaging/$f >$f.tmp
 mv $f.tmp $f
 done

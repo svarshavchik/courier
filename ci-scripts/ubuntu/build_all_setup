@@ -2,5 +2,8 @@ set -evx
 
 sh ci-scripts/ubuntu/build_shared_setup
 
+dpkg -i libcourier-auth-config*.deb
+rm -f libcourier-auth-config*.deb
+
 dpkg -i *.deb
 rm -f *.deb

@@ -25,6 +25,7 @@ Architecture: any
 Conflicts: courier-imapd, courier-pop3d
 Depends: ${shlibs:Depends},
 	 ${misc:Depends}
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
 Description: Maildir IMAP Server
  Courier-IMAP is an IMAP server for Maildir mailboxes.  This package contains
  the standalone version of the IMAP server that's included in the Courier

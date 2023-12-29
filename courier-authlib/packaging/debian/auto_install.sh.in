@@ -2,6 +2,30 @@
 
 set -ex
 
+cat >debian/libcourier-auth-config-%MAILUSER%-%MAILGROUP%.preinst <<EOF
+#! @SHELL@
+
+set -e
+getent group %MAILGROUP% >/dev/null || groupadd -r %MAILGROUP%
+getent passwd %MAILUSER% >/dev/null || useradd -r -g %MAILGROUP% -d @exec_prefix@/lib/courier -s /bin/nologin -c "Courier Mail Server" %MAILUSER%
+EOF
+chmod +x debian/libcourier-auth-config-%MAILUSER%-%MAILGROUP%.preinst
+
+mkdir -p debian/libcourier-auth-config-%MAILUSER%-%MAILGROUP%@sysconfdir@/authlib
+cat >debian/libcourier-auth-config-%MAILUSER%-%MAILGROUP%@sysconfdir@/authlib/config <<EOF
+# courier-authlib configuration: %MAILUSER%:%MAILGROUP%
+#
+# Please do not remove this file.
+#
+# A dependency error when update courier-authlib that references this file
+# means that an attempt was made to upgrade to an incomaptible newver version
+# that was configured to use a different mail user and group than the previous
+# version.
+EOF
+chown %MAILUSER%:%MAILGROUP% debian/libcourier-auth-config-%MAILUSER%-%MAILGROUP%@sysconfdir@/authlib/config
+chmod 444 debian/libcourier-auth-config-%MAILUSER%-%MAILGROUP%@sysconfdir@/authlib/config
+
+
 cat >debian/libcourier-auth.postinst <<EOF
 #! @SHELL@
 

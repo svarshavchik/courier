@@ -99,7 +99,7 @@ user "%{mailuser}" and system group "%{mailgroup}".
 
 This config sub-package ensures that this user/group exists,
 and prevents unintentional courier-authlib updates to versions
-that was built with a different user/group configuration.
+that were built with a different user/group configuration.
 
 %package devel
 Summary:    Development libraries for the Courier authentication library

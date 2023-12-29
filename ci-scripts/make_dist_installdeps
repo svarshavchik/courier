@@ -20,7 +20,7 @@ dnf install -y --setopt=install_weak_deps=false \
     gnupg2 \
     groff \
     httpd \
-    hunspell \
+    hunspell-devel \
     libidn2-devel \
     libtool \
     libtool-ltdl-devel \

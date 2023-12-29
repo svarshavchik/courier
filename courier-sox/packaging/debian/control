@@ -29,6 +29,7 @@ Description: Courier Socks 5 client library.
 Package: libcourier-sox%SOVERSION%
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
 Description: Courier authentication library (client library)
  This package contains shared libraries used by authentication clients.
 

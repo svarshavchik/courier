@@ -21,5 +21,11 @@ rm -f deb/*userdb*
 
 rm -f deb/*courier-sox-server*
 
+if test -f deb/libcourier-auth-config*.deb
+then
+  dpkg -i deb/libcourier-auth-config*.deb
+  mv deb/libcourier-auth-config*.deb ../../packages
+fi
+
 dpkg -i deb/*.deb
 mv deb/*.deb ../../packages

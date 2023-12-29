@@ -15,7 +15,6 @@ Build-Depends:
 	libcourier-auth-dev,
 	libcourier-unicode-dev,
 	sysconftool,
-	mime-support,
 	wget,
 	gpg ( >= 2),
 	expect,
@@ -28,6 +27,7 @@ Build-Depends:
 	groff-base,
 	ghostscript,
 	hunspell,
+	libhunspell-dev,
 	mgetty-fax,
 	netpbm,
 	libpcre2-dev,
@@ -41,6 +41,7 @@ Depends: ${shlibs:Depends},
 	 perl:any,
 	 libnet-cidr-perl,
 	 gnutls-bin
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
 Provides: mail-transport-agent
 Conflicts: mail-transport-agent, maildrop
 Replaces: mail-transport-agent

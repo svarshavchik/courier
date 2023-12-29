@@ -21,7 +21,7 @@ dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     gnupg2 \
     groff \
     httpd \
-    hunspell \
+    hunspell-devel \
     libidn2-devel \
     libtool \
     libtool-ltdl-devel \

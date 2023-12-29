@@ -1,10 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>INSTALL</title>
-  <!-- Copyright 2004-2022 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2024 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
 </head>
 <body>
@@ -12,15 +11,29 @@
   <p>In this document (see INSTALL.html for the formatted version of this
   INSTALL file):</p>
   <ul>
-    <li><a onclick="" href="#Requirements">Requirements</a></li>
-    <li><a onclick="" href="#Installation">Installation overview</a></li>
-    <li><a onclick="" href="#deps">Dependencies</a></li>
-    <li><a onclick="" href="#What">What gets installed</a></li>
-    <li><a onclick="" href="#manpage">For more information</a></li>
-    <li><a onclick="" href="#Starting">Starting and stopping the authentication
-    daemon</a></li>
-    <li><a onclick="" href="#Guidelines">Guidelines for using other package
-    managers</a></li>
+    <li>
+      <a onclick="" href="#Requirements">Requirements</a>
+    </li>
+    <li>
+      <a onclick="" href="#Installation">Installation overview</a>
+    </li>
+    <li>
+      <a onclick="" href="#deps">Dependencies</a>
+    </li>
+    <li>
+      <a onclick="" href="#What">What gets installed</a>
+    </li>
+    <li>
+      <a onclick="" href="#manpage">For more information</a>
+    </li>
+    <li>
+      <a onclick="" href="#Starting">Starting and stopping the authentication
+      daemon</a>
+    </li>
+    <li>
+      <a onclick="" href="#Guidelines">Guidelines for using other package
+      managers</a>
+    </li>
   </ul>
   <h2><a name="Requirements" id="Requirements">Requirements</a></h2>
   <p>See the README file for a general description of this library. The
@@ -28,17 +41,20 @@
   authentication library:</p>
   <ul>
     <li>The current version of gcc (<a onclick="" href=
-    "http://www.gnu.org/software/gcc/">http://www.gnu.org/software/gcc/</a>)</li>
+    "http://www.gnu.org/software/gcc/">http://www.gnu.org/software/gcc/</a>)
+    </li>
     <li>The GNU linker (<a onclick="" href=
-    "http://www.gnu.org/software/binutils/">http://www.gnu.org/software/binutils/</a>)</li>
+    "http://www.gnu.org/software/binutils/">http://www.gnu.org/software/binutils/</a>)
+    </li>
     <li>Libtool (<a onclick="" href=
     "http://www.gnu.org/software/libtool/">http://www.gnu.org/software/libtool/</a>).
     Additional, libtool's <code>libltdl</code> library, and its development
     files, must be installed. On some platforms this is a separate package. On
-    Fedora, this is the <code>libtool-ltdl-devel</code> package, for
-    example.</li>
+    Fedora, this is the <code>libtool-ltdl-devel</code> package, for example.
+    </li>
     <li>GNU make (<a onclick="" href=
-    "http://www.gnu.org/software/make/">http://www.gnu.org/software/make/</a>)</li>
+    "http://www.gnu.org/software/make/">http://www.gnu.org/software/make/</a>)
+    </li>
     <li>The "<code>expect</code>" command. <code>expect</code> is usually
     included with most systems. <code>Expect</code> can be downloaded from
     <code>http://expect.nist.gov/</code> if it's not installed on your system.
@@ -49,7 +65,8 @@
     work.</li>
     <li>Courier Unicode Library. Before installing this package, download and
     install <a onclick="" href=
-    "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.</li>
+    "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.
+    </li>
   </ul>
   <p>Courier-authlib uses Libtool to build shared libraries. Libtool must be
   installed, together with its <code>libltdl</code> library and its header
@@ -78,11 +95,13 @@
   packaging exists in order to have a convenient way of updating after a
   release without waiting for the distributions' packages to get built.</p>
   <p><b>NOTE:</b> If a distribution package is already installed it should be
-  removed completely before switching to the upstream version (<tt>dnf
-  remove</tt> or <tt>apt purge</tt>). Preserve any existing configuration
-  files, beforehand, in order to restore it after switching packages. This
-  applies to all Courier packages. A switch to this courier-authlib package
-  requires switching to the courier-unicode package too.</p>
+  removed completely before switching to the upstream version (<span style=
+  "font-family: monospace">dnf remove</span> or <span style=
+  "font-family: monospace">apt purge</span>). Preserve any existing
+  configuration files, beforehand, in order to restore it after switching
+  packages. This applies to all Courier packages. A switch to this
+  courier-authlib package requires switching to the courier-unicode package
+  too.</p>
   <p><b>NOTE:</b> These packages use their own, generic, installation layout
   that may deviate slightly from the package installation conventions preferred
   by the distributions.</p>
@@ -102,24 +121,22 @@
     <li>The "courier-authlib" package with the commands and standard
     authentication modules.</li>
     <li>The "courier-authlib-devel" package with development libraries and
-      header files.</li>
-    <li>The "courier-authlib-config-<i>username</i>-<i>groupname</i>
-      package. This is a metapackage that captures the user/group used by the
-      authentication library
-      (<tt>daemon</tt>/<tt>daemon</tt>) by default.
-      The dependencies on the metapackage are set up in a way to prevent
-      unitended updates to an incompatible newer version that's configured
-      with different user and group names.
-    </li>
+    header files.</li>
+    <li>The "courier-authlib-config-<i>username</i>-<i>groupname</i> package.
+    This is a metapackage that captures the user/group used by the
+    authentication library (<span style=
+    "font-family: monospace">daemon</span>/<span style=
+    "font-family: monospace">daemon</span>) by default. The dependencies on the
+    metapackage are set up in a way to prevent unitended updates to an
+    incompatible newer version that's configured with different user and group
+    names.</li>
     <li>Other "courier-authlib-<i>name</i>" authentication modules.</li>
   </ul>
   <h4>Using non-default courier username and groupname</h4>
-  <p>
-    Pass <tt>--define "mailuser courier"</tt> and
-    <tt>--define "mailgroup courier"</tt> options to
-    <command>rpmbuild</command> to build the library with a non-default
-    user and group name.
-  </p>
+  <p>Pass <span style="font-family: monospace">--define "mailuser
+  courier"</span> and <span style="font-family: monospace">--define "mailgroup
+  courier"</span> options to <command />rpmbuild to build the library with a
+  non-default user and group name.</p>
   <h3>deb</h3>
   <p>Run "apt install devscripts debhelper", if they're not installed already.
   Create an empty directory and copy/move the tarball into it:</p>
@@ -134,11 +151,12 @@ $ cd courier-authlib-VERSION</pre>
   <p>Run the <code>courier-debuild</code> script, which is a wrapper for
   <code>debuild</code>, and forwards its parameters to it:</p>
   <pre>$ ./courier-debuild -us -uc</pre>
-  <p>NOTE: the above steps must be followed strictly. The
-  <tt>courier-debuild</tt> script expects the distributed tarball in its parent
-  directory.</p>
-  <p>This eventually produces a deb subdirectory with <tt>.deb</tt> packages
-  that can be installed with "dpkg -i":</p>
+  <p>NOTE: the above steps must be followed strictly. The <span style=
+  "font-family: monospace">courier-debuild</span> script expects the
+  distributed tarball in its parent directory.</p>
+  <p>This eventually produces a deb subdirectory with <span style=
+  "font-family: monospace">.deb</span> packages that can be installed with
+  "dpkg -i":</p>
   <ul>
     <li>The "libcourier-auth" package with the commands and standard
     authentication modules; and "libcourier-auth-<i>&lt;N&gt;</i>" with
@@ -146,30 +164,46 @@ $ cd courier-authlib-VERSION</pre>
     <li>The "libcourier-auth-dev" package with development libraries and header
     files.</li>
     <li>Other "libcourier-auth-<i>name</i>" authentication modules.</li>
+    <li>The "<span style=
+    "font-family: monospace">libcourier-auth-config-<i>mailuser</i>-<i>mailgroup</i></span>"
+    package. This package sets up the reserved user and group id the library
+    and the rest of the Courier packages use. When the built <span style=
+    "font-family: monospace">.deb</span> packages get manually installed
+    directly with <span style="font-family: monospace">dpkg</span> this
+    "config" package must get installed first, by itself, followed by the rest
+    of the packages. Higher level tools, like <span style=
+    "font-family: monospace">apt</span> should figure this out by
+    themselves.</li>
   </ul>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <p>Setting the <code>DEBGCC</code> environment variable selects a non-default
   gcc version.</p>
   <p>NOTE: all Courier packages should be built using the same version of
   gcc.</p>
+  <h4>Using non-default courier username and groupname</h4>
+  <pre>$ mailuser=courier mailgroup=courier ./courier-debuild -us -uc</pre>
+  <p>Setting the <code>mailuser</code> and <code>mailgroup</code> environment
+  builds the library with a non-default user and group name.</p>
   <h3>Maintainer Mode (see README in the git repository to set up)</h3>
-  <p><tt>make rpm</tt> or <tt>make deb</tt>, as appropriate, will:</p>
+  <p><span style="font-family: monospace">make rpm</span> or <span style=
+  "font-family: monospace">make deb</span>, as appropriate, will:</p>
   <ol>
     <li>
       <p>Increment an internal release number.</p>
     </li>
     <li>
-      <p>Run <tt>make dist</tt>.</p>
+      <p>Run <span style="font-family: monospace">make dist</span>.</p>
     </li>
     <li>
       <p>Proceed and build a new release, creating the native packages in the
       rpm or deb subdirectory.</p>
     </li>
     <li>
-      <p>Execute either <tt>$HOME/bin/rpmrepos.sh</tt> or
-      <tt>$HOME/bin/debrepos.sh</tt>. This can be a script that does nothing,
-      or it's intended to be the maintainer's script that pushes out the
-      packages to a repository.</p>
+      <p>Execute either <span style=
+      "font-family: monospace">$HOME/bin/rpmrepos.sh</span> or <span style=
+      "font-family: monospace">$HOME/bin/debrepos.sh</span>. This can be a
+      script that does nothing, or it's intended to be the maintainer's script
+      that pushes out the packages to a repository.</p>
     </li>
   </ol>
   <h3>Manual installation</h3>

@@ -1,3 +1,7 @@
+2023-12-29  Sam Varshavchik  <mrsam@ripper>
+
+	* Improve 'make check' tolerance.
+
 3.1.6
 
 2023-07-12  Sam Varshavchik  <mrsam@courier-mta.com>
