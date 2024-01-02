@@ -11,3 +11,13 @@ mv ../*.tar.bz2 .
 tar xf *
 cd */.
 ./courier-debuild -us -uc
+ls -al deb
+eval `/usr/bin/dpkg-architecture`
+cp deb/*.deb /var/local/packages/pool
+(
+   cd /var/local/packages
+   dpkg-scanpackages pool >dists/main/main/binary-$DEB_TARGET_ARCH/Packages
+)
+
+apt update
+apt install `ls *.deb | sed 's/_.*//'`
