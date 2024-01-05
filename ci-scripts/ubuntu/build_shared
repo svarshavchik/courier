@@ -21,11 +21,14 @@ rm -f deb/*userdb*
 
 rm -f deb/*courier-sox-server*
 
-if test -f deb/libcourier-auth-config*.deb
-then
-  dpkg -i deb/libcourier-auth-config*.deb
-  mv deb/libcourier-auth-config*.deb ../../packages
-fi
+eval `/usr/bin/dpkg-architecture`
+cp deb/*.deb /var/local/packages/pool
+(
+   cd /var/local/packages
+   dpkg-scanpackages pool >dists/main/main/binary-$DEB_TARGET_ARCH/Packages
+)
 
-dpkg -i deb/*.deb
+apt update
+apt install `cd deb; ls *.deb | sed 's/_.*//'`
+
 mv deb/*.deb ../../packages

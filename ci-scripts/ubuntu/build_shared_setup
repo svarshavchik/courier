@@ -37,6 +37,16 @@ apt install -y \
 	pkg-config		\
 	wget
 
+echo 'deb [trusted=yes] file:///var/local/packages main main' >/etc/apt/sources.list.new
+cat /etc/apt/sources.list >>/etc/apt/sources.list.new
+mv /etc/apt/sources.list.new /etc/apt/sources.list
+
+eval `/usr/bin/dpkg-architecture`
+mkdir -p /var/local/packages/pool
+mkdir -p /var/local/packages/dists/main/main/binary-$DEB_TARGET_ARCH
+cd /var/local/packages
+dpkg-scanpackages pool >dists/main/main/binary-$DEB_TARGET_ARCH/Packages
+
 locale-gen en_US.UTF-8
 
 mkdir -p $HOME/bin
