@@ -46,6 +46,7 @@ Description: Courier authentication library (client library)
 Package: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
 Architecture: any
 Provides: libcourier-auth-uidgid
+Depends: ${misc:Depends},
 Description: Courier authentication library build configuration
  This libcourier-auth package was configured to use system
  user "%MAILUSER%" and system group "%MAILGROUP%".

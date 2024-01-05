@@ -8,7 +8,7 @@ AC_INIT([courier-authlib],[0.72.0.20231229],[courier-users@lists.sourceforge.net
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([tar-pax])
 AC_CONFIG_HEADERS([courier_auth_config.h])
 >confdefs.h  # Kill PACKAGE_ macros
 

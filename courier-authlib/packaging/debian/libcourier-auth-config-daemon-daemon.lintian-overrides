@@ -1,0 +1,8 @@
+#
+# Necessary evil
+#
+package-has-long-file-name libcourier-auth-config-daemon-daemon*
+#
+# Internal file used for version checking
+#
+non-standard-file-perm etc/authlib/config 0444 != 0644

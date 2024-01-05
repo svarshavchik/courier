@@ -323,6 +323,7 @@ EXTRA_DIST += \
 	packaging/debian/changelog.in \
 	packaging/debian/control \
 	packaging/debian/copyright \
+	packaging/debian/libcourier-auth-config-daemon-daemon.lintian-overrides \
 	packaging/debian/libcourier-auth-dev.lintian-overrides \
 	packaging/debian/libcourier-auth-ldap.lintian-overrides \
 	packaging/debian/libcourier-auth-mysql.lintian-overrides \
