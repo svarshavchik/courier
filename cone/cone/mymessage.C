@@ -786,7 +786,7 @@ bool myMessage::getDefaultHeaders(const mail::folder *folder,
 			size_t p=n.find(',');
 
 			if (p != std::string::npos)
-				n=n.substr(0, std::string::npos);
+				n=n.substr(0, p);
 
 			mail::emailAddress addr;
 

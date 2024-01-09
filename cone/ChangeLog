@@ -1,3 +1,8 @@
+2024-01-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/mymessage.C (myMessage::getDefaultHeaders): Fix full handling
+	of gecos field.
+
 1.13
 
 2023-11-17  Sam Varshavchik  <mrsam@courier-mta.com>
