@@ -132,7 +132,7 @@ int	nl=strlen(n);
 
 	while (u && *u)
 	{
-		if (memcmp(u, n, nl) == 0 &&
+		if (strncmp(u, n, nl) == 0 &&
 			(u[nl] == 0 || u[nl] == '=' || u[nl] == '|'))
 		{
 			u += nl;

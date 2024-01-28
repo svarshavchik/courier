@@ -1,3 +1,9 @@
+0.72.1
+
+2024-01-28  Hanno Böck <hanno@gentoo.org>
+
+	* Use strncmp instead of memcmp.
+
 2023-12-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Create a courier-authlib-config rpm subpackage to prevent

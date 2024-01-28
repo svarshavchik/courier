@@ -4,7 +4,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier-authlib],[0.72.0.20231229],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.72.1],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
