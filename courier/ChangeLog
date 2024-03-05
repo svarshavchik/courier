@@ -1,3 +1,10 @@
+2024-03-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/libesmtp.c: fix missing logging in case
+	of a broken connection.
+
+	* sqwebmail: Fix rendering of mailformed URLs in plain text mail.
+
 2023-12-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Update rpm spec to match updated courier-authlib packaging.

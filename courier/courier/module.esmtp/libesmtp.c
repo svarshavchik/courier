@@ -1375,6 +1375,9 @@ static int hello3(struct esmtp_info *info,
 	if (rc == -1)
 		esmtp_quit(info, arg);
 
+	if (rc > 0)
+		connection_closed(info, arg);	/* Make sure to log it */
+
 	if ((*info->lookup_broken_starttls)(info,
 					    info->sockfdaddrname, arg))
 		info->hasstarttls=0;
