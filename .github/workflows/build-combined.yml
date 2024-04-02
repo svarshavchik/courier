@@ -311,7 +311,8 @@ jobs:
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
-           # - ["archlinux:latest", "arch",      "arch"]
+           - ["debian:12",        "ubuntu",    "debian-12"]
+           - ["archlinux:latest", "arch",      "arch"]
 
   # Build the main packages
   #
@@ -356,7 +357,8 @@ jobs:
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
-           # - ["archlinux:latest", "arch",      "arch"]
+           - ["debian:12",        "ubuntu",    "debian-12"]
+           - ["archlinux:latest", "arch",      "arch"]
         project:
           - cone
           - courier-analog

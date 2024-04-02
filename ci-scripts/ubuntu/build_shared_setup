@@ -38,6 +38,7 @@ apt install -y \
 	wget
 
 echo 'deb [trusted=yes] file:///var/local/packages main main' >/etc/apt/sources.list.new
+>>/etc/apt/sources.list
 cat /etc/apt/sources.list >>/etc/apt/sources.list.new
 mv /etc/apt/sources.list.new /etc/apt/sources.list
 
@@ -47,7 +48,8 @@ mkdir -p /var/local/packages/dists/main/main/binary-$DEB_TARGET_ARCH
 cd /var/local/packages
 dpkg-scanpackages pool >dists/main/main/binary-$DEB_TARGET_ARCH/Packages
 
-locale-gen en_US.UTF-8
+echo 'en_US.UTF-8 UTF-8' >>/etc/locale.gen
+locale-gen
 
 mkdir -p $HOME/bin
 echo '#! /bin/sh' >$HOME/bin/debrepos.sh
