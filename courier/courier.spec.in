@@ -54,8 +54,6 @@
 %if %using_systemd
 
 # systemd-rpm-macros
-BuildRequires: /usr/lib/rpm/macros.d/macros.systemd
-
 %define STOP_COURIER \
         if /usr/bin/systemctl --quiet is-active courier \
 	then \
@@ -98,7 +96,7 @@ Requires(pre):      systemd
 Requires(post):     systemd
 Requires(postun):   systemd
 Requires:           systemd
-BuildRequires:	    /usr/lib/rpm/macros.d/macros.systemd
+BuildRequires:	    systemd-rpm-macros
 
 %define initscript_courier %{nil}
 %else
@@ -131,7 +129,7 @@ BuildRequires:    perl
 BuildRequires:    make
 BuildRequires:    procps-ng
 BuildRequires:    wget
-BuildRequires:    %{__gzip}
+BuildRequires:    gzip
 BuildRequires:    hunspell
 %{?_with_gpg2:  %define with_gpg2 1}
 %{!?_with_gpg2: %define with_gpg2 0}
@@ -150,7 +148,7 @@ BuildRequires:    pam-devel
 BuildRequires:	  libidn2-devel
 BuildRequires:    courier-unicode-devel
 BuildRequires:	  perl(ExtUtils::Embed)
-BuildRequires:	  /etc/mime.types
+BuildRequires:	  mailcap
 
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 
@@ -160,7 +158,7 @@ BuildRequires:      openssl-devel
 BuildRequires:      openssl-perl
 %else
 BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
-Requires:	  /usr/bin/certtool
+Requires:	    gnutls-utils
 %endif
 
 %if %with_fax
@@ -175,11 +173,11 @@ BuildRequires:      mgetty-sendfax
 BuildRequires:      netpbm-progs
 %endif
 BuildRequires:      pcre2-devel
-BuildRequires:      %{__make}
+BuildRequires:      make
 Obsoletes:	courier-smtpauth < @PACKAGE_VERSION@
 
 %if 0%{?fedora}
-BuildRequires: /usr/lib/locale/en_US.utf8
+BuildRequires: glibc-langpack-en
 BuildRequires: perl-generators
 %endif
 
@@ -237,7 +235,7 @@ Group: Applications/Mail
 Requires: %{apache_documentroot} /etc/cron.hourly
 Requires: courier = %{version}-%{release}
 Requires: hunspell
-BuildRequires:    %{__gzip}
+BuildRequires:    gzip
 %if %with_gpg2
 Requires: gnupg2
 %define gpg_option --with-gpg2

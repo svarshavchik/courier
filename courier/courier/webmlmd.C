@@ -173,6 +173,7 @@ int main(int argc, char **argv)
 
 		std::vector<char *> new_argv;
 
+		new_argv.reserve(argc+2);
 		new_argv.push_back(&shscript_v[0]);
 
 		new_argv.insert(new_argv.end(), argv, argv+argc);

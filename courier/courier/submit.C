@@ -2384,8 +2384,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 
 	if (checkfreespace(0))
 	{
-		errmsg="431 Mail system full.";
-		return (errmsg);
+		return "431 Mail system full.";
 	}
 
 	{
@@ -2547,8 +2546,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 			*/
 			if (my_rcptinfo->whitelisted_only)
 			{
-				errmsg=you_are_not_whitelisted;
-				return (errmsg);
+				return you_are_not_whitelisted;
 			}
 			my_rcptinfo->nonwhitelisted_only=1;
 		}
@@ -2559,8 +2557,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 			*/
 			if (my_rcptinfo->nonwhitelisted_only)
 			{
-				errmsg=you_are_whitelisted;
-				return (errmsg);
+				return you_are_whitelisted;
 			}
 			my_rcptinfo->whitelisted_only=1;
 		}

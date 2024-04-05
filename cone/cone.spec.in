@@ -19,7 +19,7 @@ Group: Applications/Internet
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 Requires: hunspell
-BuildRequires: hunspell libxml2-devel
+BuildRequires: hunspell-devel libxml2-devel
 BuildRequires: zlib-devel perl
 BuildRequires: libstdc++-devel gcc-c++
 BuildRequires: openldap-devel

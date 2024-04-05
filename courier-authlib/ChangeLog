@@ -1,3 +1,9 @@
+0.72.2
+
+2024-04-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-authlib.spec.in: Fedora 40 fixes.
+
 0.72.1
 
 2024-01-28  Hanno Böck <hanno@gentoo.org>

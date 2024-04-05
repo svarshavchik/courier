@@ -1,3 +1,14 @@
+1.3.6
+
+2024-04-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix spurious gcc 14 warnings
+
+	* courier.spec.in: Fedora 40 fixes
+
+	* courier/courierd.dist.in.git: add a stub CUSTOM section in the end
+	for any custom configuration settings.
+
 2024-03-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/module.esmtp/libesmtp.c: fix missing logging in case

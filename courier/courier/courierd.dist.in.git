@@ -422,3 +422,7 @@ TLS_TRUSTCERTS=@cacerts@
 # SMTP SSL certificates for authentication and relaying privileges.
 
 TLS_VERIFYPEER=NONE
+
+##NAME: CUSTOM:0
+#
+# Place any custom environment variables, or settings, here.
