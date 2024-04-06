@@ -1,3 +1,7 @@
+2024-04-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-authlib.spec.in: Packaging fixes.
+
 0.72.2
 
 2024-04-05  Sam Varshavchik  <mrsam@courier-mta.com>

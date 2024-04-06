@@ -16,7 +16,6 @@ URL: https://www.courier-mta.org/cone
 Source0: %{name}-%{version}.tar.bz2
 License: GPL
 Group: Applications/Internet
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 Requires: hunspell
 BuildRequires: hunspell-devel libxml2-devel

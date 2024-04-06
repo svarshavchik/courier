@@ -1,3 +1,7 @@
+2024-04-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop.spec.in: Packaging fixes.
+
 2023-12-29  Sam Varshavchik  <mrsam@ripper>
 
 	* Improve 'make check' tolerance.

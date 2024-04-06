@@ -12,7 +12,6 @@ License: GPLv3
 Group: Applications/Internet
 Source: maildrop-@PACKAGE_VERSION@.tar.bz2
 Url: https://www.courier-mta.org/maildrop/
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: gdbm-devel pcre2-devel
 BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel

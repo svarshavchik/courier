@@ -1,3 +1,7 @@
+2024-04-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* sysconftool.spec.in: Packaging fixes.
+
 0.21
 
 2022-11-23  Sam Varshavchik  <mrsam@courier-mta.com>

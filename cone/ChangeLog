@@ -1,3 +1,7 @@
+2024-04-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone.spec.in: Packaging fixes.
+
 2024-01-08  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* cone/mymessage.C (myMessage::getDefaultHeaders): Fix full handling
