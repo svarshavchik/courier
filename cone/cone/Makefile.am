@@ -107,6 +107,10 @@ check-am:
 	./htmlparsertest <$(srcdir)/testsuite1 | cmp -s - $(srcdir)/testsuite1.out
 	./pwtest | cmp -s - $(srcdir)/pwtest.txt
 
+check-version:
+	test "$(VERSION)" = "$(TOPLEVEL_VERSION)" && exit 0; \
+		echo "Makefile.am version mismatch"; exit 1
+
 man3src=$(srcdir)/man/*.3x
 man1src=$(srcdir)/man/*.1
 

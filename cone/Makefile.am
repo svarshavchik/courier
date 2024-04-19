@@ -197,6 +197,9 @@ bump.deb.release: packaging/debian/changelog
 		<packaging/debian/changelog >packaging/debian/changelog.new; \
 	mv packaging/debian/changelog.new packaging/debian/changelog
 
+check-am:
+	cd cone; $(MAKE) check-version TOPLEVEL_VERSION="`echo $(VERSION) | cut -d. -f1-2`"
+
 distrelease:
 	cd cone/po && make update-po
 	$(MAKE) distcheck 'DISTCHECK_CONFIGURE_FLAGS=CPPFLAGS="-I /usr/include/ncursesw"'

@@ -166,6 +166,9 @@ all-gmake-check:
 		echo "instead of make, as you were told by the INSTALL file (you did read the" ; \
 		echo "INSTALL file, did you?)" ; echo "" ; exit 1
 
+check-am:
+	cd libs/maildrop; $(MAKE) check-version TOPLEVEL_VERSION="`echo $(VERSION) | cut -d. -f1-3`"
+
 makedat.html: libs/maildrop/makedat.html
 	cp -f $(srcdir)/libs/maildrop/makedat.html makedat.html
 

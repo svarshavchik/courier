@@ -104,6 +104,8 @@ all-gmake-check:
 		echo "instead of make, as you were told by the INSTALL file (you did read the" ; \
 		echo "INSTALL file, did you?)" ; echo "" ; exit 1
 
+check-am:
+	cd courier; $(MAKE) check-version TOPLEVEL_VERSION="`echo $(VERSION) | cut -d. -f1-3`"
 #
 # For maintainer's use only
 #

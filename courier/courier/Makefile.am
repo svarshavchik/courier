@@ -705,3 +705,7 @@ check-am: aliascreate
 	mkdir testtrack.tmp
 	./testtrack
 	rm -rf testtrack.tmp
+
+check-version:
+	test "$(VERSION)" = "$(TOPLEVEL_VERSION)" && exit 0; \
+		echo "Makefile.am version mismatch"; exit 1

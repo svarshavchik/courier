@@ -1,3 +1,10 @@
+2024-04-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Adjust logic of A and AAAA lookups, for MX records. Avoids
+	potential issues with IPv4-only or IPv6-only nodes not finding
+	usable addresses because only the other kind were cached. Always
+	explicitly query for A and AAAA records.
+
 1.3.6
 
 2024-04-05  Sam Varshavchik  <mrsam@courier-mta.com>
