@@ -5,21 +5,7 @@
 #  Need to version-upgrade RH builds due to different directory locations.
 #
 
-%define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
-# check if SuSE is installed. If not, set a dummy suse_version to null, else use the given value from SuSE.
-%if ! %([ -e /etc/SuSE-release ] && echo 1 || echo 0)
-%define suse_version 0
-%endif
-
-%if %suse_version
-%define courier_release .suse%{suse_version}
-%else
-%if %is_not_mandrake
-%define courier_release %(release="`rpm -q --queryformat='.%''{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%''{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
-%else
-%define courier_release mdk
-%endif
-%endif
+%define courier_release %(release="`rpm -q --queryformat='.rh%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.fc%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
 
 %define using_systemd %(test -d /lib/systemd && echo 1 || echo 0)
 
@@ -34,16 +20,10 @@ License: GPL
 Group: Applications/Mail
 Source: %{name}-@PACKAGE_VERSION@.tar.bz2
 Requires: coreutils sed
-%if %suse_version
-Requires(post): /sbin/chkconfig
-Requires(preun): /sbin/chkconfig
-Requires(postun): /sbin/chkconfig
-%else
 %if %using_systemd
 Requires(post):   systemd
 Requires(postun):   systemd
 Requires(preun):  systemd
-%endif
 %endif
 BuildRequires: gcc-c++
 BuildRequires: procps-ng
@@ -88,13 +68,6 @@ Obsoletes: %{name}-pgsql < 99.99
 %define pamconfdir	/etc/pam.d
 #
 # SuSE specific settings
-%if %suse_version
-# some templates for SuSE distribs.
-%define templdir	${RPM_BUILD_DIR}/%{name}-@PACKAGE_VERSION@/packaging/suse
-%define _sysconfdir	/etc/courier-imap
-%define	_mandir		/usr/share/man
-%define initlndir	/usr/sbin
-%endif
 
 %description
 Courier-IMAP is an IMAP server for Maildir mailboxes.  This package contains
@@ -135,23 +108,12 @@ full Courier mail server.  Install the Courier package instead.
 
 #
 # Red Hat or SuSE like init.d file.
-%if %suse_version
-# Create SuSE courier-imap start script and a link in /usr/sbin
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{initlndir}
-install -Dm 744 %{templdir}/courier-imap.init ${RPM_BUILD_ROOT}/%{initdir}/courier-imap && \
-ln -sf `realpath --relative-to %{initlndir} -m %{initdir}/courier-imap` ${RPM_BUILD_ROOT}%{initlndir}/rccourier-imap \
-#
-# Fix for SuSE like pam file look.
-install -Dm 644 %{templdir}/pop3.pam $RPM_BUILD_ROOT%{pamconfdir}/pop3
-install -Dm 644 %{templdir}/imap.pam $RPM_BUILD_ROOT%{pamconfdir}/imap
-%else
 # Copy standard sysvinit file
 %if %using_systemd
 install -Dm 755 packaging/systemd/courier-imap.sysvinit $RPM_BUILD_ROOT/%{_datadir}
 install -Dm 644 packaging/systemd/courier-imap.service $RPM_BUILD_ROOT/lib/systemd/system
 %else
 install -Dm 744 packaging/systemd/courier-imap.sysvinit $RPM_BUILD_ROOT/%{initdir}/courier-imap
-%endif
 %endif
 
 cat >$RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist <<ZZ
@@ -352,9 +314,6 @@ fi
 %{_datadir}/courier-imap.sysvinit
 %else
 %attr(755, bin, bin) %{initdir}/courier-imap
-%if %{suse_version}
-%attr(740,root,root) %{initlndir}/rccourier-imap
-%endif
 %endif
 %dir %{_prefix}
 

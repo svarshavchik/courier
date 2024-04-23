@@ -96,7 +96,11 @@ Requires(pre):      systemd
 Requires(post):     systemd
 Requires(postun):   systemd
 Requires:           systemd
+%if 0%(rpm -q centos-release >/dev/null 2>&1 && echo "1"; exit 0)
+BuildRequires:      /usr/lib/rpm/macros.d/macros.systemd
+%else
 BuildRequires:	    systemd-rpm-macros
+%endif
 
 %define initscript_courier %{nil}
 %else

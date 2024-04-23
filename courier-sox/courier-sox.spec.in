@@ -2,17 +2,7 @@
 # Copyright 2004-2011 Double Precision, Inc.  See COPYING for
 # distribution information.
 
-%define is_not_mandrake %(test ! -e /etc/mandrake-release && echo 1 || echo 0)
-
-%if 0%{!?dist:1}
-%if %is_not_mandrake
-%define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
-%else
-%define courier_release mdk
-%endif
-%else
-%define courier_release %{nil}
-%endif
+%define courier_release %(release="`rpm -q --queryformat='.rh%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.fc%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")
 
 %define initdir %(if test -d /etc/init.d/. ; then echo /etc/init.d ; else echo /etc/rc.d/init.d ; fi)
 %define using_systemd %(test -d /etc/systemd && echo 1 || echo 0)
