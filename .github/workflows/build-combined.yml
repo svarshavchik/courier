@@ -311,6 +311,7 @@ jobs:
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
+           - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
            - ["debian:12",        "ubuntu",    "debian-12"]
            - ["archlinux:latest", "arch",      "arch"]
 
@@ -357,6 +358,7 @@ jobs:
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
+           - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
            - ["debian:12",        "ubuntu",    "debian-12"]
            - ["archlinux:latest", "arch",      "arch"]
         project:

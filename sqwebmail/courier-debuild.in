@@ -36,6 +36,19 @@ fi
 
 DEBGCC="-$DEBGCC"
 
+# Ubuntu 20
+MIME_SUPPORT="mailcap, media-types"
+
+if test "`apt-cache search mailcap`" = ""
+then
+	MIME_SUPPORT="mime-support"
+fi
+
+if test "`apt-cache search media-types`" = ""
+then
+	MIME_SUPPORT="mime-support"
+fi
+
 for f in debian/rules debian/control
 do
 	sed "
@@ -43,6 +56,7 @@ s/%SOVERSION%/@SOVERSION@/g
 s~%DEBGCC%~$DEBGCC~g
 s/%MAILUSER%/$mailuser/g
 s/%MAILGROUP%/$mailgroup/g
+s/%MIME_SUPPORT%/$MIME_SUPPORT/g
 " <packaging/$f >$f.tmp
 mv $f.tmp $f
 done

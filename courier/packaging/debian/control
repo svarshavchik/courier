@@ -20,7 +20,7 @@ Build-Depends:
 	expect,
 	libgdbm-dev,
 	libidn2-dev,
-	mime-support,
+	%MIME_SUPPORT%,
 	gnutls-dev,
 	gnutls-bin,
 	libgcrypt-dev,

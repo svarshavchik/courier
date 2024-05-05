@@ -4,6 +4,19 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
 
+# Ubuntu 20
+MIME_SUPPORT="mailcap media-types"
+
+if test "`apt-cache search mailcap`" = ""
+then
+	MIME_SUPPORT="mime-support"
+fi
+
+if test "`apt-cache search media-types`" = ""
+then
+	MIME_SUPPORT="mime-support"
+fi
+
 apt install -y gnupg pbuilder ubuntu-dev-tools apt-file debhelper systemd
 apt install -y \
 	hunspell	      	\
@@ -31,8 +44,8 @@ apt install -y \
 	libxml2-dev		\
 	libz-dev		\
 	libz-dev		\
+	$MIME_SUPPORT		\
 	mgetty-fax		\
-	mime-support		\
 	netpbm			\
 	pkg-config		\
 	wget

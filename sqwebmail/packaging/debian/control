@@ -14,7 +14,7 @@ Build-Depends:
 	libgdbm-dev,
 	libldap2-dev,
 	libpcre2-dev,
-	mime-support,
+	%MIME_SUPPORT%,
 	libcourier-auth-dev,
 	libcourier-unicode-dev,
 	gnutls-dev,
