@@ -684,9 +684,9 @@ difficult.</para>
     <para>
 This module reads
 the list of mail accounts and passwords from a table in a
-MySQL database.
+MySQL/MariaDB database.
 The <filename>@authmysqlrc@</filename> configuration file defines the
-particular details regarding the MySQL database and the schema of the
+particular details regarding the database and the schema of the
 mail account table.</para>
   </sect1>
 

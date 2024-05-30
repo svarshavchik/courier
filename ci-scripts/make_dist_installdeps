@@ -32,7 +32,7 @@ dnf install -y --setopt=install_weak_deps=false \
     ncurses-devel \
     netpbm-progs \
     openldap-devel \
-    mysql-devel \
+    mariadb-devel \
     openssl-devel \
     openssl-perl \
     pam-devel \

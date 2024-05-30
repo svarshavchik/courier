@@ -1,3 +1,8 @@
+2024-05-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-authlib.spec.in: Update dependencies to build against
+	mariadb-devel instead of mysql-devel.
+
 2024-04-06  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier-authlib.spec.in: Packaging fixes.

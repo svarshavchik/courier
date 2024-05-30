@@ -5,6 +5,12 @@
   <title>INSTALL</title>
   <!-- Copyright 2004-2024 Double Precision, Inc.  See COPYING for -->
   <!-- distribution information. -->
+
+  <style type="text/css">
+  /*<![CDATA[*/
+  span.c1 {font-family: monospace}
+  /*]]>*/
+  </style>
 </head>
 <body>
   <h1>Table of Contents</h1>
@@ -35,7 +41,7 @@
       managers</a>
     </li>
   </ul>
-  <h2><a name="Requirements" id="Requirements">Requirements</a></h2>
+  <h2><a id="Requirements">Requirements</a></h2>
   <p>See the README file for a general description of this library. The
   following software should be installed before building the Courier
   authentication library:</p>
@@ -48,29 +54,31 @@
     </li>
     <li>Libtool (<a onclick="" href=
     "http://www.gnu.org/software/libtool/">http://www.gnu.org/software/libtool/</a>).
-    Additional, libtool's <code>libltdl</code> library, and its development
-    files, must be installed. On some platforms this is a separate package. On
-    Fedora, this is the <code>libtool-ltdl-devel</code> package, for example.
+    Additionally, libtool's <span class="c1">libltdl</span> library, and its
+    development files, must be installed. On some platforms this is a separate
+    package. On Fedora, this is the <span class="c1">libtool-ltdl-devel</span>
+    package, for example.
     </li>
     <li>GNU make (<a onclick="" href=
     "http://www.gnu.org/software/make/">http://www.gnu.org/software/make/</a>)
     </li>
-    <li>The "<code>expect</code>" command. <code>expect</code> is usually
-    included with most systems. <code>Expect</code> can be downloaded from
-    <code>http://expect.nist.gov/</code> if it's not installed on your system.
+    <li>The "<span class="c1">expect</span>" command. <span class=
+    "c1">expect</span> is usually included with most systems. <span class=
+    "c1">Expect</span> can be downloaded from <span class=
+    "c1">http://expect.nist.gov/</span> if it's not installed on your system.
     This utility is used to change system login passwords, by scripting the
-    <code>passwd</code> command. If you do not have <code>expect</code>
-    installed you will not be able to change system login passwords. However
-    non-system authentication modules (LDAP, PostgreSQL, and others) will
-    work.</li>
+    <span class="c1">passwd</span> command. If you do not have <span class=
+    "c1">expect</span> installed you will not be able to change system login
+    passwords. However non-system authentication modules (LDAP, PostgreSQL, and
+    others) will work.</li>
     <li>Courier Unicode Library. Before installing this package, download and
     install <a onclick="" href=
     "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.
     </li>
   </ul>
   <p>Courier-authlib uses Libtool to build shared libraries. Libtool must be
-  installed, together with its <code>libltdl</code> library and its header
-  files.</p>
+  installed, together with its <span class="c1">libltdl</span> library and its
+  header files.</p>
   <p>On non-Linux platforms the GNU linker is also required. Courier-authlib's
   build script uses some GNU linker-specific options. It's possible to manually
   specify the native linker's equivalent options manually, if they exist. If
@@ -87,7 +95,7 @@
     <li>Install the current version of Libtool</li>
     <li>Install the current version of gcc</li>
   </ol>
-  <h2><a name="Installation" id="Installation">Installation overview</a></h2>
+  <h2><a id="Installation">Installation overview</a></h2>
   <h3>rpm and deb packages</h3>
   <p>These are not the same packages as the ones from the distributions'
   repositories. These packages carry a higher internal revision level in order
@@ -95,23 +103,22 @@
   packaging exists in order to have a convenient way of updating after a
   release without waiting for the distributions' packages to get built.</p>
   <p><b>NOTE:</b> If a distribution package is already installed it should be
-  removed completely before switching to the upstream version (<span style=
-  "font-family: monospace">dnf remove</span> or <span style=
-  "font-family: monospace">apt purge</span>). Preserve any existing
-  configuration files, beforehand, in order to restore it after switching
-  packages. This applies to all Courier packages. A switch to this
+  removed completely before switching to the upstream version (<span class=
+  "c1">dnf remove</span> or <span class="c1">apt purge</span>). Preserve any
+  existing configuration files, beforehand, in order to restore it after
+  switching packages. This applies to all Courier packages. A switch to this
   courier-authlib package requires switching to the courier-unicode package
   too.</p>
   <p><b>NOTE:</b> These packages use their own, generic, installation layout
   that may deviate slightly from the package installation conventions preferred
   by the distributions.</p>
   <h3>rpm</h3>
-  <p>Run <code>dnf install rpm-build</code> if it's not installed already,
-  then:</p>
+  <p>Run <span class="c1">dnf install rpm-build</span> if it's not installed
+  already, then:</p>
   <pre>rpmbuild -ta courier-authlib-VERSION.tar.bz2</pre>
   <p>If this fails due to any missing dependencies, install them. This builds:
   the main (runtime libraries); a subpackage for each authentication module
-  (LDAP, MySQL, etc...); the development (link libraries, header files)
+  (LDAP, MariaDB/MySQL, etc...); the development (link libraries, header files)
   package. All development libraries needed to build all authentication modules
   must be installed to build the rpms, but do not need to be installed at
   runtime unless the corresponding authentication module rpm is also
@@ -124,19 +131,16 @@
     header files.</li>
     <li>The "courier-authlib-config-<i>username</i>-<i>groupname</i> package.
     This is a metapackage that captures the user/group used by the
-    authentication library (<span style=
-    "font-family: monospace">daemon</span>/<span style=
-    "font-family: monospace">daemon</span>) by default. The dependencies on the
-    metapackage are set up in a way to prevent unitended updates to an
-    incompatible newer version that's configured with different user and group
-    names.</li>
+    authentication library (<span class="c1">daemon</span>/<span class=
+    "c1">daemon</span>) by default. The dependencies on the metapackage are set
+    up in a way to prevent unitended updates to an incompatible newer version
+    that's configured with different user and group names.</li>
     <li>Other "courier-authlib-<i>name</i>" authentication modules.</li>
   </ul>
   <h4>Using non-default courier username and groupname</h4>
-  <p>Pass <span style="font-family: monospace">--define "mailuser
-  courier"</span> and <span style="font-family: monospace">--define "mailgroup
-  courier"</span> options to <command />rpmbuild to build the library with a
-  non-default user and group name.</p>
+  <p>Pass <span class="c1">--define "mailuser courier"</span> and <span class=
+  "c1">--define "mailgroup courier"</span> options to <command />rpmbuild to
+  build the library with a non-default user and group name.</p>
   <h3>deb</h3>
   <p>Run "apt install devscripts debhelper", if they're not installed already.
   Create an empty directory and copy/move the tarball into it:</p>
@@ -148,15 +152,14 @@ $ cd tmp</pre>
   <pre>
 $ tar xvf courier-authlib-VERSION.tar.bz2
 $ cd courier-authlib-VERSION</pre>
-  <p>Run the <code>courier-debuild</code> script, which is a wrapper for
-  <code>debuild</code>, and forwards its parameters to it:</p>
+  <p>Run the <span class="c1">courier-debuild</span> script, which is a wrapper
+  for <span class="c1">debuild</span>, and forwards its parameters to it:</p>
   <pre>$ ./courier-debuild -us -uc</pre>
-  <p>NOTE: the above steps must be followed strictly. The <span style=
-  "font-family: monospace">courier-debuild</span> script expects the
-  distributed tarball in its parent directory.</p>
-  <p>This eventually produces a deb subdirectory with <span style=
-  "font-family: monospace">.deb</span> packages that can be installed with
-  "dpkg -i":</p>
+  <p>NOTE: the above steps must be followed strictly. The <span class=
+  "c1">courier-debuild</span> script expects the distributed tarball in its
+  parent directory.</p>
+  <p>This eventually produces a deb subdirectory with <span class=
+  "c1">.deb</span> packages that can be installed with "dpkg -i":</p>
   <ul>
     <li>The "libcourier-auth" package with the commands and standard
     authentication modules; and "libcourier-auth-<i>&lt;N&gt;</i>" with
@@ -164,46 +167,44 @@ $ cd courier-authlib-VERSION</pre>
     <li>The "libcourier-auth-dev" package with development libraries and header
     files.</li>
     <li>Other "libcourier-auth-<i>name</i>" authentication modules.</li>
-    <li>The "<span style=
-    "font-family: monospace">libcourier-auth-config-<i>mailuser</i>-<i>mailgroup</i></span>"
+    <li>The "<span class=
+    "c1">libcourier-auth-config-<i>mailuser</i>-<i>mailgroup</i></span>"
     package. This package sets up the reserved user and group id the library
-    and the rest of the Courier packages use. When the built <span style=
-    "font-family: monospace">.deb</span> packages get manually installed
-    directly with <span style="font-family: monospace">dpkg</span> this
-    "config" package must get installed first, by itself, followed by the rest
-    of the packages. Higher level tools, like <span style=
-    "font-family: monospace">apt</span> should figure this out by
-    themselves.</li>
+    and the rest of the Courier packages use. When the built <span class=
+    "c1">.deb</span> packages get manually installed directly with <span class=
+    "c1">dpkg</span> this "config" package must get installed first, by itself,
+    followed by the rest of the packages. Higher level tools, like <span class=
+    "c1">apt</span> should figure this out by themselves.</li>
   </ul>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
-  <p>Setting the <code>DEBGCC</code> environment variable selects a non-default
-  gcc version.</p>
+  <p>Setting the <span class="c1">DEBGCC</span> environment variable selects a
+  non-default gcc version.</p>
   <p>NOTE: all Courier packages should be built using the same version of
   gcc.</p>
   <h4>Using non-default courier username and groupname</h4>
   <pre>$ mailuser=courier mailgroup=courier ./courier-debuild -us -uc</pre>
-  <p>Setting the <code>mailuser</code> and <code>mailgroup</code> environment
-  builds the library with a non-default user and group name.</p>
+  <p>Setting the <span class="c1">mailuser</span> and <span class=
+  "c1">mailgroup</span> environment builds the library with a non-default user
+  and group name.</p>
   <h3>Maintainer Mode (see README in the git repository to set up)</h3>
-  <p><span style="font-family: monospace">make rpm</span> or <span style=
-  "font-family: monospace">make deb</span>, as appropriate, will:</p>
+  <p><span class="c1">make rpm</span> or <span class="c1">make deb</span>, as
+  appropriate, will:</p>
   <ol>
     <li>
       <p>Increment an internal release number.</p>
     </li>
     <li>
-      <p>Run <span style="font-family: monospace">make dist</span>.</p>
+      <p>Run <span class="c1">make dist</span>.</p>
     </li>
     <li>
       <p>Proceed and build a new release, creating the native packages in the
       rpm or deb subdirectory.</p>
     </li>
     <li>
-      <p>Execute either <span style=
-      "font-family: monospace">$HOME/bin/rpmrepos.sh</span> or <span style=
-      "font-family: monospace">$HOME/bin/debrepos.sh</span>. This can be a
-      script that does nothing, or it's intended to be the maintainer's script
-      that pushes out the packages to a repository.</p>
+      <p>Execute either <span class="c1">$HOME/bin/rpmrepos.sh</span> or
+      <span class="c1">$HOME/bin/debrepos.sh</span>. This can be a script that
+      does nothing, or it's intended to be the maintainer's script that pushes
+      out the packages to a repository.</p>
     </li>
   </ol>
   <h3>Manual installation</h3>
@@ -219,31 +220,31 @@ make install-configure
     <p><strong>NOTE:</strong> On the BSD family, GNU make is usually the
     'gmake' command. Use the 'gmake' command, instead of 'make'.</p>
   </blockquote>
-  <p>The '<code>make install-configure</code>' command is required; it installs
-  and updates the configuration files; this command must be executed when
-  installing courier-authlib for the first time, and when upgrading from an
-  older version.</p>
+  <p>The '<span class="c1">make install-configure</span>' command is required;
+  it installs and updates the configuration files; this command must be
+  executed when installing courier-authlib for the first time, and when
+  upgrading from an older version.</p>
   <h3>Configuration options</h3>
-  <p>The configure script takes the usual <code>autoconf</code> options:
-  <code>--prefix</code>, <code>--bindir</code>, and the rest of the usual
-  toolchain options. The default installation directories should be sufficient,
-  though.</p>
-  <p><strong>DO NOT USE</strong> the <code>--disable-static</code>, or
-  <code>--enable-static=no</code> option. Both static and shared library
-  options must be enabled for courier-authlib to build properly (but see
-  "Post-installation cleanup" below).</p>
-  <h4><code>--without-stdheaderdir</code></h4>
-  <p>The default configuration installs development files in
-  <code>/usr/local/include</code> (see "What gets installed", below). This
+  <p>The configure script takes the usual <span class="c1">autoconf</span>
+  options: <span class="c1">--prefix</span>, <span class="c1">--bindir</span>,
+  and the rest of the usual toolchain options. The default installation
+  directories should be sufficient, though.</p>
+  <p><strong>DO NOT USE</strong> the <span class="c1">--disable-static</span>,
+  or <span class="c1">--enable-static=no</span> option. Both static and shared
+  library options must be enabled for courier-authlib to build properly (but
+  see "Post-installation cleanup" below).</p>
+  <h4><span class="c1">--without-stdheaderdir</span></h4>
+  <p>The default configuration installs development files in <span class=
+  "c1">/usr/local/include</span> (see "What gets installed", below). This
   directory is usually in the compiler's search path for header files. This
   option must be specified if the compiler does NOT search for header files in
-  <code>/usr/local/include</code> by default.</p>
+  <span class="c1">/usr/local/include</span> by default.</p>
   <p>This option must also be specified if other configuration options (such as
-  <code>--prefix</code> or <code>--includedir</code>) specify a different
-  installation directory, and the new directory is also not searched by the
-  compiler, by default</p>
-  <h4><code>--with-mailuser=<em>userid</em>,
-  --with-mailgroup=<em>groupid</em></code></h4>
+  <span class="c1">--prefix</span> or <span class="c1">--includedir</span>)
+  specify a different installation directory, and the new directory is also not
+  searched by the compiler, by default</p>
+  <h4><span class="c1">--with-mailuser=<em>userid</em>,
+  --with-mailgroup=<em>groupid</em></span></h4>
   <p>"userid" is a reserved system username, "groupid" is a reserved system
   groupname. These two options should be used before installing Courier for the
   first time. These options are not required before installing Courier-IMAP or
@@ -266,7 +267,8 @@ make install-configure
   <p>When installing Courier authentication library for the first time, it is
   highly recommended to create a "courier" userid and groupid, so that
   specifying these options will not be necessary.</p>
-  <h4><code>VARIABLE=</code><em><code>value</code></em></h4>
+  <h4><span class="c1">VARIABLE=</span><em><span class=
+  "c1">value</span></em></h4>
   <p>Environment variables may be set either before running the configure
   script, or by providing the environment variables as parameters to the
   configure script. Example:</p>
@@ -277,17 +279,18 @@ make install-configure
      MAKE=gmake
 </pre>
   </blockquote>
-  <p>The <code>CC</code> and <code>CXX</code> environment variables specify the
-  C compiler that will be used to compile the authentication library.
-  <code>LDFLAGS</code> specifies additiona linker flags, etc...</p>
-  <h2><a name="deps" id="deps">Dependencies</a></h2>
+  <p>The <span class="c1">CC</span> and <span class="c1">CXX</span> environment
+  variables specify the C compiler that will be used to compile the
+  authentication library. <span class="c1">LDFLAGS</span> specifies additiona
+  linker flags, etc...</p>
+  <h2><a id="deps">Dependencies</a></h2>
   <p>On a minimum, bare-bones system, the Courier authentication library builds
   support for garden-variety authentication against system accounts (from the
-  system's password file, <code>/etc/passwd</code>).</p>
-  <p>If the <code>configure</code> script detects that certain optional
-  software components are installed, additional authentication modules will be
-  built and installed. This chapter describes what needs to be installed in
-  order to build the optional authentication modules.</p>
+  system's password file, <span class="c1">/etc/passwd</span>).</p>
+  <p>If the <span class="c1">configure</span> script detects that certain
+  optional software components are installed, additional authentication modules
+  will be built and installed. This chapter describes what needs to be
+  installed in order to build the optional authentication modules.</p>
   <blockquote>
     <p><strong>NOTE:</strong> In all cases, it is not sufficient to install the
     runtime support libraries for the following components. In order to build
@@ -298,114 +301,118 @@ make install-configure
     software libraries.</p>
   </blockquote>
   <ul>
-    <li><strong>GDBM or Berkeley DB library</strong> - The <code>userdb</code>
-    authentication module will be built if either library is installed. The
-    <code>userdb</code> authentication module includes Perl scripts that
-    maintain a list of available accounts in plain text files. A Perl script
-    then compiles the account list into a binary database, either GDBM or DB,
-    which is then used to look up account information.</li>
+    <li><strong>GDBM or Berkeley DB library</strong> - The <span class=
+    "c1">userdb</span> authentication module will be built if either library is
+    installed. The <span class="c1">userdb</span> authentication module
+    includes Perl scripts that maintain a list of available accounts in plain
+    text files. A Perl script then compiles the account list into a binary
+    database, either GDBM or DB, which is then used to look up account
+    information.</li>
     <li><strong>OpenLDAP</strong> - The LDAP authentication modules requires
     OpenLDAP client libraries to be installed. Sometimes there's some confusion
     when commercial LDAP servers are used, which come with their own
     development toolkits, which use a different API than OpenLDAP. Even if a
     commercial LDAP server is used to provide LDAP services, OpenLDAP is still
     required to enable LDAP services in Courier.</li>
-    <li><strong>MySQL</strong>, <strong>PostgreSQL</strong>, and
-    <strong>SQLite</strong> - The MySQL, PostgreSQL, and SQLite authentication
-    modules require, obviously, MySQL/PostgreSQL/SQLite development
-    libraries.<br /></li>
+    <li><strong>MariaDB/MySQL</strong>, <strong>PostgreSQL</strong>, and
+    <strong>SQLite</strong> - The MariaDB, PostgreSQL, and SQLite
+    authentication modules require, obviously, MariaDB/PostgreSQL/SQLite
+    development libraries.<br /></li>
   </ul>
-  <h2><a name="What" id="What">What gets installed</a></h2>
+  <h2><a id="What">What gets installed</a></h2>
   <ul>
-    <li><code>/usr/local/etc/authlib</code> - the configuration files.</li>
-    <li><code>/usr/local/sbin</code> - the authdaemond startup script; several
-    utility programs (courierlogger, authconfig, authtest, authenumerate); and
-    userdb scripts.</li>
-    <li><code>/usr/local/lib/courier-authlib</code> - various authentication
-    modules, as shared libraries.</li>
-    <li><code>/usr/local/libexec/courier-authlib</code> - some miscellaneous
-    stuff.</li>
-    <li><code>/usr/local/var/authdaemon</code> - a subdirectory that contains
-    the filesystem socket which authdaemond listens on.</li>
-    <li><code>/usr/local/include</code> - a header file that Courier packages
-    will use to build against courier-authlib.</li>
+    <li><span class="c1">/usr/local/etc/authlib</span> - the configuration
+    files.</li>
+    <li><span class="c1">/usr/local/sbin</span> - the authdaemond startup
+    script; several utility programs (courierlogger, authconfig, authtest,
+    authenumerate); and userdb scripts.</li>
+    <li><span class="c1">/usr/local/lib/courier-authlib</span> - various
+    authentication modules, as shared libraries.</li>
+    <li><span class="c1">/usr/local/libexec/courier-authlib</span> - some
+    miscellaneous stuff.</li>
+    <li><span class="c1">/usr/local/var/authdaemon</span> - a subdirectory that
+    contains the filesystem socket which authdaemond listens on.</li>
+    <li><span class="c1">/usr/local/include</span> - a header file that Courier
+    packages will use to build against courier-authlib.</li>
   </ul>
-  <p>Toolchain options to the <code>configure</code> script may be used to
-  select alternative installation directories for these components.</p>
+  <p>Toolchain options to the <span class="c1">configure</span> script may be
+  used to select alternative installation directories for these components.</p>
   <h3>Post-installation cleanup</h3>
-  <p>On most systems, after running <code>make install-configure</code> all
-  static libraries can be removed from the
-  <code>/usr/local/lib/courier-authlib</code> directory:</p>
-  <p><code>rm -rf /usr/local/lib/courier-authlib/*.a</code></p>
+  <p>On most systems, after running <span class="c1">make
+  install-configure</span> all static libraries can be removed from the
+  <span class="c1">/usr/local/lib/courier-authlib</span> directory:</p>
+  <p><span class="c1">rm -rf /usr/local/lib/courier-authlib/*.a</span></p>
   <p>The Courier authentication library uses only the shared libraries. The
   static versions of the shared libraries are not used. They are installed by
   default, via libtool, but are not really needed. On most platforms the
   libtool files, "*.la" can also be removed. Do not remove any soft links.</p>
-  <h2><a name="manpage" id="manpage">For more information</a></h2>
-  <p>Following "<code>make install</code>", see the <a href=
-  "README_authlib.html"><code>README_authlib.html</code></a> file for details
-  on setting up the authentication modules. The
-  <code>README_authlib.html</code> file gets assembled as part of the build
+  <h2><a id="manpage">For more information</a></h2>
+  <p>Following "<span class="c1">make install</span>", see the <a href=
+  "README_authlib.html"><span class="c1">README_authlib.html</span></a> file
+  for details on setting up the authentication modules. The <span class=
+  "c1">README_authlib.html</span> file gets assembled as part of the build
   process.</p>
   <p>Before proceding to install any other packages, be sure to verify that the
-  authentication library is working by running the <code>authtest</code>
-  command, as documented in the <code>README_authlib.html</code> file.</p>
-  <h2><a name="Starting" id="Starting">Starting and stopping the authentication
-  daemon</a></h2>
-  <p>Arrangements must be made to run the <code>courier-authlib.sysvinit</code>
-  script with "start" and "stop" parameters at system startup and shutdown.
-  <code>make install</code> does not install this script from the source
-  directory, it needs to be installed manually.</p>
-  <h2><a name="Guidelines" id="Guidelines">Guidelines for using other package
-  managers</a></h2>
+  authentication library is working by running the <span class=
+  "c1">authtest</span> command, as documented in the <span class=
+  "c1">README_authlib.html</span> file.</p>
+  <h2><a id="Starting">Starting and stopping the authentication daemon</a></h2>
+  <p>Arrangements must be made to run the <span class=
+  "c1">courier-authlib.sysvinit</span> script with "start" and "stop"
+  parameters at system startup and shutdown. <span class="c1">make
+  install</span> does not install this script from the source directory, it
+  needs to be installed manually.</p>
+  <h2><a id="Guidelines">Guidelines for using other package managers</a></h2>
   <p>The recommended way to build packages can be inferred from the RPM build
   script. It is summarized here for convenience:</p>
   <ul>
     <li>Decide whether or not Courier-specific userid and groupid needs to be
     created, and, if so, make the necessary arrangements.</li>
     <li>Ensure that all prerequisite development libraries are available.</li>
-    <li>Run the <code>configure</code> script, run <code>make</code>, then
-    <code>make install</code> as usual.</li>
-    <li>Copy the "<code>sysconftool</code>" script somewhere into the
-    installation tree. A good place would be
-    <code>%libexecdir%/courier-authlib</code>. This is the '<code>make
-    install-upgrade</code>' command. Don't run this at build time. Instead,
-    arrange for the package installation script to run the "<code>sysconftool
-    %sysconfdir%/authlib/*.dist</code>" after the package is installed
-    <strong>OR UPGRADED</strong>.</li>
-    <li>The "<code>authdaemond</code>", "<code>authenumerate</code>", and
-    "<code>authtest</code>" commands can be renamed, to avoid name
-    clashes.</li>
-    <li>There are two types of libraries that get installed in
-    <code>%libdir%</code>:
+    <li>Run the <span class="c1">configure</span> script, run <span class=
+    "c1">make</span>, then <span class="c1">make install</span> as usual.</li>
+    <li>Copy the "<span class="c1">sysconftool</span>" script somewhere into
+    the installation tree. A good place would be <span class=
+    "c1">%libexecdir%/courier-authlib</span>. This is the '<span class=
+    "c1">make install-upgrade</span>' command. Don't run this at build time.
+    Instead, arrange for the package installation script to run the
+    "<span class="c1">sysconftool %sysconfdir%/authlib/*.dist</span>" after the
+    package is installed <strong>OR UPGRADED</strong>.</li>
+    <li>The "<span class="c1">authdaemond</span>", "<span class=
+    "c1">authenumerate</span>", and "<span class="c1">authtest</span>" commands
+    can be renamed, to avoid name clashes.</li>
+    <li>There are two types of libraries that get installed in <span class=
+    "c1">%libdir%</span>:
       <ol>
-        <li>Common libraries that application link with,
-        <code>libcourier*</code>.</li>
-        <li>Dynamically-loaded authentication modules:
-        <code>libauth*</code>.</li>
+        <li>Common libraries that application link with, <span class=
+        "c1">libcourier*</span>.</li>
+        <li>Dynamically-loaded authentication modules: <span class=
+        "c1">libauth*</span>.</li>
       </ol>
-      <p>Remove all static libraries from
-      <code>%libdir%/courier-authlib</code>. Keep the <code>*.la</code> and
-      <code>*.so</code> for <code>libcourier*</code>, and include them in a
-      devel subpackage. Remove <code>*.la</code> and <code>*.so</code> for all
-      <code>libauth*</code> libraries, they are not needed.</p>
+      <p>Remove all static libraries from <span class=
+      "c1">%libdir%/courier-authlib</span>. Keep the <span class=
+      "c1">*.la</span> and <span class="c1">*.so</span> for <span class=
+      "c1">libcourier*</span>, and include them in a devel subpackage. Remove
+      <span class="c1">*.la</span> and <span class="c1">*.so</span> for all
+      <span class="c1">libauth*</span> libraries, they are not needed.</p>
     </li>
   </ul>
   <p>Now, create the installable packages, as follows:</p>
   <ul>
-    <li><code>%libdir%/courier-authlib/libauthldap*</code> goes into the LDAP
-    subpackage.</li>
-    <li><code>%libdir%/courier-authlib/libauthmysql*</code> goes into the MySQL
-    subpackage.</li>
-    <li><code>%libdir%/courier-authlib/libauthsqlite*</code> goes into the
-    SQLite subpackage.</li>
-    <li><code>%libdir%/courier-authlib/libauthpgsql*</code> goes into the
-    PostgreSQL subpackage.</li>
-    <li><code>%libdir%/courier-authlib/libauthuserdb*</code> goes into the
-    userdb subpackage.</li>
+    <li><span class="c1">%libdir%/courier-authlib/libauthldap*</span> goes into
+    the LDAP subpackage.</li>
+    <li><span class="c1">%libdir%/courier-authlib/libauthmysql*</span> goes
+    into the MariaDB/MySQL subpackage.</li>
+    <li><span class="c1">%libdir%/courier-authlib/libauthsqlite*</span> goes
+    into the SQLite subpackage.</li>
+    <li><span class="c1">%libdir%/courier-authlib/libauthpgsql*</span> goes
+    into the PostgreSQL subpackage.</li>
+    <li><span class="c1">%libdir%/courier-authlib/libauthuserdb*</span> goes
+    into the userdb subpackage.</li>
     <li>Everything else can go into the main package. Optionally, the
-    <code>courierauthconfig</code> binary, stuff in <code>%includedir%</code>,
-    and in <code>%mandir%/man3</code>, can go into a devel subpackage.</li>
+    <span class="c1">courierauthconfig</span> binary, stuff in <span class=
+    "c1">%includedir%</span>, and in <span class="c1">%mandir%/man3</span>, can
+    go into a devel subpackage.</li>
   </ul>
 </body>
 </html>

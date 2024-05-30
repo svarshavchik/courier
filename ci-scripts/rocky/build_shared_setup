@@ -28,7 +28,7 @@ dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     libxml2-devel \
     libxslt \
     make \
-    mysql-devel \
+    mariadb-devel \
     ncurses-devel \
     netpbm-progs \
     openldap-devel \
