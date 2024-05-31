@@ -107,7 +107,7 @@ Package: libcourier-auth-pgsql
 Architecture: any
 Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
-Description: PoistgreSQL support for the Courier authentication library
+Description: PostgreSQL support for the Courier authentication library
  This package installs the PostgreSQL support for the Courier
  authentication library.  Install this package in order to be able to
  authenticate with PostgreSQL.
