@@ -421,13 +421,15 @@ MAXPERIP=5
 
 PIDFILE=@piddir@/esmtpd.pid
 
-##NAME: TCPDOPTS:3
+##NAME: TCPDOPTS:4
 #
-# TCPDOPTS can contain other couriertcpd options, such as
-# -nodnslookup and -noidentlookup.
+# Other couriertcpd(1) options.  The following defaults should be fine.
 #
+# See the couriertcpd(1) manual page for a list of other options. Namely:
+# -haproxy enables HAProxy version 1 support, see the manual page for more
+# information.
 
-TCPDOPTS="-stderrlogger=@courierlogger@ -noidentlookup"
+TCPDOPTS="-stderrlogger=@courierlogger@"
 
 ##NAME: ESMTPAUTH:4
 #

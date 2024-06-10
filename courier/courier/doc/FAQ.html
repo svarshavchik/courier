@@ -397,8 +397,6 @@ export RANLIB
     <li>If the connecting IP address is resolved to a hostname, the hostname is
     looked up in DNS again, to see if it resolves to the connecting IP
     address.</li>
-    <li>The connecting IP address is queried using the <a target="_blank" href=
-    "http://www.rfc-editor.org/rfc/rfc1413.txt">IDENT protocol</a>.</li>
   </ol>
   <p>The results obtained from these queries will be recorded in the
   <code>Received:</code> header of any message received from the connecting IP
@@ -411,13 +409,7 @@ export RANLIB
   its hostname. A bigger problem is when the local DNS resolver, listed in
   /etc/resolv.conf goes down. This will result in a certain percentage of all
   incoming connections experiencing major delays.</p>
-  <p>A local, or an intermediate firewall may also drop IDENT packets. IDENT is
-  a fairly old protocol whose original purpose is to identify individual users
-  of a shared network server. Some proxies may also use IDENT to identify the
-  original source of a proxied connection. However, since IDENT is an old, and
-  not a very well known protocol, some poorly-written firewalls may not
-  recognize the protocol, and bit-bucket IDENT connection requests. An IDENT
-  request times out after 30 seconds.</p>
+
   <p>When investigating connection delays:</p>
   <ol>
     <li>Check each server listed in <code>/etc/resolv.conf</code>.
@@ -432,11 +424,11 @@ export RANLIB
     the connecting IP address.</li>
   </ol>
   <p>As a last resort, both of these lookups can be turned off. Add the
-  <code>-nodnslookup</code> and <code>-noidentlookup</code> options to
+  <code>-nodnslookup</code> option to
   TCPDOPTS, in the esmtpd configuration file (usually
   <code>/usr/lib/courier/etc/esmtpd</code>). Example:</p>
   <blockquote>
-    <p><code>TCPDOPTS="-nodnslookup -noidentlookup"</code></p>
+    <p><code>TCPDOPTS="-stderrlogger=/usr/sbin/courierlogger -nodnslookup"</code></p>
   </blockquote>
   <p>There'll probably be an existing TCPDOPTS setting in there. Add the
   whitespace-delimited options to anything that's already in there.</p>
