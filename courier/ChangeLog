@@ -1,3 +1,9 @@
+2024-06-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* tcpd: support per-local port custom -haproxy configuration.
+	Multiple updates to the couriertcpd man page, updated documentation
+	for ipv6 and CIDR support.
+
 2024-06-10  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* tcpd: remove -noidentlookup, implement -haproxy
