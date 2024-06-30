@@ -701,7 +701,7 @@ struct	stat	stat_buf;
 	else
 		(void)rfc2045_ac_check(rwrfcptr, 0);
 
-	if (rwrfcptr->has8bitchars)
+	if (rwrfcptr->hasraw8bitchars)
 		is8bit=1;
 
 	unlink(namefile("D", 1).c_str());	// Might be the GDBM file
