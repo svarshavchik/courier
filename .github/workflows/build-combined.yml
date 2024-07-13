@@ -36,14 +36,14 @@ jobs:
       image: "fedora:latest"
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
 
       - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.libsrepo }}
           ref: ${{ inputs.libsbranch }}
@@ -129,31 +129,31 @@ jobs:
           rpm -ivh ../rpm/courier-sox*rpm
 
       - name: Upload sysconftool tarball
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sysconftool
           path: "sysconftool/*.tar.bz2"
 
       - name: Upload courier-unicode tarball
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: courier-unicode
           path: "libs/unicode/*.tar.bz2"
 
       - name: Upload courier-authlib tarball
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: courier-authlib
           path: "courier-authlib/*.tar.bz2"
 
       - name: Upload courier-sox tarball
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: courier-sox
           path: "courier-sox/*.tar.bz2"
 
       - name: Upload common dist rpms
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: distrpms
           path: "rpm/*.rpm"
@@ -175,14 +175,14 @@ jobs:
       image: fedora:latest
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
 
       - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.libsrepo }}
           ref: ${{ inputs.libsbranch }}
@@ -193,7 +193,7 @@ jobs:
           sh ci-scripts/make_dist_installdeps
 
       - name: Download common dist rpms
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: distrpms
 
@@ -218,7 +218,7 @@ jobs:
           make rpm
 
       - name: Upload dist for ${{ matrix.project }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.project }}
           path: "${{ matrix.project }}/*.tar.bz2"
@@ -248,29 +248,29 @@ jobs:
       image: ${{ matrix.platform[0] }}
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
 
       - name: Download sysconftool tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: sysconftool
 
       - name: Download courier-unicode tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: courier-unicode
 
       - name: Download courier-authlib tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: courier-authlib
 
       - name: Download courier-sox tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: courier-sox
 
@@ -298,7 +298,7 @@ jobs:
           sh ci-scripts/${{ matrix.platform[1] }}/build_shared courier-sox
 
       - name: Upload shared for ${{ matrix.platform[1] }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform[2] }}-shared-packages
           path: "packages/*"
@@ -306,7 +306,7 @@ jobs:
     strategy:
       matrix:
         platform:
-           - ["centos:7",         "centos",    "centos-7"]
+#           - ["centos:7",         "centos",    "centos-7"]
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
@@ -326,14 +326,14 @@ jobs:
       image: ${{ matrix.platform[0] }}
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
 
       - name: Download shared packages
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.platform[2] }}-shared-packages
 
@@ -342,7 +342,7 @@ jobs:
           sh ci-scripts/${{ matrix.platform[1] }}/build_all_setup
 
       - name: Download package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.project }}
 
@@ -353,7 +353,7 @@ jobs:
     strategy:
       matrix:
         platform:
-           - ["centos:7",         "centos",    "centos-7"]
+#           - ["centos:7",         "centos",    "centos-7"]
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu",    "ubuntu-20"]
