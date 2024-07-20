@@ -54,7 +54,7 @@ Requires(postun): systemd
 Requires(preun):  systemd
 Requires:    %{__gzip}
 
-Requires: %{cgibindir}
+Requires: httpd-filesystem
 Obsoletes: %{name}-mysql > 0.0
 Obsoletes: %{name}-pgsql > 0.0
 

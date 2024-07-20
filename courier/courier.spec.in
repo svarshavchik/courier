@@ -236,7 +236,7 @@ Requires(posttrans): systemd
 %package webmail
 Summary: Courier @PACKAGE_VERSION@ Integrated HTTP (webmail) server
 Group: Applications/Mail
-Requires: %{apache_documentroot} /etc/cron.hourly
+Requires: /etc/cron.hourly
 Requires: courier = %{version}-%{release}
 Requires: hunspell
 BuildRequires:    gzip
@@ -246,7 +246,7 @@ Requires: gnupg2
 %else
 Requires: gnupg >= 1.0.5
 %endif
-Requires: %{apache_cgibindir}
+Requires: httpd-filesystem
 %if %using_systemd
 Requires(preun): systemd
 Requires(posttrans): systemd
@@ -255,9 +255,8 @@ Requires(posttrans): systemd
 %package webadmin
 Summary: Courier @PACKAGE_VERSION@ web-based administration tool
 Group: Applications/Mail
-Requires: %{apache_documentroot}
 Requires: courier = %{version}-%{release}
-Requires: %{apache_cgibindir}
+Requires: httpd-filesystem
 
 %package mlm
 Summary: Courier @PACKAGE_VERSION@ Integrated Mailing List Manager
@@ -267,9 +266,8 @@ Requires: courier = %{version}-%{release}
 %package mlm-web
 Summary: Courier @PACKAGE_VERSION@ Integrated web-based mailing list interface
 Group: Applications/Mail
-Requires: %{apache_documentroot}
 Requires: courier-mlm = %{version}-%{release}
-Requires: %{apache_cgibindir}
+Requires: httpd-filesystem
 %if %using_systemd
 Requires(preun): systemd
 Requires(posttrans): systemd
