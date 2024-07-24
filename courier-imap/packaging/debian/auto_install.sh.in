@@ -85,13 +85,10 @@ echo chmod 600 $DESTDIR$sysconfdir/pop3d-ssl.dist >>debian/fixperms.sh
 
 mkdir -p $DESTDIR/etc/profile.d
 cat >$DESTDIR/etc/profile.d/courier-imap.sh <<EOF
-if echo "\$MANPATH" | tr ':' '\012' | fgrep -qx $mandir
+if echo "\$PATH" | tr ':' '\012' | fgrep -qx $bindir
 then
 	:
 else
-	MANPATH="$mandir:\$MANPATH"
-	MANPATH="\`echo \$MANPATH | sed 's/:\$//'\`"
-	export MANPATH
 	PATH="$bindir:\$PATH"
 	if test -w /etc
 	then
@@ -103,16 +100,9 @@ EOF
 
 cat >$DESTDIR/etc/profile.d/courier-imap.csh <<EOF
 
-if ( \$?MANPATH ) then
-	true
-else
-	setenv MANPATH ""
-endif
-
-echo "\$MANPATH" | tr ':' '\012' | fgrep -qx $mandir
+echo "\$PATH" | tr ':' '\012' | fgrep -qx $bindir
 
 if ( \$? ) then
-	setenv MANPATH "$mandir:\$MANPATH"
 	setenv PATH "$bindir:\$PATH"
 	test -w /etc
 	if ( \$? ) then
@@ -120,8 +110,6 @@ if ( \$? ) then
 	else
 		setenv PATH "$sbindir:\$PATH"
 	endif
-
-	setenv MANPATH \`echo \$MANPATH | sed 's/:\$//'\`
 	setenv PATH    \`echo \$PATH | sed 's/:\$//'\`
 endif
 EOF
