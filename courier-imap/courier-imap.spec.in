@@ -176,13 +176,10 @@ rm -f $RPM_BUILD_ROOT/%{_datadir}/dhparams.pem.dist.tmp
 
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/profile.d
 %{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier-imap.sh <<EOF
-if echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
+if echo "\$PATH" | tr ':' '\012' | grep -Fqx  "%{_bindir}"
 then
 	:
 else
-	MANPATH="%{_mandir}:\$MANPATH"
-	MANPATH="\`echo \$MANPATH | sed 's/:\$//'\`"
-	export MANPATH
 	PATH="%{_bindir}:\$PATH"
 	if test -w /etc
 	then
@@ -194,16 +191,8 @@ EOF
 
 %{__cat} >$RPM_BUILD_ROOT/etc/profile.d/courier-imap.csh <<EOF
 
-if ( \$?MANPATH ) then
-	true
-else
-	setenv MANPATH ""
-endif
-
-echo "\$MANPATH" | tr ':' '\012' | fgrep -qx %{_mandir}
-
+echo "\$PATH" | tr ':' '\012' | grep -Fqx "%{_bindir}"
 if ( \$? ) then
-	setenv MANPATH "%{_mandir}:\$MANPATH"
 	setenv PATH "%{_bindir}:\$PATH"
 	test -w /etc
 	if ( \$? ) then
@@ -212,7 +201,6 @@ if ( \$? ) then
 		setenv PATH "%{_sbindir}:\$PATH"
 	endif
 
-	setenv MANPATH \`echo \$MANPATH | sed 's/:\$//'\`
 	setenv PATH    \`echo \$PATH | sed 's/:\$//'\`
 endif
 EOF

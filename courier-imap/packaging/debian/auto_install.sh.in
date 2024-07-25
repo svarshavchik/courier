@@ -85,7 +85,7 @@ echo chmod 600 $DESTDIR$sysconfdir/pop3d-ssl.dist >>debian/fixperms.sh
 
 mkdir -p $DESTDIR/etc/profile.d
 cat >$DESTDIR/etc/profile.d/courier-imap.sh <<EOF
-if echo "\$PATH" | tr ':' '\012' | fgrep -qx $bindir
+if echo "\$PATH" | tr ':' '\012' | grep -Fqx "$bindir"
 then
 	:
 else
@@ -100,7 +100,7 @@ EOF
 
 cat >$DESTDIR/etc/profile.d/courier-imap.csh <<EOF
 
-echo "\$PATH" | tr ':' '\012' | fgrep -qx $bindir
+echo "\$PATH" | tr ':' '\012' | grep -Fqx "$bindir"
 
 if ( \$? ) then
 	setenv PATH "$bindir:\$PATH"
