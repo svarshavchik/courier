@@ -243,6 +243,10 @@ static void rw_del_local2(struct rw_info *rwi,
 	localat=atdomain=strrchr(addr, '@');
 	if (atdomain)
 		*atdomain++=0;
+
+	for (ext=addr; *ext; ext++)
+		if (*ext == '+')
+			*ext='-';
 #endif
 
 	i=0;

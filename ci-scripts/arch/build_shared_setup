@@ -2,7 +2,9 @@ set -evx
 
 # valgrind does not get installed, valgrind on arch is broken.
 
-pacman -Sy \
+pacman -Syu --noconfirm
+
+pacman -Syu \
     automake \
     apache \
     binutils \

@@ -51,10 +51,35 @@ specify the location of the account's system mailbox.</para>
 
     <para>
 In addition to receiving mail addressed <literal>user@domain</literal>, it is
-also possible for <literal>user</literal> to receive mail addressed to
-<literal>user-<replaceable>foo</replaceable>@domain</literal>, for arbitrary values of <replaceable>foo</replaceable>. To do
+also possible for <literal>user</literal> to receive mail addressed to either
+<literal>user-<replaceable>foo</replaceable>@domain</literal>
+<literal>user+<replaceable>foo</replaceable>@domain</literal>,
+for arbitrary values of <replaceable>foo</replaceable>. To do
 this, install <filename>$HOME/.courier-<replaceable>foo</replaceable></filename>, with delivery
-instructions for mail addressed to <literal>user-foo@domain</literal>.</para>
+instructions for mail addressed to
+either <literal>user-foo@domain</literal> or
+either <literal>user+foo@domain</literal>.</para>
+
+    <note>
+      <para>
+	Whether it's
+	<literal>user+<replaceable>foo</replaceable>@domain</literal> or
+	<literal>user-<replaceable>foo</replaceable>@domain</literal>, this is
+	controlled by
+	<filename>$HOME/.courier-<replaceable>foo</replaceable></filename>.
+	All occurences of <quote>+</quote> characters in the email address
+	are replaced by a <quote>-</quote>. The corresponding
+	<filename>.courier</filename> gets processed afterwards.
+      </para>
+
+      <para>
+	All examples in the following documentation uses <quote>-</quote>
+	in E-mail addresses, but this also applies to
+	<quote>+</quote> as well (however
+	note that all actual <filename>.courier</filename>
+	filenames always use <quote>-</quote> for a separator character).
+      </para>
+    </note>
 
     <para>
 The system administrator can configure the
@@ -523,6 +548,16 @@ This environment variable contains the entire
 	</varlistentry>
       </variablelist>
 
+      <note>
+	<para>
+	  <envar>EXT</envar>,
+	  <envar>EXT2</envar>,
+	  <envar>EXT3</envar> and
+	  <envar>EXT4</envar> use <quote>-</quote> as a separator even if the
+	  recipient address used the equivalent <quote>+</quote> characters,
+	  instead.
+	</para>
+      </note>
       <note>
 	<para>
 When the external program reads the message from standard
