@@ -137,8 +137,11 @@ $ cd sqwebmail-VERSION</pre>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <p>Setting the <code>DEBGCC</code> environment variable selects a non-default
   gcc version.</p>
-  <p>NOTE: all Courier packages should be built using the same version of
-  gcc.</p>
+  <p>NOTE: All Courier packages should be built with the same version of gcc,
+  which is selected by the <span class="c1">DEBGCC</span> environment variable
+  before running <span class="c1">courier-debuild</span>. <a href=
+  "https://www.courier-mta.org/unicode/INSTALL.html">See
+  <i>courier-unicode</i>'s <i>INSTALL</i> for more information</a>.</p>
   <p>This ends up producing the <span class="c1">sqwebmail</span> binary deb,
   an <span class="c1">sqwebmail-ldap</span> deb with an additional LDAP
   dependency (for the LDAP address book hook described below), and an

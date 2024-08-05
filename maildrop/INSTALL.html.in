@@ -140,8 +140,11 @@ $ cd maildrop-VERSION</pre>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <p>Setting the <code>DEBGCC</code> environment variable selects a non-default
   gcc version.</p>
-  <p>NOTE: all Courier packages should be built using the same version of
-  gcc.</p>
+  <p>NOTE: All Courier packages should be built with the same version of gcc,
+  which is selected by the <code>DEBGCC</code> environment variable before
+  running <code>courier-debuild</code>. <a href=
+  "https://www.courier-mta.org/unicode/INSTALL.html">See
+  <i>courier-unicode</i>'s <i>INSTALL</i> for more information</a>.</p>
   <h2>Maintainer Mode (see README in the git repository to set up)</h2>
   <p><tt>make rpm</tt> or <tt>make deb</tt>, as appropriate, will:</p>
   <ol>

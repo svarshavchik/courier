@@ -39,7 +39,12 @@ then
 	esac
 fi
 
-DEBGCC="-$DEBGCC"
+if test "$DEBGCC" = "default"
+then
+    DEBGCC=""
+else
+    DEBGCC="-$DEBGCC"
+fi
 
 for f in debian/rules debian/control debian/auto_install.sh.in
 do

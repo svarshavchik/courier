@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([maildrop],[3.1.7],[courier-maildrop@lists.sourceforge.net])
+AC_INIT([maildrop],[3.1.8],[courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])

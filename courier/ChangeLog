@@ -1,3 +1,9 @@
+1.3.11
+
+2024-08-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-debuild: implement DEBGCC=default, to help with pbuilder.
+
 2024-07-25  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Allow "+" as separators in email addresses instead of "-".

@@ -78,6 +78,10 @@ files for building software that uses the Socks library.
 - The "libcourier-sox-utils" package installs an additional script that has
 dependencies on other Perl modules.
 
+   NOTE: All Courier packages should be built with the same version of gcc,
+   which is selected by the DEBGCC environment variable before running
+   courier-debuild. See courier-unicode's INSTALL for more information.
+
 Maintainer Mode (see README in the git repository to set up)
 ============================================================
 

@@ -1,3 +1,9 @@
+0.72.3
+
+2024-08-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-debuild: implement DEBGCC=default, to help with pbuilder.
+
 2024-05-30  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier-authlib.spec.in: Update dependencies to build against

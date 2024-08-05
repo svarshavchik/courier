@@ -343,6 +343,18 @@ $ ./courier-debuild -us -uc]]></programlisting>
 	      </para>
 	    </listitem>
 	  </itemizedlist>
+
+	  <note>
+	    <para>
+	      All Courier packages should be built with the same version of gcc,
+	      which is selected by the <envar>DEBGCC</envar> environment
+	      variable before running <command>courier-debuild</command>.
+	      <ulink url="https://www.courier-mta.org/unicode/INSTALL.html">See
+	      <application>courier-unicode</application>'s
+	      <filename>INSTALL</filename> for more information</ulink>.
+	    </para>
+	  </note>
+
 	</section>
       </section>
 

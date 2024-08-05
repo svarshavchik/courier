@@ -1,3 +1,9 @@
+3.1.8
+
+2024-08-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-debuild: implement DEBGCC=default, to help with pbuilder.
+
 3.1.7
 
 2024-04-06  Sam Varshavchik  <mrsam@courier-mta.com>

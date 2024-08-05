@@ -179,8 +179,11 @@ $ cd courier-authlib-VERSION</pre>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <p>Setting the <span class="c1">DEBGCC</span> environment variable selects a
   non-default gcc version.</p>
-  <p>NOTE: all Courier packages should be built using the same version of
-  gcc.</p>
+  <p>NOTE: All Courier packages should be built with the same version of gcc,
+  which is selected by the <span class="c1">DEBGCC</span> environment variable
+  before running <span class="c1">courier-debuild</span>. <a href=
+  "https://www.courier-mta.org/unicode/INSTALL.html">See
+  <i>courier-unicode</i>'s <i>INSTALL</i> for more information</a>.</p>
   <h4>Using non-default courier username and groupname</h4>
   <pre>$ mailuser=courier mailgroup=courier ./courier-debuild -us -uc</pre>
   <p>Setting the <span class="c1">mailuser</span> and <span class=

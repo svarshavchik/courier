@@ -35,7 +35,12 @@ then
 	esac
 fi
 
-DEBGCC="-$DEBGCC"
+if test "$DEBGCC" = "default"
+then
+    DEBGCC=""
+else
+    DEBGCC="-$DEBGCC"
+fi
 
 # Ubuntu 20
 MIME_SUPPORT="mailcap, media-types"
