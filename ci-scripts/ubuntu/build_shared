@@ -29,6 +29,6 @@ cp deb/*.deb /var/local/packages/pool
 )
 
 apt update
-apt install `cd deb; ls *.deb | sed 's/_.*//'`
+apt install -y `cd deb; ls *.deb | sed '/dbgsym/d;s/_.*//'`
 
 mv deb/*.deb ../../packages

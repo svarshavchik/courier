@@ -153,6 +153,7 @@ BuildRequires:	  libidn2-devel
 BuildRequires:    courier-unicode-devel
 BuildRequires:	  perl(ExtUtils::Embed)
 BuildRequires:	  mailcap
+BuildRequires:    openldap-devel
 
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 
@@ -672,6 +673,13 @@ echo "%attr(600, $mailuser, $mailgroup) %{_datadir}/dhparams.pem.dist" >>filelis
 %{__mkdir_p} $RPM_BUILD_ROOT/etc/cron.monthly
 %{__ln_s} `realpath --relative-to /etc/cron.monthly -m %{_sbindir}/mkdhparams` $RPM_BUILD_ROOT/etc/cron.monthly/courier-mkdhparams
 echo "/etc/cron.monthly/courier-mkdhparams" >>filelist
+
+## Loosen up permissions in BUILDROOT bindirs to prevent strip
+## "unable to copy file -- permission denied" in mock.
+chmod -R a+rw %{buildroot}/usr/lib/courier/libexec/courier
+chmod -R a+rw %{buildroot}/usr/lib/courier/sbin
+chmod -R a+rw %{buildroot}/usr/lib/courier/bin
+chmod -R a+rw %{buildroot}/var/www/cgi-bin
 
 #
 # Make up some /etc/profile.d scripts

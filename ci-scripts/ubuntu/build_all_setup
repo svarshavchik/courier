@@ -10,5 +10,5 @@ cp *.deb /var/local/packages/pool
 )
 
 apt update
-apt install `ls *.deb | sed 's/_.*//'`
+apt install -y `ls *.deb | sed 's/_.*//'`
 rm -f *.deb
