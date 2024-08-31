@@ -219,7 +219,7 @@ deb-pbuild: bump.deb.release
 	$(MAKE) dist
 	rm -rf @PACKAGE@-@VERSION@ deb/pbuild
 	tar xf @PACKAGE@-@VERSION@.tar.bz2
-	cd @PACKAGE@-@VERSION@ && chmod +x ./courier-debuild && ./courier-debuild -us -uc && mv deb ../deb/pbuild
+	cd @PACKAGE@-@VERSION@ && chmod +x ./courier-debuild && DEBGCC=default ./courier-debuild -us -uc && mv deb ../deb/pbuild
 	rm -rf @PACKAGE@-@VERSION@
 
 bump.deb.release: packaging/debian/changelog
