@@ -1,5 +1,5 @@
 #
-# Package installs specific permissions for every file and directory
+# Package explicitly sets these permissions
 #
-executable-is-not-world-readable usr/lib/courier/libexec/cgi-bin/webadmin*
-non-standard-executable-perm usr/lib/courier/libexec/cgi-bin/webadmin*
+executable-is-not-world-readable 0511 [usr/lib/courier/libexec/cgi-bin/webadmin]
+non-standard-executable-perm 0511 != 0755 [usr/lib/courier/libexec/cgi-bin/webadmin]

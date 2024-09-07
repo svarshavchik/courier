@@ -1,3 +1,7 @@
+2024-09-07  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* packaging/debian/rules: Fix deb packaging of systemd service.
+
 0.72.3
 
 2024-08-05  Sam Varshavchik  <mrsam@courier-mta.com>

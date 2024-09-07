@@ -1,4 +1,5 @@
 #
-# Package installs specific permissions for every file and directory
+# Package explicitly sets these permissions
 #
-non-standard-file-perm usr/lib/courier/share/courierwebadmin/*
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-15mysql.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-15mysql.pl]

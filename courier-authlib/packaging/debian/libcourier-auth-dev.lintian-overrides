@@ -1,17 +1,17 @@
 #
 # Manual pages generated using Docbook stylesheet
 #
-groff-message usr/share/man/man3/*
+groff-message *
 #
 # Internal tool
 #
-no-manual-page usr/bin/courierauthconfig
+no-manual-page [usr/bin/courierauthconfig]
 #
-# File permissions are specified by the package.
+# File permissions are set by the package
 #
-non-standard-executable-perm usr/bin/courierauthconfig 0555 != 0755
-non-standard-file-perm usr/include/courierauth.h 0444 != 0644
-non-standard-file-perm usr/include/courierauthdebug.h 0444 != 0644
-non-standard-file-perm usr/include/courierauthsasl.h 0444 != 0644
-non-standard-file-perm usr/include/courierauthsaslclient.h 0444 != 0644
-non-standard-file-perm usr/include/courierauthstaticlist.h 0444 != 0644
+non-standard-executable-perm 0555 != 0755 [usr/bin/courierauthconfig]
+non-standard-file-perm 0444 != 0644 [usr/include/courierauth.h]
+non-standard-file-perm 0444 != 0644 [usr/include/courierauthdebug.h]
+non-standard-file-perm 0444 != 0644 [usr/include/courierauthsasl.h]
+non-standard-file-perm 0444 != 0644 [usr/include/courierauthsaslclient.h]
+non-standard-file-perm 0444 != 0644 [usr/include/courierauthstaticlist.h]

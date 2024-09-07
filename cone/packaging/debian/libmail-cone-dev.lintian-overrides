@@ -1,4 +1,8 @@
 #
+# Manual pages generated using Docbook stylesheet
+#
+groff-message *
+#
 # False positive
 #
 package-name-defined-in-config-h usr/include/libmail/rfc822/config.h

@@ -64,11 +64,14 @@ EXTRA_DIST += \
 	packaging/debian/auto_install.sh.in \
 	packaging/debian/changelog \
 	packaging/debian/changelog.in \
+	packaging/debian/cone.lintian-overrides \
 	packaging/debian/control \
 	packaging/debian/copyright \
+	packaging/debian/lintian-overrides.allow-errors \
 	packaging/debian/libmail-cone-dev.lintian-overrides \
 	packaging/debian/rules \
-	packaging/debian/source/format
+	packaging/debian/source/format \
+	packaging/debian/source/lintian-overrides
 
 #
 # For maintainer's use only

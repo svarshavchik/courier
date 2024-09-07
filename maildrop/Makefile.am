@@ -312,10 +312,13 @@ EXTRA_DIST += courier-debuild \
 	packaging/debian/changelog.in \
 	packaging/debian/control \
 	packaging/debian/copyright \
+	packaging/debian/lintian-overrides.allow-errors \
 	packaging/debian/maildrop.lintian-overrides \
+	packaging/debian/maildrop-dev.lintian-overrides \
 	packaging/debian/maildrop-dev.soname.lintian-overrides \
 	packaging/debian/rules \
-	packaging/debian/source/format
+	packaging/debian/source/format \
+	packaging/debian/source/lintian-overrides
 
 packaging/debian/changelog: packaging/debian/changelog.in configure.ac
 	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status

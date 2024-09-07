@@ -47,7 +47,7 @@ apt install -y \
 	$MIME_SUPPORT		\
 	mgetty-fax		\
 	netpbm			\
-	pkg-config		\
+	pkgconf			\
 	wget
 
 

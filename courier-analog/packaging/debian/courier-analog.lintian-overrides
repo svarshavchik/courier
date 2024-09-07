@@ -1,4 +1,8 @@
 #
+# troff docs are generated using Docbook stylesheets.
+#
+groff-message *
+#
 # Package was created directly from the upstream tarball.
 #
-wrong-name-for-upstream-changelog usr/share/doc/courier-analog/ChangeLog
+wrong-name-for-upstream-changelog [usr/share/doc/courier-analog/ChangeLog]

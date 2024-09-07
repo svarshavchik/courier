@@ -25,13 +25,12 @@ cp libs/imap/pop3d.pam $DESTDIR/etc/pam.d/pop3
 
 dh_installdirs /etc/profile.d
 dh_installdirs $datadir
-dh_installdirs /lib/systemd/system
 
 dh_install packaging/systemd/courier-imap.sysvinit $datadir
 echo "chmod 555 $DESTDIR$datadir/courier-imap.sysvinit" >>debian/fixperms.sh
-dh_install packaging/systemd/courier-imap.service /lib/systemd/system
+cp packaging/systemd/courier-imap.service debian
 
-@PERL@ -p -i -e 's/courier-authlib/libcourier-auth/;$_="" if /mail-transfer-agent.target/' $DESTDIR/lib/systemd/system/courier-imap.service
+@PERL@ -p -i -e 's/courier-authlib/libcourier-auth/;$_="" if /mail-transfer-agent.target/' debian/courier-imap.service
 
 cat >$DESTDIR$datadir/dhparams.pem.dist <<EOF
 This file contains default DH parameters for initial use on a new

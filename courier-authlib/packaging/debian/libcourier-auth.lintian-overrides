@@ -1,36 +1,32 @@
 #
-# Not invoked directly
+# Manual pages generated using Docbook stylesheet
 #
-no-manual-page usr/sbin/authdaemond
+groff-message *
 #
-# Documentation elsewhere
+# No direct user invocation, documented upstream
 #
-no-manual-page usr/sbin/authenumerate
+no-manual-page [usr/sbin/authdaemond]
+no-manual-page [usr/sbin/authenumerate]
 #
-# File permissions are specified by the package.
+# File permissions are set by the package
 #
-odd-permissions-on-shared-library usr/lib/*/courier-authlib/*
+non-standard-dir-perm 0750 != 0755 [var/spool/authdaemon/]
+non-standard-executable-perm 0555 != 0755 [usr/libexec/courier-authlib/courier-authlib.sysvinit]
+non-standard-executable-perm 0555 != 0755 [usr/libexec/courier-authlib/sysconftool]
+non-standard-file-perm 0444 != 0644 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthcustom.so.0.0.0]
+non-standard-file-perm 0444 != 0644 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthpam.so.0.0.0]
+non-standard-file-perm 0660 != 0644 [etc/authlib/authdaemonrc.dist]
+non-standard-file-perm 0660 != 0644 [etc/authlib/authldaprc.dist]
+non-standard-file-perm 0660 != 0644 [etc/authlib/authmysqlrc.dist]
+non-standard-file-perm 0660 != 0644 [etc/authlib/authpgsqlrc.dist]
+non-standard-file-perm 0660 != 0644 [etc/authlib/authsqliterc.dist]
+odd-permissions-on-shared-library 0444 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthcustom.so.0.0.0]
+odd-permissions-on-shared-library 0444 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthpam.so.0.0.0]
 #
-# Required permissions by the security model.
+# Upstream packaging
 #
-non-standard-dir-perm var/spool/authdaemon/ 0750 != 0755
-#
-# File permissions are specified by the package
-#
-non-standard-executable-perm usr/libexec/courier-authlib/*
-#
-# File permissions are specified by the package
-#
-non-standard-file-perm etc/authlib/*
-#
-# File permissions are specified by the package
-#
-non-standard-file-perm usr/lib/*/courier-authlib/*
+wrong-name-for-upstream-changelog [usr/share/doc/libcourier-auth/ChangeLog.gz]
 #
 # Debhelper/lintian bug
 #
 package-has-unnecessary-activation-of-ldconfig-trigger
-#
-# Keep package-provided changelog
-#
-wrong-name-for-upstream-changelog usr/share/doc/libcourier-auth/ChangeLog.gz

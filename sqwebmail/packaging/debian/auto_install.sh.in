@@ -43,8 +43,7 @@ chmod +x debian/tmp/etc/cron.hourly/sqwebmail-cron-cleancache
 
 dh_install debian/tmp/etc/cron.hourly/* etc/cron.hourly
 
-mkdir -p debian/tmp/lib/systemd/system
-cat >debian/tmp/lib/systemd/system/sqwebmail.service <<EOF
+cat >debian/sqwebmail.service <<EOF
 [Unit]
 Description=SqWebMail
 Wants=network.target
@@ -61,8 +60,6 @@ RemainAfterExit=true
 ExecStart=$libexecdir/sqwebmaild.rc start
 ExecStop=$libexecdir/sqwebmaild.rc stop
 EOF
-
-dh_install debian/tmp/lib/systemd/system/sqwebmail.service
 
 mkdir -p debian/tmp$scriptdir
 cp sysconftool debian/tmp$scriptdir

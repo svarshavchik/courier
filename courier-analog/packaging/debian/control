@@ -2,7 +2,7 @@ Source: courier-analog
 Section: contrib/admin
 Priority: optional
 Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
-Build-Depends: debhelper-compat (= 12), pkg-config
+Build-Depends: debhelper-compat (= 12), pkgconf
 Standards-Version: 4.4.1
 Homepage: https://www.courier-mta.org/
 

@@ -7,7 +7,7 @@ Standards-Version: 4.4.1
 Homepage: https://www.courier-mta.org/
 Build-Depends:
 	perl:any,
-	pkg-config,
+	pkgconf,
 	debhelper-compat (= 12),
 	gcc%DEBGCC%,
 	g++%DEBGCC%,
@@ -38,6 +38,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 systemd,
+	 anacron,
 	 perl:any,
 	 libnet-cidr-perl,
 	 gnutls-bin

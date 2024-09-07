@@ -1,12 +1,17 @@
 #
-# Package-specified ownership and permissions
+# We provide an explicit dependency on anacron.
 #
-elevated-privileges usr/lib/sqwebmail/libexec/sqwebmail/*
-non-standard-dir-perm var/lib/sqwebmail-calendar/*
-non-standard-dir-perm var/spool/run/*
+missing-systemd-timer-for-cron-script [etc/cron.hourly/sqwebmail-cron-cleancache]
 #
-# Package was created directly from the upstream tarball.
+# Package explicitly sets these permissions
 #
-package-contains-upstream-installation-documentation usr/share/doc/sqwebmail/INSTALL.gz
-package-contains-upstream-installation-documentation usr/share/doc/sqwebmail/INSTALL.html
-wrong-name-for-upstream-changelog usr/share/doc/sqwebmail/ChangeLog.gz
+elevated-privileges 2755 daemon/daemon [usr/lib/sqwebmail/libexec/sqwebmail/sqwebpasswd]
+non-standard-dir-perm 0700 != 0755 [var/lib/sqwebmail-calendar/localcache/]
+non-standard-dir-perm 0700 != 0755 [var/spool/run/sqwebmail/]
+non-standard-dir-perm 0750 != 0755 [var/lib/sqwebmail-calendar/private/]
+#
+# Upstream packaging
+#
+package-contains-upstream-installation-documentation [usr/share/doc/sqwebmail/INSTALL.gz]
+package-contains-upstream-installation-documentation [usr/share/doc/sqwebmail/INSTALL.html]
+wrong-name-for-upstream-changelog [usr/share/doc/sqwebmail/ChangeLog.gz]

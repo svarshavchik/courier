@@ -1,9 +1,56 @@
 #
-# Internal binary.
+# DOCUMENT ME
 #
-no-manual-page usr/bin/makedatprog
+groff-message troff:<standard input>:101: warning: macro 'an-trap' not defined [usr/share/man/man1/lockmail.1.gz:1]
 #
-# Package was created directly from the upstream tarball.
+# DOCUMENT ME
 #
-package-contains-upstream-installation-documentation usr/share/doc/maildrop/INSTALL.gz
-wrong-name-for-upstream-changelog usr/share/doc/maildrop/ChangeLog.gz
+groff-message troff:<standard input>:136: warning: macro 'an-trap' not defined [usr/share/man/man1/mailbot.1.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:142: warning: macro 'an-trap' not defined [usr/share/man/man7/maildropgdbm.7.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:174: warning: macro 'an-trap' not defined [usr/share/man/man1/maildirmake.1.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:184: warning: macro 'an-trap' not defined [usr/share/man/man7/maildropex.7.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:190: warning: macro 'an-trap' not defined [usr/share/man/man7/maildropfilter.7.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:200: warning: macro 'an-trap' not defined [usr/share/man/man1/makemime.1.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:219: warning: macro 'an-trap' not defined [usr/share/man/man1/maildrop.1.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:322: warning: macro 'an-trap' not defined [usr/share/man/man1/reformime.1.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:91: warning: macro 'an-trap' not defined [usr/share/man/man5/maildir.5.gz:1]
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:99: warning: macro 'an-trap' not defined [usr/share/man/man1/reformail.1.gz:1]
+#
+# DOCUMENT ME
+#
+no-manual-page [usr/bin/makedatprog]
+#
+# DOCUMENT ME
+#
+package-contains-upstream-installation-documentation [usr/share/doc/maildrop/INSTALL.gz]
+#
+# DOCUMENT ME
+#
+wrong-name-for-upstream-changelog [usr/share/doc/maildrop/ChangeLog.gz]

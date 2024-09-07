@@ -57,6 +57,7 @@ EXTRA_DIST += \
 	packaging/debian/courier-webadmin-apache2.lintian-overrides \
 	packaging/debian/courier-webmail.lintian-overrides \
 	packaging/debian/courier-webmail-apache2.lintian-overrides \
+	packaging/debian/lintian-overrides.allow-errors \
 	packaging/debian/mkinstall.pl.in \
 	packaging/debian/rules \
 	packaging/debian/source/format \

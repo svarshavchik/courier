@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
 Build-Depends:
 	perl:any,
-	pkg-config,
+	pkgconf,
 	debhelper-compat (= 12),
 	gcc%DEBGCC%,
 	g++%DEBGCC%,

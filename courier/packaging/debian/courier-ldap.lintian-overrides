@@ -1,9 +1,9 @@
 #
-# DOCUMENT ME
+# Package explicitly sets these permissions
 #
-#
-# Package installs specific permissions for every file and directory
-#
-executable-is-not-world-readable usr/lib/courier/sbin/*
-non-standard-file-perm usr/lib/courier/share/*
-non-standard-executable-perm usr/lib/courier/sbin/*
+executable-is-not-world-readable 0500 [usr/lib/courier/sbin/courierldapaliasd]
+non-standard-executable-perm 0500 != 0755 [usr/lib/courier/sbin/courierldapaliasd]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-15ldap.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-15ldap.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-15ldapa.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-15ldapa.pl]

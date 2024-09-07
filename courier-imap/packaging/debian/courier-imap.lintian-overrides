@@ -1,6 +1,14 @@
 #
-# Package-specified ownership and permissions
+# We provide an explicit dependency on anacron.
 #
-non-standard-executable-perm usr/lib/courier-imap/share/*
-non-standard-file-perm usr/lib/courier-imap/etc/*.dist*
-non-standard-file-perm usr/lib/courier-imap/share/*.dist*
+missing-systemd-timer-for-cron-script [etc/cron.monthly/courier-imap-mkdhparams]
+#
+# Package explicitly sets these permissions
+#
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier-imap/share/courier-imap.sysvinit]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier-imap/share/sysconftool]
+non-standard-file-perm 0600 != 0644 [usr/lib/courier-imap/etc/imapd-ssl.dist]
+non-standard-file-perm 0600 != 0644 [usr/lib/courier-imap/etc/imapd.dist]
+non-standard-file-perm 0600 != 0644 [usr/lib/courier-imap/etc/pop3d-ssl.dist]
+non-standard-file-perm 0600 != 0644 [usr/lib/courier-imap/etc/pop3d.dist]
+non-standard-file-perm 0600 != 0644 [usr/lib/courier-imap/share/dhparams.pem.dist]

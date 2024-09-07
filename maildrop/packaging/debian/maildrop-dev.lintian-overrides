@@ -1,0 +1,4 @@
+#
+# DOCUMENT ME
+#
+groff-message troff:<standard input>:111: warning: macro 'an-trap' not defined [usr/share/man/man3/rfc822.3.gz:1]

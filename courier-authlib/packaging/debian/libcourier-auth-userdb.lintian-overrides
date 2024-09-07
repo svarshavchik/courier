@@ -1,11 +1,11 @@
 #
-# File permissions are specified by the package
+# Upstream packaging
 #
-odd-permissions-on-shared-library usr/lib/*/courier-authlib/*
+non-standard-file-perm 0444 != 0644 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthuserdb.so.0.0.0]
 #
-# File permissions are specified by the package
+# Upstream packaging
 #
-non-standard-file-perm usr/lib/*/courier-authlib/*
+odd-permissions-on-shared-library 0444 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthuserdb.so.0.0.0]
 #
 # Debhelper/lintian bug
 #

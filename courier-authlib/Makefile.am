@@ -333,6 +333,7 @@ EXTRA_DIST += \
 	packaging/debian/libcourier-auth-userdb.lintian-overrides \
 	packaging/debian/libcourier-auth.lintian-overrides \
 	packaging/debian/libcourier-auth.soname.lintian-overrides \
+	packaging/debian/lintian-overrides.allow-errors \
 	packaging/debian/mkinstall.pl.in \
 	packaging/debian/patches \
 	packaging/debian/rules \

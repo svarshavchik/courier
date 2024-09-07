@@ -41,7 +41,7 @@ dh_install --package=libcourier-sox-dev debian/tmp$mandir/man3/* `echo $mandir/m
 dh_install --package=libcourier-sox-server debian/tmp$sbindir/sockd `echo $sbindir | cut -c2-`
 dh_install --package=libcourier-sox-server debian/tmp$libexecdir/sockd `echo $libexecdir | cut -c2-`
 
-dh_install --package=libcourier-sox-server courier-sox.service lib/systemd/system
+cp courier-sox.service debian/libcourier-sox-server.courier-sox.service
 dh_install --package=libcourier-sox-server debian/tmp$mandir/man1/sockd* `echo $mandir/man1 | cut -c2-`
 dh_install --package=libcourier-sox-server debian/tmp/etc/pam.d/socks
 

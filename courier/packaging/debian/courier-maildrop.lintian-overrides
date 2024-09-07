@@ -1,7 +1,8 @@
 #
-# Package installs specific permissions for every file and directory
+# Package explicitly sets these permissions
 #
-executable-is-not-world-readable usr/lib/courier/bin/*
-non-standard-executable-perm usr/lib/courier/bin/*
-elevated-privileges usr/lib/courier/bin/*
-non-standard-setuid-executable-perm usr/lib/courier/bin/*
+elevated-privileges 4511 root/daemon [usr/lib/courier/bin/maildrop]
+executable-is-not-world-readable 4511 [usr/lib/courier/bin/maildrop]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/mailbot]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/reformail]
+non-standard-setuid-executable-perm 4511 [usr/lib/courier/bin/maildrop]

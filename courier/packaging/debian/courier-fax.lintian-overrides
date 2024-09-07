@@ -1,9 +1,20 @@
 #
 # Sources shell script
 #
-executable-not-elf-or-script usr/lib/courier/share/faxmail/init
+executable-not-elf-or-script [usr/lib/courier/share/faxmail/init]
 #
-# Package installs specific permissions for every file and directory
+# Package explicitly sets these permissions
 #
-non-standard-executable-perm usr/lib/courier/share/faxmail/*
-non-standard-file-perm usr/lib/courier/share/courierwebadmin/*
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/application-pdf.filter]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/application-postscript.filter]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/coverpage]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/image-gif.filter]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/image-jpeg.filter]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/image-png.filter]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/init]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/new_fax]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/faxmail/text-plain.filter]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-34fax.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-34fax.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-35fax.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-35fax.pl]

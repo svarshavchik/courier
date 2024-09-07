@@ -1,15 +1,15 @@
 #
 # Automatically disable courier-webmail when removing this package
 #
-apache2-reverse-dependency-calls-wrapper-script prerm:* a2disconf
+apache2-reverse-dependency-calls-wrapper-script a2disconf [prerm:10]
 #
 # Automatically reload apache when removing this package
 #
-maintainer-script-calls-systemctl
+maintainer-script-calls-systemctl [prerm:11]
 #
 # Separate subpackage, for convenience. Dependency specified.
 #
-web-application-works-only-with-apache courier-webmail.conf
+web-application-works-only-with-apache courier-webmail.conf [etc/apache2/conf-available/courier-webmail.conf]
 #
 # Separate subpackage, for convenience. Dependency specified.
 #

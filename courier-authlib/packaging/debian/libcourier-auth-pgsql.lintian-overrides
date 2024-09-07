@@ -1,8 +1,8 @@
 #
-# File permissions are specified by the package
+# File permissions are set by the package.
 #
-non-standard-file-perm usr/lib/*/courier-authlib/*
-odd-permissions-on-shared-library usr/lib/*/courier-authlib/*
+non-standard-file-perm 0444 != 0644 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthpgsql.so.0.0.0]
+odd-permissions-on-shared-library 0444 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthpgsql.so.0.0.0]
 #
 # Debhelper/lintian bug
 #

@@ -107,9 +107,7 @@ chmod 555 debian/tmp@libexecdir@/courier-authlib/sysconftool
 cp -p courier-authlib.sysvinit debian/tmp@libexecdir@/courier-authlib
 chmod 555 debian/tmp@libexecdir@/courier-authlib/courier-authlib.sysvinit
 
-mkdir -p debian/tmp/lib/systemd/system
-cp courier-authlib.service debian/tmp/lib/systemd/system/libcourier-auth.service
-dh_install --package libcourier-auth debian/tmp/lib/systemd/system/libcourier-auth.service
+cp courier-authlib.service debian/libcourier-auth.service
 
 DESTDIR=debian/tmp @SHELL@ mkmanifest.sh
 

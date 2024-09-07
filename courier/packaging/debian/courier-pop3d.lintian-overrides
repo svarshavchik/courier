@@ -1,7 +1,11 @@
 #
-# Package installs specific permissions for every file and directory
+# Package explicitly sets these permissions
 #
-non-standard-executable-perm usr/lib/courier/libexec/*
-non-standard-executable-perm usr/lib/courier/share/*
-non-standard-file-perm etc/courier/*
-non-standard-file-perm usr/lib/courier/share/*
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/courier/courierpop3d]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/courier/courierpop3login]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/pop3d-ssl]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/pop3d]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/configlist.pop3]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-45pop3.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-45pop3.pl]
+non-standard-file-perm 0600 != 0644 [etc/courier/pop3d.cnf]

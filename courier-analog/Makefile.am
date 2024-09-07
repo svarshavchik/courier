@@ -67,8 +67,10 @@ EXTRA_DIST += courier-debuild \
 	packaging/debian/control \
 	packaging/debian/copyright \
 	packaging/debian/courier-analog.lintian-overrides \
+	packaging/debian/lintian-overrides.allow-errors \
 	packaging/debian/rules \
-	packaging/debian/source/format
+	packaging/debian/source/format \
+	packaging/debian/source/lintian-overrides
 
 packaging/debian/changelog: packaging/debian/changelog.in configure.ac
 	CONFIG_FILES=packaging/debian/changelog $(srcdir)/config.status

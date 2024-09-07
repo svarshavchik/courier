@@ -16,7 +16,7 @@ override_dh_auto_install:
 	debian/auto_install.sh
 
 override_dh_installsystemd:
-	dh_installsystemd --package libcourier-sox-server courier-sox.service
+	dh_installsystemd --package libcourier-sox-server --name courier-sox
 
 override_dh_builddeb:
 	dh_builddeb -- $(DEB_BUILDDEB_OPTIONS)

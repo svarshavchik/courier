@@ -1,10 +1,65 @@
 #
-# Package installs specific permissions for every file and directory
+# We provide an explicit dependency on anacron.
 #
-non-standard-dir-perm var/spool/courier/calendar*
-non-standard-dir-perm var/spool/courier/webmail-logincache/*
-non-standard-executable-perm usr/lib/courier/libexec/cgi-bin/*
-non-standard-executable-perm usr/lib/courier/libexec/courier/*
-non-standard-file-perm usr/lib/courier/share/*
-non-standard-setuid-executable-perm usr/lib/courier/libexec/courier/sqwebpasswd 2555
-elevated-privileges usr/lib/courier/libexec/courier/sqwebpasswd 2555 daemon/daemon
+missing-systemd-timer-for-cron-script [etc/cron.hourly/courier-webmail]
+#
+# Package explicitly sets these permissions
+#
+elevated-privileges 2555 daemon/daemon [usr/lib/courier/libexec/courier/sqwebpasswd]
+non-standard-dir-perm 0700 != 0755 [var/spool/courier/calendar/localcache/]
+non-standard-dir-perm 0700 != 0755 [var/spool/courier/webmail-logincache/]
+non-standard-dir-perm 0750 != 0755 [var/spool/courier/calendar/private/]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/cgi-bin/webmail]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/courier/pcpd]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/courier/sqwebmaild]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/configlist.webmail]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-47webmail.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-47webmail.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/bg.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/bluebottomleft.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/bluebottomright.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/bluetopleft.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/bluetopright.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/calendar.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/cancel.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/eventadd.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/eventedit.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/first.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/folder.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/folder2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/folders.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/forward.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/forwardatt.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/fullheaders.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/graybottomleft.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/graybottomright.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/graytopleft.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/graytopright.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/key.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/last.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/left.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/left2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/logo.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/print.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/reply.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/replyall.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/replylist.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/right.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/right2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/save.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sep.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/signin.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-frowney.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-frowney2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-notsmiley.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-notsmiley2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-ohno.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-smiley.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-smiley2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-wink.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sm-wink2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/sqwebmail.css]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/trash2.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/uncancel.png]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/sqwebmail/images/wikifmt.html]
+non-standard-setuid-executable-perm 2555 [usr/lib/courier/libexec/courier/sqwebpasswd]

@@ -1,11 +1,11 @@
 #
 # Automatically disable courier-mlm-web when removing this package
 #
-apache2-reverse-dependency-calls-wrapper-script prerm:* a2disconf
+apache2-reverse-dependency-calls-wrapper-script a2disconf [prerm:10]
 #
-# utomatically reload apache when removing this package
+# Automatically reload apache when removing this package
 #
-maintainer-script-calls-systemctl
+maintainer-script-calls-systemctl [prerm:11]
 #
 # Separate subpackage, for convenience. Dependency specified.
 #

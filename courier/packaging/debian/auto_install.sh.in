@@ -224,9 +224,7 @@ cp courier.sysvinit debian/tmp@datadir@/courier.sysvinit
 @PERL@ -p -i -e 's@^webadmin=.*@webadmin="'$apache_cgibindir/webadmin'"@' \
 	      debian/tmp@datadir@/courier.sysvinit
 
-mkdir -p debian/tmp/lib/systemd/system
-sed '/mail-transfer-agent.target/d' <courier.service  >debian/tmp/lib/systemd/system/courier.service
-dh_install --package courier debian/tmp/lib/systemd/system/courier.service
+sed '/mail-transfer-agent.target/d' <courier.service  >debian/courier.service
 
 # Create an initial default DH paramter file, and install a
 # monthly script to generate DH parameters

@@ -1,25 +1,131 @@
 #
-# Package installs specific permissions for every file and directory
+# We provide an explicit dependency on anacron.
 #
-executable-is-not-world-readable usr/lib/courier/bin/*
-executable-is-not-world-readable usr/lib/courier/libexec/courier/*
-executable-is-not-world-readable usr/lib/courier/sbin/*
-executable-is-not-world-readable usr/lib/courier/share/*
-non-standard-dir-perm etc/courier/*
-non-standard-dir-perm etc/skel/Maildir/*
-non-standard-dir-perm var/spool/courier/*
-non-standard-executable-perm usr/lib/courier/*
-non-standard-file-perm etc/courier/*
-non-standard-file-perm usr/lib/courier/share/*
-non-standard-setuid-executable-perm usr/lib/courier/bin/cancelmsg 6555
-non-standard-setuid-executable-perm usr/lib/courier/bin/mailq 2555
-elevated-privileges usr/lib/courier/bin/*
-elevated-privileges usr/lib/courier/libexec/courier/*
-non-standard-setuid-executable-perm usr/lib/courier/bin/*
-non-standard-setuid-executable-perm usr/lib/courier/libexec/courier/*
+missing-systemd-timer-for-cron-script [etc/cron.monthly/courier]
+#
+# Package explicitly sets these permissions
+#
+executable-is-not-world-readable 4550 [usr/lib/courier/libexec/courier/submitmkdir]
+elevated-privileges 2555 daemon/daemon [usr/lib/courier/bin/mailq]
+elevated-privileges 4511 root/daemon [usr/lib/courier/bin/sendmail]
+elevated-privileges 4550 daemon/daemon [usr/lib/courier/libexec/courier/submitmkdir]
+elevated-privileges 6555 daemon/daemon [usr/lib/courier/bin/cancelmsg]
+executable-is-not-world-readable 0500 [usr/lib/courier/libexec/courier/courierfilter]
+executable-is-not-world-readable 0500 [usr/lib/courier/share/filterctl]
+executable-is-not-world-readable 0550 [usr/lib/courier/libexec/courier/aliascombine]
+executable-is-not-world-readable 0550 [usr/lib/courier/libexec/courier/aliascreate]
+executable-is-not-world-readable 0550 [usr/lib/courier/libexec/courier/aliasexp]
+executable-is-not-world-readable 0550 [usr/lib/courier/libexec/courier/courierd]
+executable-is-not-world-readable 0550 [usr/lib/courier/libexec/courier/modules/esmtp/courieresmtp]
+executable-is-not-world-readable 0550 [usr/lib/courier/libexec/courier/modules/esmtp/courieresmtpd]
+executable-is-not-world-readable 0550 [usr/lib/courier/libexec/courier/submit]
+executable-is-not-world-readable 0550 [usr/lib/courier/sbin/showmodules]
+executable-is-not-world-readable 0550 [usr/lib/courier/share/makealiases]
+executable-is-not-world-readable 4511 [usr/lib/courier/bin/sendmail]
+non-standard-dir-perm 0700 != 0755 [etc/courier/webadmin/]
+non-standard-dir-perm 0700 != 0755 [etc/courier/webadmin/added/]
+non-standard-dir-perm 0700 != 0755 [etc/courier/webadmin/removed/]
+non-standard-dir-perm 0700 != 0755 [etc/skel/Maildir/]
+non-standard-dir-perm 0700 != 0755 [etc/skel/Maildir/cur/]
+non-standard-dir-perm 0700 != 0755 [etc/skel/Maildir/new/]
+non-standard-dir-perm 0700 != 0755 [etc/skel/Maildir/tmp/]
+non-standard-dir-perm 0700 != 0755 [var/spool/courier/faxtmp/]
+non-standard-dir-perm 0750 != 0755 [etc/courier/aliases/]
+non-standard-dir-perm 0750 != 0755 [etc/courier/filters/]
+non-standard-dir-perm 0750 != 0755 [etc/courier/filters/active/]
+non-standard-dir-perm 0750 != 0755 [var/spool/courier/allfilters/]
+non-standard-dir-perm 0750 != 0755 [var/spool/courier/filters/]
+non-standard-dir-perm 0750 != 0755 [var/spool/courier/msgq/]
+non-standard-dir-perm 0750 != 0755 [var/spool/courier/msgs/]
+non-standard-dir-perm 0770 != 0755 [var/spool/courier/tmp/]
+non-standard-executable-perm 0500 != 0755 [usr/lib/courier/libexec/courier/courierfilter]
+non-standard-executable-perm 0500 != 0755 [usr/lib/courier/share/filterctl]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/libexec/courier/aliascombine]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/libexec/courier/aliascreate]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/libexec/courier/aliasexp]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/libexec/courier/courierd]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/libexec/courier/modules/esmtp/courieresmtp]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/libexec/courier/modules/esmtp/courieresmtpd]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/libexec/courier/submit]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/sbin/showmodules]
+non-standard-executable-perm 0550 != 0755 [usr/lib/courier/share/makealiases]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/courier-config]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/couriertls]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/deliverquota]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/dotforward]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/lockmail]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/maildiracl]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/maildirkw]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/maildirmake]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/makemime]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/mimegpg]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/reformime]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/testmxlookup]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/courier/makedatprog]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/courier/modules/esmtp/addcr]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/sbin/aliaslookup]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/sbin/courier]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/sbin/courierfilter]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/sbin/couriertcpd]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/sbin/sharedindexinstall]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/sbin/sharedindexsplit]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/sbin/showconfig]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/courierctl.start]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/courierwebadmin/dumpenv.pl]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/courierwebadmin/webadmin.pl]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/esmtpd-ssl]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/esmtpd]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/makeacceptmailfor]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/makedat]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/makehosteddomains]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/makepercentrelay]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/makesmtpaccess]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/mkesmtpdcert]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/sysconftool]
+non-standard-file-perm 0444 != 0644 [etc/courier/quotawarnmsg.example]
+non-standard-file-perm 0444 != 0644 [etc/courier/webadmin/restartauthcmd]
+non-standard-file-perm 0444 != 0644 [etc/courier/webadmin/restartcmd]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/configlist]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-00machine.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-00machine.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-05local.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-05local.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-10password.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-10password.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-20aliases.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-20aliases.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-30esmtp.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-30esmtp.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-30xspf.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-30xspf.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-31esmtp.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-31esmtp.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-50bofh.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-50bofh.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-cancel.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-main.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-main.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-save.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-save.pl]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/login.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/notsupp.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/unsecure.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/webadmin.pm]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/perlfilter-example.pl]
+non-standard-file-perm 0600 != 0644 [etc/courier/esmtpauthclient]
+non-standard-file-perm 0600 != 0644 [usr/lib/courier/share/dhparams.pem.dist]
+non-standard-file-perm 0640 != 0644 [etc/courier/aliases/system]
+non-standard-file-perm 0640 != 0644 [etc/courier/faxrc.dist]
+non-standard-file-perm 0640 != 0644 [etc/courier/ldapaliasrc.dist]
+non-standard-setuid-executable-perm 2555 [usr/lib/courier/bin/mailq]
+non-standard-setuid-executable-perm 4511 [usr/lib/courier/bin/sendmail]
+non-standard-setuid-executable-perm 4550 [usr/lib/courier/libexec/courier/submitmkdir]
+non-standard-setuid-executable-perm 6555 [usr/lib/courier/bin/cancelmsg]
+#
+# Not a directly-executable script.
+#
 script-not-executable [usr/lib/courier/share/courierwebadmin/admin-05local.pl]
-
 #
 # Automatically create $HOME/Maildir for everyone.
 #
-package-contains-file-in-etc-skel etc/skel/Maildir*
+package-contains-file-in-etc-skel [etc/skel/*]

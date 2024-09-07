@@ -1,11 +1,8 @@
 #
 # File permissions are specified by the package
 #
-odd-permissions-on-shared-library usr/lib/*/courier-authlib/*
-#
-# File permissions are specified by the package
-#
-non-standard-file-perm usr/lib/*/courier-authlib/*
+non-standard-file-perm 0444 != 0644 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthsqlite.so.0.0.0]
+odd-permissions-on-shared-library 0444 [usr/lib/x86_64-linux-gnu/courier-authlib/libauthsqlite.so.0.0.0]
 #
 # Debhelper/lintian bug
 #

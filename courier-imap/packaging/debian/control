@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Sam Varshavchik <mrsam@courier-mta.com>
 Build-Depends:
 	perl:any,
-	pkg-config,
+	pkgconf,
 	debhelper-compat (= 12),
 	gcc%DEBGCC%,
 	g++%DEBGCC%,
@@ -23,7 +23,8 @@ Homepage: https://www.courier-mta.org/imap/
 Package: courier-imap
 Architecture: any
 Conflicts: courier-imapd, courier-pop3d
-Depends: ${shlibs:Depends},
+Depends: anacron,
+	 ${shlibs:Depends},
 	 ${misc:Depends}
 Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
 Description: Maildir IMAP Server

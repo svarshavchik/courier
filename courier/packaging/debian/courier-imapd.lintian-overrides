@@ -1,8 +1,12 @@
 #
-# Package installs specific permissions for every file and directory
+# Package explicitly sets these permissions
 #
-non-standard-executable-perm usr/lib/courier/bin/*
-non-standard-executable-perm usr/lib/courier/libexec/*
-non-standard-executable-perm usr/lib/courier/share/*
-non-standard-file-perm etc/courier/*
-non-standard-file-perm usr/lib/courier/share/*
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/imapd]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/courier/imaplogin]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/imapd-ssl]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/imapd]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/share/makeimapaccess]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/configlist.imap]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-40imap.html]
+non-standard-file-perm 0444 != 0644 [usr/lib/courier/share/courierwebadmin/admin-40imap.pl]
+non-standard-file-perm 0600 != 0644 [etc/courier/imapd.cnf]

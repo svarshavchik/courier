@@ -1,5 +1,6 @@
 #
-# Package installs specific permissions for every file and directory
+# Package explicitly sets these permissions
 #
-non-standard-executable-perm usr/lib/courier/bin/*
-non-standard-executable-perm usr/lib/courier/libexec/cgi-bin/webmlm*
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/webmlmd.rc]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/bin/webmlmd]
+non-standard-executable-perm 0555 != 0755 [usr/lib/courier/libexec/cgi-bin/webmlm]
