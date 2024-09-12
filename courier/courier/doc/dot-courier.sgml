@@ -82,6 +82,17 @@ either <literal>user+foo@domain</literal>.</para>
     </note>
 
     <para>
+      <quote>+</quote> is the default content of
+      The <filename>@sysconfdir@/defaultsep</filename> configuration file,
+      if it does not exist. This configuration file
+      contains a single line with a list of all punctuation characters
+      that are considered to be equivalent to <quote>-</quote>.
+      A single, empty, blank line in
+      <filename>@sysconfdir@/defaultsep</filename> results in recognizing
+      only <quote>-</quote> as the separator character.
+    </para>
+
+    <para>
 The system administrator can configure the
 <application>Courier</application> mail server to accept mail without
 regard to whether addresses are in uppercase and lowercase. In that case the
@@ -555,6 +566,8 @@ This environment variable contains the entire
 	  <envar>EXT3</envar> and
 	  <envar>EXT4</envar> use <quote>-</quote> as a separator even if the
 	  recipient address used the equivalent <quote>+</quote> characters,
+	  or any suitable separator character specified in the
+	  <filename>@sysconfdir@/defaultsep</filename> configuration file,
 	  instead.
 	</para>
       </note>

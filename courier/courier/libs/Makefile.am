@@ -33,6 +33,7 @@ libcommon_la_SOURCES= aliases.h \
 libcommon_la_LDFLAGS=-static
 
 libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c courier_malloc.c \
+	cdefaultsep.c \
 	cdefaultdelivery.c cdomaincmp.c cfilename.c cmaildropfilter.c \
 	comsts.c comsts2.c comsts.h \
 	cmaildropmda.c \

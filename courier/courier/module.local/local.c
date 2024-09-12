@@ -245,7 +245,7 @@ static void rw_del_local2(struct rw_info *rwi,
 		*atdomain++=0;
 
 	for (ext=addr; *ext; ext++)
-		if (*ext == '+')
+		if (strchr(config_defaultsep(), *ext))
 			*ext='-';
 #endif
 
