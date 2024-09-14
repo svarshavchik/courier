@@ -386,6 +386,9 @@ AC_SUBST(REPOSITORY)
 
 AC_ARG_WITH(socks, [], [ : ], [ac_configure_args="$ac_configure_args --without-socks"])
 
+DATE=`env LC_ALL=en_US perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+AC_SUBST(DATE)
+
 AC_CONFIG_SUBDIRS(libs/soxwrap)
 AC_CONFIG_FILES(Makefile
 	testcidr.sh

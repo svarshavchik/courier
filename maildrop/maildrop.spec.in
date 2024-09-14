@@ -109,3 +109,5 @@ rm -rf $RPM_BUILD_ROOT%{_docdir}/*/html
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* @DATE@ Sam Varshavchik <mrsam@courier-mta.com>
+- Update Makefile

@@ -123,15 +123,5 @@ fi
 %doc cone/html
 
 %changelog
-* Wed Apr 14 2004 Mr. Sam <sam@email-scan.com>
-- Replace BuildPreReq: with BuildRequires, +other fixes.
-- Remove duplicate html docs, move them to -devel subpackage.
-
-* Mon Sep  1 2003 Mr. Sam <sam@email-scan.com>
-- Fix for Red Hat 9+
-
-* Sat Jul 26 2003 Mr. Sam 0.52
-- Use wide-char compatible ncurses in current RH Beta.
-
-* Wed Mar  5 2003 Mr. Sam <mrsam@courier-mta.com>
-- Initial build.
+* @DATE@ Sam Varshavchik <mrsam@courier-mta.com>
+- Update Makefile

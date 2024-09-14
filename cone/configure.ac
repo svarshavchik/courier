@@ -87,6 +87,9 @@ AM_CONDITIONAL(HAVE_SGML, test -d "$srcdir/docbook")
 
 AC_PATH_PROGS(COURIERCONFIG, courier-config, none, $LPATH)
 
+DATE=`env LC_ALL=en_US perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+AC_SUBST(DATE)
+
 echo "$VERSION" >coneversion
 AC_CONFIG_SUBDIRS(libs/unicode libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc1035 libs/rfc822 libs/rfc2045 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone)
 AC_CONFIG_FILES(

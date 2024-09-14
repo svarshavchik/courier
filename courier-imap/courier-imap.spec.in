@@ -343,5 +343,5 @@ fi
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
-* Sat Dec 17 2022 Sam Varshavchik <mrsam@courier-mta.com> -
-- Makefile and spec file fixes
+* @DATE@ Sam Varshavchik <mrsam@courier-mta.com>
+- Update Makefile

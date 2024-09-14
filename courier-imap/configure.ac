@@ -262,6 +262,9 @@ AM_CONDITIONAL(HAVE_HTML, test -f ${srcdir}/html/main.html)
 AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
 		      certsdir="$withval", certsdir=$datadir)
 
+DATE=`env LC_ALL=en_US perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+AC_SUBST(DATE)
+
 AC_CONFIG_FILES(Makefile dbobj.h dbobj.config imapd.rc imapd-ssl.rc
 		pop3d.rc pop3d-ssl.rc makeimapaccess
 		authconfig

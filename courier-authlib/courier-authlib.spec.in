@@ -328,13 +328,5 @@ rm -rf $RPM_BUILD_ROOT
 %files config-%{mailuser}-%{mailgroup}
 
 %changelog
-
-* Thu Sep  7 2006 Chris Petersen <rpm@forevermore.net>                  0.58-2
-- Make the spec a little prettier
-- Replace BuildPreReq with BuildRequires
-- Remove period from summaries (rpmlint)
-- Fix release tag to use %{?dist} macro if it's present
-- Change distro-detection to use "rh" and "fc" for version detection, and add support for mandriva
-
-* Sun Oct  3 2004 Mr. Sam <sam@email-scan.com>                          0.50-1
-- Initial build.
+* @DATE@ Sam Varshavchik <mrsam@courier-mta.com>
+- Update Makefile
