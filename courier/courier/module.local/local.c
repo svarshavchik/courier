@@ -196,6 +196,10 @@ static void rw_del_local(struct rw_info *rwi,
 	free(addr);
 }
 
+static const char *defaultsep(char c)
+{
+	return c == '-' ? "-" : strchr(config_defaultsep(), c);
+}
 
 static void rw_del_local2(struct rw_info *rwi,
 			  char *addr,
@@ -243,17 +247,13 @@ static void rw_del_local2(struct rw_info *rwi,
 	localat=atdomain=strrchr(addr, '@');
 	if (atdomain)
 		*atdomain++=0;
-
-	for (ext=addr; *ext; ext++)
-		if (strchr(config_defaultsep(), *ext))
-			*ext='-';
 #endif
 
 	i=0;
 	for (ext=addr; *ext; ext++)
 	{
 #if LOCAL_EXTENSIONS
-		if (*ext == '-' && ++i > 3)
+		if (defaultsep(*ext) && ++i > 3)
 			break;
 #endif
 	}
@@ -314,7 +314,7 @@ static void rw_del_local2(struct rw_info *rwi,
 		*ext=c;
 
 		while (ext > addr)
-			if (*--ext == '-')	break;
+			if (defaultsep(*--ext))	break;
 		if (ext == addr)
 		{
 			if (atdomain)
@@ -440,8 +440,40 @@ not_found:
 	}
 }
 
+static int local_callback2(struct authinfo *a, void *vp);
+
 
 static int local_callback(struct authinfo *a, void *vp)
+{
+	struct localauthinfo *lai=(struct localauthinfo *)vp;
+	const char *orig_ext=lai->ext;
+
+	char *ext=0;
+	int rc;
+
+	if (orig_ext)
+	{
+		char *p;
+
+		if ((ext=strdup(orig_ext)) == 0)
+			clog_msg_errno();
+
+		lai->ext=ext;
+
+		for (p=ext; *p; p++)
+			if (defaultsep(*p))
+				*p='-';
+	}
+
+	rc=local_callback2(a, vp);
+	lai->ext=orig_ext;
+
+	if (ext)
+		free(ext);
+	return rc;
+}
+
+static int local_callback2(struct authinfo *a, void *vp)
 {
 struct localauthinfo *lai=(struct localauthinfo *)vp;
 struct	rfc822token tacct, text, tuid, tgid, thomedir, tmaildir, tquota, trecip;

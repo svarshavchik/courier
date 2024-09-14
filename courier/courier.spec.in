@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2024 Double Precision, Inc.  See COPYING for
 # distribution information.
 #
 
@@ -1031,5 +1031,5 @@ fi
 
 %changelog
 
-* Tue Nov 22 2022 Sam Varshavchik <mrsam@courier-mta.com>
+* @DATE@ Sam Varshavchik <mrsam@courier-mta.com>
 - Update Makefile

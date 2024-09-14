@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier],[1.3.12.20240912],[courier-users@lists.sourceforge.net])
+AC_INIT([courier],[1.3.12.20240914],[courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -334,6 +334,8 @@ done
 AC_ARG_WITH(repository, [], REPOSITORY="$withval")
 AC_SUBST(REPOSITORY)
 
+DATE=`env LC_ALL=en_US perl -e 'print scalar localtime'`
+AC_SUBST(DATE)
 echo $real_configure_args >configure.args
 AC_CONFIG_SUBDIRS(afx libs/gdbmobj libs/bdbobj libs/cgi libs/http11 libs/numlib libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/liblock libs/maildir libs/waitlib libs/threadlib libs/makedat libs/tcpd libs/rootcerts libs/imap libs/maildrop libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail webadmin courier)
 

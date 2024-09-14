@@ -69,11 +69,11 @@ either <literal>user+foo@domain</literal>.</para>
 	<filename>$HOME/.courier-<replaceable>foo</replaceable></filename>.
 	All occurences of <quote>+</quote> characters in the email address
 	are replaced by a <quote>-</quote>. The corresponding
-	<filename>.courier</filename> gets processed afterwards.
+	<filename>.courier</filename> file then gets processed.
       </para>
 
       <para>
-	All examples in the following documentation uses <quote>-</quote>
+	All examples in the following documentation use <quote>-</quote>
 	in E-mail addresses, but this also applies to
 	<quote>+</quote> as well (however
 	note that all actual <filename>.courier</filename>
@@ -83,7 +83,7 @@ either <literal>user+foo@domain</literal>.</para>
 
     <para>
       <quote>+</quote> is the default content of
-      The <filename>@sysconfdir@/defaultsep</filename> configuration file,
+      the <filename>@sysconfdir@/defaultsep</filename> configuration file,
       if it does not exist. This configuration file
       contains a single line with a list of all punctuation characters
       that are considered to be equivalent to <quote>-</quote>.
