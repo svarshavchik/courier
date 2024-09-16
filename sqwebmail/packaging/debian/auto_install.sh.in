@@ -56,6 +56,7 @@ WantedBy=multi-user.target
 
 [Service]
 Type=forking
+Restart=no
 RemainAfterExit=true
 ExecStart=$libexecdir/sqwebmaild.rc start
 ExecStop=$libexecdir/sqwebmaild.rc stop

@@ -14,6 +14,7 @@ WantedBy=multi-user.target
 
 # First start could take several minutes, to generate the DH param file
 [Service]
+Restart=no
 Type=forking
 RemainAfterExit=true
 ExecStart=@datadir@/courier.sysvinit start
