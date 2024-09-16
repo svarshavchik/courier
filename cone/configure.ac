@@ -87,7 +87,7 @@ AM_CONDITIONAL(HAVE_SGML, test -d "$srcdir/docbook")
 
 AC_PATH_PROGS(COURIERCONFIG, courier-config, none, $LPATH)
 
-DATE=`env LC_ALL=en_US perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+DATE=`env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
 AC_SUBST(DATE)
 
 echo "$VERSION" >coneversion

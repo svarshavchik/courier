@@ -42,7 +42,7 @@ dnl Checks for library functions.
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/libs/docbook)
 
-DATE=`env LC_ALL=en_US perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+DATE=`env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
 AC_SUBST(DATE)
 
 AC_CONFIG_FILES([Makefile
