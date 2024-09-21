@@ -1,3 +1,13 @@
+1.3.13
+
+2024-09-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* packaging: Fix rpm packaging, use a synthesized changelog entry
+	with the current date, to set the rpmbuild epoch date.
+
+	* Fix several issues with the cdefaultsep configuration setting,
+	which broke mailboxes containing + characters.
+
 2024-09-07  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* packaging: Fix deb packaging of systemd service, other deb

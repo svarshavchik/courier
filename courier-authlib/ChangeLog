@@ -1,3 +1,8 @@
+2024-09-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* packaging: Fix rpm packaging, use a synthesized changelog entry
+	with the current date, to set the rpmbuild epoch date.
+
 2024-09-07  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* packaging/debian/rules: Fix deb packaging of systemd service.
