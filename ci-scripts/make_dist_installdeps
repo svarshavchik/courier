@@ -3,7 +3,6 @@ set -evx
 dnf install -y --setopt=install_weak_deps=false \
     --setopt=tsflags=nodocs \
     --setopt=deltarpm=false \
-    --disablerepo=*modular \
     autoconf \
     automake \
     bzip2 \
