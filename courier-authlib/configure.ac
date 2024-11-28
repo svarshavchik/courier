@@ -1025,8 +1025,11 @@ AC_SUBST(using_systemd)
 
 AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
 
-DATE=`env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("DATE=\"%a %b %d %Y\"; DATEFULL=\"%a, %d %b %Y %H:%M:%S %z\"", localtime)' >configure.date
+. ./configure.date
+rm configure.date
 AC_SUBST(DATE)
+AC_SUBST(DATEFULL)
 
 AC_CONFIG_FILES(Makefile
 	authdaemond

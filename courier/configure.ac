@@ -334,8 +334,12 @@ done
 AC_ARG_WITH(repository, [], REPOSITORY="$withval")
 AC_SUBST(REPOSITORY)
 
-DATE=`env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("DATE=\"%a %b %d %Y\"; DATEFULL=\"%a, %d %b %Y %H:%M:%S %z\"", localtime)' >configure.date
+. ./configure.date
+rm configure.date
 AC_SUBST(DATE)
+AC_SUBST(DATEFULL)
+
 echo $real_configure_args >configure.args
 AC_CONFIG_SUBDIRS(afx libs/gdbmobj libs/bdbobj libs/cgi libs/http11 libs/numlib libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/liblock libs/maildir libs/waitlib libs/threadlib libs/makedat libs/tcpd libs/rootcerts libs/imap libs/maildrop libs/ldapaddressbook libs/gpglib libs/pcp libs/sqwebmail webadmin courier)
 

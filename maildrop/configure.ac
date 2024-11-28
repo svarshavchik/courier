@@ -203,11 +203,12 @@ AC_ARG_WITH(version, [], :,
 
 AC_SUBST(REPOSITORY)
 
-DATE=`env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("DATE=\"%a %b %d %Y\"; DATEFULL=\"%a, %d %b %Y %H:%M:%S %z\"", localtime)' >configure.date
+. ./configure.date
+rm configure.date
 AC_SUBST(DATE)
+AC_SUBST(DATEFULL)
 
-DATE=`env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
-AC_SUBST(DATE)
 
 AC_CONFIG_SUBDIRS(libs/numlib libs/liblock libs/rfc822 libs/rfc2045 libs/gdbmobj libs/bdbobj libs/makedat libs/maildir libs/maildrop)
 

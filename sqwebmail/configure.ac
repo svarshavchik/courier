@@ -339,8 +339,12 @@ AM_CONDITIONAL(HAVE_HTMLPAGES, test -d $srcdir/html)
 AC_ARG_WITH(repository, [], REPOSITORY="$withval")
 AC_SUBST(REPOSITORY)
 
-DATE=`env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("%a %b %d %Y", localtime)'`
+env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("DATE=\"%a %b %d %Y\"; DATEFULL=\"%a, %d %b %Y %H:%M:%S %z\"", localtime)' >configure.date
+. ./configure.date
+rm configure.date
 AC_SUBST(DATE)
+AC_SUBST(DATEFULL)
+
 
 AC_CONFIG_SUBDIRS(libs/numlib libs/bdbobj libs/gdbmobj libs/md5 libs/sha1
 	libs/random128 libs/libhmac libs/liblock
