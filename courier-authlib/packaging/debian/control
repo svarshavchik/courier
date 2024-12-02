@@ -70,7 +70,8 @@ Description: Courier authentication library (development and header files)
 Package: libcourier-auth-userdb
 Architecture: any
 Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%,
+             libcourier-auth (= ${binary:Version})
 Description: Userdb support for the Courier authentication library
  This package installs the userdb support for the Courier authentication
  library.  Userdb is a simple way to manage virtual mail accounts using
@@ -80,7 +81,8 @@ Description: Userdb support for the Courier authentication library
 Package: libcourier-auth-ldap
 Architecture: any
 Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%,
+             libcourier-auth (= ${binary:Version})
 Description: LDAP support for the Courier authentication library
  This package installs the LDAP support for the Courier authentication
  library.  Install this package in order to be able to authenticate with LDAP.
@@ -88,7 +90,8 @@ Description: LDAP support for the Courier authentication library
 Package: libcourier-auth-mysql
 Architecture: any
 Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%,
+             libcourier-auth (= ${binary:Version})
 Description: Mysql (MariaDB) support for the Courier authentication library
  This package installs the Mysql (MariaDB) support for the Courier
  authentication library.  Install this package in order to be able to
@@ -97,7 +100,8 @@ Description: Mysql (MariaDB) support for the Courier authentication library
 Package: libcourier-auth-sqlite
 Architecture: any
 Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%,
+             libcourier-auth (= ${binary:Version})
 Description: SQLite support for the Courier authentication library
  This package installs the SQLite support for the Courier
  authentication library.  Install this package in order to be able to
@@ -106,7 +110,8 @@ Description: SQLite support for the Courier authentication library
 Package: libcourier-auth-pgsql
 Architecture: any
 Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%,
+             libcourier-auth (= ${binary:Version})
 Description: PostgreSQL support for the Courier authentication library
  This package installs the PostgreSQL support for the Courier
  authentication library.  Install this package in order to be able to
@@ -115,7 +120,8 @@ Description: PostgreSQL support for the Courier authentication library
 Package: libcourier-auth-pipe
 Architecture: any
 Depends: libcourier-auth (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%
+Pre-Depends: libcourier-auth-config-%MAILUSER%-%MAILGROUP%,
+             libcourier-auth (= ${binary:Version})
 Description: External authentication module that communicates via pipes
  This package installs the authpipe module, which is a generic plugin
  that enables authentication requests to be serviced by an external
