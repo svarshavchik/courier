@@ -85,6 +85,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 courier (= ${binary:Version})
+Pre-Depends: courier (= ${binary:Version})
 Description: Courier Mail Server - POP3 server
  This package adds POP3 server access to the Courier mail server.
  Courier's POP3 server can only be used to access maildir mailboxes.
@@ -99,6 +100,7 @@ Replaces: courier-imap
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 courier (= ${binary:Version})
+Pre-Depends: courier (= ${binary:Version})
 Description: Courier Mail Server - IMAP server
  This package adds IMAP server access to the Courier mail server.
  Courier's IMAP server can only be used to access maildir mailboxes.
@@ -113,6 +115,7 @@ Depends: ${shlibs:Depends},
 	 gpg ( >= 2),
 	 hunspell,
 	 courier (= ${binary:Version})
+Pre-Depends: courier (= ${binary:Version})
 Recommends: courier-webmail-apache2 (= ${binary:Version})
 Conflicts: sqwebmail
 Replaces: sqwebmail
@@ -135,6 +138,7 @@ Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 libcgi-pm-perl,
 	 courier (= ${binary:Version})
+Pre-Depends: courier (= ${binary:Version})
 Recommends: courier-webadmin-apache2 (= ${binary:Version})
 Description: Courier Mail Server - web-based administration tool
  This package installs Courier's CGI-based administration module.
@@ -164,6 +168,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 courier (= ${binary:Version})
+Pre-Depends: courier (= ${binary:Version})
 Recommends: courier-mlm-web-apache2 (= ${binary:Version})
 Description: Courier Mail Server - Mailing List Manager (web interface)
  This package installs the web-based mini-interface to the Courier
