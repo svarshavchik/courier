@@ -176,6 +176,9 @@ $ cd courier-authlib-VERSION</pre>
     followed by the rest of the packages. Higher level tools, like <span class=
     "c1">apt</span> should figure this out by themselves.</li>
   </ul>
+  <p>NOTE: if the courier-debuild script stops with an error complaining about
+    missing dependencies, then use "apt install" to install them, then try
+    again.</p>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <p>Setting the <span class="c1">DEBGCC</span> environment variable selects a
   non-default gcc version.</p>

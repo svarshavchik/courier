@@ -321,6 +321,16 @@ $ ./courier-debuild -us -uc]]></programlisting>
 	      tarball in its parent directory.
 	    </para>
 	  </note>
+	  <note>
+	    <para>
+	      If the courier-debuild script stops with an error complaining
+	      about missing dependencies, then use
+	      <quote><command>apt install</command></quote>
+	      to install them, then try
+	      again.
+	    </para>
+	  </note>
+
 	  <para>
 	    The eventually produces a
 	    <filename>deb</filename> subdirectory with

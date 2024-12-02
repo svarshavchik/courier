@@ -134,6 +134,9 @@ $ cd sqwebmail-VERSION</pre>
   <p>NOTE: the above steps must be followed strictly. The <span class=
   "c1">courier-debuild</span> script expects the distributed tarball in its
   parent directory.</p>
+  <p>NOTE: if the courier-debuild script stops with an error complaining about
+    missing dependencies, then use "apt install" to install them, then try
+    again.</p>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <p>Setting the <code>DEBGCC</code> environment variable selects a non-default
   gcc version.</p>

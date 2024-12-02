@@ -16,6 +16,7 @@ Build-Depends:
 	libgdbm-dev,
 	libpcre2-dev,
 	libgcrypt-dev,
+	sysconftool,
 	libidn2-dev
 Standards-Version: 4.4.1
 Homepage: https://www.courier-mta.org/imap/

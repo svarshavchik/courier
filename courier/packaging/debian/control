@@ -31,6 +31,7 @@ Build-Depends:
 	mgetty-fax,
 	netpbm,
 	libpcre2-dev,
+	sysconftool,
 	libperl-dev
 
 Package: courier

@@ -23,6 +23,7 @@ Build-Depends:
 	gnutls-dev,
 	gnutls-bin,
 	libgcrypt-dev,
+	sysconftool,
 	gpg ( >= 2)
 
 Package: cone

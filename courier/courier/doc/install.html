@@ -119,6 +119,9 @@ $ cd courier-VERSION</pre>
   <p>NOTE: the above steps must be followed strictly. The
   <tt>courier-debuild</tt> script expects the distributed tarball in its parent
   directory.</p>
+  <p>NOTE: if the courier-debuild script stops with an error complaining about
+    missing dependencies, then use "apt install" to install them, then try
+    again.</p>
   <p>This eventually produces a deb subdirectory with .deb packages that can be
   installed with "dpkg -i".</p>
   <p>NOTE: All Courier packages should be built with the same version of gcc,
