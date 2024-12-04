@@ -1042,7 +1042,7 @@ the following form:</para>
 
 	    <informalexample>
 	      <programlisting>
-<replaceable>domain</replaceable>:<replaceable>relay</replaceable>[,<replaceable>port</replaceable>][/SECURITY=STARTTLS][/SECURITY=REQUIRED][/SECURITY=SMTPS]
+<replaceable>domain</replaceable>:<replaceable>relay</replaceable>[,<replaceable>port</replaceable>][/SECURITY=STARTTLS][/SECURITY=REQUIRED][/SECURITY=SMTPS][/IPV4ONLY][/IPV6ONLY]
 </programlisting>
 	    </informalexample>
 
@@ -1291,6 +1291,21 @@ All other mail is rerouted to the <acronym>IP</acronym> address
 		</listitem>
 	      </varlistentry>
 	    </variablelist>
+
+	    <informalexample>
+	      <programlisting>
+example.com: /IPV4ONLY
+</programlisting>
+	    </informalexample>
+
+	    <para>
+	      This ignores example.com's IPv6 mail relays and always uses the
+	      domain's mail relays' IPv4 addresses. Similarly,
+	      <quote>/IPV6ONLY</quote> ignores IPv4 addresses and only uses
+	      IPv6 addresses. This is used (as the last resort)
+	      if there's an issue with
+	      IPv4 or IPv6 connectivity to the domain
+	    </para>
 
 	    <para>
 	      Changes to

@@ -123,9 +123,7 @@ struct esmtp_info {
 	unsigned esmtp_writebufleft;
 };
 
-extern struct esmtp_info *esmtp_info_alloc(const char *host,
-					   const char *smtproute,
-					   int smtproutes_flags);
+extern struct esmtp_info *esmtp_info_alloc(const char *host);
 
 extern void esmtp_setauthclientfile(struct esmtp_info *, const char *);
 extern void esmtp_info_free(struct esmtp_info *);

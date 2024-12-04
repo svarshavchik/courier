@@ -270,6 +270,22 @@ include '@sysconfdir@/maildroprcs/verifysenderfull'</programlisting>
       Just because a mail server accepted the
       <command>RCPT TO</command> it does not mean that the given E-mail
       address can ultimately receive E-mail.
+      This is especially true if a smarthost is in the picture.
+      <command>verifyfilter</command> and
+      <command>verifysmtp</command> will attempt to read the
+      <filename>esmtproutes</filename> configuration file
+      (see
+      <ulink url="courier.html">
+	<citerefentry>
+	  <refentrytitle>courier</refentrytitle>
+	  <manvolnum>8</manvolnum>
+	</citerefentry>
+      </ulink>
+      for more information).
+      If <filename>esmtproutes</filename> is configured to use a smarthost
+      all mail, for all domains, then every email address will pass validation
+      if the smarthost accept mail to any recipient without any further
+      checking (as is usually the case).
     </para>
 
     <para>
@@ -279,9 +295,9 @@ include '@sysconfdir@/maildroprcs/verifysenderfull'</programlisting>
       <command>verifyfilter</command>.
       Running as a non-daemon user, <command>verifysmtp</command>
       may not be able to read some
-      <application>Courier</application>'s configuration files, and also
-      won't use several others like
-      <filename>smtproutes</filename>
+      <application>Courier</application>'s configuration files, like
+      the aforementioned
+      <filename>esmtproutes</filename>
       and
       <filename>authclient</filename>.
       As such, <command>verifysmtp</command>'s behavior might differ from

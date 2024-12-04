@@ -1,3 +1,9 @@
+2024-12-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Implement /ipv4only and /ipv6only options in esmtproutes
+
+	* Move smtproutes handling into libesmtp.
+
 2024-11-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* rpm packaging fixes: fix warning messages from redefining global

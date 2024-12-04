@@ -24,7 +24,6 @@
 #include	<sys/stat.h>
 #endif
 #include	"courier.h"
-#include	"smtproutes.h"
 
 #include	"libfilter/libfilter.h"
 #include	"rfc1035/rfc1035.h"
@@ -166,8 +165,6 @@ static void do_verify(struct verify_info *my_info,
 {
 	const char *domain=strrchr(address, '@');
 	struct esmtp_info *info;
-	int smtproutes_flags=0;
-	char *smtproute=0;
 	struct esmtp_mailfrom_info mfi;
 	char *mail_from_cmd;
 	const char *errmsg;
@@ -180,14 +177,7 @@ static void do_verify(struct verify_info *my_info,
 		return;
 	}
 
-	if (my_env->in_daemon)
-	{
-		smtproute=smtproutes(domain+1, &smtproutes_flags);
-	}
-
-	info=esmtp_info_alloc(domain+1, smtproute, smtproutes_flags);
-	if (smtproute)
-		free(smtproute);
+	info=esmtp_info_alloc(domain+1);
 
 	if (my_env->in_daemon)
 	{
@@ -267,6 +257,14 @@ static void do_verify(struct verify_info *my_info,
 		esmtp_misccommand(info, rcpt_to_cmd, my_info);
 		free(rcpt_to_cmd);
 		info->log_good_reply=NULL;
+	}
+	else
+	{
+		if (my_info->errcode == 0)
+		{
+			my_info->errcode='5';
+			add_reply(my_info, "connection failed");
+		}
 	}
 	free(mail_from_cmd);
 

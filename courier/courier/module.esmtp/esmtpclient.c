@@ -690,14 +690,8 @@ static int is_local_or_loopback(struct esmtp_info *info,
 
 static struct esmtp_info *libesmtp_init(const char *host)
 {
-	int smtproutes_flags=0;
-	char *smtproute=smtproutes(host,
-				   &smtproutes_flags);
 	char *q;
-	struct esmtp_info *info=esmtp_info_alloc(host, smtproute,
-						 smtproutes_flags);
-	if (smtproute)
-		free(smtproute);
+	struct esmtp_info *info=esmtp_info_alloc(host);
 
 	q=config_localfilename("esmtpauthclient");
 	esmtp_setauthclientfile(info, q);

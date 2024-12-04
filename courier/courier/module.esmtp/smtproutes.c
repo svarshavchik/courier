@@ -142,6 +142,12 @@ char *smtproutes(const char *domain, int *flags)
 
 			if (strcmp(q, "SECURITY=SMTPS") == 0)
 				*flags |= ROUTE_SMTPS;
+
+			if (strcmp(q, "IPV4ONLY") == 0)
+				*flags |= ROUTE_IPV4;
+
+			if (strcmp(q, "IPV6ONLY") == 0)
+				*flags |= ROUTE_IPV6;
 		}
 	}
 

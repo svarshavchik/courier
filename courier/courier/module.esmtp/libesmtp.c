@@ -386,10 +386,11 @@ static int default_get_sourceaddr(struct esmtp_info *info,
 	return 0;
 }
 
-struct esmtp_info *esmtp_info_alloc(const char *host,
-				    const char *smtproute,
-				    int smtproutes_flags)
+struct esmtp_info *esmtp_info_alloc(const char *host)
 {
+	int smtproutes_flags=0;
+	char *smtproute=smtproutes(host,
+				   &smtproutes_flags);
 	struct esmtp_info *p=malloc(sizeof(struct esmtp_info));
 
 	if (!p)
@@ -418,12 +419,7 @@ struct esmtp_info *esmtp_info_alloc(const char *host,
 	p->esmtp_sockfd= -1;
 
 	p->smtproutes_flags=smtproutes_flags;
-	if (smtproute)
-	{
-		p->smtproute=strdup(smtproute);
-		if (!p->smtproute)
-			abort();
-	}
+	p->smtproute=smtproute;
 
 	p->esmtpkeepaliveping=0;
 	p->quit_timeout=10;
@@ -1407,7 +1403,26 @@ static int get_sourceaddr(struct esmtp_info *info,
 {
 	RFC1035_ADDR in=RFC1035_ADDRANY;
 
-	int rc=(*info->get_sourceaddr)(info, dest_addr, &in, arg);
+	int rc;
+
+	int adjusted_af=af;
+
+#if	RFC1035_IPV6
+
+	if (adjusted_af == AF_INET6 &&
+	    IN6_IS_ADDR_V4MAPPED(dest_addr))
+		adjusted_af=AF_INET;
+#endif
+
+	if ((info->smtproutes_flags & ROUTE_IPV4) &&
+	    adjusted_af != AF_INET)
+		return -1;
+
+#if	RFC1035_IPV6
+	if ((info->smtproutes_flags & ROUTE_IPV6) && adjusted_af != AF_INET6)
+		return -1;
+#endif
+	rc=(*info->get_sourceaddr)(info, dest_addr, &in, arg);
 
 	if (rc)
 		return rc;
@@ -1594,6 +1609,7 @@ static int do_esmtp_connect_to(struct esmtp_info *info,
 		info->sockfdaddrname=strdup(p->hostname);	/* Save this for later */
 
 		info->is_secure_connection=0;
+		errno=0;
 		if ((info->esmtp_sockfd=rfc1035_mksocket(SOCK_STREAM, 0, &af))
 		    >= 0 &&
 		    rfc1035_mkaddress(af, &addrbuf, &addr, port,
