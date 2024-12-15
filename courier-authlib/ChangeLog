@@ -1,3 +1,7 @@
+2024-12-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* packaging/debian/control: Fix deb package dependencies
+
 2024-09-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* packaging: Fix rpm packaging, use a synthesized changelog entry
