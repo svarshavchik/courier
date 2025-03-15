@@ -1,3 +1,10 @@
+1.4.0
+
+2025-03-15  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/submit.C (my_spf_lookup): In the Received-SPF header
+	replace SPF=<name> with identity=<name>, per RFC 4408.
+
 2024-12-04  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Implement /ipv4only and /ipv6only options in esmtproutes

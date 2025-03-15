@@ -705,7 +705,7 @@ static const char *my_spf_lookup(const char *checkname,
 	(*hdrOut) += str;
 	(*hdrOut) += " (";
 	(*hdrOut) += errmsg_buf;
-	(*hdrOut) += ")\n  SPF=";
+	(*hdrOut) += ")\n  identity=";
 	(*hdrOut) += checkname;
 	(*hdrOut) += ";\n";
 
@@ -1004,7 +1004,7 @@ static int getsender(Input &input, struct rw_transport *module)
 			/* Consider HELO=ip.address a PASS */
 			else
 			{
-				result=my_spf_lookup("HELO",
+				result=my_spf_lookup("helo",
 						     frominfo.helohost.c_str(),
 						     tcpremoteip,
 						     frominfo.helohost.c_str(),
@@ -1036,7 +1036,7 @@ static int getsender(Input &input, struct rw_transport *module)
 		{
 			errmsg[0]=0;
 
-			result=my_spf_lookup("MAILFROM",
+			result=my_spf_lookup("mailfrom",
 					     buf.c_str(),
 					     tcpremoteip,
 					     frominfo.helohost.c_str(),
@@ -2099,7 +2099,7 @@ char	*sender=rfc822_gettok(addresst);
 			std::string received_spf;
 			char errmsg[256];
 
-			const char *result=my_spf_lookup("FROM",
+			const char *result=my_spf_lookup("from",
 							 spf_from_address
 							 .c_str(),
 							 getenv("TCPREMOTEIP"),
