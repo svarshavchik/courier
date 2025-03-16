@@ -650,7 +650,7 @@ static const char *my_spf_lookup(const char *checkname,
 				 const char *mailfrom,
 				 const char *tcpremoteip,
 				 const char *helodomain,
-				 std::string *hdrOut,
+				 std::string &hdrOut,
 				 char *errmsg_buf,
 				 size_t errmsg_buf_size)
 {
@@ -696,18 +696,21 @@ static const char *my_spf_lookup(const char *checkname,
 		str="unknown";
 	}
 
-	(*hdrOut)="Received-SPF: ";
+	hdrOut="Received-SPF: ";
 
 	for (q=errmsg_buf; *q; q++)
 		if (*q < ' ' || *q >= 127)
 			*q='?';
 
-	(*hdrOut) += str;
-	(*hdrOut) += " (";
-	(*hdrOut) += errmsg_buf;
-	(*hdrOut) += ")\n  identity=";
-	(*hdrOut) += checkname;
-	(*hdrOut) += ";\n";
+	hdrOut += str;
+	hdrOut += " (";
+	hdrOut += errmsg_buf;
+	hdrOut += ")\n  identity=";
+	hdrOut += checkname;
+	hdrOut += ";\n  SPF=";
+	for (const char *p=checkname; *p; ++p)
+		hdrOut += static_cast<char>( *p + 'A'-'a' );
+	hdrOut += ";\n";
 
 	for (i=0; i<sizeof(values)/sizeof(values[0]); i++)
 	{
@@ -732,11 +735,11 @@ static const char *my_spf_lookup(const char *checkname,
 				*q='?';
 			else if (*q == ';')
 				*q=' ';
-		(*hdrOut) += "  ";
-		(*hdrOut) += keys[i];
-		(*hdrOut) += "=";
-		(*hdrOut) += v ? v:strerror(errno);
-		(*hdrOut) += ";\n";
+		hdrOut += "  ";
+		hdrOut += keys[i];
+		hdrOut += "=";
+		hdrOut += v ? v:strerror(errno);
+		hdrOut += ";\n";
 
 		if (v)
 			free(v);
@@ -1008,7 +1011,7 @@ static int getsender(Input &input, struct rw_transport *module)
 						     frominfo.helohost.c_str(),
 						     tcpremoteip,
 						     frominfo.helohost.c_str(),
-						     &receivedspfhelo,
+						     receivedspfhelo,
 						     errmsg,
 						     sizeof(errmsg));
 
@@ -1040,7 +1043,7 @@ static int getsender(Input &input, struct rw_transport *module)
 					     buf.c_str(),
 					     tcpremoteip,
 					     frominfo.helohost.c_str(),
-					     &receivedspfmailfrom,
+					     receivedspfmailfrom,
 					     errmsg,
 					     sizeof(errmsg));
 
@@ -2104,7 +2107,7 @@ char	*sender=rfc822_gettok(addresst);
 							 .c_str(),
 							 getenv("TCPREMOTEIP"),
 							 mf->helohost.c_str(),
-							 &received_spf,
+							 received_spf,
 							 errmsg,
 							 sizeof(errmsg));
 
