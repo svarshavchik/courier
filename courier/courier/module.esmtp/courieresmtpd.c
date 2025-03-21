@@ -87,7 +87,7 @@ static const char *smtp_externalauth()
 	return NULL;
 }
 
-static void tarpit()
+static void tarpit(void)
 {
 	const char *p;
 	if ((p=getenv("TARPIT")) && atoi(p))
