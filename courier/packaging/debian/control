@@ -84,8 +84,7 @@ Description: Courier Mail Server PostgreSQL configuration screen
 Package: courier-pop3d
 Architecture: any
 Depends: ${shlibs:Depends},
-	 ${misc:Depends},
-	 courier (= ${binary:Version})
+	 ${misc:Depends}
 Pre-Depends: courier (= ${binary:Version})
 Description: Courier Mail Server - POP3 server
  This package adds POP3 server access to the Courier mail server.
@@ -99,8 +98,7 @@ Architecture: any
 Conflicts: courier-imap
 Replaces: courier-imap
 Depends: ${shlibs:Depends},
-	 ${misc:Depends},
-	 courier (= ${binary:Version})
+	 ${misc:Depends}
 Pre-Depends: courier (= ${binary:Version})
 Description: Courier Mail Server - IMAP server
  This package adds IMAP server access to the Courier mail server.
@@ -114,8 +112,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
 	 gpg ( >= 2),
-	 hunspell,
-	 courier (= ${binary:Version})
+	 hunspell
 Pre-Depends: courier (= ${binary:Version})
 Recommends: courier-webmail-apache2 (= ${binary:Version})
 Conflicts: sqwebmail
@@ -137,8 +134,7 @@ Package: courier-webadmin
 Architecture: any
 Depends: ${shlibs:Depends},
 	 ${misc:Depends},
-	 libcgi-pm-perl,
-	 courier (= ${binary:Version})
+	 libcgi-pm-perl
 Pre-Depends: courier (= ${binary:Version})
 Recommends: courier-webadmin-apache2 (= ${binary:Version})
 Description: Courier Mail Server - web-based administration tool
@@ -167,8 +163,7 @@ Description: Courier Mail Server - Mailing List Manager
 Package: courier-mlm-web
 Architecture: any
 Depends: ${shlibs:Depends},
-	 ${misc:Depends},
-	 courier (= ${binary:Version})
+	 ${misc:Depends}
 Pre-Depends: courier (= ${binary:Version})
 Recommends: courier-mlm-web-apache2 (= ${binary:Version})
 Description: Courier Mail Server - Mailing List Manager (web interface)

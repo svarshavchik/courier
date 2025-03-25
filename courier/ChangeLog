@@ -1,6 +1,10 @@
+2025-03-24  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix lintian warnings.
+
 2025-03-20  "Hanno Böck" <hanno@hboeck.de>
 
-	* gcc compatbility fixes
+	* gcc compatibility fixes
 
 1.4.0
 
