@@ -1,3 +1,9 @@
+1.4.1
+
+2025-04-06  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* gcc compatibility fixes
+
 2025-03-24  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fix lintian warnings.

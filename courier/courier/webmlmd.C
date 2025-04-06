@@ -56,12 +56,12 @@ extern "C" {
 		exit(rc);
 	}
 
-	void rfc2045_enomem(const char *errmsg)
+	void rfc2045_enomem()
 	{
 		cginocache();
 		std::cout << "Content-Type: text/plain" << std::endl
 			  << std::endl
-			  << errmsg
+			  << "Out of memory"
 			  << std::endl << std::flush;
 		fake_exit(1);
 	}

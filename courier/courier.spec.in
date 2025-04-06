@@ -195,7 +195,7 @@ BuildRequires: glibc-langpack-en
 BuildRequires: perl-generators
 %endif
 
-Requires: courier-authlib-config-%(eval `courierauthconfig --configfiles`; echo "$mailuser-$mailgroup")
+Requires: courier-authlib-config-%(eval `courierauthconfig --configfiles 2>/dev/null`; echo "$mailuser-$mailgroup")
 
 %if ! %alternatives
 %package sendmail-wrapper

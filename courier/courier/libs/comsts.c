@@ -830,7 +830,7 @@ int sts_mx_validate(struct sts_id *id, const char *domainname)
 
 	open_policy(id);
 
-	while ((field=next_policy_field(id)) != 0)
+	while ((field=next_policy_field()) != 0)
 	{
 		if (strcmp(field, "mx"))
 			continue;

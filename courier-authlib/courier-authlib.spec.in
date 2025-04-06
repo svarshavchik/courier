@@ -14,10 +14,16 @@
 
 %if 0%{!?mailuser:1}
 %define mailuser daemon
+%define custom_user 0
+%else
+%define custom_user 1
 %endif
 
 %if 0%{!?mailgroup:1}
 %define mailgroup daemon
+%define custom_group 0
+%else
+%define custom_group 1
 %endif
 
 ################################################################################
@@ -92,6 +98,13 @@ other Courier applications.
 %package config-%{mailuser}-%{mailgroup}
 Provides:   courier-authlib-uidgid
 Conflicts:  courier-authlib-uidgid
+%if %{custom_user}
+Provides:   user(%{mailuser})
+%endif
+%if %{custom_group}
+Provides:   group(%{mailgroup})
+%endif
+
 Summary:    Courier-authlib configuration package
 Group:      System Environment/Daemons
 Requires(pre): shadow-utils

@@ -1,9 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2025 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier-imap],[5.2.10],[courier-imap@lists.sourceforge.net])
+AC_INIT([courier-imap],[5.2.11],[courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(foreign)

@@ -297,7 +297,7 @@ EXTRA_DIST=$(nohtmlin) $(BUILT_SOURCES) dotforward.1 pop3d-ssl.8
 if HAVE_SGML
 
 download.html: download.php
-	cp -f $(srcdir)/download.php download.html
+	php $(srcdir)/download.php >download.html
 
 aliaslookup.html: aliaslookup.sgml ../../libs/docbook/sgml2html
 	../../libs/docbook/sgml2html aliaslookup.sgml aliaslookup.html

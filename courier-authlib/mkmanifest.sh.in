@@ -14,17 +14,20 @@ cat >>filelist.base <<EOF
 @localstatedir@/spool/authdaemon 750 @mailuser@ @mailgroup@ dir
 EOF
 
-for f in $DESTDIR@sbindir@/*
+for fn in `ls $DESTDIR@sbindir@`
 do
-	fn=`basename $f`
-	case "$fn" in
+    case "$fn" in
+	courierauthconfig)
+	    :
+	    # Unified /bin/sbin
+	    ;;
 	*userdb*)
-		echo "@sbindir@/$fn" >>filelist.userdb
-		;;
+	    echo "@sbindir@/$fn" >>filelist.userdb
+	    ;;
 	*)
-		echo "@sbindir@/$fn" >>filelist.base
-		;;
-	esac
+	    echo "@sbindir@/$fn" >>filelist.base
+	    ;;
+    esac
 done
 
 for f in $DESTDIR@libdir@/courier-authlib/*
