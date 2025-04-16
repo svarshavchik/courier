@@ -113,18 +113,6 @@ AC_ARG_ENABLE(root,
 	esac
 ])
 
-AC_ARG_WITH(testmode, [], testmode="$withval", testmode="N")
-
-case "$testmode" in
-y*|y*|1)
-	testmode=1
-	CFLAGS=`echo "$CFLAGS" | sed 's/-O2//'`
-	;;
-*)
-	testmode=0
-	;;
-esac
-AC_SUBST(testmode)
 AC_ARG_WITH(explicitsync, [--with-explicitsync       Explicitly sync cache files
 ],
 	explicitsync="$withval")
@@ -148,6 +136,5 @@ esac
 
 AC_DEFINE_UNQUOTED(testmode,$testmode, [ Testing flag ])
 
-echo "$CFLAGS" >cflags
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

@@ -2,15 +2,11 @@
 # Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
 # distribution information.
 
-CFLAGS=`cat cflags`
-
-
 AM_CPPFLAGS=`@COURIERAUTHCONFIG@ --cppflags`
 
 BUILT_SOURCES=libexecdir.h modulelist.h sysconfdir.h
 CLEANFILES=sysconfdir.h libexecdir.h modulelist.h module.local \
 	permissions.dat
-DISTCLEANFILES=cflags
 
 moduledir=$(libexecdir)/courier/modules/local
 globbindir=@prefix@/bin
