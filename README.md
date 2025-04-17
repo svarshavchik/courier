@@ -8,11 +8,6 @@ components can be enabled or disabled at will. The Courier mail server
 now implements basic web-based calendaring and scheduling services
 integrated in the webmail module.
 
-The Courier mail server's source code should compile on most POSIX-based
-operating systems based on Linux, and BSD-derived kernels. It should also
-compile on Solaris and AIX, with some help from Sun's or IBM's freeware
-add-on tools for their respective operating systems.
-
 ## How to build
 
 This is a shared repository by all Courier-related projects. Each project
@@ -50,25 +45,32 @@ This repository does not contain any automatically or script-generated
 source files. As such, building from this repository requires additional
 dependencies that are not needed when building packaged tarballs.
 
-Additional packages that you may need to install are:
+Additional packages that you may need to install are (they need to be
+installed prior to running INSTALLME):
 
 1) autoconf, automake, libtool
 
-Run the "autobloat" script to autogenerate all autotool-generated scripts,
-first.
+INSTALLME automatically runs the "autobloat" script to autogenerate all
+autotool-generated scripts.
 
-2) xsltproc, docbook, and docbook DTDs.
+2) gettext
+
+The repository does not contain gettext-generated ekeleton code, either.
+The "autobloat" script will also run gettextize to add gettext scaffolding,
+where needed.
+
+3) xsltproc, docbook, and docbook DTDs.
 
 - Fedora: xsltproc, docbook-dtds, docbook-style-dsssl, docbook-utils,
 docbook-style-xsl, docbook5-schema, docbook5-style-xsl
 
 - Ubuntu: xsltproc, docbook, docbook-xml, docbook-xsl, w3c-sgml-lib
 
-3) elinks, tidy
+4) elinks, tidy
 
-4) libtool, libltdl
+5) libtool, libltdl
 
-5) courier-authlib dependencies: openldap, mysql, postgresql, sqlite, gdbm/bdb.
+6) courier-authlib dependencies: openldap, mysql, postgresql, sqlite, gdbm/bdb.
 
 - Fedora: openldap-devel, mariadb-devel, zlib-devel, sqlite-devel,
   postresql-devel, gdbm-devel, pam-devel, expect, libtool-ltdl-devel

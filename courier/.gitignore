@@ -3,6 +3,7 @@
 /NEWS
 /config.cache
 /config.guess
+/config.rpath
 /config.sub
 /configure.args
 /courier.config.cache
