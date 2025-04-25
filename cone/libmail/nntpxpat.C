@@ -109,7 +109,7 @@ void mail::nntp::XpatTask::processStatusResponse(const char *line)
 {
 	if (line[0] != '2')
 	{
-		done(line);
+		finished(line);
 		return;
 	}
 	response_func= &mail::nntp::XpatTask::processXpatResponse;
@@ -118,7 +118,7 @@ void mail::nntp::XpatTask::processStatusResponse(const char *line)
 void mail::nntp::XpatTask::processXpatResponse(const char *l)
 {
 	if (*l == '.')
-		done("OK");
+		finished("OK");
 
 	msgnum_t n;
 
@@ -160,7 +160,7 @@ void mail::nntp::XpatTask::processXpatResponse(const char *l)
 	}
 }
 
-void mail::nntp::XpatTask::done(const char *l)
+void mail::nntp::XpatTask::finished(const char *l)
 {
 	unsigned char Xor=0;
 	unsigned char Ror=0;
@@ -222,7 +222,7 @@ void mail::nntp::XpatTask::done(const char *l)
 	callbackPtr=NULL;
 
 	try {
-		Task::done();
+		done();
 	} catch (...) {
 		cbPat->success(searchResults);
 		throw;

@@ -74,9 +74,9 @@ bool ConfigScreen::Button::processKeyInFocus(const Key &key)
 	return CursesButton::processKeyInFocus(key);
 }
 
-void ConfigScreen::addPrompt(CursesLabel *label,
-			     CursesField *field,
-			     size_t atRow)
+void ConfigScreen::addPromptWithAttr(CursesLabel *label,
+				     CursesField *field,
+				     size_t atRow)
 {
 	Curses::CursesAttr labelAttr;
 	Curses::CursesAttr fieldAttr;
@@ -285,46 +285,46 @@ void ConfigScreen::init()
 
 	int rownum=0;
 
-	addPrompt(&myAddressLabel, &myAddressAdd, (rownum += 1));
+	addPromptWithAttr(&myAddressLabel, &myAddressAdd, (rownum += 1));
 
 	htmlDemoronization.setStyle( CursesButton::NORMAL );
 	addPrompt(NULL, &htmlDemoronization, (rownum += 2));
 
-	addPrompt(&myListAddressLabel, &myListAddressAdd, (rownum += 2));
+	addPromptWithAttr(&myListAddressLabel, &myListAddressAdd, (rownum += 2));
 
-	addPrompt(&sentFoldersLabel, (CursesField *)NULL, (rownum += 2));
+	addPromptWithAttr(&sentFoldersLabel, (CursesField *)NULL, (rownum += 2));
 
-	addPrompt(&myHeadersLabel, &myHeadersAdd, (rownum += 2));
+	addPromptWithAttr(&myHeadersLabel, &myHeadersAdd, (rownum += 2));
 
-	addPrompt(&dictionaryLabel, &dictionaryField, (rownum += 2));
+	addPromptWithAttr(&dictionaryLabel, &dictionaryField, (rownum += 2));
 
-	addPrompt(&smtpServerLabel, &smtpServer, (rownum += 2));
+	addPromptWithAttr(&smtpServerLabel, &smtpServer, (rownum += 2));
 	addPrompt(&smtpCertificateLabel, &smtpCertificateButton, (rownum += 1));
-	addPrompt(&smtpServerUIDLabel, &smtpServerUID, (rownum += 1));
+	addPromptWithAttr(&smtpServerUIDLabel, &smtpServerUID, (rownum += 1));
 	addPrompt(NULL, &smtpServerCRAM, (rownum += 1));
 	addPrompt(NULL, &smtpUseIMAP, (rownum += 1));
 	addPrompt(NULL, &smtpUseSSL, (rownum += 1));
 
-	addPrompt(&nntpCommandLabel, &nntpCommand, (rownum += 2));
+	addPromptWithAttr(&nntpCommandLabel, &nntpCommand, (rownum += 2));
 
-	addPrompt(&suspendLabel, &suspendCommand, (rownum += 2));
+	addPromptWithAttr(&suspendLabel, &suspendCommand, (rownum += 2));
 
-	addPrompt(&editorLabel, &editorCommand, (rownum += 2));
+	addPromptWithAttr(&editorLabel, &editorCommand, (rownum += 2));
 
 	addPrompt(NULL, &moronizationEnabled, (rownum += 2));
 	addPrompt(NULL, &quitNoPrompt, (rownum += 2));
 
-	addPrompt(&autosaveLabel, &autosaveField, (rownum += 2));
+	addPromptWithAttr(&autosaveLabel, &autosaveField, (rownum += 2));
 
-	addPrompt(&watchDaysLabel, &watchDaysField, (rownum += 2));
-	addPrompt(&watchDepthLabel, &watchDepthField, (rownum += 1));
+	addPromptWithAttr(&watchDaysLabel, &watchDaysField, (rownum += 2));
+	addPromptWithAttr(&watchDepthLabel, &watchDepthField, (rownum += 1));
 
 	postAndMail.setStyle( CursesButton::NORMAL );
 	addPrompt(&postAndMailLabel, &postAndMail, (rownum += 2));
 
-	addPrompt(&gpgopts1Label, &gpgopts1Field, (rownum += 2));
+	addPromptWithAttr(&gpgopts1Label, &gpgopts1Field, (rownum += 2));
 
-	addPrompt(&gpgopts2Label, &gpgopts2Field, (rownum += 2));
+	addPromptWithAttr(&gpgopts2Label, &gpgopts2Field, (rownum += 2));
 
 	{
 		size_t i;
@@ -361,7 +361,7 @@ void ConfigScreen::init()
 				throw;
 			}
 
-			addPrompt(l, f, (rownum += skip));
+			addPromptWithAttr(l, f, (rownum += skip));
 			skip=1;
 
 			f->setText(Tags::tags.names[i]);
@@ -386,7 +386,7 @@ void ConfigScreen::init()
 				throw;
 			}
 
-			addPrompt(l, (CursesField *)NULL, rownum += 2);
+			addPromptWithAttr(l, (CursesField *)NULL, rownum += 2);
 
 			struct CustomColor **c=g->colors;
 

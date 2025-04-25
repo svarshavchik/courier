@@ -209,9 +209,9 @@ public:
 private:
 	void init();
 
-	void addPrompt(CursesLabel *label,
-		       CursesField *field,
-		       size_t atRow);
+	void addPromptWithAttr(CursesLabel *label,
+			       CursesField *field,
+			       size_t atRow);
 	void addPrompt(CursesLabel *label,
 		       Curses *field,
 		       size_t atRow) override;

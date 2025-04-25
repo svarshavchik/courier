@@ -67,7 +67,7 @@ private:
 
 	void processXpatResponse(const char *);
 
-	void done(const char *);
+	void finished(const char *);
 
 	std::vector<mail::nntp::nntpMessageInfo>::iterator lastIdxMsgNum;
 };
