@@ -1,3 +1,7 @@
+2025-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Reimplement low-level header parsing code in C++.
+
 1.14
 
 2024-08-05  Sam Varshavchik  <mrsam@courier-mta.com>

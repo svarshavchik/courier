@@ -1,3 +1,8 @@
+2025-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: update the low-level message header parsing code, used by
+	getaddr() and hasaddr() functions, and the reformail tool.
+
 2024-09-21  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* packaging: Fix rpm packaging, use a synthesized changelog entry

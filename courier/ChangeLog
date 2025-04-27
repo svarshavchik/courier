@@ -1,3 +1,11 @@
+2025-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* all: low level message header parsing code reimplemented in C++, the
+	C code remains in place, with some changes.
+
+	* maildrop: update the low-level message header parsing code, used by
+	getaddr() and hasaddr() functions, and the reformail tool.
+
 1.4.1
 
 2025-04-06  Sam Varshavchik  <mrsam@courier-mta.com>

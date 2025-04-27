@@ -23,9 +23,7 @@
 #include "rfc2045/rfc2045.h"
 #include <stdio.h>
 
-extern "C" {
 #include "sqwebmail/msg2html.h"
-}
 
 static int cmpmodfilenames(std::string a, std::string b)
 {
@@ -176,7 +174,7 @@ static void unknown_attachment_action(struct rfc2045id *idptr,
 	       findparam(*argsp, "ATTACHNOTICE").c_str(),
 	       content_type_s.c_str(),
 	       (long)((size+512)/1024L));
-	       
+
 }
 
 static char *get_textlink(const char *url, void *arg)
@@ -345,4 +343,3 @@ std::string webmlmd::do_mod_reject(std::string filename,
 
 	return ctlmsg.format_error_message();
 }
-

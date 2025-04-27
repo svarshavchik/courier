@@ -167,7 +167,7 @@ bool mail::address::operator==(const mail::address &o) const
 	return getCanonAddress() == o.getCanonAddress();
 }
 
-static void parseCallback(const char *str, int pos, void *voidarg)
+static void parseCallback(const char *str, size_t pos, void *voidarg)
 {
 	*(size_t *)voidarg=pos;
 }
