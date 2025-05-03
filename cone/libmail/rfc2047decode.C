@@ -9,6 +9,8 @@
 #include "rfc822/rfc2047.h"
 #include "mail.H"
 #include <cstring>
+#include <string>
+#include <iterator>
 
 using namespace std;
 
@@ -64,17 +66,23 @@ string mail::rfc2047::decoder::decodeSimple(string str)
 {
 	std::string output;
 
-	if (rfc2047_decoder(str.c_str(), &decodeSimpleCallback, &output) < 0)
+	bool error=false;
+	::rfc2047::decode(str.begin(), str.end(),
+			  [&]
+			  (auto charset, auto language, auto closure)
+			  {
+				  auto iter=std::back_inserter(output);
+
+				  closure(iter);
+			  },
+			  [&]
+			  (auto b, auto e, auto ignore)
+			  {
+				  error=true;
+			  });
+
+	if (error)
 		return str;
 
 	return output;
-}
-
-void mail::rfc2047::decoder::decodeSimpleCallback(const char *chset,
-						  const char *lang,
-						  const char *content,
-						  size_t cnt,
-						  void *dummy)
-{
-	((std::string *)dummy)->append(content, content+cnt);
 }

@@ -6,9 +6,9 @@
 #include "libmail_config.h"
 #include "rfcaddr.H"
 #include "headers.H"
-#include "rfc2047encode.H"
 #include "rfc2047decode.H"
 #include "rfc2045/rfc2045.h"
+#include "rfc822/rfc2047.h"
 #include <errno.h>
 
 using namespace std;
@@ -85,7 +85,7 @@ string mail::Header::encoded::encode(string text, string charset, string lang)
 	if (lang.size() > 0)
 		charset += "*" + lang;
 
-	return mail::rfc2047::encode(text, charset);
+	return ::rfc2047::encode(text, charset, rfc2047_qp_allow_any).first;
 }
 
 mail::Header::encoded::encoded(string name,

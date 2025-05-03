@@ -60,18 +60,9 @@ namespace rfc2047 {
 		// Decode without transcoding to a specific charset.
 
 		static std::string decodeSimple(std::string str);
-
-	private:
-		static void decodeSimpleCallback(const char *chset,
-						 const char *lang,
-						 const char *content,
-						 size_t cnt,
-						 void *dummy);
-
 	};
 }
 
 LIBMAIL_END
 
 #endif
-

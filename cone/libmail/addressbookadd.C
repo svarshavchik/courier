@@ -5,7 +5,6 @@
 */
 #include "libmail_config.h"
 #include "addressbookadd.H"
-#include "rfc2047encode.H"
 #include "attachments.H"
 #include "headers.H"
 #include "envelope.H"
@@ -120,7 +119,7 @@ void mail::addressbook::Add::addedIntro(string successMsg)
 	headers << mail::Header::plain("Content-Type",
 				       "text/x-libmail-addressbook");
 
-				
+
 	mail::Attachment addresses(headers, "VERSION: 2\n" +
 				   mail::address::toString("Address: ",
 							   newEntry.addresses)
@@ -263,4 +262,3 @@ void mail::addressbook::Add::fail(string failMsg)
 		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
 	}
 }
-

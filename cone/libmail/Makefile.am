@@ -91,7 +91,6 @@ libmail_la_SOURCES=misc.H mail.H mail.C \
 			pop3maildrop.C pop3maildrop.H \
 			qp.C qp.H \
 			rfc2047decode.C rfc2047decode.H \
-			rfc2047encode.C rfc2047encode.H \
 			rfcaddr.C rfcaddr.H \
 			runlater.C runlater.H \
 			search.C search.H \

@@ -13,7 +13,7 @@
 #include "gettext.H"
 #include "htmlparser.H"
 #include "init.H"
-#include "libmail/rfc2047encode.H"
+#include "rfc822/rfc2047.h"
 #include "libmail/rfc2047decode.H"
 #include "libmail/misc.H"
 
@@ -547,14 +547,15 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 
 		if (serverPtr)
 			o << "X-Server: "
-			  << (string)mail::rfc2047::encode(serverPtr->url,
-							   "iso-8859-1")
+			  << ::rfc2047::encode(serverPtr->url,
+					       "iso-8859-1",
+					       rfc2047_qp_allow_any).first
 			  << "\n";
 		if (folderPtr)
 			o << "X-Folder: "
-			  << (string)mail::rfc2047::encode(folderPtr
-							   ->getPath(),
-							   "iso-8859-1")
+			  << ::rfc2047::encode(folderPtr->getPath(),
+					       "iso-8859-1",
+					       rfc2047_qp_allow_any).first
 			  << "\n";
 
 		{
@@ -567,7 +568,8 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 
 		if (fcc.size() > 0)
 			o << "X-Fcc: "
-			  << (string)mail::rfc2047::encode(fcc, "UTF-8")
+			  << ::rfc2047::encode(fcc, "UTF-8",
+					       rfc2047_qp_allow_any).first
 			  << "\n";
 
 		if (customheaders.size() > 0)
@@ -606,7 +608,10 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 
 			if (ss.size() > 0)
 			{
-				ss=mail::rfc2047::encode(ss, "utf-8");
+				ss=::rfc2047::encode(
+					ss, "utf-8",
+					rfc2047_qp_allow_any
+				).first;
 
 				o << "Subject: " <<
 					ss.c_str() << "\n";

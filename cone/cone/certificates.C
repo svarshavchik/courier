@@ -25,7 +25,7 @@
 #include "curses/curseskeyhandler.H"
 
 #include "libmail/logininfo.H"
-#include "libmail/rfc2047encode.H"
+#include "rfc822/rfc2047.h"
 #include "libmail/rfc2047decode.H"
 
 #include "gettext.H"

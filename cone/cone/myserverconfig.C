@@ -21,7 +21,7 @@
 #include "init.H"
 #include "macros.H"
 #include "htmlentity.h"
-#include "libmail/rfc2047encode.H"
+#include "rfc822/rfc2047.h"
 #include "libmail/rfc2047decode.H"
 #include "libmail/mail.H"
 #include "libmail/maildir.H"
@@ -670,12 +670,17 @@ void myServer::config::save()
 	if (remoteConfigAccount)
 	{
 		urls.insert(myServer::remoteConfigURL);
-		std::string sUrl=mail::rfc2047::encode(myServer::remoteConfigURL,
-						  myCharset);
+		std::string sUrl=::rfc2047::encode(
+			myServer::remoteConfigURL,
+			myCharset,
+			rfc2047_qp_allow_any
+		).first;
 
-		std::string sFolder=mail::rfc2047::encode(myServer::
-						     remoteConfigFolder,
-						     myCharset);
+		std::string sFolder=::rfc2047::encode(
+			myServer::remoteConfigFolder,
+			myCharset,
+			rfc2047_qp_allow_any
+		).first;
 		if (!xmlSetProp(d, (xmlChar *)"REMOTECONFIG",
 				(xmlChar *)sUrl.c_str()) ||
 		    !xmlSetProp(d, (xmlChar *)"REMOTEFOLDER",
@@ -690,14 +695,16 @@ void myServer::config::save()
 
 		urls.insert(p->url);
 
-		std::string sName=mail::rfc2047::encode(p->serverName,
-						   myCharset);
-		std::string sUrl=mail::rfc2047::encode(p->url, myCharset);
+		std::string sName=::rfc2047::encode(
+			p->serverName, myCharset, rfc2047_qp_allow_any
+		).first;
+		std::string sUrl=::rfc2047::encode(
+			p->url, myCharset, rfc2047_qp_allow_any).first;
 
-		std::string sNewsrc=mail::rfc2047::encode(p->newsrc,
-						     myCharset);
-		std::string sCert=mail::rfc2047::encode(p->certificate,
-						   myCharset);
+		std::string sNewsrc=::rfc2047::encode(
+			p->newsrc, myCharset, rfc2047_qp_allow_any).first;
+		std::string sCert=::rfc2047::encode(
+			p->certificate, myCharset, rfc2047_qp_allow_any).first;
 
 		xmlNodePtr serverNode=xmlNewNode (NULL,
 						  (xmlChar *)
@@ -778,8 +785,8 @@ void myServer::config::save()
 
 		while (fb != fe)
 		{
-			std::string path=mail::rfc2047::encode(*fb++,
-							  myCharset);
+			std::string path=::rfc2047::encode(
+				*fb++, myCharset, rfc2047_qp_allow_any).first;
 
 			xmlNodePtr f=xmlNewNode(NULL,
 						(xmlChar *)"NAMESPACE"
@@ -801,10 +808,13 @@ void myServer::config::save()
 
 		while (scb != sce)
 		{
-			std::string name=mail::rfc2047::encode(scb->first,
-							  myCharset);
-			std::string value=mail::rfc2047::encode(scb->second,
-							   myCharset);
+			std::string name
+				=::rfc2047::encode(scb->first,
+						   myCharset,
+						   rfc2047_qp_allow_any).first;
+			std::string value=::rfc2047::encode(
+				scb->second, myCharset, rfc2047_qp_allow_any
+			).first;
 
 			xmlNodePtr f=xmlNewNode(NULL,
 						(xmlChar *)"SETTING");
@@ -829,8 +839,9 @@ void myServer::config::save()
 
 		while (ffb != ffe)
 		{
-			std::string path=mail::rfc2047::encode(ffb->first,
-							  myCharset);
+			std::string path=::rfc2047::encode(
+				ffb->first, myCharset, rfc2047_qp_allow_any
+			).first;
 
 			std::map<std::string, std::string>
 				::iterator cb=ffb->second.begin(),
@@ -854,13 +865,15 @@ void myServer::config::save()
 
 			while (cb != ce)
 			{
-				std::string name=
-					mail::rfc2047::encode(cb->first,
-							      myCharset);
+				std::string name=::rfc2047::encode(
+					cb->first, myCharset,
+					rfc2047_qp_allow_any
+				).first;
 
-				std::string val=
-					mail::rfc2047::encode(cb->second,
-							      myCharset);
+				std::string val=::rfc2047::encode(
+					cb->second, myCharset,
+					rfc2047_qp_allow_any
+				).first;
 
 				if (name == "INDEX" ||
 				    name == "SNAPSHOT")
@@ -922,7 +935,10 @@ void myServer::config::save()
 
 	while (sb != se)
 	{
-		std::string address= mail::rfc2047::encode(*sb++, myCharset);
+		std::string address=
+			::rfc2047::encode(
+				*sb++, myCharset,rfc2047_qp_allow_any
+			).first;
 
 		if (!xmlNewTextChild(REMOTE->children, NULL,
 				     (xmlChar *)"ADDRESS",
@@ -935,7 +951,9 @@ void myServer::config::save()
 
 	while (sb != se)
 	{
-		std::string address= mail::rfc2047::encode(*sb++, myCharset);
+		std::string address=::rfc2047::encode(
+			*sb++, myCharset, rfc2047_qp_allow_any
+		).first;
 
 		if (!xmlNewTextChild(REMOTE->children, NULL,
 				     (xmlChar *)"LISTADDRESS",
@@ -965,19 +983,23 @@ void myServer::config::save()
 						"SPECIALFOLDER");
 
 			std::string idString=
-				mail::rfc2047::encode(id, myCharset);
+				::rfc2047::encode(id, myCharset,
+						  rfc2047_qp_allow_any).first;
 
 			std::string serverString=
-				mail::rfc2047::encode(sb->serverUrl,
-						      myCharset);
+				::rfc2047::encode(sb->serverUrl,
+						  myCharset,
+						  rfc2047_qp_allow_any).first;
 
 			std::string pathString=
-				mail::rfc2047::encode(sb->serverPath,
-						      myCharset);
+				::rfc2047::encode(sb->serverPath,
+						  myCharset,
+						  rfc2047_qp_allow_any).first;
 
 			std::string nameString=
-				mail::rfc2047::encode(sb->nameUTF8,
-						      "utf-8");
+				::rfc2047::encode(sb->nameUTF8,
+						  "utf-8",
+						  rfc2047_qp_allow_any).first;
 			if (!f || !xmlSetProp(f, (xmlChar *)"ID",
 					      (xmlChar *)
 					      idString.c_str())
@@ -1010,8 +1032,9 @@ void myServer::config::save()
 
 	urls.insert(myServer::smtpServerURL);
 
-	std::string smtpUrl=mail::rfc2047::encode(myServer::smtpServerURL,
-					     myCharset);
+	std::string smtpUrl=::rfc2047::encode(myServer::smtpServerURL,
+					      myCharset,
+					      rfc2047_qp_allow_any).first;
 
 	f=xmlNewNode(NULL, (xmlChar *)"SMTP");
 
@@ -1034,9 +1057,10 @@ void myServer::config::save()
 	}
 
 	{
-		std::string c=mail::rfc2047
-			::encode(nntpCommandFolder::nntpCommand,
-				 myCharset);
+		std::string c=::rfc2047::encode(
+			nntpCommandFolder::nntpCommand,
+			myCharset,
+			rfc2047_qp_allow_any).first;
 
 		f=xmlNewNode(NULL, (xmlChar *)"NNTP");
 
@@ -1079,11 +1103,13 @@ void myServer::config::save()
 		std::string o1s=o1.str();
 		std::string o2s=o2.str();
 
-		std::string gpgopt1=mail::rfc2047
-			::encode(GPG::gpg.extraEncryptSignOptions, myCharset);
-		std::string gpgopt2=mail::rfc2047
-			::encode(GPG::gpg.extraDecryptVerifyOptions,
-				 myCharset);
+		std::string gpgopt1=::rfc2047::encode(
+			GPG::gpg.extraEncryptSignOptions, myCharset,
+					rfc2047_qp_allow_any).first;
+		std::string gpgopt2=::rfc2047::encode(
+			GPG::gpg.extraDecryptVerifyOptions,
+			myCharset,
+			rfc2047_qp_allow_any).first;
 
 		f=xmlNewNode(NULL, (xmlChar *)"OPTIONS");
 		if (!f || !xmlSetProp(f, (xmlChar *)"DEMORONIZATION",
@@ -1166,8 +1192,9 @@ void myServer::config::save()
 			{
 				f=xmlNewNode(NULL, (xmlChar *)"TAG");
 
-				std::string n=mail::rfc2047::encode(Tags::tags.names
-							       [i], myCharset);
+				std::string n=::rfc2047::encode(
+					Tags::tags.names[i], myCharset,
+					rfc2047_qp_allow_any).first;
 
 				if (!f || !xmlSetProp(f, (xmlChar *)"NAME",
 						      (xmlChar *)n.c_str())
@@ -1194,12 +1221,18 @@ void myServer::config::save()
 		xmlNodePtr f=xmlNewNode(NULL,
 					(xmlChar *)"ADDRESSBOOK");
 
-		std::string nameString=mail::rfc2047::encode(p->getName(),
-							myCharset);
-		std::string urlString=mail::rfc2047::encode(p->getURL(),
-						       myCharset);
-		std::string folderString=mail::rfc2047::encode(p->getFolder(),
-							  myCharset);
+		std::string nameString=::rfc2047::encode(p->getName(),
+							 myCharset,
+							 rfc2047_qp_allow_any
+		).first;
+		std::string urlString=::rfc2047::encode(p->getURL(),
+							myCharset,
+							rfc2047_qp_allow_any
+		).first;
+		std::string folderString=::rfc2047::encode(p->getFolder(),
+							   myCharset,
+							   rfc2047_qp_allow_any
+		).first;
 
 		if (!f || !xmlSetProp(f, (xmlChar *)"NAME",
 				      (xmlChar *)nameString.c_str())
@@ -1259,9 +1292,10 @@ void myServer::config::save()
 						(xmlChar *)
 
 						(xmlChar *)
-						((std::string)mail::rfc2047
-						 ::encode
-						 (s, myCharset)).c_str()))
+						::rfc2047::encode(
+							s, myCharset,
+							rfc2047_qp_allow_any
+						).first.c_str()))
 					outofmemory();
 			}
 			else
@@ -1269,7 +1303,8 @@ void myServer::config::save()
 				std::string s(unicode::iconvert::convert
 					      (mb->first.n, "utf-8"));
 
-				s=mail::rfc2047::encode(s, "utf-8");
+				s=::rfc2047::encode(s, "utf-8",
+						    rfc2047_qp_allow_any).first;
 
 				if (!xmlSetProp(n,
 						(xmlChar *)"NAME",
@@ -2517,7 +2552,9 @@ void myServer::saveFolderIndex(myFolder *mf)
 				sizebuf=n.str();
 			}
 
-			std::string uid=mail::rfc2047::encode(i.uid, myCharset);
+			std::string uid=::rfc2047::encode(i.uid, myCharset,
+							  rfc2047_qp_allow_any
+			).first;
 
 #if 0
 			fprintf(stderr, "SUBJECT: %s, NAME: %s\n",
@@ -2525,14 +2562,19 @@ void myServer::saveFolderIndex(myFolder *mf)
 				i.name_utf8.c_str());
 			fflush(stderr);
 #endif
-			std::string subject=mail::rfc2047::encode(i.subject_utf8,
-								  "utf-8");
-			std::string name=mail::rfc2047::encode(i.name_utf8,
-							       "utf-8");
+			std::string subject=::rfc2047::encode(
+				i.subject_utf8,
+				"utf-8",
+				rfc2047_qp_allow_any).first;
+			std::string name=::rfc2047::encode(
+				i.name_utf8,
+				"utf-8",
+				rfc2047_qp_allow_any).first;
 
-			std::string messageid=mail::rfc2047::encode((std::string)
-								    i.messageid,
-								    "utf-8");
+			std::string messageid=::rfc2047::encode(
+				(std::string)messageid,
+				"utf-8",
+				rfc2047_qp_allow_any).first;
 
 			std::string references;
 
@@ -2552,10 +2594,13 @@ void myServer::saveFolderIndex(myFolder *mf)
 					++rb;
 				}
 
-				references=mail::rfc2047
-					::encode(mail::address
-						 ::toString("", vec),
-						 myCharset);
+				references=
+					::rfc2047::encode(
+						mail::address::toString(
+							"", vec
+						),
+						myCharset,
+						rfc2047_qp_allow_any).first;
 			}
 			if (!xmlSetProp(messageNode,
 					(xmlChar *)"UID",
@@ -2607,7 +2652,9 @@ void myServer::saveFolderIndex(myFolder *mf)
 			time_t expires=wb->second.expires;
 			size_t depth=wb->second.depth;
 
-			messageid=mail::rfc2047::encode(messageid, myCharset);
+			messageid=::rfc2047::encode(messageid, myCharset,
+						    rfc2047_qp_allow_any
+			).first;
 
 			std::ostringstream o1;
 

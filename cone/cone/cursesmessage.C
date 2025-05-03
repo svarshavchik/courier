@@ -30,7 +30,7 @@
 #include "rfc822/rfc822hdr.h"
 #include "curses/cursesscreen.H"
 #include "libmail/addmessage.H"
-#include "libmail/rfc2047encode.H"
+#include "rfc822/rfc2047.h"
 #include "libmail/rfc2047decode.H"
 #include "libmail/mail.H"
 #include "libmail/misc.H"
@@ -2434,15 +2434,18 @@ void CursesMessage::reply()
 	std::string tmpfile=myServer::getConfigDir() + "/message.tmp";
 	std::string msgfile=myServer::getConfigDir() + "/message.txt";
 
-	std::string r_server=mail::rfc2047::encode(myfolder->getServer()->url,
-					      "iso-8859-1");
+	std::string r_server=::rfc2047::encode(myfolder->getServer()->url,
+					       "iso-8859-1",
+					       rfc2047_qp_allow_any).first;
 
-	std::string r_folder=mail::rfc2047::encode(myfolder->getFolder()->getPath(),
-					    "iso-8859-1");
+	std::string r_folder=::rfc2047::encode(myfolder->getFolder()->getPath(),
+					       "iso-8859-1",
+					       rfc2047_qp_allow_any).first;
 
-	std::string r_uid=mail::rfc2047::encode(myfolder->getIndex(messagesortednum)
-					 .uid,
-					 "iso-8859-1");
+	std::string r_uid=::rfc2047::encode(
+		myfolder->getIndex(messagesortednum).uid,
+		"iso-8859-1",
+		rfc2047_qp_allow_any).first;
 
 	std::string content_type="TEXT/PLAIN";
 
@@ -2588,7 +2591,8 @@ void CursesMessage::reply()
 
 	if (fcc.size() > 0)
 		otmpfile << "X-Fcc: "
-			 << (std::string)mail::rfc2047::encode(fcc, "UTF-8")
+			 << ::rfc2047::encode(fcc, "UTF-8",
+					rfc2047_qp_allow_any).first
 			 << std::endl;
 
 	otmpfile << "X-Server: " << r_server << std::endl
@@ -2811,14 +2815,17 @@ void CursesMessage::forward()
 
 	if (fcc.size() > 0)
 		otmpfile << "X-Fcc: "
-			 << (std::string)mail::rfc2047::encode(fcc, "UTF-8")
+			 << ::rfc2047::encode(fcc, "UTF-8",
+					      rfc2047_qp_allow_any).first
 			 << std::endl;
 
-	std::string r_server=mail::rfc2047::encode(myfolder->getServer()->url,
-					    "iso-8859-1");
+	std::string r_server=::rfc2047::encode(myfolder->getServer()->url,
+					       "iso-8859-1",
+					       rfc2047_qp_allow_any).first;
 
-	std::string r_folder=mail::rfc2047::encode(myfolder->getFolder()->getPath(),
-					    "iso-8859-1");
+	std::string r_folder=::rfc2047::encode(myfolder->getFolder()->getPath(),
+					       "iso-8859-1",
+					       rfc2047_qp_allow_any).first;
 
 	otmpfile << "X-Server: " << r_server << std::endl
 		 << "X-Folder: " << r_folder << std::endl;

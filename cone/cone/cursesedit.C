@@ -25,7 +25,7 @@
 #include "colors.H"
 #include "disconnectcallbackstub.H"
 #include "libmail/rfc2047decode.H"
-#include "libmail/rfc2047encode.H"
+#include "rfc822/rfc2047.h"
 #include "gpglib/gpglib.h"
 
 #include <sstream>
@@ -1203,8 +1203,9 @@ std::string CursesEdit::attach(std::string filename, std::string description,
 		if (description.size() > 0)
 		{
 			std::string s=
-				mail::rfc2047::encode(description,
-						      unicode_default_chset());
+				::rfc2047::encode(description,
+						  unicode_default_chset(),
+						  rfc2047_qp_allow_any).first;
 
 			fprintf(fp, "Content-Description: %s\n",
 				s.c_str());
@@ -3775,7 +3776,8 @@ std::string CursesEdit::getFcc(SaveSink *sink)
 		if (xfcc.size() > 0 && sink)
 		{
 			(*sink) << "X-Fcc: "
-				<< (std::string)mail::rfc2047::encode(xfcc, "UTF-8")
+				<< ::rfc2047::encode(xfcc, "UTF-8",
+						     rfc2047_qp_allow_any).first
 				<< "\n";
 		}
 	}
@@ -3887,7 +3889,9 @@ void CursesEdit::saveheaders(std::string &fromhdr, std::string &replytohdr,
 		if (v.size() > 0)
 		{
 			std::string h=ch->name + " "
-				+ (std::string)mail::rfc2047::encode(v, charset);
+				+ ::rfc2047::encode(v, charset,
+						    rfc2047_qp_allow_any
+				).first;
 
 			if (sink)
 				(*sink) << h << "\n";
@@ -3930,7 +3934,7 @@ void CursesEdit::saved(std::string fromhdr,
 	if (!s)
 		return;
 
-	xfcc=mail::rfc2047::encode(xfcc, "UTF-8");
+	xfcc=::rfc2047::encode(xfcc, "UTF-8", rfc2047_qp_allow_any).first;
 
 	if (xfcc == "")
 		xfcc="=?UTF-8?" "?=";  // Heh -- trigraph warning :-)

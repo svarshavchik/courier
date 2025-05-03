@@ -17,7 +17,6 @@
 #include "mimetypes.H"
 #include "qp.H"
 #include "rfc2047decode.H"
-#include "rfc2047encode.H"
 #include "rfcaddr.H"
 #include "smtpinfo.H"
 #include "structure.H"

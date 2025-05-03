@@ -5,9 +5,9 @@
 */
 
 #include "libmail/rfcaddr.H"
-#include "libmail/rfc2047encode.H"
 #include "libmail/misc.H"
 #include "libmail/logininfo.H"
+#include "rfc822/rfc2047.h"
 
 #include "addressbookinterfaceldap.H"
 
@@ -113,7 +113,8 @@ int AddressBook::Interface::LDAP::callback_func(const char *utf8_name,
 		callback_info *info=
 			(callback_info *)callback_arg;
 
-		mail::address n(mail::rfc2047::encodeAddrName(utf8_name, "UTF-8"),
+		mail::address n(::rfc2047::encode(utf8_name, "UTF-8",
+						  rfc2047_qp_allow_word).first,
 			address);
 
 		info->addrList->push_back(n);

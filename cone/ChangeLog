@@ -1,3 +1,7 @@
+2025-05-02  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libmail API update.
+
 2025-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Reimplement low-level header parsing code in C++.

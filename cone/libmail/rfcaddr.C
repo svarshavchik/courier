@@ -8,13 +8,13 @@
 #include "rfcaddr.H"
 #include "mail.H"
 #include "misc.H"
-#include "rfc2047encode.H"
 #include "rfc2047decode.H"
 #include "rfc822/rfc822.h"
 #include <courier-unicode.h>
 
 #include <iostream>
 #include <algorithm>
+#include "rfc822/rfc2047.h"
 
 #if LIBIDN
 #include <idn2.h>
@@ -296,7 +296,7 @@ std::string mail::emailAddress::setDisplayName(const std::string &s,
 
 	decodedName=ucbuf;
 
-	name=mail::rfc2047::encodeAddrName(s, charset);
+	name=::rfc2047::encode(s, charset, rfc2047_qp_allow_word).first;
 
 	return "";
 }
