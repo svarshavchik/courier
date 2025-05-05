@@ -4,7 +4,7 @@ dnl Process this file with autoconf to produce a configure script.
 #
 # See COPYING for distribution information.
 #
-AC_INIT([cone],[1.15.20250504],[courier-cone@lists.sourceforge.net])
+AC_INIT([cone],[1.15],[courier-cone@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(cone.C)
 AC_CONFIG_AUX_DIR(..)
