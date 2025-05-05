@@ -2572,7 +2572,7 @@ void myServer::saveFolderIndex(myFolder *mf)
 				rfc2047_qp_allow_any).first;
 
 			std::string messageid=::rfc2047::encode(
-				(std::string)messageid,
+				i.messageid,
 				"utf-8",
 				rfc2047_qp_allow_any).first;
 
