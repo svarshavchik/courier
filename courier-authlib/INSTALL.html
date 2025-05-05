@@ -18,27 +18,25 @@
   INSTALL file):</p>
   <ul>
     <li>
-      <a onclick="" href="#Requirements">Requirements</a>
+      <a href="#Requirements">Requirements</a>
     </li>
     <li>
-      <a onclick="" href="#Installation">Installation overview</a>
+      <a href="#Installation">Installation overview</a>
     </li>
     <li>
-      <a onclick="" href="#deps">Dependencies</a>
+      <a href="#deps">Dependencies</a>
     </li>
     <li>
-      <a onclick="" href="#What">What gets installed</a>
+      <a href="#What">What gets installed</a>
     </li>
     <li>
-      <a onclick="" href="#manpage">For more information</a>
+      <a href="#manpage">For more information</a>
     </li>
     <li>
-      <a onclick="" href="#Starting">Starting and stopping the authentication
-      daemon</a>
+      <a href="#Starting">Starting and stopping the authentication daemon</a>
     </li>
     <li>
-      <a onclick="" href="#Guidelines">Guidelines for using other package
-      managers</a>
+      <a href="#Guidelines">Guidelines for using other package managers</a>
     </li>
   </ul>
   <h2><a id="Requirements">Requirements</a></h2>
@@ -46,20 +44,20 @@
   following software should be installed before building the Courier
   authentication library:</p>
   <ul>
-    <li>The current version of gcc (<a onclick="" href=
+    <li>gcc that supports at least C++17 (<a href=
     "http://www.gnu.org/software/gcc/">http://www.gnu.org/software/gcc/</a>)
     </li>
-    <li>The GNU linker (<a onclick="" href=
+    <li>The GNU linker (<a href=
     "http://www.gnu.org/software/binutils/">http://www.gnu.org/software/binutils/</a>)
     </li>
-    <li>Libtool (<a onclick="" href=
+    <li>Libtool (<a href=
     "http://www.gnu.org/software/libtool/">http://www.gnu.org/software/libtool/</a>).
     Additionally, libtool's <span class="c1">libltdl</span> library, and its
     development files, must be installed. On some platforms this is a separate
     package. On Fedora, this is the <span class="c1">libtool-ltdl-devel</span>
     package, for example.
     </li>
-    <li>GNU make (<a onclick="" href=
+    <li>GNU make (<a href=
     "http://www.gnu.org/software/make/">http://www.gnu.org/software/make/</a>)
     </li>
     <li>The "<span class="c1">expect</span>" command. <span class=
@@ -72,7 +70,7 @@
     passwords. However non-system authentication modules (LDAP, PostgreSQL, and
     others) will work.</li>
     <li>Courier Unicode Library. Before installing this package, download and
-    install <a onclick="" href=
+    install <a href=
     "https://www.courier-mta.org/unicode/">https://www.courier-mta.org/unicode/</a>.
     </li>
   </ul>
@@ -87,7 +85,7 @@
   <p>On the other hand, GNU make will be required in almost every case.
   SYSV-derived make variants (probably) will not work.</p>
   <p>The same line of logic also applies to gcc. So, strictly speaking, only a
-  basic C compiler, GNU make and libtool, are really needed to build
+  basic C++ compiler, GNU make and libtool, are really needed to build
   courier-authlib. Still, try the following before giving up if problems occur
   when building this package:</p>
   <ol>
@@ -137,6 +135,11 @@
     that's configured with different user and group names.</li>
     <li>Other "courier-authlib-<i>name</i>" authentication modules.</li>
   </ul>
+  <h4>Rocky/RHEL 8 notes</h4>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>dnf install --enablerepo=crb -y gcc-toolset-14
+scl enable gcc-toolset-14 "rpmbuild -ta courier-authlib-VERSION.tar.bz2"</pre>
   <h4>Using non-default courier username and groupname</h4>
   <p>Pass <span class="c1">--define "mailuser courier"</span> and <span class=
   "c1">--define "mailgroup courier"</span> options to <command />rpmbuild to
@@ -177,8 +180,8 @@ $ cd courier-authlib-VERSION</pre>
     "c1">apt</span> should figure this out by themselves.</li>
   </ul>
   <p>NOTE: if the courier-debuild script stops with an error complaining about
-    missing dependencies, then use "apt install" to install them, then try
-    again.</p>
+  missing dependencies, then use "apt install" to install them, then try
+  again.</p>
   <pre>$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <p>Setting the <span class="c1">DEBGCC</span> environment variable selects a
   non-default gcc version.</p>
@@ -192,6 +195,11 @@ $ cd courier-authlib-VERSION</pre>
   <p>Setting the <span class="c1">mailuser</span> and <span class=
   "c1">mailgroup</span> environment builds the library with a non-default user
   and group name.</p>
+  <h4>Ubuntu 20</h4>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>$ sudo apt install -y gcc-10 g++-10
+$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <h3>Maintainer Mode (see README in the git repository to set up)</h3>
   <p><span class="c1">make rpm</span> or <span class="c1">make deb</span>, as
   appropriate, will:</p>

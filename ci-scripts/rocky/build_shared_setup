@@ -11,6 +11,7 @@ fi
 
 dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     automake \
+    autoconf-archive \
     /etc/mime.types \
     expect \
     gawk \
@@ -55,3 +56,12 @@ dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
 mkdir -p $HOME/bin
 echo '#! /bin/sh' >$HOME/bin/rpmrepos.sh
 chmod +x $HOME/bin/rpmrepos.sh
+
+. /etc/os-release
+
+case $VERSION_ID in
+    8*)
+	dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
+	    gcc-toolset-14
+	;;
+esac

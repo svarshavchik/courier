@@ -117,6 +117,11 @@
   webmail server's URL is <span class=
   "c1">http(s)?://server/cgi-bin/sqwebmail</span>, with its images installed in
   <span class="c1">http(s)?://server/webmail</span>.</p>
+  <h4>Rocky/RHEL 8 notes</h4>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>dnf install --enablerepo=crb -y gcc-toolset-14
+scl enable gcc-toolset-14 "rpmbuild -ta sqwebmail-VERSION.tar.bz2"</pre>
   <h3>deb</h3>
   <p>Run "apt install devscripts debhelper", if they're not installed already.
   Create an empty directory and copy/move the tarball into it:</p>
@@ -156,6 +161,11 @@ $ cd sqwebmail-VERSION</pre>
   to the webmail server. The <span class=
   "c1">http(s)://server/sqwebmail-images</span> URL also gets redirected
   internally to the webmail server's UI images.</p>
+  <h4>Ubuntu 20</h4>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>$ sudo apt install -y gcc-10 g++-10
+$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <h3>Maintainer Mode (see README in the git repository to set up)</h3>
   <p><span class="c1">make rpm</span> or <span class="c1">make deb</span>, as
   appropriate, will:</p>

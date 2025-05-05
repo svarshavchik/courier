@@ -103,6 +103,11 @@
     the modified spec file to build your custom package: <code>rpmbuild -ba
     <i>filename</i>.spec</code></li>
   </ul>
+  <h4>Rocky/RHEL 8 notes</h4>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>dnf install --enablerepo=crb -y gcc-toolset-14
+scl enable gcc-toolset-14 "rpmbuild -ta courier-VERSION.tar.bz2"</pre>
   <h2>Building DEB packages</h2>
   <p>Create an empty directory and copy/move the tarball into it:</p>
   <pre>
@@ -120,8 +125,8 @@ $ cd courier-VERSION</pre>
   <tt>courier-debuild</tt> script expects the distributed tarball in its parent
   directory.</p>
   <p>NOTE: if the courier-debuild script stops with an error complaining about
-    missing dependencies, then use "apt install" to install them, then try
-    again.</p>
+  missing dependencies, then use "apt install" to install them, then try
+  again.</p>
   <p>This eventually produces a deb subdirectory with .deb packages that can be
   installed with "dpkg -i".</p>
   <p>NOTE: All Courier packages should be built with the same version of gcc,
@@ -129,6 +134,11 @@ $ cd courier-VERSION</pre>
   running <code>courier-debuild</code>. <a href=
   "https://www.courier-mta.org/unicode/INSTALL.html">See
   <i>courier-unicode</i>'s <i>INSTALL</i> for more information</a>.</p>
+  <h3>Ubuntu 20</h3>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>$ sudo apt install -y gcc-10 g++-10
+$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <h2>Maintainer Mode (see README in the git repository to set up)</h2>
   <p><tt>make rpm</tt> or <tt>make deb</tt>, as appropriate, will:</p>
   <ol>

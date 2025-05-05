@@ -1,3 +1,9 @@
+2025-05-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Require C++17 support. Add autoconf checks for C++17. Provide
+	build instructions for oldest versions of enterprise Linux distros
+	whose gcc is too old.
+
 2025-05-02  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libmail API update.

@@ -19,6 +19,7 @@ fi
 
 apt install -y gnupg pbuilder ubuntu-dev-tools apt-file debhelper systemd
 apt install -y \
+	autoconf-archive        \
 	hunspell	      	\
 	libhunspell-dev       	\
 	expect			\
@@ -50,6 +51,10 @@ apt install -y \
 	pkgconf			\
 	wget
 
+if test "$DEBGCC" != ""
+then
+    apt install -y gcc-$DEBGCC g++-$DEBGCC
+fi
 
 # ubuntu has an existing /etc/apt/sources.list, debian does not.
 

@@ -11,6 +11,7 @@ Build-Depends:
 	debhelper-compat (= 12),
 	gcc%DEBGCC%,
 	g++%DEBGCC%,
+	autoconf-archive,
 	libncurses-dev,
 	libidn2-dev,
 	hunspell,

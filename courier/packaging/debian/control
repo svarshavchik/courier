@@ -11,6 +11,7 @@ Build-Depends:
 	debhelper-compat (= 12),
 	gcc%DEBGCC%,
 	g++%DEBGCC%,
+	autoconf-archive,
 	libldap2-dev,
 	libcourier-auth-dev,
 	libcourier-unicode-dev,

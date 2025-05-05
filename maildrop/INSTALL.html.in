@@ -22,10 +22,9 @@
   <!-- distribution information. -->
   <h1>Requirements</h1>
   <ul>
-    <li>C++ compiler - A C++ compiler is required.</li>
-    <li>make - The GNU make is recommended. Solaris's make is to be avoided.
-    xBSD already has a gmake port, install it and use it (use gmake everywhere
-    this document refers to make).</li>
+    <li>gcc that supports at least C++17 (<a href=
+    "http://www.gnu.org/software/gcc/">http://www.gnu.org/software/gcc/</a>)
+    </li>
     <li>GDBM/DB - optional.</li>
     <li>The PCRE2 library (<a href=
     "http://www.pcre.org">http:/www.pcre.org</a>) is required.</li>
@@ -120,6 +119,11 @@
   then:</p>
   <pre>rpmbuild -ta maildrop-VERSION.tar.bz2</pre>
   <p>If this fails due to any missing dependencies, install them.</p>
+  <h3>Rocky/RHEL 8 notes</h3>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>dnf install --enablerepo=crb -y gcc-toolset-14
+scl enable gcc-toolset-14 "rpmbuild -ta maildrop-VERSION.tar.bz2"</pre>
   <h2>deb</h2>
   <p>Run "apt install devscripts debhelper", if they're not installed already.
   Create an empty directory and copy/move the tarball into it:</p>
@@ -148,6 +152,11 @@ $ cd maildrop-VERSION</pre>
   running <code>courier-debuild</code>. <a href=
   "https://www.courier-mta.org/unicode/INSTALL.html">See
   <i>courier-unicode</i>'s <i>INSTALL</i> for more information</a>.</p>
+  <h3>Ubuntu 20</h3>
+  <p>Courier packages require at least C++17 support, but the default version
+  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <pre>$ sudo apt install -y gcc-10 g++-10
+$ DEBGCC=10 ./courier-debuild -us -uc</pre>
   <h2>Maintainer Mode (see README in the git repository to set up)</h2>
   <p><tt>make rpm</tt> or <tt>make deb</tt>, as appropriate, will:</p>
   <ol>

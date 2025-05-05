@@ -45,6 +45,7 @@ Source:         http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.
 ################################################################################
 
 BuildRequires:      libtool
+BuildRequires:      autoconf-archive
 BuildRequires:      procps-ng
 BuildRequires:      openldap-devel
 BuildRequires:      mariadb-devel zlib-devel sqlite-devel

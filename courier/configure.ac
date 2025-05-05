@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier],[1.4.1],[courier-users@lists.sourceforge.net])
+AC_INIT([courier],[1.4.1.20250504],[courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -16,6 +16,7 @@ LT_INIT
 
 AC_PROG_MAKE_SET
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_17
 AC_PROG_SYSCONFTOOL
 AC_PATH_PROGS(SETENV, env)
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)

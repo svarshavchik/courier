@@ -8,6 +8,7 @@ Build-Depends:
 	debhelper-compat (= 12),
 	gcc%DEBGCC%,
 	g++%DEBGCC%,
+	autoconf-archive,
 	libldap2-dev,
 	libmariadb-dev,
 	libmariadb-dev-compat,

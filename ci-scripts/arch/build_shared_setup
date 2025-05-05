@@ -6,6 +6,7 @@ pacman -Syu --noconfirm
 
 pacman -Syu \
     automake \
+    autoconf-archive \
     apache \
     binutils \
     coreutils \

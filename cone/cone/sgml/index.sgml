@@ -273,6 +273,23 @@ $ rpmbuild -ta cone-VERSION.tar.bz2]]></programlisting>
 	  <para>
 	      If this fails due to any missing dependencies, install them.
 	  </para>
+
+	  <section id="rpmbuildrhel8">
+	    <title>Rocky/RHEL 8 notes</title>
+
+	    <para>
+	      Courier packages require at least C++17 support, but the defualt
+	      version of gcc does not fully support C++17,
+	      and a newer gcc is needed:
+	    </para>
+	    <blockquote>
+	      <informalexample>
+		<programlisting><![CDATA[
+$ sudo dnf install --enablerepo=crb -y gcc-toolset-14
+$ scl enable gcc-toolset-14 "rpmbuild -ta cone-VERSION.tar.bz2"]]></programlisting>
+	      </informalexample>
+	    </blockquote>
+	  </section>
 	</section>
 
 	<section id="debbuild">
@@ -364,7 +381,21 @@ $ ./courier-debuild -us -uc]]></programlisting>
 	      <filename>INSTALL</filename> for more information</ulink>.
 	    </para>
 	  </note>
-
+	  <section id="debbuildubuntu20">
+	    <title>Ubuntu 20</title>
+	    <para>
+	      Courier packages require at least C++17 support, but the
+	      default version of gcc does not fully support it, and a
+	      newer gcc is needed:
+	    </para>
+	    <blockquote>
+	      <informalexample>
+		<programlisting><![CDATA[
+$ sudo apt install -y gcc-10 g++-10
+$ DEBGCC=10 ./courier-debuild -us -uc]]></programlisting>
+	      </informalexample>
+	    </blockquote>
+	  </section>
 	</section>
       </section>
 
@@ -664,25 +695,25 @@ The following prerequisites must be installed to build and run &app;:</para>
 	<listitem>
 	  <para>
 A wide-character version of the curses library.
-<ulink url="http://dickey.his.com/ncurses/ncurses.html">ncurses</ulink>
+<ulink url="https://invisible-island.net/ncurses/">ncurses</ulink>
 supports wide characters starting with version 5.3, if enabled at compile
 time.</para>
 	</listitem>
 
 	<listitem>
 	  <para>
-<ulink url="http://www.xmlsoft.org">Libxml2</ulink></para>
+<ulink url="https://gitlab.gnome.org/GNOME/libxml2">Libxml2</ulink></para>
 	</listitem>
 
 	<listitem>
 	  <para>
-<ulink url="http://www.gnutls.org">GnuTLS</ulink>; or
-<ulink url="http://www.openssl.org">OpenSSL</ulink> 0.9.7 or higher</para>
+<ulink url="https://gnutls.org">GnuTLS</ulink>; or
+<ulink url="https://openssl-library.org/">OpenSSL</ulink> 0.9.7 or higher</para>
 	</listitem>
 
 	<listitem>
 	  <para>
-	    <ulink url="http://www.gnu.org/software/libidn/">Libidn</ulink>;
+	    <ulink url="https://www.gnu.org/software/libidn/">Libidn</ulink>;
 	    although &app; will compile without it, internationalized domain
 	    names will not be shown properly.
 	  </para>
@@ -692,7 +723,7 @@ time.</para>
 	  <para>
 &app; optionally supports LDAP address books.
 LDAP support requires
-<ulink url="http://www.openldap.org">OpenLDAP</ulink>.</para>
+<ulink url="https://openldap.org">OpenLDAP</ulink>.</para>
 
 	  <note>
 	    <para>
@@ -722,20 +753,14 @@ Partial searches are also possible.</para>
 
 	<listitem>
 	  <para>
-	    <ulink url="http://hunspell.github.io/">hunspell</ulink>,
+	    <ulink url="https://hunspell.github.io/">hunspell</ulink>,
 <ulink url="https://aspell.net/">aspell</ulink> or
 <ulink url="https://sourceforge.net/projects/pspell/">pspell</ulink></para>
 	</listitem>
 
 	<listitem>
 	  <para>
-<ulink url="http://www.gnome.org/~veillard/gamin/">Gamin</ulink>, or the older
-<ulink url="http://oss.sgi.com/projects/fam/">FAM</ulink>
-library</para></listitem>
-
-	<listitem>
-	  <para>
-The current version of the gcc compiler</para></listitem>
+The current version of the gcc compiler, at least C++17 support</para></listitem>
 
 	<listitem>
 	  <para>
@@ -751,15 +776,6 @@ url="https://www.courier-mta.org/download.php#sox">https://www.courier-mta.org/d
 and follow its installation instructions.</para>
 	</listitem>
       </itemizedlist>
-
-      <para>
-Right now the primary development focus is on the Linux platform,
-but &app; should build on other POSIX platforms; and any problems are likely
-to be minor, and trivial to resolve.
-A large portion of
-&app;'s code base comes from
-<ulink url="https://www.courier-mta.org">Courier</ulink>, which builds on
-many platforms.</para>
 
       <note>
 	<para>

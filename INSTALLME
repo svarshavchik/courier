@@ -6,9 +6,6 @@
 # shared by multiple Courier projects. If you want to hack the "courier"
 # project, you must pull the shared repository into the courier/libs directory.
 #
-# Additionally, clean and smudge filters must be set up in order to properly
-# support sysconftool-based configuration files.
-#
 # To set up a project directory, run this script with two parameters:
 #
 # A) the project directory to set up.
@@ -35,6 +32,7 @@ cd $projdir
 git clone $gitrepo libs
 
 # Now, run the autobloat script to rebuild the autotools
-# stuff.
+# stuff. You must have autoconf, autoconf-archive, automake, libtool,
+# and gettext packages installed.
 
 sh ./autobloat

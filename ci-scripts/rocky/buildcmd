@@ -1,0 +1,8 @@
+set -vx
+
+rpmbuild -ta --clean \
+   --define 'notice_option --with-notice=unicode' \
+   --define "_topdir `pwd`/rpm" *.tar.bz2 && exit 0
+
+cat rpm/BUILD/*/config.log
+exit 1

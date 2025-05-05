@@ -59,6 +59,7 @@ Obsoletes: %{name}-mysql > 0.0
 Obsoletes: %{name}-pgsql > 0.0
 
 BuildRequires: gcc-c++
+BuildRequires: autoconf-archive
 BuildRequires: procps-ng
 BuildRequires: rpm >= 4.0.2 coreutils grep perl
 BuildRequires: %(which gpg >/dev/null 2>/dev/null && echo 'gnupg >= 1.0.5' && exit 0; echo gnupg2)

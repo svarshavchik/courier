@@ -4,6 +4,7 @@ dnf install -y --setopt=install_weak_deps=false \
     --setopt=tsflags=nodocs \
     --setopt=deltarpm=false \
     autoconf \
+    autoconf-archive \
     automake \
     bzip2 \
     docbook-style-xsl \

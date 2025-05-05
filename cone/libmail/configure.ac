@@ -15,6 +15,7 @@ AM_INIT_AUTOMAKE([foreign no-define])
 
 dnl Checks for programs.
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_17
 AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_INSTALL

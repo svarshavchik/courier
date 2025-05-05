@@ -26,6 +26,7 @@ Requires(postun):   systemd
 Requires(preun):  systemd
 %endif
 BuildRequires: gcc-c++
+BuildRequires: autoconf-archive
 BuildRequires: procps-ng
 BuildRequires: gdbm-devel
 BuildRequires: coreutils perl

@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([courier-sox],[0.19],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.19.20250504],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AC_CONFIG_HEADERS([courier_socks_config.h])

@@ -8,6 +8,7 @@ Build-Depends:
 	debhelper-compat (= 12),
 	gcc%DEBGCC%,
 	g++%DEBGCC%,
+	autoconf-archive,
 	gpg ( >= 2),
 	hunspell,
 	libhunspell-dev,

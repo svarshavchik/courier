@@ -1,3 +1,9 @@
+2025-05-04  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Require C++17 support. Add autoconf checks for C++17. Provide
+	build instructions for oldest versions of enterprise Linux distros
+	whose gcc is too old.
+
 2025-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* all: low level message header parsing code reimplemented in C++, the

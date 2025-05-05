@@ -16,6 +16,7 @@ BuildRequires: gdbm-devel pcre2-devel
 BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: gcc-c++
+BuildRequires: autoconf-archive
 BuildRequires: %{__make}
 
 %package devel

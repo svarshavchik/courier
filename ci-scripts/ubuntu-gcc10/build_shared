@@ -1,0 +1,3 @@
+set -evx
+export DEBGCC=10
+. ci-scripts/ubuntu/build_shared

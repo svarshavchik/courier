@@ -26,6 +26,7 @@ BuildRequires: libidn2-devel
 BuildRequires: courier-unicode-devel
 BuildRequires: %{__make}
 BuildRequires: procps-ng
+BuildRequires: autoconf-archive
 
 %define use_openssl %(rpm -q openssl-devel >/dev/null 2>&1 && echo 1 && exit 0; echo 0)
 

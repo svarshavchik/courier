@@ -16,6 +16,7 @@ Group: System Environment/Libraries
 URL: https://www.courier-mta.org
 Source0: %{name}-%{version}.tar.bz2
 BuildRequires: libtool
+BuildRequires: autoconf-archive
 BuildRequires: courier-authlib-devel
 BuildRequires: gdbm-devel
 BuildRequires: /usr/include/ltdl.h

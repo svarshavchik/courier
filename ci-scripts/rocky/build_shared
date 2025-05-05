@@ -3,9 +3,12 @@ set -evx
 cd build
 mkdir rpm
 
-rpmbuild -ta --clean \
-   --define 'notice_option --with-notice=unicode' \
-   --define "_topdir `pwd`/rpm" *.tar.bz2
+if test -f /opt/rh/gcc-toolset-14/enable
+then
+    scl enable gcc-toolset-14 "bash ../ci-scripts/rocky/buildcmd"
+else
+    bash ../ci-scripts/rocky/buildcmd
+fi
 
 # Do not install courier-authlib modules
 
