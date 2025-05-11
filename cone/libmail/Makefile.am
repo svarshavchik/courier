@@ -146,9 +146,7 @@ mailtool_LDADD=libmail.la ../libs/rfc2045/librfc2045.la \
 mailtool_LDFLAGS=-static
 
 testsuite_SOURCES=testsuite.C
-testsuite_DEPENDENCIES=$(mailtool_DEPENDENCIES)
-testsuite_LDADD=$(mailtool_LDADD)
-testsuite_LDFLAGS=-static
+testsuite_LDADD=-lcourier-unicode
 
 EXTRA_DIST += testsuite.txt
 

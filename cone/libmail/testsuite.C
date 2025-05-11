@@ -5,6 +5,7 @@
 */
 #include "libmail_config.h"
 #include "nntpnewsrc.H"
+#include "nntpnewsrc.C"
 
 #include <iostream>
 
