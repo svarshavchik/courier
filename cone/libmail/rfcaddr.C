@@ -167,84 +167,30 @@ bool mail::address::operator==(const mail::address &o) const
 	return getCanonAddress() == o.getCanonAddress();
 }
 
-static void parseCallback(const char *str, size_t pos, void *voidarg)
-{
-	*(size_t *)voidarg=pos;
-}
-
 template<class T> bool mail::address::fromString(string addresses,
 						 vector<T> &h,
 						 size_t &errIndex)
 {
 	errIndex=std::string::npos;
 
-	struct rfc822t *t=rfc822t_alloc_new(addresses.c_str(),
-					    &parseCallback, &errIndex);
-	if (!t)
-		return false;
-
-	struct rfc822a *a=rfc822a_alloc(t);
-
-	if (!a)
-	{
-		rfc822t_free(t);
-		return false;
-	}
-
-	try {
-		int i;
-
-		for (i=0; i<a->naddrs; i++)
+	rfc822::tokens tokens{
+		addresses,
+		[&]
+		(size_t n)
 		{
-			string name;
-			string addr;
+			errIndex=n;
+		}};
 
-			char *n=rfc822_display_name_tobuf(a, i, NULL);
+	rfc822::addresses email_addresses{tokens};
 
-			if (!n)
-			{
-				rfc822a_free(a);
-				rfc822t_free(t);
-				return false;
-			}
+	for (auto &a:email_addresses)
+	{
+		std::string name, addr;
 
-			try {
-				name=n;
-				free(n);
-			} catch (...) {
-				free(n);
-				LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-			}
+		a.name.print(std::back_inserter(name));
+		a.address.print(std::back_inserter(addr));
 
-
-			n=rfc822_getaddr(a, i);
-
-			if (!n)
-			{
-				rfc822a_free(a);
-				rfc822t_free(t);
-				return false;
-			}
-
-			try {
-				addr=n;
-				free(n);
-			} catch (...) {
-				free(n);
-				LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-			}
-
-			if (a->addrs[i].name == 0)
-				name="";
-
-			h.push_back( mail::address(name, addr));
-		}
-		rfc822a_free(a);
-		rfc822t_free(t);
-	} catch (...) {
-		rfc822a_free(a);
-		rfc822t_free(t);
-		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
+		h.push_back( mail::address(name, addr));
 	}
 	return true;
 }

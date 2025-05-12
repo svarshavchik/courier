@@ -1,3 +1,8 @@
+2025-05-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* libmail/rfcaddr.C: use updated rfc822 library to parse E-mail
+	addresses.
+
 2025-05-04  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Require C++17 support. Add autoconf checks for C++17. Provide
