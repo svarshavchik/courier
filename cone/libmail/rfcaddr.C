@@ -187,18 +187,8 @@ template<class T> bool mail::address::fromString(string addresses,
 	{
 		std::string name, addr;
 
-		a.name.print(std::back_inserter(name));
+		a.unquote_name(std::back_inserter(name));
 		a.address.print(std::back_inserter(addr));
-
-		auto b=name.begin(), p=b, e=name.end();
-		for (; b != e; ++b)
-		{
-			if (*b == '\\' && b+1 != e)
-				++b;
-			*p++=*b;
-		}
-
-		name.erase(p, e);
 		h.push_back( mail::address(name, addr));
 	}
 	return true;
@@ -352,7 +342,7 @@ void mail::emailAddress::decode()
 	size_t at=std::find(ucaddr.begin(), ucaddr.end(), '@')
 		- ucaddr.begin();
 
-	if (at != std::string::npos)
+	if (at != ucaddr.size())
 	{
 		++at;
 		ucaddr.push_back(0);
