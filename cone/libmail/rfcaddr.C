@@ -190,6 +190,15 @@ template<class T> bool mail::address::fromString(string addresses,
 		a.name.print(std::back_inserter(name));
 		a.address.print(std::back_inserter(addr));
 
+		auto b=name.begin(), p=b, e=name.end();
+		for (; b != e; ++b)
+		{
+			if (*b == '\\' && b+1 != e)
+				++b;
+			*p++=*b;
+		}
+
+		name.erase(p, e);
 		h.push_back( mail::address(name, addr));
 	}
 	return true;
