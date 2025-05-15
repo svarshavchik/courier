@@ -24,8 +24,7 @@ against) in
 addition to linking with <filename>libmail.a</filename>.</para>
 
     <para>
-&libname; is currently in active development.
-Right now the primary development focus is on the Linux platform and the
+&libname;'s primary development focus is on the Linux platform and the
 gcc compiler.
 &libname; will probably build on other POSIX
 platforms; any errors are likely to be minor, and trivial to resolve.
@@ -56,12 +55,20 @@ As such, the library contains both C and C++ code; although the
 published
 API consists of C++ objects only.
 &libname; uses C++ objects declared in the
-<literal>mail</literal> namespace.
+<literal>mail</literal> namespace, and internally uses objects in the
+following namespaces:
+    </para>
+    <itemizedlist>
+      <listitem>
+	<simpara><literal>rfc822</literal></simpara>
+      </listitem>
+    </itemizedlist>
+
+    <para>
 Applications that use
 &libname;
-should refrain from declaring any objects in the
-<literal>mail</literal> namespace.
-At this time, applications should also refrain from declaring any C functions
+should refrain from declaring any objects in these namespaces.
+Applications should also refrain from declaring any C functions
 whose name begin with the following prefixes (these prefixes are reserved
 at this time):</para>
 
