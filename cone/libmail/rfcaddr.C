@@ -187,7 +187,10 @@ template<class T> bool mail::address::fromString(string addresses,
 	{
 		std::string name, addr;
 
-		a.unquote_name(std::back_inserter(name));
+		if (a.address.size() == 0)
+			continue;
+		if (a.name.size() > 0)
+			a.unquote_name(std::back_inserter(name));
 		a.address.print(std::back_inserter(addr));
 		h.push_back( mail::address(name, addr));
 	}
