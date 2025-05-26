@@ -40,22 +40,10 @@ namespace rfc2047 {
 
 		void rfc2047_callback(const char *text, size_t text_len);
 	public:
-
-		// Decode to unicode chars.
-		const char32_t *decode(std::string rfc2047_text);
-
 		// Decode to charset 'tocharset'.
 
 		std::string decode(std::string rfc2047_text,
 				   std::string charset);
-
-
-		// Decode the name portion in a parsed list of addresses.
-		// Decode to charset 'nativeInfo', and prepend [CHARSET] to
-		// content in any charset other than 'nativeInfo'.
-
-		void decode(std::vector<mail::address> &addr_cpy,
-			    std::string charset);
 
 		// Decode without transcoding to a specific charset.
 

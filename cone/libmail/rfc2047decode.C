@@ -38,29 +38,12 @@ string mail::rfc2047::decoder::decode(string text, string charset)
 {
 	decodedbuf.clear();
 
-	if (rfc822_display_hdrvalue("subject",
-				    text.c_str(),
-				    charset.c_str(),
-				    &mail::rfc2047::decoder::
-				    rfc2047_decode_callback,
-				    NULL,
-				    this) < 0)
-		return text;
+	auto iter=std::back_inserter(decodedbuf);
+	rfc822::display_header("subject", text, charset, iter);
 
 	return decodedbuf;
 }
 
-void mail::rfc2047::decoder::decode(vector<mail::address> &addr_cpy,
-				    std::string charset)
-{
-	vector<mail::address>::iterator b=addr_cpy.begin(), e=addr_cpy.end();
-
-	while (b != e)
-	{
-		b->setName(decode(b->getName(), charset));
-		b++;
-	}
-}
 
 string mail::rfc2047::decoder::decodeSimple(string str)
 {
