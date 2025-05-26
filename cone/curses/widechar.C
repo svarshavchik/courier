@@ -211,7 +211,9 @@ size_t widecharbuf::grapheme_t::wcwidth(ssize_t col) const
 	std::string s;
 	bool ignore;
 
-	unicode::iconvert::fromu::convert(uptr, uptr+cnt,
+	auto from=uptr;
+	auto to=uptr+cnt;
+	unicode::iconvert::fromu::convert(from, to,
 					  unicode_default_chset(), s, ignore);
 
 	return towidechar(s.begin(), s.end(), towidechar_wcwidth_iter(col));
@@ -275,7 +277,7 @@ void editablewidechar::contents_cut(size_t cut_pos,
 		return;
 
 	std::u32string before, after;
-						
+
 	if (cut_pos < before_insert.graphemes.size())
 	{
 		before=before_insert.get_unicode_substring(0, cut_pos);
@@ -397,7 +399,7 @@ size_t editablewidechar::adjust_shift_pos(size_t &shiftoffset,
 	for (size_t i=0; i<wbefore.graphemes.size(); ++i)
 		virtual_col += (last_grapheme_width=wbefore.graphemes[i]
 				.wcwidth(virtual_col));
-		
+
 	if (shiftoffset > 0
 	    && shiftoffset == wbefore.graphemes.size()
 	    && width > last_grapheme_width)
@@ -499,4 +501,3 @@ CursesFlowedLine::CursesFlowedLine(const std::u32string &textArg,
 	: text(unicode::iconvert::convert(textArg, "utf-8")), flowed(flowedArg)
 {
 }
-
