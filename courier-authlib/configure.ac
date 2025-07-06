@@ -1024,7 +1024,7 @@ then
 fi
 AC_SUBST(using_systemd)
 
-AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog)
+AC_CONFIG_SUBDIRS(libs/bdbobj libs/gdbmobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/rfc2045 libs/random128 libs/liblock liblog)
 
 env LC_ALL=C perl -e 'use POSIX qw(strftime); print strftime("DATE=\"%a %b %d %Y\"; DATEFULL=\"%a, %d %b %Y %H:%M:%S %z\"", localtime)' >configure.date
 . ./configure.date

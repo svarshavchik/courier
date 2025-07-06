@@ -1,7 +1,7 @@
 #include	<stdlib.h>
 #include	<string.h>
 #include	"auth.h"
-#include	"rfc822/encode.h"
+#include	"rfc2045/encode.h"
 
 static int write_challenge(const char *p, size_t l, void *vp)
 {

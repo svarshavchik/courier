@@ -4,7 +4,7 @@
 
 AUTOMAKE_OPTIONS=dist-bzip2
 
-SUBDIRS=libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/random128 libs/liblock liblog
+SUBDIRS=libs/gdbmobj libs/bdbobj libs/md5 libs/sha1 libs/libhmac libs/numlib libs/makedat userdb libs/rfc822 libs/rfc2045 libs/random128 libs/liblock liblog
 
 AM_CPPFLAGS=-I liblock $(LTDLINCL)
 BUILT_SOURCES=
@@ -69,7 +69,7 @@ libcourierauth_la_SOURCES=authdaemon.c authdaemonlib.c preauthdaemon.c \
 	courierauthdebug.h \
 	authoption.c
 libcourierauth_la_LIBADD=libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la libs/numlib/libnumlib.la \
-	libs/random128/librandom128.la libs/rfc822/libencode.la
+	libs/random128/librandom128.la libs/rfc2045/libencode.la
 libcourierauth_la_LDFLAGS=@NETLIBS@ -version-info @LIBVERSION_INFO@
 
 # The userdb module
@@ -375,7 +375,7 @@ courierauthconfig_SOURCES=authinfo.c
 
 authpasswd_SOURCES=authpasswd.c
 authpasswd_LDADD=libcourierauthcommon.la \
-        libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la libs/rfc822/libencode.la
+        libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la libs/rfc2045/libencode.la
 
 authtest_SOURCES=authtest.c
 authtest_DEPENDENCIES=libcourierauth.la
@@ -404,10 +404,10 @@ authdaemondprog_DEPENDENCIES=libcourierauthcommon.la \
 	libcourierauth.la \
 	libs/liblock/liblock.la $(modules) \
 	libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la \
-	libs/rfc822/libencode.la libs/numlib/libnumlib.la
+	libs/rfc2045/libencode.la libs/numlib/libnumlib.la
 authdaemondprog_LDADD=$(LIBLTDL) libcourierauthcommon.la libcourierauth.la libs/liblock/liblock.la \
 	libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la \
-	libs/rfc822/libencode.la libs/numlib/libnumlib.la
+	libs/rfc2045/libencode.la libs/numlib/libnumlib.la
 authdaemondprog_LDFLAGS=-export-dynamic $(modules:%=-dlopen %) \
 	-rpath $(pkglibdir) @NETLIBS@
 
