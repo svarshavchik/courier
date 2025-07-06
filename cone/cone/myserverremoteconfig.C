@@ -16,7 +16,7 @@
 #include "init.H"
 #include "searchcallback.H"
 #include "errno.h"
-#include "rfc822/encode.h"
+#include "rfc2045/encode.h"
 #include <courier-unicode.h>
 
 using namespace std;

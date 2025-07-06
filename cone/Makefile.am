@@ -3,7 +3,7 @@
 #
 # See COPYING for distribution information.
 #
-SUBDIRS=libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 libs/rfc2045 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone
+SUBDIRS=libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc2045 libs/rfc1035 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone
 AM_DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
 
 sysconf_DATA=cone.dist

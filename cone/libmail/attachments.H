@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include "namespace.H"
 #include "structure.H"
-#include "rfc822/encode.h"
+#include "rfc2045/encode.h"
 
 LIBMAIL_START
 

@@ -126,7 +126,7 @@ noinst_DATA += html/index.html html/manpage.css man/.timestamp
 LAMAILLIBS=../libmail/libmail.la ../libs/maildir/libmaildir.la \
 	../libs/rfc2045/librfc2045.la \
 	../libs/tcpd/libspipe.la @LIBCOURIERTLS@ \
-	../libs/rfc822/librfc822.la ../libs/rfc822/libencode.la \
+	../libs/rfc822/librfc822.la ../libs/rfc2045/libencode.la \
 	../libs/liblock/liblock.la \
 	../libs/libhmac/libhmac.la ../libs/md5/libmd5.la ../libs/sha1/libsha1.la \
 	../libs/numlib/libnumlib.la

@@ -40,7 +40,7 @@
 
 #include <courier-unicode.h>
 #include "rfc822/rfc822.h"
-#include "rfc822/encode.h"
+#include "rfc2045/encode.h"
 #include "rfc2045/rfc2045.h"
 #include "rfc2045/rfc2045charset.h"
 #include "libmail/mail.H"

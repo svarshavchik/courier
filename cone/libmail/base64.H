@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "rfc822/encode.h"
+#include "rfc2045/encode.h"
 
 LIBMAIL_START
 

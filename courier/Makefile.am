@@ -8,15 +8,15 @@ AUTOMAKE_OPTIONS=dist-bzip2
 AM_CXXFLAGS=@COURIER_UNICODE_CXXFLAGS@
 AM_DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
 SUBDIRS=afx @DBSUBDIR@ libs/numlib libs/soxwrap libs/md5 libs/sha1 \
-	libs/libhmac libs/random128 libs/rfc822 libs/rfc1035 \
-	libs/rfc2045 libs/liblock libs/maildir libs/waitlib libs/tcpd \
+	libs/libhmac libs/random128 libs/rfc822 libs/rfc2045 \
+	libs/rfc1035 libs/liblock libs/maildir libs/waitlib libs/tcpd \
 	libs/threadlib libs/makedat libs/rootcerts libs/imap libs/maildrop \
 	libs/cgi libs/http11 libs/ldapaddressbook libs/gpglib libs/pcp \
 	libs/sqwebmail webadmin courier
 
 DIST_SUBDIRS=afx libs/gdbmobj libs/bdbobj libs/numlib libs/soxwrap \
 	libs/md5 libs/sha1 libs/libhmac libs/random128 \
-	libs/rfc822 libs/rfc1035 libs/rfc2045 libs/liblock libs/maildir \
+	libs/rfc822 libs/rfc2045 libs/rfc1035 libs/liblock libs/maildir \
 	libs/waitlib libs/tcpd libs/threadlib libs/makedat libs/rootcerts \
 	libs/imap libs/maildrop libs/cgi libs/http11 libs/ldapaddressbook \
 	libs/gpglib libs/pcp libs/sqwebmail webadmin courier

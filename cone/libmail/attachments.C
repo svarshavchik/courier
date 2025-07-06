@@ -6,7 +6,7 @@
 #include "libmail_config.h"
 #include "misc.H"
 #include "headers.H"
-#include "rfc822/encode.h"
+#include "rfc2045/encode.h"
 #include "rfc2045/rfc2045charset.h"
 #include "rfc2045/rfc2045.h"
 #include <sys/time.h>

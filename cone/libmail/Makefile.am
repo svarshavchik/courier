@@ -127,7 +127,7 @@ libmail_la_LIBADD = $(LIBIDN_LIBS)
 mailtool_SOURCES=mailtool.C
 mailtool_DEPENDENCIES=libmail.la \
 	../libs/rfc2045/librfc2045.la \
-	../libs/rfc822/librfc822.la ../libs/rfc822/libencode.la \
+	../libs/rfc822/librfc822.la ../libs/rfc2045/libencode.la \
 	../libs/maildir/libmaildir.la \
 	@LIBCOURIERTLS@ \
 	../libs/liblock/liblock.la \
@@ -136,7 +136,7 @@ mailtool_DEPENDENCIES=libmail.la \
 	../libs/soxwrap/soxlibs.dep
 
 mailtool_LDADD=libmail.la ../libs/rfc2045/librfc2045.la \
-	../libs/rfc822/librfc822.la ../libs/rfc822/libencode.la \
+	../libs/rfc822/librfc822.la ../libs/rfc2045/libencode.la \
 	../libs/maildir/libmaildir.la \
 	@LIBCOURIERTLS@ -lcourier-unicode \
 	../libs/liblock/liblock.la \
