@@ -103,8 +103,8 @@ DISTCLEANFILES=$(htmldataclean) $(man_MANS)
 librfc822_la_SOURCES=
 librfc2045_la_SOURCES=
 
-librfc822_la_LIBADD=libs/rfc822/librfc822.la libs/rfc822/libencode.la
-librfc2045_la_LIBADD=libs/rfc2045/librfc2045.la
+librfc822_la_LIBADD=libs/rfc822/librfc822.la
+librfc2045_la_LIBADD=libs/rfc2045/librfc2045.la libs/rfc2045/libencode.la
 librfc822_la_LDFLAGS=-rpath $(libdir) -version-info @LIBVERSION_INFO@
 librfc2045_la_LDFLAGS=-rpath $(libdir) -version-info @LIBVERSION_INFO@
 
