@@ -72,6 +72,7 @@ dpkg-scanpackages pool >dists/main/main/binary-$DEB_TARGET_ARCH/Packages
 # locale-gen accepts a locale in ubuntu, debian requires /etc/locale.gen to
 # be manually updated.
 
+echo 'en_US ISO-8859-1' >>/etc/locale.gen
 echo 'en_US.UTF-8 UTF-8' >>/etc/locale.gen
 locale-gen
 

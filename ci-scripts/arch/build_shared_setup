@@ -4,6 +4,11 @@ set -evx
 
 pacman -Syu --noconfirm
 
+echo 'NoExtract  = !usr/share/i18n/charmaps/ISO-8859-1.gz' >>/etc/pacman.conf
+grep NoExtract /etc/pacman.conf
+echo 'en_US ISO-8859-1' >>/etc/locale.gen
+echo 'en_US.UTF-8 UTF-8' >>/etc/locale.gen
+
 pacman -Syu \
     automake \
     autoconf-archive \
@@ -16,6 +21,8 @@ pacman -Syu \
     gcc \
     gdbm \
     ghostscript \
+    glibc \
+    glibc-locales \
     gnupg \
     groff \
     gzip \
@@ -49,5 +56,4 @@ mkdir -p /var/www/cgi-bin /var/www/html
 echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
 echo /usr/local/lib64 >> /etc/ld.so.conf.d/local.conf
 
-echo 'en_US.UTF-8 UTF-8' >>/etc/locale.gen
 locale-gen

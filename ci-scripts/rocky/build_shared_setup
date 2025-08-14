@@ -16,6 +16,7 @@ dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
     expect \
     gawk \
     gcc-c++ \
+    libstdc++-devel \
     gdbm-devel \
     gettext-devel \
     ghostscript \
@@ -60,7 +61,7 @@ chmod +x $HOME/bin/rpmrepos.sh
 . /etc/os-release
 
 case $VERSION_ID in
-    8*)
+    [89]*)
 	dnf install -y --enablerepo=$extrarepo --setopt=tsflags=nodocs \
 	    gcc-toolset-14
 	;;

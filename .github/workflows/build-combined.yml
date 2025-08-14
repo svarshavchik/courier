@@ -313,6 +313,7 @@ jobs:
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
            - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
            - ["debian:12",        "ubuntu",    "debian-12"]
+           - ["debian:13",        "ubuntu",    "debian-13"]
            - ["archlinux:latest", "arch",      "arch"]
 
   # Build the main packages
@@ -360,6 +361,7 @@ jobs:
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
            - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
            - ["debian:12",        "ubuntu",    "debian-12"]
+           - ["debian:13",        "ubuntu",    "debian-13"]
            - ["archlinux:latest", "arch",      "arch"]
         project:
           - cone
