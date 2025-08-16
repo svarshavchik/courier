@@ -1,3 +1,7 @@
+2025-08-16  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* reformime: reimplemented in C++ using the new C++ MIME library.
+
 2025-05-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Remove obsolete diagnostic references to FAM and Gamin.
@@ -10,7 +14,7 @@
 
 2025-04-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
-	* all: low level message header parsing code reimplemented in C++, the
+	* all: low level MIME parsing code reimplemented in C++, the
 	C code remains in place, with some changes.
 
 	* maildrop: update the low-level message header parsing code, used by

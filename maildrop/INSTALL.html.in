@@ -119,8 +119,8 @@
   then:</p>
   <pre>rpmbuild -ta maildrop-VERSION.tar.bz2</pre>
   <p>If this fails due to any missing dependencies, install them.</p>
-  <h3>Rocky/RHEL 8 notes</h3>
-  <p>Courier packages require at least C++17 support, but the default version
+  <h3>Rocky/RHEL 8/9 notes</h3>
+  <p>Courier packages require C++17 support, but the default version
   of gcc does not fully support it, and a newer gcc is needed:</p>
   <pre>dnf install --enablerepo=crb -y gcc-toolset-14
 scl enable gcc-toolset-14 "rpmbuild -ta maildrop-VERSION.tar.bz2"</pre>
@@ -152,11 +152,14 @@ $ cd maildrop-VERSION</pre>
   running <code>courier-debuild</code>. <a href=
   "https://www.courier-mta.org/unicode/INSTALL.html">See
   <i>courier-unicode</i>'s <i>INSTALL</i> for more information</a>.</p>
-  <h3>Ubuntu 20</h3>
-  <p>Courier packages require at least C++17 support, but the default version
-  of gcc does not fully support it, and a newer gcc is needed:</p>
+  <h3>Ubuntu and Debian</h3>
+  <p>Courier packages require C++17 support, but the default version
+  of gcc on Ubuntu does not fully support it, and a newer gcc is needed:</p>
   <pre>$ sudo apt install -y gcc-10 g++-10
 $ DEBGCC=10 ./courier-debuild -us -uc</pre>
+  <p><code>make check</code> requires both the ISO-8859-1 based
+    <code>en_US</code> locale in addition to the default
+    <code>en_US.UTF-8</code>, on all versions of Ubuntu and Debian.</p>
   <h2>Maintainer Mode (see README in the git repository to set up)</h2>
   <p><tt>make rpm</tt> or <tt>make deb</tt>, as appropriate, will:</p>
   <ol>

@@ -275,10 +275,10 @@ $ rpmbuild -ta cone-VERSION.tar.bz2]]></programlisting>
 	  </para>
 
 	  <section id="rpmbuildrhel8">
-	    <title>Rocky/RHEL 8 notes</title>
+	    <title>Rocky/RHEL 8/9 notes</title>
 
 	    <para>
-	      Courier packages require at least C++17 support, but the defualt
+	      Courier packages require C++17 support, but the defualt
 	      version of gcc does not fully support C++17,
 	      and a newer gcc is needed:
 	    </para>
@@ -381,10 +381,10 @@ $ ./courier-debuild -us -uc]]></programlisting>
 	      <filename>INSTALL</filename> for more information</ulink>.
 	    </para>
 	  </note>
-	  <section id="debbuildubuntu20">
-	    <title>Ubuntu 20</title>
+	  <section id="debbuildubuntu">
+	    <title>Ubuntu and Debian</title>
 	    <para>
-	      Courier packages require at least C++17 support, but the
+	      Courier packages require C++17 support, but the
 	      default version of gcc does not fully support it, and a
 	      newer gcc is needed:
 	    </para>
@@ -395,6 +395,11 @@ $ sudo apt install -y gcc-10 g++-10
 $ DEBGCC=10 ./courier-debuild -us -uc]]></programlisting>
 	      </informalexample>
 	    </blockquote>
+	    <para><command>make check</command> requires both the
+	      <literal>ISO-8859-1</literal> based
+	      <literal>en_US</literal> locale in addition to the default
+	      <literal>en_US.UTF-8</literal>, on all versions of Ubuntu
+	      and Debian.</p>
 	  </section>
 	</section>
       </section>
