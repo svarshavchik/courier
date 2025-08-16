@@ -399,7 +399,7 @@ $ DEBGCC=10 ./courier-debuild -us -uc]]></programlisting>
 	      <literal>ISO-8859-1</literal> based
 	      <literal>en_US</literal> locale in addition to the default
 	      <literal>en_US.UTF-8</literal>, on all versions of Ubuntu
-	      and Debian.</p>
+	      and Debian.</para>
 	  </section>
 	</section>
       </section>
