@@ -1103,7 +1103,7 @@ S: * STATUS EXISTS=17 UNSEEN=5
 S: +OK Status retrieved
 </literallayout>
 </para>
-      
+
       <para>
 The <literal>STATUS</literal> command returns the status of a folder.
 The next word after <quote><literal>STATUS</literal></quote> is a
@@ -2075,7 +2075,7 @@ The server responds to a <literal>* FETCH</literal> by returning
 <replaceable>list</replaceable> is a comma-separated list of flags that are
 set for this message.
 A message without any flags set results in an empty
-<replaceable>list</replaceable>, or the absence of the 
+<replaceable>list</replaceable>, or the absence of the
 <quote>FLAGS=<replaceable>list</replaceable></quote> response
 altogether.</para>
 	</listitem>
@@ -2354,8 +2354,13 @@ be an empty string.
 SMAP clients should treat MIME section ID as opaque text strings, and must
 not interpret them in any way (except for the blank mime ID referring to the
 entire message).
-</para>
+	  </para>
 
+	  <para>
+	    Additionally, MIME section IDs are not guaranteed to persist
+	    across SMAP sessions (newer SMAP servers might use a different
+	    naming scheme).
+	  </para>
 	  <para>
 <quote><literal>MIME.ID=</literal><replaceable>id</replaceable></quote>
 specifies the MIME section ID of the following headers.
