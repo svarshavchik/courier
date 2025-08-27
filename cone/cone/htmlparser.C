@@ -305,7 +305,7 @@ htmlParser::linebuf::linebuf(htmlParser *parserArg, size_t desiredWidthArg)
 	  desiredWidth(desiredWidthArg), parser(parserArg), isempty(true),
 	  lastchar(' ')
 {
-	set_opts(UNICODE_LB_OPT_PRBREAK | UNICODE_LB_OPT_SYBREAK);
+	set_opts(UNICODE_LB_OPT_PRBREAK );
 }
 
 htmlParser::linebuf::~linebuf()

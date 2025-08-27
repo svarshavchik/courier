@@ -568,7 +568,6 @@ public:
 		: buf(new buffer(rewrap_helper, out_iter, towidth, delsp))
 	{
 		buf->set_opts(UNICODE_LB_OPT_PRBREAK|
-			      UNICODE_LB_OPT_SYBREAK|
 			      UNICODE_LB_OPT_DASHWJ);
 	}
 
