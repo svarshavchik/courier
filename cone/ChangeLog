@@ -1,3 +1,7 @@
+2025-09-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update for courier-unicode 2.4.0
+
 2025-05-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* libmail/rfcaddr.C: use updated rfc822 library to parse E-mail

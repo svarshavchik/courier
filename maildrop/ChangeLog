@@ -1,3 +1,13 @@
+2025-09-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mailbot: reimplemented in C++ using the new C++ MIME library.
+
+2025-08-31  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* reformail: reimplemented in C++ using the new C++ MIME library.
+	Compare E-mail addresses (for -r, and other options),
+	case-insensitively.
+
 2025-08-16  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* reformime: reimplemented in C++ using the new C++ MIME library.

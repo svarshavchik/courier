@@ -71,7 +71,7 @@ with this option.
 	;;
 esac
 
-AX_COURIER_UNICODE_VERSION(2.1)
+AX_COURIER_UNICODE_VERSION(2.4)
 
 dnl Checks for libraries.
 
