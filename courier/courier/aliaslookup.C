@@ -11,7 +11,7 @@
 
 class MyAliasHandler : public AliasHandler {
 public:
-	void Alias(const char *ptr)
+	void Alias(const char *ptr) override
 	{
 		std::cout << ptr << std::endl;
 	}

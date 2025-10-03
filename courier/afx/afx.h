@@ -37,10 +37,10 @@ class afxpipestreambuf : public std::streambuf {
 	void seekp(std::streampos);
 	int handle() { return (fd); }
 	void handle(int f);
-	int sync();
+	int sync() override;
  protected:
-	int overflow(int);
-	int underflow();
+	int overflow(int) override;
+	int underflow() override;
 } ;
 
 class afxipipestream : public std::istream {

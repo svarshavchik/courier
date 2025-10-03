@@ -247,7 +247,7 @@ public:
 	~ExpnAliasHandler();
 
 	std::string prev_alias;
-	void	Alias(const char *);
+	void	Alias(const char *) override;
 } ;
 
 ExpnAliasHandler::ExpnAliasHandler()
@@ -1260,7 +1260,7 @@ class RcptAliasHandler : public AliasHandler {
 public:
 	RcptAliasHandler();
 	~RcptAliasHandler();
-	void	Alias(const char *);
+	void	Alias(const char *) override;
 	SubmitFile *submitptr;
 	struct rcptinfo *rcptinfoptr;
 	std::string	listname;

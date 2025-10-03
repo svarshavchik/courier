@@ -727,12 +727,12 @@ struct savemsg_totmpfile : public savemsg_sink {
 
 	savemsg_totmpfile(std::ostream &oArg) : o(oArg) {}
 
-	void saveline(const std::string &s)
+	void saveline(const std::string &s) override
 	{
 		o << s << "\n";
 	}
 
-	void error(const std::string &errmsg)
+	void error(const std::string &errmsg) override
 	{
 		std::cout << errmsg << std::endl;
 	}

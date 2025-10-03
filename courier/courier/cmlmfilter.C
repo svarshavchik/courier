@@ -25,11 +25,11 @@ struct savemsg_ignore : public savemsg_sink {
 	{
 	}
 
-	void saveline(const std::string &)
+	void saveline(const std::string &) override
 	{
 	}
 
-	void error(const std::string &errmsg)
+	void error(const std::string &errmsg) override
 	{
 		if (have_error)
 			std::cerr << "550-" << last_error << std::endl;
