@@ -30,8 +30,9 @@ class tmpaccount : public account, public generic {
 
 	callback::disconnect *disconnect_callback;
 	callback::folder *folder_callback;
-	FILE *f;
-	struct rfc2045 *rfc2045p;
+
+	std::shared_ptr<rfc822::fdstreambuf> f;
+	std::shared_ptr<rfc2045::entity> rfc2045p;
 	messageInfo fInfo;
 
 	void disconnect(const char *);
@@ -91,8 +92,8 @@ class tmpaccount : public account, public generic {
 
 	class add : public addMessage {
 
-		FILE *newFile;
-		struct rfc2045 *rfc2045p;
+		std::shared_ptr<rfc822::fdstreambuf> newFile;
+		rfc2045::entity_parser<false> rfc2045p;
 
 		tmpaccount *account;
 		mail::callback &cb;
@@ -182,21 +183,22 @@ public:
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
-				 int &fdRet,
+				 std::shared_ptr<rfc822::fdstreambuf> &fdRet,
 				 mail::callback &callback) override;
 
-	void genericGetMessageStruct(std::string uid,
-				     size_t messageNumber,
-				     struct rfc2045 *&structRet,
-				     mail::callback &callback) override;
+	void genericGetMessageStruct(
+		std::string uid,
+		size_t messageNumber,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback) override;
 
-	void genericGetMessageFdStruct(std::string uid,
-				       size_t messageNumber,
-				       bool peek,
-				       int &fdRet,
-				       struct rfc2045 *&structret,
-
-				       mail::callback &callback) override;
+	void genericGetMessageFdStruct(
+		std::string uid,
+		size_t messageNumber,
+		bool peek,
+		std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback) override;
 
 	bool genericCachedUid(std::string uid) override;
 

@@ -12,7 +12,7 @@
 #include <courier-unicode.h>
 #include "maildir/maildirwatch.h"
 #include "maildir/maildirkeywords.h"
-
+#include "rfc822/rfc822.h"
 #include <string>
 #include <vector>
 
@@ -25,7 +25,8 @@ LIBMAIL_START
 
 class maildir : public mail::account, public generic {
 
-	bool calledDisconnected; // Disconnected callback has been called.
+	bool calledDisconnected{false};
+	// Disconnected callback has been called.
 
 	void resumed() override;
 	void handler(std::vector<pollfd> &fds, int &timeout) override;
@@ -37,23 +38,22 @@ private:
 public:
 	class addmessage;
 private:
-	folder *sameServerFolderPtr;
+	folder *sameServerFolderPtr{nullptr};
 
 
 protected:
 
-	mail::callback::folder *folderCallback;
+	mail::callback::folder *folderCallback{nullptr};
 	std::string folderPath; // Path to the currently opened folder
 
-	bool ispop3maildrop; // This is a subclass of pop3maildrop
+	bool ispop3maildrop{false}; // This is a subclass of pop3maildrop
 
 private:
 
 	// Caching most recently opened message:
 	std::string cacheUID;
-	struct rfc2045 *cacheRfcp;
-	int cachefd;
-
+	std::shared_ptr<rfc2045::entity> cacheEntity;
+	std::shared_ptr<rfc822::fdstreambuf> cacheFd;
 
 	mail::keywords::Hashtable keywordHashtable; // Keyword support
 
@@ -95,10 +95,10 @@ private:
 
 	bool updateFlags(size_t msgNum);
 
-	struct maildirwatch *watchFolder;
-	struct maildirwatch *lockFolder;
+	struct maildirwatch *watchFolder{nullptr};
+	struct maildirwatch *lockFolder{nullptr};
 	struct maildirwatch_contents watchFolderContents;
-	bool watchStarting;
+	bool watchStarting{false};
 
 public:
 	static bool maildirmake(std::string subdir, bool isFolder);
@@ -227,22 +227,24 @@ public:
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
-				 int &fdRet,
+				 std::shared_ptr<rfc822::fdstreambuf> &fdRet,
 				 mail::callback &callback) override;
 
-	void genericGetMessageStruct(std::string uid,
-				     size_t messageNumber,
-				     struct rfc2045 *&structRet,
-				     mail::callback &callback) override;
+	void genericGetMessageStruct(
+		std::string uid,
+		size_t messageNumber,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback) override;
 
 	bool genericCachedUid(std::string uid) override;
 
-	void genericGetMessageFdStruct(std::string uid,
+	void genericGetMessageFdStruct(
+		std::string uid,
 				       size_t messageNumber,
-				       bool peek,
-				       int &fdRet,
-				       struct rfc2045 *&structret,
-				       mail::callback &callback) override;
+		bool peek,
+		std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback) override;
 
 	void genericMarkRead(size_t messageNumber) override;
 };

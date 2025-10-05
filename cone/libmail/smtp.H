@@ -16,6 +16,7 @@
 #include	"smtpinfo.H"
 #include	"logininfo.H"
 #include	"fd.H"
+#include	"rfc822/rfc822.h"
 #include	<stdio.h>
 #include	<time.h>
 #include	<list>
@@ -23,6 +24,7 @@
 #include	<set>
 #include	<queue>
 #include	<vector>
+#include	<memory>
 
 LIBMAIL_START
 
@@ -100,7 +102,7 @@ private:
 	bool ready2send;	/* Fully logged in */
 
 	struct messageQueueInfo {
-		FILE *message;
+		std::shared_ptr<rfc822::fdstreambuf> message;
 		mail::smtpInfo messageInfo;
 		mail::callback *callback;
 		bool flag8bit;
@@ -212,7 +214,7 @@ public:
 			    searchCallback &callback) override;
 
 
-	void send(FILE *tmpfile, mail::smtpInfo &info,
+	void send(rfc822::fdstreambuf &tmpfile, mail::smtpInfo &info,
 		  mail::callback *callback,
 		  bool flag8bit);
 

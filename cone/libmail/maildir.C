@@ -73,24 +73,17 @@ mail::maildir::maildirMessageInfo::~maildirMessageInfo()
 {
 }
 
-#define CONSTRUCTOR \
-	calledDisconnected(false), \
-	sameServerFolderPtr(NULL), \
-	folderCallback(NULL), \
-	cacheRfcp(NULL), cachefd(-1), \
-	watchFolder(NULL), lockFolder(NULL), watchStarting(false)
-
 mail::maildir::maildir(mail::callback::disconnect &disconnect_callback,
 		       mail::callback &callback,
 		       string pathArg)
-	: mail::account(disconnect_callback), CONSTRUCTOR
+	: mail::account{disconnect_callback}
 {
 	if (init(callback, pathArg))
 		callback.success("Mail folders opened");
 }
 
 mail::maildir::maildir(mail::callback::disconnect &disconnect_callback)
-	: mail::account(disconnect_callback), CONSTRUCTOR
+	: mail::account{disconnect_callback}
 {
 	// Used by pop3maildrop subclass.
 }
@@ -143,10 +136,6 @@ mail::maildir::~maildir()
 
 	if (lockFolder)
 		maildirwatch_free(lockFolder);
-	if (cacheRfcp)
-		rfc2045_free(cacheRfcp);
-	if (cachefd >= 0)
-		close(cachefd);
 	if (!calledDisconnected)
 	{
 		calledDisconnected=true;
@@ -181,7 +170,7 @@ void mail::maildir::handler(vector<pollfd> &fds, int &ioTimeout)
 		if (rc > 0)
 		{
 			watchStarting=false;
-			updateFolderIndexInfo(NULL, false);
+			updateFolderIndexInfo(nullptr, false);
 		}
 		if (fd < 0)
 			return;
@@ -208,11 +197,11 @@ void mail::maildir::handler(vector<pollfd> &fds, int &ioTimeout)
 		MONITOR(mail::maildir);
 
 		updateNotify(false);
-		updateFolderIndexInfo(NULL, false);
+		updateFolderIndexInfo(nullptr, false);
 
 		if (!DESTROYED())
 			updateNotify(true);
-		updateFolderIndexInfo(NULL, false);
+		updateFolderIndexInfo(nullptr, false);
 		return;
 	}
 
@@ -304,7 +293,7 @@ string mail::maildir::getfilename(size_t i)
 		return n;
 
 	try {
-		fn=maildir_filename(dir, NULL,
+		fn=maildir_filename(dir, nullptr,
 				    index[i].lastKnownFilename.c_str());
 		free(dir);
 	} catch (...) {
@@ -394,7 +383,7 @@ mail::maildir::readKeywordHelper::readKeywordHelper(mail::maildir *mdArg)
 
 	kwArray.resize(n);
 	for (i=0; i<n; i++)
-		kwArray[i]=NULL;
+		kwArray[i]=nullptr;
 }
 
 bool mail::maildir::readKeywordHelper::go(string maildir, bool &rc)
@@ -416,10 +405,10 @@ bool mail::maildir::readKeywordHelper::go(string maildir, bool &rc)
 	{
 		if (kwArray[i])
 			libmail_kwmDestroy(kwArray[i]);
-		kwArray[i]=NULL;
+		kwArray[i]=nullptr;
 	}
 
-	char *imap_lock=NULL;
+	char *imap_lock=nullptr;
 
 	if (md->lockFolder)
 	{
@@ -461,7 +450,7 @@ bool mail::maildir::readKeywordHelper::go(string maildir, bool &rc)
 
 	for (i=0; i<kwArray.size(); i++)
 	{
-		if (kwArray[i] == NULL)
+		if (kwArray[i] == nullptr)
 		{
 			if (!md->index[i].keywords.empty())
 			{
@@ -476,7 +465,7 @@ bool mail::maildir::readKeywordHelper::go(string maildir, bool &rc)
 		{
 			md->index[i].changed=true;
 			md->index[i].keywords.replace(kwArray[i]);
-			kwArray[i]=NULL;
+			kwArray[i]=nullptr;
 		}
 	}
 
@@ -492,7 +481,7 @@ mail::maildir::readKeywordHelper::~readKeywordHelper()
 	{
 		if (kwArray[i])
 			libmail_kwmDestroy(kwArray[i]);
-		kwArray[i]=NULL;
+		kwArray[i]=nullptr;
 	}
 }
 
@@ -555,16 +544,16 @@ mail::maildir::readKeywordHelper::findMessageByFilename(const char *filename,
 	map<string, size_t>::iterator i=filenameMap.find(filename);
 
 	if (i == filenameMap.end())
-		return NULL;
+		return nullptr;
 
 	size_t n=i->second;
 
 	if (indexNum)
 		*indexNum=n;
 
-	if (kwArray[n] == NULL && autocreate)
-		if ((kwArray[n]=libmail_kwmCreate()) == NULL)
-			return NULL;
+	if (kwArray[n] == nullptr && autocreate)
+		if ((kwArray[n]=libmail_kwmCreate()) == nullptr)
+			return nullptr;
 	return &kwArray[n];
 }
 
@@ -578,18 +567,18 @@ struct libmail_kwMessage
 						       int autocreate)
 {
 	if (n >= kwArray.size())
-		return NULL;
+		return nullptr;
 
-	if (kwArray[n] == NULL && autocreate)
-		if ((kwArray[n]=libmail_kwmCreate()) == NULL)
-			return NULL;
+	if (kwArray[n] == nullptr && autocreate)
+		if ((kwArray[n]=libmail_kwmCreate()) == nullptr)
+			return nullptr;
 	return &kwArray[n];
 }
 
 const char *mail::maildir::readKeywordHelper::getMessageFilename(size_t n)
 {
 	if (n >= kwArray.size())
-		return NULL;
+		return nullptr;
 
 	return md->index[n].lastKnownFilename.c_str();
 }
@@ -644,7 +633,7 @@ void mail::maildir::checkNewMail(callback *callback)
 
 	// Move messages from new to cur
 
-	maildir_getnew(md.c_str(), NULL,
+	maildir_getnew(md.c_str(), nullptr,
 		       &recent_callback_func, &recentMessages);
 
 	// Now, rescan the cur directory
@@ -733,7 +722,7 @@ void mail::maildir::checkNewMail(callback *callback)
 	while (!DESTROYED() && !changedList.empty())
 	{
 		list<size_t>::iterator b=changedList.begin();
-		
+
 		size_t n= *b;
 
 		changedList.erase(b);
@@ -1057,18 +1046,10 @@ void mail::maildir::open(string pathStr, mail::callback &callback,
 	index.clear();
 	updateNotify(false);
 
-	folderCallback=NULL;
-	if (cacheRfcp)
-	{
-		rfc2045_free(cacheRfcp);
-		cacheRfcp=NULL;
-	}
+	folderCallback=nullptr;
 
-	if (cachefd >= 0)
-	{
-		close(cachefd);
-		cachefd=-1;
-	}
+	cacheEntity.reset();
+	cacheFd.reset();
 
 	if (path == "")
 	{
@@ -1109,7 +1090,7 @@ void mail::maildir::open(string pathStr, mail::callback &callback,
 	}
 
 	maildir_purgetmp(md.c_str());
-	maildir_getnew(md.c_str(), NULL,
+	maildir_getnew(md.c_str(), nullptr,
 		       &recent_callback_func, &recentMessages);
 
 	scan(pathStr, index);
@@ -1241,24 +1222,26 @@ void mail::maildir::genericMessageSize(string uid,
 	callback.success("OK");
 }
 
-void mail::maildir::genericGetMessageFd(string uid,
-					size_t messageNumber,
-					bool peek,
-					int &fdRet,
-					mail::callback &callback)
+void mail::maildir::genericGetMessageFd(
+	string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	mail::callback &callback)
 {
-	struct rfc2045 *dummy;
+	std::shared_ptr<rfc2045::entity> dummy;
 
 	genericGetMessageFdStruct(uid, messageNumber, peek, fdRet, dummy,
 				  callback);
 }
 
-void mail::maildir::genericGetMessageStruct(string uid,
-					    size_t messageNumber,
-					    struct rfc2045 *&structRet,
-					    mail::callback &callback)
+void mail::maildir::genericGetMessageStruct(
+	string uid,
+	size_t messageNumber,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	mail::callback &callback)
 {
-	int dummy;
+	std::shared_ptr<rfc822::fdstreambuf> dummy;
 
 	genericGetMessageFdStruct(uid, messageNumber, true, dummy, structRet,
 				  callback);
@@ -1266,20 +1249,21 @@ void mail::maildir::genericGetMessageStruct(string uid,
 
 bool mail::maildir::genericCachedUid(string uid)
 {
-	return uid == cacheUID && cachefd >= 0 && cacheRfcp != 0;
+	return uid == cacheUID && !cacheFd->error();
 }
 
-void mail::maildir::genericGetMessageFdStruct(string uid,
-					      size_t messageNumber,
-					      bool peek,
-					      int &fdRet,
-					      struct rfc2045 *&structret,
-					      mail::callback &callback)
+void mail::maildir::genericGetMessageFdStruct(
+	string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	mail::callback &callback)
 {
-	if (uid == cacheUID && cachefd >= 0 && cacheRfcp != 0)
+	if (uid == cacheUID && cacheFd && !cacheFd->error() && cacheEntity)
 	{
-		fdRet=cachefd;
-		structret=cacheRfcp;
+		fdRet=cacheFd;
+		structRet=cacheEntity;
 		callback.success("OK");
 		return;
 	}
@@ -1290,23 +1274,8 @@ void mail::maildir::genericGetMessageFdStruct(string uid,
 		return;
 	}
 
-	if (cacheRfcp)
-	{
-		rfc2045_free(cacheRfcp);
-		cacheRfcp=NULL;
-	}
-
-	if (cachefd >= 0)
-	{
-		close(cachefd);
-		cachefd= -1;
-	}
-
-	if (!fixMessageNumber(this, uid, messageNumber))
-	{
-		callback.fail("Message removed on the server");
-		return;
-	}
+	cacheFd.reset();
+	cacheEntity.reset();
 
 	string messageFn=getfilename(messageNumber);
 
@@ -1318,41 +1287,47 @@ void mail::maildir::genericGetMessageFdStruct(string uid,
 
 	int fd=maildir_safeopen(messageFn.c_str(), O_RDONLY, 0);
 
-	struct rfc2045 *rfcp;
+	cacheFd=std::make_shared<rfc822::fdstreambuf>(fd);
 
-	if (fd < 0 || fcntl(fd, F_SETFD, FD_CLOEXEC) < 0 ||
-	    (rfcp=rfc2045_alloc()) == NULL)
+	if (cacheFd->error())
 	{
-		if (fd >= 0)
-			close(fd);
+		cacheFd.reset();
+		callback.fail("Error opening the message");
+		return;
+	}
+
+	cacheEntity=std::make_shared<rfc2045::entity>();
+
+	if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0)
+	{
+		cacheFd.reset();
+		cacheEntity.reset();
 		callback.fail("Message removed on the server");
 		return;
 	}
 
-	fcntl(fd, F_SETFD, FD_CLOEXEC);
-
-	cachefd=fd;
-	cacheRfcp=rfcp;
 	cacheUID="";
 
-	vector<char> buffer;
-
-	buffer.insert(buffer.end(), BUFSIZ, 0);
-
-	int n;
-
-	while ((n=read(fd, &buffer[0], buffer.size())) > 0)
-		rfc2045_parse(rfcp, &buffer[0], n);
-	rfc2045_parse_partial(rfcp);
-
-	if (n < 0)
 	{
+		std::istreambuf_iterator<char> b{&*cacheFd}, e{};
+
+		rfc2045::entity::line_iter<false>::iter parser{b, e};
+
+		cacheEntity->parse(parser);
+	}
+
+	if (cacheFd->error())
+	{
+		cacheFd.reset();
+		cacheEntity.reset();
 		callback.fail(strerror(errno));
 		return;
 	}
 
-	fdRet=cachefd;
-	structret=cacheRfcp;
+	fdRet=cacheFd;
+	structRet= cacheEntity;
+	cacheUID=std::move(uid);
+
 	if (!peek && index[messageNumber].unread)
 	{
 		index[messageNumber].unread=false;
@@ -1381,7 +1356,7 @@ void mail::maildir::updateNotify(bool enableDisable)
 		{
 			maildirwatch_end(&watchFolderContents);
 			maildirwatch_free(watchFolder);
-			watchFolder=NULL;
+			watchFolder=nullptr;
 		}
 		return;
 	}
@@ -1457,7 +1432,7 @@ void mail::maildir::updateKeywords(const vector<size_t> &messages,
 	{
 		if (!updateKeywords(dir,
 				    messages, keywords, setOrChange, changeTo,
-				    NULL, NULL))
+				    nullptr, nullptr))
 		{
 			cb.fail(strerror(errno));
 			return;
@@ -1468,7 +1443,7 @@ void mail::maildir::updateKeywords(const vector<size_t> &messages,
 
 		libmail_kwgInit(&g);
 
-		char *imap_lock=NULL;
+		char *imap_lock=nullptr;
 
 		if (lockFolder)
 		{
@@ -1495,7 +1470,7 @@ void mail::maildir::updateKeywords(const vector<size_t> &messages,
 				{
 					unlink(imap_lock);
 					free(imap_lock);
-					imap_lock=NULL;
+					imap_lock=nullptr;
 				}
 
 				cb.fail(strerror(errno));
@@ -1513,7 +1488,7 @@ void mail::maildir::updateKeywords(const vector<size_t> &messages,
 				{
 					unlink(imap_lock);
 					free(imap_lock);
-					imap_lock=NULL;
+					imap_lock=nullptr;
 				}
 				libmail_kwgDestroy(&g);
 				if (keepGoing)
@@ -1526,7 +1501,7 @@ void mail::maildir::updateKeywords(const vector<size_t> &messages,
 			{
 				unlink(imap_lock);
 				free(imap_lock);
-				imap_lock=NULL;
+				imap_lock=nullptr;
 			}
 			libmail_kwgDestroy(&g);
 		} catch (...) {
@@ -1534,7 +1509,7 @@ void mail::maildir::updateKeywords(const vector<size_t> &messages,
 			{
 				unlink(imap_lock);
 				free(imap_lock);
-				imap_lock=NULL;
+				imap_lock=nullptr;
 			}
 			libmail_kwgDestroy(&g);
 			throw;
@@ -1673,7 +1648,7 @@ bool mail::maildir::updateKeywords(string dir,
 				if (origKw && origKw->keywords &&
 				    (kef=libmail_kweFind(&g->kwHashTable,
 							 b->c_str(),
-							 0)) != NULL)
+							 0)) != nullptr)
 				{
 					libmail_kwmClear(origKw->keywords,
 							 kef);

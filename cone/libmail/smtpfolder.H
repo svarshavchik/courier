@@ -11,7 +11,9 @@
 #include "smtp.H"
 #include "smtpinfo.H"
 #include "addmessage.H"
-
+#include "rfc822/rfc822.h"
+#include "rfc2045/rfc2045.h"
+#include "rfc2045/encode.h"
 #include <stdio.h>
 
 // smtp::getSendFolder() creates a fake folder object.  Copying
@@ -88,10 +90,10 @@ class smtpAddMessage : public addMessage {
 	smtpInfo myInfo;
 	mail::callback &myCallback;
 
-	FILE *temporaryFile;
-	struct rfc2045 *rfcp;
-	bool flag8bit;
-
+	rfc822::fdstreambuf temporaryFile;
+	rfc2045::entity_parser<false> parser;
+	bool has8bitmime{false};
+	bool flag8bit{false};
 public:
 	smtpAddMessage(smtp *smtpServer,
 			     smtpInfo messageInfo,

@@ -25,11 +25,10 @@ class mbox::GenericGetMessageTask : public mbox::LockTask {
 	std::string uid;
 	size_t messageNumber;
 	bool peek;
-	int *fdret;
-	struct rfc2045 **structret;
+	std::shared_ptr<rfc822::fdstreambuf> *fdret;
+	std::shared_ptr<rfc2045::entity> *structret;
 
-	FILE *tempFp;
-	struct rfc2045 *tempStruct;
+	rfc822::fdstreambuf tempFp;
 
 public:
 	GenericGetMessageTask(mbox &mboxAccount,
@@ -37,8 +36,8 @@ public:
 			      std::string uidArg,
 			      size_t messageNumberArg,
 			      bool peekArg,
-			      int *fdretArg,
-			      struct rfc2045 **structretArg);
+			      std::shared_ptr<rfc822::fdstreambuf> *fdretArg,
+			      std::shared_ptr<rfc2045::entity> *structretArg);
 	~GenericGetMessageTask();
 
 	bool locked(file &file) override;

@@ -108,22 +108,13 @@ void CursesMessage::SaveText::operator()(std::string text)
 class CursesMessage::SaveTextParseMime : public SaveText {
 
 public:
-	struct rfc2045 *rfc2045p;
+	rfc2045::entity_parser<false> parser;
 
-	SaveTextParseMime(std::ostream &o)
-		: SaveText(o),
-		  rfc2045p(rfc2045_alloc())
-	{
-	}
-
-	~SaveTextParseMime()
-	{
-		rfc2045_free(rfc2045p);
-	}
+	using SaveText::SaveText;
 
 	void operator()(std::string text) override
 	{
-		rfc2045_parse(rfc2045p, text.c_str(), text.size());
+		parser.parse(text.begin(), text.end());
 		SaveText::operator()(text);
 	}
 };
@@ -243,7 +234,7 @@ bool CursesMessage::init(std::string mimeId,
 
 			shown[n].contents=filename;
 
-			std::ofstream ofs(filename.c_str());
+			std::ofstream ofs{filename};
 
 			SaveText save_text(ofs);
 
@@ -478,7 +469,7 @@ bool CursesMessage::readTextPlain(size_t n)
 
 	tmpfiles.push_back(filename);
 
-	std::ofstream ofs(filename.c_str());
+	std::ofstream ofs{filename};
 
 	SaveText save_text(ofs);
 
@@ -513,7 +504,7 @@ bool CursesMessage::filterExternal(size_t n)
 	tmpfiles.push_back(shown[n].contents2);
 
 	{
-		std::ofstream o(shown[n].contents2.c_str());
+		std::ofstream o{shown[n].contents2};
 
 		SaveText filter_text(o);
 
@@ -2206,7 +2197,7 @@ void CursesMessage::reply()
 		return;
 
 	clearAttFiles();
-	std::ifstream ifs(shown[n].contents.c_str());
+	std::ifstream ifs{shown[n].contents};
 
 	std::string line;
 
@@ -2569,7 +2560,7 @@ void CursesMessage::reply()
 		return;
 	}
 
-	std::ofstream otmpfile(tmpfile.c_str());
+	std::ofstream otmpfile{tmpfile};
 
 	if (post)
 		otmpfile << "Newsgroups: " << newsgroups << std::endl;
@@ -2741,7 +2732,7 @@ void CursesMessage::forward()
 
 		createAttFilename(tmpfile, attfile);
 
-		std::ofstream otmpfile(tmpfile.c_str());
+		std::ofstream otmpfile{tmpfile};
 
 		extern char should_be_same[sizeof(RFC2045_MIME_MESSAGE_RFC822)
 					   ==
@@ -2778,8 +2769,12 @@ void CursesMessage::forward()
 
 		otmpfile << std::flush;
 
-		if (save_attachment.rfc2045p->rfcviolation &
-		    RFC2045_ERR8BITHEADER)
+		auto entity=save_attachment.parser.parsed_entity();
+
+		static_assert(sizeof(RFC2045_MIME_MESSAGE_RFC822) ==
+			      sizeof(RFC2045_MIME_MESSAGE_GLOBAL));
+
+		if (entity.all_errors() & RFC2045_ERR8BITHEADER)
 		{
 			otmpfile.seekp(0);
 			otmpfile << "Content-Type: " RFC2045_MIME_MESSAGE_GLOBAL
@@ -2811,7 +2806,7 @@ void CursesMessage::forward()
 		return;
 	}
 
-	std::ofstream otmpfile(tmpfile.c_str());
+	std::ofstream otmpfile{tmpfile};
 
 	if (fcc.size() > 0)
 		otmpfile << "X-Fcc: "
@@ -2853,7 +2848,7 @@ void CursesMessage::forward()
 			 << std::endl;
 
 		{
-			std::ifstream i(shown[n].contents.c_str());
+			std::ifstream i{shown[n].contents};
 
 			std::string line;
 
@@ -2891,7 +2886,7 @@ void CursesMessage::forward()
 
 		if (n < shown.size() && shown[n].contents.size())
 		{
-			std::ifstream i(shown[n].contents.c_str());
+			std::ifstream i{shown[n].contents};
 
 			std::string content_chset
 				=shown[n].content_chset;

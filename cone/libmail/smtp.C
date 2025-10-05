@@ -123,11 +123,11 @@ bool mail::smtp::Blast::fillWriteBuffer()
 
 	size_t i;
 
-	FILE *fp=mySmtp->sendQueue.front().message;
+	auto &fp=*mySmtp->sendQueue.front().message;
 
 	for (i=0; i<sizeof(buffer); i++)
 	{
-		int ch=getc(fp);
+		int ch=fp.sbumpc();
 
 		if (ch == EOF)
 		{
@@ -152,13 +152,13 @@ bool mail::smtp::Blast::fillWriteBuffer()
 
 		if (lastChar == '\n' && ch == '.')
 		{
-			ungetc(ch, fp); // Leading .s are doubled.
+			fp.sputbackc(ch); // Leading .s are doubled.
 			--bytesDone;
 		}
 
 		if (ch == '\n' && lastChar != '\r')
 		{
-			ungetc(ch, fp);
+			fp.sputbackc(ch);
 			--bytesDone;
 			ch='\r';
 		}
@@ -259,7 +259,6 @@ void mail::smtp::disconnect(const char *reason)
 		struct messageQueueInfo &info=sendQueue.front();
 
 		info.callback->fail(reason);
-		fclose(info.message);
 		sendQueue.pop();
 	}
 	pingTimeout=0;
@@ -321,9 +320,10 @@ void mail::smtp::handler(vector<pollfd> &fds, int &ioTimeout)
 	{
 		if (pingTimeout < now)
 		{
+			rfc822::fdstreambuf sb;
 			mail::smtpInfo dummy;
 
-			send(NULL, dummy, NULL, false);
+			send(sb, dummy, NULL, false);
 		}
 		else
 		{
@@ -1086,14 +1086,19 @@ void mail::smtp::searchMessages(const mail::searchParams &searchInfo,
 // Another message is ready to go out.  Called by mail::smtpFolder::go,
 // and one other place.
 
-void mail::smtp::send(FILE *tmpfile, mail::smtpInfo &info,
+void mail::smtp::send(rfc822::fdstreambuf &sb, mail::smtpInfo &info,
 		      mail::callback *callback, bool flag8bit)
 {
 	pingTimeout=0;
 
 	struct messageQueueInfo msgInfo;
 
-	msgInfo.message=tmpfile;
+	if (sb.fileno() >= 0)
+	{
+		msgInfo.message=std::make_shared<rfc822::fdstreambuf>(
+			dup(sb.fileno())
+		);
+	}
 	msgInfo.messageInfo=info;
 	msgInfo.callback=callback;
 	msgInfo.flag8bit=flag8bit;
@@ -1122,7 +1127,7 @@ void mail::smtp::rsetResponse(int result, string message)
 {
 	struct messageQueueInfo &info=sendQueue.front();
 
-	if (info.message == NULL) // Just a NO-OP ping.
+	if (!info.message) // Just a NO-OP ping.
 	{
 		sendQueue.pop();
 
@@ -1133,6 +1138,11 @@ void mail::smtp::rsetResponse(int result, string message)
 		return;
 	}
 
+	if (info.message->error())
+	{
+		messageProcessed(500, strerror(errno));
+		return;
+	}
 	switch (result / 100) {
 	case 1:
 	case 2:
@@ -1174,8 +1184,8 @@ void mail::smtp::rsetResponse(int result, string message)
 	{
 		long pos;
 
-		if (fseek(info.message, 0L, SEEK_END) < 0 ||
-		    (pos=ftell(info.message)) < 0)
+		if ((pos=info.message->pubseekoff(0, std::ios_base::end))
+		    < 0)
 		{
 			messageProcessed(500, strerror(errno));
 			return;
@@ -1354,9 +1364,9 @@ void mail::smtp::dataResponse(int result, string message)
 
 	long fpos;
 
-	if ( fseek(sendQueue.front().message, 0L, SEEK_END) < 0 ||
-	     (fpos=ftell(sendQueue.front().message)) < 0 ||
-	     fseek(sendQueue.front().message, 0L, SEEK_SET) < 0 ||
+	if ( (fpos=sendQueue.front().message->pubseekoff(0, std::ios_base::end))
+	     < 0 ||
+	     sendQueue.front().message->pubseekpos(0) != 0 ||
 	     (myBlaster=new Blast(this)) == NULL)
 
 	{
@@ -1399,7 +1409,6 @@ void mail::smtp::messageProcessed(int result, string message)
 	struct messageQueueInfo &info=sendQueue.front();
 
 	mail::callback *callback=info.callback;
-	fclose(info.message);
 
 	try {
 		sendQueue.pop();

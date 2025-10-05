@@ -1314,7 +1314,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 		if (filename.size() == 0)
 			return true;
 
-		std::ifstream i(filename.c_str());
+		std::ifstream i{filename};
 
 		if (!i.is_open())
 		{
@@ -1517,7 +1517,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 
 		std::string msgfile=getConfigDir() + "/message.tmp";
 
-		std::ofstream o(msgfile.c_str());
+		std::ofstream o{msgfile};
 
 		if (!o.is_open())
 		{
@@ -1588,7 +1588,7 @@ bool CursesEditMessage::processKeyInFocus(const Key &key)
 			return true;
 		}
 
-		std::ifstream i(msgfile.c_str());
+		std::ifstream i{msgfile};
 
 		if (!i.is_open())
 		{

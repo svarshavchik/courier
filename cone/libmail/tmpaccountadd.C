@@ -10,27 +10,37 @@
 using namespace std;
 
 mail::tmpaccount::add::add(tmpaccount *accountArg, mail::callback &cbArg)
-	: addMessage(accountArg), newFile(tmpfile()),
-	  rfc2045p(rfc2045_alloc()), account(accountArg),
+	: addMessage(accountArg),
+	  newFile{
+		  std::make_shared<rfc822::fdstreambuf>(
+			  rfc822::fdstreambuf::tmpfile()
+		  )
+	  }, account(accountArg),
 	  cb(cbArg)
 {
 }
 
-mail::tmpaccount::add::~add()
-{
-	if (newFile)
-		fclose(newFile);
-	if (rfc2045p)
-		rfc2045_free(rfc2045p);
-}
+mail::tmpaccount::add::~add()=default;
 
 void mail::tmpaccount::add::saveMessageContents(string s)
 {
-	if (newFile && !s.empty())
-		if (fwrite(&s[0], s.size(), 1, newFile) != 1)
-			; // Ignore gcc warning
-	if (rfc2045p && !s.empty())
-		rfc2045_parse(rfc2045p, &s[0], s.size());
+	if (newFile)
+	{
+		char *p=s.data();
+		size_t n=s.size();
+
+		while (n)
+		{
+			auto done=newFile->sputn(p, n);
+
+			if (done <= 0) break;
+
+			p += done;
+			n -= done;
+		}
+	}
+
+	rfc2045p.parse(s.begin(), s.end());
 }
 
 void mail::tmpaccount::add::fail(string errmsg)
@@ -44,18 +54,15 @@ void mail::tmpaccount::add::go()
 	if (!checkServer())
 		return;
 
-	if (!newFile || fflush(newFile) < 0 || ferror(newFile) || !rfc2045p)
+	if (!newFile || newFile->pubsync() < 0 || newFile->error())
 	{
 		fail(strerror(errno));
 		return;
 	}
 
-	rfc2045_parse_partial(rfc2045p);
-
 	if (account->f)
 	{
-		fclose(account->f);
-		account->f=NULL;
+		account->f.reset();
 		vector< pair<size_t, size_t> > dummy;
 
 		dummy.push_back( make_pair( (size_t)0, (size_t)0));
@@ -63,13 +70,12 @@ void mail::tmpaccount::add::go()
 			account->folder_callback->messagesRemoved(dummy);
 	}
 
-	if (account->rfc2045p)
-		rfc2045_free(account->rfc2045p);
+	account->rfc2045p=std::make_shared<rfc2045::entity>(
+		rfc2045p.parsed_entity()
+	);
 
-	account->rfc2045p=rfc2045p;
 	account->f=newFile;
-	rfc2045p=NULL;
-	newFile=NULL;
+	newFile.reset();
 
 	if (account->folder_callback)
 		account->folder_callback->newMessages();

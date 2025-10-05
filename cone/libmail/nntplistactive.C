@@ -122,9 +122,9 @@ void mail::nntp::ListActiveTask::processSubscription(const char *msg)
 	size_t delGroupCount=0;
 
 	{
-		ifstream i(myserver->newsrcFilename.c_str());
+		ifstream i{myserver->newsrcFilename};
 
-		ofstream o(newNewsrcFilename.c_str());
+		ofstream o{newNewsrcFilename};
 
 		if (o.is_open())
 		{

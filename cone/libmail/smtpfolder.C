@@ -129,7 +129,7 @@ void mail::smtpFolder::renameFolder(const mail::folder *newParent,
 mail::folder *mail::smtpFolder::clone() const
 {
 	mail::smtpFolder *c=new mail::smtpFolder(smtpServer, smtpSendInfo);
-	
+
 	if (!c)
 		return NULL;
 
@@ -159,51 +159,38 @@ void mail::smtpFolder::open(mail::callback &openCallback,
 mail::smtpAddMessage::smtpAddMessage(mail::smtp *smtpServer,
 				     mail::smtpInfo messageInfo,
 				     mail::callback &callback)
-	: mail::addMessage(smtpServer),
-	  myServer(smtpServer),
-	  myInfo(messageInfo),
-	  myCallback(callback),
-	  temporaryFile(NULL),
-	  rfcp(NULL),
-	  flag8bit(false)
+	: mail::addMessage{smtpServer},
+	  myServer{smtpServer},
+	  myInfo{messageInfo},
+	  myCallback{callback},
+	  temporaryFile{rfc822::fdstreambuf::tmpfile()}
 {
-	if (!smtpServer->hasCapability("8BITMIME"))
-	{
-		if ((rfcp=rfc2045_alloc_ac()) == NULL)
-			LIBMAIL_THROW("Out of memory.");
-
-		// Might need rewriting
-
-	}
-
-	if ((temporaryFile=tmpfile()) == NULL)
-	{
-		if (rfcp)
-			rfc2045_free(rfcp);
-		rfcp=NULL;
-		LIBMAIL_THROW("Out of memory.");
-	}
+	has8bitmime=smtpServer->hasCapability("8BITMIME");
 }
 
-mail::smtpAddMessage::~smtpAddMessage()
-{
-	if (temporaryFile)
-		fclose(temporaryFile);
-	if (rfcp)
-		rfc2045_free(rfcp);
-}
+mail::smtpAddMessage::~smtpAddMessage()=default;
 
 void mail::smtpAddMessage::saveMessageContents(string s)
 {
-	string::iterator b=s.begin(), e=s.end();
-
-	while (b != e)
-		if (*b++ & 0x80)
+	for (auto &c:s)
+		if (c & 0x80)
 			flag8bit=true;
-	if (fwrite(&*s.begin(), s.size(), 1, temporaryFile) != 1)
-		; // Ignore gcc warning.
-	if (rfcp)
-		rfc2045_parse(rfcp, &*s.begin(), s.size());
+
+	auto ptr=s.data();
+	auto n=s.size();
+
+	while (n)
+	{
+		auto d=temporaryFile.sputn(ptr, n);
+
+		if (d <= 0)
+			break;
+
+		ptr += d;
+		n -= d;
+	}
+
+	parser.parse(s.begin(), s.end());
 }
 
 void mail::smtpAddMessage::fail(string errmsg)
@@ -215,7 +202,7 @@ void mail::smtpAddMessage::fail(string errmsg)
 void mail::smtpAddMessage::go()
 {
 	try {
-		if (fflush(temporaryFile) || ferror(temporaryFile))
+		if (temporaryFile.pubsync() < 0 || temporaryFile.error())
 		{
 			fail(strerror(errno));
 			return;
@@ -224,59 +211,63 @@ void mail::smtpAddMessage::go()
 		if (myServer.isDestroyed())
 			return;
 
-		if (rfcp)
+		auto entity=parser.parsed_entity();
+
+		if (!has8bitmime)
 		{
-			rfc2045_parse_partial(rfcp);
-			if (rfc2045_ac_check(rfcp, RFC2045_RW_7BIT))
+			if (entity.autoconvert_check(
+				    rfc2045::convert::sevenbit)
+			)
 			{
-				FILE *tmpfile2=tmpfile();
-				if (!tmpfile2)
+				rfc822::fdstreambuf tmpfile2{
+					rfc822::fdstreambuf::tmpfile()
+				};
+
+				if (tmpfile2.error())
 				{
 					fail(strerror(errno));
 					return;
 				}
 
-				int fd_copy=dup(fileno(tmpfile2));
 
-				if (fd_copy < 0)
+				rfc2045::entity::line_iter<false>::autoconvert(
+					entity,
+					[&]
+					(const char *ptr, size_t n)
+					{
+						while (n)
+						{
+							auto d=tmpfile2.sputn(
+								ptr, n
+							);
+
+							if (d <= 0)
+							{
+								tmpfile2={};
+								return;
+							}
+							ptr += d;
+							n -= d;
+						}
+					},
+					temporaryFile,
+					"mail::account"
+				);
+
+				temporaryFile=std::move(tmpfile2);
+
+				if (temporaryFile.error())
 				{
-					fclose(tmpfile2);
 					fail(strerror(errno));
-					return;
 				}
-
-				struct rfc2045src *src=
-					rfc2045src_init_fd
-					(fileno(temporaryFile));
-
-				if (src == NULL ||
-				    rfc2045_rewrite(rfcp,
-						    src,
-						    fd_copy,
-						    "mail::account") < 0)
-				{
-					if (src)
-						rfc2045src_deinit(src);
-					close(fd_copy);
-					fclose(tmpfile2);
-					fail(strerror(errno));
-					return;
-				}
-				close(fd_copy);
-				fclose(temporaryFile);
-				temporaryFile=tmpfile2;
-				flag8bit=false;
-				rfc2045src_deinit(src);
 			}
 		}
+
 		myServer->send(temporaryFile, myInfo, &myCallback,
 			       flag8bit);
-		temporaryFile=NULL;
 		delete this;
 	} catch (...) {
 		fail("An exception occurred while sending message.");
 		delete this;
 	}
 }
-
-

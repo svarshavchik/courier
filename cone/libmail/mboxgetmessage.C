@@ -17,39 +17,25 @@
 
 using namespace std;
 
-mail::mbox::GenericGetMessageTask::GenericGetMessageTask(mail::mbox &mboxAccount,
-							 mail::callback
-							 &callbackArg,
-							 string uidArg,
-							 size_t
-							 messageNumberArg,
-							 bool peekArg,
-							 int *fdretArg,
-							 struct rfc2045
-							 **structretArg)
-	: LockTask(mboxAccount, callbackArg),
-	  uid(uidArg),
-	  messageNumber(messageNumberArg),
-	  peek(peekArg),
-	  fdret(fdretArg),
-	  structret(structretArg),
-
-	  tempFp(NULL),
-	  tempStruct(NULL)
+mail::mbox::GenericGetMessageTask::GenericGetMessageTask(
+	mail::mbox &mboxAccount,
+	mail::callback &callbackArg,
+	string uidArg,
+	size_t messageNumberArg,
+	bool peekArg,
+	std::shared_ptr<rfc822::fdstreambuf> *fdretArg,
+	std::shared_ptr<rfc2045::entity> *structretArg)
+	: LockTask{mboxAccount, callbackArg},
+	  uid{uidArg},
+	  messageNumber{messageNumberArg},
+	  peek{peekArg},
+	  fdret{fdretArg},
+	  structret{structretArg}
 {
 }
 
-mail::mbox::GenericGetMessageTask::~GenericGetMessageTask()
-{
-	// tempFp/tempStruct should be null, if all's well.  If not, clean up
-	// after outselves.
+mail::mbox::GenericGetMessageTask::~GenericGetMessageTask()=default;
 
-	if (tempFp)
-		fclose(tempFp);
-
-	if (tempStruct)
-		rfc2045_free(tempStruct);
-}
 
 bool mail::mbox::GenericGetMessageTask::locked(mail::file &file)
 {
@@ -66,9 +52,14 @@ bool mail::mbox::GenericGetMessageTask::locked(mail::file &file)
 	off_t startingPos=mboxAccount.folderMessageIndex[realMsgNum]
 		.startingPos;
 
-	if (fseek(file, startingPos, SEEK_SET) < 0 ||
-	    (tempFp=tmpfile()) == NULL ||
-	    (tempStruct=rfc2045_alloc()) == NULL)
+	if (fseek(file, startingPos, SEEK_SET) < 0)
+	{
+		fail(strerror(errno));
+		return true;
+	}
+	tempFp=rfc822::fdstreambuf::tmpfile();
+
+	if (tempFp.error())
 	{
 		fail(strerror(errno));
 		return true;
@@ -81,7 +72,11 @@ bool mail::mbox::GenericGetMessageTask::locked(mail::file &file)
 		struct stat stat_buf;
 
 		if (fstat(fileno(static_cast<FILE *>(file)), &stat_buf) < 0)
-			endingPos=stat_buf.st_size;
+		{
+			fail(strerror(errno));
+			return true;
+		}
+		endingPos=stat_buf.st_size;
 	}
 	else
 		endingPos=mboxAccount.folderMessageIndex[realMsgNum+1]
@@ -95,6 +90,8 @@ bool mail::mbox::GenericGetMessageTask::locked(mail::file &file)
 	off_t nextUpdatePos=startingPos;
 
 	bool firstLine=true;
+
+	rfc2045::entity_parser<false> parser;
 
 	while (!feof(file) && !me.isDestroyed())
 	{
@@ -145,38 +142,46 @@ bool mail::mbox::GenericGetMessageTask::locked(mail::file &file)
 
 		line += "\n";
 
-		if (fwrite(&line[0], line.size(), 1, tempFp) != 1)
-			; // Ignore gcc warning
+		auto n=line.size();
+		p=line.c_str();
 
-		rfc2045_parse(tempStruct, &line[0], line.size());
+		while (n)
+		{
+			auto d=tempFp.sputn(p, n);
+
+			if (d <= 0)
+			{
+				fail(strerror(errno));
+				return true;
+			}
+
+			p += d;
+			n -= d;
+		}
+
+		parser.parse(line.begin(), line.end());
 	}
 
-	if (fflush(tempFp) < 0 || ferror(tempFp) < 0)
+	auto tempStruct=parser.parsed_entity();
+
+	if (tempFp.error())
 	{
 		fail(strerror(errno));
 		return true;
 	}
 
-	mboxAccount.cachedMessageUid="";
-	if (mboxAccount.cachedMessageFp)
-		fclose(mboxAccount.cachedMessageFp);
-	if (mboxAccount.cachedMessageRfcp)
-		rfc2045_free(mboxAccount.cachedMessageRfcp);
-
-	mboxAccount.cachedMessageFp=NULL;
-	mboxAccount.cachedMessageRfcp=NULL;
+	fcntl(tempFp.fileno(), F_SETFD, FD_CLOEXEC);
 
 	mboxAccount.cachedMessageUid=uid;
-	mboxAccount.cachedMessageFp=tempFp;
-	mboxAccount.cachedMessageRfcp=tempStruct;
-
-	fcntl(fileno(tempFp), F_SETFD, FD_CLOEXEC);
-
-	tempFp=NULL;
-	tempStruct=NULL;
+	mboxAccount.cachedMessageFp=std::make_shared<rfc822::fdstreambuf>(
+		std::move(tempFp)
+	);
+	mboxAccount.cachedMessageRfcp=std::make_shared<rfc2045::entity>(
+		std::move(tempStruct)
+	);
 
 	if (fdret)
-		*fdret=fileno(mboxAccount.cachedMessageFp);
+		*fdret=mboxAccount.cachedMessageFp;
 	if (structret)
 		*structret=mboxAccount.cachedMessageRfcp;
 
@@ -192,4 +197,3 @@ bool mail::mbox::GenericGetMessageTask::locked(mail::file &file)
 	done();
 	return true;
 }
-

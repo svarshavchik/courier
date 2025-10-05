@@ -354,7 +354,7 @@ void myServer::savepasswords(std::string password)
 	std::string tmpPassFilename=passFilename + ".tmp";
 
 
-	std::ofstream o(tmpPassFilename.c_str());
+	std::ofstream o{tmpPassFilename};
 
 	if (tlspassword_save(&urlp[0], &passp[0], password.c_str(),
 			     save_password_func, &o)
@@ -393,7 +393,7 @@ bool myServer::loadpasswords(std::string password)
 {
 	std::string f=PasswordList::masterPasswordFile();
 
-	std::ifstream i(f.c_str());
+	std::ifstream i{f};
 
 	return tlspassword_load(load_func, &i, password.c_str(),
 				install_passwords, NULL) == 0;

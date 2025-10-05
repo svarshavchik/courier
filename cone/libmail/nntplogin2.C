@@ -25,7 +25,7 @@ mail::nntp::LoginTask::~LoginTask()
 
 void mail::nntp::LoginTask::loggedIn()
 {
-	ifstream i(myserver->newsrcFilename.c_str());
+	ifstream i{myserver->newsrcFilename};
 
 	if (i.is_open())
 	{

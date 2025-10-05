@@ -197,7 +197,7 @@ void mail::nntp::folder::readSubFolders( callback::folderList &callback1,
 	{
 		if (!myserver->hasNewgroups)
 		{
-			ifstream i(myserver->newsrcFilename.c_str());
+			ifstream i{myserver->newsrcFilename};
 			string serverDate;
 
 			if (i.is_open())
@@ -243,7 +243,7 @@ void mail::nntp::folder::readSubFolders( callback::folderList &callback1,
 	{
 		// List all subscribed folders, in a flat hierarchy
 
-		ifstream i(myserver->newsrcFilename.c_str());
+		ifstream i{myserver->newsrcFilename};
 
 		if (i.is_open())
 		{
@@ -280,7 +280,7 @@ void mail::nntp::folder::readSubFolders( callback::folderList &callback1,
 
 		map<string, hierEntry> subfolders;
 
-		ifstream i(myserver->newsrcFilename.c_str());
+		ifstream i{myserver->newsrcFilename};
 
 		if (i.is_open())
 		{
@@ -433,11 +433,11 @@ void mail::nntp::folder::destroy(callback &callback, bool destroyDir) const
 
 	string newNewsrcFilename=myserver->newsrcFilename + ".tmp";
 
-	ofstream o(newNewsrcFilename.c_str());
+	ofstream o{newNewsrcFilename};
 
 	if (o.is_open())
 	{
-		ifstream i(myserver->newsrcFilename.c_str());
+		ifstream i{myserver->newsrcFilename};
 
 		string line;
 

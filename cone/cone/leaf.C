@@ -196,7 +196,7 @@ void LeafEditMessage::saveTo()
 
 	// Make a backup copy of the original file
 
-	ifstream i(filename.c_str());
+	ifstream i{filename};
 	struct stat stat_buf;
 
 	if (i.is_open() && stat(filename.c_str(), &stat_buf) == 0)
@@ -204,7 +204,7 @@ void LeafEditMessage::saveTo()
 		string backup=filename + "~";
 
 		unlink(backup.c_str());
-		ofstream b(backup.c_str());
+		ofstream b{backup};
 
 		if (!b.is_open() ||
 		    chmod(backup.c_str(), stat_buf.st_mode & 0777)<0)
@@ -270,7 +270,7 @@ void LeafEditMessage::saveTo()
 
 	}
 
-	ofstream o(filename.c_str());
+	ofstream o{filename};
 
 	if (!o.is_open())
 	{
@@ -775,7 +775,7 @@ int main(int argc, char **argv)
 				defaultName=CursesFileReq
 					::washfname(defaultName);
 
-				ifstream i(defaultName.c_str());
+				ifstream i{defaultName};
 
 				if (!i.is_open())
 				{

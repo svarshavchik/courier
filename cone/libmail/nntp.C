@@ -231,8 +231,7 @@ mail::nntp::nntp(string url, string passwd,
 	  inactivityTimeout(0),
 	  folderCallback(NULL),
 	  hasNewgroups(false), didCacheNewsrc(false),
-	  disconnectCallback(&disconnectCallbackArg),
-	  genericTmpFp(NULL), genericTmpRfcp(NULL)
+	  disconnectCallback(&disconnectCallbackArg)
 {
 	if (newsrcFilenameArg.size() == 0)
 	{
@@ -271,17 +270,8 @@ const char *mail::nntp::application_protocol() const
 
 void mail::nntp::cleartmp()
 {
-	if (genericTmpFp != NULL)
-	{
-		fclose(genericTmpFp);
-		genericTmpFp=NULL;
-	}
-
-	if (genericTmpRfcp != NULL)
-	{
-		rfc2045_free(genericTmpRfcp);
-		genericTmpRfcp=NULL;
-	}
+	genericTmpFp.reset();
+	genericTmpRfcp.reset();
 }
 
 mail::nntp::~nntp()
@@ -309,7 +299,7 @@ void mail::nntp::cacheNewsrc()
 		return;
 
 	cachedNewsrc.clear();
-	ifstream i(newsrcFilename.c_str());
+	ifstream i{newsrcFilename};
 
 	string line;
 
@@ -337,11 +327,11 @@ bool mail::nntp::updateOpenedNewsrc(newsrc &n)
 
 	string newNewsrcFilename=newsrcFilename + ".tmp";
 
-	ofstream o(newNewsrcFilename.c_str());
+	ofstream o{newNewsrcFilename};
 
 	if (o.is_open())
 	{
-		ifstream i(newsrcFilename.c_str());
+		ifstream i{newsrcFilename};
 
 		string line;
 
@@ -406,13 +396,13 @@ bool mail::nntp::updateCachedNewsrc()
 
 	string newNewsrcFilename=newsrcFilename + ".tmp";
 
-	ofstream o(newNewsrcFilename.c_str());
+	ofstream o{newNewsrcFilename};
 
 	if (o.is_open())
 	{
 		// Copy any extra lines...
 
-		ifstream i(newsrcFilename.c_str());
+		ifstream i{newsrcFilename};
 
 		string line;
 
@@ -640,7 +630,7 @@ void mail::nntp::findFolder(string folder,
 	bool foundSubFolders=false;
 
 	{
-		ifstream i(newsrcFilename.c_str());
+		ifstream i{newsrcFilename};
 
 		if (i.is_open())
 		{
@@ -1291,11 +1281,13 @@ void mail::nntp::genericMessageSize(string uid,
 	callback.success("OK"); // TODO
 }
 
-void mail::nntp::genericGetMessageFd(string uid,
-				     size_t messageNumber,
-				     bool peek,
-				     int &fdRet,
-				     callback &callback)
+void mail::nntp::genericGetMessageFd(
+	string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	callback &callback
+)
 {
 	if (openedGroup.size() == 0)
 	{
@@ -1303,9 +1295,9 @@ void mail::nntp::genericGetMessageFd(string uid,
 		return;
 	}
 
-	if (genericTmpFp && uid == cachedUid)
+	if (genericTmpFp && !genericTmpFp->error() && uid == cachedUid)
 	{
-		fdRet=fileno(genericTmpFp);
+		fdRet=genericTmpFp;
 		callback.success("OK");
 		return;
 	}
@@ -1320,10 +1312,12 @@ bool mail::nntp::genericCachedUid(string uid)
 	return genericTmpFp && uid == cachedUid;
 }
 
-void mail::nntp::genericGetMessageStruct(string uid,
-					 size_t messageNumber,
-					 struct rfc2045 *&structRet,
-					 callback &callback)
+void mail::nntp::genericGetMessageStruct(
+	string uid,
+	size_t messageNumber,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	callback &callback
+)
 {
 	if (openedGroup.size() == 0)
 	{

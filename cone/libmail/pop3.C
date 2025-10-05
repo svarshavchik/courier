@@ -1755,11 +1755,13 @@ class mail::pop3::CacheMessageTask : public mail::callback::message {
 
 	string uid;
 
-	int *fdptr;
-	struct rfc2045 **rfcptr;
+	std::shared_ptr<rfc822::fdstreambuf> *fdptr;
+	std::shared_ptr<rfc2045::entity> *rfcptr;
 
-	FILE *tmpfilefp;
-	struct rfc2045 *rfc;
+	std::shared_ptr<rfc822::fdstreambuf> tmpfile;
+
+	rfc2045::entity_parser<false> rfc;
+	bool write_error{false};
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
@@ -1771,8 +1773,8 @@ public:
 	CacheMessageTask(mail::pop3 *myserverArg,
 			 mail::callback *callbackArg,
 			 string uidArg,
-			 int *fdArg,
-			 struct rfc2045 **rfcArg);
+			 std::shared_ptr<rfc822::fdstreambuf> *fdArg,
+			 std::shared_ptr<rfc2045::entity> *rfcArg);
 	~CacheMessageTask();
 
 	bool init();
@@ -1783,28 +1785,22 @@ public:
 	void messageTextCallback(size_t n, string text) override;
 };
 
-mail::pop3::CacheMessageTask::CacheMessageTask(mail::pop3 *myserverArg,
-					       mail::callback *callbackArg,
-					       string uidArg,
-					       int *fdArg,
-					       struct rfc2045 **rfcArg)
-	: myserver(myserverArg),
+mail::pop3::CacheMessageTask::CacheMessageTask(
+	mail::pop3 *myserverArg,
+	mail::callback *callbackArg,
+	string uidArg,
+	std::shared_ptr<rfc822::fdstreambuf> *fdArg,
+	std::shared_ptr<rfc2045::entity> *rfcArg
+) : myserver(myserverArg),
 	  callback(callbackArg),
 	  uid(uidArg),
 	  fdptr(fdArg),
-	  rfcptr(rfcArg),
-	  tmpfilefp(NULL),
-	  rfc(NULL)
+	  rfcptr(rfcArg)
 {
 }
 
 mail::pop3::CacheMessageTask::~CacheMessageTask()
 {
-	if (tmpfilefp)
-		fclose(tmpfilefp);
-
-	if (rfc)
-		rfc2045_free(rfc);
 }
 
 void mail::pop3
@@ -1829,42 +1825,28 @@ void mail::pop3::CacheMessageTask::success(string message)
 		     return;
 	}
 
-	if (fflush(tmpfilefp) || ferror(tmpfilefp))
+	if (write_error)
 	{
 		fail(strerror(errno));
 		return;
 	}
+	myserver->genericTmpFd.reset();
 
-	if (myserver->genericTmpFd >= 0)
-		close(myserver->genericTmpFd);
-
-	rfc2045_parse_partial(rfc);
-
-	if (myserver->genericTmpRfcp)
-	{
-		rfc2045_free(myserver->genericTmpRfcp);
-		myserver->genericTmpRfcp=NULL;
-	}
+	myserver->genericTmpRfcp.reset();
 
 	myserver->cachedUid=uid;
 
-	if ((myserver->genericTmpFd=dup(fileno(tmpfilefp))) < 0)
-	{
-		fail(strerror(errno));
-		return;
-	}
-
-	fcntl(myserver->genericTmpFd, F_SETFD, FD_CLOEXEC);
+	myserver->genericTmpFd=tmpfile;
 
 	if (fdptr)
 		*fdptr=myserver->genericTmpFd;
 
-	myserver->genericTmpRfcp=rfc;
+	myserver->genericTmpRfcp=std::make_shared<rfc2045::entity>(
+		rfc.parsed_entity()
+	);
 
 	if (rfcptr)
-		*rfcptr=rfc;
-
-	rfc=NULL;
+		*rfcptr=myserver->genericTmpRfcp;
 
 	mail::callback *c=callback;
 
@@ -1886,21 +1868,44 @@ void mail::pop3::CacheMessageTask::fail(string message)
 
 bool mail::pop3::CacheMessageTask::init()
 {
-	if ((tmpfilefp=tmpfile()) == NULL ||
-	    (rfc=rfc2045_alloc()) == NULL)
+	tmpfile=std::make_shared<rfc822::fdstreambuf>(
+		rfc822::fdstreambuf::tmpfile()
+	);
+
+	if (tmpfile->error())
 	{
 		fail(strerror(errno));
 		return false;
 	}
 
+	fcntl(tmpfile->fileno(), F_SETFD, FD_CLOEXEC);
+
 	return true;
 }
 
-void mail::pop3::CacheMessageTask::messageTextCallback(size_t n, string text)
+void mail::pop3::CacheMessageTask::messageTextCallback(
+	size_t ignore,
+	string text
+)
 {
-	if (fwrite(text.c_str(), text.size(), 1, tmpfilefp) != 1)
-		; // Ignore gcc warning
-	rfc2045_parse(rfc, text.c_str(), text.size());
+	size_t n=text.size();
+	char *ptr=text.data();
+
+	while (n)
+	{
+		auto done=tmpfile->sputn(ptr, n);
+
+		if (done <= 0)
+		{
+			write_error=true;
+			return;
+		}
+
+		ptr += done;
+		n -= done;
+	}
+
+	rfc.parse(text.begin(), text.end());
 }
 
 
@@ -1987,8 +1992,7 @@ mail::pop3::pop3(string url, string passwd,
 	  calledDisconnected(false),
 	  orderlyShutdown(false),
 	  lastTaskCompleted(0),
-	  inbox(this), folderCallback(NULL),
-	  genericTmpFd(-1), genericTmpRfcp(NULL)
+	  inbox(this), folderCallback(NULL)
 {
 	savedLoginInfo.callbackPtr=NULL;
 	savedLoginInfo.loginCallbackFunc=callback_func;
@@ -2141,17 +2145,8 @@ void mail::pop3::disconnect(const char *reason)
 		}
 	}
 
-	if (genericTmpFd >= 0)
-	{
-		close(genericTmpFd);
-		genericTmpFd= -1;
-	}
-
-	if (genericTmpRfcp != NULL)
-	{
-		rfc2045_free(genericTmpRfcp);
-		genericTmpRfcp=NULL;
-	}
+	genericTmpFd.reset();
+	genericTmpRfcp.reset();
 
 	string errmsg=reason ? reason:"";
 
@@ -2347,13 +2342,15 @@ void mail::pop3::readMessageAttributes(const vector<size_t> &messages,
 					 callback);
 }
 
-void mail::pop3::genericGetMessageFd(string uid,
-				     size_t messageNumber,
-				     bool peek,
-				     int &fdRet,
-				     mail::callback &callback)
+void mail::pop3::genericGetMessageFd(
+	string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	mail::callback &callback
+)
 {
-	if (genericTmpFd >= 0 && cachedUid == uid)
+	if (genericTmpFd && !genericTmpFd->error() && cachedUid == uid)
 	{
 		fdRet=genericTmpFd;
 		callback.success("OK");
@@ -2387,10 +2384,11 @@ void mail::pop3::genericGetMessageFd(string uid,
 }
 
 
-void mail::pop3::genericGetMessageStruct(string uid,
-					 size_t messageNumber,
-					 struct rfc2045 *&structRet,
-					 mail::callback &callback)
+void mail::pop3::genericGetMessageStruct(
+	string uid,
+	size_t messageNumber,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	mail::callback &callback)
 {
 	if (genericTmpRfcp && cachedUid == uid)
 	{

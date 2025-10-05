@@ -543,7 +543,7 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 	string messagetmp=myServer::getConfigDir() + "/message.tmp";
 
 	{
-		ofstream o(messagetmp.c_str());
+		ofstream o{messagetmp};
 
 		if (serverPtr)
 			o << "X-Server: "

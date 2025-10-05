@@ -1,3 +1,10 @@
+2025-10-05  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/cursesedit.C (CursesEdit::addAttachment): Fix ineffective
+	inline attachment option.
+
+	* Switch to the new rfc822 and rfc2045 C++-based libraries
+
 2025-09-09  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Update for courier-unicode 2.4.0

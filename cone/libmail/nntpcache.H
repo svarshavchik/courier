@@ -24,20 +24,20 @@ LIBMAIL_START
 
 class mail::nntp::CacheTask : public mail::nntp::FetchTaskBase {
 
-	int *cacheFd;
-	struct rfc2045 **cacheStruct;
+	std::shared_ptr<rfc822::fdstreambuf> *cacheFd;
+	std::shared_ptr<rfc2045::entity> *cacheStruct;
 
-	FILE *tmpfile;
-	struct rfc2045 *rfc2045p;
+
+	std::shared_ptr<rfc822::fdstreambuf> tmpfile;
+	rfc2045::entity_parser<false> rfc2045p;
 
 public:
 	CacheTask(mail::callback *callbackArg, nntp &myserverArg,
 		  std::string groupNameArg,
 		  size_t msgNumArg,
 		  std::string uidArg,
-
-		  int *cacheFdArg,
-		  struct rfc2045 **cacheStructArg);
+		  std::shared_ptr<rfc822::fdstreambuf> *cacheFdArg,
+		  std::shared_ptr<rfc2045::entity> *cacheStructArg);
 
 	~CacheTask();
 

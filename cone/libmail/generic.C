@@ -48,8 +48,8 @@ mail::generic::~generic()
 class mail::generic::Attributes : public mail::callback::message,
 		     public mail::runLater {
 
-	int fd;
-	struct rfc2045 *rfc2045p;
+	std::shared_ptr<rfc822::fdstreambuf> fd;
+	std::shared_ptr<rfc2045::entity> rfc2045p;
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
@@ -238,7 +238,7 @@ void mail::generic::Attributes::success(string msg)
 
 		mail::mimestruct s;
 
-		genericMakeMimeStructure(s, fd, rfc2045p, "", NULL);
+		genericMakeMimeStructure(s, fd, *rfc2045p, "", NULL);
 
 		if (callback && goodMsg)
 			callback->messageStructureCallback(nextMsg->second,
@@ -328,6 +328,7 @@ void mail::generic::Attributes::messageTextCallback(size_t dummy,
 			header=header.substr(0, nsave);
 		}
 
+		rfc2045::entity::tolowercase(header);
 		genericBuildEnvelope(header, value, envelope);
 		// Accumulate envelope information
 
@@ -356,72 +357,81 @@ void mail::generic::Attributes::messageTextCallback(size_t dummy,
 // Accumulate header lines into the envelope structure
 //
 
-void mail::generic::genericBuildEnvelope(string header, string value,
+void mail::generic::genericBuildEnvelope(string_view header, string_view value,
 					 mail::envelope &envelope)
 {
-	if (strcasecmp(header.c_str(), "From") == 0)
+	if (header == "from")
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.from, dummy);
+		mail::address::fromString({value.begin(), value.end()},
+					  envelope.from, dummy);
 	}
-	else if (strcasecmp(header.c_str(), "Sender") == 0)
+	else if (header == "sender")
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.sender,
+		mail::address::fromString({value.begin(), value.end()},
+					  envelope.sender,
 					  dummy);
 	}
-	else if (strcasecmp(header.c_str(), "Reply-To") == 0)
+	else if (header == "reply-to")
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.replyto,
+		mail::address::fromString({value.begin(), value.end()},
+					  envelope.replyto,
 					  dummy);
 	}
-	else if (strcasecmp(header.c_str(), "To") == 0)
+	else if (header == "to")
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.to,
+		mail::address::fromString({value.begin(), value.end()},
+					  envelope.to,
 					  dummy);
 	}
-	else if (strcasecmp(header.c_str(), "Cc") == 0)
+	else if (header == "cc")
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.cc,
+		mail::address::fromString({value.begin(), value.end()},
+					  envelope.cc,
 					  dummy);
 	}
-	else if (strcasecmp(header.c_str(), "Bcc") == 0)
+	else if (header == "bcc")
 	{
 		size_t dummy;
 
-		mail::address::fromString(value, envelope.bcc,
+		mail::address::fromString({value.begin(), value.end()},
+					  envelope.bcc,
 					  dummy);
 	}
-	else if (strcasecmp(header.c_str(), "In-Reply-To") == 0)
+	else if (header == "in-reply-to")
 	{
-		envelope.inreplyto=value;
+		envelope.inreplyto={value.begin(), value.end()};
 	}
-	else if (strcasecmp(header.c_str(), "Message-ID") == 0)
+	else if (header == "message-id")
 	{
-		envelope.messageid=value;
+		envelope.messageid={value.begin(), value.end()};
 	}
-	else if (strcasecmp(header.c_str(), "Subject") == 0)
+	else if (header == "subject")
 	{
-		envelope.subject=value;
+		envelope.subject={value.begin(), value.end()};
 	}
-	else if (strcasecmp(header.c_str(), "Date") == 0)
+	else if (header == "date")
 	{
-		rfc822_parsedate_chk(value.c_str(), &envelope.date);
+		rfc822_parsedate_chk(
+			std::string{value.begin(), value.end()}.c_str(),
+			&envelope.date);
 	}
-	else if (strcasecmp(header.c_str(), "References") == 0)
+	else if (header == "references")
 	{
 		vector<address> address_list;
 		size_t err_index;
 
-		address::fromString(value, address_list, err_index);
+		address::fromString({value.begin(), value.end()},
+				    address_list, err_index);
 
 		envelope.references.clear();
 
@@ -459,7 +469,7 @@ public:
 	CopyMimePart();
 	virtual ~CopyMimePart();
 
-	bool copy(int fd, off_t *cnt,
+	bool copy(const std::shared_ptr<rfc822::fdstreambuf> &fd, off_t *cnt,
 		  mail::ptr<mail::account> &account,
 		  mail::readMode readType,
 		  mail::callback::message *callback);
@@ -475,15 +485,17 @@ mail::generic::CopyMimePart::~CopyMimePart()
 {
 }
 
-bool mail::generic::CopyMimePart::copy(int fd,	// File descriptor to copy from
-				       off_t *cnt, // Not null - max byte count
-				       mail::ptr<mail::account> &account,
-				       // The canary (drops dead, we're done)
+bool mail::generic::CopyMimePart::copy(
+	// File descriptor to copy from
+	const std::shared_ptr<rfc822::fdstreambuf> &fd,
+	off_t *cnt, // Not null - max byte count
+	mail::ptr<mail::account> &account,
+	// The canary (drops dead, we're done)
 
-				       mail::readMode readType,
-				       mail::callback::message *callback
-				       // Original callback
-				       )
+	mail::readMode readType,
+	mail::callback::message *callback
+	// Original callback
+)
 {
 	int n=0;
 	size_t output_ptr=0;
@@ -498,7 +510,7 @@ bool mail::generic::CopyMimePart::copy(int fd,	// File descriptor to copy from
 		else
 			n= (int) *cnt;
 
-		n=read(fd, input_buffer, n);
+		n=fd->sgetn(input_buffer, n);
 
 		if (n <= 0)
 			break;
@@ -610,7 +622,7 @@ class mail::generic::ReadMultiple : public mail::callback::message,
 
 	mail::callback::message *callback;
 
-	int temp_fd;
+	std::shared_ptr<rfc822::fdstreambuf> temp_fd;
 
 	// Callback for when genericGetMessageFd() is used
 
@@ -821,7 +833,7 @@ void mail::generic::ReadMultiple::messageTextCallback(size_t n,
 void mail::generic::ReadMultiple::processTempFile(string s)
 {
 	try {
-		if (lseek(temp_fd, 0L, SEEK_SET) < 0)
+		if (temp_fd->pubseekpos(0) != 0)
 		{
 			fail(strerror(errno));
 			return;
@@ -875,8 +887,8 @@ class mail::generic::ReadMimePart : public mail::callback,
 
 	void copyto(string) override;
 
-	bool copyHeaders();
-	bool copyContents();
+	bool copyHeaders(rfc2045::entity *);
+	bool copyContents(rfc2045::entity *);
 
 	void reportProgress(size_t bytesCompleted,
 			    size_t bytesEstimatedTotal,
@@ -885,8 +897,8 @@ class mail::generic::ReadMimePart : public mail::callback,
 			    size_t messagesEstimatedTotal) override;
 
 public:
-	int fd;
-	struct rfc2045 *rfcp;
+	std::shared_ptr<rfc822::fdstreambuf> fd;
+	std::shared_ptr<rfc2045::entity> rfcp;
 
 	ReadMimePart(mail::account *account, mail::generic *generic,
 		     size_t messageNum,
@@ -938,7 +950,10 @@ void mail::generic::ReadMimePart::success(string message)
 
 	// Parse the synthesized MIME id, and locate the relevant rfc2045
 	// tructure.
-	while (rfcp && *p)
+
+	rfc2045::entity *ptr=&*rfcp;
+
+	while (ptr && *p)
 	{
 		unsigned partNumber=0;
 
@@ -948,24 +963,22 @@ void mail::generic::ReadMimePart::success(string message)
 		if (*p)
 			p++;
 
-		rfcp=rfcp->firstpart;
-
-		while (rfcp)
+		if (partNumber < 0 || partNumber > ptr->subentities.size())
 		{
-			if (!rfcp->isdummy && --partNumber == 0)
-				break;
-
-			rfcp=rfcp->next;
+			ptr=nullptr;
+			break;
 		}
+
+		ptr= &ptr->subentities[partNumber-1];
 	}
 
 	bool rc=true;
 
-	if (rfcp)
+	if (ptr)
 		try {
 			rc=readType == mail::readBoth ||
 				readType == mail::readContents
-				? copyContents():copyHeaders();
+				? copyContents(ptr):copyHeaders(ptr);
 		} catch (...) {
 			delete this;
 			LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
@@ -984,51 +997,34 @@ void mail::generic::ReadMimePart::success(string message)
 
 // Return just the header portion.
 
-bool mail::generic::ReadMimePart::copyHeaders()
+bool mail::generic::ReadMimePart::copyHeaders(rfc2045::entity *ptr)
 {
-	struct rfc2045src *src=rfc2045src_init_fd(fd);
-	struct rfc2045headerinfo *h=src ? rfc2045header_start(src, rfcp):NULL;
-	int flags=RFC2045H_NOLC;
+	rfc2045::entity::line_iter<false>::headers headers{*ptr, *fd};
+
+	headers.name_lc=false;
 
 	if (readType == mail::readHeaders)
-		flags |= RFC2045H_KEEPNL;
+		headers.keep_eol=true;
 
-	try {
-		char *header, *value;
+	do {
+		auto h=headers.current_header();
 
-		while (h && rfc2045header_get(h, &header, &value,
-					      flags) == 0 && header)
-			copyto(string(header) + ": " + value + "\n");
+		if (h.size() == 0 || h == "\n")
+			break;
+		copyto(std::string{h.begin(), h.end()});
+	} while (headers.next());
 
-		if (h)
-			rfc2045header_end(h);
-		if (src)
-			rfc2045src_deinit(src);
-	} catch (...) {
-		if (h)
-			rfc2045header_end(h);
-		if (src)
-			rfc2045src_deinit(src);
-		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-	}
 	return true;
 }
 
 // Return body end/or header.
 
-bool mail::generic::ReadMimePart::copyContents()
+bool mail::generic::ReadMimePart::copyContents(rfc2045::entity *ptr)
 {
-	off_t start_pos, end_pos, start_body;
-
-	off_t nlines, nbodylines;
-
-	rfc2045_mimepos(rfcp, &start_pos, &end_pos, &start_body,
-			&nlines, &nbodylines);
-
-	if (lseek(fd, start_pos, SEEK_SET) < 0)
+	if (static_cast<size_t>(fd->pubseekpos(ptr->startpos)) != ptr->startpos)
 		return false;
 
-	end_pos -= start_pos;
+	off_t end_pos=ptr->endbody-ptr->startpos;
 
 	return copy(fd, &end_pos, account, readType, callback);
 }
@@ -1071,39 +1067,37 @@ public:
 	mail::generic *generic;
 	mail::callback *callback;
 
-	int &fd;
-	struct rfc2045 * &rfc2045p;
+	std::shared_ptr<rfc822::fdstreambuf> &fd;
+	std::shared_ptr<rfc2045::entity> &rfc2045p;
 
 	GetMessageFdStruct(string uidArg,
 			   size_t messageNumberArg,
 			   mail::generic *genericArg,
 			   mail::callback *callbackArg,
-			   int &fdArg,
-			   struct rfc2045 *&rfc2045pArg);
+			   std::shared_ptr<rfc822::fdstreambuf> &fdArg,
+			   std::shared_ptr<rfc2045::entity> &rfc2045pArg);
 	~GetMessageFdStruct();
 
 	void success(string) override;
 	void fail(string) override;
 };
 
-mail::generic::GetMessageFdStruct::GetMessageFdStruct(string uidArg,
-						      size_t messageNumberArg,
-						      mail::generic
-						      *genericArg,
-						      mail::callback
-						      *callbackArg,
-						      int &fdArg,
-						      struct rfc2045
-						      *&rfc2045pArg)
-	: uid(uidArg),
-	  messageNumber(messageNumberArg),
-	  generic(genericArg),
-	  callback(callbackArg),
-	  fd(fdArg),
-	  rfc2045p(rfc2045pArg)
+mail::generic::GetMessageFdStruct::GetMessageFdStruct(
+	string uidArg,
+	size_t messageNumberArg,
+	mail::generic *genericArg,
+	mail::callback *callbackArg,
+	std::shared_ptr<rfc822::fdstreambuf> &fdArg,
+	std::shared_ptr<rfc2045::entity> &rfc2045pArg
+) : uid(uidArg),
+    messageNumber(messageNumberArg),
+    generic(genericArg),
+    callback(callbackArg),
+    fd(fdArg),
+    rfc2045p(rfc2045pArg)
 {
-	fd= -1;
-	rfc2045p=NULL;
+	fd={};
+	rfc2045p={};
 }
 
 mail::generic::GetMessageFdStruct::~GetMessageFdStruct()
@@ -1112,7 +1106,7 @@ mail::generic::GetMessageFdStruct::~GetMessageFdStruct()
 
 void mail::generic::GetMessageFdStruct::success(string message)
 {
-	if (rfc2045p == NULL)
+	if (!rfc2045p)
 	{
 		generic->genericGetMessageStruct(uid, messageNumber,
 					  rfc2045p, *this);
@@ -1152,12 +1146,13 @@ void mail::generic
 //
 // IMPLEMENTATIONS
 
-void mail::generic::genericGetMessageFdStruct(string uid,
-					      size_t messageNumber,
-					      bool peek,
-					      int &fdRet,
-					      struct rfc2045 *&structRet,
-					      mail::callback &callback)
+void mail::generic::genericGetMessageFdStruct(
+	string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	mail::callback &callback)
 {
 	GetMessageFdStruct *s=new GetMessageFdStruct(uid, messageNumber,
 						     this,
@@ -1344,12 +1339,12 @@ void mail::generic::genericReadMessageContent(mail::account *account,
 // Convert rfc2045 parse structure to a mail::mimestruct.  A simple
 // mechanism is used to synthesize mime IDs.
 
-void mail::generic::genericMakeMimeStructure(mail::mimestruct &s,
-					     int fd,
-					     struct rfc2045 *rfcp,
-					     string mime_id,
-					     mail::envelope *
-					     envelopePtr)
+void mail::generic::genericMakeMimeStructure(
+	mail::mimestruct &s,
+	std::shared_ptr<rfc822::fdstreambuf> fd,
+	rfc2045::entity &rfc2045p,
+	string mime_id,
+	mail::envelope *envelopePtr)
 {
 	s=mail::mimestruct();
 
@@ -1361,166 +1356,78 @@ void mail::generic::genericMakeMimeStructure(mail::mimestruct &s,
 
 	// Now read the headers, and figure out the rest
 
-	struct rfc2045src *src=rfc2045src_init_fd(fd);
-	struct rfc2045headerinfo *h=src ? rfc2045header_start(src, rfcp):NULL;
+	rfc2045::entity::line_iter<false>::headers headers{rfc2045p, *fd};
 
-	char *header;
-	char *value;
+	s.content_size=rfc2045p.endbody - rfc2045p.startbody;
+	s.content_lines=rfc2045p.nbodylines;
+	s.smtputf8=rfc2045p.errors.code & RFC2045_ERR8BITHEADER ? true:false;
 
-	off_t start_pos, end_pos, start_body, nlines, nbodylines;
+	do {
+		const auto &[header, value] = headers.name_content();
 
-	rfc2045_mimepos(rfcp, &start_pos, &end_pos, &start_body,
-			&nlines, &nbodylines);
-
-	s.content_size=end_pos - start_body;
-	s.content_lines=nbodylines;
-	s.smtputf8=rfcp->rfcviolation & RFC2045_ERR8BITHEADER ? true:false;
-
-	try {
-		while (h && rfc2045header_get(h, &header, &value, 0) == 0)
+		if (header == "content-id")
 		{
-			if (header == NULL)
-				break;
-
-			if (strcmp(header, "content-id") == 0)
-			{
-				s.content_id=value;
-				continue;
-			}
-
-			if (strcmp(header, "content-description") == 0)
-			{
-				s.content_description=value;
-				continue;
-			}
-
-			if (strcmp(header, "content-transfer-encoding") == 0)
-			{
-				s.content_transfer_encoding=value;
-				continue;
-			}
-
-			if (strcmp(header, "content-md5") == 0)
-			{
-				s.content_md5=value;
-				continue;
-			}
-
-			if (strcmp(header, "content-language") == 0)
-			{
-				s.content_id=value;
-				continue;
-			}
-
-			string *name;
-
-			mail::mimestruct::parameterList *attributes;
-
-			if (strcmp(header, "content-type") == 0)
-			{
-				name= &s.type;
-				attributes= &s.type_parameters;
-			}
-			else if (strcmp(header, "content-disposition") == 0)
-			{
-				name= &s.content_disposition;
-				attributes= &s.content_disposition_parameters;
-			}
-			else
-			{
-				if (envelopePtr)
-					genericBuildEnvelope(header, value,
-							     *envelopePtr);
-				continue;
-			}
-
-			const char *p=value;
-
-			while (p && *p && *p != ';' && !unicode_isspace((unsigned char)*p))
-				p++;
-
-			*name= string((const char *)value, p);
-
-			mail::upper(*name);
-
-			while (p && *p)
-			{
-				if (unicode_isspace((unsigned char)*p) || *p == ';')
-				{
-					p++;
-					continue;
-				}
-
-				const char *q=p;
-
-				while (*q
-				       && !unicode_isspace((unsigned char)*q) && *q != ';'
-				       && *q != '=')
-					q++;
-
-				string paramName=string(p, q);
-
-				mail::upper(paramName);
-
-				while (*q
-				       && unicode_isspace((unsigned char)*q))
-					q++;
-
-				string paramValue="";
-
-				if (*q == '=')
-				{
-					q++;
-
-					while (*q
-					       && unicode_isspace((unsigned char)*q))
-						q++;
-
-					bool inQuote=false;
-
-					while (*q)
-					{
-						if (!inQuote)
-						{
-							if (*q == ';')
-								break;
-							if (unicode_isspace(
-								    (unsigned char)*q))
-								break;
-						}
-
-						if (*q == '"')
-						{
-							inQuote= !inQuote;
-							q++;
-							continue;
-						}
-
-						if (*q == '\\' && q[1])
-							++q;
-
-						paramValue += *q;
-						q++;
-					}
-				}
-
-				attributes->set_simple(paramName, paramValue);
-				p=q;
-			}
+			s.content_id=value;
+			continue;
 		}
-	} catch (...) {
-		if (h)
-			rfc2045header_end(h);
-		if (src)
-			rfc2045src_deinit(src);
-		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-	}
 
-	if (h)
-		rfc2045header_end(h);
+		if (header == "content-description")
+		{
+			s.content_description={value.begin(), value.end()};
+			continue;
+		}
 
-	if (src)
-		rfc2045src_deinit(src);
+		if (header == "content-transfer-encoding")
+		{
+			s.content_transfer_encoding={value.begin(),
+						     value.end()};
+			continue;
+		}
+
+		if (header == "content-md5")
+		{
+			s.content_md5={value.begin(), value.end()};
+			continue;
+		}
+
+		if (header == "content-language")
+		{
+			s.content_id={value.begin(), value.end()};
+			continue;
+		}
+
+		string *name;
+
+		mail::mimestruct::parameterList *attributes;
+
+		if (header == "content-type")
+		{
+			name= &s.type;
+			attributes= &s.type_parameters;
+		}
+		else if (header == "content-disposition")
+		{
+			name= &s.content_disposition;
+			attributes= &s.content_disposition_parameters;
+		}
+		else
+		{
+			if (envelopePtr)
+				genericBuildEnvelope(header, value,
+						     *envelopePtr);
+			continue;
+		}
+
+		rfc2045::entity::rfc2231_header parsed_header{value};
+
+		*name=parsed_header.value;
+		mail::upper(*name);
+
+		for (const auto &[key, value] : parsed_header.parameters)
+		{
+			attributes->set_simple(key, value.value);
+		}
+	} while (headers.next());
 
 	// Fix content type/subtype
 
@@ -1549,11 +1456,8 @@ void mail::generic::genericMakeMimeStructure(mail::mimestruct &s,
 
 	size_t cnt=1;
 
-	for (rfcp=rfcp->firstpart; rfcp; rfcp=rfcp->next)
+	for (auto subentity:rfc2045p.subentities)
 	{
-		if (rfcp->isdummy)
-			continue;
-
 		string buffer;
 
 		{
@@ -1565,7 +1469,7 @@ void mail::generic::genericMakeMimeStructure(mail::mimestruct &s,
 
 		genericMakeMimeStructure( *s.addChild(),
 					  fd,
-					  rfcp,
+					  subentity,
 					  mime_id + buffer,
 					  env );
 	}

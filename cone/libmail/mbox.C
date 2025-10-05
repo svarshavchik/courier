@@ -253,20 +253,10 @@ void mail::mbox::installTask(task *t)
 mail::mbox::mbox(bool magicInboxArg,
 		       string folderRoot, mail::callback &callback,
 		       mail::callback::disconnect &disconnect_callback)
-	: mail::account(disconnect_callback),
-	  calledDisconnected(false),
-	  magicInbox(magicInboxArg),
-	  inboxFolder("INBOX", *this),
-	  hierarchyFolder("", *this),
-	  currentFolderReadOnly(false),
-	  folderSavedSize(0),
-	  folderSavedTimestamp(0),
-	  multiLockLock(NULL),
-	  folderDirty(false),
-	  newMessages(false),
-	  cachedMessageRfcp(NULL),
-	  cachedMessageFp(NULL),
-	  currentFolderCallback(NULL)
+	: mail::account{disconnect_callback},
+	  magicInbox{magicInboxArg},
+	  inboxFolder{"INBOX", *this},
+	  hierarchyFolder{"", *this}
 {
 	sigset_t ss;
 
@@ -379,17 +369,8 @@ void mail::mbox::resetFolder()
 		multiLockLock=NULL;
 	}
 
-	if (cachedMessageRfcp)
-	{
-		rfc2045_free(cachedMessageRfcp);
-		cachedMessageRfcp=NULL;
-	}
-
-	if (cachedMessageFp)
-	{
-		fclose(cachedMessageFp);
-		cachedMessageFp=NULL;
-	}
+	cachedMessageRfcp.reset();
+	cachedMessageFp.reset();
 
 	cachedMessageUid="";
 
@@ -941,15 +922,17 @@ void mail::mbox::genericMessageSize(string uid,
 	callback.success("OK");
 }
 
-void mail::mbox::genericGetMessageFd(string uid,
-				     size_t messageNumber,
-				     bool peek,
-				     int &fdRet,
-				     mail::callback &callback)
+void mail::mbox::genericGetMessageFd(
+	string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	mail::callback &callback)
 {
-	if (uid == cachedMessageUid && cachedMessageFp)
+	if (uid == cachedMessageUid && cachedMessageFp &&
+	    !cachedMessageFp->error())
 	{
-		fdRet=fileno(cachedMessageFp);
+		fdRet=cachedMessageFp;
 		callback.success("OK");
 		return;
 	}
@@ -960,10 +943,11 @@ void mail::mbox::genericGetMessageFd(string uid,
 					      &fdRet, NULL));
 }
 
-void mail::mbox::genericGetMessageStruct(string uid,
-					 size_t messageNumber,
-					 struct rfc2045 *&structRet,
-					 mail::callback &callback)
+void mail::mbox::genericGetMessageStruct(
+	string uid,
+	size_t messageNumber,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	mail::callback &callback)
 {
 	if (uid == cachedMessageUid && cachedMessageRfcp)
 	{
@@ -978,18 +962,19 @@ void mail::mbox::genericGetMessageStruct(string uid,
 					      NULL, &structRet));
 }
 
-void mail::mbox::genericGetMessageFdStruct(string uid,
-					   size_t messageNumber,
-					   bool peek,
-					   int &fdRet,
-					   struct rfc2045 *&structret,
-					   mail::callback &callback)
+void mail::mbox::genericGetMessageFdStruct(
+	string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	std::shared_ptr<rfc2045::entity> &structret,
+	mail::callback &callback)
 {
 	if (uid == cachedMessageUid && cachedMessageRfcp &&
 	    cachedMessageFp)
 	{
 		structret=cachedMessageRfcp;
-		fdRet=fileno(cachedMessageFp);
+		fdRet=cachedMessageFp;
 		callback.success("OK");
 		return;
 	}

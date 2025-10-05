@@ -317,7 +317,7 @@ bool CertificatesScreen::processKey(const Curses::Key &key)
 
 		{
 			std::stringstream ss;
-			std::ifstream ifs(filename.c_str());
+			std::ifstream ifs{filename};
 
 			if (!ifs.is_open())
 			{

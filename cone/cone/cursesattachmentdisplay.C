@@ -455,7 +455,7 @@ void CursesAttachmentDisplay::downloadTo(CursesMessage *message,
 	statusBar->clearstatus();
 	statusBar->status(_("Downloading..."));
 
-	std::ofstream saveFile(filename.c_str());
+	std::ofstream saveFile{filename};
 
 	if (saveFile.bad() || saveFile.fail())
 	{

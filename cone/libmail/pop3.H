@@ -356,21 +356,22 @@ private:
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
-				 int &fdRet,
-				 callback &callback) override;
+				 std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+				 mail::callback &callback) override;
 
-	void genericGetMessageStruct(std::string uid,
-				     size_t messageNumber,
-				     struct rfc2045 *&structRet,
-				     callback &callback) override;
+	void genericGetMessageStruct(
+		std::string uid,
+		size_t messageNumber,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback) override;
 
 	bool genericCachedUid(std::string uid) override;
 
 	// One message is cached to a temp file, and parsed.
 
 	std::string cachedUid;
-	int genericTmpFd;
-	struct rfc2045 *genericTmpRfcp;
+	std::shared_ptr<rfc822::fdstreambuf> genericTmpFd;
+	std::shared_ptr<rfc2045::entity> genericTmpRfcp;
 
 	//
 	// Inherited from mail::snapshot::restore:

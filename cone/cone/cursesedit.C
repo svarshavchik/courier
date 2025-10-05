@@ -435,7 +435,7 @@ void CursesEdit::init()
 
 	}
 
-	std::ifstream i(msg.c_str());
+	std::ifstream i{msg};
 
 	std::string subjectV;
 
@@ -765,7 +765,7 @@ void CursesEdit::init()
 		if (stat(f.c_str(), &stat_buf))
 			continue;
 
-		std::ifstream i(f.c_str());
+		std::ifstream i{f};
 
 		if (!i.is_open())
 			continue;
@@ -774,97 +774,81 @@ void CursesEdit::init()
 
 		// Well, make this quick and dirty by leveraging rfc2045
 
-		struct rfc2045 *rfcp=rfc2045_alloc();
+		rfc2045::entity_parser<false> parser;
 
-		if (!rfcp)
-			outofmemory();
+		std::string_view mv="Mime-Version: 1.0\n";
 
-		try {
-			static const char mv[]="Mime-Version: 1.0\n";
+		parser.parse(mv.begin(), mv.end()); // rfc2045 food
 
-			rfc2045_parse(rfcp, mv, sizeof(mv)-1); // rfc2045 food
+		rfc2045::entity entity=({
+				std::string header;
 
-			std::string line;
+				std::string line;
 
-			while (!getline(i, line).eof())
-			{
-				line += "\n";
-				rfc2045_parse(rfcp, line.c_str(),
-					      line.size());
+				while (!getline(i, line).eof())
+				{
+					if (line.empty())
+						break;
+					header += line;
+					header += "\n";
+				}
 
-				if (!rfcp->workinheader)
-					break;
-			}
+				header += "\n\n\n";
+				parser.parse(header.begin(), header.end());
 
-			rfc2045_parse(rfcp, "\n\n\n", 3);
+				parser.parsed_entity();
+			});
 
-			const char *content_type;
-			const char *content_transfer_encoding;
-			const char *charset;
 
-			rfc2045_mimeinfo(rfcp, &content_type,
-					 &content_transfer_encoding,
-					 &charset);
+		s.content_description=entity.content_description;
 
-			s.content_description=
-				rfcp->content_description ?
-				rfcp->content_description:"";
+		s.content_transfer_encoding=
+			rfc2045::to_cte(entity.content_transfer_encoding);
 
-			s.content_transfer_encoding=
-				content_transfer_encoding ?
-				content_transfer_encoding:"8BIT";
+		s.type=entity.content_type.value;
 
-			s.type=content_type;
+		size_t sn=s.type.find('/');
 
-			size_t sn=s.type.find('/');
+		if (sn != std::string::npos)
+		{
+			s.subtype=s.type.substr(sn+1);
 
-			if (sn != std::string::npos)
-			{
-				s.subtype=s.type.substr(sn+1);
-
-				s.type=s.type.substr(0, sn);
-			}
-
-			char *disposition_name=NULL;
-			char *disposition_filename;
-
-			if (rfc2231_udecodeDisposition(rfcp, "name", NULL,
-						       &disposition_name) < 0
-			    ||
-			    rfc2231_udecodeDisposition(rfcp, "filename", NULL,
-						       &disposition_filename)
-			    < 0)
-			{
-				if (disposition_name)
-					free(disposition_name);
-				LIBMAIL_THROW(strerror(errno));
-			}
-
-			s.content_disposition=rfcp->content_disposition
-				? rfcp->content_disposition
-				: "ATTACHMENT";
-			s.content_size=stat_buf.st_size;
-
-			try {
-				if (*disposition_filename)
-					s.content_disposition_parameters
-						.set("FILENAME",
-						     disposition_filename,
-						     unicode_default_chset(),
-						     "");
-				free(disposition_name);
-				free(disposition_filename);
-			} catch (...) {
-				free(disposition_name);
-				free(disposition_filename);
-				LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-			}
-
-			rfc2045_free(rfcp);
-		} catch (...) {
-			rfc2045_free(rfcp);
-			LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
+			s.type=s.type.substr(0, sn);
 		}
+
+		s.content_disposition="attachment";
+
+		rfc2045::entity::rfc2231_header content_disposition{
+			entity.content_disposition
+		};
+
+		auto iter=content_disposition.parameters.find("name");
+
+		if (iter != content_disposition.parameters.end())
+		{
+			s.content_disposition_parameters.set(
+				"NAME",
+				iter->second.value,
+				iter->second.charset,
+				iter->second.language
+			);
+		}
+
+		iter=content_disposition.parameters.find("filename");
+
+		if (iter != content_disposition.parameters.end())
+		{
+			s.content_disposition_parameters.set(
+				"FILENAME",
+				iter->second.value,
+				iter->second.charset,
+				iter->second.language
+			);
+		}
+
+		if (!content_disposition.value.empty())
+			s.content_disposition=content_disposition.value;
+		s.content_size=stat_buf.st_size;
 
 		std::string name;
 		std::string filename;
@@ -1083,7 +1067,7 @@ void CursesEdit::addAttachment(std::vector<std::string> &fileList, std::string m
 	if (response.abortflag)
 		return;
 
-	std::string inlineFlag=description;
+	std::string inlineFlag=response;
 
 	std::vector<std::string>::iterator b=fileList.begin(), e=fileList.end();
 
@@ -1721,7 +1705,7 @@ bool CursesEdit::processKey(const Curses::Key &key)
 
 		std::string tmpKey= myServer::getConfigDir() + "/pgpkey.tmp";
 
-		std::ofstream o(tmpKey.c_str());
+		std::ofstream o{tmpKey};
 
 		if (o.bad() || o.fail())
 		{
@@ -3399,7 +3383,7 @@ bool CursesEdit::save(SaveSink &sink,
 	// Grab some existing headers
 
 	{
-		std::ifstream i(oldfile.c_str());
+		std::ifstream i{oldfile};
 
 		if (!i.is_open())
 		{

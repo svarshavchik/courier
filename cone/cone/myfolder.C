@@ -1005,7 +1005,7 @@ void myFolder::saveSnapshot(string snapshotId)
 
 	unlink(tmpfilename.c_str());
 
-	ofstream o(tmpfilename.c_str());
+	ofstream o{tmpfilename};
 
 	if (o.is_open())
 	{
@@ -1390,8 +1390,10 @@ class OpenDraftCallback : public mail::callback::message,
 			    size_t messagesEstimatedTotal) override;
 
 public:
-	FILE *fp;
-	struct rfc2045 *rfc2045p;
+
+	rfc822::fdstreambuf fp;
+	rfc2045::entity_parser<false> parser;
+	bool write_error{false};
 
 	OpenDraftCallback();
 	~OpenDraftCallback();
@@ -1401,13 +1403,11 @@ public:
 	void fail(string message) override;
 };
 
-OpenDraftCallback::OpenDraftCallback()
+OpenDraftCallback::OpenDraftCallback() : fp{rfc822::fdstreambuf::tmpfile()}
 {
 }
 
-OpenDraftCallback::~OpenDraftCallback()
-{
-}
+OpenDraftCallback::~OpenDraftCallback()=default;
 
 void OpenDraftCallback::reportProgress(size_t bytesCompleted,
 				       size_t bytesEstimatedTotal,
@@ -1423,9 +1423,23 @@ void OpenDraftCallback::reportProgress(size_t bytesCompleted,
 
 void OpenDraftCallback::messageTextCallback(size_t n, string text)
 {
-	if (fwrite(&*text.begin(), text.size(), 1, fp) != 1)
-		; // Ignore gcc warning
-	rfc2045_parse(rfc2045p, &*text.begin(), text.size());
+	auto p=text.data();
+	n=text.size();
+
+	while (n)
+	{
+		auto d=fp.sputn(p, n);
+
+		if (d <= 0)
+		{
+			write_error=true;
+			break;
+		}
+		n -= d;
+		p += d;
+	}
+
+	parser.parse(text.begin(), text.end());
 }
 
 void OpenDraftCallback::success(string message)
@@ -1438,7 +1452,7 @@ void OpenDraftCallback::fail(string message)
 	myServer::Callback::fail(message);
 }
 
-static bool prepareDraft(FILE *, struct rfc2045 *);
+static bool prepareDraft(rfc822::fdstreambuf &, rfc2045::entity);
 
 void myFolder::goDraft()
 {
@@ -1456,50 +1470,40 @@ void myFolder::goDraft()
 			  << getFolder()->getName());
 
 	OpenDraftCallback openDraft;
+	mail::messageInfo oldInfo=server->getFolderIndexInfo(messageNum);
 
-	if ((openDraft.rfc2045p=rfc2045_alloc()) == NULL ||
-	    (openDraft.fp=tmpfile()) == NULL)
+	vector<size_t> messageVec;
+
+	messageVec.push_back(messageNum);
+
+	server->readMessageContent(messageVec, false,
+				   mail::readBoth, openDraft);
+
+	if (openDraft.write_error)
 	{
-		if (openDraft.rfc2045p)
-			rfc2045_free(openDraft.rfc2045p);
-		statusBar->status(strerror(errno), statusBar->SYSERROR);
+		statusBar->status(strerror(errno));
 		statusBar->beepError();
 		return;
 	}
 
-	mail::messageInfo oldInfo=server->getFolderIndexInfo(messageNum);
+	if (!myServer::eventloop(openDraft))
+		return;
 
-	try {
-		vector<size_t> messageVec;
+	statusBar->clearstatus();
+	statusBar->status(_("Extracting MIME attachments..."));
 
-		messageVec.push_back(messageNum);
-
-		server->readMessageContent(messageVec, false,
-					   mail::readBoth, openDraft);
-
-		if (!myServer::eventloop(openDraft))
-		{
-			fclose(openDraft.fp);
-			rfc2045_free(openDraft.rfc2045p);
-			return;
-		}
-
-		statusBar->clearstatus();
-		statusBar->status(_("Extracting MIME attachments..."));
-
-		if (fflush(openDraft.fp) < 0 || ferror(openDraft.fp) < 0 ||
-		    !prepareDraft(openDraft.fp, openDraft.rfc2045p))
-		{
-			return;
-		}
-
-	} catch (...) {
-		fclose(openDraft.fp);
-		rfc2045_free(openDraft.rfc2045p);
-		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
+	if (openDraft.fp.pubsync() < 0 || openDraft.fp.error())
+	{
+		statusBar->status(strerror(errno));
+		statusBar->beepError();
+		return;
 	}
-	fclose(openDraft.fp);
-	rfc2045_free(openDraft.rfc2045p);
+
+	if (!prepareDraft(openDraft.fp,
+			  openDraft.parser.parsed_entity()))
+	{
+		return;
+	}
 
 	if (server.isDestroyed())
 		return;
@@ -1535,61 +1539,39 @@ void myFolder::goDraft()
         myServer::nextScreenArg=NULL;
 }
 
-static bool copyTo(FILE *, string, string, off_t, off_t, struct rfc2045 *,
+static bool copyTo(rfc822::fdstreambuf &, string, string, off_t, off_t,
+		   rfc2045::entity *,
 		   size_t, size_t);
-static bool copyTo(FILE *, ostream &, off_t, off_t, struct rfc2045 *,
+static bool copyTo(rfc822::fdstreambuf &, ostream &, off_t, off_t,
+		   rfc2045::entity *,
 		   mail::autodecoder *d, size_t, size_t);
 
 // Extract the main body of the message, and its attachments.
 
-static bool prepareDraft(FILE *fp, struct rfc2045 *rfcp)
+static bool prepareDraft(rfc822::fdstreambuf &fp, rfc2045::entity entity)
 {
-	struct rfc2045 *p;
-
 	string messagetmp=myServer::getConfigDir() + "/message.tmp";
 	string messagetxt=myServer::getConfigDir() + "/message.txt";
 
-	if (rfcp->firstpart == NULL)
+	if (entity.subentities.empty())
 	{
-		off_t start_pos, end_pos, start_body, dummy;
-
-		rfc2045_mimepos(rfcp, &start_pos, &end_pos,
-				&start_body, &dummy, &dummy);
-
 		return copyTo(fp, messagetmp, messagetxt,
-			      start_pos, start_body, rfcp, 0, 1);
+			      entity.startpos,
+			      entity.startbody, &entity, 0, 1);
 	}
-
-	struct rfc2045 *firstSect=NULL;
 
 	size_t done=0;
-	size_t estTotal=0;
-
-	for (p=rfcp->firstpart; p; p=p->next)
-	{
-		if (p->isdummy)
-			continue;
-
-		++estTotal;
-	}
-
+	size_t estTotal=entity.subentities.size();
 	size_t cnt=0;
 
-	for (p=rfcp->firstpart; p; p=p->next)
+	rfc2045::entity *firstSect=nullptr;
+	for (auto &p:entity.subentities)
 	{
-		if (p->isdummy)
-			continue;
-
 		if (!firstSect)
 		{
-			firstSect=p;
+			firstSect=&p;
 			continue;
 		}
-
-		off_t start_pos, end_pos, dummy;
-
-		rfc2045_mimepos(p, &start_pos, &end_pos,
-				&dummy, &dummy, &dummy);
 
 		string tmpname, attname;
 
@@ -1604,21 +1586,19 @@ static bool prepareDraft(FILE *fp, struct rfc2045 *rfcp)
 
 		myMessage::createAttFilename(tmpname, attname, buffer);
 
-		if (!copyTo(fp, tmpname, attname, start_pos, end_pos, NULL,
+		if (!copyTo(fp, tmpname, attname, p.startpos, p.endbody, NULL,
 			    done, estTotal))
 			return false;
 
 		++done;
 	}
 
-	off_t start_pos, end_pos, start_body, dummy;
+	auto startpos=entity.startpos;
+	auto startbody=entity.startbody;
 
-	rfc2045_mimepos(rfcp, &start_pos, &end_pos, &start_body,
-			&dummy, &dummy);
+	ofstream o(messagetmp);
 
-	ofstream o(messagetmp.c_str());
-
-	if (fseek(fp, start_pos, SEEK_SET) < 0)
+	if (static_cast<size_t>(fp.pubseekpos(startpos)) != startpos)
 	{
 		statusBar->status(strerror(errno), statusBar->SYSERROR);
 		statusBar->beepError();
@@ -1627,13 +1607,13 @@ static bool prepareDraft(FILE *fp, struct rfc2045 *rfcp)
 
 	char lastCh='\n';
 
-	while (start_pos < start_body)
+	while (startpos < startbody)
 	{
-		int ch=getc(fp);
+		int ch=fp.sbumpc();
 
 		if (ch == EOF)
 			break;
-		++start_pos;
+		++startpos;
 
 		if (ch == '\r')
 			continue;
@@ -1648,13 +1628,10 @@ static bool prepareDraft(FILE *fp, struct rfc2045 *rfcp)
 	if (lastCh != '\n')
 		o << '\n';
 
-	clearerr(fp);
-
 	if (firstSect)
 	{
-		rfc2045_mimepos(firstSect, &start_pos, &end_pos, &start_body,
-				&dummy, &dummy);
-		if (!copyTo(fp, o, start_pos, start_body, firstSect, NULL,
+		if (!copyTo(fp, o, firstSect->startpos,
+			    firstSect->startbody, firstSect, NULL,
 			    done, estTotal))
 			return false;
 	}
@@ -1670,12 +1647,12 @@ static bool prepareDraft(FILE *fp, struct rfc2045 *rfcp)
 	return true;
 }
 
-static bool copyTo(FILE *fp, string tmpname, string txtname,
-		   off_t from, off_t to, struct rfc2045 *contentPart,
+static bool copyTo(rfc822::fdstreambuf &fp, string tmpname, string txtname,
+		   off_t from, off_t to, rfc2045::entity *contentPart,
 		   size_t messagesCompleted,
 		   size_t messagesEstimatedTotal)
 {
-	ofstream o(tmpname.c_str());
+	ofstream o(tmpname);
 
 	if (!copyTo(fp, o, from, to, contentPart, NULL,
 		    messagesCompleted,
@@ -1715,13 +1692,13 @@ void myFolderWriteDecoded::decoded(string s)
 	o << s;
 }
 
-static bool copyTo(FILE *fp, ostream &o, off_t from, off_t to,
-		   struct rfc2045 *contentPart,
+static bool copyTo(rfc822::fdstreambuf &fp, ostream &o, off_t from, off_t to,
+		   rfc2045::entity *contentPart,
 		   mail::autodecoder *decoderArg,
 		   size_t messagesCompleted,
 		   size_t messagesEstimatedTotal)
 {
-	if (fseek(fp, from, SEEK_SET) >= 0)
+	if (fp.pubseekpos(from) == from)
 	{
 		char buffer[BUFSIZ];
 		off_t startedPos=from;
@@ -1736,7 +1713,7 @@ static bool copyTo(FILE *fp, ostream &o, off_t from, off_t to,
 				n=to-from;
 
 			errno=EIO;
-			n=fread(buffer, 1, n, fp);
+			n=fp.sgetn(buffer, n);
 
 			if (n <= 0)
 			{
@@ -1770,23 +1747,16 @@ static bool copyTo(FILE *fp, ostream &o, off_t from, off_t to,
 
 		if (contentPart)
 		{
-			const char *content_type;
-                        const char *content_transfer_encoding;
-                        const char *charset;
+			myFolderWriteDecoded decoder{
+				o,
+				rfc2045::to_cte(
+					contentPart->content_transfer_encoding
+				)
+			};
 
-                        rfc2045_mimeinfo(contentPart, &content_type,
-                                         &content_transfer_encoding,
-                                         &charset);
-
-			off_t start_pos, end_pos, start_body, dummy;
-
-			rfc2045_mimepos(contentPart, &start_pos, &end_pos,
-					&start_body, &dummy, &dummy);
-
-			myFolderWriteDecoded
-				decoder(o, content_transfer_encoding);
-
-			return (copyTo(fp, o, start_body, end_pos, NULL,
+			return (copyTo(fp, o,
+				       contentPart->startbody,
+				       contentPart->endbody, NULL,
 				       &decoder,
 				       messagesCompleted,
 				       messagesEstimatedTotal));

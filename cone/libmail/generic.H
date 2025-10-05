@@ -7,6 +7,7 @@
 #define libmail_generic_H
 
 #include "libmail_config.h"
+#include "rfc2045/rfc2045.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -54,8 +55,7 @@
 
 #include "mail.H"
 #include "maildir/maildirkeywords.h"
-
-struct rfc2045;
+#include "rfc822/rfc822.h"
 
 LIBMAIL_START
 
@@ -78,31 +78,35 @@ public:
 					size_t messageNumber,
 					mail::callback::message &callback)=0;
 
-	virtual void genericGetMessageFd(std::string uid,
-					 size_t messageNumber,
-					 bool peek,
-					 int &fdRet,
-					 mail::callback &callback)=0;
+	virtual void genericGetMessageFd(
+		std::string uid,
+		size_t messageNumber,
+		bool peek,
+		std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+		mail::callback &callback)=0;
 	// NOTE: fdRet gets initialized, then the callback function is invoked.
 	// The file descriptor remains valid ONLY UNTIL the callback function
 	// terminates, at which point the file descriptor may be closed.
 	// The callback function must dup the descriptor, if it needs to.
 
-	virtual void genericGetMessageStruct(std::string uid,
-					     size_t messageNumber,
-					     struct rfc2045 *&structRet,
-					     mail::callback &callback)=0;
+	virtual void genericGetMessageStruct(
+		std::string uid,
+		size_t messageNumber,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback
+	)=0;
+
 	// NOTE: structRet gets initialized, then the callback function is
 	// invoked. structRet remains valid ONLY UNTIL the callback function
 	// terminates, at which point the structure may get deleted.
 
-	virtual void genericGetMessageFdStruct(std::string uid,
-					       size_t messageNumber,
-					       bool peek,
-					       int &fdRet,
-					       struct rfc2045 *&structret,
-
-					       mail::callback &callback);
+	virtual void genericGetMessageFdStruct(
+		std::string uid,
+		size_t messageNumber,
+		bool peek,
+		std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+		std::shared_ptr<rfc2045::entity> &structret,
+		mail::callback &callback);
 
 	virtual bool genericCachedUid(std::string uid)=0;
 
@@ -148,7 +152,7 @@ public:
 	// Generic keyword update for drivers that implement temporary
 	// keywords only (keywords are not saved, and are lost when the
 	// mail account is closed).
-	// 
+	//
 	// genericUpdateKeywords() is intended to be invoked directly by
 	// updateKeywords().  It will dutifully iterate over the supplied
 	// message set, and update each message's keywords, one by one.
@@ -203,16 +207,19 @@ private:
 
 	class CopyMimePart;
 
-	static void genericMakeMimeStructure(mimestruct &s,
-					     int fd, struct rfc2045 *rfcp,
-					     std::string mimeId,
-					     envelope *saveEnvelope);
+	static void genericMakeMimeStructure(
+		mimestruct &s,
+		std::shared_ptr<rfc822::fdstreambuf> fd,
+		rfc2045::entity &rfc2045p,
+		std::string mimeId,
+		envelope *saveEnvelope);
 	//
 	// Create a mimestruct, (and a envelope, if necessary)
 	// from a rfc2045 parse of a MIME section
 
 public:
-	static void genericBuildEnvelope(std::string header, std::string value,
+	static void genericBuildEnvelope(std::string_view header,
+					 std::string_view value,
 					 envelope &envelope);
 
 	class Decode;
@@ -240,4 +247,3 @@ private:
 LIBMAIL_END
 
 #endif
-

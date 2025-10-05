@@ -41,8 +41,9 @@ class mbox : public mail::account, public generic {
 	void resumed() override;
 	void handler(std::vector<pollfd> &fds, int &timeout) override;
 
-	bool calledDisconnected; // True if the disconnect callback was invoked
-	bool magicInbox;	// True if this account uses INBOX
+	// True if the disconnect callback was invoked
+	bool calledDisconnected{false};
+	bool magicInbox{false};	// True if this account uses INBOX
 	std::string inboxSpoolPath; // Path to the system spool inbox
 	std::string inboxMailboxPath; // $HOME/mboxAccount
 
@@ -272,20 +273,20 @@ class mbox : public mail::account, public generic {
 	// The currently open folder.
 
 	std::string currentFolder;
-	bool currentFolderReadOnly;	// Folder opened in readonly mode.
+	bool currentFolderReadOnly{false}; // Folder opened in readonly mode.
 
-	off_t folderSavedSize;
-	time_t folderSavedTimestamp;
+	off_t folderSavedSize{0};
+	time_t folderSavedTimestamp{0};
 	// Detect if someone else modified the folder file.
 
 	std::string multiLockFilename;
-	lock *multiLockLock;
+	lock *multiLockLock{nullptr};
 
-	bool folderDirty;
+	bool folderDirty{false};
 	// Set to true when message metadata has been modified, but the
 	// folder file has not been updated to reflect these changes.
 
-	bool newMessages;
+	bool newMessages{false};
 	// Set when index is updated from folderMessageIndex, and new messages
 	// were found.
 
@@ -309,12 +310,12 @@ class mbox : public mail::account, public generic {
 	// opened message:
 
 	std::string cachedMessageUid;	// The cached uid
-	struct rfc2045 *cachedMessageRfcp;
-	FILE *cachedMessageFp;
+	std::shared_ptr<rfc2045::entity> cachedMessageRfcp;
+	std::shared_ptr<rfc822::fdstreambuf> cachedMessageFp;
 
 	void resetFolder();
 
-	mail::callback::folder *currentFolderCallback;
+	mail::callback::folder *currentFolderCallback{nullptr};
 
 	// The application sees the following index:
 
@@ -448,22 +449,24 @@ public:
 	void genericGetMessageFd(std::string uid,
 				 size_t messageNumber,
 				 bool peek,
-				 int &fdRet,
+				 std::shared_ptr<rfc822::fdstreambuf> &fdRet,
 				 mail::callback &callback) override;
 
-	void genericGetMessageStruct(std::string uid,
-				     size_t messageNumber,
-				     struct rfc2045 *&structRet,
-				     mail::callback &callback) override;
+	void genericGetMessageStruct(
+		std::string uid,
+		size_t messageNumber,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback) override;
 
 	bool genericCachedUid(std::string uid) override;
 
-	void genericGetMessageFdStruct(std::string uid,
-				       size_t messageNumber,
-				       bool peek,
-				       int &fdRet,
-				       struct rfc2045 *&structret,
-				       mail::callback &callback) override;
+	void genericGetMessageFdStruct(
+		std::string uid,
+		size_t messageNumber,
+		bool peek,
+		std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+		std::shared_ptr<rfc2045::entity> &structRet,
+		mail::callback &callback) override;
 	void genericMarkRead(size_t messageNumber) override;
 };
 

@@ -10,74 +10,69 @@
 #include <fcntl.h>
 #include <cstring>
 
-mail::nntp::CacheTask::CacheTask(mail::callback *callbackArg,
-				 nntp &myserverArg,
-				 std::string groupNameArg,
-				 size_t msgNumArg,
-				 std::string uidArg,
-
-				 int *cacheFdArg,
-				 struct rfc2045 **cacheStructArg)
+mail::nntp::CacheTask::CacheTask(
+	mail::callback *callbackArg,
+	nntp &myserverArg,
+	std::string groupNameArg,
+	size_t msgNumArg,
+	std::string uidArg,
+	std::shared_ptr<rfc822::fdstreambuf> *cacheFdArg,
+	std::shared_ptr<rfc2045::entity> *cacheStructArg)
 	: FetchTaskBase(callbackArg, myserverArg, groupNameArg,
 			msgNumArg, uidArg, mail::readBoth),
 	  cacheFd(cacheFdArg),
-	  cacheStruct(cacheStructArg),
-	  tmpfile(NULL),
-	  rfc2045p(NULL)
+	  cacheStruct(cacheStructArg)
 {
 }
 
-mail::nntp::CacheTask::~CacheTask()
-{
-	if (tmpfile)
-		fclose(tmpfile);
-
-	if (rfc2045p)
-		rfc2045_free(rfc2045p);
-}
+mail::nntp::CacheTask::~CacheTask()=default;
 
 void mail::nntp::CacheTask::loggedIn()
 {
-	if ((tmpfile= ::tmpfile()) == NULL ||
-	    (rfc2045p=rfc2045_alloc()) == NULL)
+	this->tmpfile=std::make_shared<rfc822::fdstreambuf>(
+		rfc822::fdstreambuf::tmpfile()
+	);
+
+	if (!this->tmpfile->error())
 	{
-		fail(strerror(errno));
+		fcntl(this->tmpfile->fileno(), F_SETFD, FD_CLOEXEC);
+
+		FetchTaskBase::loggedIn();
 		return;
 	}
 
-	FetchTaskBase::loggedIn();
+	fail(strerror(errno));
 }
 
 void mail::nntp::CacheTask::fetchedText(std::string txt)
 {
-	if (fwrite(txt.c_str(), txt.size(), 1, tmpfile) != 1)
-		; // Ignore gcc warning
-	rfc2045_parse(rfc2045p, txt.c_str(), txt.size());
+	auto p=txt.data();
+	auto n=txt.size();
+
+	while (n)
+	{
+		auto done=tmpfile->sputn(p, n);
+		if (done <= 0)
+			break;
+
+		p += done;
+		n -= done;
+	}
+	rfc2045p.parse(txt.begin(), txt.end());
 }
 
 void mail::nntp::CacheTask::success(std::string msg)
 {
-	rfc2045_parse_partial(rfc2045p);
-
-	if (fflush(tmpfile) < 0 || ferror(tmpfile))
-	{
-		fail(strerror(errno));
-		return;
-	}
-
-	fcntl(fileno(tmpfile), F_SETFD, FD_CLOEXEC);
-
 	myserver->cleartmp();
 
 	myserver->cachedUid=uid;
-	myserver->genericTmpFp=tmpfile;
-	tmpfile=NULL;
-
-	myserver->genericTmpRfcp=rfc2045p;
-	rfc2045p=NULL;
+	myserver->genericTmpFp=std::move(tmpfile);
+	myserver->genericTmpRfcp=std::make_shared<rfc2045::entity>(
+		rfc2045p.parsed_entity()
+	);
 
 	if (cacheFd)
-		*cacheFd=fileno(myserver->genericTmpFp);
+		*cacheFd=myserver->genericTmpFp;
 
 	if (cacheStruct)
 		*cacheStruct=myserver->genericTmpRfcp;

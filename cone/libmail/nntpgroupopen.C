@@ -113,7 +113,7 @@ void mail::nntp::GroupOpenTask::selectedGroup(msgnum_t estimatedCount,
 		myNewsrc.newsgroupname=groupName;
 		myNewsrc.subscribed=false;
 
-		ifstream i(myserver->newsrcFilename.c_str());
+		ifstream i{myserver->newsrcFilename};
 
 		string line;
 

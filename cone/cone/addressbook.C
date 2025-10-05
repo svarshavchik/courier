@@ -1085,7 +1085,7 @@ bool AddressBookIndexScreen::processKey(const Curses::Key &key)
 		if (filename.size() == 0)
 			return true;
 
-		ifstream i(filename.c_str());
+		ifstream i{filename};
 
 		if (!i.is_open())
 		{
@@ -1216,7 +1216,7 @@ bool AddressBookIndexScreen::processKey(const Curses::Key &key)
 		if (filename.size() == 0)
 			return true;
 
-		ofstream o(filename.c_str());
+		ofstream o{filename};
 
 		if (!o.is_open())
 		{

@@ -69,10 +69,6 @@ void mail::tmpaccount::disconnect(const char *reason)
 mail::tmpaccount::~tmpaccount()
 {
 	disconnect("Disconnected.");
-	if (f)
-		fclose(f);
-	if (rfc2045p)
-		rfc2045_free(rfc2045p);
 }
 
 
@@ -262,8 +258,7 @@ void mail::tmpaccount::updateFolderIndexInfo(callback &cb)
 {
 	if (f && fInfo.deleted)
 	{
-		fclose(f);
-		f=NULL;
+		f.reset();
 
 		vector< pair<size_t, size_t> > dummy;
 
@@ -301,13 +296,14 @@ void mail::tmpaccount::genericMessageRead(std::string uid,
 {
 	if (f && fInfo.uid == uid)
 	{
-		if (fseek(f, 0L, SEEK_END) < 0 || fseek(f, 0L, SEEK_SET) < 0)
+		if (f->pubseekoff(0, std::ios_base::end) < 0 ||
+		    f->pubseekpos(0) != 0)
 		{
 			callback.fail(strerror(errno));
 			return;
 		}
 
-		mail::file rf(fileno(f), "r");
+		mail::file rf(f->fileno(), "r");
 
 		if (!rf)
 		{
@@ -338,7 +334,7 @@ void mail::tmpaccount::genericMessageSize(std::string uid,
 	{
 		struct stat stat_buf;
 
-		if (fstat(fileno(f), &stat_buf) == 0)
+		if (fstat(f->fileno(), &stat_buf) == 0)
 		{
 			callback.messageSizeCallback(0, stat_buf.st_size);
 			callback.success("Ok.");
@@ -351,24 +347,26 @@ void mail::tmpaccount::genericMessageSize(std::string uid,
 		callback.success("Ok.");
 }
 
-void mail::tmpaccount::genericGetMessageFd(std::string uid,
-					   size_t messageNumber,
-					   bool peek,
-					   int &fdRet,
-					   mail::callback &callback)
+void mail::tmpaccount::genericGetMessageFd(
+	std::string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	mail::callback &callback)
 {
-	struct rfc2045 *dummy;
+	std::shared_ptr<rfc2045::entity> dummy;
 
 	genericGetMessageFdStruct(uid, messageNumber, peek, fdRet, dummy,
 				  callback);
 }
 
-void mail::tmpaccount::genericGetMessageStruct(std::string uid,
-					       size_t messageNumber,
-					       struct rfc2045 *&structRet,
-					       mail::callback &callback)
+void mail::tmpaccount::genericGetMessageStruct(
+	std::string uid,
+	size_t messageNumber,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	mail::callback &callback)
 {
-	int dummy;
+	std::shared_ptr<rfc822::fdstreambuf> dummy;
 
 	genericGetMessageFdStruct(uid, messageNumber, true, dummy, structRet,
 				  callback);
@@ -379,22 +377,24 @@ bool mail::tmpaccount::genericCachedUid(std::string uid)
 	return f && uid == fInfo.uid;
 }
 
-void mail::tmpaccount::genericGetMessageFdStruct(std::string uid,
-						 size_t messageNumber,
-						 bool peek,
-						 int &fdRet,
-						 struct rfc2045 *&structret,
-						 mail::callback &callback)
+void mail::tmpaccount::genericGetMessageFdStruct(
+	std::string uid,
+	size_t messageNumber,
+	bool peek,
+	std::shared_ptr<rfc822::fdstreambuf> &fdRet,
+	std::shared_ptr<rfc2045::entity> &structRet,
+	mail::callback &callback)
 {
 	if (f && uid == fInfo.uid)
 	{
-		if (fseek(f, 0L, SEEK_END) < 0 || fseek(f, 0L, SEEK_SET) < 0)
+		if (f->pubseekoff(0, std::ios_base::end) < 0 ||
+		    f->pubseekpos(0) != 0)
 		{
 			callback.fail(strerror(errno));
 			return;
 		}
-		fdRet=fileno(f);
-		structret=rfc2045p;
+		fdRet=f;
+		structRet=rfc2045p;
 		if (!peek)
 			genericMarkRead(0);
 

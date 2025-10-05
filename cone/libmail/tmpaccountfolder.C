@@ -56,7 +56,7 @@ void mail::tmpaccount::folder::readFolderInfo( callback::folderInfo
 	callback1.success();
 	callback2.success("Ok");
 }
-	
+
 void mail::tmpaccount::folder::getParentFolder(callback::folderList &callback1,
 					       callback &callback2) const
 {
@@ -132,9 +132,7 @@ void mail::tmpaccount::folder::open(callback &openCallback,
 	if (isDestroyed(openCallback))
 		return;
 
-	if (account->f)
-		fclose(account->f);
-	account->f=NULL;
+	account->f.reset();
 
 	account->folder_callback= &folderCallback;
 	openCallback.success("Ok.");
