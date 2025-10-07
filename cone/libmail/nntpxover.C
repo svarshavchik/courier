@@ -88,7 +88,7 @@ void mail::nntp::XoverTask::doNextXoverRange()
 		} while (nextUid != msgUids.end() &&
 			 myserver->fixGenericMessageNumber( nextUid->second,
 							    nextUid->first) &&
-			 
+
 			 myserver->index[nextUid[-1].first].msgNum + 1 ==
 			 myserver->index[nextUid->first].msgNum);
 
@@ -234,11 +234,11 @@ void mail::nntp::XoverTask::processXover(const char *msg)
 
 	mail::envelope env;
 
-	mail::generic::genericBuildEnvelope("Subject", fields[1], env);
-	mail::generic::genericBuildEnvelope("From", fields[2], env);
-	mail::generic::genericBuildEnvelope("Date", fields[3], env);
-	mail::generic::genericBuildEnvelope("Message-ID", fields[4], env);
-	mail::generic::genericBuildEnvelope("References", fields[5], env);
+	mail::generic::genericBuildEnvelope("subject", fields[1], env);
+	mail::generic::genericBuildEnvelope("from", fields[2], env);
+	mail::generic::genericBuildEnvelope("date", fields[3], env);
+	mail::generic::genericBuildEnvelope("message-id", fields[4], env);
+	mail::generic::genericBuildEnvelope("references", fields[5], env);
 	// Not used, for now...
 
 	size_t msgNum= n - firstMsgNum + prevUid->first;
