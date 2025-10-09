@@ -19,6 +19,7 @@
 #include	"rfc822/rfc822hdr.h"
 #include	"rfc2045/rfc2045.h"
 #include	"rfc2045/rfc2045charset.h"
+#include	"rfc2045/encode.h"
 #include	<stdio.h>
 #include	<string.h>
 #include	<fcntl.h>
@@ -60,15 +61,12 @@ extern int verpflag;
 
 #define	PERMISSION	0660
 
-SubmitFile::SubmitFile() : rwrfcptr(0)
-{
-}
+SubmitFile::SubmitFile()=default;
 
 SubmitFile::~SubmitFile()
 {
 	interrupt();
 	current_submit_file=0;
-	if (rwrfcptr)	rfc2045_free(rwrfcptr);
 }
 
 // Start the ball rolling by specifying the envelope sender.
@@ -591,11 +589,6 @@ void SubmitFile::MessageStart()
 	}
 
 	datfile.fd(nfd);
-
-	rwrfcptr=rfc2045_alloc_ac();
-
-	if (rwrfcptr == NULL)
-		clog_msg_errno();
 	diskfull=checkfreespace(&diskspacecheck);
 }
 
@@ -621,32 +614,20 @@ size_t	l=strlen(p);
 	diskspacecheck -= l;
 
 	if (datfile.fail())	clog_msg_errno();
-	rfc2045_parse(rwrfcptr, p, strlen(p));
+	parser.parse(p, p+l);
 }
 
 /* ------------ */
 
-static int call_rfc2045_rewrite(struct rfc2045 *p, int fdin_arg, int fdout_arg,
-				const char *appname)
-{
-	struct rfc2045src *src=rfc2045src_init_fd(fdin_arg);
-	int rc;
-
-	if (!src)
-		return -1;
-
-	rc=rfc2045_rewrite(p, src, fdout_arg, appname);
-	rfc2045src_deinit(src);
-	return rc;
-}
-
 int SubmitFile::MessageEnd(unsigned rcptnum, int iswhitelisted,
 			   int filter_enabled)
 {
-int	is8bit=0, dorewrite=0, rwmode=0;
-const	char *mime=getenv("MIME");
-unsigned	n;
-struct	stat	stat_buf;
+	bool	is8bit{false}, dorewrite{false};
+	const	char *mime=getenv("MIME");
+	unsigned	n;
+	struct	stat	stat_buf;
+
+	rfc2045::convert rwmode{rfc2045::convert::standardize};
 
 	if (sizelimit && bytecount > sizelimit)
 	{
@@ -668,12 +649,23 @@ struct	stat	stat_buf;
 		return (1);
 	}
 
-	if (rwrfcptr->rfcviolation & RFC2045_ERR2COMPLEX)
+	auto entity=parser.parsed_entity();
+
 	{
-                std::cout <<
-                   "550 Message MIME complexity exceeds the policy maximum."
-		     << std::endl << std::flush;
-		return (1);
+		auto errors=entity.errors.describe();
+
+		if ((entity.errors.code & RFC2045_ERRFATAL) && !errors.empty())
+		{
+			auto b=errors.begin(), e=errors.end();
+
+			while (++b != e)
+			{
+				std::cout << "550-" << *b << "\n";
+			}
+
+			std::cout << "550 " << errors[0] << "\n" << std::flush;
+			return (1);
+		}
 	}
 
 	datfile << std::flush;
@@ -690,28 +682,28 @@ struct	stat	stat_buf;
 	{
 		if (mime && strcmp(mime, "7bit") == 0)
 		{
-			rwmode=RFC2045_RW_7BIT;
-			is8bit=0;
+			rwmode=rfc2045::convert::sevenbit;
+			is8bit=false;
 		}
 		if (mime && strcmp(mime, "8bit") == 0)
-			rwmode=RFC2045_RW_8BIT;
-		if (rfc2045_ac_check(rwrfcptr, rwmode))
-			dorewrite=1;
+			rwmode=rfc2045::convert::eightbit;
+
+		dorewrite=entity.autoconvert_check(rwmode);
 	}
 	else
-		(void)rfc2045_ac_check(rwrfcptr, 0);
+		(void)entity.autoconvert_check(rwmode);
 
-	if (rwrfcptr->hasraw8bitchars)
-		is8bit=1;
+	if (entity.hasraw8bitchars)
+		is8bit=true;
 
 	unlink(namefile("D", 1).c_str());	// Might be the GDBM file
 					// if receipients read from headers.
 	if (dorewrite)
 	{
-		int	fd1=dup(datfile.fd());
+		rfc822::fdstreambuf fd1buf{dup(datfile.fd())};
 		int	fd2;
 
-		if (fd1 < 0)	clog_msg_errno();
+		if (fd1buf.error())	clog_msg_errno();
 		datfile.close();
 		if (datfile.fail())	clog_msg_errno();
 
@@ -719,21 +711,49 @@ struct	stat	stat_buf;
 			O_RDWR|O_CREAT|O_TRUNC, PERMISSION)) < 0)
 			clog_msg_errno();
 
-		if (call_rfc2045_rewrite(rwrfcptr, fd1, fd2,
-					 PACKAGE " " VERSION))
+		rfc822::fdstreambuf fd2buf{fd2};
+
+		bool error=false;
+
+		rfc2045::entity::line_iter<false>::autoconvert(
+			entity,
+			[&]
+			(const char *ptr, size_t l)
+			{
+				while (l)
+				{
+					auto d=fd2buf.sputn(ptr, l);
+
+					if (d <= 0)
+					{
+						error=true;
+						return;
+					}
+
+					ptr += d;
+					l -= d;
+				}
+			},
+			fd1buf,
+			PACKAGE " " VERSION);
+
+		if (fd2buf.pubsync() < 0 || fd2buf.error())
+			error=true;
+
+		if (error)
 		{
 			clog_msg_errno();
 			std::cout << "431 Mail system full." << std::endl << std::flush;
 			return (1);
 		}
-		close(fd1);
 
 #if	EXPLICITSYNC
 		fsync(fd2);
 #endif
-		fstat(fd2, &stat_buf);
+		fstat(fd2buf.fileno(), &stat_buf);
 		close(fd2);
 
+		fd2={};
 		std::string p=namefile("D", 0);
 
 		unlink(p.c_str());
@@ -751,7 +771,7 @@ struct	stat	stat_buf;
 		if (datfile.fail())	clog_msg_errno();
 	}
 
-	if (rwrfcptr->rfcviolation & RFC2045_ERR8BITHEADER)
+	if (entity.all_errors() & RFC2045_ERR8BITHEADER)
 	{
 		/*
 		** One control file: add a COMCTLFILE_SMTPUTF8 record.
@@ -794,7 +814,7 @@ struct	stat	stat_buf;
 		closectl();
 	}
 
-	if (rwrfcptr->rfcviolation & RFC2045_ERR8BITHEADER)
+	if (entity.all_errors() & RFC2045_ERR8BITHEADER)
 	{
 		/*
 		** Multiple control files, add a COMCTLFILE_SMTPUTF8

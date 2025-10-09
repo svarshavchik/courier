@@ -764,7 +764,8 @@ int savemsg(std::istream &msgs, savemsg_sink &sink)
 	int	n;
 	std::string keyword= cmdget_s("KEYWORD"), keywords;
 	int	adminrequest=0;
-	struct rfc2045 *rfc2045_parser=rfc2045_alloc();
+
+	rfc2045::entity_parser<false> rfc2045_parser;
 
 	if (keyword.size() > 0)
 		keywords="["+keyword+"]";
@@ -893,64 +894,42 @@ int savemsg(std::istream &msgs, savemsg_sink &sink)
 		if (!dodelete)
 		{
 			sink.saveline(buf);
-			rfc2045_parse(rfc2045_parser, buf.c_str(), buf.size());
-			rfc2045_parse(rfc2045_parser, "\n", 1);
+
+			buf += "\n";
+
+			rfc2045_parser.parse(buf.begin(), buf.end());
 		}
 	}
 
 	sink.saveline("");
-	rfc2045_parse(rfc2045_parser, "\n", 1);
 
-	struct rfc822t *t=rfc822t_alloc_new(from.c_str(), 0, 0);
+	const std::string_view newline="\n";
 
-	if (!t)
+	rfc2045_parser.parse(newline.begin(), newline.end());
+
+	rfc822::tokens t{from};
+	rfc822::addresses a{t};
+
+	for (auto &address:a)
 	{
-		rfc2045_free(rfc2045_parser);
-		perror("malloc");
-		return (EX_TEMPFAIL);
+		if (address.address.empty())
+			continue;
+		from.clear();
+		address.display_address(unicode::utf_8,
+					std::back_inserter(from));
+		if (!from.empty())
+			break;
 	}
-
-	struct rfc822a *a=rfc822a_alloc(t);
-
-	if (!a)
-	{
-		rfc822t_free(t);
-		rfc2045_free(rfc2045_parser);
-		perror("malloc");
-		return (EX_TEMPFAIL);
-	}
-
-	char *nn=0;
-
-	if (a->naddrs > 0)
-	{
-		nn=rfc822_getaddr(a, 0);
-		if (!nn)
-		{
-			rfc822a_free(a);
-			rfc822t_free(t);
-			rfc2045_free(rfc2045_parser);
-			perror("malloc");
-			return (EX_TEMPFAIL);
-		}
-	}
-	rfc822a_free(a);
-	rfc822t_free(t);
-	if (nn)
-	{
-		from=nn;
-		free(nn);
-	}
-	else	from="";
-
 
 	int	first_line=1;
 
 	while (std::getline(msgs, buf).good())
 	{
 		sink.saveline(buf);
-		rfc2045_parse(rfc2045_parser, buf.c_str(), buf.size());
-		rfc2045_parse(rfc2045_parser, "\n", 1);
+
+		buf += "\n";
+		rfc2045_parser.parse(buf.begin(), buf.end());
+		buf.pop_back();
 
 		// Check for "subscribe/unsubscribe on the first line" wankers.
 
@@ -974,10 +953,8 @@ int savemsg(std::istream &msgs, savemsg_sink &sink)
 			first_line=0;
 	}
 
-	bool smtputf8=rfc2045_parser->rfcviolation & RFC2045_ERR8BITHEADER
-		? true:false;
-
-	rfc2045_free(rfc2045_parser);
+	bool smtputf8=rfc2045_parser.parsed_entity().all_errors() &
+		RFC2045_ERR8BITHEADER;
 
 	if (smtputf8)
 	{

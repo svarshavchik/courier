@@ -17,7 +17,7 @@
 #endif
 #include	<fstream>
 #include	<time.h>
-
+#include	"rfc2045/rfc2045.h"
 #include	<list>
 #include	<string>
 #include	<set>
@@ -62,7 +62,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-struct	rfc2045;
 struct	rw_transport;
 
 class RcptFilterInfo {
@@ -97,7 +96,7 @@ static	SubmitFile *current_submit_file;
 	time_t		ctltimestamp;
 	std::string	basemsgid;
 
-	struct		rfc2045 *rwrfcptr;
+	rfc2045::entity_parser<false> parser;
 	const char 	*frommta;
 	unsigned long	bytecount;
 	unsigned long	sizelimit;

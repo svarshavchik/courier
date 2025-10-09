@@ -164,46 +164,24 @@ static void outhtml(std::ostream &o, const char *t)
 
 static int checksub(std::string msg)
 {
-	std::string from=header_s(msg, "from");
+	std::string fromhdr=header_s(msg, "from");
 
-	struct rfc822t *t=rfc822t_alloc_new(from.c_str(), 0, 0);
+	rfc822::tokens t{fromhdr};
+	rfc822::addresses a{t};
 
-	if (!t)
+	std::string from;
+
+	for (auto &address:a)
 	{
-		perror("malloc");
-		return (EX_TEMPFAIL);
-	}
+		if (address.address.empty())
+			continue;
 
-struct rfc822a *a=rfc822a_alloc(t);
+		address.address.display_address(unicode::utf_8,
+						std::back_inserter(from));
 
-	if (!a)
-	{
-		rfc822t_free(t);
-		perror("malloc");
-		return (EX_TEMPFAIL);
+		if (!from.empty())
+			break;
 	}
-
-char *nn=0;
-
-	if (a->naddrs > 0)
-	{
-		nn=rfc822_getaddr(a, 0);
-		if (!nn)
-		{
-			rfc822a_free(a);
-			rfc822t_free(t);
-			perror("malloc");
-			return (EX_TEMPFAIL);
-		}
-	}
-	rfc822a_free(a);
-	rfc822t_free(t);
-	if (nn)
-	{
-		from=nn;
-		free(nn);
-	}
-	else	from="";
 
 	int	rc=is_subscriber(from.c_str());
 

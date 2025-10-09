@@ -526,44 +526,26 @@ std::string returnaddr(std::string msg, const char *explicit_address)
 //
 //  Grabbed the header, must now parse an address out of it.
 //
-			struct rfc822t *t=rfc822t_alloc_new(addr.c_str(),
-							    NULL, NULL);
+			std::string header_addr{addr};
+			rfc822::tokens t{header_addr};
+			rfc822::addresses a{t};
 
-			if (!t)
+			addr.clear();
+			for (auto &address:a)
 			{
-				perror("malloc");
-				exit(EX_OSERR);
+				if (address.address.empty())
+					continue;
+
+				address.display_address(
+					unicode::utf_8,
+					std::back_inserter(addr)
+				);
+				if (!addr.empty())
+					break;
 			}
 
-		struct rfc822a *a=rfc822a_alloc(t);
-
-			if (!a)
-			{
-				perror("malloc");
-				exit(EX_OSERR);
-			}
-
-			if (a->naddrs <= 0)
-			{
-				addr="";
-				rfc822a_free(a);
-				rfc822t_free(t);
-				return (addr);
-			}
-
-		char	*s=rfc822_getaddr(a, 0);
-
-			rfc822a_free(a);
-			rfc822t_free(t);
-
-			if (!s)
-			{
-				perror("malloc");
-				exit(EX_OSERR);
-			}
-
-			addr=s;
-			free(s);
+			if (addr.empty())
+				return addr;
 		}
 	}
 

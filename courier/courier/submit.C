@@ -2028,29 +2028,24 @@ char	*sender=rfc822_gettok(addresst);
 			if (headername == "from" &&
 			    !bofh_checkspf("BOFHSPFFROM", "off", "off"))
 			{
-				struct rfc822t *t=
-					rfc822t_alloc_new(header.c_str(),
-							  NULL, NULL);
+				rfc822::tokens t{header};
+				rfc822::addresses a{t};
 
-				if (!t)
-					clog_msg_errno();
-
-				struct rfc822a *a=rfc822a_alloc(t);
-				if (!a)
-					clog_msg_errno();
-
-				if (a->naddrs > 0 && a->addrs[0].tokens)
+				for (auto &address:a)
 				{
-					char *s=rfc822_getaddr(a, 0);
+					if (address.address.empty())
+						continue;
 
-					if (!s)
-						clog_msg_errno();
+					address.display_address(
+						unicode::utf_8,
+						std::back_inserter(
+							spf_from_address
+						)
+					);
 
-					spf_from_address=s;
-					free(s);
+					if (!spf_from_address.empty())
+						break;
 				}
-				rfc822a_free(a);
-				rfc822t_free(t);
 
 				if (mf->mailfrom_passed_spf &&
 				    bofh_checkspf("BOFHSPFFROM", "off",

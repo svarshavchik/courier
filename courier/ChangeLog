@@ -1,3 +1,13 @@
+2025-10-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone: Makefile fixes
+
+	* couriermlm: use the new C++ MIME library to parse mailing list
+	commands.
+
+	* courier/submit2.C: use the new C++ MIME library to validate
+	messages and extract From: headers for SPF lookups.
+
 2025-09-09  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* mailbot: reimplemented in C++ using the new C++ MIME library.

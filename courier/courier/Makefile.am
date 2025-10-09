@@ -379,7 +379,7 @@ couriermlm_DEPENDENCIES=../afx/libafx.a ../libs/rfc2045/librfc2045.la \
         ../libs/rfc822/librfc822.la \
 	../libs/liblock/liblock.la ../libs/random128/librandom128.la ../libs/md5/libmd5.la \
 	../libs/numlib/libnumlib.la @dblibrary@
-couriermlm_LDADD=$(couriermlm_DEPENDENCIES) -lcourier-unicode
+couriermlm_LDADD=$(couriermlm_DEPENDENCIES) -lcourier-unicode -lpthread
 
 # webmlm
 
