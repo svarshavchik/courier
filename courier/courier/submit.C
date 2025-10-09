@@ -47,6 +47,7 @@
 
 #include	<algorithm>
 #include	<functional>
+#include	<iterator>
 
 #include	<ctype.h>
 

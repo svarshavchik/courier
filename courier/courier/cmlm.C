@@ -7,6 +7,7 @@
 
 #include	"afx/afx.h"
 #include	"rfc822/rfc822.h"
+#include	"rfc822/rfc2047.h"
 #include	"rfc2045/rfc2045.h"
 #include	"random128/random128.h"
 #include	"numlib/numlib.h"
@@ -20,6 +21,7 @@
 #include	<sstream>
 #include	<iomanip>
 #include	<fstream>
+#include	<iterator>
 #include	<signal.h>
 #include	<sys/types.h>
 #include	<sys/stat.h>

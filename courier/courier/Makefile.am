@@ -221,7 +221,7 @@ submit_LDADD=../libs/rfc1035/librfc1035.a \
 	../libs/md5/libmd5.la ../libs/random128/librandom128.la \
 	../libs/soxwrap/libsoxwrap.a \
 	`cat ../libs/soxwrap/soxlibs.dep` \
-	../afx/libafx.a @NETLIBS@ @LIBIDN_LIBS@ -lcourierauth
+	../afx/libafx.a @NETLIBS@ @LIBIDN_LIBS@ -lcourierauth -lpthread
 
 submit_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 

@@ -13,6 +13,7 @@
 #include	<courier-unicode.h>
 #include	<iostream>
 #include	<sstream>
+#include	<iterator>
 #include	<set>
 #include	<list>
 #include	<vector>

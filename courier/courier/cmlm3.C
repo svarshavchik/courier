@@ -8,6 +8,7 @@
 #include	"cmlmsublist.h"
 #include	"dbobj.h"
 #include	"rfc822/rfc822.h"
+#include	"rfc822/rfc2047.h"
 #include	"numlib/numlib.h"
 
 #include <sstream>
@@ -18,9 +19,11 @@
 #include	<iostream>
 #include	<fstream>
 #include	<list>
+#include	<iterator>
 #include	<sys/types.h>
 #include	<sys/stat.h>
 #include	<sysexits.h>
+
 #if HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
