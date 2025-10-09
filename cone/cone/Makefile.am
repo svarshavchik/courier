@@ -180,7 +180,7 @@ cone_LDADD=../libs/tcpd/libtlsclient.la \
 	../libs/soxwrap/libsoxwrap.a \
 	`cat ../curses/curseslib ../libs/soxwrap/soxlibs.dep` \
 	 @LIBINTL@ @XMLLIBS@ \
-	`. ../libs/tcpd/couriertls.config; echo $$cryptlibs`
+	`. ../libs/tcpd/couriertls.config; echo $$cryptlibs` -lpthread
 
 leaf_DEPENDENCIES=../curses/libcurses.a libdummyspellchecker.a \
 	../libmail/objectmonitor.o \
