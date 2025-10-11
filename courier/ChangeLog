@@ -1,3 +1,8 @@
+2025-10-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier.spec.in: Fix RPM spec file to be compatible with the
+	unified bin directory hierarchy.
+
 2025-10-08  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* cone: Makefile fixes

@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2024 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2025 Double Precision, Inc.  See COPYING for
 # distribution information.
 #
 
@@ -8,7 +8,7 @@
 %{?_without_fax:    %define with_fax 0}
 %{!?_without_fax:   %define with_fax 1}
 
-%define alternatives %(test -x /usr/sbin/alternatives && echo 1 || echo 0)
+%define alternatives %(test -x %{_sbindir}/alternatives && echo 1 || echo 0)
 
 %define is_rhel %(grep -q 'ID_LIKE=.*rhel\\b' /etc/os-release && echo 1 || echo 0)
 
@@ -62,11 +62,11 @@
 
 # systemd-rpm-macros
 %define STOP_COURIER \
-        if /usr/bin/systemctl --quiet is-active courier \
+        if %{_bindir}/systemctl --quiet is-active courier \
 	then \
 	     if test -d %{STATEDIR}/courier \
 	     then \
-		/usr/bin/systemctl stop courier \
+		%{_bindir}/systemctl stop courier \
 		touch %{STATEDIR}/courier/restart \
 	     fi \
 	fi
@@ -74,9 +74,9 @@
 %define RESTART_COURIER \
 	if test -f %{STATEDIR}/courier/restart \
 	then \
-	     /usr/bin/systemctl reset-failed courier \
+	     %{_bindir}/systemctl reset-failed courier \
 	     rm -f %{STATEDIR}/courier/restart \
-	     /usr/bin/systemctl start courier \
+	     %{_bindir}/systemctl start courier \
 	fi
 %else
 %define STOP_COURIER		%{nil}
@@ -122,7 +122,7 @@ Requires:         coreutils
 Requires:	  wget
 %if %alternatives
 Obsoletes:        courier-sendmail-wrapper < @PACKAGE_VERSION@
-Provides:         /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail /usr/bin/newaliases
+Provides:         %{_sbindir}/sendmail %{_bindir}/mailq %{_bindir}/rmail %{_bindir}/newaliases
 %endif
 
 BuildRequires:    gcc-c++
@@ -167,7 +167,7 @@ BuildRequires:      openssl
 BuildRequires:      openssl-devel
 BuildRequires:      openssl-perl
 %else
-BuildRequires:      libgcrypt-devel gnutls-devel /usr/bin/certtool
+BuildRequires:      libgcrypt-devel gnutls-devel %{_bindir}/certtool
 Requires:	    gnutls-utils
 %endif
 
@@ -318,7 +318,7 @@ Available rpmbuild rebuild options:
 
 %if ! %alternatives
 %description sendmail-wrapper
-This package contains two soft links from /usr/sbin/sendmail and
+This package contains two soft links from %{_sbindir}/sendmail and
 /usr/lib/sendmail to %{courier_bindir}/sendmail.  This allows application
 that use sendmail to transparently use Courier for sending mail.
 %endif
@@ -431,7 +431,7 @@ Manual pages:                    %{courier_mandir}
 
 EOF
 
-/usr/bin/perl -p -i -e 's@^webadmin=.*@webadmin="%{apache_cgibindir}/webadmin"@' \
+%{_bindir}/perl -p -i -e 's@^webadmin=.*@webadmin="%{apache_cgibindir}/webadmin"@' \
 	      courier.sysvinit || exit 1
 
 # -----------------------------------------------------------------------------
@@ -484,7 +484,7 @@ echo '%{initdir}/courier 755 bin bin config' >>permissions.dat
 #  Translate permissions.dat to spec file format
 #
 
-/usr/bin/perl -e '
+%{_bindir}/perl -e '
 $buildroot=$ENV{"RPM_BUILD_ROOT"};
 $prefix="%{courier_prefix}";
 $exec_prefix="%{courier_prefix}";
@@ -720,14 +720,20 @@ EOF
 # Create sendmail soft links manually.
 #
 
-%{__mkdir_p} $RPM_BUILD_ROOT/usr/sbin
+%{__mkdir_p} $RPM_BUILD_ROOT/%{_sbindir}
 %{__mkdir_p} $RPM_BUILD_ROOT/usr/lib
-%{__mkdir_p} $RPM_BUILD_ROOT/usr/bin
+%{__mkdir_p} $RPM_BUILD_ROOT/%{_bindir}
 
 
 %if %alternatives
-	%{__ln_s} ../sbin/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
-	%{__ln_s} ../sbin/sendmail $RPM_BUILD_ROOT/usr/bin/sendmail
+	%{__ln_s} `realpath --relative-to /usr/lib -m %{_sbindir}/sendmail` \
+		$RPM_BUILD_ROOT/usr/lib/sendmail
+
+	if test "%{_sbindir}" != "%{_bindir}"
+	then
+	    echo '%attr(-, root, root) %{_bindir}/sendmail' >>filelist
+	    %{__ln_s} `realpath --relative-to %{_bindir} -m %{_sbindir}/sendmail` $RPM_BUILD_ROOT%{_bindir}/sendmail
+	fi
 %else
 
 # Old fashioned stuff
@@ -738,9 +744,13 @@ EOF
 %attr(-, root, root) /usr/lib/sendmail
 EOF
 
-	%{__ln_s} `realpath --relative-to /usr/sbin -m %{courier_bindir}/sendmail` $RPM_BUILD_ROOT/usr/sbin/sendmail
+	if test "%{_sbindir}" != "%{_bindir}"
+	then
+	    %{__ln_s} `realpath --relative-to %{_sbindir} -m %{courier_bindir}/sendmail` $RPM_BUILD_ROOT%{_sbindir}/sendmail
+	fi
+
 	%{__ln_s} `realpath --relative-to /usr/lib -m %{courier_bindir}/sendmail` $RPM_BUILD_ROOT/usr/lib/sendmail
-	%{__ln_s} `realpath --relative-to /usr/bin -m %{courier_bindir}/sendmail` $RPM_BUILD_ROOT/usr/bin/sendmail
+	%{__ln_s} `realpath --relative-to %{_bindir} -m %{courier_bindir}/sendmail` $RPM_BUILD_ROOT%{_bindir}/sendmail
 %endif
 
 #
@@ -771,7 +781,7 @@ for f in filelist filelist.pop3 filelist.imap filelist.webmail
 do
 	ff=`echo $f | %{__sed} 's/filelist/configlist/'`
 
-	/usr/bin/perl -e '
+	%{_bindir}/perl -e '
 		while (<>)
 		{
 			chop;
@@ -805,7 +815,7 @@ echo '%%attr(511, root, root) %{apache_cgibindir}/webadmin' >filelist.webadmin
 if test -f %{initdir}/courier
 then
 	/sbin/chkconfig --del courier
-	/usr/bin/systemctl stop courier.service || :
+	%{_bindir}/systemctl stop courier.service || :
 fi
 %endif
 
@@ -821,7 +831,7 @@ fi
 %systemd_post courier.service
 if [ $1 -eq 1 ]
 then
-    /usr/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+    %{_bindir}/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 %else
 /sbin/chkconfig --del courier
@@ -830,30 +840,30 @@ fi
 
 %{courier_datadir}/sysconftool `%{__cat} %{courier_datadir}/configlist` >/dev/null
 %if %alternatives
-/usr/sbin/alternatives --install /usr/sbin/sendmail mta %{courier_bindir}/sendmail 91 \
-   --slave /usr/bin/mailq mta-mailq %{courier_bindir}/mailq \
-   --slave /usr/bin/rmail mta-rmail %{courier_bindir}/rmail \
-   --slave /usr/bin/newaliases mta-newaliases %{courier_sbindir}/makealiases %initscript_courier
+%{_sbindir}/alternatives --install %{_sbindir}/sendmail mta %{courier_bindir}/sendmail 91 \
+   --slave %{_bindir}/mailq mta-mailq %{courier_bindir}/mailq \
+   --slave %{_bindir}/rmail mta-rmail %{courier_bindir}/rmail \
+   --slave %{_bindir}/newaliases mta-newaliases %{courier_sbindir}/makealiases %initscript_courier
 %endif
 
 %triggerpostun -- courier-sendmail-wrapper
 %if %alternatives
-/usr/sbin/alternatives --install /usr/sbin/sendmail mta %{courier_bindir}/sendmail 91 \
-   --slave /usr/bin/mailq mta-mailq %{courier_bindir}/mailq \
-   --slave /usr/bin/rmail mta-rmail %{courier_bindir}/rmail \
-   --slave /usr/bin/newaliases mta-newaliases %{courier_sbindir}/makealiases %initscript_courier
+/usr/sbin/alternatives --install %{_sbindir}/sendmail mta %{courier_bindir}/sendmail 91 \
+   --slave %{_bindir}/mailq mta-mailq %{courier_bindir}/mailq \
+   --slave %{_bindir}/rmail mta-rmail %{courier_bindir}/rmail \
+   --slave %{_bindir}/newaliases mta-newaliases %{courier_sbindir}/makealiases %initscript_courier
 %endif
 
 %postun
 %if %alternatives
 if test "$1" = 0 ; then
-	/usr/sbin/alternatives --remove mta %{courier_bindir}/sendmail
+	%{_sbindir}/alternatives --remove mta %{courier_bindir}/sendmail
 fi
 %endif
 
 %if %using_systemd
 
-/usr/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+%{_bindir}/systemctl daemon-reload >/dev/null 2>&1 || :
 
 if test "$1" = "0"
 then
@@ -979,7 +989,6 @@ fi
 
 %files -f filelist
 %if %alternatives
-%attr(-, root, root) /usr/bin/sendmail
 %attr(-, root, root) /usr/lib/sendmail
 %endif
 %attr(644, root, root) %config(noreplace) /etc/pam.d/esmtp
