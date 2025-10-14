@@ -1,3 +1,5 @@
+3.2.0
+
 2025-09-09  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* mailbot: reimplemented in C++ using the new C++ MIME library.

@@ -1,3 +1,5 @@
+1.5.0
+
 2025-10-11  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier.spec.in: Fix RPM spec file to be compatible with the
