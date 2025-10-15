@@ -1,3 +1,5 @@
+1.16
+
 2025-10-05  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* cone/cursesedit.C (CursesEdit::addAttachment): Fix ineffective
