@@ -358,7 +358,7 @@ time_t	current_time;
 				}
 
 				info[j].pendel=strcpy(
-					courier_malloc(strlen(line)+1),
+					(char *)courier_malloc(strlen(line)+1),
 					line);
 				close(info[j].cmdpipe);
 				info[j].cmdpipe= -1;
@@ -380,7 +380,7 @@ time_t	current_time;
 			if (i < module_nchildren)
 			{
 				info[i].pendel=strcpy(
-					courier_malloc(strlen(line)+1),
+					(char *)courier_malloc(strlen(line)+1),
 					line);
 				continue;
 			}
@@ -456,7 +456,7 @@ pid_t	pid;
 		;
 
 	if (info[i].host)	free(info[i].host);
-	memcpy(info[i].host=courier_malloc(hostplen+1), hostp, hostplen);
+	memcpy(info[i].host=(char *)courier_malloc(hostplen+1), hostp, hostplen);
 	info[i].host[hostplen]=0;
 
 	if (pipe(pipebuf) < 0)	clog_msg_errno();
@@ -523,10 +523,12 @@ size_t	l=strlen(line);
 
         iov[0].iov_base=(caddr_t)line;
         iov[0].iov_len=l;
-	iov[1].iov_base="\n";
+
+	static char newline_str[]="\n";
+	iov[1].iov_base=newline_str;
 	iov[1].iov_len=1;
 
-	if (writev(info[i].cmdpipe, iov, 2) != l+1)
+	if ((size_t)writev(info[i].cmdpipe, iov, 2) != l+1)
 	{
 		clog_msg_prerrno();
 		/* This is usually because the process has terminated,

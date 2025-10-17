@@ -391,7 +391,8 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 	int smtproutes_flags=0;
 	char *smtproute=smtproutes(host,
 				   &smtproutes_flags);
-	struct esmtp_info *p=malloc(sizeof(struct esmtp_info));
+	struct esmtp_info *p=(struct esmtp_info *)
+		malloc(sizeof(struct esmtp_info));
 
 	if (!p)
 		abort();
@@ -763,7 +764,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 					if (l > 10000)	continue;
 							/* Script kiddies... */
 					++p;
-					s=malloc(l);
+					s=(char *)malloc(l);
 					if (!s)
 						abort();
 					*s=0;
@@ -1018,7 +1019,7 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 			return (-1);
 		}
 
-		q=malloc(strlen(p)+40);
+		q=(char *)malloc(strlen(p)+40);
 		if (!q)
 			abort();
 		strcat(strcpy(q, "TLS_TRUSTCERTS="), p);
@@ -1028,7 +1029,7 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 
 	if (p && atoi(p))
 	{
-		verify_domain=malloc(sizeof("-verify=")+strlen(hostname));
+		verify_domain=(char *)malloc(sizeof("-verify=")+strlen(hostname));
 		if (!verify_domain)
 			abort();
 		strcat(strcpy(verify_domain, "-verify="), hostname);
@@ -1052,7 +1053,9 @@ static int esmtp_enable_tls(struct esmtp_info *info,
 
 	if (domain_sts_mode == sts_mode_enforce)
 	{
-		vars[vars_n++]="TLS_VERIFYPEER=PEER";
+		static char tls_verifypeer_str[]="TLS_VERIFYPEER=PEER";
+
+		vars[vars_n++]=tls_verifypeer_str;
 	}
 	vars[vars_n]=0;
 	cinfo.override_vars=vars;
@@ -1817,7 +1820,7 @@ int esmtp_misccommand(struct esmtp_info *info,
 		      const char *cmd,
 		      void *arg)
 {
-	char *with_crlf=malloc(strlen(cmd)+3);
+	char *with_crlf=(char *)malloc(strlen(cmd)+3);
 
 	if (!with_crlf)
 		abort();
@@ -1936,11 +1939,13 @@ static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
 				     struct esmtp_mailfrom_info *mf_info,
 				     const char **errmsg)
 {
-	char	*bodyverb="", *verpverb="", *retverb="";
-	char	*oenvidverb="", *sizeverb="";
-	char	*smtputf8verb="";
+	static char nullstr[]="";
 
-	const char *seclevel="";
+	char	*bodyverb=nullstr, *verpverb=nullstr, *retverb=nullstr;
+	char	*oenvidverb=nullstr, *sizeverb=nullstr;
+	char	*smtputf8verb=nullstr;
+
+	const char *seclevel=nullstr;
 	char	*mailfromcmd;
 	size_t l;
 
@@ -1949,14 +1954,20 @@ static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
 	if (errmsg)
 		*errmsg=0;
 
+	static char eight[]=" BODY=8BITMIME";
+	static char seven[]=" BODY=7BIT";
+
 	if (info->has8bitmime)	/* ESMTP 8BITMIME capability */
-		bodyverb= mf_info->is8bitmsg ? " BODY=8BITMIME":" BODY=7BIT";
+		bodyverb= mf_info->is8bitmsg ? eight:seven;
+
+	static char verp_str[]=" VERP";
 
 	if (info->hasverp && mf_info->verp)
-		verpverb=" VERP";	/* ESMTP VERP capability */
+		verpverb=verp_str;	/* ESMTP VERP capability */
 
+	static char smtputf8_str[]=" SMTPUTF8";
 	if (info->hassmtputf8 && mf_info->issmtputf8)
-		smtputf8verb=" SMTPUTF8";
+		smtputf8verb=smtputf8_str;
 	else
 	{
 		const char *p;
@@ -1975,14 +1986,18 @@ static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
 	}
 
 	/* ESMTP DSN capability */
+
+	static char retfull_str[]=" RET=FULL";
+	static char rethdrs_str[]=" RET=HDRS";
+
 	if (info->hasdsn && mf_info->dsn_format)
-		retverb=mf_info->dsn_format == 'F' ? " RET=FULL":
-			mf_info->dsn_format == 'H' ? " RET=HDRS":"";
+		retverb=mf_info->dsn_format == 'F' ? retfull_str:
+			mf_info->dsn_format == 'H' ? rethdrs_str:nullstr;
 
 	if (info->hasdsn && mf_info->envid)
 	{
-		oenvidverb=malloc(sizeof(" ENVID=")+10+
-				  strlen(mf_info->envid));
+		oenvidverb=(char *)malloc(sizeof(" ENVID=")+10+
+					  strlen(mf_info->envid));
 		if (!oenvidverb)
 			abort();
 		strcat(strcpy(oenvidverb, " ENVID="), mf_info->envid);
@@ -2002,7 +2017,7 @@ static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
 				s=s/70 * 100;
 
 			libmail_str_off_t(s, buf);
-			sizeverb=malloc(sizeof(" SIZE=")+strlen(buf));
+			sizeverb=(char *)malloc(sizeof(" SIZE=")+strlen(buf));
 			if (!sizeverb)
 				abort();
 			strcat(strcpy(sizeverb, " SIZE="), buf);
@@ -2024,7 +2039,7 @@ static char *esmtp_mailfrom_cmd_idna(struct esmtp_info *info,
 		strlen(smtputf8verb)+
 		strlen(seclevel);
 
-	mailfromcmd=malloc(l);
+	mailfromcmd=(char *)malloc(l);
 
 	if (!mailfromcmd)
 		abort();
@@ -2232,7 +2247,7 @@ static char *rcpt_data(struct esmtp_info *info,
 		mk_one_receip(info, (i<nreceips ? &receips[i]:NULL),
 			      count, &l);
 
-	p=malloc(l);
+	p=(char *)malloc(l);
 	if (!p)
 		abort();
 	ptr=p;
@@ -2371,7 +2386,7 @@ static int do_pipeline_rcpt_2(struct esmtp_info *info,
 
 		if (!info->haspipelining)
 		{
-			int i;
+			size_t i;
 
 			for (i=0; i<l; ++i)
 				if (rcpt_data_cmd[i] == '\n')
@@ -2547,9 +2562,9 @@ static char *logsuccessto(struct esmtp_info *info)
 	char	*p;
 
 	esmtp_sockipname(info, buf);
-	p=malloc(sizeof("delivered:  []")+
-		 (info->sockfdaddrname ?
-		  strlen(info->sockfdaddrname):0)+strlen(buf));
+	p=(char *)malloc(sizeof("delivered:  []")+
+			 (info->sockfdaddrname ?
+			  strlen(info->sockfdaddrname):0)+strlen(buf));
 
 	if (!p)
 		abort();
@@ -2940,7 +2955,7 @@ int esmtp_send(struct esmtp_info *info,
 	}
 	free(mailfroms);
 
-	rcptok=malloc(sizeof(int)*(nreceipients+1));
+	rcptok=(int *)malloc(sizeof(int)*(nreceipients+1));
 	if (!rcptok)
 		abort();
 

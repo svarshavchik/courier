@@ -330,7 +330,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 	if ((cn=ctlfile_searchfirst(ctf, COMCTLFILE_MSGSOURCE)) >= 0 &&
 	    backscatter(ctf->lines[cn]+1))
 	{
-		int i;
+		size_t i;
 
 		for (i=0; i<del->nreceipients; i++)
 		{
@@ -477,7 +477,7 @@ static void talking2(struct esmtp_info *info,
 	char	*p;
 
 	esmtp_sockipname(info, buf);
-	p=courier_malloc(strlen(info->sockfdaddrname ?
+	p=(char *)courier_malloc(strlen(info->sockfdaddrname ?
 				info->sockfdaddrname:"")+strlen(buf)+
 		sizeof(" []"));
 	strcat(strcat(strcat(strcpy(p,
@@ -514,7 +514,7 @@ static void connect_error1(struct moduledel *del, struct ctlfile *ctf, int n)
 /* Log reply received */
 
 static void smtp_msg(struct moduledel *del, struct ctlfile *ctf,
-		     int rcpt_num)
+		     size_t rcpt_num)
 {
 	unsigned	i;
 
@@ -534,7 +534,7 @@ static void smtp_msg(struct moduledel *del, struct ctlfile *ctf,
 }
 
 static void reply(struct moduledel *del, struct ctlfile *ctf, const char *msg,
-		  int rcpt_num)
+		  size_t rcpt_num)
 {
 	unsigned        i;
 
@@ -556,7 +556,7 @@ static void reply(struct moduledel *del, struct ctlfile *ctf, const char *msg,
 /* Log the command sent to remote server */
 
 static void sent(struct moduledel *del, struct ctlfile *ctf, const char *msg,
-		 int rcpt_num)
+		 size_t rcpt_num)
 {
 	unsigned        i;
 
@@ -822,7 +822,9 @@ static struct esmtp_rcpt_info *mk_rcpt_info(struct moduledel *del,
 	unsigned n=del->nreceipients;
 	unsigned i;
 
-	struct esmtp_rcpt_info *p=malloc(n*sizeof(struct esmtp_rcpt_info));
+	struct esmtp_rcpt_info *p=
+		(struct esmtp_rcpt_info *)
+		malloc(n*sizeof(struct esmtp_rcpt_info));
 
 	if (!p)
 		abort();

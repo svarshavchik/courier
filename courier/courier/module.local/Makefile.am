@@ -78,7 +78,7 @@ install-perms-local:
 	@echo $(moduledir)/courierdeliver 755 @mailuser@ @mailgroup@ >>permissions.dat
 	@echo $(bindir)/preline 755 @mailuser@ @mailgroup@ >>permissions.dat
 
-librewrite_la_SOURCES=local.c dotcourier.c
+librewrite_la_SOURCES=local.C dotcourier.c
 librewrite_la_LDFLAGS=-static
 
 libexecdir.h: config.status

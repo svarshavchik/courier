@@ -39,7 +39,7 @@
 #define DEFAULTNAME	"alias@"
 
 
-extern char *local_dotcourier(const char *, const char *, const char **);
+extern "C" char *local_dotcourier(const char *, const char *, const char **);
 
 static void rw_local(struct rw_info *, void (*)(struct rw_info *));
 static void rw_del_local(struct rw_info *, void (*)(struct rw_info *),
@@ -273,7 +273,7 @@ static void rw_del_local2(struct rw_info *rwi,
 
 		if (atdomain)
 		{
-			alloc_buf=malloc(strlen(addr)+strlen(atdomain)+2);
+			alloc_buf=(char *)malloc(strlen(addr)+strlen(atdomain)+2);
 			if (!alloc_buf)
 				clog_msg_errno();
 			strcat(strcat(strcpy(alloc_buf, addr), "@"),
@@ -324,7 +324,7 @@ static void rw_del_local2(struct rw_info *rwi,
 				lai.rwi=rwi;
 				lai.found=0;
 
-				alloc_buf=malloc(sizeof(DEFAULTNAME)
+				alloc_buf=(char *)malloc(sizeof(DEFAULTNAME)
 						 +strlen(atdomain));
 				if (!alloc_buf)
 					clog_msg_errno();
@@ -766,11 +766,15 @@ const char *quota;
 		close(p[0]);
 		close(p[1]);
 
-		argv[0]=strrchr(maildrop, '/')+1;
-		argv[1]="-D";
+		argv[0]=const_cast<char *>(strrchr(maildrop, '/')+1);
+
+		static char d_str[]="-D";
+		argv[1]=d_str;
 		argv[2]=(char *)uidgids;
-		argv[3]="-M";
-		argv[4]=malloc((addr ? strlen(addr):0)+sizeof("smtpfilter-"));
+
+		static char m_str[]="-M";
+		argv[3]=m_str;
+		argv[4]=(char *)malloc((addr ? strlen(addr):0)+sizeof("smtpfilter-"));
 		if (!argv[4])
 		{
 			printf("450 Out of memory.\n");
@@ -781,27 +785,29 @@ const char *quota;
 		if (addr && *addr)
 			strcat(strcat(argv[4], "-"), addr);
 		argv[5]=getenv("TCPREMOTEHOST");
-		if (!argv[5])	argv[5]="";
+
+		static char nullstr[]="";
+		if (!argv[5])	argv[5]=nullstr;
 		argv[6]=getenv("TCPREMOTEIP");
-		if (!argv[6])	argv[6]="";
+		if (!argv[6])	argv[6]=nullstr;
 		argv[7]=(char *)sender;
-		if (!argv[7])	argv[7]="";
-		putenv(strcat(strcpy(courier_malloc(sizeof("SENDER=")+
+		if (!argv[7])	argv[7]=nullstr;
+		putenv(strcat(strcpy((char *)courier_malloc(sizeof("SENDER=")+
 					strlen(argv[7])), "SENDER="),
 					argv[7]));
 
-		putenv(strcat(strcpy(courier_malloc(sizeof("HOME=")+
+		putenv(strcat(strcpy((char *)courier_malloc(sizeof("HOME=")+
 			strlen(homedir)), "HOME="), homedir));
-		putenv(strcat(strcpy(courier_malloc(sizeof("DEFAULT=")+
+		putenv(strcat(strcpy((char *)courier_malloc(sizeof("DEFAULT=")+
 			strlen(defaults)), "DEFAULT="), defaults));
-		putenv(strcat(strcpy(courier_malloc(sizeof("MAILDIRQUOTA=")+
+		putenv(strcat(strcpy((char *)courier_malloc(sizeof("MAILDIRQUOTA=")+
 			strlen(quota)), "MAILDIRQUOTA="), quota));
 
 
 		argv[8]=getenv("BOUNCE");
-		if (!argv[8])	argv[8]="";
+		if (!argv[8])	argv[8]=nullstr;
 		argv[9]=getenv("BOUNCE2");
-		if (!argv[9])	argv[9]="";
+		if (!argv[9])	argv[9]=nullstr;
 		argv[10]=0;
 		execv(maildrop, argv);
 		_exit(0);	/* Assume spam filter isn't installed */
@@ -812,7 +818,7 @@ const char *quota;
 
 	while ((l=read(p[0], errbuf, sizeof(errbuf))) > 0)
 	{
-		if (l > bufsize-1)
+		if ((size_t)l > bufsize-1)
 			l=bufsize-1;
 		memcpy(buf, errbuf, l);
 		buf += l;

@@ -8,11 +8,6 @@
 
 #include	"courier.h"
 
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /* Install libraries */
 
 int rw_install_start();
@@ -20,6 +15,10 @@ int rw_install( const char *name,
 	struct rw_list *(*rw_install)(const struct rw_install_info *),
 	const char *(*rw_init)() );
 int rw_install_init();
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 /* Search for a rewriting function */
 
@@ -49,6 +48,7 @@ void rw_rewrite_chksyn_print(struct rw_info *);
 void rw_rewrite_chksyn_at_ok_print(struct rw_info *);
 	/* ... and allow leading @ in the address */
 
+#ifdef	__cplusplus
 /* Internal structure stores module list */
 
 extern struct rw_transport {
@@ -76,6 +76,7 @@ char *rw_rewrite_header(struct rw_transport *,	/* Rewriting library */
 	int,			/* flags/mode */
 	struct rfc822token *,	/* sender */
 	char **);		/* ptr to error message */
+#endif
 
 char	*rw_rewrite_header_func(void (*rwfunc)(
 			struct rw_info *, void (*)(struct rw_info *), void *),

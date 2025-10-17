@@ -44,7 +44,7 @@ module_PROGRAMS=courieresmtp courieresmtpd addcr
 INSTALL=@INSTALL@ `test \`id -u\` != 0 || echo -o @mailuser@ -g @mailgroup@`
 INSTALL_PROGRAM=${INSTALL} -m 550
 
-EXTRA_DIST=courier.config staticlist.c esmtp.authpam.dist esmtpd.cnf.gnutls
+EXTRA_DIST=courier.config staticlist.C esmtp.authpam.dist esmtpd.cnf.gnutls
 
 noinst_LTLIBRARIES=librewrite.la libesmtp.la
 
@@ -54,12 +54,12 @@ install-data-hook:
 
 ldaddlibdl=@LIBDL@
 
-courieresmtp_SOURCES=courieresmtp.c esmtpclient.c esmtpconfig.c esmtpconfig.h \
-		staticlist.c
+courieresmtp_SOURCES=courieresmtp.C esmtpclient.C esmtpconfig.c esmtpconfig.h \
+		staticlist.C
 nodist_EXTRA_courieresmtp_SOURCES=dummy.C
 
-courieresmtpd_SOURCES=courieresmtpd.c esmtpconfig.c esmtpconfig.h esmtpiov.c \
-		esmtpiov.h staticlist.c
+courieresmtpd_SOURCES=courieresmtpd.C esmtpconfig.c esmtpconfig.h esmtpiov.C \
+		esmtpiov.h staticlist.C
 
 courieresmtp_DEPENDENCIES=../../courier/libs/libmodule.la \
 			librewrite.la \
@@ -179,7 +179,7 @@ install-perms-local:
 librewrite_la_SOURCES=esmtp.c
 librewrite_la_LDFLAGS=-static
 
-libesmtp_la_SOURCES=libesmtp.c libesmtp.h smtproutes.c smtproutes.h
+libesmtp_la_SOURCES=libesmtp.C libesmtp.h smtproutes.C smtproutes.h
 libesmtp_la_LDFLAGS=-static
 
 localstatedir.h: config.status

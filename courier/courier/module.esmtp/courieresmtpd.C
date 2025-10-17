@@ -57,7 +57,8 @@ static int hasstarttls;
 static char *mailfroms=0;
 extern time_t iovread_timeout;
 extern time_t iovwrite_timeout;
-static char *input_line="";
+static char no_input_line=0;
+static char *input_line=&no_input_line;
 static void cancelsubmit();
 static time_t data_timeout;
 
@@ -68,7 +69,7 @@ static const char *tcpremoteip, *tcpremotehost, *tcpremoteport;
 
 static time_t teergrube=INIT_TEERGRUBE;
 
-extern const char *externalauth();
+extern "C" const char *externalauth();
 
 static const char *truncate_ipv6(const char *tcp)
 {
@@ -186,8 +187,8 @@ const char *p, *q;
 				*p='_';
 	}
 
-        putenv(strcat(strcpy(courier_malloc(sizeof("ESMTPHELO=") +
-					    strlen(helobuf)),
+        putenv(strcat(strcpy((char *)courier_malloc(sizeof("ESMTPHELO=") +
+						    strlen(helobuf)),
 			     "ESMTPHELO="), helobuf));
 
 	if (!extended)
@@ -278,12 +279,17 @@ int	rc;
 	rfc822t_free(t);
 	if (!addr)	clog_msg_errno();
 
-	argv[0]="submit";
-	argv[1]=strcat(strcpy(courier_malloc(strlen(cmd)+strlen(addr)+1),
+	static char submit_str[]="submit";
+	argv[0]=submit_str;
+	argv[1]=strcat(strcpy((char *)courier_malloc(strlen(cmd)+strlen(addr)+1),
 		cmd), addr);
 	free(addr);
-	argv[2]="local";	/* Use the LOCAL rewrite module */
-	argv[3]="unknown; unknown";
+
+	static char local_str[]="local";
+	argv[2]=local_str;	/* Use the LOCAL rewrite module */
+
+	static char unknown_str[]="unknown; unknown";
+	argv[3]=unknown_str;
 	argv[4]=0;
 	if (submit_fork(argv, environ, submit_print_stdout))
 	{
@@ -313,8 +319,12 @@ static void startsubmit(int tls)
 	if (submit_started)	return;
 	if (helobuf[0] == '\0')	return;
 
-	argv[0]="submit";
-	argv[1]=getenv("RELAYCLIENT") ? "-src=authsmtp":"-src=smtp";
+	static char submit_str[]="submit";
+	argv[0]=submit_str;
+
+	static char src_authsmtp_str[]="-src=authsmtp";
+	static char src_smtp_str[]="-src=smtp";
+	argv[1]=getenv("RELAYCLIENT") ? src_authsmtp_str:src_smtp_str;
 	n=2;
 
 	if (authuserbuf[0])
@@ -336,7 +346,7 @@ static void startsubmit(int tls)
 
 	if (extended)
 	{
-		static char *exid[] =
+		static const char *exid[] =
 			{"ESMTP",
 			 "ESMTPA",
 			 "ESMTPS",
@@ -352,13 +362,16 @@ static void startsubmit(int tls)
 	}
 	argv[n++]=rfc3848_buf;
 
-	argv[n++]="esmtp";
+	static char esmtp_str[]="esmtp";
+	argv[n++]=esmtp_str;
 
 	host=tcpremotehost;
 
 	if (!host)	host="";
-	argv[n]=buf=courier_malloc(strlen(host)+strlen(tcpremoteip)+strlen(
-		helobuf)+sizeof("dns;  ( [])"));
+	argv[n]=buf=(char *)courier_malloc(
+		strlen(host)+strlen(tcpremoteip)+strlen(
+			helobuf
+		)+sizeof("dns;  ( [])"));
 
 	strcat(strcat(strcpy(buf, "dns; "), helobuf), " (");
 	if (*host)
@@ -372,10 +385,12 @@ static void startsubmit(int tls)
 
 	if (*ident || authuserbuf[0] || tls)
 	{
-		argv[n]=identbuf=courier_malloc(sizeof("IDENT: , AUTH: , ")+
-						strlen(tlsbuf)+
-						strlen(ident)+
-						strlen(authuserbuf));
+		argv[n]=identbuf=(char *)courier_malloc(
+			sizeof("IDENT: , AUTH: , ")+
+			strlen(tlsbuf)+
+			strlen(ident)+
+			strlen(authuserbuf)
+		);
 		++n;
 		*identbuf=0;
 		if (*ident)
@@ -384,11 +399,11 @@ static void startsubmit(int tls)
                 {
                         if (*identbuf)  strcat(identbuf, ", ");
                         strcat(strcat(identbuf, "AUTH: "), authuserbuf);
-			putenv(strcat(
-				 strcpy(
-				   courier_malloc(sizeof("SENDERAUTH=") +
-						  strlen(authuserbuf)),
-				   "SENDERAUTH="), authuserbuf));
+			putenv(strcat(strcpy((char *)
+					     courier_malloc(
+						     sizeof("SENDERAUTH=") +
+						     strlen(authuserbuf)),
+					     "SENDERAUTH="), authuserbuf));
 		}
 
 		if (tls)
@@ -437,7 +452,7 @@ char	*p;
 	log_error_to=0;
 	if (r && rl)
 	{
-		if ((log_error_to=malloc(rl+1)) == 0)
+		if ((log_error_to=(char *)malloc(rl+1)) == 0)
 			clog_msg_errno();
 		memcpy(log_error_to, r, rl);
 		log_error_to[rl]=0;
@@ -533,7 +548,7 @@ const char *q=skipaddress(&p);
 		/* Save <address> in mailfroms */
 
 		if (mailfroms)	free(mailfroms);
-		mailfroms=courier_malloc(q-p+3);
+		mailfroms=(char *)courier_malloc(q-p+3);
 		memcpy(mailfroms, p-1, q-p+2);
 		mailfroms[q-p+2]=0;
 		set_submit_error(0, 0);
@@ -625,7 +640,7 @@ static int domailfrom(const char *p, const char *q)
 		r= s-1;
 	}
 
-	buf=courier_malloc(q-p+envidlen+80);
+	buf=(char *)courier_malloc(q-p+envidlen+80);
 	if (q > p)
 		memcpy(buf, p, q-p);
 	strcpy(buf + (q-p), "\t");
@@ -728,7 +743,7 @@ static int dorcptto(const char *p, const char *q)
 static int rcpttolocal(const char *p, const char *r, const char *q)
 {
 	const char *d=config_defaultdomain();
-	char *buf=courier_malloc(r-p + strlen(d)+strlen(q)+1);
+	char *buf=(char *)courier_malloc(r-p + strlen(d)+strlen(q)+1);
 	int rc;
 
 	memcpy(buf, p, r-p);
@@ -792,7 +807,7 @@ int	rc;
 
 			r += 6;
 
-			encoded_orcpt=malloc(s-r+1);
+			encoded_orcpt=(char *)malloc(s-r+1);
 			if (!encoded_orcpt)
 				abort();
 			memcpy(encoded_orcpt, r, s-r);
@@ -805,7 +820,7 @@ int	rc;
 	if (orcpt_utf8)
 		orcpt_utf8_len=strlen(orcpt_utf8);
 
-	buf=courier_malloc(q-p + relayclientl + orcpt_utf8_len + 10);
+	buf=(char *)courier_malloc(q-p + relayclientl + orcpt_utf8_len + 10);
 	memcpy(buf, p, q-p);
 	t=buf + (q-p);
 	if (relayclientl)
@@ -1215,8 +1230,11 @@ int	authenticated=0;
 			       libmail_str_size_t(pipefd[1], buf2));
 
 			argvec[0]=buf1;
-			argvec[1]="-tcpd";
-			argvec[2]="-server";
+
+			static char tcpd_str[]="-tcpd";
+			static char server_str[]="-server";
+			argvec[1]=tcpd_str;
+			argvec[2]=server_str;
 			argvec[3]=NULL;
 			fcntl(pipefd[0], F_SETFD, FD_CLOEXEC);
 
@@ -1279,7 +1297,8 @@ int	authenticated=0;
 		char	*authmethod;
 		char	*initreply;
 		const char *q;
-		char	*buf=strcpy(courier_malloc(strlen(line)+1), line);
+		char	*buf=
+			strcpy((char *)courier_malloc(strlen(line)+1), line);
 		char	*authtype;
 		char	*authdata;
 		char    fakecmd[80];
@@ -1316,8 +1335,9 @@ int	authenticated=0;
 
 			if (initreply && *initreply)
 			{
+				static char zero=0;
 				if (strcmp(initreply, "=") == 0)
-					initreply="";
+					initreply=&zero;
 			}
 			else
 			{
@@ -1375,14 +1395,19 @@ int	authenticated=0;
 				addiovec("235 Ok\r\n", 8);
 				iovflush();
 				cancelsubmit();
-				putenv("BLOCK=");
+
+				static char block_str[]="BLOCK=";
+				putenv(block_str);
 				rc=getenv("AUTHRELAYCLIENT");
 				if (!rc)	rc="";
-				p=courier_malloc(sizeof("RELAYCLIENT=")+
+				p=(char *)courier_malloc(sizeof("RELAYCLIENT=")+
 					strlen(rc));
 				strcat(strcpy(p, "RELAYCLIENT="), rc);
 				putenv(p);
-				putenv("FAXRELAYCLIENT=");
+
+				static char faxrelayclient_str[]=
+					"FAXRELAYCLIENT=";
+				putenv(faxrelayclient_str);
 				startsubmit(tls);
 				authenticated=1;
 			}

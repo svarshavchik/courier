@@ -180,6 +180,7 @@ then
 fi
 
 CFLAGS="-I$srcdir/../.. -I../.. -I$srcdir/../../courier -I../../courier -I$srcdir/../../libs -I../../libs -I$srcdir/../../courier/libs $CFLAGS"
+CXXFLAGS="-I$srcdir/../.. -I../.. -I$srcdir/../../courier -I../../courier -I$srcdir/../../libs -I../../libs -I$srcdir/../../courier/libs $CXXFLAGS"
 
 AC_ARG_WITH(mailuser, [--with-mailuser=user      Specify mail user name (defaults to mail)],
 	mailuser="$withval",
@@ -360,5 +361,5 @@ done
 AC_CONFIG_FILES([Makefile esmtpd esmtpd-ssl \
 	esmtpd.dist esmtpd-msa.dist esmtpd-ssl.dist  \
 	makesmtpaccess makeacceptmailfor \
-	makepercentrelay staticlist.c mkesmtpdcert esmtpd.cnf.openssl])
+	makepercentrelay staticlist.C mkesmtpdcert esmtpd.cnf.openssl])
 AC_OUTPUT

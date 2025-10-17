@@ -21,9 +21,9 @@ libcommon_la_SOURCES= aliases.h \
 	commsgcancel.c commsgcancel.h comesmtpidstring.c comfax.c comfax.h \
 	comparseqid.c comparseqid.h comqueuename.c comqueuename.h \
 	comqueuename2.c \
-	comreadtime.c comreadtime.h comrwerrfunc.c comrwheader.c comrwmsg.c \
-	comrwmsg7bit.c comrwmsg8bit.c \
-	comrwinfoinit.c comrwinstall.c comrwinstall2.c comrwsearchdel.c \
+	comreadtime.c comreadtime.h comrwerrfunc.C comrwheader.C comrwmsg.C \
+	comrwmsg7bit.C comrwmsg8bit.C \
+	comrwinfoinit.C comrwinstall.C comrwinstall2.c comrwsearchdel.C \
 	comsecurity.c \
 	comsizelimit.c comstatfs.c comstrinode.c comstrinode.h \
 	comstrtimestamp.c comstrtimestamp.h comstrtotime.c comstrtotime.h \
@@ -38,9 +38,9 @@ libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c courier_malloc.c \
 	comsts.c comsts2.c comsts.h \
 	cmaildropmda.c \
 	cread1l.c cme.c cdefaultdomain.c chelohost.c cfilteracct.c \
-	cmsgidhost.c courierdir.c islocal.c islocalt.c maxlongsize.h \
+	cmsgidhost.c courierdir.c islocal.c islocalt.C maxlongsize.h \
 	readfile.c removecomments.c lcclog.c lcclog2.c lcclog3.c \
-	rwdefaulthost.c rwsearch.c lcrewrite.c
+	rwdefaulthost.C rwsearch.C lcrewrite.C
 
 #  Testaliases
 
@@ -50,7 +50,7 @@ testaliases_LDADD=libcommon.la libcourier.la ../../afx/libafx.a @dblibrary@
 
 #  libmodule.a uses either shared or static transport modules
 
-MODULESTATIC=lcrwstatic.c lcrwstaticlist.c lcrwstaticlist.h
+MODULESTATIC=lcrwstatic.C lcrwstaticlist.C lcrwstaticlist.h
 MODULESTATICH=lcrwstatic.h
 
 MODULE=$(MODULESTATICH) $(MODULESTATIC)

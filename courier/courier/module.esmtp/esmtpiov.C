@@ -30,7 +30,7 @@ static char inputbuf[5120];
 static char *inputbufhead=inputbuf, *inputbuftail=inputbuf;
 static int overflowed=0;
 static struct iovec iov[10];
-static int	niovec=0;
+static size_t	niovec=0;
 
 void iovreset()
 {
@@ -41,11 +41,11 @@ void iovflush()
 {
 struct iovec *iovp=iov;
 unsigned niovp=niovec;
-int	n;
+size_t	n;
 fd_set	fds;
 struct	timeval	tv;
 
-	while (niovp && niovec)
+	while (niovp)
 	{
 		FD_ZERO(&fds);
 		FD_SET(1, &fds);
@@ -53,7 +53,7 @@ struct	timeval	tv;
 		tv.tv_usec=0;
 		if (select(2, 0, &fds, 0, &tv) <= 0 ||
 			!FD_ISSET(1, &fds) ||
-			(n=writev(1, iov, niovec)) <= 0)
+			(n=writev(1, iovp, niovec)) <= 0)
 		{
 			iov_logerror("writev: ",
 #if HAVE_STRERROR

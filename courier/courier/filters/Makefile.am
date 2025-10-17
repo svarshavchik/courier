@@ -52,7 +52,7 @@ ratefilter_LDADD=libfilter/libfilter.la ../../afx/libafx.a \
 
 
 
-verifyfilter_SOURCES=verifyfilter.c
+verifyfilter_SOURCES=verifyfilter.C
 nodist_EXTRA_verifyfilter_SOURCES=dummy.C
 
 verifyfilter_DEPENDENCIES=libfilter/libfilter.la \

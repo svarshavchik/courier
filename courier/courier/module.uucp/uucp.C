@@ -160,7 +160,7 @@ unsigned nreceipients=p->nreceipients;
 struct	rfc822t *hostt;
 unsigned i;
 
-	if ((reciparray=malloc(sizeof(unsigned)*nreceipients)) == 0)
+	if ((reciparray=(unsigned *)malloc(sizeof(unsigned)*nreceipients)) == 0)
 		clog_msg_errno();
 
 	for (i=0; i<nreceipients; i++)
@@ -188,13 +188,13 @@ unsigned i;
 		/* The real recipient is host!recipient */
 
 		const char *receipient=p->receipients[reciparray[i]*2+1];
-		char	*recip=courier_malloc(strlen(p->host)
+		char	*recip=(char *)courier_malloc(strlen(p->host)
 				+strlen(receipient)+2);
 		char	*verp_sender=0;
 
 			strcat(strcat(strcpy(recip, p->host), "!"), receipient);
 
-			verp_sender=courier_malloc(strlen(save_sender)+
+			verp_sender=(char *)courier_malloc(strlen(save_sender)+
 				verp_encode(recip, 0)+1);
 
 			strcat(strcpy(verp_sender, save_sender), "-");
@@ -224,7 +224,7 @@ static char *uucp_quote(const char *arg)
 {
 char	*s;
 
-	s=courier_malloc(strlen(arg)+3);
+	s=(char *)courier_malloc(strlen(arg)+3);
 	strcat(strcat(strcpy(s, "("), arg), ")");
 	return (s);
 }
@@ -247,7 +247,7 @@ unsigned i, j;
 
 	if (nreceipients == 0)	return;
 
-	savearray=courier_malloc(nreceipients * sizeof(*reciparray));
+	savearray=(unsigned *)courier_malloc(nreceipients * sizeof(*reciparray));
 
         for (pass=0; pass<2; pass++)
         {
@@ -367,8 +367,9 @@ const char *sec;
 		close(pipefd2[1]);
 
 		argenv=getenv("UUXFLAGS");
-		if (!argenv)	argenv="";
-		argenvcopy=courier_malloc(strlen(argenv)+1);
+		static char nullstr[]="";
+		if (!argenv)	argenv=nullstr;
+		argenvcopy=(char *)courier_malloc(strlen(argenv)+1);
 		strcpy(argenvcopy, argenv);
 		nargs_needed=9+nreceipients;
 			/* uux -p -z -a sender path!rmail -f sender (null) */
@@ -376,7 +377,7 @@ const char *sec;
 		for (s=argenvcopy; (s=strtok(s, " \t")) != 0; s=0)
 			++nargs_needed;
 
-		argvec=courier_malloc(nargs_needed * sizeof(char *));
+		argvec=(const char **)courier_malloc(nargs_needed * sizeof(char *));
 		argvec[0]=UUX;
 		argvec[1]="-p";
 		nargs_needed=2;
@@ -396,7 +397,7 @@ const char *sec;
 		for (s=argenvcopy; (s=strtok(s, " \t")) != 0; s=0)
 			argvec[nargs_needed++]=s;
 
-		s=malloc(strlen(p->host)+sizeof("!rmail"));
+		s=(char *)malloc(strlen(p->host)+sizeof("!rmail"));
 
 		if (!s)	clog_msg_errno();
 		strcat(strcpy(s, p->host), "!rmail");
@@ -479,7 +480,8 @@ const char *sec;
 			strcat(errbuf, " message accepted.");
 	}
 
-	last="";
+	static char nullstr[]="";
+	last=nullstr;
 	for (s=errbuf; (s=strtok(s, "\n")) != 0; s=0)
 	{
 		if (*last)

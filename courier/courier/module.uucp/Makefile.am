@@ -18,7 +18,7 @@ module_PROGRAMS=courieruucp
 databindir=$(datadir)
 databin_SCRIPTS=makeuucpneighbors
 
-EXTRA_DIST=courier.config staticlist.c courieruucp.8.in courieruucp.html.in
+EXTRA_DIST=courier.config staticlist.C courieruucp.8.in courieruucp.html.in
 
 noinst_LTLIBRARIES=librewrite.la
 
@@ -36,7 +36,7 @@ install-data-hook:
 	for f in $(htmldoc_DATA); do chmod 444 $(DESTDIR)$(htmldocdir)/$$f ; done
 	test `id -u` = 0 || exit 0; for f in $(htmldoc_DATA); do chown bin $(DESTDIR)$(htmldocdir)/$$f ; chgrp bin $(DESTDIR)$(htmldocdir)/$$f ; done
 
-courieruucp_SOURCES=uucp.c staticlist.c
+courieruucp_SOURCES=uucp.c staticlist.C
 nodist_EXTRA_courieruucp_SOURCES=dummy.C
 
 courieruucp_DEPENDENCIES=../../courier/libs/libmodule.la \

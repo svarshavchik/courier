@@ -64,6 +64,7 @@ then
 fi
 
 CFLAGS="-I$srcdir/../.. -I../.. -I$srcdir/../../libs -I../../libs -I$srcdir/../../courier -I../../courier -I$srcdir/../../courier/libs $CFLAGS"
+CXXFLAGS="-I$srcdir/../.. -I../.. -I$srcdir/../../libs -I../../libs -I$srcdir/../../courier -I../../courier -I$srcdir/../../courier/libs $CXXFLAGS"
 AC_SUBST(courierdir)
 
 AC_ARG_WITH(mailuser, [--with-mailuser=user      Specify mail user name (defaults to mail)],
@@ -92,5 +93,5 @@ INSTALL_SCRIPT='${INSTALL} -m 755'
 
 AM_CONDITIONAL(HAVE_SGML, test -d ${srcdir}/../../libs/docbook)
 
-AC_CONFIG_FILES([Makefile staticlist.c makeuucpneighbors])
+AC_CONFIG_FILES([Makefile staticlist.C makeuucpneighbors])
 AC_OUTPUT

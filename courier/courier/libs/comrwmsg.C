@@ -98,7 +98,7 @@ static void add2header(const char *p, unsigned l, struct rwmsginfo *msginfo)
 	if (l + msginfo->headerbuflen > msginfo->headerbufsize)
 	{
 	unsigned ll=(msginfo->headerbufsize + l + 1023) & ~1023;
-	char	*buf=courier_malloc(ll);
+	char	*buf=(char *)courier_malloc(ll);
 
 		if (msginfo->headerbufsize)
 			memcpy(buf, msginfo->headerbuf, msginfo->headerbufsize);

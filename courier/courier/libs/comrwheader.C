@@ -27,7 +27,8 @@ char	*new_header=0;
 	if (!rfca)	clog_msg_errno();
 
 	bufptrs=0;
-	if (rfca->naddrs && (bufptrs=malloc(sizeof(char *) * rfca->naddrs))
+	if (rfca->naddrs &&
+	    (bufptrs=(char **)malloc(sizeof(char *) * rfca->naddrs))
 		== 0)
 	{
 		rfc822t_free(rfcp);
@@ -104,7 +105,7 @@ char	*new_header=0;
 		for (i=l=0; new_header[i]; i++)
 			if (new_header[i] == '\n' && new_header[i+1])
 				l += 2;
-		p=courier_malloc(strlen(new_header)+1+l);
+		p=(char *)courier_malloc(strlen(new_header)+1+l);
 		for (i=l=0; new_header[i]; i++)
 		{
 			p[l++]=new_header[i];

@@ -12,8 +12,14 @@
 #endif
 #include	<stdio.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
+#endif
+
+	struct rfc822token;
+
+#ifdef __cplusplus
+}
 #endif
 
 #define MAILUID		(courier_mailuid())
@@ -47,7 +53,7 @@ extern "C" {
 
 typedef char *my_caddr_t;
 
-struct rfc822token;
+#ifdef __cplusplus
 
 struct rw_install_info {
         int rw_verlo;
@@ -97,19 +103,27 @@ struct rw_list {
 			unsigned);		/* Sizeof(buffer) */
 	} ;
 
+void rw_info_init(struct rw_info *, struct rfc822token *,
+		  void (*)(int, const char *, struct rw_info *));
+
+int configt_islocal(const struct rfc822token *, char **);
+
+extern "C" {
+#endif
+
+#if 0
+}
+#endif
+
 void set_courierdir(const char *);
 const char *courierdir();
 void *courier_malloc(unsigned);
 char *courier_strdup(const char *);
 
 struct ctlfile;
-struct rfc822token;
 void rw_init_verbose(int);
 int rw_init_courier(const char *);
 extern int rw_init_verbose_flag;
-
-void rw_info_init(struct rw_info *, struct rfc822token *,
-		void (*)(int, const char *, struct rw_info *));
 
 struct stat;
 char	*readfile(const char *, struct stat *);
@@ -183,7 +197,6 @@ const char *dsn_sender(struct ctlfile *, unsigned, int);
 
 int config_domaincmp(const char *, const char *, unsigned);
 int config_islocal(const char *, char **);
-int configt_islocal(const struct rfc822token *, char **);
 
 int config_is_indomain(const char *,
 		const char *);
@@ -194,7 +207,10 @@ int	config_has_vhost(const char *);
 char	*config_localfilename(const char *);
 char	*config_read1l(const char *);
 
+#if 0
+{
+#endif
 #ifdef	__cplusplus
-} ;
+}
 #endif
 #endif

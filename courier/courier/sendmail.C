@@ -37,7 +37,7 @@
 #include	<string.h>
 #include	<ctype.h>
 
-extern void esmtpd();
+extern "C" void esmtpd();
 
 
 static struct passwd *mypwd()
@@ -81,12 +81,13 @@ const char *host;
 		if ((host=env("MAILSHOST")) != 0 ||
 			(host=env("MAILHOST")) != 0)
 		{
-		char	*p=courier_malloc(strlen(from)+strlen(host)+2);
+			char	*p=(char *)
+				courier_malloc(strlen(from)+strlen(host)+2);
 
 			return (strcat(strcat(strcpy(p, from), "@"), host));
 		}
 	}
-	return (strcpy(courier_malloc(strlen(from)+1), from));
+	return (strcpy((char *)courier_malloc(strlen(from)+1), from));
 }
 
 static char *rewrite_from(const char *, const char *, const char *,
@@ -116,7 +117,7 @@ char	*p, *q;
 
 	if (!pw || !pw->pw_gecos)	return (0);
 
-	p=strcpy(courier_malloc(strlen(pw->pw_gecos)+1), pw->pw_gecos);
+	p=strcpy((char *)courier_malloc(strlen(pw->pw_gecos)+1), pw->pw_gecos);
 
 	if ((q=strchr(p, ',')) != 0)	*q=0;
 	return (p);
@@ -126,10 +127,11 @@ static void rewrite_headers(const char *From)
 {
 int	seen_from=0;
 char	headerbuf[5000];
-int	c, i;
+int	c;
+size_t  i;
 const char *mailuser, *mailuser2, *mailhost;
 char	*p;
-char	*pfrom=From ? strcpy(courier_malloc(strlen(From)+1), From):0;
+ char	*pfrom=From ? strcpy((char *)courier_malloc(strlen(From)+1), From):0;
 
 	if ((mailuser=env("MAILUSER")) == 0 &&
 		(mailuser=env("LOGNAME")) == 0)
@@ -197,8 +199,9 @@ char	*pfrom=From ? strcpy(courier_malloc(strlen(From)+1), From):0;
 			{
 				pfrom=get_gecos();
 			}
-			else	pfrom=strcpy(courier_malloc(strlen(From)+1),
-                                        From);
+			else	pfrom=strcpy(
+				(char *)courier_malloc(strlen(From)+1),
+				From);
 		}
 
 		p=rewrite_from(NULL, mailuser, mailhost, pfrom);
@@ -245,7 +248,7 @@ char	*gecosname=0;
 
 	if (!oldfrom)
 	{
-	char	*p=courier_malloc(
+		char	*p=(char *)courier_malloc(
 			(newuser ? strlen(newuser):0)+
 			(newhost ? strlen(newhost):0)+4);
 		strcpy(p, "<");
@@ -260,7 +263,7 @@ char	*gecosname=0;
 			namet=tokenize_name(newname);
 			q=rfc822_gettok(namet->tokens);
 			rfc822t_free(namet);
-			r=courier_malloc(strlen(p)+strlen(q)+2);
+			r=(char *)courier_malloc(strlen(p)+strlen(q)+2);
 			strcat(strcat(strcpy(r, q), " "), p);
 			free(p);
 			p=r;
@@ -411,11 +414,11 @@ int     submit_errcode;
 	signal(SIGPIPE, SIG_IGN);
 	argn=1;
 
-	putenv("AUTHMODULES="); /* See module.local/local.c */
+	setenv("AUTHMODULES", "", 1); /* See module.local/local.c */
 
-	putenv("LANG=en_US");
-	putenv("CHARSET=iso-8859-1");
-	putenv("MM_CHARSET=iso-8859-1");
+	setenv("LANG", "en_US", 1);
+	setenv("CHARSET", "iso-8859-1", 1);
+	setenv("MM_CHARSET", "iso-8859-1", 1);
 
 #if HAVE_SETLOCALE
 	setlocale(LC_ALL, "C");
@@ -445,7 +448,7 @@ int     submit_errcode;
 				"rmail: UU_MACHINE!UU_USER required.\n");
 			exit(EX_NOPERM);
 		}
-		uucprmail=malloc(strlen(uu_machine)+strlen(uu_user)+2);
+		uucprmail=(char *)malloc(strlen(uu_machine)+strlen(uu_user)+2);
 		if (!uucprmail)
 		{
 			perror("malloc");
@@ -567,9 +570,13 @@ int     submit_errcode;
 
 	sprintf(frombuf, "uid %s", libmail_str_uid_t(getuid(), ubuf));
 	argp=0;
-	args[argp++]="submit";
+
+	static char submit_str[]="submit";
+	static char bcc_str[]="-bcc";
+
+	args[argp++]=submit_str;
 	if (bcconly)
-		args[argp++]="-bcc";
+		args[argp++]=bcc_str;
 
 	if (uucprmail)
 	{
@@ -579,8 +586,9 @@ int     submit_errcode;
 			exit(EX_NOPERM);
 		}
 
-		args[argp++]="uucp";
-		s=malloc(sizeof("unknown; uucp ()")+strlen(uucprmail));
+		static char uucp_str[]="uucp";
+		args[argp++]=uucp_str;
+		s=(char *)malloc(sizeof("unknown; uucp ()")+strlen(uucprmail));
 		if (!s)
 		{
 			perror("malloc");
@@ -591,8 +599,10 @@ int     submit_errcode;
 	}
 	else
 	{
-		args[argp++]="local";
-		args[argp++]="dns; localhost (localhost [127.0.0.1])";
+		static char local_str[]="local";
+		static char dns_str[]="dns; localhost (localhost [127.0.0.1])";
+		args[argp++]=local_str;
+		args[argp++]=dns_str;
 		args[argp++]=frombuf;
 	}
 	args[argp++]=0;
@@ -601,7 +611,10 @@ int     submit_errcode;
 	clog_open_stderr("sendmail");
 	if (ret || security || doverp)
 	{
-		envs[envp]=strcat(strcat(strcpy(courier_malloc(strlen(ret ?
+		envs[envp]=strcat(
+			strcat(
+				strcpy((char *)
+					courier_malloc(strlen(ret ?
 			ret:"")+strlen(security ? security:"") + 30),
 						"DSNRET="), (ret ? ret:"")),
 				  (doverp ? "V":""));
@@ -614,21 +627,24 @@ int     submit_errcode;
 
 	if (dsn)
 	{
-		envs[envp]=strcat(strcpy(courier_malloc(strlen(dsn)+11),
+		envs[envp]=strcat(strcpy((char *)courier_malloc(strlen(dsn)+11),
 			"DSNNOTIFY="), dsn);
 		++envp;
 	}
 	if (envid)
 	{
-		envs[envp]=strcat(strcpy(courier_malloc(strlen(envid)+10),
+		envs[envp]=strcat(strcpy((char *)courier_malloc(strlen(envid)+10),
 			"DSNENVID="), envid);
 		++envp;
 	}
-	envs[envp++]="TCPREMOTEHOST=localhost";
-	envs[envp++]="TCPREMOTEIP=127.0.0.1";
+
+	static char localhost_str[]="TCPREMOTEHOST=localhost";
+	static char tcpremoteip_str[]="TCPREMOTEIP=127.0.0.1";
+	envs[envp++]=localhost_str;
+	envs[envp++]=tcpremoteip_str;
 
 	if (!uucprmail)
-		envs[envp++]=strcat(strcpy(courier_malloc(strlen(frombuf)+
+		envs[envp++]=strcat(strcpy((char *)courier_malloc(strlen(frombuf)+
 				sizeof("TCPREMOTEINFO=")),
 				"TCPREMOTEINFO="), frombuf);
 	envs[envp]=0;

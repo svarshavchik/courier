@@ -188,7 +188,7 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 			return (NULL);
 
 		if (fstat(fileno(f), &stat_buf) < 0
-		    || fread ( (faxrc=courier_malloc(stat_buf.st_size+1)),
+		    || fread ( (faxrc=(char *)courier_malloc(stat_buf.st_size+1)),
 			       stat_buf.st_size, 1, f) != 1)
 		{
 			clog_msg_prerrno();
@@ -197,7 +197,7 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 		}
 		faxrc[stat_buf.st_size] = 0;
 		fclose(f);
-		faxrcbuf=courier_malloc(stat_buf.st_size+1);
+		faxrcbuf=(char *)courier_malloc(stat_buf.st_size+1);
 	}
 
 	if (strlen(a) > MAXLEN)
@@ -274,7 +274,7 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 				while (q && *q)
 				{
 					int n;
-					int j;
+					size_t j;
 
 					if (*q != '$')
 					{

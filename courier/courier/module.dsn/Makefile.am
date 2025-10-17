@@ -55,7 +55,7 @@ install-perms-local:
 		>>permissions.dat ; done
 	@echo $(moduledir)/courierdsn 755 @mailuser@ @mailgroup@ >>permissions.dat
 
-librewrite_la_SOURCES=dsnstub.c
+librewrite_la_SOURCES=dsnstub.C
 librewrite_la_LDFLAGS=-static
 
 sysconfdir.h: config.status

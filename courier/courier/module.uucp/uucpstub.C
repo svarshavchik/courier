@@ -62,10 +62,10 @@ static const char *buf=0;
 		free(f);
 		if (buf == 0)
 		{
-		const char *p=config_me();
+			const char *p=config_me();
 
-			buf=strcpy(courier_malloc(strlen(p)+1), p);
-			if ((f=strchr(buf, '.')) != 0)	*f=0;
+			buf=strcpy((char *)courier_malloc(strlen(p)+1), p);
+			if ((f=(char *)strchr(buf, '.')) != 0)	*f=0;
 		}
 	}
 	return (buf);

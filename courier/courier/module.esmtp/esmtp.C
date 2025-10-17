@@ -207,6 +207,8 @@ char	*p;
 
 	if (!percenthack)	/* First time */
 	{
+		static char zero=0;
+
 		p=config_localfilename("esmtppercentrelay");
 
 		percenthack=readfile(p, 0);
@@ -215,7 +217,7 @@ char	*p;
 		if (percenthack)
 			removecomments(percenthack);
 		else
-			percenthack="";
+			percenthack=&zero;
 		dbobj_init(&percenthackdat);
 		p=config_localfilename("esmtppercentrelay.dat");
 		dbobj_open(&percenthackdat, p, "R");

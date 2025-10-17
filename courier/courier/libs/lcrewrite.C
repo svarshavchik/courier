@@ -73,7 +73,7 @@ int	cnt;
 		case 0:
 		case '"':
 			{
-				int i;
+				size_t i;
 
 				for (i=0; i<t->len; i++)
 				{
@@ -115,7 +115,7 @@ static void do_rw_rewrite_chksyn_print(struct rw_info *info,
 	char	*buf;
 
 		if (!addr)	clog_msg_errno();
-		buf=courier_malloc(strlen(addr)+sizeof(errmsg));
+		buf=(char *)courier_malloc(strlen(addr)+sizeof(errmsg));
 		strcat(strcpy(buf, errmsg), addr);
 		free(addr);
 		(*info->err_func)(553, buf, info);

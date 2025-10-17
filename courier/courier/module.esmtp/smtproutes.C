@@ -46,14 +46,14 @@ const char *p=buf;
 			return (0);
 		}
 		free(p);
-		p=strcpy(courier_malloc(strlen(domain)+1), domain);
+		p=strcpy((char *)courier_malloc(strlen(domain)+1), domain);
 		for (q=p; *q; q++)
 			*q=tolower(*q);
 		q=dbobj_fetch(&d, p, strlen(p), &l, "D");
 		free(p);
 		dbobj_close(&d);
 		if (!q)	return (0);
-		p=courier_malloc(l+1);
+		p=(char *)courier_malloc(l+1);
 		memcpy(p, q, l);
 		p[l]=0;
 		free(q);
@@ -91,7 +91,7 @@ const char *p=buf;
 				return (0);
 			}
 
-			q=courier_malloc(i+1);
+			q=(char *)courier_malloc(i+1);
 			memcpy(q, p, i);
 			q[i]=0;
 			free(buf);

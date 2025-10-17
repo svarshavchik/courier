@@ -34,10 +34,13 @@
 #define SOFTFAIL_STATUS "430"
 #define VERIFICATION_FAILED_FORMAT	"%s <%s> verification failed.\n"
 
-void rfc2045_error(const char *p)
-{
-	fprintf(stderr, "%s\n", p);
-	exit(1);
+extern "C" {
+
+	void rfc2045_error(const char *p)
+	{
+		fprintf(stderr, "%s\n", p);
+		exit(1);
+	}
 }
 
 struct verify_info {
@@ -58,7 +61,8 @@ struct my_environment {
 
 struct verify_info *verify_info_init()
 {
-	struct verify_info *m=malloc(sizeof(struct verify_info));
+	struct verify_info *m=(struct verify_info *)
+		malloc(sizeof(struct verify_info));
 
 	if (!m)
 		abort();
