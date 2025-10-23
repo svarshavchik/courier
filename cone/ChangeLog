@@ -1,3 +1,9 @@
+1.17
+
+2025-10-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix MIME parsing bugs.
+
 1.16
 
 2025-10-05  Sam Varshavchik  <mrsam@courier-mta.com>
