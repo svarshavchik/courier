@@ -70,6 +70,7 @@ libcourierauth_la_SOURCES=authdaemon.c authdaemonlib.c preauthdaemon.c \
 	authoption.c
 libcourierauth_la_LIBADD=libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la libs/numlib/libnumlib.la \
 	libs/random128/librandom128.la libs/rfc2045/libencode.la
+nodist_EXTRA_libcourierauth_la_SOURCES=cplusplus1.cc
 libcourierauth_la_LDFLAGS=@NETLIBS@ -version-info @LIBVERSION_INFO@
 
 # The userdb module
@@ -376,6 +377,7 @@ courierauthconfig_SOURCES=authinfo.c
 authpasswd_SOURCES=authpasswd.c
 authpasswd_LDADD=libcourierauthcommon.la \
         libs/libhmac/libhmac.la libs/md5/libmd5.la libs/sha1/libsha1.la libs/rfc2045/libencode.la
+nodist_EXTRA_authpasswd_SOURCES=cplusplus2.cc
 
 authtest_SOURCES=authtest.c
 authtest_DEPENDENCIES=libcourierauth.la
@@ -410,6 +412,7 @@ authdaemondprog_LDADD=$(LIBLTDL) libcourierauthcommon.la libcourierauth.la libs/
 	libs/rfc2045/libencode.la libs/numlib/libnumlib.la
 authdaemondprog_LDFLAGS=-export-dynamic $(modules:%=-dlopen %) \
 	-rpath $(pkglibdir) @NETLIBS@
+nodist_EXTRA_authdaemondprog_SOURCES=cplusplus3.cc
 
 authdaemontest_SOURCES=authdaemontest.c
 authdaemontest_DEPENDENCIES=libcourierauthcommon.la

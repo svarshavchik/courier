@@ -306,12 +306,12 @@ jobs:
     strategy:
       matrix:
         platform:
-#           - ["centos:7",         "centos",    "centos-7"]
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu-gcc10",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
            - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
+           - ["ubuntu:24.04",     "ubuntu-clang20",    "ubuntu-24-clang"]
            - ["debian:12",        "ubuntu",    "debian-12"]
            - ["debian:13",        "ubuntu",    "debian-13"]
            - ["archlinux:latest", "arch",      "arch"]
@@ -354,12 +354,12 @@ jobs:
     strategy:
       matrix:
         platform:
-#           - ["centos:7",         "centos",    "centos-7"]
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["rockylinux:9",     "rocky",     "rocky-9"]
            - ["ubuntu:20.04",     "ubuntu-gcc10",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
            - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
+           - ["ubuntu:24.04",     "ubuntu-clang20",    "ubuntu-24-clang"]
            - ["debian:12",        "ubuntu",    "debian-12"]
            - ["debian:13",        "ubuntu",    "debian-13"]
            - ["archlinux:latest", "arch",      "arch"]

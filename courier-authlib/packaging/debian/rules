@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
-export CXX=g++%DEBGCC%
-export CC=gcc%DEBGCC%
+export CXX=%CXXCOMPILER%
+export CC=%CCOMPILER%
 
 %:
 	dh $@

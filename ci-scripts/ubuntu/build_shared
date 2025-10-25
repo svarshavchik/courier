@@ -6,6 +6,7 @@ cd build
 
 tar xf *.tar.bz2
 cd */.
+env
 ./courier-debuild -us -uc
 
 # Do not install courier-authlib modules

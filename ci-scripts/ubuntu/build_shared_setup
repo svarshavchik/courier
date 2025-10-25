@@ -56,6 +56,14 @@ then
     apt install -y gcc-$DEBGCC g++-$DEBGCC
 fi
 
+if test "$DEBCLANG" != ""
+then
+    apt install -y clang-$DEBCLANG	\
+		libc++-$DEBCLANG-dev	\
+		llvm-$DEBCLANG-dev	\
+		libstdc++-14-dev
+fi
+
 # ubuntu has an existing /etc/apt/sources.list, debian does not.
 
 echo 'deb [trusted=yes] file:///var/local/packages main main' >/etc/apt/sources.list.new

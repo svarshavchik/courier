@@ -107,6 +107,7 @@ librfc822_la_LIBADD=libs/rfc822/librfc822.la
 librfc2045_la_LIBADD=libs/rfc2045/librfc2045.la libs/rfc2045/libencode.la
 librfc822_la_LDFLAGS=-rpath $(libdir) -version-info @LIBVERSION_INFO@
 librfc2045_la_LDFLAGS=-rpath $(libdir) -version-info @LIBVERSION_INFO@
+nodist_EXTRA_librfc2045_la_SOURCES=cplusplus.cc
 
 install-data-local: install-man install-deliverquota install-maildrop
 

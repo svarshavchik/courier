@@ -1,0 +1,7 @@
+export DEBCLANG=20
+
+# "dwz: ...  Unknown debugging section .debug_addr" fix
+export CFLAGS="-gdwarf-4"
+export CXXFLAGS="-gdwarf-4"
+
+. ci-scripts/ubuntu/build_all_setup
