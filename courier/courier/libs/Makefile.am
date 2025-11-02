@@ -18,7 +18,7 @@ libcommon_la_SOURCES= aliases.h \
 	comaliases3.C comaliases4.C combatchsize.c comcargs.c comcargs.h \
 	comconfig.c comconfig.h comctlfile.c \
 	comctlfile.h comdsn.c comdsn2.c comerrmsg.c \
-	commsgcancel.c commsgcancel.h comesmtpidstring.c comfax.c comfax.h \
+	commsgcancel.c commsgcancel.h comesmtpidstring.c comfax.C comfax.h \
 	comparseqid.c comparseqid.h comqueuename.c comqueuename.h \
 	comqueuename2.c \
 	comreadtime.c comreadtime.h comrwerrfunc.C comrwheader.C comrwmsg.C \
@@ -32,7 +32,9 @@ libcommon_la_SOURCES= aliases.h \
 	comtrigger.c comuidgid.C comuidgid.h comverp.c comverp.h mybuf.h
 libcommon_la_LDFLAGS=-static
 
-libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c courier_malloc.c \
+libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c \
+	cgethostname_sys.c \
+	courier_malloc.c \
 	cdefaultsep.c \
 	cdefaultdelivery.c cdomaincmp.c cfilename.c cmaildropfilter.c \
 	comsts.c comsts2.c comsts.h \

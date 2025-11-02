@@ -61,7 +61,8 @@ static size_t dsnlimit;
 
 static void dsninit()
 {
-static struct { char **textptr, *filenameptr; } texts[]={
+	static struct { char **textptr;
+		const char *filenameptr; } texts[]={
 	{ &dsnsubjectwarn,	SYSCONFDIR "/dsnsubjectwarn.txt"},
 	{ &dsnsubjectnotice,	SYSCONFDIR "/dsnsubjectnotice.txt"},
 	{ &dsnheader,		SYSCONFDIR "/dsnheader.txt"},
@@ -71,7 +72,7 @@ static struct { char **textptr, *filenameptr; } texts[]={
 	{ &dsndelivered,	SYSCONFDIR "/dsndelivered.txt"},
 	{ &dsnfailed,		SYSCONFDIR "/dsnfailed.txt"},
 	} ;
-int	i;
+	size_t i;
 
 	for (i=0; i<sizeof(texts)/sizeof(texts[0]); i++)
 		if ( (*texts[i].textptr=
@@ -198,9 +199,10 @@ struct moduledel *p;
 
 			argc=0;
 
-
-			args[argc++]="submit";
-			args[argc++]="-delay=0";
+			static char submit_str[]="submit";
+			static char delay_str[]="-delay=0";
+			args[argc++]=submit_str;
+			args[argc++]=delay_str;
 
 			strcpy(msgsource, "-src=");
 
@@ -212,16 +214,22 @@ struct moduledel *p;
 			}
 			strcat(msgsource, "dsn");
 			args[argc++]=msgsource;
-			args[argc++]="dsn";
-			args[argc++]="dns; localhost (localhost [127.0.0.1])";
-			args[argc++]="ftp://ftp.isi.edu/in-notes/rfc1894.txt";
+
+			static char submit_module_str[]="dsn";
+			static char submit_source_str[]=
+				"dns; localhost (localhost [127.0.0.1])";
+			static char submit_comment_str[]=
+				"https://www.rfc-editor.org/rfc/rfc1894.txt";
+			args[argc++]=submit_module_str;
+			args[argc++]=submit_source_str;
+			args[argc++]=submit_comment_str;
 			args[argc++]=NULL;
 
 			sec_level_orig=ctlfile_security(&ctf);
 			if (sec_level_orig && *sec_level_orig)
 			{
-				envp[nenvp]
-					=courier_malloc(strlen(sec_level_orig)
+				envp[nenvp]=(char *)
+					courier_malloc(strlen(sec_level_orig)
 							+30);
 				strcat(strcat(strcpy(envp[nenvp],
 						     "DSNRET=S{"),
@@ -690,13 +698,13 @@ static int isfax(const char *p)
 	return (0);
 }
 
-static void print_header(FILE *f, char *template, const char *me,
+static void print_header(FILE *f, char *template_str, const char *me,
 			 const char *from_time, const char *from_mta)
 {
         unsigned char c, c2;
         int i = 0;
 
-        while ((c=template[i++]) > 0)
+        while ((c=template_str[i++]) > 0)
 	{
 		char        kw[64];
 		if (c != '[')
@@ -705,7 +713,7 @@ static void print_header(FILE *f, char *template, const char *me,
                         continue;
 		}
 
-		if (template[i] != '#')
+		if (template_str[i] != '#')
 		{
 			putc('[', f);
 			continue;
@@ -714,7 +722,7 @@ static void print_header(FILE *f, char *template, const char *me,
 		++i;
 
 		c2=0;
-		while ((c=template[i]) != 0 && (isalnum(c) || c == '_'))
+		while ((c=template_str[i]) != 0 && (isalnum(c) || c == '_'))
 		{
                         if (c2 < sizeof(kw)-1)
                                 kw[c2++]=c;
@@ -729,7 +737,7 @@ static void print_header(FILE *f, char *template, const char *me,
 		}
 
 		++i;
-		if (template[i] != ']')
+		if (template_str[i] != ']')
 		{
 			fprintf(f, "[#%s#", kw);
 			continue;
@@ -800,7 +808,8 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 
 	if (ctf->sender[0] == '\0')
 		returnmsg=1;
-	else if (!dodelayed && stat_buf.st_size < dsnlimit &&
+	else if (!dodelayed &&
+		 static_cast<size_t>(stat_buf.st_size) < dsnlimit &&
 		(j=ctlfile_searchfirst(ctf, COMCTLFILE_DSNFORMAT)) >= 0 &&
 		strchr(ctf->lines[j], 'H') == 0)
 	{

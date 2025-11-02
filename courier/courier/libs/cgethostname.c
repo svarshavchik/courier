@@ -15,11 +15,6 @@
 #include	<string.h>
 #include	<idn2.h>
 
-#if     HAS_GETHOSTNAME
-#else
-int gethostname(const char *, size_t);
-#endif
-
 static char *hostname_buf=0;
 
 const char *config_gethostname()
@@ -30,7 +25,7 @@ char	buf[BUFSIZ];
 	{
 		buf[sizeof(buf)-1]=0;
 		buf[0]=0;
-		gethostname(buf, sizeof(buf)-1);
+		gethostname_sys(buf, sizeof(buf)-1);
 
 		if (buf[0])
 		{

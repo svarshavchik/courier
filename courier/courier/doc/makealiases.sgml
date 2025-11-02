@@ -216,7 +216,7 @@ Lines starting with the # character are ignored, they are comments.</para>
     <para>
 <replaceable>alias</replaceable> is not restricted to be a local address.
 It may be any valid
-<ulink url="http://www.rfc-editor.org/rfc/rfc822.txt">RFC 2822</ulink>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc822">RFC 2822</ulink>
 address. All addresses do not necessary have to be in a canonical
 form.</para>
 
@@ -421,7 +421,7 @@ notification attributes of an E-mail message.</para>
     <para>
 An alias with multiple addresses is treated like a private mailing list, as
 defined by
-<ulink url="http://www.rfc-editor.org/rfc/rfc1894.txt">RFC 1894</ulink>.
+<ulink url="https://datatracker.ietf.org/doc/html/rfc1894">RFC 1894</ulink>.
 If the message requests a successful delivery
 notification, the <application moreinfo="none">Courier</application> mail server
 generates a delivery status notification for the
@@ -454,7 +454,7 @@ individual, separate, message.</para>
 <para>
 Duplicate elimination can fail in certain rare circumstances, involving
 exotic features of
-<ulink url="http://www.rfc-editor.org/rfc/rfc822.txt">RFC 2822</ulink>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc822">RFC 2822</ulink>
 concerning case sensitivity.</para>
 
     <para>

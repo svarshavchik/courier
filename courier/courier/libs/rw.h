@@ -7,6 +7,9 @@
 #define	rw_h
 
 #include	"courier.h"
+#include	"rfc822/rfc822.h"
+
+int aliasexp(std::istream &is, std::ostream &os, struct rw_transport *module);
 
 /* Install libraries */
 
@@ -17,8 +20,6 @@ int rw_install( const char *name,
 int rw_install_init();
 
 #ifdef	__cplusplus
-extern "C" {
-#endif
 
 /* Search for a rewriting function */
 
@@ -32,8 +33,9 @@ struct rw_info_rewrite {
 	char	*errmsg;
 	} ;
 
-struct rfc822t *rw_rewrite_tokenize(const char *);
-int rw_syntaxchk(struct rfc822token *);
+rfc822::tokens rw_rewrite_tokenize(const char *);
+int rw_syntaxchk(const rfc822::tokens &);
+#endif
 
 void rw_err_func(int, const char *, struct rw_info *);
 	/*
@@ -61,8 +63,9 @@ extern struct rw_transport {
 
 void rw_searchdel(struct rw_info *,
 		void (*)(struct rw_info *,
-			struct rw_transport *, const struct rfc822token *,
-			const struct rfc822token *));
+			struct rw_transport *,
+			 const rfc822::tokens &,
+			 const rfc822::tokens &));
 
 struct rw_transport *rw_search_transport(const char *);
 
@@ -72,21 +75,21 @@ void rw_rewrite_module(struct rw_transport *, struct rw_info *,
 /* Rewrite RFC822 header: */
 
 char *rw_rewrite_header(struct rw_transport *,	/* Rewriting library */
-	const char *,		/* header */
-	int,			/* flags/mode */
-	struct rfc822token *,	/* sender */
-	char **);		/* ptr to error message */
-#endif
+			const char *,		/* header */
+			int,			/* flags/mode */
+			const rfc822::tokens &,	/* sender */
+			char **);		/* ptr to error message */
 
-char	*rw_rewrite_header_func(void (*rwfunc)(
-			struct rw_info *, void (*)(struct rw_info *), void *),
-						/* Rewriting function */
+char	*rw_rewrite_header_func(
+	void (*rwfunc)(
+		struct rw_info *, void (*)(struct rw_info *), void *),
+	/* Rewriting function */
 	const char *,		/* See above */
 	int,			/* See above */
-	struct rfc822token *,	/* See above */
+	const rfc822::tokens &,	/* See above */
 	char **,		/* See above */
 	void *);	/* Context ptr, passed as last arg to rwfunc */
-
+#endif
 
 void rw_local_defaulthost(struct rw_info *, void (*)(struct rw_info *));
 	/* Common rewriting function that appends the local domain to
@@ -141,7 +144,4 @@ int rw_rewrite_msg_7bit(int,
 		void (*)(struct rw_info *), void *),
 	void *
 	);
-#ifdef	__cplusplus
-}
-#endif
 #endif

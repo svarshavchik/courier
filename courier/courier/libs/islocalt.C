@@ -8,13 +8,23 @@
 #include	<string.h>
 #include	<stdlib.h>
 
-int configt_islocal(const struct rfc822token *t, char **p)
+bool configt_islocal(rfc822::tokens::iterator b,
+		     rfc822::tokens::iterator e,
+		     std::string &hosteddomain)
 {
-char	*address=rfc822_gettok(t);
-int	rc;
+	std::string s;
+	size_t l=rfc822::tokens::print(b, e,
+				       rfc822::length_counter{} );
+	s.reserve(l);
+	rfc822::tokens::print(b, e, std::back_inserter(s));
 
-	if (!address)	clog_msg_errno();
-	rc=config_islocal(address, p);
-	free(address);
-	return (rc);
+	char *p=nullptr;
+	bool rc=config_islocal(s.c_str(), &p);
+
+	if (p)
+	{
+		hosteddomain=p;
+		free(p);
+	}
+	return rc;
 }

@@ -1,5 +1,5 @@
 /*
-** Copyright 2002 Double Precision, Inc.
+** Copyright 2002-2025 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -14,7 +14,9 @@
 #include	<sys/stat.h>
 #include	<stdlib.h>
 #include	<string.h>
+#include	<fcntl.h>
 #include	<ctype.h>
+#include	<algorithm>
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif
@@ -23,8 +25,8 @@
 
 static void rw_fax(struct rw_info *, void (*)(struct rw_info *));
 static void rw_del_fax(struct rw_info *, void (*)(struct rw_info *),
-		void (*)(struct rw_info *, const struct rfc822token *,
-			const struct rfc822token *));
+		       void (*)(struct rw_info *, const rfc822::tokens &,
+				const rfc822::tokens &));
 
 struct rw_list *fax_rw_install(const struct rw_install_info *p)
 {
@@ -39,43 +41,40 @@ const char *fax_rw_init()
 	return (0);
 }
 
-static int is_fax(struct rfc822token **headptr,
-		  struct rfc822token ***atptr,
-		  struct rfc822token *faxhostt)
+static bool is_fax(rfc822::tokens &addr,
+		   rfc822::tokens::iterator *atptr,
+		   rfc822::tokens &faxhost)
 {
-	struct rfc822token **p=NULL, *q;
+	rfc822::tokens::iterator b=addr.begin(), e=addr.end();
 	int dummy;
 
-	for ( ; *headptr; headptr=&(*headptr)->next)
-		if ( (*headptr)->token == '@')
-			p=headptr;
-
-	if (!p)
+	for (auto p=b; p != e; ++p)
 	{
-		return (0);
+		if (p->type == '@')
+		{
+			*atptr=p;
+
+			if (++p == e || p->type || p+1 != e)
+				break;
+
+			if (!comgetfaxopts(p->str, &dummy))
+				break;
+
+			faxhost= {p, e};
+			return true;
+		}
 	}
 
-	q= (*p)->next;
-
-	if (!q || q->next || q->token != 0)
-		return (0);
-
-	if (comgetfaxoptsn(q->ptr, q->len, &dummy) == 0)
-	{
-		*faxhostt= *q;
-		*atptr=p;
-		return (1);
-	}
-
-	return (0);
+	return false;
 }
 
 
 static void rw_fax(struct rw_info *p, void (*func)(struct rw_info *))
 {
-	struct rfc822token **dummy, dummy2;
+	rfc822::tokens::iterator dummy;
+	rfc822::tokens faxhost;
 
-	if (is_fax(&p->ptr, &dummy, &dummy2))
+	if (is_fax(p->addr, &dummy, faxhost))
 		return;
 
 	(*func)(p);
@@ -162,9 +161,42 @@ static int matches(const char *num, const char *pat, int *match_buf,
 	return (1);
 }
 
+/* The first time up, read the config file */
+
+static std::string getfaxrc()
+{
+	struct stat stat_buf;
+	char *n=config_localfilename("faxrc");
+
+	int fd=open(n, O_RDONLY);
+
+	free(n);
+
+	if (fd < 0)
+		return "";
+
+	rfc822::fdstreambuf fds{fd};
+
+	if (fstat(fd, &stat_buf) < 0)
+	{
+		clog_msg_prerrno();
+		return "";
+	}
+
+	std::string s;
+
+	s.reserve(stat_buf.st_size);
+
+	s.insert(s.end(),
+		 std::istreambuf_iterator<char>{&fds},
+		 std::istreambuf_iterator<char>{});
+	return s;
+}
+
 static char *rwfax(const char *a, const char *module, char *buffer)
 {
-	static char *faxrc=0, *faxrcbuf;
+	static const std::string faxrc=getfaxrc();
+
 	char *p;
 	int matched_strings[MAXLEN];
 	char *nextl;
@@ -174,34 +206,12 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 	if (!module)
 		accepted=1;	/* Not called from SUBMIT, that's OK */
 
-	/* The first time up, read the config file */
-
-	if (!faxrc)
-	{
-		struct stat stat_buf;
-		char *n=config_localfilename("faxrc");
-		FILE *f=fopen(n, "r");
-
-		free(n);
-
-		if (!f)
-			return (NULL);
-
-		if (fstat(fileno(f), &stat_buf) < 0
-		    || fread ( (faxrc=(char *)courier_malloc(stat_buf.st_size+1)),
-			       stat_buf.st_size, 1, f) != 1)
-		{
-			clog_msg_prerrno();
-			fclose(f);
-			return (NULL);
-		}
-		faxrc[stat_buf.st_size] = 0;
-		fclose(f);
-		faxrcbuf=(char *)courier_malloc(stat_buf.st_size+1);
-	}
-
 	if (strlen(a) > MAXLEN)
 		return (NULL);
+
+	std::string faxrc_copy{faxrc};
+
+	char *faxrcbuf=faxrc_copy.data();
 
 	strcpy(buffer, a);
 
@@ -222,8 +232,6 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 		if (*p == '+')
 			*p='@';
 	}
-
-	strcpy(faxrcbuf, faxrc);
 
 	for (p=nextl=faxrcbuf; *nextl; )
 	{
@@ -263,6 +271,10 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 			if (!q)
 				continue;
 
+			auto r=strtok(NULL, " \t\r");
+			char nullstr[]="";
+			if (!r) r=nullstr;
+
 			while (matches(buffer, q, matched_strings, flags))
 			{
 				char new_buffer[MAXLEN+1];
@@ -270,8 +282,7 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 
 				/* Build the replacement string */
 
-				q=strtok(NULL, " \t\r");
-				while (q && *q)
+				for (auto q=r; *q; )
 				{
 					int n;
 					size_t j;
@@ -377,46 +388,43 @@ static char *rwfax(const char *a, const char *module, char *buffer)
 static void rw_del_fax(struct rw_info *rwi,
 		       void (*nextfunc)(struct rw_info *),
 		       void (*delfunc)(struct rw_info *,
-				       const struct rfc822token *,
-				       const struct rfc822token *))
+				       const rfc822::tokens &,
+				       const rfc822::tokens &))
 {
-	struct rfc822token **p;
-	char *a, *b, *c;
-	struct rfc822token t, ht;
+	rfc822::tokens::iterator atp;
+	rfc822::tokens host;
+
 	char curnum[MAXLEN+1];
 
-	if (!is_fax(&rwi->ptr, &p, &ht))
+	if (!is_fax(rwi->addr, &atp, host))
 	{
 		(*nextfunc)(rwi);
 		return;
 	}
 
-	*p=0;
+	std::string a;
 
-	a=rfc822_gettok(rwi->ptr);
+	a.reserve(rfc822::tokens::print(rwi->addr.begin(), atp,
+					rfc822::length_counter{}));
 
-	if (!a)
-	{
-		clog_msg_errno();
-		(*rwi->err_func)(550, "Out of memory", rwi);
-		return;
-	}
+	rfc822::tokens::print(rwi->addr.begin(), atp,
+			      std::back_inserter(a));
 
-	for (b=c=a; *b; b++)
+	a.erase(std::remove_if(
+			a.begin(), a.end(),
+			[](char c)
+			{
+				return VALIDCHAR(c) == nullptr;
+			}), a.end());
+
+	if (a.empty())
 	{
-		if (VALIDCHAR(*b))
-			*c++ = *b;
-	}
-	*c=0;
-	if (*a == 0)
-	{
-		free(a);
 		(*rwi->err_func)(550, "Invalid fax phone number", rwi);
 		return;
 	}
 
-	b=rwfax(a, rwi->mode & RW_SUBMIT ? rwi->smodule:NULL, curnum);
-	free(a);
+	auto b=rwfax(a.c_str(), rwi->mode & RW_SUBMIT ? rwi->smodule:NULL,
+		     curnum);
 
 	if (!b || !*b)
 	{
@@ -424,10 +432,9 @@ static void rw_del_fax(struct rw_info *rwi,
 		return;
 	}
 
-	t.token=0;
-	t.next=0;
-	t.ptr=b;
-	t.len=strlen(b);
+	rfc822::tokens t;
 
-	(*delfunc)(rwi, &ht, &t);
+	t.push_back({0, b});
+
+	(*delfunc)(rwi, host, t);
 }

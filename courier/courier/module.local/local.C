@@ -36,15 +36,12 @@
 #define	syslog(a, b)
 #endif
 
-#define DEFAULTNAME	"alias@"
-
-
 extern "C" char *local_dotcourier(const char *, const char *, const char **);
 
 static void rw_local(struct rw_info *, void (*)(struct rw_info *));
 static void rw_del_local(struct rw_info *, void (*)(struct rw_info *),
-		void (*)(struct rw_info *, const struct rfc822token *,
-			const struct rfc822token *));
+			 void (*)(struct rw_info *, const rfc822::tokens &,
+				  const rfc822::tokens &));
 
 static int rw_local_filter(const char *,	/* Sending module */
 			int,			/* File descriptor */
@@ -73,21 +70,26 @@ static void rw_local(struct rw_info *p, void (*func)(struct rw_info *))
 	{
 		if (p->mode & RW_ENVSENDER)
 		{
-		char	*q=rfc822_gettok(p->ptr);
+			std::string addr;
+			size_t l=rfc822::tokens::print(
+				p->addr.begin(), p->addr.end(),
+				rfc822::length_counter{} );
+			addr.reserve(l);
 
-			if (!q)	clog_msg_errno();
+			rfc822::tokens::print(p->addr.begin(),
+					      p->addr.end(),
+					      std::back_inserter(addr));
+
 
 /*********************************************************************
 **
 ** To filter messages originating from the command line based on the
-** sender, insert code here to call p->rw_info to reject the message.
+** sender, insert code here to call p->err_func to reject the message.
 **
 ** The sender can be identified via getuid().  Note, though, that the
 ** process is running setgid to MAILGID.
 **
 *********************************************************************/
-
-			free(q);
 		}
 	}
 
@@ -97,11 +99,11 @@ static void rw_local(struct rw_info *p, void (*func)(struct rw_info *))
 static int local_callback(struct authinfo *, void *);
 
 struct localauthinfo {
-	const char *address;
-	const char *ext;
+	std::string address;
+	std::string ext;
 	struct rw_info *rwi;
-	void (*delfunc)(struct rw_info *, const struct rfc822token *,
-			const struct rfc822token *);
+	void (*delfunc)(struct rw_info *, const rfc822::tokens &,
+			const rfc822::tokens &);
 	int found;
 	int exists;
 } ;
@@ -117,83 +119,87 @@ struct localauthinfo {
 */
 
 static void rw_del_local2(struct rw_info *rwi,
-			  char *addr,
+			  const std::string &addr,
 			  void (*nextfunc)(struct rw_info *),
 			  void (*delfunc)(struct rw_info *,
-					  const struct rfc822token *,
-					  const struct rfc822token *));
+					  const rfc822::tokens &,
+					  const rfc822::tokens &));
 
 static void rw_del_local(struct rw_info *rwi,
 			 void (*nextfunc)(struct rw_info *),
 			 void (*delfunc)(struct rw_info *,
-					 const struct rfc822token *,
-					 const struct rfc822token *))
+					 const struct rfc822::tokens &,
+					 const struct rfc822::tokens &))
 {
-	struct rfc822token *p, **prevp;
-	char	*addr;
-	char	*hostdomain=NULL;
-	struct	rfc822token	hostdomaint;
+	auto ab=rwi->addr.begin(), ae=rwi->addr.end(), p=ab;
 
-	prevp=0;
-	for (p= *(prevp=&rwi->ptr); p; p= *(prevp= &p->next))
+	for (; p != ae; ++p)
 	{
-		if (p->token == '!')
+		if (p->type == '!')
 		{
 			(*nextfunc)(rwi);
 			return;
 		}
-		if (p->token == '@')	break;
+		if (p->type == '@')	break;
 	}
 
-	if (p)
+	std::string hostdomain;
+
+	if (p != ae)
 	{
 		/* If not a local domain, ignore */
 
-		if (!configt_islocal(p->next, &hostdomain))
+		if (!configt_islocal(++p, ae, hostdomain))
 		{
 			(*nextfunc)(rwi);
 			return;
 		}
 
-		if (hostdomain)
+		if (!hostdomain.empty())
 		{
-			char *q;
+			rwi->addr.erase(p, ae);
 
-			p->next= &hostdomaint;
+			char *q=ualllower(hostdomain.c_str());
 
-			q=ualllower(hostdomain);
-
-			free(hostdomain);
+			if (!q)
+				clog_msg_errno();
 			hostdomain=q;
+			free(q);
 
-			hostdomaint.next=0;
-			hostdomaint.token=0;
-			hostdomaint.ptr=hostdomain;
-			hostdomaint.len=strlen(hostdomain);
+			rwi->addr.push_back({0, hostdomain});
+			ae=rwi->addr.end();
 		}
 		else
-			*prevp=0;
+		{
+			rwi->addr.erase(--p, ae);
+		}
+		ae=rwi->addr.end();
 	}
 
 	/* Remove quotes from the local portion */
 
-	for (p=rwi->ptr; p; p=p->next)
-		if (p->token == '"')	p->token=0;
-	addr=rfc822_gettok(rwi->ptr);
+	for (auto &p:rwi->addr)
+		if (p.type == '"') p.type=0;
 
-	if (!addr)	clog_msg_errno();
+	std::string addr;
+	size_t l=rfc822::tokens::print(rwi->addr.begin(), rwi->addr.end(),
+				       rfc822::length_counter{} );
+	addr.reserve(l);
+
+	rfc822::tokens::print(rwi->addr.begin(), rwi->addr.end(),
+			      std::back_inserter(addr));
 
 	{
-		char *p=ulocallower(addr);
+		char *p=ulocallower(addr.c_str());
 
-		free(addr);
+		if (!p)
+			clog_msg_errno();
+
 		addr=p;
+		free(p);
 	}
 
 	rw_del_local2(rwi, addr, nextfunc, delfunc);
-	if (hostdomain)
-		free(hostdomain);
-	free(addr);
 }
 
 static const char *defaultsep(char c)
@@ -202,20 +208,22 @@ static const char *defaultsep(char c)
 }
 
 static void rw_del_local2(struct rw_info *rwi,
-			  char *addr,
+			  const std::string &addr,
 			  void (*nextfunc)(struct rw_info *),
 			  void (*delfunc)(struct rw_info *,
-					  const struct rfc822token *,
-					  const struct rfc822token *))
+					  const rfc822::tokens &,
+					  const rfc822::tokens &))
 {
-	char *ext;
+	size_t ext;
 	int	i;
 	struct localauthinfo lai;
 #if LOCAL_EXTENSIONS
-	char *atdomain, *localat;
+	std::string_view atdomain;
 #endif
 
-	if (strchr(addr, '!') || *addr == 0)
+	std::string_view search_addr{addr};
+
+	if (addr.empty() || addr.find('!') != addr.npos)
 	{
 		/* Can't have !s in an address, that's used a delimiter
 		** for the returned data.
@@ -234,7 +242,7 @@ static void rw_del_local2(struct rw_info *rwi,
 	** we're in courierd, but RW_SUBMIT is not set.
 	*/
 
-	if (*addr == '.')
+	if (*addr.c_str() == '.')
 	{
 		if ((rwi->mode & (RW_SUBMIT|RW_SUBMITALIAS))
 			== RW_SUBMIT)
@@ -244,57 +252,55 @@ static void rw_del_local2(struct rw_info *rwi,
 	}
 
 #if LOCAL_EXTENSIONS
-	localat=atdomain=strrchr(addr, '@');
-	if (atdomain)
-		*atdomain++=0;
+	{
+		auto p=search_addr.find('@');
+
+		if (p != search_addr.npos)
+		{
+			atdomain=search_addr.substr(p);
+			search_addr=search_addr.substr(0, p);
+		}
+	}
 #endif
 
 	i=0;
-	for (ext=addr; *ext; ext++)
+
+	for (ext=0; ext<search_addr.size(); ++ext)
 	{
 #if LOCAL_EXTENSIONS
-		if (defaultsep(*ext) && ++i > 3)
+		if (defaultsep(search_addr[ext]) && ++i > 3)
 			break;
 #endif
 	}
 
 	for (;;)
 	{
-		char *search_addr=addr;
-
 #if LOCAL_EXTENSIONS
-		char	c;
-		char *alloc_buf=0;
 
-		c= *ext;
-		*ext=0;
+		lai.ext.assign(
+			(search_addr.begin() + (ext < search_addr.size()
+						? ext+1:ext)),
+			search_addr.end()
+		);
 
-		lai.ext=c ? ext+1:ext;
+		lai.address.assign(
+			search_addr.begin(),
+			search_addr.begin()+ext
+		);
 
-		if (atdomain)
-		{
-			alloc_buf=(char *)malloc(strlen(addr)+strlen(atdomain)+2);
-			if (!alloc_buf)
-				clog_msg_errno();
-			strcat(strcat(strcpy(alloc_buf, addr), "@"),
-			       atdomain);
-			search_addr=alloc_buf;
-		}
+		lai.address += atdomain;
 #else
-		lai.ext=0;
+		lai.address=addr;
+		lai.ext="";
 #endif
-		lai.address=search_addr;
+
 		lai.delfunc=delfunc;
 		lai.rwi=rwi;
 		lai.found=0;
 
-		i=auth_getuserinfo("courier", search_addr,
+		i=auth_getuserinfo("courier", lai.address.c_str(),
 				   local_callback, &lai);
 
-#if LOCAL_EXTENSIONS
-		if (alloc_buf)
-			free(alloc_buf);
-#endif
 		if (i == 0)
 		{
 			if (lai.exists)
@@ -310,34 +316,27 @@ static void rw_del_local2(struct rw_info *rwi,
 				"Service temporarily unavailable.", rwi);
 			return;
 		}
-#if LOCAL_EXTENSIONS
-		*ext=c;
 
-		while (ext > addr)
-			if (defaultsep(*--ext))	break;
-		if (ext == addr)
+#if LOCAL_EXTENSIONS
+
+		while (ext > 0)
+			if (defaultsep(search_addr[--ext])) break;
+
+		if (ext == 0)
 		{
-			if (atdomain)
+			if (!atdomain.empty())
 			{
 				lai.ext=addr;
 				lai.delfunc=delfunc;
 				lai.rwi=rwi;
 				lai.found=0;
 
-				alloc_buf=(char *)malloc(sizeof(DEFAULTNAME)
-						 +strlen(atdomain));
-				if (!alloc_buf)
-					clog_msg_errno();
-
-				strcat(strcpy(alloc_buf, DEFAULTNAME),
-				       atdomain);
-
-				lai.address=alloc_buf;
+				lai.address="alias";
+				lai.address += atdomain;
 
 				i=auth_getuserinfo("courier",
-						   alloc_buf,
+						   lai.address.c_str(),
 						   &local_callback, &lai);
-				free(alloc_buf);
 				if (i == 0)
 				{
 					if (lai.exists)
@@ -359,11 +358,6 @@ static void rw_del_local2(struct rw_info *rwi,
 		break;
 #endif
 	}
-
-#if LOCAL_EXTENSIONS
-	if (localat)
-		*localat='@';	/* Put back what was taken */
-#endif
 
 	/* Try to deliver to an alias defined in ${sysconfdir}/aliasdir */
 
@@ -416,79 +410,54 @@ not_found:
 	    (strcmp(rwi->smodule, "local") == 0 ||
 	     strcmp(rwi->smodule, "uucp") == 0))
 	{
-		(*delfunc)(rwi, rwi->ptr, rwi->ptr);
+		(*delfunc)(rwi, rwi->addr, rwi->addr);
 		return;
 	}
 
 	{
-		char buf[256];
+		std::string addr;
+		size_t l=rfc822::tokens::print(
+			rwi->addr.begin(), rwi->addr.end(),
+			rfc822::length_counter{} );
+		addr.reserve(l);
 
-		char *orig_addr=rfc822_gettok(rwi->ptr);
+		rfc822::tokens::print(rwi->addr.begin(), rwi->addr.end(),
+				      std::back_inserter(addr));
 
 		/* This can come out in SMTP, so make it an ACE domain */
 
-		char *orig_addr_ace=udomainace(orig_addr ? orig_addr:"");
+		char *orig_addr_ace=udomainace(addr.c_str());
 
-		buf[255]=0;
-
-		snprintf(buf, 255, "User <%s> unknown", orig_addr_ace);
-
-		if (orig_addr)
-			free(orig_addr);
+		addr="User <";
+		addr += orig_addr_ace;
 		free(orig_addr_ace);
-		(*rwi->err_func)(550, buf, rwi);
+		addr += "> unknown";
+
+		(*rwi->err_func)(550, addr.c_str(), rwi);
 	}
 }
-
-static int local_callback2(struct authinfo *a, void *vp);
-
 
 static int local_callback(struct authinfo *a, void *vp)
 {
-	struct localauthinfo *lai=(struct localauthinfo *)vp;
-	const char *orig_ext=lai->ext;
-
-	char *ext=0;
-	int rc;
-
-	if (orig_ext)
-	{
-		char *p;
-
-		if ((ext=strdup(orig_ext)) == 0)
-			clog_msg_errno();
-
-		lai->ext=ext;
-
-		for (p=ext; *p; p++)
-			if (defaultsep(*p))
-				*p='-';
-	}
-
-	rc=local_callback2(a, vp);
-	lai->ext=orig_ext;
-
-	if (ext)
-		free(ext);
-	return rc;
-}
-
-static int local_callback2(struct authinfo *a, void *vp)
-{
 struct localauthinfo *lai=(struct localauthinfo *)vp;
-struct	rfc822token tacct, text, tuid, tgid, thomedir, tmaildir, tquota, trecip;
-struct	rfc822token te1, te2, te3, te4, te5, te6;
+rfc822::tokens tacct, trecip;
 char	ubuf[40], gbuf[40];
 char	*p;
 uid_t	un;
 gid_t	gn;
 
+	for (char &c:lai->ext)
+	{
+		if (defaultsep(c))
+			c='-';
+	}
+
 	lai->found=1;
 	lai->exists=0;
 
-	if (lai->ext && *lai->ext)
+	if (!lai->ext.empty())
 	{
-	char	*ext=local_dotcourier(a->homedir, lai->ext, 0);
+		char	*ext=local_dotcourier(a->homedir, lai->ext.c_str(), 0);
 
 		if (!ext && errno == ENOENT)
 			return (0);	/* Not found */
@@ -502,7 +471,7 @@ gid_t	gn;
 	{
 		syslog(LOG_DAEMON|LOG_CRIT,
 			"Invalid homedir or maildir for %s - has \\n, !, is null.",
-				lai->address);
+		       lai->address.c_str());
 		return (1);
 	}
 
@@ -517,26 +486,11 @@ Host:
 Ext:
 	non standard mailbox
 */
-	tacct.next= &te1;
-	tacct.token=0;
-	tacct.ptr=a->address;
-	tacct.len=strlen(tacct.ptr);
-
-	te1.next= &text;
-	te1.token='!';
-	te1.ptr="!";
-	te1.len=1;
-
-	text.next= &te2;
-	text.token=0;
-	text.ptr=lai->ext;
-	if (text.ptr == 0)	text.ptr="";
-	text.len=strlen(text.ptr);
-
-	te2.next= &tuid;
-	te2.token='!';
-	te2.ptr="!";
-	te2.len=1;
+	tacct.reserve(13);
+	tacct.push_back({0, a->address});
+	tacct.push_back({'!', "!"});
+	tacct.push_back({0, lai->ext.c_str()});
+	tacct.push_back({'!', "!"});
 
 	if (a->sysuserid)
 		un= *a->sysuserid;
@@ -574,15 +528,8 @@ Ext:
 		un=un/10;
 	} while (un);
 
-	tuid.next=&te3;
-	tuid.token=0;
-	tuid.ptr=p;
-	tuid.len=strlen(p);
-
-	te3.next= &tgid;
-	te3.token='!';
-	te3.ptr="!";
-	te3.len=1;
+	tacct.push_back({0, p});
+	tacct.push_back({'!', "!"});
 
 	p=gbuf+sizeof(gbuf)-1;
 	*p=0;
@@ -592,48 +539,17 @@ Ext:
 		gn=gn/10;
 	} while (gn);
 
-	tgid.next= &te4;
-	tgid.token=0;
-	tgid.ptr=p;
-	tgid.len=strlen(p);
+	tacct.push_back({0, p});
+	tacct.push_back({'!', "!"});
+	tacct.push_back({0, a->homedir});
+	tacct.push_back({'!', "!"});
+	tacct.push_back({0, a->maildir ? a->maildir:""});
+	tacct.push_back({'!', "!"});
+	tacct.push_back({0, a->quota ? a->quota:""});
 
-	te4.next= &thomedir;
-	te4.token='!';
-	te4.ptr="!";
-	te4.len=1;
+	trecip.push_back({0, lai->address});
 
-	thomedir.next=&te5;
-	thomedir.token=0;
-	thomedir.ptr= a->homedir;
-	thomedir.len=strlen(thomedir.ptr);
-
-	te5.next= &tmaildir;
-	te5.token='!';
-	te5.ptr="!";
-	te5.len=1;
-
-	tmaildir.next=&te6;
-	tmaildir.token=0;
-	tmaildir.ptr= a->maildir;
-	if (tmaildir.ptr == 0)	tmaildir.ptr="";
-	tmaildir.len=strlen(tmaildir.ptr);
-
-	te6.next= &tquota;
-	te6.token='!';
-	te6.ptr="!";
-
-	tquota.next=0;
-	tquota.token=0;
-	tquota.ptr= a->quota;
-	if (tquota.ptr == 0)	tquota.ptr="";
-	tquota.len=strlen(tquota.ptr);
-
-	trecip.next=0;
-	trecip.token=0;
-	trecip.ptr=lai->address;
-	trecip.len=strlen(trecip.ptr);
-
-	(*lai->delfunc)(lai->rwi, &tacct, &trecip);
+	(*lai->delfunc)(lai->rwi, tacct, trecip);
 	return (0);
 }
 
@@ -749,6 +665,10 @@ const char *quota;
 		return (1);
 	}
 
+#ifndef EXEC_MAILDROP
+#define EXEC_MAILDROP execv
+#endif
+
 	if (pid == 0)
 	{
 	char	*argv[11];
@@ -809,7 +729,7 @@ const char *quota;
 		argv[9]=getenv("BOUNCE2");
 		if (!argv[9])	argv[9]=nullstr;
 		argv[10]=0;
-		execv(maildrop, argv);
+		EXEC_MAILDROP(maildrop, argv);
 		_exit(0);	/* Assume spam filter isn't installed */
 	}
 	free(s);

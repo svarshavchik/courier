@@ -214,7 +214,7 @@ password) and have no explicitly defined character set.</para>
     <section id="smaplimits">
       <title>Maximum limitations and timeouts</title>
       <para>
-<ulink url="http://www.rfc-editor.org/rfc/rfc2822.txt">RFC 2822</ulink>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2822">RFC 2822</ulink>
 sets the maximum length of a line in an E-mail message as 998 characters.
 This limitation is applicable to SMAP, since SMAP deals with E-mail.
 Additionally, SMAP commands may not exceed 8000 characters.
@@ -544,7 +544,7 @@ command.</para>
 This SMAP server supports the
 <quote><replaceable>mechanism</replaceable></quote>
 authentication mechanism, as defined by
-<ulink url="http://www.rfc-editor.org/rfc/rfc3501.txt">RFC 3501</ulink>,
+<ulink url="https://datatracker.ietf.org/doc/html/rfc3501">RFC 3501</ulink>,
 and its successors.</para>
 	</listitem>
       </varlistentry>
@@ -558,7 +558,7 @@ natural language
 <quote><replaceable>language</replaceable></quote>.
 <quote><replaceable>language</replaceable></quote>
 is a language tag defined by
-<ulink url="http://www.rfc-editor.org/rfc/rfc1766.txt">RFC 1766</ulink>.
+<ulink url="https://datatracker.ietf.org/doc/html/rfc1766">RFC 1766</ulink>.
 A multilingual SMAP server lists
 multiple <literal>LANG</literal> keywords, one keyword for each
 language.</para>
@@ -674,7 +674,7 @@ The <literal>STARTTLS</literal>
 capability indicates that the server
 is capable of encrypting the connection between the client and the server.
 See
-<ulink url="http://www.rfc-editor.org/rfc/rfc2595.txt">RFC 2595</ulink>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2595">RFC 2595</ulink>
 for some additional comments on using TLS with mail-related protocols.
 </para>
 
@@ -2137,7 +2137,7 @@ was added to the folder.
 Note that this is not necessarily the contents of the message's
 <literal>Date:</literal> header.
 <replaceable>rfcdate</replaceable> uses the same
-<ulink url="http://www.rfc-editor.org/rfc/rfc2822.txt">RFC 2822</ulink>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2822">RFC 2822</ulink>
 date/time format as the <literal>Date:</literal> header.
 Example:</para>
 
@@ -2321,7 +2321,7 @@ S: +OK Ok
 </para>
 
 	  <para>
-<ulink url="http://www.rfc-editor.org/rfc/rfc2045.txt">RFC 2045</ulink>,
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2045">RFC 2045</ulink>,
 and related documents,
 specifies the format of MIME messages.
 A MIME message contains one or more individual or multipart
@@ -2804,7 +2804,7 @@ server.</para>
 	  <para>
 Sets delivery status notification options for the sent message, as
 described by
-<ulink url="http://www.rfc-editor.org/rfc/rfc1891.txt">RFC 1891</ulink>.
+<ulink url="https://datatracker.ietf.org/doc/html/rfc1891">RFC 1891</ulink>.
 This is an optional keyword that may not be implemented by all servers.
 Servers that do not implement delivery status notifications should reject
 this keyword.</para>

@@ -12,11 +12,9 @@
 #include	"numlib/numlib.h"
 #include	"comuidgid.h"
 #include	"sbindir.h"
-#include	<pwd.h>
 #include	<stdio.h>
 #include	<ctype.h>
 #include	<signal.h>
-#include	<idn2.h>
 #if	HAVE_SYSEXITS_H
 #include	<sysexits.h>
 #else
@@ -36,336 +34,14 @@
 #include	<stdlib.h>
 #include	<string.h>
 #include	<ctype.h>
+#include	<pwd.h>
 
 extern "C" void esmtpd();
-
-
-static struct passwd *mypwd()
-{
-static struct passwd *pwd=0;
-int	first_pwd=1;
-
-	if (first_pwd)
-	{
-		first_pwd=0;
-		pwd=getpwuid(getuid());
-	}
-
-	return (pwd);
-}
-
-static const char *env(const char *envname)
-{
-const char *p=getenv(envname);
-
-	if (p && !*p)	p=0;
-	return (p);
-}
-
-static char *rewrite_env_sender(const char *from)
-{
-const char *host;
-
-	if (!from)
-	{
-		if ((from=env("MAILSUSER")) == 0 &&
-			(from=env("MAILUSER")) == 0 &&
-			(from=env("LOGNAME")) == 0 &&
-			(from=env("USER")) == 0)
-		{
-		struct passwd *pw=mypwd();
-
-			from=pw ? pw->pw_name:"nobody";
-		}
-
-		if ((host=env("MAILSHOST")) != 0 ||
-			(host=env("MAILHOST")) != 0)
-		{
-			char	*p=(char *)
-				courier_malloc(strlen(from)+strlen(host)+2);
-
-			return (strcat(strcat(strcpy(p, from), "@"), host));
-		}
-	}
-	return (strcpy((char *)courier_malloc(strlen(from)+1), from));
-}
-
-static char *rewrite_from(const char *, const char *, const char *,
-		const char *);
-
-static struct rfc822t *tokenize_name(const char *name)
-{
-struct rfc822t *p=rw_rewrite_tokenize(name);
-struct rfc822token *t;
-
-	for (t=p->tokens; t; t=t->next)
-		if (t->token)	break;
-	if (t == 0)	return (p);	/* Only atoms */
-	if (p->tokens == 0)	return (p);
-
-	p->tokens->token='"';
-	p->tokens->next=0;
-	p->tokens->ptr=name;
-	p->tokens->len=strlen(name);
-	return (p);
-}
-
-static char *get_gecos()
-{
-struct passwd *pw=mypwd();
-char	*p, *q;
-
-	if (!pw || !pw->pw_gecos)	return (0);
-
-	p=strcpy((char *)courier_malloc(strlen(pw->pw_gecos)+1), pw->pw_gecos);
-
-	if ((q=strchr(p, ',')) != 0)	*q=0;
-	return (p);
-}
-
-static void rewrite_headers(const char *From)
-{
-int	seen_from=0;
-char	headerbuf[5000];
-int	c;
-size_t  i;
-const char *mailuser, *mailuser2, *mailhost;
-char	*p;
- char	*pfrom=From ? strcpy((char *)courier_malloc(strlen(From)+1), From):0;
-
-	if ((mailuser=env("MAILUSER")) == 0 &&
-		(mailuser=env("LOGNAME")) == 0)
-		mailuser=env("USER");
-	mailuser2=env("MAILUSER");
-	mailhost=env("MAILHOST");
-
-	while (fgets(headerbuf, sizeof(headerbuf), stdin))
-	{
-	char	*p=strchr(headerbuf, '\n');
-
-		if (p)
-		{
-			*p=0;
-			if (p == headerbuf || strcmp(headerbuf, "\r") == 0)
-				break;
-		}
-
-		if (strncasecmp(headerbuf, "from:", 5))
-		{
-			fprintf(submit_to, "%s", headerbuf);
-			if (!p)
-				while ((c=getchar()) != EOF && c != '\n')
-					putc(c, submit_to);
-			putc('\n', submit_to);
-			continue;
-		}
-		if (!p)
-			while ((c=getchar()) != EOF && c != '\n')
-				;	/* I don't care */
-		if (seen_from)	continue;	/* Screwit */
-		seen_from=1;
-
-		i=strlen(headerbuf);
-		for (;;)
-		{
-			c=getchar();
-			if (c != EOF)	ungetc(c, stdin);
-			if (c == EOF || c == '\r' || c == '\n')	break;
-			if (!isspace((int)(unsigned char)c))	break;
-			while ((c=getchar()) != EOF && c != '\n')
-			{
-				if (i < sizeof(headerbuf)-1)
-					headerbuf[i++]=c;
-			}
-			headerbuf[i]=0;
-		}
-
-		p=rewrite_from(headerbuf+5, mailuser2, mailhost, pfrom);
-		fprintf(submit_to, "From: %s\n", p);
-		free(p);
-	}
-	if (!seen_from)
-	{
-		if (!mailuser)
-		{
-		struct passwd *pw=mypwd();
-
-			mailuser=pw ? pw->pw_name:"nobody";
-		}
-
-		if (!pfrom)
-		{
-			if ( !(From=env("MAILNAME")) && !(From=env("NAME")))
-			{
-				pfrom=get_gecos();
-			}
-			else	pfrom=strcpy(
-				(char *)courier_malloc(strlen(From)+1),
-				From);
-		}
-
-		p=rewrite_from(NULL, mailuser, mailhost, pfrom);
-		fprintf(submit_to, "From: %s\n", p);
-		free(p);
-	}
-	putc('\n', submit_to);
-	if (pfrom)	free(pfrom);
-}
-
-static char *rewrite_from_idna(const char *oldfrom, const char *newuser,
-			       const char *newhost, const char *newname);
-
-static char *rewrite_from(const char *oldfrom, const char *newuser,
-			  const char *newhost, const char *newname)
-{
-	char *newhost_idna=0;
-	char *p;
-
-	if (newhost && idna_to_ascii_8z(newhost, &newhost_idna, 0)
-	    != IDNA_SUCCESS)
-		newhost_idna=0;
-
-	p=rewrite_from_idna(oldfrom, newuser,
-			    (newhost_idna ? newhost_idna:newhost),
-			    newname);
-
-	if (newhost_idna)
-		free(newhost_idna);
-
-	return p;
-}
-
-static char *rewrite_from_idna(const char *oldfrom, const char *newuser,
-			       const char *newhost, const char *newname)
-{
-struct rfc822t *rfct;
-struct rfc822a *rfca;
-struct rfc822t *usert, *hostt, *namet;
-struct rfc822token attoken, **tp;
-char	*p;
-const char *q;
-char	*gecosname=0;
-
-	if (!oldfrom)
-	{
-		char	*p=(char *)courier_malloc(
-			(newuser ? strlen(newuser):0)+
-			(newhost ? strlen(newhost):0)+4);
-		strcpy(p, "<");
-		if (newuser)	strcat(p, newuser);
-		if (newuser && newhost)
-			strcat(strcat(p, "@"), newhost);
-		strcat(p, ">");
-		if (newname)
-		{
-		char *q, *r;
-
-			namet=tokenize_name(newname);
-			q=rfc822_gettok(namet->tokens);
-			rfc822t_free(namet);
-			r=(char *)courier_malloc(strlen(p)+strlen(q)+2);
-			strcat(strcat(strcpy(r, q), " "), p);
-			free(p);
-			p=r;
-			free(q);
-		}
-		return (p);
-	}
-
-	if ((rfct=rfc822t_alloc_new(oldfrom, NULL, NULL)) == 0 ||
-		(rfca=rfc822a_alloc(rfct)) == 0)
-	{
-		clog_msg_errno();
-		return(0);
-	}
-
-	if ((q=env("MAILNAME")) || (q=env("NAME")))
-		newname=q;
-
-	if (!newname && rfca->naddrs == 0)
-		newname=gecosname=get_gecos();
-
-	if ((rfca->naddrs == 0 || rfca->addrs[0].tokens == 0) && newuser == 0)
-	{
-	struct	passwd *pw=mypwd();
-
-		if (pw)	newuser=pw->pw_name;
-	}
-
-	namet=newname ? tokenize_name(newname):0;
-	usert=newuser ? rw_rewrite_tokenize(newuser):0;
-	hostt=newhost ? rw_rewrite_tokenize(newhost):0;
-
-	if (rfca->naddrs == 0 || rfca->addrs[0].tokens == 0)
-	{
-	struct rfc822addr a;
-	struct rfc822a	fakea;
-
-		if (hostt)
-		{
-		struct rfc822token *t;
-
-			attoken.token='@';
-			attoken.next=hostt->tokens;
-			attoken.ptr=0;
-			attoken.len=0;
-
-			for (t=usert->tokens; t->next; t=t->next)
-				;
-			t->next=&attoken;
-		}
-		fakea.naddrs=1;
-		fakea.addrs= &a;
-
-		if (!namet)	namet=tokenize_name("");
-		if (!usert)	usert=rw_rewrite_tokenize("");
-		a.name=namet->tokens;
-		a.tokens=usert->tokens;
-		p=rfc822_getaddrs(&fakea);
-	}
-	else
-	{
-	struct	rfc822token *t, *u;
-
-		rfca->naddrs=1;
-		if (usert)
-		{
-			for (t=rfca->addrs[0].tokens; t; t=t->next)
-				if (t->token == '@')	break;
-
-			for (u=usert->tokens; u->next; u=u->next)
-				;
-			u->next=t;
-			rfca->addrs[0].tokens=usert->tokens;;
-		}
-
-		if (hostt && rfca->addrs[0].tokens)
-		{
-			for (tp= &rfca->addrs[0].tokens; *tp;
-				tp= &(*tp)->next)
-				if ( (*tp)->token == '@')	break;
-			*tp=&attoken;
-			attoken.token='@';
-			attoken.next=hostt->tokens;
-			attoken.ptr=0;
-			attoken.len=0;
-		}
-		if (namet)
-			rfca->addrs[0].name=namet->tokens;
-
-		p=rfc822_getaddrs(rfca);
-	}
-
-	if (!p)	clog_msg_errno();
-
-	if (usert)	rfc822t_free(usert);
-	if (hostt)	rfc822t_free(hostt);
-	if (namet)	rfc822t_free(namet);
-	rfc822t_free(rfct);
-	rfc822a_free(rfca);
-	if (gecosname)	free(gecosname);
-	return (p);
-}
+extern struct passwd *mypwd();
+extern std::string rewrite_env_sender(const char *from);
+extern void rewrite_headers(const char *From,
+			    FILE *read_from,
+			    FILE *submit_to);
 
 static void exit_submit(int errcode)
 {
@@ -416,12 +92,8 @@ int     submit_errcode;
 
 	setenv("AUTHMODULES", "", 1); /* See module.local/local.c */
 
-	setenv("LANG", "en_US", 1);
-	setenv("CHARSET", "iso-8859-1", 1);
-	setenv("MM_CHARSET", "iso-8859-1", 1);
-
 #if HAVE_SETLOCALE
-	setlocale(LC_ALL, "C");
+	setlocale(LC_ALL, "");
 #endif
 
 	/* Only uucp can run rmail (this better be installed setgid) */
@@ -665,11 +337,8 @@ int     submit_errcode;
 		}
 		else
 		{
-		char	*p;
-
-			p=rewrite_env_sender(from);
-			submit_write_message(p);
-			free(p);
+			auto p=rewrite_env_sender(from);
+			submit_write_message(p.c_str());
 		}
 		if ((submit_errcode=submit_readrcprinterr()) != 0)
 		{
@@ -691,7 +360,7 @@ int     submit_errcode;
 		putc('\n', submit_to);
 
 	if (!uucprmail)
-		rewrite_headers(From);
+		rewrite_headers(From, stdin, submit_to);
 
 	while ((c=getchar()) != EOF)
 	{

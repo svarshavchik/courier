@@ -43,44 +43,39 @@ char	*errmsg=makeerrmsgtext(errnum, p);
 }
 
 static void found_module(struct rw_info *rwi, struct rw_transport *t,
-	const struct rfc822token *host, const struct rfc822token *addr)
+			 const rfc822::tokens &host,
+			 const rfc822::tokens &addr)
 {
 struct getdelinfo_struct *p=(struct getdelinfo_struct *)rwi->udata;
 
 	if (!t->udata)	return;
 	p->drvinfop=(drvinfo *)t->udata;
 
-	char *s=rfc822_gettok(host);
+	size_t l=host.print( rfc822::length_counter{} );
+	p->host.clear();
+	p->host.reserve(l);
+	host.print(std::back_inserter(p->host));
 
-	if (!s)	clog_msg_errno();
-	p->host=s;
-	free(s);
+	l=addr.print( rfc822::length_counter{} );
 
-	s=rfc822_gettok(addr);
-
-	if (!s) clog_msg_errno();
-	p->addr=s;
-	free(s);
+	p->addr.clear();
+	p->addr.reserve(l);
+	addr.print(std::back_inserter(p->addr));
 }
 
-drvinfo *msgq::getdelinfo(struct rfc822token *sendert,
+drvinfo *msgq::getdelinfo(rfc822::tokens sendert,
 			  const char *receipient, std::string &host,
 			  std::string &addr, std::string &errmsg)
 {
 	struct getdelinfo_struct gdis(0, host, addr);
-	struct	rw_info	rwi;
-	struct rfc822t *rfcp=rw_rewrite_tokenize(receipient);
-
-	rw_info_init(&rwi, rfcp->tokens, gdi_err_func);
-	rwi.sender=sendert;
-	rwi.mode=RW_OUTPUT|RW_ENVRECIPIENT;
+	rw_info	rwi{RW_OUTPUT|RW_ENVRECIPIENT, std::move(sendert), {}};
+	auto rfcp=rw_rewrite_tokenize(receipient);
+	rw_info_init(&rwi, std::move(rfcp), gdi_err_func);
 	rwi.udata= (void *)&gdis;
 	rw_searchdel(&rwi, &found_module);
-	rfc822t_free(rfcp);
 	if (!gdis.drvinfop && gdis.errmsg.size() == 0)
 		gdis.errmsg="550 User unknown.";
 	errmsg=gdis.errmsg;
 	return (gdis.drvinfop);
 
 }
-

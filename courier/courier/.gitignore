@@ -82,7 +82,9 @@
 /submit
 /submitmkdir
 /sysconfdir.h
+/testaliasexp
 /testmxlookup
+/testsendmailrw
 /testtrack
 /webmail
 /webmail.authpam

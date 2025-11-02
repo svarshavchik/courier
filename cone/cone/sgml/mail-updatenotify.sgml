@@ -98,7 +98,7 @@ or to stop notifying the application
 	<para>
 This method only works with IMAP mail accounts on IMAP servers that support
 the IMAP IDLE extension, as described by
-<ulink url="http://www.rfc-editor.org/rfc/rfc2177.txt">RFC
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2177">RFC
 2177</ulink>.
 This method has no effect with IMAP servers that do not implement the IDLE
 extension, or other mail accounts.</para>
@@ -162,7 +162,7 @@ notification.</para>
 <link linkend="mail-updatefolderindexinfo"><citerefentry>
 	    <refentrytitle>mail::account::updateFolderIndexInfo</refentrytitle>
 	    <manvolnum>3x</manvolnum></citerefentry></link>,
-<ulink url="http://www.rfc-editor.org/rfc/rfc2177.txt">RFC
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2177">RFC
 2177</ulink>.</para>
     </refsect1> 
   </refentry>

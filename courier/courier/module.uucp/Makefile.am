@@ -21,6 +21,7 @@ databin_SCRIPTS=makeuucpneighbors
 EXTRA_DIST=courier.config staticlist.C courieruucp.8.in courieruucp.html.in
 
 noinst_LTLIBRARIES=librewrite.la
+noinst_PROGRAMS=testuucp
 
 install-data-hook:
 	-$(mkinstalldirs) $(DESTDIR)$(moduledir)
@@ -36,8 +37,19 @@ install-data-hook:
 	for f in $(htmldoc_DATA); do chmod 444 $(DESTDIR)$(htmldocdir)/$$f ; done
 	test `id -u` = 0 || exit 0; for f in $(htmldoc_DATA); do chown bin $(DESTDIR)$(htmldocdir)/$$f ; chgrp bin $(DESTDIR)$(htmldocdir)/$$f ; done
 
-courieruucp_SOURCES=uucp.c staticlist.C
-nodist_EXTRA_courieruucp_SOURCES=dummy.C
+courieruucp_SOURCES=uucp.C staticlist.C
+
+testuucp_SOURCES=testuucp.C
+testuucp_DEPENDENCIES=\
+	../../libs/rfc2045/librfc2045.la \
+	../../libs/rfc822/librfc822.la \
+	../../libs/numlib/libnumlib.la \
+	#
+
+testuucp_LDADD=$(testuucp_DEPENDENCIES) -lcourier-unicode @LIBIDN_LIBS@
+
+check-am:
+	./testuucp
 
 courieruucp_DEPENDENCIES=../../courier/libs/libmodule.la \
 	librewrite.la \
@@ -87,7 +99,7 @@ install-perms-local:
 	@echo $(man8dir)/courieruucp.8 644 bin bin man >>permissions.dat
 	@echo $(man8dir)/makeuucpneighbors.8 644 bin bin man >>permissions.dat
 
-librewrite_la_SOURCES=uucpstub.c
+librewrite_la_SOURCES=uucpstub.C uucpfuncs.h uucpfuncs.C
 librewrite_la_LDFLAGS=-static
 
 sysconfdir.h: config.status

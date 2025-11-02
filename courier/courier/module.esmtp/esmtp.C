@@ -18,13 +18,18 @@
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif
+#include	<algorithm>
 
-static int acceptdomain(const struct rfc822token *);
+#ifndef GETENV
+#define GETENV getenv
+#endif
+
+static int acceptdomain(std::string);
 static void rw_esmtp(struct rw_info *, void (*)(struct rw_info *));
 
 static void rw_del_esmtp(struct rw_info *, void (*)(struct rw_info *),
-		void (*)(struct rw_info *, const struct rfc822token *,
-			const struct rfc822token *));
+			 void (*)(struct rw_info *, const rfc822::tokens &,
+				  const rfc822::tokens &));
 
 struct rw_list *esmtp_rw_install(const struct rw_install_info *p)
 {
@@ -39,27 +44,31 @@ const char *esmtp_rw_init()
 	return (0);
 }
 
-static struct rfc822token *rfc822check(int err_code,
-	struct rw_info *info, int allow_faxdomain)
+static rfc822::tokens::iterator rfc822check(
+	int err_code,
+	struct rw_info *info,
+	bool allow_faxdomain)
 {
-struct rfc822token *p, *s;
+	rfc822::tokens::iterator p, s;
 
-	for (p=0, s=info->ptr; s; s=s->next)
-		if (s->token == '@')	p=s;
-	if (p)
+	for (s=info->addr.begin(), p=info->addr.end();
+	     s != info->addr.end(); ++s)
+		if (s->type == '@')
+			p=s;
+	if (p != info->addr.end())
 	{
-	int	seendot=1;
-	int	seen1dot=0;
-	int	dummy;
+		int	seendot=1;
+		int	seen1dot=0;
+		int	dummy;
 
-		for (s=p->next; s; s=s->next)
+		for (s=p+1; s != info->addr.end(); ++s)
 		{
-			if (s->token == 0)
+			if (s->type == 0)
 			{
 				if (!seendot)	break;
 				seendot=0;
 			}
-			else if (s->token == '.')
+			else if (s->type == '.')
 			{
 				if (seendot)	break;
 				seendot=1;
@@ -74,24 +83,24 @@ struct rfc822token *p, *s;
 		** address, relax this syntax check.
 		*/
 
-		if (s == 0 && !seen1dot && allow_faxdomain &&
-		    p->next && !p->next->next && p->next->token == 0 &&
-		    comgetfaxoptsn(p->next->ptr, p->next->len, &dummy) == 0 &&
-		    getenv("FAXRELAYCLIENT") != NULL)
+		if (s == info->addr.end() && !seen1dot && allow_faxdomain &&
+		    p+1 != info->addr.end() &&
+		    p+2 == info->addr.end() &&
+		    p[1].type == 0 &&
+		    comgetfaxopts(p[1].str, &dummy) &&
+		    GETENV("FAXRELAYCLIENT") != NULL)
 			return (p);
 
-		if (s == 0 && seen1dot)	return (p);
+		if (s == info->addr.end() && seen1dot)	return (p);
 	}
 
 	(*info->err_func)(err_code, "Syntax error.", info);
-	return (0);
+	return (info->addr.end());
 }
 
 static int rwrecip(struct rw_info *info)
 {
-struct rfc822token *p, *q;
-
-	if (rfc822check(513, info, 1) == 0)	return (-1);
+	if (rfc822check(513, info, true) == info->addr.end())	return (-1);
 
 	/*
 		Rewrite @foobar:foo@bar into foo@bar if @foobar is us.
@@ -99,53 +108,81 @@ struct rfc822token *p, *q;
 
 	for (;;)
 	{
-		if (info->ptr == 0 || info->ptr->token != '@')
+		if (info->addr.empty() || info->addr[0].type != '@')
 			break;
-		for (p=info->ptr; p->next; p=p->next)
-			if (p->next->token == ':')	break;
-		if (!p->next)	break;
-		q=p->next;
-		p->next=0;
-		if (configt_islocal(info->ptr->next, 0))
+
+		auto p=std::find_if(
+			info->addr.begin(),
+			info->addr.end(),
+			[](auto &token)
+			{
+				return token.type == ':';
+			});
+
+		if (p == info->addr.end()) break;
+
+		std::string ignore;
+
+		if (configt_islocal(info->addr.begin()+1,
+				    p,
+				    ignore))
 		{
-			info->ptr=q->next;
-			continue;
+			info->addr.erase(info->addr.begin(), ++p);
+			break;
 		}
-		/* foobar is nonlocal, rewrite as foo%bar@foobar */
-		p=info->ptr;
-		info->ptr=q->next;
-		while (q->next)
-			q=q->next;
-		q->next=p;
+
+		/* foobar is nonlocal, rewrite as foo@bar@foobar */
+
+		rfc822::tokens buf{info->addr.begin(),  p};
+
+		info->addr.erase(info->addr.begin(), ++p);
+		info->addr.insert(info->addr.end(),
+				  buf.begin(),
+				  buf.end());
 		break;
 	}
 
 	/* Rewrite foo@bar@foobar as foo%bar@foobar */
 
-	for (p=info->ptr, q=p; p; p=p->next)
-		if (p->token == ':')	q=p->next;
+	auto q=info->addr.begin();
+	for (auto p=q; p != info->addr.end(); ++p)
+		if (p->type == ':')
+			q=p+1;
 
-	p=0;
-	while (q)
+	auto p=info->addr.end();
+
+	for (; q != info->addr.end(); ++q)
 	{
-		if (q->token == '@' || q->token == '%')
+		if (q->type == '@' || q->type == '%')
 		{
-			if (p)	p->token='%';
+			if (p != info->addr.end())
+				p->type='%';
 			p=q;
 		}
-		q=q->next;
 	}
-	if (p)	p->token='@';
+
+	if (p != info->addr.end())
+	{
+		p->type='@';
+	}
 
 	/* One more time */
 
-	if ((p=rfc822check(513, info, 1)) == 0)	return (-1);
+	if ((p=rfc822check(513, info, true)) == info->addr.end())
+		return (-1);
 
 	/* When called from submit (initial receipt of a message),
 	** either RELAYCLIENT must be set, or this must be one of our domains.
 	*/
 
-	if (!getenv("RELAYCLIENT") && !acceptdomain(p->next))
+	std::string s;
+
+	s.reserve(rfc822::tokens::print(p+1, info->addr.end(),
+					rfc822::length_counter{}));
+	rfc822::tokens::print(p+1, info->addr.end(),
+			      std::back_inserter(s));
+
+	if (!GETENV("RELAYCLIENT") && !acceptdomain(std::move(s)))
 	{
 		(*info->err_func)(513, "Relaying denied.", info);
 		return (-1);
@@ -174,17 +211,24 @@ static int isindomaindb_utf8(const char *address, struct dbobj *db)
 
 static int isindomaindb(const char *p, struct dbobj *db)
 {
-	char *address_utf8;
+	char *address_utf8_str;
+	std::string address_utf8;
 	char *q;
 	int ret;
 	char *hlocal;
 
-	if (idna_to_unicode_8z8z(p, &address_utf8, 0)
-	    != IDNA_SUCCESS)
-		address_utf8=courier_strdup(p);
+	if (idna_to_unicode_8z8z(p, &address_utf8_str, 0)
+	    == IDNA_SUCCESS)
+	{
+		address_utf8=address_utf8_str;
+		free(address_utf8_str);
+	}
+	else
+	{
+		address_utf8=p;
+	}
 
-	q=ualllower(address_utf8);
-	free(address_utf8);
+	q=ualllower(address_utf8.c_str());
 
 	hlocal=config_is_gethostname(q);
 	if (hlocal &&
@@ -199,18 +243,17 @@ static int isindomaindb(const char *p, struct dbobj *db)
 	return ret;
 }
 
-static int ispercenthack(struct rfc822token *ptr)
+static int ispercenthack(rfc822::tokens::iterator b, rfc822::tokens::iterator e)
 {
-static char *percenthack=0;
-static struct dbobj percenthackdat;
-char	*p;
+	static char *percenthack=0;
+	static struct dbobj percenthackdat;
+	char *p;
 
 	if (!percenthack)	/* First time */
 	{
 		static char zero=0;
 
 		p=config_localfilename("esmtppercentrelay");
-
 		percenthack=readfile(p, 0);
 		free(p);
 
@@ -227,16 +270,17 @@ char	*p;
 	if (*percenthack == 0 && !dbobj_isopen(&percenthackdat))
 		return (0);	/* Don't bother */
 
-	p=rfc822_gettok(ptr);
-	if (config_is_indomain(p, percenthack) ||
+	std::string pbuf;
+	pbuf.reserve(rfc822::tokens::print(b, e, rfc822::length_counter{}));
+	rfc822::tokens::print(b, e, std::back_inserter(pbuf));
+
+	if (config_is_indomain(pbuf.c_str(), percenthack) ||
 		(dbobj_isopen(&percenthackdat) &&
-			isindomaindb(p, &percenthackdat)))
+		 isindomaindb(pbuf.c_str(), &percenthackdat)))
 	{
-		free(p);
 		return (1);
 	}
 
-	free(p);
 	return (0);
 }
 
@@ -247,30 +291,34 @@ char	*p;
 
 static void rwinput(struct rw_info *info, void (*func)(struct rw_info *))
 {
-struct rfc822token *p, *q, **start, **ptr;
+	auto start=info->addr.begin();
 
-	for (start= &info->ptr, p=info->ptr; p; p=p->next)
-		if (p->token == ':')
-			start =&p->next;
+	for (auto p=start; p != info->addr.end(); ++p)
+		if (p->type == ':')
+			start = p+1;
 
-	for (p=0, ptr=start; *ptr; ptr= &(*ptr)->next)
+	auto p=info->addr.end(), ptr=start;
+	for (; ptr != info->addr.end(); ++ptr)
 	{
-		if ( (*ptr)->token == '%' )
-			p= *ptr;
-		if ( (*ptr)->token == '@' )
+		if (ptr->type == '%')
+			p= ptr;
+		if ( ptr->type == '@' )
 			break;
 	}
-	if (!p || *ptr == 0 || !configt_islocal((*ptr)->next, 0))
+
+	std::string domain;
+	if (p == info->addr.end() || ptr == info->addr.end() ||
+	    !configt_islocal(ptr+1, info->addr.end(), domain))
 	{
 		(*func)(info);
 		return;
 	}
 
-	q= *ptr;
-	*ptr=0;
-	if (ispercenthack(p->next))
-		p->token='@';
-	else	*ptr=q;
+	if (p != info->addr.end() && ispercenthack(p+1, ptr))
+	{
+		p->type='@';
+		info->addr.erase(ptr, info->addr.end());
+	}
 	(*func)(info);
 }
 
@@ -278,45 +326,34 @@ struct rfc822token *p, *q, **start, **ptr;
 
 static void rwoutput(struct rw_info *info, void (*func)(struct rw_info *))
 {
-struct rfc822token *p, *q, **r;
-const char *me;
-struct rfc822t	*tp;
-struct rfc822token at;
-
-	if (info->ptr == 0)
+	if (info->addr.empty())
 	{
 		(*func)(info);
 		return;
 	}
 
-	for (q=0, p=info->ptr; p; p=p->next)
-		if (p->token == '@')	q=p;
+	auto q=info->addr.end();
+	for (auto p=info->addr.begin(); p != info->addr.end(); ++p)
+		if (p->type == '@')	q=p;
 
-	if (q)
+	if (q != info->addr.end())
 	{
-		if (!ispercenthack(q->next))
+		if (!ispercenthack(q+1, info->addr.end()))
 		{
 			(*func)(info);
 			return;
 		}
 
-		q->token='%';
+		q->type='%';
 	}
 
-	for (r= &info->ptr; *r; r= &(*r)->next)
-		;
+	auto tp=rw_rewrite_tokenize(config_defaultdomain());
+	info->addr.reserve(info->addr.size() + tp.size()+1);
 
-	at.token='@';
-	at.ptr=0;
-	at.len=0;
-	me=config_defaultdomain();
-	tp=rw_rewrite_tokenize(me);
-	at.next=tp->tokens;
+	info->addr.push_back({'@', "@"});
+	info->addr.insert(info->addr.end(), tp.begin(), tp.end());
 
-	*r=&at;
 	(*func)(info);
-	*r=0;
-	rfc822t_free(tp);
 }
 
 static void rw_esmtp(struct rw_info *info, void (*func)(struct rw_info *))
@@ -327,11 +364,12 @@ static void rw_esmtp(struct rw_info *info, void (*func)(struct rw_info *))
 	{
 		if (info->mode & RW_ENVSENDER)
 		{
-			if (info->ptr &&
-				(info->ptr->token || info->ptr->len))
-					/* NULL sender OK */
+			if (!info->addr.empty() &&
+			    (info->addr[0].type || info->addr[0].str.size()))
+				/* NULL sender OK */
 			{
-				if (rfc822check(517, info, 0) == 0)
+				if (rfc822check(517, info, false)
+				    == info->addr.end())
 					return;
 			}
 		}
@@ -348,31 +386,31 @@ static void rw_esmtp(struct rw_info *info, void (*func)(struct rw_info *))
 }
 
 static void rw_del_esmtp(struct rw_info *rwi,
-		void (*nextfunc)(struct rw_info *),
-		void (*delfunc)(struct rw_info *, const struct rfc822token *,
-			const struct rfc822token *))
+			 void (*nextfunc)(struct rw_info *),
+			 void (*delfunc)(struct rw_info *,
+					 const rfc822::tokens &,
+					 const rfc822::tokens &))
 {
-	struct rfc822token *p;
-	char	*c, *ac;
-	struct	rfc822token host, addr;
+	auto p=rwi->addr.begin();
 
-	for (p=rwi->ptr; p; p=p->next)
+	for (; p != rwi->addr.end(); p++)
 	{
-		if (p->token == '!')
+		if (p->type == '!')
 		{
 			(*nextfunc)(rwi);	/* We don't talk UUCP */
 			return;
 		}
-		if (p->token == '@')	break;
+		if (p->type == '@')	break;
 	}
 
-	if (!p)
+	if (p == rwi->addr.end())
 	{
 		(*nextfunc)(rwi);
 		return;
 	}
 
-	if (configt_islocal(p->next, 0))
+	std::string domain;
+	if (configt_islocal(p+1, rwi->addr.end(), domain))
 	{
 		(*nextfunc)(rwi);
 				/* Local module should handle it */
@@ -385,28 +423,33 @@ static void rw_del_esmtp(struct rw_info *rwi,
 		return;
 	}
 
-	ac=rfc822_gettok(rwi->ptr);
-	if (!ac)	clog_msg_errno();
-	if (strchr(ac, '@') == 0)
+	std::string ac;
+
+	ac.reserve(rfc822::tokens::print(rwi->addr.begin(), rwi->addr.end(),
+					 rfc822::length_counter{}));
+	rfc822::tokens::print(rwi->addr.begin(), rwi->addr.end(),
+			      std::back_inserter(ac));
+
+	if (ac.find('@') == ac.npos)
 	{
-		free(ac);
 		(*nextfunc)(rwi); /* Local? */
 		return;
 	}
 
-	c=udomainlower(ac);
-	free(ac);
-	host.next=0;
-	host.token=0;
-	host.ptr=strchr(c, '@')+1;
-	host.len=strlen(host.ptr);
-	addr.next=0;
-	addr.token=0;
-	addr.ptr=c;
-	addr.len=strlen(c);
+	auto c=udomainlower(ac.c_str());
 
-	(*delfunc)(rwi, &host, &addr);
+	ac=c;
 	free(c);
+
+	rfc822::tokens host;
+
+	host.push_back({0, strchr(ac.c_str(), '@')+1});
+
+	rfc822::tokens addr;
+
+	addr.push_back({0, ac.c_str()});
+
+	(*delfunc)(rwi, host, addr);
 }
 
 
@@ -414,15 +457,12 @@ static void rw_del_esmtp(struct rw_info *rwi,
 /*               Should we accept mail for this domain?                 */
 /************************************************************************/
 
-static int acceptdomain(const struct rfc822token *t)
+static int acceptdomain(std::string address)
 {
-char	*address=rfc822_gettok(t);
 int	rc;
 
 static const char *acceptdomains=0;
 static struct dbobj acceptdomainsdb;
-
-	if (!address)	clog_msg_errno();
 
 	if (!acceptdomains)
 	{
@@ -446,10 +486,9 @@ static struct dbobj acceptdomainsdb;
 		free(filename);
 	}
 
-	rc=config_is_indomain(address, acceptdomains);
+	rc=config_is_indomain(address.c_str(), acceptdomains);
 	if (rc == 0 && dbobj_isopen(&acceptdomainsdb))
-		rc=isindomaindb(address, &acceptdomainsdb);
+		rc=isindomaindb(address.c_str(), &acceptdomainsdb);
 
-	free(address);
 	return (rc);
 }

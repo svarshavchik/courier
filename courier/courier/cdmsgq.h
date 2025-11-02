@@ -20,9 +20,9 @@
 #include	<string>
 #include	<vector>
 #include	<tuple>
+#include	"rfc822/rfc822.h"
 
 class drvinfo;
-struct rfc822token;
 struct comctlfile;
 
 class msgq {
@@ -74,8 +74,9 @@ static std::string backup_relay;
 static int queuescan2(std::string);
 static int queuescan3(std::string, std::string, const char *);
 
-static drvinfo *getdelinfo(struct rfc822token *,
-	const char *, std::string &, std::string &, std::string &);
+static drvinfo *getdelinfo(rfc822::tokens,
+			   const char *, std::string &, std::string &,
+			   std::string &);
 
 public:
 	void removeq();

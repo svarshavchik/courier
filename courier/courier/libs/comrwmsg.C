@@ -120,11 +120,11 @@ static int dorewriteheader(struct rwmsginfo *msginfo)
 	char	*errmsgbuf=0;
 
 		s=rw_rewrite_header_func( msginfo->rewritefunc,
-                        msginfo->headerbuf,
-                        RW_OUTPUT|RW_HEADER,
-                        0,
-                        &errmsgbuf,
-			msginfo->arg);
+					  msginfo->headerbuf,
+					  RW_OUTPUT|RW_HEADER,
+					  {},
+					  &errmsgbuf,
+					  msginfo->arg);
 
 		if (errmsgbuf)  free(errmsgbuf);
 		if (s)

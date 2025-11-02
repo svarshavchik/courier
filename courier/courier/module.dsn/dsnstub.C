@@ -19,8 +19,8 @@
 
 static void rw_dsn(struct rw_info *, void (*)(struct rw_info *));
 static void rw_del_dsn(struct rw_info *, void (*)(struct rw_info *),
-		void (*)(struct rw_info *, const struct rfc822token *,
-			const struct rfc822token *));
+		       void (*)(struct rw_info *, const rfc822::tokens &,
+				const rfc822::tokens &));
 
 static struct rw_transport *local;
 
@@ -49,9 +49,10 @@ static void rw_dsn(struct rw_info *p, void (*func)(struct rw_info *))
 }
 
 static void rw_del_dsn(struct rw_info *rwi,
-			void (*nextfunc)(struct rw_info *),
-		void (*delfunc)(struct rw_info *, const struct rfc822token *,
-				const struct rfc822token *))
+		       void (*nextfunc)(struct rw_info *),
+		       void (*delfunc)(struct rw_info *,
+				       const rfc822::tokens &,
+				       const rfc822::tokens &))
 {
 	delfunc=delfunc;
 	(*nextfunc)(rwi);

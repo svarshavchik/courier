@@ -7,15 +7,30 @@
 #define	faxconvert_h
 
 #include	"config.h"
+#include	<vector>
+#include	<string>
 
-struct sort_file_list {
-	struct sort_file_list *next;
-	char *filename;
-} ;
+#ifndef FILTERBINDIR
+#include "filterbindir.h"
+#endif
 
-struct sort_file_list *read_dir_sort_filenames(const char *,
-					       const char *);
+#ifndef FAXTMPDIR
+#include "faxtmpdir.h"
+#endif
+
+#define SUBTMPDIR FAXTMPDIR "/.tmp"
+
+std::vector<std::string> read_dir_sort_filenames(const char *,
+						 const char *);
+
+int courierfax_start_filter(const char *, pid_t *);
+int courierfax_end_filter(const char *, pid_t);
 
 void rmdir_contents(const char *);
+
+void courierfax(struct moduledel *);
+
+void courierfax_failed(unsigned, struct ctlfile *, unsigned, int, const char *);
+void invoke_sendfax(char **);
 
 #endif

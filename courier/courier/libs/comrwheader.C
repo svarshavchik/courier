@@ -11,50 +11,34 @@
 #include	<string.h>
 
 
-static char *rw_rewrite_header_common(struct rw_transport *rw,
+static char *rw_rewrite_header_common(
+	struct rw_transport *rw,
 	void (*rwfunc)(struct rw_info *, void (*)(struct rw_info *), void *),
-	const char *header, int mode, struct rfc822token *sender,
+	const std::string_view &header, int mode, const rfc822::tokens &sender,
 	char **errmsgptr, void *funcarg)
 {
-struct rfc822t *rfcp;
-struct rfc822a *rfca;
-char	**bufptrs;
-int	i;
-char	*new_header=0;
+	std::vector<char *> bufptrs;
+	char	*new_header=0;
 
-	rfcp=rfc822t_alloc_new(header, NULL, NULL);
-	rfca=rfc822a_alloc(rfcp);
-	if (!rfca)	clog_msg_errno();
+	rfc822::tokens rfcp{header};
+	rfc822::addresses rfca{rfcp};
 
-	bufptrs=0;
-	if (rfca->naddrs &&
-	    (bufptrs=(char **)malloc(sizeof(char *) * rfca->naddrs))
-		== 0)
-	{
-		rfc822t_free(rfcp);
-		rfc822a_free(rfca);
-		clog_msg_errno();
-	}
+	bufptrs.reserve(rfca.size());
 
 	*errmsgptr=0;
-	for (i=0; i<rfca->naddrs; i++)
-	{
-	struct	rw_info_rewrite rwr;
-	struct	rw_info rwi;
-	struct rfc822token *tokenp;
 
-		if (rfca->addrs[i].tokens == NULL)
-		{
-			bufptrs[i]=0;
+	for (auto &a:rfca)
+	{
+		struct	rw_info_rewrite rwr;
+		struct	rw_info rwi{mode, sender, {}};
+
+		if (a.address.empty())
 			continue;
-		}
 
 		rwr.buf=0;
 		rwr.errmsg=0;
 
-		rw_info_init(&rwi, rfca->addrs[i].tokens, rw_err_func);
-		rwi.mode=mode;
-		rwi.sender=sender;
+		rw_info_init(&rwi, a.address, rw_err_func);
 		rwi.udata=(void *)&rwr;
 
 		/*
@@ -62,8 +46,7 @@ char	*new_header=0;
 		** status notification, so leave it untouched.
 		*/
 
-		if (rwi.ptr && rwi.ptr->token == '@' &&
-			rwi.ptr->next == 0)
+		if (rwi.addr.size() == 1 && rwi.addr[0].type == '@')
 			rw_rewrite_print(&rwi);
 
 		/* --- */
@@ -74,73 +57,66 @@ char	*new_header=0;
 			);
 		else
 			(*rwfunc)(&rwi,
-				rw_rewrite_print
-				, funcarg
-				);
+				rw_rewrite_print, funcarg
+			);
 
 		if ( (*errmsgptr=((struct rw_info_rewrite *)rwi.udata)->errmsg)
 			!= 0)	break;
 
-		if ( (bufptrs[i]=((struct rw_info_rewrite *)rwi.udata)->buf)
-			== 0)	continue;
+		auto bufptr=((struct rw_info_rewrite *)rwi.udata)->buf;
 
-		tokenp=rfca->addrs[i].tokens;
+		if (!bufptr)
+			continue;
 
-		tokenp->next=0;
-		tokenp->token=0;
-		tokenp->ptr=bufptrs[i];
-		tokenp->len=strlen(tokenp->ptr);
+		bufptrs.push_back(bufptr);
+
+		a.address.clear();
+
+		a.address.push_back( {0, bufptr} );
 	}
 
 	new_header=0;
 
 	if ( !*errmsgptr)
 	{
-	unsigned i, l;
-	char	*p;
+		std::string wrapped_header;
 
-		new_header=rfc822_getaddrs_wrap(rfca, 70);
-		if (!new_header)	clog_msg_errno();
+		std::string prefix="";
 
-		for (i=l=0; new_header[i]; i++)
-			if (new_header[i] == '\n' && new_header[i+1])
-				l += 2;
-		p=(char *)courier_malloc(strlen(new_header)+1+l);
-		for (i=l=0; new_header[i]; i++)
+		auto collect = [&]
+			(std::string l)
 		{
-			p[l++]=new_header[i];
-			if (new_header[i] == '\n' && new_header[i+1])
-			{
-				p[l++]=' ';
-				p[l++]=' ';
-			}
-		}
-		p[l]=0;
-		free(new_header);
-		new_header=p;
+			while (!l.empty() && isspace(l.back()))
+				l.pop_back();
+			wrapped_header += prefix;
+			wrapped_header += std::move(l);
+			prefix="\n  ";
+		};
+
+		rfca.print_wrapped(rfca.begin(), rfca.end(), 70, collect);
+
+		new_header=strdup(wrapped_header.c_str());
 	}
 
-	for (i=0; i<rfca->naddrs; i++)
-		if (bufptrs[i])	free(bufptrs[i]);
-
-	rfc822a_free(rfca);
-	rfc822t_free(rfcp);
-	if (bufptrs)	free(bufptrs);
+	for (auto &b:bufptrs)
+		if (b) free(b);
 
 	return (new_header);
 }
 
-char	*rw_rewrite_header(struct rw_transport *rw,
-	const char *header, int mode, struct rfc822token *sender,
+char	*rw_rewrite_header(
+	struct rw_transport *rw,
+	const char *header, int mode, const rfc822::tokens &sender,
 	char **errmsgptr)
 {
 	return (rw_rewrite_header_common(rw, 0,
 		header, mode, sender, errmsgptr, 0));
 }
 
-char	*rw_rewrite_header_func(void (*rwfunc)(
-			struct rw_info *, void (*)(struct rw_info *), void *),
-	const char *header, int mode, struct rfc822token *sender,
+char	*rw_rewrite_header_func(
+	void (*rwfunc)(struct rw_info *, void (*)(struct rw_info *), void *),
+	const char *header, int mode,
+	const rfc822::tokens &sender,
 	char **errmsgptr, void *funcarg)
 {
 	return (rw_rewrite_header_common(0, rwfunc,

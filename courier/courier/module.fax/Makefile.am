@@ -69,10 +69,45 @@ install-perms-local:
 	@for f in $(filterbin_SCRIPTS) ; do echo $(filterbindir)/$$f 555 @mailuser@ @mailgroup@ >>permissions.dat ; done
 	@echo @faxtmpdir@ 700 @mailuser@ @mailgroup@ >>permissions.dat
 
-librewrite_la_SOURCES=faxstub.c
+librewrite_la_SOURCES=faxstub.C
 librewrite_la_LDFLAGS=-static
 
-courierfax_SOURCES=courierfax.c faxconvert.c faxconvert.h
+noinst_PROGRAMS=testfaxconvert testcourierfax testfaxstub
+
+testfaxconvert_SOURCES=testfaxconvert.C testfuncs.h
+testfaxconvert_DEPENDENCIES=\
+		@courierdir@/libs/rfc2045/librfc2045.la \
+		@courierdir@/libs/rfc822/librfc822.la \
+		@courierdir@/libs/numlib/libnumlib.la \
+		#
+
+testfaxconvert_LDADD=$(testfaxconvert_DEPENDENCIES) -lcourier-unicode
+
+testcourierfax_SOURCES=testcourierfax.C testfuncs.h
+testcourierfax_DEPENDENCIES=\
+		@courierdir@/libs/rfc2045/librfc2045.la \
+		@courierdir@/libs/rfc822/librfc822.la \
+		@courierdir@/libs/numlib/libnumlib.la \
+		#
+
+testcourierfax_LDADD=$(testcourierfax_DEPENDENCIES) -lcourier-unicode
+
+testfaxstub_SOURCES=testfaxstub.C
+testfaxstub_DEPENDENCIES=\
+		@courierdir@/libs/rfc2045/librfc2045.la \
+		@courierdir@/libs/rfc822/librfc822.la \
+		@courierdir@/libs/numlib/libnumlib.la \
+		#
+testfaxstub_LDADD=$(testfaxstub_DEPENDENCIES) -lcourier-unicode
+
+check-am:
+	LC_ALL=en_US.UTF-8 @VALGRIND@ ./testfaxconvert
+	rm -rf testfaxtmp testfilterbin testmessage
+	LC_ALL=en_US.UTF-8 @VALGRIND@ ./testcourierfax
+	rm -rf testfilterbin
+	LC_ALL=en_US.UTF-8 @VALGRIND@ ./testfaxstub
+
+courierfax_SOURCES=courierfax.C courierfax2.C faxconvert.C faxconvert.h
 nodist_EXTRA_courierfax_SOURCES=dummy.C
 courierfax_DEPENDENCIES=@courierdir@/courier/libs/libmodule.la \
 		librewrite.la \

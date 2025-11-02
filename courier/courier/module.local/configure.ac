@@ -27,6 +27,14 @@ if test "$COURIERAUTHCONFIG" = ""
 then
 	AC_MSG_ERROR(courierauthconfig not found)
 fi
+AC_PATH_PROG(VALGRIND, valgrind, none)
+
+if test "$VALGRIND" = "none"
+then
+    VALGRIND=""
+else
+    VALGRIND="$VALGRIND --tool=memcheck --leak-check=yes --error-exitcode=1 --child-silent-after-fork=yes"
+fi
 
 dnl Checks for libraries.
 PKG_CHECK_MODULES(LIBIDN, libidn2 >= 0.0.0, [libidn=yes], [libidn=no])
@@ -53,6 +61,10 @@ AC_CHECK_FUNC(setpgrp,
 
 
 dnl Other options
+
+. ../../dbobj.config
+dblibrary="../../$dblibrary"
+AC_SUBST(dblibrary)
 
 if test x$GCC = xyes
 then

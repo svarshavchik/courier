@@ -282,7 +282,7 @@ exists.</para>
 Returns the value of attribute <parameter>name</parameter> (uppercase).
 If <parameter>info</parameter> is not NULL, the attribute's value is
 converted to the specified character set (if the attribute uses
-<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2231">RFC 2231</ulink>
 to specify its character set and language).</para>
 	  </listitem>
 	</varlistentry>
@@ -296,7 +296,7 @@ Set the attribute <parameter>name</parameter> to <parameter>value</parameter>.
 If <parameter>charset</parameter> and/or <parameter>language</parameter> are
 not empty strings, <parameter>name</parameter>'s character set and language
 are indicated accordingly, as per
-<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>.</para>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2231">RFC 2231</ulink>.</para>
 	  </listitem>
 	</varlistentry>
 

@@ -275,7 +275,7 @@ is VERPed.</para>
       <para>
 A VERP is a return address which contains the recipient address encoded in
 it. Not all MTAs support
-<ulink url="http://www.rfc-editor.org/rfc/rfc1894.txt">RFC 1894</ulink>-based
+<ulink url="https://datatracker.ietf.org/doc/html/rfc1894">RFC 1894</ulink>-based
 delivery status notifications. VERPs permit
 mailing list software to identify non-deliverable addresses even in the
 absence of a machine-readable DSN.</para>
@@ -377,6 +377,24 @@ are set, the system userid is used. The host portion of the address is set by
 the contents of the <envar>MAILHOST</envar> environment variable. If it is not
 set, the system name of the server is used.</para>
 </refsect2>
+
+    <refsect2 id="idn">
+      <title>International domain names</title>
+
+      <para>
+	<envar>MAILHOST</envar> and
+	<envar>MAILSHOST</envar> should be given in
+	UTF-8. ACE-encoded hostnames
+	get converted to UTF-8 for <envar>MAILSHOST</envar>. The replacement
+	hostname portion of the <literal>From</literal> address is converted
+	to ACE.
+      </para>
+
+      <para>
+	<envar>MAILNAME</envar> and <option>-F</option> should be given in
+	UTF-8, and is converted to <ulink url="https://datatracker.ietf.org/doc/html/rfc2047">RFC 2047</ulink>.
+      </para>
+    </refsect2>
 
     <refsect2 id="exitcode">
       <title>EXIT CODE</title>

@@ -66,7 +66,7 @@ set.
 specifies <literal>value</literal>'s language.
 <literal>value</literal> is converted to <literal>US-ASCII</literal>
 text according to
-<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>.</para>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2231">RFC 2231</ulink>.</para>
 	</listitem>
       </varlistentry>
       <varlistentry>

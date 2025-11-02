@@ -1,5 +1,5 @@
 /*
-** Copyright 2002-2009 Double Precision, Inc.
+** Copyright 2002-2025 Double Precision, Inc.
 ** See COPYING for distribution information.
 */
 
@@ -13,9 +13,9 @@
 #include	"comfax.h"
 #include	"rfc822/rfc822.h"
 #include	"waitlib/waitlib.h"
-#include	<courier-unicode.h>
 #include	"numlib/numlib.h"
 #include	"comuidgid.h"
+#include	"comstrtotime.h"
 #include	<stdlib.h>
 #include	<locale.h>
 #include	<langinfo.h>
@@ -32,11 +32,6 @@
 #include	<pwd.h>
 #include	<sys/wait.h>
 #include	<sys/time.h>
-#include	"comctlfile.h"
-#include	"comqueuename.h"
-#include	"comstrtotime.h"
-#include	"comstrtimestamp.h"
-#include	"comverp.h"
 #include	<sys/stat.h>
 #include <sys/types.h>
 #if HAVE_SYS_WAIT_H
@@ -50,93 +45,29 @@
 #endif
 #include	"faxconvert.h"
 #include	"sendfax.h"
+#ifndef FAXTMPDIR
 #include	"faxtmpdir.h"
+#endif
+#include	"comctlfile.h"
 
+struct faxconv_err_args {
+	struct ctlfile *ctf;
+	unsigned nreceip;
 
-static void fax(struct moduledel *);
+	std::vector<std::string> *file_list;
+	int is_locked;
+	unsigned n_cover_pages;
+} ;
 
-/*
-**  Kill the child process.
-*/
+static int faxsend_cleanup(int, char *, void *);
 
-static void killit(int n)
-{
-	module_signal(SIGKILL);
-	exit(0);
-}
+extern int faxconvert(const char *, int, unsigned *);
 
-/*
-** Main loop.  Receive a message to deliver.  Fork off a child process.  Yawn.
-*/
-
-int main(int argc, char **argv)
-{
-	struct moduledel *p;
-	int waitstat;
-	const char *cp;
-
-	clog_open_syslog("courierfax");
-	if (chdir(getenv("COURIER_HOME")))
-		clog_msg_errno();
-
-	cp=getenv("MAXDELS");
-	if (!cp || atoi(cp) != 1)
-	{
-		clog_msg_start_err();
-		clog_msg_str("FATAL: courierfax module misconfiguration, MAXDELS must be 1");
-		clog_msg_send();
-		exit(0);
-	}
-
-	cp=getenv("MAXRCPT");
-	if (!cp || atoi(cp) != 1)
-	{
-		clog_msg_start_err();
-		clog_msg_str("FATAL: courierfax module misconfiguration, MAXRCPT must be 1");
-		clog_msg_send();
-		exit(0);
-	}
-
-	module_init(0);
-	while ((p=module_getdel()) != NULL)
-	{
-		pid_t	pid;
-		unsigned delid;
-
-		delid=atol(p->delid);
-
-		if ((pid=module_fork(delid, 0)) == -1)
-		{
-			clog_msg_prerrno();
-			module_completed(delid, delid);
-			continue;
-		}
-
-		if (pid == 0)
-		{
-			fax(p);
-			exit(0);
-		}
-	}
-
-	module_signal(SIGTERM);
-	signal(SIGCHLD, SIG_DFL);
-	signal(SIGALRM, killit);
-	alarm(5);
-	wait(&waitstat);
-	alarm(0);
-	return (0);
-}
+static int faxconvert_cleanup(int dummy, char *errmsg, void *vp);
 
 /*
 **  All righty - pick up a message to deliver.
 */
-
-static void faxabort(int n)
-{
-	signal(SIGTERM, SIG_IGN);
-	kill(-getpid(), SIGTERM);
-}
 
 static int read_childerrmsg(pid_t child_proc,
 			    int errfd,
@@ -198,31 +129,7 @@ static int read_childerrmsg(pid_t child_proc,
 			     errbuf, errhandler_arg);
 }
 
-struct faxconv_err_args {
-	struct ctlfile *ctf;
-	unsigned nreceip;
-
-	struct sort_file_list *file_list;
-	int is_locked;
-	int n_cover_pages;
-} ;
-
-
-static int faxconvert_cleanup(int dummy, char *errmsg, void *vp)
-{
-	struct faxconv_err_args *args=(struct faxconv_err_args *)vp;
-
-	ctlfile_append_reply(args->ctf, args->nreceip,
-			     errmsg,
-			     COMCTLFILE_DELFAIL_NOTRACK, 0);
-	return (-1);
-}
-
-extern int faxconvert(const char *, int, int *);
-
-static int faxsend_cleanup(int, char *, void *);
-
-static void fax(struct moduledel *p)
+void courierfax(struct moduledel *p)
 {
 	struct	ctlfile ctf;
 	unsigned nreceipients=p->nreceipients;
@@ -232,27 +139,12 @@ static void fax(struct moduledel *p)
 	int pipefd[2];
 	pid_t child_proc;
 	int faxopts;
-	int n_cover_pages;
+	unsigned n_cover_pages;
 	FILE *fp;
 
 	struct faxconv_err_args err_args;
 
-	struct sort_file_list *page_list, *pp;
-
-
-#if     HAVE_SETPGRP
-#if     SETPGRP_VOID
-        setpgrp();
-#else
-        setpgrp(0, 0);
-#endif
-#else
-#if     HAVE_SETPGID
-        setpgid(0, 0);
-#endif
-#endif
-
-	if (comgetfaxopts(host, &faxopts))
+	if (!comgetfaxopts(host, &faxopts))
 	{
 		clog_msg_start_err();
 		clog_msg_str("courierfax: FATAL: invalid host");
@@ -260,7 +152,7 @@ static void fax(struct moduledel *p)
 		exit(1);
 	}
 
-	putenv(faxopts & FAX_LOWRES ? "FAXRES=lo":"FAXRES=hi");
+	setenv("FAXRES", (faxopts & FAX_LOWRES ? "lo":"hi"), 1);
 
 	if (nreceipients != 1)
 	{
@@ -277,8 +169,6 @@ static void fax(struct moduledel *p)
 		clog_msg_errno();
 
 	/* Convert message to fax format, use a child process */
-
-	signal(SIGTERM, faxabort);
 
 	if (pipe(pipefd) < 0)
 	{
@@ -358,15 +248,7 @@ static void fax(struct moduledel *p)
 		exit(0);
 	}
 
-	page_list=read_dir_sort_filenames(FAXTMPDIR, FAXTMPDIR "/");
-
-	if (!page_list)
-	{
-		clog_msg_start_err();
-		clog_msg_str("courierfax: INTERNAL ERROR - no pages to xmit.");
-		clog_msg_send();
-		exit(1);
-	}
+	auto page_list=read_dir_sort_filenames(FAXTMPDIR, FAXTMPDIR "/");
 
 	/* Keep trying until the modem line is unlocked */
 
@@ -387,7 +269,6 @@ static void fax(struct moduledel *p)
 		if (child_proc == 0)
 		{
 			unsigned page_cnt=0;
-			char **argvec;
 
 			close(pipefd[0]);
 			close(0);
@@ -410,48 +291,35 @@ static void fax(struct moduledel *p)
 			}
 			close(pipefd[1]);
 
-			for (pp=page_list; pp; pp=pp->next)
-				++page_cnt;
+			page_cnt += page_list.size();
 
-#if 0
-			while (page_list)
-			{
-				unlink(page_list->filename);
-				page_list=page_list->next;
-			}
+			std::vector<char *> argvec;
 
-			exit(0);
-#endif
+			argvec.reserve(page_cnt*10);
 
-			argvec=(char **)courier_malloc(sizeof(char *)*
-						       (page_cnt+10));
+			static char sendfax_str[]=SENDFAX;
+			static char v_opt[]="-v";
+			static char r_opt[]="-r";
+			argvec.push_back(sendfax_str);
+			argvec.push_back(v_opt);
+			argvec.push_back(r_opt);
 
-			argvec[0]=SENDFAX;
-			argvec[1]="-v";
-			argvec[2]="-r";
-
-			page_cnt=3;
-
+			static char n_str[]="-n";
 			if (faxopts & FAX_LOWRES)
-				argvec[page_cnt++]="-n";
+				argvec.push_back(n_str);
 
-			argvec[page_cnt++]=(char *)receipient;
+			argvec.push_back(const_cast<char *>(receipient));
 
-			while (page_list)
-			{
-				argvec[page_cnt++]=page_list->filename;
-				page_list=page_list->next;
-			}
-			argvec[page_cnt]=0;
-			execv(SENDFAX, argvec);
-			perror(SENDFAX);
-			exit(1);
+			for (auto &filename:page_list)
+				argvec.push_back(filename.data());
+			argvec.push_back(nullptr);
+			invoke_sendfax(argvec.data());
 		}
 		close(pipefd[1]);
 
 		err_args.ctf= &ctf;
 		err_args.nreceip=nrecipient;
-		err_args.file_list=page_list;
+		err_args.file_list=&page_list;
 		err_args.is_locked=0;
 		err_args.n_cover_pages=n_cover_pages;
 
@@ -463,8 +331,7 @@ static void fax(struct moduledel *p)
 			char fmtbuf1[NUMBUFSIZE];
 			char fmtbuf2[NUMBUFSIZE*2+100];
 
-			for (pp=page_list; pp; pp=pp->next)
-				++npages;
+			npages += page_list.size();
 
 			libmail_str_size_t(npages, fmtbuf);
 			libmail_str_size_t(n_cover_pages, fmtbuf1);
@@ -485,30 +352,38 @@ static void fax(struct moduledel *p)
 	rmdir_contents(FAXTMPDIR);
 }
 
+static int faxconvert_cleanup(int dummy, char *errmsg, void *vp)
+{
+	struct faxconv_err_args *args=(struct faxconv_err_args *)vp;
+
+	ctlfile_append_reply(args->ctf, args->nreceip,
+			     errmsg,
+			     COMCTLFILE_DELFAIL_NOTRACK, 0);
+	return (-1);
+}
+
+extern int faxconvert(const char *, int, unsigned *);
+
 static int faxsend_cleanup(int errcode, char *errmsg, void *vp)
 {
 	struct faxconv_err_args *args=(struct faxconv_err_args *)vp;
 	unsigned pages_sent=0;
 	char *p, *q;
 
-	int i;
-	time_t now_time;
-
 	unsigned coverpage_cnt=0;
 	unsigned page_cnt=0;
 
 	/* Check how many files sendfax renamed (were succesfully sent) */
 
-	while (args->file_list)
+	for (auto &file:*args->file_list)
 	{
-		if (access(args->file_list->filename, 0) == 0)
+		if (access(file.c_str(), 0) == 0)
 			break;
 
 		if (coverpage_cnt < args->n_cover_pages)
 			++coverpage_cnt;
 		else
 			++pages_sent;
-		args->file_list=args->file_list->next;
 	}
 
 	/* Strip out any blank lines in captured output from sendfax */
@@ -552,7 +427,8 @@ static int faxsend_cleanup(int errcode, char *errmsg, void *vp)
 	}
 	else	/* Default message */
 	{
-		q=SENDFAX ": completed.";
+		static char completed_str[]=SENDFAX ": completed.";
+		q=completed_str;
 	}
 
 	/*
@@ -613,16 +489,7 @@ static int faxsend_cleanup(int errcode, char *errmsg, void *vp)
 	sprintf(errmsg, "%u cover pages, %u document pages sent.",
 		coverpage_cnt, page_cnt);
 
-	i=ctlfile_searchfirst(args->ctf, COMCTLFILE_FAXEXPIRES);
-
-	time(&now_time);
-	ctlfile_append_reply(args->ctf, args->nreceip,
-			     errmsg,
-			     (pages_sent == 0 &&
-			      i >= 0 &&
-			      errcode < 10 &&
-			      now_time < strtotime(args->ctf->lines[i]+1)
-			      ? COMCTLFILE_DELDEFERRED:
-			      COMCTLFILE_DELFAIL_NOTRACK), 0);
+	courierfax_failed(pages_sent, args->ctf, args->nreceip,
+			  errcode, errmsg);
 	return (-1);
 }

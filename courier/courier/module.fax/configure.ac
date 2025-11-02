@@ -7,7 +7,7 @@ AC_INIT([module.fax],[0.10],[courier-users@lists.sourceforge.net])
 
 >confdefs.h  # Kill PACKAGE_ macros
 
-AC_CONFIG_SRCDIR(faxconvert.c)
+AC_CONFIG_SRCDIR(faxconvert.C)
 AM_INIT_AUTOMAKE([foreign no-define])
 LPATH="$PATH:/usr/local/bin"
 AC_CONFIG_HEADERS(config.h)
@@ -120,6 +120,15 @@ AC_SUBST(PBMTOG3)
 AC_SUBST(G3TOPBM)
 AC_SUBST(PNGTOPNM)
 AC_SUBST(PNMTOPNG)
+
+AC_PATH_PROG(VALGRIND, valgrind, none)
+
+if test "$VALGRIND" = "none"
+then
+    VALGRIND=""
+else
+    VALGRIND="$VALGRIND --tool=memcheck --leak-check=yes --error-exitcode=1 --child-silent-after-fork=yes"
+fi
 
 dnl Checks for libraries.
 

@@ -8,9 +8,8 @@
 #endif
 #include	"courier.h"
 #include	"rw.h"
-#include	"dbobj.h"
+#include	"uucpfuncs.h"
 #include	"rfc822/rfc822.h"
-#include	"sysconfdir.h"
 
 #include	<string.h>
 #if	HAVE_UNISTD_H
@@ -19,10 +18,8 @@
 
 static void rw_uucp(struct rw_info *, void (*)(struct rw_info *));
 static void rw_del_uucp(struct rw_info *, void (*)(struct rw_info *),
-		void (*)(struct rw_info *, const struct rfc822token *,
-			const struct rfc822token *));
-
-static const char *uucpme();
+			void (*)(struct rw_info *, const rfc822::tokens &,
+				 const rfc822::tokens &));
 
 struct rw_list *uucp_rw_install(const struct rw_install_info *p)
 {
@@ -37,58 +34,19 @@ const char *uucp_rw_init()
 	return (0);
 }
 
-static struct dbobj uucpneighbors;
-static int uucpneighbors_isopen=0;
-
-static void uucpneighbors_init()
-{
-	if (uucpneighbors_isopen)	return;
-
-	dbobj_init(&uucpneighbors);
-	uucpneighbors_isopen=1;
-	if (dbobj_open(&uucpneighbors, SYSCONFDIR "/uucpneighbors.dat", "R"))
-		uucpneighbors_isopen= -1;
-}
-
-static const char *uucpme()
-{
-static const char *buf=0;
-
-	if (buf == 0)
-	{
-	char	*f=config_localfilename("uucpme");
-
-		buf=config_read1l(f);
-		free(f);
-		if (buf == 0)
-		{
-			const char *p=config_me();
-
-			buf=strcpy((char *)courier_malloc(strlen(p)+1), p);
-			if ((f=(char *)strchr(buf, '.')) != 0)	*f=0;
-		}
-	}
-	return (buf);
-}
-
 static int uucprw= -1;
 
 static void prepend_me(struct rw_info *p, void (*func)(struct rw_info *));
 
 static void rw_uucp(struct rw_info *p, void (*func)(struct rw_info *))
 {
-struct rfc822token **q;
-
 	/* Only rewrite headers if uucprewriteheaders is set */
 
 	if ((p->mode & RW_HEADER) != 0)
 	{
 		if (uucprw < 0)
 		{
-		char	*f=config_localfilename("uucprewriteheaders");
-
-			uucprw= access(f, 0) == 0 ? 1:0;
-			free(f);
+			uucprw=uucprewriteheaders();
 		}
 
 		if (!uucprw)
@@ -100,66 +58,71 @@ struct rfc822token **q;
 
 	if ((p->mode & RW_OUTPUT) == 0)
 	{
-	struct	rfc822token *r, *r2;
-	char	*s;
-
 		/* Convert UUCP address to Internet address */
 
 		/* First, remove me!foo!bar */
 
-		for (q= &p->ptr; *q; q= & (*q)->next )
-			if ((*q)->token == '!')	break;
-		r= *q;
-		*q=0;
+		auto b=p->addr.begin(), bb=b, e=p->addr.end();
 
-		s=rfc822_gettok(p->ptr);
-
-		if (!s)	clog_msg_errno();
-		if (r && strcmp(s, uucpme()) == 0)
+		while (b != e)
 		{
-			p->ptr=r->next;
+			if (b->type == '!')
+				break;
+			++b;
 		}
-		else	*q=r;
-		free(s);
+
+		std::string s;
+		size_t l=rfc822::tokens::print(bb, b,
+					       rfc822::length_counter{} );
+		s.reserve(l);
+
+		rfc822::tokens::print(bb, b, std::back_inserter(s));
+
+		if (s == uucpme() && b != e && ++b != e)
+		{
+			p->addr.erase(p->addr.begin(), b);
+		}
+
+		b=p->addr.begin(); e=p->addr.end();
 
 		/*
 		** If address already contains an @, assume it's already an
 		** Internet address.
 		*/
 
-		for (r= p->ptr; r; r= r->next )
-			if (r->token == '@')
+		for (auto &r:p->addr)
+			if (r.type == '@')
 			{
 				(*func)(p);
 				return;
 			}
 
-		for (q= &p->ptr; *q; q= & (*q)->next )
+		for (bb=b; bb != e; ++bb)
 		{
-			if ((*q)->token == '!')
+			if (bb->type == '!')
 				break;
 		}
 
-		if (*q)
+		if (auto iter=bb; iter != e && ++iter != e)
 		{
-		char	*uun;
-		size_t	uunl;
-		char	*addr;
-
 			uucpneighbors_init();
 
-			r=*q;
-			*q=0;
-			addr=rfc822_gettok(p->ptr);
-			*q=r;
+			std::string addr;
+			size_t l=rfc822::tokens::print(
+				b, bb,
+				rfc822::length_counter{}
+			);
 
-			if (!addr)	clog_msg_errno();
+			addr.reserve(l);
+			rfc822::tokens::print(
+				b, bb,
+				std::back_inserter(addr)
+			);
 
-			uun=0;
-			if (uucpneighbors_isopen)
-				uun=dbobj_fetch(&uucpneighbors, addr,
-					strlen(addr), &uunl, "");
-			free(addr);
+			size_t uunl=0;
+			char *uun=uucpneighbors_fetch(
+				addr.c_str(), addr.size(), &uunl, ""
+			);
 
 			if (uun)	/* We will relay this via UUCP */
 			{
@@ -170,24 +133,19 @@ struct rfc822token **q;
 		}
 		else /* Only one node - must be a local address */
 		{
+			p->addr.erase(bb, p->addr.end()); // Trailing !
+
 			rw_local_defaulthost(p, func);
 			return;
 		}
 
 		/* Rewrite domain.com!foo as foo@domain.com */
 
-		r= *q;
+		rfc822::tokens host{p->addr.begin(), bb};
 
-		*q=0;
-
-		for (q= &r->next; *q; q= & (*q)->next )
-			;
-
-		*q=r;
-		r2=r->next;
-		r->next=p->ptr;
-		r->token='@';
-		p->ptr=r2;
+		p->addr.erase(p->addr.begin(), ++bb); // Not end, checked in if
+		p->addr.push_back({'@', ""});
+		p->addr.insert(p->addr.end(), host.begin(), host.end());
 		(*func)(p);
 		return;
 	}
@@ -197,47 +155,45 @@ struct rfc822token **q;
 /* Ok, if we have user@host, rewrite it either as user, if host is us, or
 ** host!user */
 
-	for (q= &p->ptr; *q; q= & (*q)->next )
-		if ( (*q)->token == '@' )
+	for (auto b=p->addr.begin(), q=b, e=p->addr.end(); q != e; ++q)
+	{
+		if ( q->type == '@' )
 		{
-		struct rfc822token *at, *host, **z;
-		char	*hostdomain=0;
+			std::string hostdomain;
 
-			if (configt_islocal((*q)->next,
-				&hostdomain) && hostdomain == 0)
+			auto r=q;
+			if (configt_islocal(++r, e, hostdomain)
+			    && hostdomain.empty())
 			{
-				*q=0;
+				p->addr.erase(q, e);
 				break;
 			}
-			if (hostdomain)	free(hostdomain);
 
-			at= *q;
-			at->token='!';
-			host=at->next;
-			*q=0;
-			at->next=p->ptr;
-			p->ptr=host;
+			rfc822::tokens host{r, e};
+			p->addr.erase(q, e);
 
-			for (z= &p->ptr; *z; z= & (*z)->next)
-				;
+			host.push_back({'!', ""});
 
-			*z=at;
+			p->addr.insert(p->addr.begin(), host.begin(),
+				       host.end());
 
 			prepend_me(p, func);
 			return;
 		}
-
+	}
 	prepend_me(p, func);
 }
 
 static void prepend_me(struct rw_info *p, void (*func)(struct rw_info *))
 {
-struct rfc822token metoken, bangtoken;
 
-	if (p->ptr && p->ptr->token == 0 && p->ptr->len == 0)
-		p->ptr=p->ptr->next;
+	if (!p->addr.empty() && p->addr.begin()->type == 0 &&
+	    p->addr.begin()->str.size() == 0)
+	{
+		p->addr.erase(p->addr.begin(), ++p->addr.begin());
+	}
 
-	if (p->ptr == 0)
+	if (p->addr.empty())
 	{
 		(*func)(p);
 		return;
@@ -248,53 +204,56 @@ struct rfc822token metoken, bangtoken;
 	** case we'll rewrite it as "c!d!..."
 	*/
 
-	if (p->host)
+	if (!p->host.empty())
 	{
-	const struct rfc822token *q;
-	struct rfc822token *r;
+		auto hb=p->host.begin(), he=p->host.end();
 
-		for (q=p->host, r=p->ptr; q && r; q=q->next, r=r->next)
+		auto ab=p->addr.begin(), ae=p->addr.end();
+
+		for (; hb != he && ab != ae; ++hb, ++ab)
 		{
-			if (q->token != r->token)	break;
-			if (!rfc822_is_atom(q->token))	continue;
-			if (q->len != r->len)	break;
-			if (memcmp(q->ptr, r->ptr, q->len))	break;
+			if (hb->type != ab->type)	break;
+			if (!rfc822_is_atom(hb->type))	continue;
+
+			if (hb->str.size() != ab->str.size()) break;
+			if (memcmp(hb->str.data(),
+				   ab->str.data(),
+				   hb->str.size()))
+				break;
 		}
 
-		if (q == 0 && r && r->token == '!' && r->next)
+		if (hb == he && ab != ae && ab->type == '!' && ++ab != ae)
 		{
-			p->ptr=r->next;
+			p->addr.erase(p->addr.begin(), ab);
 			(*func)(p);
 			return;
 		}
 	}
 
-	metoken.token=0;
-	metoken.ptr=uucpme();
-	metoken.len=strlen(metoken.ptr);
-	metoken.next= &bangtoken;
-	bangtoken.token='!';
-	bangtoken.ptr="!";
-	bangtoken.len=1;
-	bangtoken.next=p->ptr;
-	p->ptr= &metoken;
+	rfc822::token mebang[2]={
+		{ 0, uucpme() },
+		{ '!', "!" }
+	};
+
+	p->addr.insert(p->addr.begin(), mebang, mebang+2);
 	(*func)(p);
 }
 
-static void rw_del_uucp(struct rw_info *rwi,
-			void (*nextfunc)(struct rw_info *),
-		void (*delfunc)(struct rw_info *, const struct rfc822token *,
-				const struct rfc822token *))
+static void rw_del_uucp(
+	struct rw_info *rwi,
+	void (*nextfunc)(struct rw_info *),
+	void (*delfunc)(struct rw_info *, const rfc822::tokens &,
+			const rfc822::tokens &))
 {
-int	hasbang=0;
-struct rfc822token **prev, *p;
-struct rfc822token **uux_bang;
+	bool hasbang{false};
 
-	for (prev=&rwi->ptr; *prev; prev=&(*prev)->next)
+	auto ab=rwi->addr.begin(), prev=ab, ae=rwi->addr.end();
+
+	for ( ; prev != ae; ++prev)
 	{
-		if ((*prev)->token == '!')
-			hasbang=1;
-		if ((*prev)->token == '@')
+		if (prev->type == '!')
+			hasbang=true;
+		if (prev->type == '@')
 			break;
 	}
 
@@ -304,60 +263,61 @@ struct rfc822token **uux_bang;
 		return;
 	}
 
-	if ( (p=*prev) != 0 && p->next)
+	if (auto p=prev; p != ae && ++p != ae)
 	{
-	char	*hostdomain=0;
+		std::string hostdomain;
 
-		if (!configt_islocal(p->next, &hostdomain))
+		if (!configt_islocal(p, ae, hostdomain))
 		{
 			(*nextfunc)(rwi);
 			return;
 		}
-		if (hostdomain)	free(hostdomain);
 	}
 
-	*prev=0;
+	// hasbang=true;
 
-	hasbang=1;
-	for (p=rwi->ptr; p; p=p->next, hasbang=0)
+	for (auto p=rwi->addr.begin(); p != prev; ++p, hasbang=false)
 	{
-		if (p->token != '!')	continue;
-		if (hasbang || p->next == 0 || p->next->token == '!')
+		if (p->type != '!')	continue;
+
+		auto q=p;
+		if (hasbang || ++q == prev || q->type == '!')
 		{
 			(*rwi->err_func)(550, "Invalid UUCP bang path.", rwi);
 			return;
 		}
 	}
 
-	uux_bang=0;
+	rwi->addr.erase(prev, ae);
 
 	uucpneighbors_init();
 
-	for (prev=&rwi->ptr; *prev; prev=&(*prev)->next)
+	ab=rwi->addr.begin(), ae=rwi->addr.end();
+	auto uux_bang=ae;
+
+	for (prev=ab; prev != ae; ++prev)
 	{
-	char	*addr;
-	char	*uun;
-	size_t	uunl;
-	size_t	i;
+		char *uun;
+		size_t	uunl;
+		size_t	i;
 
-		if ( (*prev)->token != '!')	continue;
-		p= *prev;
-		*prev=0;
-		addr=rfc822_gettok(rwi->ptr);
-		*prev=p;
-		if (!addr)	clog_msg_errno();
+		if (prev->type != '!')	continue;
 
-		uun=0;
+		size_t l=rfc822::tokens::print(ab, prev,
+					       rfc822::length_counter{} );
+		std::string addr;
+		addr.reserve(l);
+		rfc822::tokens::print(ab, prev, std::back_inserter(addr));
+
 		uunl=0;
 
-		if (uucpneighbors_isopen)
-			uun=dbobj_fetch(&uucpneighbors, addr, strlen(addr),
-				&uunl, "");
-		free(addr);
+		uun=uucpneighbors_fetch(addr.c_str(),
+					addr.size(),
+					&uunl, "");
 
-		if (uun == 0)
+		if (uun == nullptr)
 		{
-			prev=0;
+			prev=ae;
 			break;
 		}
 
@@ -366,29 +326,42 @@ struct rfc822token **uux_bang;
 			{
 				/* Relay, run rmail here */
 
-				if (!uux_bang)
+				if (uux_bang == ae)
 					uux_bang= prev;
 				break;
 			}
 
+		if (uux_bang != ae)
+			break;
 		for (i=0; i<uunl; i++)
 			if (uun[i] == 'G')
 				break;
 
 		if (i < uunl) 	/* Gateway, ignore rest of path */
 		{
-			if (!uux_bang)
-				uux_bang= prev;
+			if (uux_bang != ae)
+				uux_bang=ae;
 			free(uun);
 			break;
 		}
 
-		p= (*prev)->next;
+		auto p=prev;
 
-		if (p->next == 0)
+		++p;
+
+		if (p != ae)
 		{
-			free(uun);
-			break;
+			auto q=p;
+			for (; q != ae; ++q)
+				if (q->type == '!')
+					break;
+
+			if (q == ae)
+			{
+				uux_bang=prev;
+				free(uun);
+				break;
+			}
 		}
 
 		/* This one must marked as F - OK to forward through here */
@@ -401,21 +374,24 @@ struct rfc822token **uux_bang;
 		if ( i < uunl)	break;
 	}
 
-	if (!prev || *prev == 0)
+	if (prev == ae)
 	{
 		(*rwi->err_func)(550, "Unknown UUCP bang path.", rwi);
 		return;
 	}
 
-	if (uux_bang == 0)
+	if (uux_bang == ae)
 	{
-		for (prev=&rwi->ptr; *prev; prev=&(*prev)->next)
-			if ( (*prev)->token == '!' )
+		for (prev=ab; prev != ae; ++prev)
+			if ( prev->type == '!' )
 				uux_bang= prev;
 	}
 
-	p= (*uux_bang)->next;
-	*uux_bang=0;
+	auto p=uux_bang;
+
+	rfc822::tokens deladdr{++p, ae};
+
+	rwi->addr.erase(uux_bang, ae);
 
 	if (rwi->mode & RW_VERIFY)
 	{
@@ -423,25 +399,5 @@ struct rfc822token **uux_bang;
 		return;
 	}
 
-#if 1
-	(*delfunc)(rwi, rwi->ptr, p);
-#else
-	{
-	char *a=rfc822_gettok(rwi->ptr);
-	char *b=rfc822_gettok(p);
-	char *c;
-
-		if (!a || !b || !(c=malloc(strlen(a)+strlen(b)+100)))
-		{
-			clog_msg_errno();
-			return;
-		}
-
-		strcat(strcat(strcat(strcpy(c, "uux "), a), "!rmail "), b);
-		(*rwi->err_func)(550, c, rwi);
-		free(a);
-		free(b);
-		free(c);
-	}
-#endif
+	(*delfunc)(rwi, rwi->addr, deladdr);
 }

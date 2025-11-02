@@ -715,7 +715,7 @@ int	k=ctlfile_searchfirst(&ctlinfo, COMCTLFILE_MSGID);
 
 	k=ctlfile_searchfirst(&ctlinfo, COMCTLFILE_SENDER);
 
-	struct rfc822t *sendert=rw_rewrite_tokenize(k < 0 ? "":ctlinfo.lines[k]+1);
+	auto sendert=rw_rewrite_tokenize(k < 0 ? "":ctlinfo.lines[k]+1);
 	std::string	errmsg;
 
 	for (i=0; i<ctlinfo.nreceipients; i++)
@@ -735,7 +735,7 @@ int	k=ctlfile_searchfirst(&ctlinfo, COMCTLFILE_MSGID);
 		}
 		if (ctlinfo.lines[j])	continue;
 
-	drvinfo *module=getdelinfo(sendert->tokens,
+	drvinfo *module=getdelinfo(sendert,
 			ctlinfo.receipients[i], host, addr, errmsg);
 
 		if (!module)
@@ -783,13 +783,11 @@ clog_msg_send();
 			newq->rcptinfo_list.resize(++newq->rcptcount);
 
 		struct	rw_info_rewrite rwir;
-		struct	rw_info	rwi;
+		rw_info	rwi{RW_OUTPUT|RW_ENVSENDER, {}, {}};
 
 			rwir.buf=0;
 			rwir.errmsg=0;
-			rw_info_init(&rwi, sendert->tokens, rw_err_func);
-			rwi.sender=0;
-			rwi.mode=RW_OUTPUT|RW_ENVSENDER;
+			rw_info_init(&rwi, sendert, rw_err_func);
 			rwi.udata= (void *)&rwir;
 			rw_rewrite_module(module->module, &rwi,
 				rw_rewrite_chksyn_print);
@@ -827,7 +825,6 @@ clog_msg_send();
 		newq->rcptinfo_list[j].addresses.push_back(addr);
 		newq->rcptinfo_list[j].addressesidx.push_back(i);
 	}
-	rfc822t_free(sendert);
 	ctlfile_close(&ctlinfo);
 
 	if (newq->nextsenddel <= current_time ||

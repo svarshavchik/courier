@@ -22,7 +22,14 @@ AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX_17
 LT_INIT
 
+AC_PATH_PROG(VALGRIND, valgrind, none)
 
+if test "$VALGRIND" = "none"
+then
+    VALGRIND=""
+else
+    VALGRIND="$VALGRIND --tool=memcheck --leak-check=yes --error-exitcode=1"
+fi
 
 AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
 

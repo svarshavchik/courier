@@ -11,8 +11,8 @@ struct rw_searchdel_info {
 	void	*save_udata;
 	void	(*save_err_func)(int, const char *, struct rw_info *);
 	void	(*del_func)(struct rw_info *,
-		struct rw_transport *, const struct rfc822token *,
-			const struct rfc822token *);
+			    struct rw_transport *, const rfc822::tokens &,
+			    const struct rfc822::tokens &);
 } ;
 
 static void do_next_rw(struct rw_info *, struct rw_searchdel_info *);
@@ -28,8 +28,9 @@ struct rw_searchdel_info *p=(struct rw_searchdel_info *)i->udata;
 	i->udata=(void *)p;
 }
 
-static void found_delivery(struct rw_info *i, const struct rfc822token *host,
-	const struct rfc822token *addr)
+static void found_delivery(struct rw_info *i,
+			   const struct rfc822::tokens &host,
+			   const struct rfc822::tokens &addr)
 {
 struct rw_searchdel_info *p=(struct rw_searchdel_info *)i->udata;
 
@@ -61,9 +62,10 @@ static void do_next_rw(struct rw_info *i, struct rw_searchdel_info *di)
 }
 
 void rw_searchdel(struct rw_info *i,
-		void (*func)(struct rw_info *,
-			struct rw_transport *, const struct rfc822token *,
-			const struct rfc822token *))
+		  void (*func)(struct rw_info *,
+			       struct rw_transport *,
+			       const struct rfc822::tokens &,
+			       const struct rfc822::tokens &))
 {
 struct rw_searchdel_info rwsdi;
 

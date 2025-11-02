@@ -23,7 +23,8 @@
 
 char *local_extension()
 {
-static char *ext=0;
+	static char *ext=0;
+	static char courier_str[]="courier";
 
 	if (!ext)
 	{
@@ -36,7 +37,7 @@ static char *ext=0;
 	if (!ext || !*ext)
 	{
 		if (ext)	free(ext);
-		ext="courier";
+		ext=courier_str;
 	}
 	return (ext);
 }
@@ -58,7 +59,7 @@ char	*x=local_extension();
 	if (*ext)
 	{
 	char	*c;
-	char	*filebuf=courier_malloc(sizeof("/." "--default")
+	char	*filebuf=(char *)courier_malloc(sizeof("/." "--default")
 			+strlen(x) +strlen(ext)+strlen(homedir));
 	int	isfirst=1;
 	struct	stat	stat_buf;

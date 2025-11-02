@@ -54,7 +54,7 @@ The default
 mail server configuration uses the same access file,
 <filename>@sysconfdir@/smtpaccess.dat</filename> for both the regular ESMTP server,
 and the message submission server on port 587
-(<ulink url="http://www.rfc-editor.org/rfc/rfc2476.txt">RFC 2476</ulink>).
+(<ulink url="https://datatracker.ietf.org/doc/html/rfc2476">RFC 2476</ulink>).
 It is possible to
 use different access files. To do so, create a different access file, edit
 <filename>@sysconfdir@/esmtpd-msa</filename>, and set
@@ -98,21 +98,6 @@ The incoming connection is accepted, but every message will be rejected.</para>
 	</varlistentry>
 
 	<varlistentry>
-	  <term>FAXRELAYCLIENT</term>
-	  <listitem>
-	    <para>
-Allow the client to send faxes via the
-<ulink url="courierfax.html"><citerefentry><refentrytitle>courierfax</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
-module.</para>
-	    <note>
-	      <para>
-When ESMTP authentication is enabled, a successful authentication
-automatically sets <envar>FAXRELAYCLIENT</envar>.</para>
-	    </note>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
 	  <term>RELAYCLIENT</term>
 	  <listitem>
 	    <para>
@@ -125,6 +110,29 @@ automatically sets <envar>RELAYCLIENT</envar>.</para>
 	    </note>
 	  </listitem>
 	</varlistentry>
+
+	<varlistentry>
+	  <term>FAXRELAYCLIENT</term>
+	  <listitem>
+	    <para>
+Allow the client to send faxes via the
+<ulink url="courierfax.html"><citerefentry><refentrytitle>courierfax</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>
+module.</para>
+	    <note>
+	      <para>
+		<envar>RELAYCLIENT</envar> must also be set.
+		<envar>FAXRELAYCLIENT</envar> is set in addition to
+		<envar>RELAYCLIENT</envar>.
+	      </para>
+	    </note>
+	    <note>
+	      <para>
+When ESMTP authentication is enabled, a successful authentication
+automatically sets <envar>FAXRELAYCLIENT</envar>.</para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+
       </variablelist>
 
       <para>

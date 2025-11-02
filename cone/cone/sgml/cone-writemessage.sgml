@@ -280,7 +280,7 @@ When all is said and done, <keycap>CTRL</keycap>-<keycap>X</keycap> sends
 the message.
 One, final chance, is offered to cancel, and change one's mind.
 If the mail server supports
-<ulink url="http://www.rfc-editor.org/rfc/rfc1891.txt">Delivery
+<ulink url="https://datatracker.ietf.org/doc/html/rfc1891">Delivery
 Status Notifications</ulink>, press <keycap>D</keycap> to select
 delivery notifications options.
 Where available, press <keycap>E</keycap> to encrypt the message, and/or

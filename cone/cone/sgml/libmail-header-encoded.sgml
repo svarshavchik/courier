@@ -33,13 +33,13 @@ Three arguments are provided to the constructor: the header's name, its
 content, and the content's character set.
 Non-<literal>US-ASCII</literal> portions of the contents are encoded
 according to
-<ulink url="http://www.rfc-editor.org/rfc/rfc2047.txt">RFC 2047</ulink>.</para>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2047">RFC 2047</ulink>.</para>
 
     <para>
 The fourth argument to the constructor is optional.
 If not an empty string, it identifies the content's language, as described in
 section 5 of
-<ulink url="http://www.rfc-editor.org/rfc/rfc2231.txt">RFC 2231</ulink>.</para>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2231">RFC 2231</ulink>.</para>
 
     <para>
 This is not the appropriate class to create structured MIME headers, or

@@ -5,7 +5,7 @@
 	<para>
 This request should not be used with accounts on IMAP servers that do
 not implement the
-<ulink url="http://www.rfc-editor.org/rfc/rfc2359.txt">UIDPLUS</ulink>
+<ulink url="https://datatracker.ietf.org/doc/html/rfc2359">UIDPLUS</ulink>
 IMAP extension.
 <quote>UIDPLUS</quote> is required to directly support this functionality.
 An alternative, much slower, fallback implementation will be used with

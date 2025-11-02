@@ -6,14 +6,9 @@
 #include	"rw.h"
 #include	"courier.h"
 
-void rw_info_init(struct rw_info *p, struct rfc822token *t,
+void rw_info_init(struct rw_info *p, rfc822::tokens t,
 		void (*err_func)(int, const char *, struct rw_info *p))
 {
-	p->mode=0;
-	p->ptr=t;
+	p->addr=std::move(t);
 	p->err_func=err_func;
-	p->sender=0;
-	p->udata=0;
-	p->smodule=0;
-	p->host=0;
 }

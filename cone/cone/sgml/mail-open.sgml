@@ -97,7 +97,7 @@ that identifies one of the following types of accounts:
 	<varlistentry><term>imap://<replaceable>user</replaceable>@<replaceable>server<optional>:port</optional></replaceable><optional>/options</optional></term>
 	  <listitem>
 	    <para>
-An <ulink url="http://www.rfc-editor.org/rfc/rfc3501.txt">IMAP</ulink>
+An <ulink url="https://datatracker.ietf.org/doc/html/rfc3501">IMAP</ulink>
 or an <link linkend="smap1">SMAP</link>
 account on <replaceable>server</replaceable>.
 The colon and <replaceable>port</replaceable> are optional; defaulting

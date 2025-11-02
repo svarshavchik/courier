@@ -18,4 +18,7 @@
 /module.fax
 /new_fax
 /sendfax.h
+/testcourierfax
+/testfaxconvert
+/testfaxstub
 /text-plain.filter

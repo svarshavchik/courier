@@ -17,15 +17,9 @@
 
 	/* Tokenize text for RFC822 parsing */
 
-struct rfc822t *rw_rewrite_tokenize(const char *address)
+rfc822::tokens rw_rewrite_tokenize(const char *address)
 {
-struct rfc822t *tokens=rfc822t_alloc_new(address, NULL, NULL);
-int	i;
-
-	if (!tokens)	clog_msg_errno();
-	for (i=1; i<tokens->ntokens; i++)
-		tokens->tokens[i-1].next=tokens->tokens+i;
-	return (tokens);
+	return rfc822::tokens{address};
 }
 
 	/* Call a transport module's rewrite function */
@@ -41,7 +35,7 @@ void rw_rewrite_module(struct rw_transport *module,
 		(*rwi->err_func)(550, "Invalid address.", rwi);
 }
 
-int rw_syntaxchk(struct rfc822token *t)
+int rw_syntaxchk(const rfc822::tokens &t)
 {
 int	cnt;
 
@@ -52,13 +46,13 @@ int	cnt;
 	** the end of the address.
 	**
 	*/
-	if (!t)	return (0);	/* <> envelope sender ok */
+	if (t.empty())	return (0);	/* <> envelope sender ok */
 
 	cnt=1;
 
-	while (t)
+	for (auto &token:t)
 	{
-		switch (t->token)	{
+		switch (token.type)	{
 		case '<':
 		case '>':
 		case ';':
@@ -72,22 +66,15 @@ int	cnt;
 			break;
 		case 0:
 		case '"':
+			for (unsigned char c:token.str)
 			{
-				size_t i;
-
-				for (i=0; i<t->len; i++)
-				{
-					unsigned char c=t->ptr[i];
-
-					if (isspace((int)c) || c < ' ')
-						return (-1);
-				}
+				if (isspace((int)c) || c < ' ')
+					return (-1);
 			}
 		default:
 			cnt=0;
 			break;
 		}
-		t=t->next;
 	}
 	if (cnt)	return (-1);
 	return (0);
@@ -98,28 +85,37 @@ int	cnt;
 	*/
 void rw_rewrite_print(struct rw_info *info)
 {
-char	*p=rfc822_gettok(info->ptr);
+	size_t l=info->addr.print( rfc822::length_counter{} );
+
+	char *p=(char *)malloc(l+1);
 
 	if (!p)		clog_msg_errno();
 
+	char *save=p;
+
+	info->addr.print(save);
+	*save=0;
 	( (struct rw_info_rewrite *)info->udata)->buf=p;
 }
 
 static void do_rw_rewrite_chksyn_print(struct rw_info *info,
-				       struct rfc822token *t)
+				       const rfc822::tokens &t)
 {
 	if (rw_syntaxchk(t))
 	{
-	static const char errmsg[]="Syntax error: ";
-	char	*addr=rfc822_gettok(info->ptr);
-	char	*buf;
+		static const char errmsg[]="Syntax error: ";
 
-		if (!addr)	clog_msg_errno();
-		buf=(char *)courier_malloc(strlen(addr)+sizeof(errmsg));
-		strcat(strcpy(buf, errmsg), addr);
-		free(addr);
-		(*info->err_func)(553, buf, info);
-		free(buf);
+		size_t l=info->addr.print( rfc822::length_counter{} );
+
+		std::string s;
+
+		s.reserve(l+sizeof(errmsg));
+
+		s += errmsg;
+
+		info->addr.print(std::back_inserter(s));
+
+		(*info->err_func)(553, s.c_str(), info);
 	}
 	else
 		rw_rewrite_print(info);
@@ -127,15 +123,15 @@ static void do_rw_rewrite_chksyn_print(struct rw_info *info,
 
 void rw_rewrite_chksyn_print(struct rw_info *info)
 {
-	do_rw_rewrite_chksyn_print(info, info->ptr);
+	do_rw_rewrite_chksyn_print(info, info->addr);
 }
 
 void rw_rewrite_chksyn_at_ok_print(struct rw_info *info)
 {
-	struct rfc822token *t=info->ptr;
+	auto b=info->addr.begin(), e=info->addr.end();
 
-	if (t && t->token == '@')
-		t=t->next;
+	if (b != e && b->type == '@')
+		++b;
 
-	do_rw_rewrite_chksyn_print(info, t);
+	do_rw_rewrite_chksyn_print(info, {b, e});
 }

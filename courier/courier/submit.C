@@ -140,22 +140,18 @@ struct expninfo {
 
 static void rewrite_address(const char *inaddress, struct rw_transport *module,
 	int mode,
-	struct rfc822token *sender,
+			    const rfc822::tokens &sender,
 	void (*handler)(const char *inaddress,
-		struct rfc822token *inaddresst, const char *errmsg, void *misc),
+			const rfc822::tokens &inaddresst,
+			const char *errmsg, void *misc),
 	void *misc)
 {
 struct	rw_info_rewrite	rwir;
-struct	rw_info rwi;
-struct	rfc822t *rfcp;
+ struct	rw_info rwi{mode, sender, {}};
 char	*address, *errmsg;
 
-	rfcp=rw_rewrite_tokenize(inaddress);
+	rw_info_init(&rwi, rw_rewrite_tokenize(inaddress), rw_err_func);
 
-	rw_info_init(&rwi, rfcp->tokens, rw_err_func);
-
-	rwi.mode=mode;
-	rwi.sender=sender;
 	rwi.udata=(void *)&rwir;
 	rwir.buf=0;
 	rwir.errmsg=0;
@@ -184,10 +180,9 @@ char	*address, *errmsg;
 	}
 	errmsg=((struct rw_info_rewrite *)rwi.udata)->errmsg;
 
-	(*handler)( address, rwi.ptr, errmsg, misc);
+	(*handler)( address, rwi.addr, errmsg, misc);
 	if (address)	free(address);
 	if (errmsg)	free(errmsg);
-	rfc822t_free(rfcp);
 }
 
 int checkfreespace(unsigned *availbytes)
@@ -275,12 +270,10 @@ void	ExpnAliasHandler::Alias(const char *p)
 //
 ////////////////////////////////////////////////////////////////////////////
 
-static void showexpn(const char *address, struct rfc822token *addresst,
+static void showexpn(const char *address, const rfc822::tokens &addresst,
 	const char *errmsg, void *misc)
 {
 struct	expninfo *info = (struct expninfo *)misc;
-
-	addresst=addresst;
 
 	if (errmsg)
 	{
@@ -321,29 +314,30 @@ struct	expninfo *info = (struct expninfo *)misc;
 struct rw_info_vrfy {
 	struct rw_info_rewrite rwr;
 	struct	rw_transport *module;
-	char	*host;
-	char	*addr;
+	std::string host;
+	std::string addr;
 	} ;
 
 static void found_transport(struct rw_info *rwi,
-		struct rw_transport *t,
-		const struct rfc822token *host,
-		const struct rfc822token *addr)
+			    struct rw_transport *t,
+			    const rfc822::tokens &host,
+			    const rfc822::tokens &addr)
 {
 struct rw_info_vrfy *p=(struct rw_info_vrfy *)rwi->udata;
 
 	p->module=t;
-	if (!(p->host=rfc822_gettok(host)) ||
-		!(p->addr=rfc822_gettok(addr)))
-		clog_msg_errno();
+
+	p->host.reserve(host.print( rfc822::length_counter{}));
+	host.print(std::back_inserter(p->host));
+
+	p->addr.reserve(addr.print( rfc822::length_counter{}));
+	addr.print(std::back_inserter(p->addr));
 }
 
-static void showvrfy(const char *address, struct rfc822token *addresst,
+static void showvrfy(const char *address, const rfc822::tokens &addresst,
 	const char *errmsg, void *misc)
 {
 struct	expninfo *info = (struct expninfo *)misc;
-
-	addresst=addresst;
 
 	if (!address)
 	{
@@ -363,22 +357,17 @@ struct	expninfo *info = (struct expninfo *)misc;
 
 	// Attempt to find an output module for this address.
 
-struct	rfc822t *rfcp=rw_rewrite_tokenize(address);
 struct	rw_info_vrfy riv;
 
 	riv.rwr.buf=0;
 	riv.rwr.errmsg=0;
 	riv.module=0;
-	riv.host=0;
-	riv.addr=0;
 
-struct	rw_info	rwi;
+	struct	rw_info	rwi{RW_VERIFY, {}, {}};
 
-	rw_info_init(&rwi, rfcp->tokens, rw_err_func);
+	rw_info_init(&rwi, rw_rewrite_tokenize(address), rw_err_func);
 	rwi.udata= (void *)&riv;
-	rwi.mode=RW_VERIFY;
 	rw_searchdel(&rwi, &found_transport);
-	rfc822t_free(rfcp);
 
 	if (!riv.module && !riv.rwr.errmsg)
 		rw_err_func(511, "Undeliverable address.", &rwi);
@@ -391,8 +380,6 @@ struct	rw_info	rwi;
 		free(riv.rwr.errmsg);
 		return;
 	}
-	free(riv.host);
-	free(riv.addr);
 	std::cout << "250 <" << address << ">" << std::endl << std::flush;
 }
 
@@ -1098,18 +1085,14 @@ static int getsender(Input &input, struct rw_transport *module)
 	}
 
 	sender=utf8ize_address(sender);
-	struct	rfc822t *rfcp=rw_rewrite_tokenize(sender.c_str());
-	struct	rw_info	rwi;
+	struct	rw_info	rwi{RW_ENVSENDER|RW_SUBMIT, {}, {}};
 
-	rw_info_init(&rwi, rfcp->tokens, mailfromerr);
+	rw_info_init(&rwi, rw_rewrite_tokenize(sender.c_str()), mailfromerr);
 
-	rwi.mode=RW_ENVSENDER|RW_SUBMIT;
-	rwi.sender=NULL;
 	rwi.udata=(void *)&frominfo;
 	rwi.smodule=module->name;
 
 	rw_rewrite_module(module, &rwi, getrcpts);
-	rfc822t_free(rfcp);
 
 	return (frominfo.flag);
 }
@@ -1272,13 +1255,13 @@ public:
 	int aborted;
 	int ret_code;
 
-	struct rfc822token *addresst, *sendert;
+	rfc822::tokens addresst, sendert;
 	struct rw_transport *sourcemodule;
 } ;
 
 struct	rcptinfo {
 	struct rw_transport *module;
-	struct rfc822token *sendert;
+	rfc822::tokens &sendert;
 	std::string prw_receipient;	/* Pre-rewrite recipient */
 	std::string *oreceipient;	/* DSN original receipient */
 	std::string *dsn;		/* DSN flags */
@@ -1347,19 +1330,15 @@ void RcptAliasHandler::Alias(const char *p)
 
 	if (listcount == 0)
 	{
-	struct rw_info	rwi;
-	struct rw_info_vrfy riv;
-	std::string	errmsg;
+		struct rw_info	rwi{RW_SUBMIT, sendert, {}};
+		struct rw_info_vrfy riv;
+		std::string	errmsg;
 
 		riv.rwr.buf=0;
 		riv.rwr.errmsg=0;
 		riv.module=0;
-		riv.host=0;
-		riv.addr=0;
 
 		rw_info_init(&rwi, addresst, rw_err_func);
-		rwi.sender=sendert;
-		rwi.mode=RW_SUBMIT;
 		rwi.udata= (void *)&riv;
 		rwi.smodule=sourcemodule->name;
 
@@ -1590,32 +1569,32 @@ static void getrcpts(struct rw_info *rwi)
 
 	Input &input= *mf->input;
 
-	struct rfc822token *addresst=rwi->ptr;
 	unsigned hasrcpts=0;
 
-	if (rw_syntaxchk(addresst))
+	auto &orig_addr=rwi->addr;
+
+	if (rw_syntaxchk(rwi->addr))
 	{
 		std::cout << "517 Syntax error." << std::endl << std::flush;
 		return;
 	}
 
-char	*sender=rfc822_gettok(addresst);
+	std::string sender;
 
-	if (!sender)	clog_msg_errno();
+	sender.reserve(rwi->addr.print(rfc822::length_counter{}));
+	rwi->addr.print(std::back_inserter(sender));
 
-	if (checkdns(sender, mf))	return;
+	if (checkdns(sender.c_str(), mf))	return;
 
 	std::cout << "250 Ok." << std::endl << std::flush;
 
 	mf->asptr->Open(mf->module);
 
-	struct	rcptinfo my_rcptinfo;
+	rcptinfo my_rcptinfo{mf->module, rwi->addr};
 	std::string	receipient;
 	std::string	oreceipient;
 	std::string	dsn;
 
-	my_rcptinfo.module=mf->module;
-	my_rcptinfo.sendert=addresst;
 	my_rcptinfo.asptr=mf->asptr;
 	my_rcptinfo.has_receipient=0;
 	my_rcptinfo.rcptalias.submitptr= &my_rcptinfo.submitfile;
@@ -1623,7 +1602,7 @@ char	*sender=rfc822_gettok(addresst);
 
 	my_rcptinfo.submitfile.SendingModule( mf->module->name );
 
-	my_rcptinfo.submitfile.Sender(receivedfrommta, sender,
+	my_rcptinfo.submitfile.Sender(receivedfrommta, sender.c_str(),
 			(mf->envid && mf->envid->size() > 0 ?
 			 mf->envid->c_str(): (const char *)0),
 			mf->dsnformat);
@@ -1632,9 +1611,6 @@ char	*sender=rfc822_gettok(addresst);
 	my_rcptinfo.rcptnum=0;
 	my_rcptinfo.whitelisted_only=0;
 	my_rcptinfo.nonwhitelisted_only=0;
-
-	free(sender);
-
 
 	if (strcmp(mf->module->name, "local") == 0 ||
 	    strcmp(mf->module->name, "dsn") == 0)
@@ -1689,13 +1665,11 @@ char	*sender=rfc822_gettok(addresst);
 
 		receipient=utf8ize_address(receipient);
 
-		struct	rw_info rwi;
-		struct	rfc822t *rfcp;
+		struct	rw_info rwi{RW_ENVRECIPIENT|RW_SUBMIT,
+			orig_addr, {}};
 
-		rfcp=rw_rewrite_tokenize(receipient.c_str());
-		rw_info_init(&rwi, rfcp->tokens, rcpttoerr);
-		rwi.mode=RW_ENVRECIPIENT|RW_SUBMIT;
-		rwi.sender=addresst;
+		rw_info_init(&rwi, rw_rewrite_tokenize(receipient.c_str()),
+			     rcpttoerr);
 		rwi.smodule=mf->module->name;
 		rwi.udata=(void *)&my_rcptinfo;
 		my_rcptinfo.errflag=0;
@@ -1706,7 +1680,6 @@ char	*sender=rfc822_gettok(addresst);
 		// CANNOT reject if errflag=0 any more, due to filtering
 		// syncronization.
 
-		rfc822t_free(rfcp);
 		++hasrcpts;
 
 		if (my_rcptinfo.errflag > 0)
@@ -1833,8 +1806,6 @@ char	*sender=rfc822_gettok(addresst);
 
 	while (read_next_line(input, line))
 	{
-		struct	rfc822t *rfcp;
-		struct	rfc822a	*rfca;
 		int	i;
 		size_t	l;
 		size_t	headerl;
@@ -1923,22 +1894,19 @@ char	*sender=rfc822_gettok(addresst);
 			headername == "to" ||
 			headername == "cc"))))
 		{
-			rfcp=rw_rewrite_tokenize(header.c_str());
-			rfca=rfc822a_alloc(rfcp);
-			if (!rfca)	clog_msg_errno();
+			rfc822::tokens rfcp{header};
+			rfc822::addresses rfca{rfcp};
 
-			for (i=0; i<rfca->naddrs; i++)
+			for (auto &a:rfca)
 			{
-				if (rfca->addrs[i].tokens == NULL)
+				if (a.address.empty())
 					continue;
 
-			struct	rw_info rwi;
+				struct	rw_info rwi{RW_ENVRECIPIENT|RW_SUBMIT,
+					orig_addr, {}};
 
-				rw_info_init(&rwi, rfca->addrs[i].tokens,
-								rcpttoerr);
-				rwi.mode=RW_ENVRECIPIENT|RW_SUBMIT;
+				rw_info_init(&rwi, a.address, rcpttoerr);
 				rwi.smodule=mf->module->name;
-				rwi.sender=addresst;
 				rwi.udata=(void *)&my_rcptinfo;
 				my_rcptinfo.errflag=0;
 				(*my_rcptinfo.oreceipient) = "";
@@ -1961,8 +1929,6 @@ char	*sender=rfc822_gettok(addresst);
 					++my_rcptinfo.rcptnum;
 				}
 			}
-			rfc822a_free(rfca);
-			rfc822t_free(rfcp);
 		}
 
 		// Rewrite every RFC822 header we can find.
@@ -2001,7 +1967,7 @@ char	*sender=rfc822_gettok(addresst);
 					rw_rewrite_header(mf->module,
 							  header.c_str(),
 							  RW_HEADER|RW_SUBMIT,
-							  addresst, &errmsg);
+							  orig_addr, &errmsg);
 
 				if (!new_header)
 				{
@@ -2227,8 +2193,8 @@ char	*errmsg=makeerrmsgtext(msgnum, errtext);
 }
 
 static std::string checkrcpt(struct rcptinfo *,
-	struct rfc822token *,
-	const char *);
+			     const rfc822::tokens *,
+			     const char *);
 
 static void getrcpt_common(struct rw_info *rwi, bool);
 
@@ -2247,22 +2213,19 @@ static void getrcpt_toutf8(struct rw_info *rwi)
 static void getrcpt_common(struct rw_info *rwi, bool to_utf8)
 {
 	struct rcptinfo *my_rcptinfo=(struct rcptinfo *)rwi->udata;
-	struct rfc822token *addresst=rwi->ptr;
-	char	*address=rfc822_gettok(addresst);
 
-	if (!address)
-		clog_msg_errno();
+	std::string addrstr;
+
+	addrstr.reserve(rwi->addr.print( rfc822::length_counter{}));
+	rwi->addr.print(std::back_inserter(addrstr));
 
 	std::string	errmsg;
 
 	{
-		char *p=udomainlower(address);
-		free(address);
-		address=p;
+		char *p=udomainlower(addrstr.c_str());
+		addrstr=p;
+		free(p);
 	}
-
-	std::string addrstr=address;
-	free(address);
 
 	if (to_utf8)
 	{
@@ -2270,7 +2233,7 @@ static void getrcpt_common(struct rw_info *rwi, bool to_utf8)
 		my_rcptinfo->prw_receipient=addrstr;
 	}
 
-	errmsg=checkrcpt(my_rcptinfo, addresst, addrstr.c_str());
+	errmsg=checkrcpt(my_rcptinfo, &rwi->addr, addrstr.c_str());
 	my_rcptinfo->errflag=0;
 
 	if (errmsg.size())
@@ -2281,11 +2244,10 @@ static void getrcpt_common(struct rw_info *rwi, bool to_utf8)
 }
 
 static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
-			     struct rfc822token *addresst,
+			     const rfc822::tokens *addresst,
 			     const char *address)
 {
 	struct rw_transport *source=my_rcptinfo->module;
-	struct rfc822token *sendert=my_rcptinfo->sendert;
 	const char *oaddress=my_rcptinfo->oreceipient->c_str();
 	const char *dsn=my_rcptinfo->dsn->c_str();
 	AliasSearch &aliasp=*my_rcptinfo->asptr;
@@ -2377,8 +2339,8 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 	handlerp.listcount=0;
 	handlerp.aborted=0;
 	handlerp.ret_code=0;
-	handlerp.addresst=addresst;
-	handlerp.sendert=sendert;
+	handlerp.addresst=*addresst;
+	handlerp.sendert=my_rcptinfo->sendert;
 	handlerp.sourcemodule=source;
 
 	if (checkfreespace(0))
@@ -2410,9 +2372,8 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 		handlerp.listcount == 1 ||
 		handlerp.aborted)
 	{
-	struct rw_info	rwi;
 	struct rw_info_vrfy riv;
-	struct rfc822t *aliasaddresst=0;
+	rfc822::tokens aliasaddresst;
 	int	rwmode=RW_SUBMIT;
 	const char *trackerrmsg;
 
@@ -2458,7 +2419,6 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 
 			aliasaddresst=rw_rewrite_tokenize(handlerp.aliasbuf
 							  .c_str());
-			if (!aliasaddresst)	clog_msg_errno();
 
 			if (*oaddress == 0)
 			{
@@ -2466,7 +2426,7 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 				oaddress=oaddressbuf.c_str();
 			}
 
-			addresst=aliasaddresst->tokens;
+			addresst=&aliasaddresst;
 			address=handlerp.aliasbuf.c_str();
 		}
 
@@ -2491,12 +2451,13 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 		riv.rwr.buf=0;
 		riv.rwr.errmsg=0;
 		riv.module=0;
-		riv.host=0;
-		riv.addr=0;
 
-		rw_info_init(&rwi, addresst, rw_err_func);
-		rwi.sender=sendert;
-		rwi.mode=rwmode;
+		if (strcmp(source->name, DSN))
+			if (!nofilter)
+				rwmode |= RW_FILTER;
+		rw_info	rwi{rwmode, my_rcptinfo->sendert, {}};
+
+		rw_info_init(&rwi, *addresst, rw_err_func);
 		rwi.udata= (void *)&riv;
 		rwi.smodule=source->name;
 
@@ -2512,13 +2473,8 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 		}
 		else
 		{
-			if (!nofilter)
-				rwi.mode |= RW_FILTER;
 			rw_searchdel(&rwi, &found_transport);
 		}
-
-		if (aliasaddresst)
-			rfc822t_free(aliasaddresst);
 
 		if (!riv.module && !riv.rwr.errmsg)
 			rw_err_func(511, "Unknown user.", &rwi);
@@ -2611,13 +2567,10 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 				&& handlerp.listcount != 1) /* NOT ALIASES */
 				handlerp.submitptr->ReceipientFilter(
 					riv.module,
-					riv.host,
-					riv.addr,
+					riv.host.c_str(),
+					riv.addr.c_str(),
 					rcptnum);
 		}
-
-		free(riv.host);
-		free(riv.addr);
 	}
 	else	// Make sure aliases are properly recorded for DSN generation
 		// purposes.
@@ -2631,9 +2584,9 @@ static std::string checkrcpt(struct rcptinfo *my_rcptinfo,
 static int do_receipient_filter(struct rw_info *rwi, struct rw_info_vrfy *riv,
 				std::string &errmsg)
 {
-int	rc;
-char	errmsgbuf[2048];
-char *p;
+	int	rc;
+	char	errmsgbuf[2048];
+	std::string p;
 
 	if (riv->module->rw_ptr->filter_msg == 0)
 		return (0);		/* Handle as a whitelisted recipient */
@@ -2641,19 +2594,18 @@ char *p;
 	if (nofilter)
 		return (0);		/* Caller module is whitelisted */
 
-	p=rfc822_gettok(rwi->sender);
-	if (!p)	clog_msg_errno();
+	p.reserve(rwi->sender.print(rfc822::length_counter{}));
+	rwi->sender.print(std::back_inserter(p));
 
 	errmsgbuf[0]=0;
 	rc=(*riv->module->rw_ptr->filter_msg)(
 		rwi->smodule,
 		-1,
-		riv->host,
-		riv->addr,
-		p,
+		riv->host.c_str(),
+		riv->addr.c_str(),
+		p.c_str(),
 		errmsgbuf,
 		sizeof(errmsgbuf));
-	free(p);
 
 	if (!(rc == 0 || rc == 99))
 	{
@@ -2686,14 +2638,13 @@ int cppmain(int argc, char **argv)
 {
 	int	argn;
 	const	char *module;
-	static char shenv[]="SHELL=/bin/sh";
 
 	clog_open_syslog("submit");
 	umask(007);
 #if HAVE_SETLOCALE
-	setlocale(LC_ALL, "C");
+	setlocale(LC_ALL, "");
 #endif
-	putenv(shenv);
+	setenv("SHELL", "/bin/sh", 1);
 	// In 0.34 maildrop environment init was changed to import SHELL,
 	// when built as part of Courier.  Therefore, we need to make sure
 	// that SHELL is initialized here.
@@ -2762,7 +2713,7 @@ struct rw_transport *modulep=rw_search_transport(module);
 					.c_str(),
 					modulep,
 					(expnname ? RW_ENVRECIPIENT|RW_EXPN:
-					 RW_ENVRECIPIENT|RW_VERIFY), NULL,
+					 RW_ENVRECIPIENT|RW_VERIFY), {},
 					expnname ? showexpn:showvrfy,
 					&expn_info);
 		}

@@ -59,6 +59,29 @@ preline_SOURCES=preline.c
 
 noinst_LTLIBRARIES=librewrite.la
 
+noinst_PROGRAMS=testlocal
+
+testlocal_SOURCES=testlocal.C
+testlocal_DEPENDENCIES=\
+	../libs/islocalt.lo \
+	../libs/islocal.lo \
+	../libs/readfile.lo \
+	../libs/cme.lo \
+	../libs/removecomments.lo \
+	../libs/cdefaultsep.lo \
+	../libs/addrlower.lo \
+	../libs/cdefaultdomain.lo \
+	../libs/cread1l.lo \
+	../libs/cgethostname.lo \
+	../libs/cdomaincmp.lo \
+	@dblibrary@ \
+	../../libs/rfc2045/librfc2045.la \
+	../../libs/rfc822/librfc822.la \
+	../../libs/numlib/libnumlib.la \
+	#
+testlocal_LDADD=$(testlocal_DEPENDENCIES) \
+	-lcourier-unicode @LIBIDN_LIBS@
+
 install-data-hook:
 	chmod 755 $(DESTDIR)$(moduledir)
 	@test `id -u` = 0 || exit 0 ; cd $(DESTDIR)$(moduledir) || exit 1 ; chown @mailuser@ . ; chgrp @mailgroup@ .
@@ -92,3 +115,4 @@ sysconfdir.h: config.status
 
 check-am:
 	$(srcdir)/testsuite | cmp -s - $(srcdir)/testsuite.txt
+	@VALGRIND@ ./testlocal

@@ -8,15 +8,22 @@
 #include	"rfc822/rfc822.h"
 #include	<string.h>
 
+#ifndef ACE_DOMAIN
+#define ACE_DOMAIN config_defaultdomain_ace()
+#endif
+
+#ifndef I18N_DOMAIN
+#define I18N_DOMAIN config_defaultdomain()
+#endif
+
 void rw_local_defaulthost(struct rw_info *p, void (*func)(struct rw_info *))
 {
-struct rfc822token *q, **ptr;
-struct rfc822token at, name;
+	auto b=p->addr.begin(), e=p->addr.end();
 
-	if (p->ptr && p->ptr->token == 0 && p->ptr->len == 0)
-		p->ptr=p->ptr->next;
+	if (b != e && b->type == 0 && b->str.size() == 0)
+		++b;
 
-	if (p->ptr == 0)		/* Address is <> */
+	if (b == e)		/* Address is <> */
 	{
 		(*func)(p);
 		return;
@@ -26,32 +33,16 @@ struct rfc822token at, name;
 	** Do not append the default domain to a UUCP address.
 	*/
 
-	for (q=p->ptr; q; q=q->next)
-		if (q->token == '!')
+	for (auto &t:p->addr)
+		if (t.type == '!' || t.type == '@')
 		{
 			(*func)(p);
 			return;
 		}
 
-	for (q=*(ptr=&p->ptr); q; q= *(ptr= &q->next))
-		if (q->token == '@')
-		{
-			(*func)(p);
-			return;
-		}
-
-	*ptr= &at;
-
-	at.next= &name;
-	at.token= '@';
-	at.ptr=0;
-	at.len=0;
-
-	name.next=0;
-	name.token=0;
-	name.ptr=(p->mode & RW_HEADER ?
-		  config_defaultdomain_ace() :
-		  config_defaultdomain());
-	name.len=strlen(name.ptr);
+	p->addr.push_back({'@', "@"});
+	p->addr.push_back(
+		{0, p->mode & RW_HEADER ?
+		 ACE_DOMAIN : I18N_DOMAIN});
 	(*func)(p);
 }

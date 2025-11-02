@@ -47,6 +47,10 @@ INSTALL_PROGRAM=${INSTALL} -m 550
 EXTRA_DIST=courier.config staticlist.C esmtp.authpam.dist esmtpd.cnf.gnutls
 
 noinst_LTLIBRARIES=librewrite.la libesmtp.la
+noinst_PROGRAMS=testesmtp
+
+check-am: testesmtp
+	@VALGRIND@ ./testesmtp
 
 install-data-hook:
 	chmod 755 $(DESTDIR)$(moduledir)
@@ -116,6 +120,28 @@ courieresmtpd_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
 
 addcr_SOURCES=addcr.c
 
+testesmtp_SOURCES=testesmtp.C
+testesmtp_DEPENDENCIES=\
+	../libs/addrlower.lo \
+	../libs/cgethostname.lo \
+	../libs/removecomments.lo \
+	../libs/islocal.lo \
+	../libs/islocalt.lo \
+	../libs/cme.lo \
+	../libs/cdomaincmp.lo \
+	../libs/cread1l.lo \
+	../libs/readfile.lo \
+	../libs/cdefaultdomain.lo \
+	../libs/lcrewrite.lo \
+	@dblibrary@ \
+	../../libs/rfc2045/librfc2045.la \
+	../../libs/rfc822/librfc822.la \
+	../../libs/numlib/libnumlib.la \
+	#
+
+testesmtp_LDADD=$(testesmtp_DEPENDENCIES) \
+	-lcourier-unicode @LIBIDN_LIBS@ @NETLIBS@
+
 install-data-local:
 	test -f $(DESTDIR)$(sbindir)/courieresmtpd && exit 0; $(mkinstalldirs) $(DESTDIR)$(sbindir) || :; rm -f $(DESTDIR)$(sbindir)/courieresmtpd && $(LN_S) `realpath --relative-to $(sbindir) -m $(moduledir)/courieresmtpd` $(DESTDIR)$(sbindir)/courieresmtpd
 	-$(mkinstalldirs) $(DESTDIR)$(bindir)
@@ -176,7 +202,7 @@ install-perms-local:
 	@echo $(sysconfdir)/esmtpd.cnf 644 @mailuser@ @mailgroup@ config >>permissions.dat
 	@echo $(sysconfdir)/esmtpauthclient 600 @mailuser@ @mailgroup@ config >>permissions.dat
 
-librewrite_la_SOURCES=esmtp.c
+librewrite_la_SOURCES=esmtp.C
 librewrite_la_LDFLAGS=-static
 
 libesmtp_la_SOURCES=libesmtp.C libesmtp.h smtproutes.C smtproutes.h

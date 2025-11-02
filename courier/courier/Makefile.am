@@ -252,7 +252,7 @@ submitmkdir_LDADD=libs/libcourier.la
 
 # sendmail - sendmail wrapper for submit (needs +g privs)
 
-sendmail_SOURCES=sendmail.c sendmail-esmtpd-wrapper.c
+sendmail_SOURCES=sendmail.C sendmail2.C sendmail-esmtpd-wrapper.c
 nodist_EXTRA_sendmail_SOURCES=dummy.C
 sendmail_DEPENDENCIES=libs/libcommon.la libs/libcourier.la ../libs/rfc822/librfc822.la\
 	../libs/numlib/libnumlib.la
@@ -308,10 +308,35 @@ maildirkw$(EXEEXT): ../libs/maildir/maildirkw$(EXEEXT)
 
 # aliasexp - first step in building an alias list, normalize alias file
 
-aliasexp_SOURCES=cppmain.C aliasexp.C
+aliasexp_SOURCES=cppmain.C aliasexp.C aliasexp2.C
 aliasexp_DEPENDENCIES=$(COURIERDEPENDENCIES) ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a ../libs/soxwrap/soxlibs.dep ../afx/libafx.a
 aliasexp_LDADD=$(COURIERLDADD) ../libs/tcpd/libspipe.la ../libs/soxwrap/libsoxwrap.a `cat ../libs/soxwrap/soxlibs.dep` ../afx/libafx.a -lcourierauth -lcourier-unicode @LIBIDN_LIBS@
 aliasexp_LDFLAGS=`@COURIERAUTHCONFIG@ --ldflags`
+
+testaliasexp_SOURCES=testaliasexp.C
+testaliasexp_DEPENDENCIES=\
+	libs/comrwerrfunc.lo \
+	libs/comrwinfoinit.lo \
+	libs/lcrewrite.lo \
+	libs/islocalt.lo \
+	libs/islocal.lo \
+	libs/addrlower.lo \
+	libs/cdefaultdomain.lo \
+	libs/comerrmsg.lo \
+	libs/readfile.lo \
+	libs/cme.lo \
+	libs/removecomments.lo \
+	libs/cgethostname.lo \
+	libs/cdomaincmp.lo \
+	libs/cread1l.lo \
+	libs/rwdefaulthost.lo \
+	libs/cdefaultsep.lo \
+	libs/cmaildropfilter.lo \
+	module.local/librewrite.la \
+	../libs/rfc822/librfc822.la	\
+	@dblibrary@	\
+	#
+testaliasexp_LDADD=$(testaliasexp_DEPENDENCIES) -lcourier-unicode
 
 # aliascombine - Merge alias specifications
 
@@ -687,14 +712,20 @@ install-perms-recursive:
 install-perms-local:
 	@chmod +x perms.sh
 	@./perms.sh >>permissions.dat
-#
-# Lame regression test.
-#
-noinst_PROGRAMS=testtrack
+
+noinst_PROGRAMS=testtrack testsendmailrw testaliasexp
 
 testtrack_SOURCES=testtrack.c
 testtrack_DEPENDENCIES=../libs/numlib/libnumlib.la
 testtrack_LDADD=../libs/numlib/libnumlib.la \
+	@LIBIDN_LIBS@ -lcourier-unicode
+
+testsendmailrw_SOURCES=testsendmailrw.C
+testsendmailrw_DEPENDENCIES=\
+	libs/addrlower.lo\
+	../libs/rfc822/librfc822.la
+
+testsendmailrw_LDADD=$(testsendmailrw_DEPENDENCIES) \
 	@LIBIDN_LIBS@ -lcourier-unicode
 
 check-am: aliascreate
@@ -705,6 +736,8 @@ check-am: aliascreate
 	mkdir testtrack.tmp
 	./testtrack
 	rm -rf testtrack.tmp
+	LC_ALL=en_US.UTF-8 @VALGRIND@ ./testsendmailrw
+	@VALGRIND@ ./testaliasexp
 
 check-version:
 	test "$(VERSION)" = "$(TOPLEVEL_VERSION)" && exit 0; \

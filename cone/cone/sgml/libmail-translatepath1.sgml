@@ -13,7 +13,7 @@ Specifically:</para>
 
       <variablelist>
 	<varlistentry>
-	  <term><ulink url="http://www.rfc-editor.org/rfc/rfc3501.txt">IMAP</ulink></term>
+	  <term><ulink url="https://datatracker.ietf.org/doc/html/rfc3501">IMAP</ulink></term>
 	  <listitem>
 	    <para>
 <parameter>folderPath</parameter> is converted from application's

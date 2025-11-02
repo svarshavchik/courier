@@ -100,10 +100,10 @@ static int	pid;
 static int	uuxpipe;
 static int	uuxerr;
 
-static struct rfc822token *delhostt;
+static rfc822::tokens delhostt;
 
 struct uucprwinfo {
-	struct rfc822token *delhostt;
+	rfc822::tokens delhostt;
 	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *));
 	} ;
 
@@ -157,7 +157,6 @@ static void uux(struct moduledel *p)
 struct	ctlfile ctf;
 unsigned *reciparray;
 unsigned nreceipients=p->nreceipients;
-struct	rfc822t *hostt;
 unsigned i;
 
 	if ((reciparray=(unsigned *)malloc(sizeof(unsigned)*nreceipients)) == 0)
@@ -172,8 +171,8 @@ unsigned i;
 
 	/* Save host we will be contacting, for rewriting */
 
-	hostt=rw_rewrite_tokenize(p->host);
-	delhostt=hostt->tokens;
+	auto hostt=rw_rewrite_tokenize(p->host);
+	delhostt=hostt;
 
 	if (ctlfile_searchfirst(&ctf, COMCTLFILE_VERP) < 0 ||
 		*p->sender == 0)

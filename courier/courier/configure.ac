@@ -61,8 +61,14 @@ if test "$COURIERAUTHCONFIG" = ""
 then
 	AC_MSG_ERROR(courierauthconfig not found)
 fi
+AC_PATH_PROG(VALGRIND, valgrind, none)
 
-AX_COURIER_UNICODE_CXXFLAGS
+if test "$VALGRIND" = "none"
+then
+    VALGRIND=""
+else
+    VALGRIND="$VALGRIND --tool=memcheck --leak-check=yes --error-exitcode=1"
+fi
 
 CFLAGS="-I$srcdir/.. -I.. -I../libs -I$srcdir/../libs -I$srcdir/libs $CFLAGS"
 CXXFLAGS="-I$srcdir/.. -I.. -I../libs -I$srcdir/../libs -I$srcdir/libs $CXXFLAGS $COURIER_UNICODE_CXXFLAGS"
@@ -73,7 +79,7 @@ AC_ARG_WITH(softlinkdir, [  --with-softlinks=dir:link,dir:link...   specify soft
 
 version=`cat ../version`
 
-COPYRIGHT="Courier $version Copyright 1999-2022 Double Precision, Inc."
+COPYRIGHT="Courier $version Copyright 1999-2025 Double Precision, Inc."
 AC_SUBST(COPYRIGHT)
 
 dnl Check whether we should use gdbm, or db.

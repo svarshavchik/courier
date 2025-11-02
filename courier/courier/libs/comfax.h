@@ -7,23 +7,14 @@
 #define	comfax_h
 
 #include	"courier.h"
+#include	<string_view>
 #include	<stdlib.h>
 #include	<ctype.h>
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 
 #define FAX_LOWRES	1
 #define FAX_OKUNKNOWN	2
 #define	FAX_COVERONLY	4
 
-int comgetfaxopts(const char *, int *);
-int comgetfaxoptsn(const char *, int, int *);
-
-#ifdef	__cplusplus
-}
-#endif
+bool comgetfaxopts(std::string_view, int *);
 
 #endif
