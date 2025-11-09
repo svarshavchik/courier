@@ -1,3 +1,12 @@
+0.72.6
+
+2025-11-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix C++ linking issues
+
+	* authldaplib.cpp: Fix rebinding after an automatic reconnection.
+	Update sample authldap.ldif and remove authldap.schema
+
 0.72.5
 
 2025-05-04  Sam Varshavchik  <mrsam@courier-mta.com>

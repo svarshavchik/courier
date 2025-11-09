@@ -7,7 +7,7 @@ Configuration File
 ------------------
 
      LDAP configuration is placed in the file authldaprc, which is installed,
-     by default, as /usr/lib/courier-imap/etc/authldaprc.
+     by default, as <sysconfdir>/authldaprc (/usr/local/etc/authldaprc).
      Use --with-authldaprc=pathname to override the location.
 
      This file must be owned by root and have the permissions set to 0400
@@ -21,16 +21,12 @@ Schema
 ------
 
 OpenLDAP 2.0 defaults to schema checking on all directories.  The file
-authldap.schema contains a definition of a LDAP objects
+authldap.ldif contains a definition of a LDAP objects
 CourierMailAccount, CourierMailAlias, and CourierDomainAlias.
 
 Only CourierMailAccount is used for mailbox authentication (i.e. IMAP,
 webmail).  The other two objects are used by LDAP-based mail routing
 in the Courier Mail Server.
-
-The file authldap.ldif contains an ldif format definition of the same objects.
-This is the same schema definition as in authldap.schema, except in the ldif
-format.
 
 Here are some sample LDAP objects that use this schema:
 
@@ -84,4 +80,3 @@ Notice on Luc's original patch:
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-

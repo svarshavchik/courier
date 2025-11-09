@@ -1,5 +1,5 @@
 /*
-** Copyright 2016 Double Precision, Inc.  See COPYING for
+** Copyright 2016-2025 Double Precision, Inc.  See COPYING for
 ** distribution information.
 */
 
@@ -65,6 +65,7 @@ public:
 	void disconnect();
 	void close();
 
+	int open();
 private:
 	bool enable_tls();
 
@@ -525,15 +526,15 @@ void ldap_connection::close()
 	connection=NULL;
 }
 
-static int ldapopen()
+int ldap_connection::open()
 {
-	if (!main_connection.connected())
+	if (!connected())
 	{
-		if (!main_connection.connect())
+		if (!connect())
 			return 1;
 	}
 
-	if (authldaprc.initbind && !main_connection.bound)
+	if (authldaprc.initbind && !bound)
 	{
 		/* Bind to server */
 		if (courier_authdebug_login_level >= 2)
@@ -551,8 +552,8 @@ static int ldapopen()
 				: authldaprc.ldap_binddn.c_str());
 		}
 
-		if (!main_connection.bind(authldaprc.ldap_binddn,
-					  authldaprc.ldap_bindpw))
+		if (!bind(authldaprc.ldap_binddn,
+			  authldaprc.ldap_bindpw))
 		{
 			authldapclose();
 			ldapconnfailure();
@@ -665,7 +666,7 @@ public:
 		{
 			ptr=NULL;
 			conn.disconnect();
-			if (!conn.connect()
+			if (conn.open()
 			    || !conn.ok("ldap_search_ext_s",
 				     ldap_search_ext_s(conn.connection,
 						       basedn.c_str(),
@@ -878,7 +879,7 @@ static void cpp_auth_ldap_enumerate( void(*cb_func)(const char *name,
 {
 	int msgid;
 
-	if (ldapopen())
+	if (main_connection.open())
 	{
 		(*cb_func)(NULL, 0, 0, NULL, NULL, NULL, void_arg);
 		return;
@@ -1520,7 +1521,7 @@ static int auth_ldap_try(const char *service,
 		free(q);
 	}
 
-	if (ldapopen())	return (-1);
+	if (main_connection.open())	return (-1);
 
 	std::string::iterator at=std::find(user.begin(), user.end(), '@');
 

@@ -127,6 +127,5 @@ auth_*.html - bin bin doc
 EOF
 
 cat >>filelist.ldap <<EOF
-authldap.schema - bin bin doc
 authldap.ldif - bin bin doc
 EOF

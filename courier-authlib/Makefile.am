@@ -295,7 +295,6 @@ $(GITFILES): %: %.git
 endif
 
 EXTRA_DIST=$(HTMLFILES) sysconftool COPYING COPYING.GPL\
-	authldap.schema \
 	authldap.ldif \
 	$(GITFILES) README.ldap \
 	README.authmysql.myownquery \
@@ -603,13 +602,6 @@ auth_sasl_ex.3: auth_sasl.3
 	touch $@
 
 endif
-
-authldap.ldif: authldap.schema
-	echo 'dn: cn=courier,cn=schema,cn=config' >authldap.ldif.tmp
-	echo 'objectClass: olcSchemaConfig' >>authldap.ldif.tmp
-	echo 'cn: courier' >>authldap.ldif.tmp
-	sed '/^#/d;s/^attributetype/olcAttributeTypes:/;s/^objectclass/olcObjectClasses:/;s/^$$/#/' <$(srcdir)/authldap.schema | tr '\011' ' ' >>authldap.ldif.tmp
-	mv -f authldap.ldif.tmp authldap.ldif
 
 README_authlib.html: README_authlib.html.in config.status
 	$(SHELL) ./config.status --file=README_authlib.html
