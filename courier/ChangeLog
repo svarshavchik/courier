@@ -1,3 +1,8 @@
+2025-11-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/submit2.C (SubmitFile::MessageEnd): Exempt DSN module
+	from the MIME parsing error block, for now.
+
 2025-10-24  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* reformime: fail if the input message has a MIME parsing error.

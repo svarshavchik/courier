@@ -654,7 +654,9 @@ int SubmitFile::MessageEnd(unsigned rcptnum, int iswhitelisted,
 	{
 		auto errors=entity.errors.describe();
 
-		if ((entity.errors.code & RFC2045_ERRFATAL) && !errors.empty())
+		if ((entity.errors.code & RFC2045_ERRFATAL) &&
+		    strcmp(sending_module, DSN) &&
+		    !errors.empty())
 		{
 			auto b=errors.begin(), e=errors.end();
 
