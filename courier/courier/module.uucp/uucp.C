@@ -11,6 +11,8 @@
 #include	"rw.h"
 #include	"moduledel.h"
 #include	"rfc822/rfc822.h"
+#include	"rfc2045/rfc2045.h"
+#include	"rfc2045/encode.h"
 #include	"numlib/numlib.h"
 #include	<stdlib.h>
 #include	<string.h>
@@ -100,21 +102,71 @@ static int	pid;
 static int	uuxpipe;
 static int	uuxerr;
 
-static rfc822::tokens delhostt;
+namespace {
+#if 0
+}
+#endif
 
-struct uucprwinfo {
-	rfc822::tokens delhostt;
-	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *));
-	} ;
+class rw_autoconvert : public rfc2045::entity::autoconvert_meta {
 
-static void call_rewrite_func(struct rw_info *i,
-		void (*func)(struct rw_info *),
-		void *voidarg)
+	rw_transport * const uucp=rw_search_transport("uucp");
+	const rfc822::tokens sender;
+	const rfc822::tokens host;
+
+	std::string last_header;
+public:
+
+	rw_autoconvert(std::string_view sender,
+		       rfc822::tokens host) : sender{sender},
+					      host{std::move(host)}{}
+
+	std::string_view rwheader(
+		const rfc2045::entity &e,
+		std::string_view lcname,
+		std::string_view full_header) override;
+};
+
+std::string_view rw_autoconvert::rwheader(
+	const rfc2045::entity &e,
+	std::string_view lcname,
+	std::string_view full_header)
 {
-struct uucprwinfo *arg= (struct uucprwinfo *)voidarg;
+	if (e.parent_entity)
+		return full_header;
 
-	i->host=arg->delhostt;
-	(*arg->rewrite_func)(i, func);
+	if (!rfc822::header_is_addr(lcname))
+		return full_header;
+
+	std::string header_cpy{full_header.begin(), full_header.end()};
+
+	char *errmsg;
+
+	auto buf=rw_rewrite_header(
+		uucp,
+		header_cpy.c_str(),
+		RW_OUTPUT|RW_HEADER,
+		sender,
+		host,
+		&errmsg
+	);
+	if (errmsg)
+		free(errmsg);
+
+	if (buf)
+	{
+		last_header=buf;
+		free(buf);
+		if (full_header.size() &&
+		    full_header.data()[full_header.size()-1] == '\n')
+			last_header += "\n";
+		return last_header;
+	}
+	return full_header;
+}
+
+#if 0
+{
+#endif
 }
 
 static void alarm_sig(int n)
@@ -171,9 +223,6 @@ unsigned i;
 
 	/* Save host we will be contacting, for rewriting */
 
-	auto hostt=rw_rewrite_tokenize(p->host);
-	delhostt=hostt;
-
 	if (ctlfile_searchfirst(&ctf, COMCTLFILE_VERP) < 0 ||
 		*p->sender == 0)
 		/* No VERP */
@@ -209,7 +258,7 @@ unsigned i;
 	free(reciparray);
 }
 
-static int dowrite(const char *, unsigned, void *);
+static int dowrite(const char *, size_t);
 
 /*
 **	In order to properly quote a non-file argument to uux:
@@ -291,7 +340,6 @@ int	waitstat;
 pid_t	pid2;
 char	*saveerrbuf;
 unsigned i;
-struct uucprwinfo uucprwinfo_s;
 struct stat stat_buf;
 const char *sec;
 
@@ -435,10 +483,40 @@ const char *sec;
 
 	signal(SIGPIPE, SIG_IGN);
 
-	uucprwinfo_s.delhostt=delhostt;
-	uucprwinfo_s.rewrite_func= rewrite_func;
+	rfc822::fdstreambuf fds{fp};
+	rfc2045::entity entity;
+	{
+		std::istreambuf_iterator<char> b{&fds}, e;
 
-	j=rw_rewrite_msg(fp, &dowrite, &call_rewrite_func, &uucprwinfo_s);
+		rfc2045::entity::line_iter<false>::iter parser{b, e};
+
+		entity.parse(parser);
+	}
+	entity.autoconvert_check(
+		rfc2045::convert::standardize
+	);
+
+	rw_autoconvert metadata{
+		p->sender,
+		rw_rewrite_tokenize(p->host)
+	};
+
+	metadata.appid=PACKAGE " " VERSION;
+
+	j=0;
+
+	rfc2045::entity::line_iter<false>::autoconvert(
+		entity,
+		[&]
+		(const char *ptr, size_t l)
+		{
+			if (j < 0)
+				return;
+
+			j=dowrite(ptr, l);
+		},
+		fds,
+		metadata);
 
 	if (j < 0)
 	{
@@ -464,7 +542,6 @@ const char *sec;
 			;
 	}
 	close(uuxerr);
-	close(fp);
 
 	*errbufptr=0;
 	if (waitstat)
@@ -504,7 +581,7 @@ const char *sec;
 	}
 }
 
-static int dowrite(const char *p, unsigned l, void *arg)
+static int dowrite(const char *p, size_t l)
 {
 	while (l)
 	{

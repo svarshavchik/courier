@@ -40,13 +40,15 @@ void uaddrlower(std::string &s)
 							   unicode_lc);
 	std::string domain(p, e);
 
-	char *ptr;
+	char *ptr=nullptr;
 
 	if (idna_to_ascii_8z(domain.c_str(), &ptr, 0) == IDNA_SUCCESS)
 	{
 		domain=ptr;
-		free(ptr);
 	}
+
+	if (ptr)
+		free(ptr);
 
 	s=username+unicode::iconvert::convert_tocase(domain,
 						     unicode::utf_8,

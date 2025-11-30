@@ -57,7 +57,7 @@ int config_islocal(const char *address, char **domainp)
 	size_t	pl;
 	char	*lcaddress;
 	int	dotcount;
-	char *address_utf8;
+	char *address_utf8=0;
 	char *hlocal;
 
 	if (domainp)	*domainp=0;
@@ -80,7 +80,11 @@ int config_islocal(const char *address, char **domainp)
 		return (0);
 
 	if (idna_to_unicode_8z8z(address, &address_utf8, 0) != IDNA_SUCCESS)
+	{
+		if (address_utf8)
+			free(address_utf8);
 		address_utf8=courier_strdup(address);
+	}
 
 	k=ualllower(address_utf8);
 	free(address_utf8);
@@ -122,7 +126,7 @@ int config_islocal(const char *address, char **domainp)
 
 	if (domainp)
 	{
-		*domainp=courier_malloc(pl+1);
+		*domainp=(char *)courier_malloc(pl+1);
 		memcpy( *domainp, p, pl);
 		(*domainp)[pl]=0;
 	}
@@ -154,14 +158,17 @@ static int config_is_indomainutf8(const char *address, const char *localp)
 
 int config_is_indomain(const char *address, const char *localp)
 {
-	char *address_utf8;
+	char *address_utf8=0;
 	char *l;
 	char *hlocal;
 	int rc;
 
 	if (idna_to_unicode_8z8z(address, &address_utf8, 0) != IDNA_SUCCESS)
+	{
+		if (address_utf8)
+			free(address_utf8);
 		address_utf8=courier_strdup(address);
-
+	}
 	l=ualllower(address_utf8);
 	free(address_utf8);
 

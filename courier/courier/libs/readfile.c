@@ -25,7 +25,7 @@ char	*p=0;
 
 	if (fstat(fileno(fp), stat_buf) ||
 		fread((p=(char *)courier_malloc(stat_buf->st_size+1)),
-			1, stat_buf->st_size, fp) != stat_buf->st_size)
+		      1, stat_buf->st_size, fp) != (size_t)stat_buf->st_size)
 	{
 		fclose(fp);
 		clog_msg_errno();

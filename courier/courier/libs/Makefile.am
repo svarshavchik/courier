@@ -3,7 +3,7 @@
 # distribution information.
 
 noinst_LTLIBRARIES=libcommon.la libcourier.la libmodule.la
-noinst_PROGRAMS=testaliases
+noinst_PROGRAMS=testaliases testconfig
 
 BUILT_SOURCES=sysconfdir.h localstatedir.h libexecdir.h sbindir.h lcrwstatic.h \
 	courier_version.h
@@ -21,8 +21,7 @@ libcommon_la_SOURCES= aliases.h \
 	commsgcancel.c commsgcancel.h comesmtpidstring.c comfax.C comfax.h \
 	comparseqid.c comparseqid.h comqueuename.c comqueuename.h \
 	comqueuename2.c \
-	comreadtime.c comreadtime.h comrwerrfunc.C comrwheader.C comrwmsg.C \
-	comrwmsg7bit.C comrwmsg8bit.C \
+	comreadtime.c comreadtime.h comrwerrfunc.C comrwheader.C \
 	comrwinfoinit.C comrwinstall.C comrwinstall2.c comrwsearchdel.C \
 	comsecurity.c \
 	comsizelimit.c comstatfs.c comstrinode.c comstrinode.h \
@@ -32,14 +31,14 @@ libcommon_la_SOURCES= aliases.h \
 	comtrigger.c comuidgid.C comuidgid.h comverp.c comverp.h mybuf.h
 libcommon_la_LDFLAGS=-static
 
-libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c \
+libcourier_la_SOURCES=rw.h addrlower.c cgethostname.c \
 	cgethostname_sys.c \
 	courier_malloc.c \
 	cdefaultsep.c \
 	cdefaultdelivery.c cdomaincmp.c cfilename.c cmaildropfilter.c \
 	comsts.c comsts2.c comsts.h \
 	cmaildropmda.c \
-	cread1l.c cme.c cdefaultdomain.c chelohost.c cfilteracct.c \
+	cread1l.c cme.C cdefaultdomain.C chelohost.c cfilteracct.c \
 	cmsgidhost.c courierdir.c islocal.c islocalt.C maxlongsize.h \
 	readfile.c removecomments.c lcclog.c lcclog2.c lcclog3.c \
 	rwdefaulthost.C rwsearch.C lcrewrite.C
@@ -49,6 +48,12 @@ libcourier_la_SOURCES=rw.h rwint.h addrlower.c cgethostname.c \
 testaliases_SOURCES=testaliases.C
 testaliases_DEPENDENCIES=libcommon.la libcourier.la ../../afx/libafx.a @dblibrary@
 testaliases_LDADD=libcommon.la libcourier.la ../../afx/libafx.a @dblibrary@
+
+# testconfig
+
+testconfig_SOURCES=testconfig.C
+testconfig_DEPENDENCIES=@dblibrary@
+testconfig_LDADD=@LIBIDN_LIBS@ -lcourier-unicode @dblibrary@
 
 #  libmodule.a uses either shared or static transport modules
 
@@ -97,4 +102,5 @@ dist-hook:
 	rm -f $(distdir)/lcrwstatic.h
 
 check-am:
-	./testaliases
+	@VALGRIND@ ./testaliases
+	@VALGRIND@ ./testconfig

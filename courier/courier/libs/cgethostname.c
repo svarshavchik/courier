@@ -29,12 +29,15 @@ char	buf[BUFSIZ];
 
 		if (buf[0])
 		{
-			char *address_utf8;
+			char *address_utf8=0;
 
 			if (idna_to_unicode_8z8z(buf, &address_utf8, 0)
 			    != IDNA_SUCCESS)
+			{
+				if (address_utf8)
+					free(address_utf8);
 				address_utf8=courier_strdup(buf);
-
+			}
 			hostname_buf=ualllower(address_utf8);
 			free(address_utf8);
 		}

@@ -37,11 +37,11 @@ static int config_domaincmp_utf8(const char *address, const char *domain)
 int config_domaincmp(const char *lookup_address,
 		     const char *domain, unsigned domainl)
 {
-	char *lookup_domain=courier_malloc(domainl+1);
-	char *lookup_domain_utf8;
+	char *lookup_domain=(char *)courier_malloc(domainl+1);
+	char *lookup_domain_utf8=0;
 	int rc;
 
-	char *lookup_address_utf8;
+	char *lookup_address_utf8=0;
 	char *p;
 
 	memcpy(lookup_domain, domain, domainl);
@@ -53,13 +53,18 @@ int config_domaincmp(const char *lookup_address,
 		free(lookup_domain);
 		lookup_domain=lookup_domain_utf8;
 	}
-
+	else if (lookup_domain_utf8)
+		free(lookup_domain_utf8);
 	lookup_domain_utf8=ualllower(lookup_domain);
 	free(lookup_domain);
 
 	if (idna_to_unicode_8z8z(lookup_address, &lookup_address_utf8, 0)
 	    != IDNA_SUCCESS)
+	{
+		if (lookup_address_utf8)
+			free(lookup_address_utf8);
 		lookup_address_utf8=courier_strdup(lookup_address);
+	}
 	p=ualllower(lookup_address_utf8);
 	free(lookup_address_utf8);
 

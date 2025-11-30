@@ -66,6 +66,7 @@ courieruucp_LDADD=../../courier/libs/libmodule.la \
 	../../courier/libs/libcommon.la \
 	../../courier/libs/libcourier.la \
 	../../libs/rfc2045/librfc2045.la \
+	../../libs/rfc2045/libencode.la \
 	../../libs/rfc822/librfc822.la \
 	../../libs/numlib/libnumlib.la \
 	../../libs/waitlib/libwaitlib.la \

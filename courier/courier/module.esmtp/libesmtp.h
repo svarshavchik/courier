@@ -20,7 +20,10 @@
 #include	"soxwrap/sconnect.h"
 #include	"rfc1035/rfc1035.h"
 #include	"rfc1035/rfc1035mxlist.h"
+#include	"rfc822/rfc822.h"
+#include	"rfc2045/rfc2045.h"
 #include	<ctype.h>
+#include	<functional>
 
 #define	ISFINALLINE(p)	( isdigit((int)(unsigned char)p[0]) &&	\
 			isdigit((int)(unsigned char)p[1]) && \
@@ -29,98 +32,105 @@
 
 struct rw_info;
 
+struct rw_rewritten_address {
+	virtual void operator()(const rfc822::tokens &)=0;
+};
+
 struct esmtp_info {
 
-	void (*log_talking)(struct esmtp_info *, void *);
-	void (*log_sent)(struct esmtp_info *, const char *, int, void *);
-	void (*log_reply)(struct esmtp_info *, const char *, int, void *);
-	void (*log_smtp_error)(struct esmtp_info *, const char *, int, void *);
-	void (*log_rcpt_error)(struct esmtp_info *, int, int, void *);
-	void (*log_net_error)(struct esmtp_info *, int, void *);
+	void (*log_talking)(struct esmtp_info *, void *)=nullptr;
+	void (*log_sent)(struct esmtp_info *, const char *, int, void *)=nullptr;
+	void (*log_reply)(struct esmtp_info *, const char *, int, void *)=nullptr;
+	void (*log_smtp_error)(struct esmtp_info *, const char *, int, void *)=nullptr;
+	void (*log_rcpt_error)(struct esmtp_info *, int, int, void *)=nullptr;
+	void (*log_net_error)(struct esmtp_info *, int, void *)=nullptr;
 
 	void (*log_success)(struct esmtp_info *, unsigned, const char *,
-			    int, void *);
+			    int, void *)=nullptr;
 	void (*report_broken_starttls)(struct esmtp_info *,
 				       const char *,
-				       void *);
+				       void *)=nullptr;
 	int (*lookup_broken_starttls)(struct esmtp_info *,
 				      const char *,
-				      void *);
+				      void *)=nullptr;
 	int (*is_local_or_loopback)(struct esmtp_info *,
 				    const char *,
 				    const char *,
-				    void *);
+				    void *)=nullptr;
 	int (*get_sourceaddr)(struct esmtp_info *info,
 			      const RFC1035_ADDR *dest_addr,
 			      RFC1035_ADDR *source_addr,
-			      void *arg);
+			      void *arg)=nullptr;
 
-	char *authclientfile;
+	char *authclientfile=nullptr;
 
-	time_t esmtpkeepaliveping;
-	time_t quit_timeout;
-	time_t connect_timeout;
-	time_t helo_timeout;
-	time_t data_timeout;
-	time_t cmd_timeout;
-	time_t delay_timeout;
+	time_t esmtpkeepaliveping{0};
+	time_t quit_timeout{0};
+	time_t connect_timeout{0};
+	time_t helo_timeout{0};
+	time_t data_timeout{0};
+	time_t cmd_timeout{0};
+	time_t delay_timeout{0};
 
-	void (*log_good_reply)(struct esmtp_info *, const char *, int, void *);
+	void (*log_good_reply)(struct esmtp_info *, const char *, int, void *)
+	=nullptr;
 
-	int hasdsn;
-	int has8bitmime;
-	int hassmtputf8;
-	int hasverp;
-	int hassize;
-	int hasexdata;
-	int hascourier;
-	int hasstarttls;
-	int hassecurity_starttls;
+	int hasdsn{0};
+	int has8bitmime{0};
+	int hassmtputf8{0};
+	int hasverp{0};
+	int hassize{0};
+	int hasexdata{0};
+	int hascourier{0};
+	int hasstarttls{0};
+	int hassecurity_starttls{0};
 
 	/* This connection has TLS enabled.  */
-	int is_tls_connection;
+	int is_tls_connection{0};
 
 	/* TLS connection with Courier's SECURITY extension. */
-	int is_secure_connection;
+	int is_secure_connection{0};
 
-	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *));
+	void (*rewrite_func)(struct rw_info *, void (*)(struct rw_info *))=nullptr;
+	std::function<std::string(const rfc822::tokens &,
+				  std::string)> rewrite_addr_header;
 
-	char *host;
-	char *smtproute;
-	int smtproutes_flags;
-	int esmtp_sockfd;
+	std::string host;
+	char *smtproute{nullptr};
+	int smtproutes_flags{0};
+	int esmtp_sockfd{0};
 
-	const char *helohost;
-	RFC1035_ADDR sockfdaddr;
-	RFC1035_ADDR laddr;
+	const char *helohost{nullptr};
+	RFC1035_ADDR sockfdaddr{};
+	RFC1035_ADDR laddr{};
 
-	char *sockfdaddrname;
+	char *sockfdaddrname{nullptr};
 
-	int esmtp_cork;
-	int corked;
-	int haspipelining;
+	int esmtp_cork{0};
+	int corked{0};
+	int haspipelining{0};
 
-	char *authsasllist;
-	int auth_error_sent;
-	int quit_needed;
-	int rset_needed;
-	time_t	esmtp_timeout_time;
+	char *authsasllist{nullptr};
+	int auth_error_sent{0};
+	int quit_needed{0};
+	int rset_needed{0};
+	time_t	esmtp_timeout_time{0};
 
-	time_t net_timeout;
+	time_t net_timeout{0};
 	/*
 	** If all MXs are unreachable, wait until this tick before attempting
 	** any new connections.
 	*/
-	int net_error;
+	int net_error{0};
 
 	struct mybuf esmtp_sockbuf;
 
-	char socklinebuf[sizeof(((struct mybuf *)0)->buffer)+1];
-	unsigned socklinesize;
+	char socklinebuf[sizeof(((struct mybuf *)0)->buffer)+1]={};
+	unsigned socklinesize{0};
 
-	char esmtp_writebuf[BUFSIZ];
-	char *esmtp_writebufptr;
-	unsigned esmtp_writebufleft;
+	char esmtp_writebuf[BUFSIZ]={};
+	char *esmtp_writebufptr{nullptr};
+	unsigned esmtp_writebufleft{0};
 };
 
 extern struct esmtp_info *esmtp_info_alloc(const char *host);
@@ -173,7 +183,7 @@ extern int esmtp_send(struct esmtp_info *info,
 		      struct esmtp_mailfrom_info *mf_info,
 		      struct esmtp_rcpt_info *rcpt_info,
 		      size_t nreceipients,
-		      int fd,
+		      rfc822::fdstreambuf &fdbuf,
 		      void *arg);
 
 extern void esmtp_sockipname(struct esmtp_info *, char *);

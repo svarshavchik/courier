@@ -704,7 +704,7 @@ static const char *my_spf_lookup(const char *checkname,
 	{
 		const char *c=values[i] ? values[i]:"";
 
-		char *v;
+		char *v=0;
 
 		switch (i) {
 		case 0:
@@ -715,7 +715,11 @@ static const char *my_spf_lookup(const char *checkname,
 			break;
 		default:
 			if (idna_to_ascii_8z(c, &v, 0) != IDNA_SUCCESS)
+			{
+				if (v)
+					free(v);
 				v=strdup(c);
+			}
 		}
 
 		for (q=v; q && *q; q++)
@@ -882,10 +886,14 @@ static std::string utf8ize_address(const std::string &s)
 		return s;
 
 	std::string domain=s.substr(++p);
-	char *utf8;
+	char *utf8=0;
 
 	if (idna_to_unicode_8z8z(domain.c_str(), &utf8, 0) != IDNA_SUCCESS)
+	{
+		if (utf8)
+			free(utf8);
 		return s;
+	}
 
 	domain=utf8;
 	free(utf8);
@@ -1967,7 +1975,9 @@ static void getrcpts(struct rw_info *rwi)
 					rw_rewrite_header(mf->module,
 							  header.c_str(),
 							  RW_HEADER|RW_SUBMIT,
-							  orig_addr, &errmsg);
+							  orig_addr,
+							  {},
+							  &errmsg);
 
 				if (!new_header)
 				{

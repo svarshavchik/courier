@@ -31,7 +31,7 @@ char *udomainlower(const char *c)
 	if (!ud)
 		return courier_strdup(c);
 
-	s=courier_malloc(strlen(ud)+1+(d-c));
+	s=(char *)courier_malloc(strlen(ud)+1+(d-c));
 
 	memcpy(s, c, d-c);
 	strcpy(s+(d-c), ud);
@@ -51,12 +51,15 @@ static char *udomainutf82(const char *c)
 		return courier_strdup(c);
 
 	++d;
+	s=0;
 	if (idna_to_unicode_8z8z(d, &s, 0) != IDNA_SUCCESS)
 	{
+		if (s)
+			free(s);
 		return courier_strdup(c);
 	}
 
-	ud=courier_malloc((d-c+1)+strlen(s));
+	ud=(char *)courier_malloc((d-c+1)+strlen(s));
 
 	memcpy(ud, c, d-c);
 	strcpy(ud+(d-c), s);
@@ -76,7 +79,7 @@ static char *udomainace2(const char *c)
 {
 	const char *d;
 	char *ud;
-	char *s;
+	char *s=nullptr;
 
 	d=strrchr(c, '@');
 
@@ -86,10 +89,12 @@ static char *udomainace2(const char *c)
 	++d;
 	if (idna_to_ascii_8z(d, &s, 0) != IDNA_SUCCESS)
 	{
+		if (s)
+			free(s);
 		return courier_strdup(c);
 	}
 
-	ud=courier_malloc((d-c+1)+strlen(s));
+	ud=(char *)courier_malloc((d-c+1)+strlen(s));
 
 	memcpy(ud, c, d-c);
 	strcpy(ud+(d-c), s);
@@ -138,8 +143,8 @@ char *ulocallower(const char *c)
 
 		if (lower_username)
 		{
-			char *buf=courier_malloc(strlen(lower_username)+
-						 strlen(at)+1);
+			char *buf=(char *)courier_malloc(strlen(lower_username)+
+							 strlen(at)+1);
 
 			strcat(strcpy(buf, lower_username), at);
 			free(c_copy);

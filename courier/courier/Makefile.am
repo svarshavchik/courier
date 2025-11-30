@@ -450,6 +450,7 @@ dotforward_SOURCES=dotforward.c
 dotforward_DEPENDENCIES=../libs/rfc822/librfc822.la libs/libcourier.la \
 			@dblibrary@
 dotforward_LDADD=$(dotforward_DEPENDENCIES) -lcourier-unicode
+nodist_EXTRA_dotforward_SOURCES=dummy.C
 
 # courier - start, stop, restart courier
 

@@ -238,7 +238,11 @@ static std::string rewrite_from(const char *oldfrom, const char *newuser,
 
 	if (newhost && idna_to_ascii_8z(newhost, &newhost_idna, 0)
 	    != IDNA_SUCCESS)
+	{
+		if (newhost_idna)
+			free(newhost_idna);
 		newhost_idna=0;
+	}
 
 	auto p=rewrite_from_idna(oldfrom, newuser,
 				 (newhost_idna ? newhost_idna:newhost),

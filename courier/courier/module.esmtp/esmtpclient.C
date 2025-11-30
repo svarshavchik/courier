@@ -143,9 +143,40 @@ void esmtpchild(unsigned childnum)
 			if (!info)
 			{
 				info=libesmtp_init(del->host);
-				info->rewrite_func=
-					rw_search_transport("esmtp")->rw_ptr
-					->rewrite;
+
+				rw_transport *esmtp=
+					rw_search_transport("esmtp");
+				auto rewrite_func=
+					esmtp->rw_ptr->rewrite;
+				info->rewrite_func=rewrite_func;
+				info->rewrite_addr_header=
+					[esmtp, info]
+					(const rfc822::tokens &sender,
+					 std::string header)
+					{
+						char *errmsg;
+
+						auto buf=rw_rewrite_header(
+							esmtp,
+							header.c_str(),
+							RW_OUTPUT|RW_HEADER,
+							sender,
+							std::string_view{
+								info->host
+							},
+							&errmsg
+						);
+
+						if (errmsg)
+							free(errmsg);
+
+						if (buf)
+						{
+							header=buf;
+							free(buf);
+						}
+						return header;
+					};
 			}
 
 			info->net_error=0;
@@ -302,7 +333,7 @@ static void sendesmtp(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	/* Sanity check */
 
-	if (strcmp(info->host, del->host))
+	if (info->host != del->host)
 	{
 		clog_msg_start_err();
 		clog_msg_str("Internal failure in courieresmtp - daemon mixup.");
@@ -857,6 +888,7 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 		connect_error1(del, ctf, -1);
 		return;
 	}
+	rfc822::fdstreambuf fdbuf{fd};
 
 	memset(&mf_info, 0, sizeof(mf_info));
 
@@ -887,9 +919,8 @@ static void pushdsn(struct esmtp_info *info, struct my_esmtp_info *my_info)
 
 	rcpt_info=mk_rcpt_info(del, ctf);
 
-	esmtp_send(info, &mf_info, rcpt_info, del->nreceipients, fd,
+	esmtp_send(info, &mf_info, rcpt_info, del->nreceipients, fdbuf,
 		   my_info);
 
 	free(rcpt_info);
-	close(fd);
 }

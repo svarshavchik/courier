@@ -56,8 +56,11 @@ std::string	mkmessageidheader()
 	if (idna_to_ascii_8z(mhostname, &idn2_hostname, 0) == IDNA_SUCCESS)
 		mhostname=idn2_hostname;
 	else
+	{
+		if (idn2_hostname)
+			free(idn2_hostname);
 		idn2_hostname=0;
-
+	}
 	hdrbuf += mhostname;
 	hdrbuf += ">\n";
 	if (idn2_hostname)

@@ -75,26 +75,17 @@ void rw_rewrite_module(struct rw_transport *, struct rw_info *,
 /* Rewrite RFC822 header: */
 
 char *rw_rewrite_header(struct rw_transport *,	/* Rewriting library */
-			const char *,		/* header */
+			std::string_view,		/* header */
 			int,			/* flags/mode */
 			const rfc822::tokens &,	/* sender */
+			const rfc822::tokens &,	/* host */
 			char **);		/* ptr to error message */
 
-char	*rw_rewrite_header_func(
-	void (*rwfunc)(
-		struct rw_info *, void (*)(struct rw_info *), void *),
-	/* Rewriting function */
-	const char *,		/* See above */
-	int,			/* See above */
-	const rfc822::tokens &,	/* See above */
-	char **,		/* See above */
-	void *);	/* Context ptr, passed as last arg to rwfunc */
 #endif
 
 void rw_local_defaulthost(struct rw_info *, void (*)(struct rw_info *));
 	/* Common rewriting function that appends the local domain to
 	** unqualified addresses. */
-
 
 /* Call rw_rewrite_header for the following headers: */
 
@@ -105,43 +96,4 @@ void rw_local_defaulthost(struct rw_info *, void (*)(struct rw_info *));
 	 strncasecmp((l), "from:", 5) == 0 || \
 	 strncasecmp((l), "reply-to:", 9) == 0)
 
-/* Rewrite headers in an entire message */
-
-int rw_rewrite_msg(int,		/* Freshly open file descriptor
-				containing the message to rewrite */
-
-	int (*)(const char *, unsigned, void *),
-				/*
-				** This function is called repeatedly with
-				** the contents of the rewritten message.
-				** The function should non-0 if there was an
-				** error while saving the contents of the
-				** rewritten message.
-				*/
-	void (*)(struct rw_info *,
-		void (*)(struct rw_info *), void *),
-				/* This function is called to rewrite a
-				** single address.  It receives the standard
-				** rwinfo structure, and must call the
-				** supplied function pointer after doing
-				** any rewriting.
-				*/
-	void *	/*
-		** This pointer is forwarded as the last argument to the
-		** above two functions.
-		*/
-	);
-
-	/* rw_rewrite_msg returns 0, or the non-zero exit status if there
-	** was an error reported by the write func */
-
-struct rfc2045;
-
-int rw_rewrite_msg_7bit(int,
-	struct rfc2045 *,
-	int (*)(const char *, unsigned, void *),
-	void (*)(struct rw_info *,
-		void (*)(struct rw_info *), void *),
-	void *
-	);
 #endif

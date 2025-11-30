@@ -11,11 +11,11 @@
 #include	<string.h>
 
 
-static char *rw_rewrite_header_common(
+char *rw_rewrite_header(
 	struct rw_transport *rw,
-	void (*rwfunc)(struct rw_info *, void (*)(struct rw_info *), void *),
-	const std::string_view &header, int mode, const rfc822::tokens &sender,
-	char **errmsgptr, void *funcarg)
+	std::string_view header, int mode, const rfc822::tokens &sender,
+	const rfc822::tokens &host,
+	char **errmsgptr)
 {
 	std::vector<char *> bufptrs;
 	char	*new_header=0;
@@ -30,7 +30,7 @@ static char *rw_rewrite_header_common(
 	for (auto &a:rfca)
 	{
 		struct	rw_info_rewrite rwr;
-		struct	rw_info rwi{mode, sender, {}};
+		struct	rw_info rwi{mode, sender, host};
 
 		if (a.address.empty())
 			continue;
@@ -51,14 +51,9 @@ static char *rw_rewrite_header_common(
 
 		/* --- */
 
-		else if (rw)
-			rw_rewrite_module(rw, &rwi,
-				rw_rewrite_print
-			);
-		else
-			(*rwfunc)(&rwi,
-				rw_rewrite_print, funcarg
-			);
+		else rw_rewrite_module(rw, &rwi,
+				       rw_rewrite_print
+		);
 
 		if ( (*errmsgptr=((struct rw_info_rewrite *)rwi.udata)->errmsg)
 			!= 0)	break;
@@ -102,23 +97,4 @@ static char *rw_rewrite_header_common(
 		if (b) free(b);
 
 	return (new_header);
-}
-
-char	*rw_rewrite_header(
-	struct rw_transport *rw,
-	const char *header, int mode, const rfc822::tokens &sender,
-	char **errmsgptr)
-{
-	return (rw_rewrite_header_common(rw, 0,
-		header, mode, sender, errmsgptr, 0));
-}
-
-char	*rw_rewrite_header_func(
-	void (*rwfunc)(struct rw_info *, void (*)(struct rw_info *), void *),
-	const char *header, int mode,
-	const rfc822::tokens &sender,
-	char **errmsgptr, void *funcarg)
-{
-	return (rw_rewrite_header_common(0, rwfunc,
-		header, mode, sender, errmsgptr, funcarg));
 }

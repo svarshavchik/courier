@@ -6,4 +6,5 @@
 /sbindir.h
 /sysconfdir.h
 /testaliases
+/testconfig
 /courier_version.h

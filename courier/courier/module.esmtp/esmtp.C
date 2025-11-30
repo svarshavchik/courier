@@ -211,7 +211,7 @@ static int isindomaindb_utf8(const char *address, struct dbobj *db)
 
 static int isindomaindb(const char *p, struct dbobj *db)
 {
-	char *address_utf8_str;
+	char *address_utf8_str=0;
 	std::string address_utf8;
 	char *q;
 	int ret;
@@ -225,6 +225,8 @@ static int isindomaindb(const char *p, struct dbobj *db)
 	}
 	else
 	{
+		if (address_utf8_str)
+			free(address_utf8_str);
 		address_utf8=p;
 	}
 

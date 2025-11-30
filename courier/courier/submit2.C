@@ -717,6 +717,10 @@ int SubmitFile::MessageEnd(unsigned rcptnum, int iswhitelisted,
 
 		bool error=false;
 
+		rfc2045::entity::autoconvert_meta metadata;
+
+		metadata.appid=PACKAGE " " VERSION;
+
 		rfc2045::entity::line_iter<false>::autoconvert(
 			entity,
 			[&]
@@ -736,8 +740,7 @@ int SubmitFile::MessageEnd(unsigned rcptnum, int iswhitelisted,
 					l -= d;
 				}
 			},
-			fd1buf,
-			PACKAGE " " VERSION);
+			fd1buf, metadata);
 
 		if (fd2buf.pubsync() < 0 || fd2buf.error())
 			error=true;

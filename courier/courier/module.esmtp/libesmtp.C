@@ -20,6 +20,7 @@
 #include	"tcpd/spipe.h"
 #include	"tcpd/tlsclient.h"
 #include	"rfc2045/rfc2045.h"
+#include	"rfc2045/encode.h"
 #include	"rw.h"
 #include	<idn2.h>
 #include	<courierauthsaslclient.h>
@@ -391,13 +392,11 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 	int smtproutes_flags=0;
 	char *smtproute=smtproutes(host,
 				   &smtproutes_flags);
-	struct esmtp_info *p=(struct esmtp_info *)
-		malloc(sizeof(struct esmtp_info));
+
+	auto p=new esmtp_info;
 
 	if (!p)
 		abort();
-
-	memset(p, 0, sizeof(*p));
 
 	p->helohost="*";
 	p->log_talking= &default_log_talking;
@@ -412,10 +411,7 @@ struct esmtp_info *esmtp_info_alloc(const char *host)
 	p->is_local_or_loopback= &default_is_local_or_loopback;
 	p->get_sourceaddr= &default_get_sourceaddr;
 
-	p->host=strdup(host);
-
-	if (!p->host)
-		abort();
+	p->host=host;
 
 	p->esmtp_sockfd= -1;
 
@@ -475,8 +471,7 @@ void esmtp_info_free(struct esmtp_info *p)
 		free(p->smtproute);
 	if (p->sockfdaddrname)
 		free(p->sockfdaddrname);
-	free(p->host);
-	free(p);
+	delete p;
 }
 
 int esmtp_connected(struct esmtp_info *info)
@@ -619,7 +614,7 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 	strcpy(hellobuf, "EHLO ");
 
 	{
-		char *q;
+		char *q=0;
 
 		if (idna_to_ascii_8z(p, &q, 0) == IDNA_SUCCESS)
 		{
@@ -628,6 +623,8 @@ static int esmtp_helo(struct esmtp_info *info, int using_tls,
 		}
 		else
 		{
+			if (q)
+				free(q);
 			strncat(hellobuf, p, sizeof(hellobuf)-10);
 		}
 	}
@@ -1465,7 +1462,8 @@ static int do_esmtp_connect_to(struct esmtp_info *info,
 
 static int do_esmtp_connect(struct esmtp_info *info, void *arg)
 {
-	const char *dest_domain=info->smtproute ? info->smtproute:info->host;
+	const char *dest_domain=
+		info->smtproute ? info->smtproute:info->host.c_str();
 	struct sts_id domain_sts_id;
 	int rc;
 	const char *tls_trustcerts=getenv("TLS_TRUSTCERTS");
@@ -2871,27 +2869,74 @@ struct rw_for_esmtp {
 	void *arg;
 	} ;
 
-static void call_rewrite_func(struct rw_info *p, void (*f)(struct rw_info *),
-			      void *arg)
-{
-	struct rw_for_esmtp *rfe=(struct rw_for_esmtp *)arg;
+static int convert_to_crlf(const char *msg, unsigned l, rw_for_esmtp *ptr);
 
-	(*rfe->info->rewrite_func)(p, f);
+namespace {
+#if 0
+}
+#endif
+
+class rw_autoconvert : public rfc2045::entity::autoconvert_meta {
+
+	esmtp_info *const info;
+	const rfc822::tokens sender;
+
+	std::string last_header;
+
+public:
+	rw_autoconvert(esmtp_info *info,
+		       std::string_view sender
+	) : info{info}, sender{sender}
+	{
+	}
+
+	std::string_view rwheader(
+		const rfc2045::entity &e,
+		std::string_view lcname,
+		std::string_view full_header) override;
+};
+
+std::string_view rw_autoconvert::rwheader(
+	const rfc2045::entity &e,
+	std::string_view lcname,
+	std::string_view full_header)
+{
+	if (e.parent_entity || !info->rewrite_addr_header)
+		return full_header;
+
+	if (!rfc822::header_is_addr(lcname))
+		return full_header;
+
+	last_header=info->rewrite_addr_header(sender, {
+			full_header.begin(),
+			full_header.end()
+		});
+	if (full_header.size() &&
+	    full_header.data()[full_header.size()-1] == '\n')
+		last_header += "\n";
+
+	return last_header;
 }
 
-static int convert_to_crlf(const char *, unsigned, void *);
+#if 0
+{
+#endif
+}
 
 int esmtp_send(struct esmtp_info *info,
 	       struct esmtp_mailfrom_info *mf_info,
 	       struct esmtp_rcpt_info *rcpt_info,
 	       size_t nreceipients,
-	       int fd,
+	       rfc822::fdstreambuf &fdbuf,
 	       void *arg)
 {
 	unsigned i;
 	int	*rcptok;
 	char	*mailfroms;
 	struct rfc2045 *rfcp=0;
+	int	fd=fdbuf.fileno();
+
+	rfc2045::entity entity;
 
 	struct	stat stat_buf;
 	char *rcpt_buf;
@@ -2932,6 +2977,14 @@ int esmtp_send(struct esmtp_info *info,
 		return 0;
 	}
 
+	fdbuf.pubseekpos(0);
+	{
+		std::istreambuf_iterator<char> b{&fdbuf}, e;
+
+		rfc2045::entity::line_iter<false>::iter parser{b, e};
+
+		entity.parse(parser);
+	}
 	/*
 	** While waiting for MAIL FROM to come back, check if the message
 	** needs to be converted to quoted-printable.
@@ -2939,12 +2992,28 @@ int esmtp_send(struct esmtp_info *info,
 
 	if (!info->has8bitmime && mf_info->is8bitmsg)
 	{
+		fdbuf.pubseekpos(0);
 		rfcp=rfc2045_alloc_ac();
 		if (!rfcp)	clog_msg_errno();
 		parserfc(fd, rfcp);
 
 		rfc2045_ac_check(rfcp, RFC2045_RW_7BIT);
+
+		entity.autoconvert_check(
+			rfc2045::convert::sevenbit
+		);
 	}
+	else
+	{
+		entity.autoconvert_check(
+			rfc2045::convert::standardize
+		);
+	}
+
+	fdbuf.pubseekpos(0);
+
+	if (fdbuf.error())
+		return -1;
 
 	if (esmtp_parsereply(info, mailfroms, arg))	/* MAIL FROM rejected */
 	{
@@ -2972,7 +3041,8 @@ int esmtp_send(struct esmtp_info *info,
 	free(rcpt_buf);
 
 	{
-	struct rw_for_esmtp rfe;
+		struct rw_for_esmtp rfe;
+		rw_autoconvert metadata{info, mf_info->sender};
 
 		rfe.is_sol=1;
 		rfe.byte_counter=0;
@@ -2981,16 +3051,31 @@ int esmtp_send(struct esmtp_info *info,
 
 		cork(1);
 
-		if ((rfcp ?
-			rw_rewrite_msg_7bit(fd, rfcp,
-				&convert_to_crlf,
-				&call_rewrite_func,
-				&rfe):
-			rw_rewrite_msg(fd,
-				&convert_to_crlf,
-				&call_rewrite_func,
-				&rfe))
-		    || data_wait(info, nreceipients, rcptok,  arg))
+		metadata.appid=PACKAGE " " VERSION;
+
+		bool error=false;
+
+		rfc2045::entity::line_iter<false>::autoconvert(
+			entity,
+			[&]
+			(const char *ptr, size_t l)
+			{
+				if (error)
+					return;
+
+				if (convert_to_crlf(ptr, l, &rfe))
+					error=true;
+			},
+			fdbuf,
+			metadata);
+
+		if (!error && !rfe.is_sol)
+		{
+			if (convert_to_crlf("\n", 1, &rfe))
+				error=true;
+		}
+
+		if (error || data_wait(info, nreceipients, rcptok,  arg))
 			for (i=0; i<nreceipients; i++)
 				if (rcptok[i])
 					(*info->log_net_error)(info, i,
@@ -3005,7 +3090,7 @@ int esmtp_send(struct esmtp_info *info,
 static int escape_dots(const char *, unsigned,
 		       struct rw_for_esmtp *);
 
-static int convert_to_crlf(const char *msg, unsigned l, void *voidp)
+static int convert_to_crlf(const char *msg, unsigned l, rw_for_esmtp *ptr)
 {
 unsigned i, j;
 int	rc;
@@ -3014,14 +3099,12 @@ int	rc;
 	{
 		if (msg[i] != '\n')
 			continue;
-		if ((rc=escape_dots(msg+j, i-j,
-			(struct rw_for_esmtp *)voidp)) != 0 ||
-			(rc=escape_dots("\r", 1,
-				(struct rw_for_esmtp *)voidp)) != 0)
+		if ((rc=escape_dots(msg+j, i-j, ptr)) != 0 ||
+			(rc=escape_dots("\r", 1, ptr)) != 0)
 			return (rc);
 		j=i;
 	}
-	return (escape_dots(msg+j, i-j, (struct rw_for_esmtp *)voidp));
+	return (escape_dots(msg+j, i-j, ptr));
 }
 
 static int escape_dots(const char *msg, unsigned l, struct rw_for_esmtp *ptr)

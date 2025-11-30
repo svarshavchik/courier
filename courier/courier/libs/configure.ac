@@ -36,6 +36,15 @@ fi
 CFLAGS="-I.. -I$srcdir/.. -I../.. -I$srcdir/../.. -I$srcdir/../../libs -I../../libs $CFLAGS"
 CXXFLAGS="-I.. -I$srcdir/.. -I../.. -I$srcdir/../.. -I$srcdir/../../libs -I../../libs $CXXFLAGS"
 
+AC_PATH_PROG(VALGRIND, valgrind, none)
+
+if test "$VALGRIND" = "none"
+then
+    VALGRIND=""
+else
+    VALGRIND="$VALGRIND --tool=memcheck --leak-check=yes --error-exitcode=1 --child-silent-after-fork=yes"
+fi
+
 dnl Checks for libraries.
 PKG_CHECK_MODULES(LIBIDN, libidn2 >= 0.0.0, [libidn=yes], [libidn=no])
 

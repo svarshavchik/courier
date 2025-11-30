@@ -1,3 +1,10 @@
+2025-11-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier: use the new C++ MIME parsing library to rewrite
+	E-mail sent via esmtp and uucp. Leave existing multipart MIME
+	sections unaltered unless it is really necessary to reencode
+	one of its entities.
+
 2025-11-14  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/submit2.C (SubmitFile::MessageEnd): Exempt DSN module
