@@ -101,11 +101,11 @@ static int local_callback(struct authinfo *, void *);
 struct localauthinfo {
 	std::string address;
 	std::string ext;
-	struct rw_info *rwi;
+	struct rw_info *rwi{nullptr};
 	void (*delfunc)(struct rw_info *, const rfc822::tokens &,
 			const rfc822::tokens &);
-	int found;
-	int exists;
+	int found{0};
+	int exists{0};
 } ;
 
 /*

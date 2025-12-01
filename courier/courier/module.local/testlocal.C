@@ -82,10 +82,10 @@ int auth_getuserinfo(const char *service, const char *uid,
 	result += "\"\n";
 
 	authinfo ret{};
-	uid_t u=getuid();
+	uid_t u=1000;
 
 	ret.sysuserid=&u;
-	ret.sysgroupid=getgid();
+	ret.sysgroupid=1000;
 
 	if (strcmp(uid, "home1") == 0)
 	{

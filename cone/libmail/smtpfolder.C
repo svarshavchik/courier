@@ -229,6 +229,9 @@ void mail::smtpAddMessage::go()
 					return;
 				}
 
+				rfc2045::entity::autoconvert_meta meta;
+
+				meta.appid="mail::account";
 
 				rfc2045::entity::line_iter<false>::autoconvert(
 					entity,
@@ -251,7 +254,7 @@ void mail::smtpAddMessage::go()
 						}
 					},
 					temporaryFile,
-					"mail::account"
+					meta
 				);
 
 				temporaryFile=std::move(tmpfile2);

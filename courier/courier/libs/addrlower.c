@@ -79,7 +79,7 @@ static char *udomainace2(const char *c)
 {
 	const char *d;
 	char *ud;
-	char *s=nullptr;
+	char *s=0;
 
 	d=strrchr(c, '@');
 

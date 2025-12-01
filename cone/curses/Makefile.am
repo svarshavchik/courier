@@ -31,7 +31,5 @@ noinst_DATA=curseslib
 
 DISTCLEANFILES=curseslib
 
-AM_CXXFLAGS=@COURIER_UNICODE_CXXFLAGS@
-
 curseslib: config.status
 	echo @CURSESLIB@ >curseslib
