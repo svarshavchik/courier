@@ -1011,7 +1011,13 @@ bool mail::generic::ReadMimePart::copyHeaders(rfc2045::entity *ptr)
 
 		if (h.size() == 0 || h == "\n")
 			break;
-		copyto(std::string{h.begin(), h.end()});
+
+		std::string recovered_header{h.begin(), h.end()};
+
+		if (!headers.keep_eol)
+			// Otherwise the trailing one is preserved
+			recovered_header += "\n";
+		copyto(std::move(recovered_header));
 	} while (headers.next());
 
 	return true;
