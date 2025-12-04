@@ -12,16 +12,6 @@
 #endif
 #include	<stdio.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-	struct rfc822token;
-
-#ifdef __cplusplus
-}
-#endif
-
 #define MAILUID		(courier_mailuid())
 #define MAILGID		(courier_mailgid())
 #define	MAILUSER	"@mailuser@"
@@ -70,7 +60,7 @@ struct rw_info {
 	rfc822::tokens addr;
 	void (*err_func)(int, const char *, struct rw_info *);
 
-	const rfc822::tokens sender; // TODO: const
+	const rfc822::tokens sender;
 	rfc822::tokens host;   // TODO: const, For courieruucp only */
 	rw_info(int mode, rfc822::tokens sender,
 		rfc822::tokens host)

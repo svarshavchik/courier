@@ -279,8 +279,8 @@
     <title>SEE ALSO</title>
     <para>
 <ulink url="courier.html"><citerefentry><refentrytitle>courier</refentrytitle><manvolnum>8</manvolnum></citerefentry></ulink>,
-<ulink url="https://www.ietf.org/rfc/rfc1035.txt">RFC 1035</ulink>,
-<ulink url="https://www.ietf.org/rfc/rfc8461.txt">RFC 8461</ulink>.
+<ulink url="https://datatracker.ietf.org/doc/html/rfc1035">RFC 1035</ulink>,
+<ulink url="https://datatracker.ietf.org/doc/html/rfc8461">RFC 8461</ulink>.
     </para>
   </refsect1>
 </refentry>

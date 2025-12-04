@@ -130,7 +130,7 @@ struct expninfo {
 //
 // handler   - function that will be called.  The first argument to the
 //             function will be the rewritten address, the second argument
-//             is the same address, but as rfc822token link list.  The third
+//             is the same address, but as an rfc822::tokens.  The third
 //             argument will be an error message.  If NULL, the address was
 //             rewritten succesfully.  The last argument will be the misc
 //             pointer.
@@ -1209,7 +1209,7 @@ static int checkdns(const char *sender,
 		return (-1);
 	}
 
-	std::cout << "517 Invalid domain, see <URL:https://www.ietf.org/rfc/rfc1035.txt>" << std::endl << std::flush;
+	std::cout << "517 Invalid domain, see <URL:https://datatracker.ietf.org/doc/html/rfc1035>" << std::endl << std::flush;
 	return (-1);
 }
 

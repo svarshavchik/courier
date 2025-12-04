@@ -1,9 +1,14 @@
+2025-12-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update links to RFCs.
+
 2025-11-30  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier: use the new C++ MIME parsing library to rewrite
 	E-mail sent via esmtp and uucp. Leave existing multipart MIME
 	sections unaltered unless it is really necessary to reencode
-	one of its entities.
+	one of its entities. Update other parts of Courier code to use
+	the C++ MIME library, including: couriermlm, courierfax.
 
 2025-11-14  Sam Varshavchik  <mrsam@courier-mta.com>
 

@@ -172,8 +172,8 @@ struct rw_list {
         int rw_version;
         void (*rewrite)(struct rw_info *info, void (*func)(struct rw_info *));
         void (*rewrite_del)(struct rw_info *info, void (*func)(struct rw_info *),
-                    void (*delfunc)(struct rw_info *info, const struct rfc822token *host,
-                                const struct rfc822 *addr));
+                    void (*delfunc)(struct rw_info *info, const rfc822::tokens &amp;host,
+                                const rfc822::tokens &amp;addr));
         int  (*filter_msg)(const char *,
                         int,
                         const char *,
@@ -193,9 +193,9 @@ this module interface must set rw_version to zero.
   <pre>
 <code>struct rw_info {
     int mode;
-    struct rfc822token *ptr;
+    rfc822::tokens addr;
     void (*err_func)(int, const char *, struct rw_info *);
-    const struct rfc822token *sender;
+    const rfc822::tokens sender;
     const char *smodule;
     void *udata;
 } ;</code>
@@ -220,7 +220,7 @@ submitted for delivery (as opposed to address verification for
   <p>It is possible that none of those bits are set, when invoked
   by another rewrite function.</p>
 
-  <p><code>ptr</code> is the address to rewrite, as rfc822
+  <p><code>addr</code> is the address to rewrite, as rfc822
   tokens.</p>
 
   <p><code>udata</code> contains an arbitrary pointer, for usage by
@@ -279,7 +279,7 @@ submitted for delivery (as opposed to address verification for
   <code>rewrite_del</code> receives the pointer to the rw_info
   structure, then the <code>host</code> and the
   <code>address</code> information for the output module, as
-  rfc822token lists. If the mode field has the
+  rfc822::tokens. If the mode field has the
   <code>RW_SUBMIT</code> bit set, rewrite_del can find the
   message's envelope sender address in canonical format) in
   <code>info-&gt;sender</code>.</p>
@@ -303,7 +303,7 @@ submitted for delivery (as opposed to address verification for
   <code>sender</code> field contains a pointer to the envelope
   sender, in canonical format. Like <code>rewrite</code>,
   <code>rewrite_del</code> may muck around with the
-  <code>rfc822token</code> list in <code>ptr</code>.
+  <code>rfc822::tokens</code> in <code>addr</code>.
   <code>rewrite_del</code> functions are called in order according
   to the configured module priority. By setting a higher priority,
   it is possible to have <code>rewrite_del</code> rewrite the
