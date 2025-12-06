@@ -2844,15 +2844,6 @@ static int data_wait(struct esmtp_info *info, size_t nreceipients,
 	return (0);
 }
 
-static void parserfc(int fd, struct rfc2045 *rfcp)
-{
-char	buf[8192];
-int	n;
-
-	while ((n=sox_read(fd, buf, sizeof(buf))) > 0)
-		rfc2045_parse(rfcp, buf, n);
-}
-
 /*
 ** Ok, everything above is collected into a nice, tight, package.
 */
@@ -2933,7 +2924,6 @@ int esmtp_send(struct esmtp_info *info,
 	unsigned i;
 	int	*rcptok;
 	char	*mailfroms;
-	struct rfc2045 *rfcp=0;
 	int	fd=fdbuf.fileno();
 
 	rfc2045::entity entity;
@@ -2992,13 +2982,6 @@ int esmtp_send(struct esmtp_info *info,
 
 	if (!info->has8bitmime && mf_info->is8bitmsg)
 	{
-		fdbuf.pubseekpos(0);
-		rfcp=rfc2045_alloc_ac();
-		if (!rfcp)	clog_msg_errno();
-		parserfc(fd, rfcp);
-
-		rfc2045_ac_check(rfcp, RFC2045_RW_7BIT);
-
 		entity.autoconvert_check(
 			rfc2045::convert::sevenbit
 		);
@@ -3017,8 +3000,6 @@ int esmtp_send(struct esmtp_info *info,
 
 	if (esmtp_parsereply(info, mailfroms, arg))	/* MAIL FROM rejected */
 	{
-		if (rfcp)	rfc2045_free(rfcp);
-
 		free(mailfroms);
 		return 0;
 	}
@@ -3034,7 +3015,6 @@ int esmtp_send(struct esmtp_info *info,
 				arg) )
 	{
 		free(rcpt_buf);
-		if (rfcp)	rfc2045_free(rfcp);
 		free(rcptok);
 		return 0;
 	}
@@ -3083,7 +3063,6 @@ int esmtp_send(struct esmtp_info *info,
 		free(rcptok);
 		cork(0);
 	}
-	if (rfcp)	rfc2045_free(rfcp);
 	return 0;
 }
 
