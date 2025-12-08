@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 #
-# Copyright 2003-2025, Double Precision Inc.
+# Copyright 2003-2025, S. Varshavchik.
 #
 # See COPYING for distribution information.
 #

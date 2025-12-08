@@ -1,6 +1,6 @@
 #! @PERL@
 #
-# Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 1999 S. Varshavchik.  See COPYING for
 # distribution information.
 
 ############################################################################
@@ -117,7 +117,7 @@ if ($pid2 == 0)
 			$date=<DATE>;
 			close(DATE);
 			chomp $date;
-			$TITLE=".TH \"$cmd\" [SECTION] \"$date\" \"Double Precision, Inc.\" \"\"\n";
+			$TITLE=".TH \"$cmd\" [SECTION] \"$date\" \"S. Varshavchik.\" \"\"\n";
 			next;
 		}
 
@@ -142,7 +142,7 @@ if ($pid2 == 0)
 			$TITLE =~ s/\[SECTION\]/$SECTION/;
 			print $TITLE;
 			print $RCS;
-			print ".\\\" Copyright 1998-1999 Double Precision, Inc.  See COPYING for\n";
+			print ".\\\" Copyright 1998-1999 S. Varshavchik.  See COPYING for\n";
 			print ".\\\" distribution information.\n";
 			$INBODY=1;
 		}

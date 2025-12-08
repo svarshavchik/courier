@@ -1,21 +1,21 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
  "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 
-  <!-- Copyright 2004 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004 S. Varshavchik.  See COPYING for -->
   <!-- distribution information. -->
 
 <refentry id="courier-analog">
 
   <docinfo>
     <title>courier-analog</title>
-    <orgname>Double Precision, Inc.</orgname>
+    <orgname>S. Varshavchik.</orgname>
     <productname>Courier Mail Server</productname>
 
   </docinfo>
   <refmeta>
     <refentrytitle>courier-analog</refentrytitle>
     <manvolnum>8</manvolnum>
-    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+    <refmiscinfo>S. Varshavchik.</refmiscinfo>
   </refmeta>
 
   <refnamediv>

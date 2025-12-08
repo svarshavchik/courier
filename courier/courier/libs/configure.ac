@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright 1998 - 2008 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2008 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
 AC_INIT([libcourier],[0.11],[courier-users@lists.sourceforge.net])

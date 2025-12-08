@@ -2,7 +2,7 @@
 # TITLE: PostgreSQL
 #
 #
-# Copyright 2001-2004 Double Precision, Inc.  See COPYING for
+# Copyright 2001-2004 S. Varshavchik.  See COPYING for
 # distribution information.
 
 use webadmin;

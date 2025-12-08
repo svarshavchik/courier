@@ -20,9 +20,9 @@
    send mail between ESMTP mail relays. [STARTTLS] is an optional SMTP
    extension, but sometimes the sender might wish to require that
    [STARTTLS], or an equivalent, must be used to deliver a particular
-   message.  Even if two mail nodes - the sending and the receiving
-   nodes - are set up to use [STARTTLS], there are known methods of
-   attack - such as [DNS] cache poisoning - which can be used to
+   message.  Even if two mail nodes ‐ the sending and the receiving
+   nodes ‐ are set up to use [STARTTLS], there are known methods of
+   attack ‐ such as [DNS] cache poisoning ‐ which can be used to
    intercept mail traffic.
 
 3. Framework for the SECURITY SMTP transport extension
@@ -34,11 +34,11 @@
 
       (2) The EHLO keyword associated with this extension is SECURITY.
 
-      (3) The SECURITY EHLO keyword takes a comma-delimited list as a
+      (3) The SECURITY EHLO keyword takes a comma‐delimited list as a
           parameter.
 
       (4) One optional ESMTP keyword SECURITY is associated with the
-          MAIL FROM command. This parameter takes a comma-delimited list
+          MAIL FROM command. This parameter takes a comma‐delimited list
           as a parameter.
 
       (5) No additional ESMTP verbs are defined by this extension.
@@ -48,7 +48,7 @@
 
 4. The SECURITY SMTP extension
 
-   The EHLO keyword SECURITY takes a comma-separated list of words as an
+   The EHLO keyword SECURITY takes a comma‐separated list of words as an
    argument.  This document defines two words that may appear in the
    EHLO SECURITY list:
 
@@ -60,9 +60,9 @@ S. Varshavchik            Expires XXX XX, XXXX                  [Page 1]
 SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
 
 
-          NONE      - No security.
+          NONE      ‐ No security.
 
-          STARTTLS  - Must use STARTTLS to deliver the message.
+          STARTTLS  ‐ Must use STARTTLS to deliver the message.
 
 
    The optional SECURITY ESMTP keyword to the MAIL FROM command MUST use
@@ -120,18 +120,18 @@ SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
 
        220 example.com ESMTP
        EHLO domain.com
-       250-example.com ESMTP
+       250‐example.com ESMTP
        250 STARTTLS
        STARTTLS
        220 Go ahead.
        [4m(TLS[24m [4mnegotiation[24m [4mtakes[24m [4mplace)[0m
        EHLO domain.com
-       250-example.com ESMTP
-       250-SECURITY=NONE,STARTTLS
-       250-SIZE
-       250-DSN
+       250‐example.com ESMTP
+       250‐SECURITY=NONE,STARTTLS
+       250‐SIZE
+       250‐DSN
        250 HELP
-       MAIL FROM:<itny-out@domain.com> SIZE=1250 SECURITY=STARTTLS
+       MAIL FROM:<itny‐out@domain.com> SIZE=1250 SECURITY=STARTTLS
        250 Ok
        [4m(Normal[24m [4mSMTP[24m [4mdialogue[24m [4mcontinues...)[0m
 
@@ -140,14 +140,14 @@ SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
    [DSN] messages generated for a message with any SECURITY keyword MUST
    also use the same SECURITY keyword for the DSN.  This is because DSNs
    may include portions of the original message.  The presumption is
-   that if a secure path existed between the sender, and the DSN-
+   that if a secure path existed between the sender, and the DSN‐
    generating node, a return secure path also exists.
 
 7. Security concerns
 
    Note that it is not necessary for a mail client to negotiate TLS/SSL
    in order to submit the message for delivery.  A mail node SHOULD
-   advertise and enable SECURITY in both plaintext and TLS/SSL-secured
+   advertise and enable SECURITY in both plaintext and TLS/SSL‐secured
    sessions.
 
    The SECURITY extension allows a fairly straightforward way to set up
@@ -181,7 +181,7 @@ SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
    The SECURITY extension’s scope is limited to delivery of a message to
    the recipient’s mailbox.  Once a message is delivered, it is the
    recipient’s responsibility to access the message in a secure
-   environment, such as by using SSL/TLS-wrapped versions of existing
+   environment, such as by using SSL/TLS‐wrapped versions of existing
    mailbox access protocols.
 
 8. References
@@ -199,16 +199,16 @@ SECURITY SMTP Extension      S. Varshavchik                 XXX XX, XXXX
               Notifications", RFC 1891, University of Tennessee, January
               1996.
 
-   [DNS]      Mockapetris, P., "Domain Names - Implementation and
+   [DNS]      Mockapetris, P., "Domain Names ‐ Implementation and
               Specification", RFC 1035, ISI, November 1987
 
 9. Author’s address
 
-   Sam Varshavchik
-   Double Precision, Inc.
-   402 Main Street Suite 100-241
-   Metuchen, NJ 08840
-   <mrsam@courier-mta.com>
+   Sam Varshavchik <mrsam@courier‐mta.com>
+
+
+
+
 
 
 

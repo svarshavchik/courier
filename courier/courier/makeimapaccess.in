@@ -1,6 +1,6 @@
 #! @SHELL@
 #
-# Copyright 2015 Double Precision, Inc.  See COPYING for
+# Copyright 2015 S. Varshavchik.  See COPYING for
 # distribution information.
 
 prefix="@prefix@"

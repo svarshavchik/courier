@@ -1,7 +1,7 @@
 #! @SHELL@
 #
 #
-# Copyright 2000-2007 Double Precision, Inc.  See COPYING for
+# Copyright 2000-2007 S. Varshavchik.  See COPYING for
 # distribution information.
 #
 # This is a short script to q`uickly generate a self-signed X.509 key for

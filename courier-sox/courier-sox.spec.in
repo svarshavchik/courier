@@ -1,5 +1,5 @@
 #
-# Copyright 2004-2011 Double Precision, Inc.  See COPYING for
+# Copyright 2004-2011 S. Varshavchik.  See COPYING for
 # distribution information.
 
 %define courier_release %(release="`rpm -q --queryformat='.rh%{VERSION}' redhat-release 2>/dev/null`" ; if test $? != 0 ; then release="`rpm -q --queryformat='.fc%{VERSION}' fedora-release 2>/dev/null`" ; if test $? != 0 ; then release="" ; fi ; fi ; echo "$release")

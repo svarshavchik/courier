@@ -1,5 +1,5 @@
 /*
-** Copyright 2002-2008, Double Precision Inc.
+** Copyright 2002-2008, S. Varshavchik.
 **
 ** See COPYING for distribution information.
 */
@@ -240,11 +240,15 @@ int mail::imapGreetingHandler::process(mail::imap &imapAccount, string &buffer)
 		{
 			if (!capability_sent)
 			{
-				static const char courierimap[]="Double Precision, Inc.";
+				static const char courierimap[]="S. Varshavchik.";
+				static const char courierimap2[]="S. Varshavchik.";
 				static const char cyrusimap[]="Cyrus IMAP4";
 
 				if (search(b, e, courierimap,
 					   courierimap+sizeof(courierimap)-1)
+				    != e ||
+				    search(b, e, courierimap2,
+					   courierimap2+sizeof(courierimap2)-1)
 				    != e)
 				{
 					imapAccount.setCapability(LIBMAIL_CHEAPSTATUS);

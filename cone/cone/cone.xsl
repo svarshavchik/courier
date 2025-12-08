@@ -31,7 +31,7 @@
    <meta name="MSSmartTagsPreventParsing" content="TRUE" />
     <xsl:comment>
 
-Copyright 2002 - 2022 Double Precision, Inc.  See COPYING for distribution
+Copyright 2002 - 2022 S. Varshavchik.  See COPYING for distribution
 information.
 
 </xsl:comment>

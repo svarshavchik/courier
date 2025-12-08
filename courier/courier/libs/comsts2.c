@@ -1,5 +1,5 @@
 /*
-** Copyright 2019 Double Precision, Inc.
+** Copyright 2019 S. Varshavchik.
 ** See COPYING for distribution information.
 */
 

@@ -1,6 +1,6 @@
 /*
 **
-** Copyright 2007 Double Precision, Inc.
+** Copyright 2007 S. Varshavchik.
 ** See COPYING for distribution information.
 */
 

@@ -1,5 +1,5 @@
 # $Id: testsuite,v 1.2 2003/04/23 01:32:20 mrsam Exp $
-# Copyright 2000 Double Precision, Inc.  See COPYING for
+# Copyright 2000 S. Varshavchik.  See COPYING for
 # distribution information.
 
 PERL="$1"

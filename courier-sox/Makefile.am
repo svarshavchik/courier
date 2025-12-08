@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Double Precision, Inc.
+# Copyright 2004-2022 S. Varshavchik.
 # See COPYING for distribution information.
 #
 AUTOMAKE_OPTIONS=dist-bzip2

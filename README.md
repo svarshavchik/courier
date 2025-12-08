@@ -35,7 +35,7 @@ Note: for historical reasons, the courier-unicode project is in the libs
 repository, the unicode subdirectory. It does not require sysconftool, and
 can be built by itself/
 
-_Copyright 1998-2022 Double Precision, Inc. This software is distributed
+_Copyright 1998-2022 S. Varshavchik. This software is distributed
 under the terms of the GNU General Public License. See COPYING for
 additional information._
 

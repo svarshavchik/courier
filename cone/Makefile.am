@@ -1,5 +1,5 @@
 #
-# Copyright 2003-2021, Double Precision Inc.
+# Copyright 2003-2021, S. Varshavchik.
 #
 # See COPYING for distribution information.
 #
@@ -90,7 +90,7 @@ dist-hook:
 
 
 
-# Copyright 2000 Double Precision, Inc.  See COPYING for
+# Copyright 2000 S. Varshavchik.  See COPYING for
 # distribution information.
 
 # Need to add sysconftoolize to package:

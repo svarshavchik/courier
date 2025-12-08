@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
  "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 
-  <!-- Copyright 2004-2008 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2008 S. Varshavchik.  See COPYING for -->
   <!-- distribution information. -->
 
 <refentry id="auth-sasl">
@@ -9,7 +9,7 @@
   <refmeta>
     <refentrytitle>auth_sasl</refentrytitle>
     <manvolnum>3</manvolnum>
-    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+    <refmiscinfo>S. Varshavchik.</refmiscinfo>
   </refmeta>
 
   <refnamediv>

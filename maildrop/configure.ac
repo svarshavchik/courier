@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2022 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
 AC_INIT([maildrop],[3.2.1],[courier-maildrop@lists.sourceforge.net])

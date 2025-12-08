@@ -1,5 +1,5 @@
 #
-# Copyright 2000-2019 Double Precision, Inc.  See COPYING for
+# Copyright 2000-2019 S. Varshavchik.  See COPYING for
 # distribution information.
 
 SUBDIRS=libfilter perlfilter

@@ -7,7 +7,7 @@
 
 ]>
 
-  <!-- Copyright 2004-2020 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2020 S. Varshavchik.  See COPYING for -->
   <!-- distribution information. -->
 
 <refentry id="auth-login">
@@ -15,7 +15,7 @@
   <refmeta>
     <refentrytitle>auth_login_meta</refentrytitle>
     <manvolnum>3</manvolnum>
-    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+    <refmiscinfo>S. Varshavchik.</refmiscinfo>
   </refmeta>
 
   <refnamediv>

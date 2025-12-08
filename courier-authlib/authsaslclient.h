@@ -2,7 +2,7 @@
 #define	authsaslclient_h
 
 /*
-** Copyright 2000-2008 Double Precision, Inc.  See COPYING for
+** Copyright 2000-2008 S. Varshavchik.  See COPYING for
 ** distribution information.
 */
 

@@ -2,7 +2,7 @@
 #define	authcustom_h
 
 /*
-** Copyright 1998 - 1999 Double Precision, Inc.  See COPYING for
+** Copyright 1998 - 1999 S. Varshavchik.  See COPYING for
 ** distribution information.
 */
 

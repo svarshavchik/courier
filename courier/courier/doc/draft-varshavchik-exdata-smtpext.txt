@@ -8,10 +8,10 @@
 
    This document describes an extension to the SMTP service [RFC1425],
    called Extended DATA Reply.  This is an extended format of the SMTP
-   response to the DATA verb which provides recipient-specific status
+   response to the DATA verb which provides recipient‐specific status
    information.  This allows mail recipients to use individual mail
    filters as part of the Simple Mail Transfer Protocol.  This is a very
-   desirable feature because of escalating amounts of unwanted junk E-
+   desirable feature because of escalating amounts of unwanted junk E‐
    mail sent over the Internet.
 
 2. Introduction
@@ -31,20 +31,20 @@
 
    The only way to handle this condition within the current protocol is
    to send a status code indicating that the message was accepted, then
-   immediately generate a non-delivery report for undeliverable
+   immediately generate a non‐delivery report for undeliverable
    recipients.  This imposes additional resources and overhead to
-   generate and transmit the non-delivery report.
+   generate and transmit the non‐delivery report.
 
-   The ability to have recipient-specific status in the reply to the
+   The ability to have recipient‐specific status in the reply to the
    DATA verb is desirable for the following reasons:
 
         A) The receiving SMTP server does not have to generate and send
-           a non-delivery report.
+           a non‐delivery report.
 
         B) Recipients can install individual mail filters that
-           selectively block unwanted E-mail, and the mail filters will
+           selectively block unwanted E‐mail, and the mail filters will
            be able to examine the entire contents of the message before
-           deciding to reject the message.  Currently, recipient-
+           deciding to reject the message.  Currently, recipient‐
            specific filtering is only possible in response to the "RCPT
            TO:" verb.  But the only available information at that point
            is the network address of the sending SMTP agent and return
@@ -60,11 +60,11 @@ Expires XXX XX, XXXX                                            [Page 1]
 EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
 
 
-   There are several other mail enhancements that involve recipient-
+   There are several other mail enhancements that involve recipient‐
    specific processing.  [RFC2033] defines a related, but a completely
-   different, mail delivery protocol which features recipient-specific
-   processing.  There was also another draft memo published, draft-ietf-
-   fax-smtp-session, which defined an extension for recipient-specific
+   different, mail delivery protocol which features recipient‐specific
+   processing.  There was also another draft memo published, draft‐ietf‐
+   fax‐smtp‐session, which defined an extension for recipient‐specific
    mail processing, however its scope is different from the scope of
    this memo.
 
@@ -130,26 +130,26 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
    formatted as follows, where <SP>, <CR> and <LF> represent the ASCII
    space, carriage return, and line feed characters:
 
-   ex-reply-code: ex-reply-recipient-list
+   ex‐reply‐code: ex‐reply‐recipient‐list
 
-   ex-reply-recipient-list: non-final-recipient ex-reply-recipient-list
-                       | final-recipient
+   ex‐reply‐recipient‐list: non‐final‐recipient ex‐reply‐recipient‐list
+                       | final‐recipient
 
-   non-final-recipient: non-term-line non-final-recipient
-                        | non-final-recipient-term-line
+   non‐final‐recipient: non‐term‐line non‐final‐recipient
+                        | non‐final‐recipient‐term‐line
 
-   non-term-line: "558-" result-code "-" result-text
+   non‐term‐line: "558‐" result‐code "‐" result‐text
 
-   non-final-recipient-term-line: "558-" result-code <SP> result-text
+   non‐final‐recipient‐term‐line: "558‐" result‐code <SP> result‐text
 
-   final-recipient: non-term-line final-recipient
-                    | final-recipient-term-line
+   final‐recipient: non‐term‐line final‐recipient
+                    | final‐recipient‐term‐line
 
-   final-recipient-term-line: "558" <SP> result-code <SP> result-text
+   final‐recipient‐term‐line: "558" <SP> result‐code <SP> result‐text
 
-   result-code: digit digit digit
+   result‐code: digit digit digit
 
-   result-text: 0 or more characters, except <CR> and <LF>, terminated
+   result‐text: 0 or more characters, except <CR> and <LF>, terminated
                 by the <CR> <LF> sequence
 
    digit: Characters "0" through "9"
@@ -193,19 +193,19 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
 
 7.  Examples
 
-   In this example the first recipient of a two-recipient message is
+   In this example the first recipient of a two‐recipient message is
    accepted.  The second recipient is rejected:
 
-   558-250 Message accepted
-   558-550-Access denied:
+   558‐250 Message accepted
+   558‐550‐Access denied:
    558 550 Insufficient permission
 
    In this example the first recipient is rejected. The second recipient
    is accepted:
 
-   558-550-Access denied
-   558-550 Insufficient permission
-   558-250-Message accepted
+   558‐550‐Access denied
+   558‐550 Insufficient permission
+   558‐250‐Message accepted
    558 250 Queue ID is 120
 
 
@@ -215,7 +215,7 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
    replies are wrapped inside a standard SMTP multiline reply with a 558
    status code.  If the numeric code of the second status reply to the
    DATA verb is 558, and if the receiving server listed EXDATA in the
-   EHLO keyword list, the "558-" and "558<SP>" characters are removed
+   EHLO keyword list, the "558‐" and "558<SP>" characters are removed
    from the start of every line in the multiline response. The remaining
    text is now interpreted as a series of individual SMTP replies, one
    reply per recipient.  Each individual reply may be a multiline reply
@@ -236,7 +236,7 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
    subreplies as if they had been 451 subreplies.
 
    While receiving a 558 reply, the client must implement a timeout of
-   at least 10 minutes per subreply.  It MUST use per- subreply timeouts
+   at least 10 minutes per subreply.  It MUST use per‐ subreply timeouts
    rather than trying to time the entire 558 reply.  This means that the
    overall timeout is approximately proportional to the number of
    recipients.
@@ -265,11 +265,11 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
    Furthermore, the sending SMTP agent can always omit the EXDATA
    keyword from the MAIL FROM: verb.
 
-   It follows that recipient-specific mail filtering is still a very
+   It follows that recipient‐specific mail filtering is still a very
    desireable feature if the sending SMTP agent does not state its
    support for the EXDATA extension.  One approach is to reply to the
    DATA verb with an accepted status, then apply individual filters and
-   generate a non-delivery report for recipients whose filters rejected
+   generate a non‐delivery report for recipients whose filters rejected
    the message.  But this would be exactly how individual mail filtering
    is currently implemented, and it carries with it the same
    disadvantages and setbacks.
@@ -292,7 +292,7 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
    recipient only.
 
    Here’s an approach that attempts to achieve a compromise between
-   having recipient-specific mail filtering, and avoiding unwanted
+   having recipient‐specific mail filtering, and avoiding unwanted
    disruptions of this kind.
 
         A) Recipients must explicitly enable the ability to set
@@ -300,7 +300,7 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
 
         B) Allow each recipient to specify "whitelisted" senders and/or
            network addresses.  The mail server will not do any filtering
-           on white-listed mail, and will never send EXDATA-formatted
+           on white‐listed mail, and will never send EXDATA‐formatted
            replies to those sources.
 
         C) When the first valid RCPT TO: verb is received (after zero or
@@ -351,9 +351,9 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
    An experimental patch was made available in September 1997 (with
    various revisions that followed) to a relatively popular mail server.
    The patch used an XEXDATA EHLO keyword.  The experimental patch was
-   mainly used to implement recipient-specific mail filtering:
+   mainly used to implement recipient‐specific mail filtering:
    permitting individual recipients of a message to selectively reject
-   incoming E-mail traffic based on the contents of the message.  The
+   incoming E‐mail traffic based on the contents of the message.  The
    patch implemented the XEXDATA extension only for the receiving side,
    not for the sending side.
 
@@ -380,10 +380,10 @@ EXDATA SMTP Extension        S. Varshavchik                 XXX XX, XXXX
 11. Author’s address
 
    Sam Varshavchik
-   Double Precision, Inc.
-   402 Main Street Suite 100-241
-   Metuchen, NJ 08840
-   <mrsam@courier-mta.com>
+   <mrsam@courier‐mta.com>
+
+
+
 
 
 

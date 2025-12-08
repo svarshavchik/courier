@@ -19,7 +19,7 @@
 <book id="index2">
   <title>The <application>Courier</application> IMAP server</title>
 
-  <para>Copyright 1999-2024, Double Precision, Inc.
+  <para>Copyright 1999-2024, S. Varshavchik.
   This software is distributed under the terms of the GNU General
   Public License. See COPYING for additional
   information.</para>
@@ -312,7 +312,7 @@ Connected to imap.example.com.
 Escape character is '^]'.
 * OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THRE
 AD=REFERENCES SORT QUOTA IDLE AUTH=CRAM-MD5 SMAP1 KEYWORDS ACL ACL2=UNION STARTT
-LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.
+LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 S. Varshavchik.
 See COPYING for distribution information.
 </programlisting>
 	</informalexample>
@@ -397,7 +397,7 @@ Connected to imap.example.com.
 Escape character is '^]'.
 * OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THRE
 AD=REFERENCES SORT QUOTA IDLE AUTH=CRAM-MD5 SMAP1 KEYWORDS ACL ACL2=UNION STARTT
-LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 Double Precision, Inc.
+LS XMAGICTRASH] Courier-IMAP ready. Copyright 1998-2008 S. Varshavchik.
 See COPYING for distribution information.
 0 login testuser testpass
 </programlisting>

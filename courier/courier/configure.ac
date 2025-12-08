@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright 1998 - 2017 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2017 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
 AC_INIT([courier],[1.5.1],[courier-users@lists.sourceforge.net])
@@ -79,7 +79,7 @@ AC_ARG_WITH(softlinkdir, [  --with-softlinks=dir:link,dir:link...   specify soft
 
 version=`cat ../version`
 
-COPYRIGHT="Courier $version Copyright 1999-2025 Double Precision, Inc."
+COPYRIGHT="Courier $version Copyright 1999-2025 S. Varshavchik."
 AC_SUBST(COPYRIGHT)
 
 dnl Check whether we should use gdbm, or db.

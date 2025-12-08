@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2022 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2022 S. Varshavchik.  See COPYING for
 # distribution information.
 
 @SET_MAKE@
@@ -304,7 +304,7 @@ all-gmake-check:
 check-am:
 	cd libs/imap; $(MAKE) check-version TOPLEVEL_VERSION="`echo $(VERSION) | cut -d. -f1-3`"
 
-# Copyright 2000 Double Precision, Inc.  See COPYING for
+# Copyright 2000 S. Varshavchik.  See COPYING for
 # distribution information.
 
 # Need to add sysconftoolize to package:

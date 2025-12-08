@@ -2,7 +2,7 @@
 #define	authlib_auth_h
 
 /*
-** Copyright 1998 - 2004 Double Precision, Inc.  See COPYING for
+** Copyright 1998 - 2004 S. Varshavchik.  See COPYING for
 ** distribution information.
 */
 

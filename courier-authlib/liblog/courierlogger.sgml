@@ -1,7 +1,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
  "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 
-  <!-- Copyright 2004-2007 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2004-2007 S. Varshavchik.  See COPYING for -->
   <!-- distribution information. -->
 
 <refentry id="courierlogger">
@@ -9,7 +9,7 @@
   <refmeta>
     <refentrytitle>courierlogger</refentrytitle>
     <manvolnum>1</manvolnum>
-    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+    <refmiscinfo>S. Varshavchik.</refmiscinfo>
   </refmeta>
 
   <refnamediv>

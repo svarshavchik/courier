@@ -1,6 +1,6 @@
 #! @SHELL@
 #
-# Copyright 2017 Double Precision, Inc.  See COPYING for
+# Copyright 2017 S. Varshavchik.  See COPYING for
 # distribution information.
 #
 # Start courierfilter, reading the configuration from

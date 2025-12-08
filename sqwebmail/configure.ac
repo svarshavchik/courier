@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
-dnl Copyright 1998 - 2023 Double Precision, Inc.  See COPYING for
+dnl Copyright 1998 - 2023 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
 AC_INIT([sqwebmail],[6.3.1],[courier-sqwebmail@lists.sourceforge.net])

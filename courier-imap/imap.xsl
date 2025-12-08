@@ -19,7 +19,7 @@
    <meta name="MSSmartTagsPreventParsing" content="TRUE" />
     <xsl:comment>
 
-Copyright 2007-2015 Double Precision, Inc.  See COPYING for distribution
+Copyright 2007-2015 S. Varshavchik.  See COPYING for distribution
 information.
 
 </xsl:comment>

@@ -5,7 +5,7 @@
 # Do not alter lines that begin with ##, they are used when upgrading
 # this configuration.
 #
-# Copyright 2000-2006 Double Precision, Inc.  See COPYING for
+# Copyright 2000-2006 S. Varshavchik.  See COPYING for
 # distribution information.
 #
 # This configuration file configures the courierldapaliasd process.

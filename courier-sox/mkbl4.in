@@ -1,7 +1,7 @@
 #! @PERL@
 #
 #
-# Copyright 2006 Double Precision, Inc.
+# Copyright 2006 S. Varshavchik.
 # See COPYING for distribution information.
 #
 # Parse common IPv4 blacklist format file into a GDBM lookup file, usable by 

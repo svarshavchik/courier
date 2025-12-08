@@ -1,5 +1,5 @@
 /*
-** Copyright 2000-2014 Double Precision, Inc.
+** Copyright 2000-2014 S. Varshavchik.
 ** See COPYING for distribution information.
 */
 #include	<stdio.h>

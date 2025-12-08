@@ -2,7 +2,7 @@
 # TITLE: Mail server name and local domains
 #
 #
-# Copyright 2001 Double Precision, Inc.  See COPYING for
+# Copyright 2001 S. Varshavchik.  See COPYING for
 # distribution information.
 
 my $ME;

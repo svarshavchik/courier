@@ -5,7 +5,7 @@
 
 
 /*
-** Copyright 2000 Double Precision, Inc.
+** Copyright 2000 S. Varshavchik.
 ** See COPYING for distribution information.
 */
 

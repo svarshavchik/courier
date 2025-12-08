@@ -1,5 +1,5 @@
 #
-# Copyright 1998 - 2021 Double Precision, Inc.  See COPYING for
+# Copyright 1998 - 2021 S. Varshavchik.  See COPYING for
 # distribution information.
 
 noinst_LTLIBRARIES=libcommon.la libcourier.la libmodule.la

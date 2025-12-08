@@ -1,5 +1,5 @@
 #
-# Copyright 2004-2007 Double Precision, Inc.  See COPYING for
+# Copyright 2004-2007 S. Varshavchik.  See COPYING for
 # distribution information.
 
 sbin_PROGRAMS=courierlogger

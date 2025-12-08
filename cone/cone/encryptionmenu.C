@@ -1,5 +1,5 @@
 /*
-** Copyright 2003-2016, Double Precision Inc.
+** Copyright 2003-2016, S. Varshavchik.
 **
 ** See COPYING for distribution information.
 */

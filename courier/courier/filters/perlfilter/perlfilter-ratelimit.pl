@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Copyright 2014 Double Precision, Inc.  See COPYING for
+# Copyright 2014 S. Varshavchik.  See COPYING for
 # distribution information.
 #
 # To use this filter, at least perl 5.10 is required:

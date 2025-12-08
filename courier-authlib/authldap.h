@@ -3,7 +3,7 @@
 
 /*
 **
-** Copyright 1998 - 2003 Double Precision, Inc.  See COPYING for
+** Copyright 1998 - 2003 S. Varshavchik.  See COPYING for
 ** distribution information.
 */
 

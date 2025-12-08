@@ -9,7 +9,7 @@ echo ">";
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Courier Mail Server - latest releases</title><!-- $Id$ -->
-  <!-- Copyright 2000-2014 Double Precision, Inc.  See COPYING for -->
+  <!-- Copyright 2000-2014 S. Varshavchik.  See COPYING for -->
   <!-- distribution information. -->
   <link rel="icon" href="icon.gif" type="image/gif" />
   <style type="text/css">

@@ -2,14 +2,14 @@
  "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 
 <!-- $Id: sysconftool7.sgml,v 1.3 2007/04/06 20:04:16 mrsam Exp $ -->
-<!-- Copyright 2000-2005 Double Precision, Inc.  See COPYING for -->
+<!-- Copyright 2000-2005 S. Varshavchik.  See COPYING for -->
 <!-- distribution information. -->
 
 <refentry id="sysconftool.7">
 
   <docinfo>
     <title>sysconftool</title>
-    <orgname>Double Precision, Inc.</orgname>
+    <orgname>S. Varshavchik.</orgname>
     <productname>Courier Mail Server</productname>
   </docinfo>
 
@@ -17,7 +17,7 @@
   <refmeta>
     <refentrytitle>sysconftool</refentrytitle>
     <manvolnum>7</manvolnum>
-    <refmiscinfo>Double Precision, Inc.</refmiscinfo>
+    <refmiscinfo>S. Varshavchik.</refmiscinfo>
   </refmeta>
 
   <refnamediv>

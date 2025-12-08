@@ -3,7 +3,7 @@
 # TITLE: Local mail delivery setup
 #
 #
-# Copyright 2001 Double Precision, Inc.  See COPYING for
+# Copyright 2001 S. Varshavchik.  See COPYING for
 # distribution information.
 
 if ($cgi->param("Submit"))
