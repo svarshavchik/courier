@@ -5,6 +5,7 @@
 /ChangeLog
 /IMAGE.filter
 /buildversion.H
+/colors_inc.h
 /cone
 /cone.dist
 /cone.dist.in

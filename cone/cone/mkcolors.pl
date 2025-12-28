@@ -25,7 +25,7 @@ while (<>)
     push @{$groupList{$currentGroup}}, $1;
 }
 
-foreach (keys %groupList)
+foreach (sort keys %groupList)
 {
     print "\nstatic struct CustomColor *${_}[]={\n";
     foreach (@{$groupList{$_}})
