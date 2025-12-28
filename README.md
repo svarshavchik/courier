@@ -61,8 +61,8 @@ where needed.
 
 3) xsltproc, docbook, and docbook DTDs.
 
-- Fedora: xsltproc, docbook-dtds, docbook-style-dsssl, docbook-utils,
-docbook-style-xsl, docbook5-schema, docbook5-style-xsl
+- Fedora: libxslt, docbook-dtds, docbook-style-dsssl, docbook-utils,
+docbook-style-xsl, docbook5-schemas, docbook5-style-xsl
 
 - Ubuntu: xsltproc, docbook, docbook-xml, docbook-xsl, w3c-sgml-lib
 

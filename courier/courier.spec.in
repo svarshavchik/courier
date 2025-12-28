@@ -153,7 +153,6 @@ Requires: gnupg >= 1.0.5
 %endif
 BuildRequires:    expect
 BuildRequires:    gdbm-devel
-BuildRequires:    pam-devel
 BuildRequires:	  libidn2-devel
 BuildRequires:    courier-unicode-devel
 BuildRequires:	  perl(ExtUtils::Embed)
