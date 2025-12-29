@@ -17,7 +17,7 @@
 
   <refsynopsisdiv>
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">makehosteddomains</command>
+      <command>makehosteddomains</command>
     </cmdsynopsis>
   </refsynopsisdiv>
 
@@ -25,50 +25,50 @@
     <title>DESCRIPTION</title>
 
     <para>
-<command moreinfo="none">makehosteddomains</command> rebuilds the contents of the
-<filename moreinfo="none">@sysconfdir@/hosteddomains.dat</filename> database from the
-contents of <filename moreinfo="none">@sysconfdir@/hosteddomains</filename>.
+<command>makehosteddomains</command> rebuilds the contents of the
+<filename>@sysconfdir@/hosteddomains.dat</filename> database from the
+contents of <filename>@sysconfdir@/hosteddomains</filename>.
 This can be either a file or a
 directory.  If it's a directory, the contents of all the files in this
 directory are simply concatenated.
-The <command moreinfo="none">makehosteddomains</command> script
+The <command>makehosteddomains</command> script
 must be run in order for any changes to
-<filename moreinfo="none">@sysconfdir@/hosteddomains</filename> to take effect.</para>
+<filename>@sysconfdir@/hosteddomains</filename> to take effect.</para>
 
     <para>
-The function of <filename moreinfo="none">@sysconfdir@/hosteddomains</filename> is very
-similar to the one of <filename moreinfo="none">@sysconfdir@/locals</filename>.
+The function of <filename>@sysconfdir@/hosteddomains</filename> is very
+similar to the one of <filename>@sysconfdir@/locals</filename>.
 Both configuration files specify
 a list of domains that are considered to be local domains - domains whose
 mailboxes are stored locally.</para>
 
     <para>
-The difference is that domains listed in <filename moreinfo="none">@sysconfdir@/locals</filename>
+The difference is that domains listed in <filename>@sysconfdir@/locals</filename>
 are removed from addresses before their mailbox is looked up. For example, if
-the domain "<literal moreinfo="none">example.com</literal>" is listed in <filename moreinfo="none">@sysconfdir@/locals</filename>,
-then the address <filename moreinfo="none">&lt;user@example.com&gt;</filename> is delivered to a local
-mailbox named "<literal moreinfo="none">user</literal>".  If this domain is listed, instead, in
-<filename moreinfo="none">@sysconfdir@/hosteddomains</filename>, then the address
-<literal moreinfo="none">&lt;user@example.com&gt;</literal> is delivered to a local mailbox named
-"<literal moreinfo="none">user@example.com</literal>". Usually you would use
-<filename moreinfo="none">@sysconfdir@/locals</filename> to specify domains that correspond to your
+the domain "<literal>example.com</literal>" is listed in <filename>@sysconfdir@/locals</filename>,
+then the address <filename>&lt;user@example.com&gt;</filename> is delivered to a local
+mailbox named "<literal>user</literal>".  If this domain is listed, instead, in
+<filename>@sysconfdir@/hosteddomains</filename>, then the address
+<literal>&lt;user@example.com&gt;</literal> is delivered to a local mailbox named
+"<literal>user@example.com</literal>". Usually you would use
+<filename>@sysconfdir@/locals</filename> to specify domains that correspond to your
 local system accounts, that are looked up in your system's password database.
-The <filename moreinfo="none">@sysconfdir@/hosteddomains</filename> file is usually used when you have
+The <filename>@sysconfdir@/hosteddomains</filename> file is usually used when you have
 database-based virtual domains, that are maintained via an LDAP or a MySQL
 server.
-The <application moreinfo="none">Courier</application> mail server's LDAP and MySQL
+The <application>Courier</application> mail server's LDAP and MySQL
 authentication modules will use the full
 E-mail address to query the LDAP or MySQL server for the location of the local
 mailbox that correspond to the E-mail address.
-The <application moreinfo="none">Courier</application> mail server's
-<literal moreinfo="none">authuserdb</literal> authentication module can also use full E-mail
+The <application>Courier</application> mail server's
+<literal>authuserdb</literal> authentication module can also use full E-mail
 addresses.</para>
 
     <refsect2 id="makehosteddomains_contents_of_hosteddomains">
-      <title>Contents of <filename moreinfo="none">hosteddomains</filename></title>
+      <title>Contents of <filename>hosteddomains</filename></title>
 
       <para>
-The file <filename moreinfo="none">@sysconfdir@/hosteddomains</filename>
+The file <filename>@sysconfdir@/hosteddomains</filename>
 simply contains a list of domains, one per line, for example:</para>
 
       <informalexample>
@@ -91,52 +91,52 @@ example.com&lt;TAB&gt;domain.com
       </informalexample>
 
       <para>
-First, we list the domain "<literal moreinfo="none">domain.com</literal>" as a hosted domain.
-Then, we also list the domain "<literal moreinfo="none">mail.domain.com</literal>", which is
+First, we list the domain "<literal>domain.com</literal>" as a hosted domain.
+Then, we also list the domain "<literal>mail.domain.com</literal>", which is
 an alias for
-<literal moreinfo="none">domain.com</literal>.
-The <application moreinfo="none">Courier</application> mail server will take any
+<literal>domain.com</literal>.
+The <application>Courier</application> mail server will take any
 address of the form
-<literal moreinfo="none">&lt;address@mail.domain.com&gt;</literal>, rewrite it as
-<literal moreinfo="none">&lt;address@domain.com&gt;</literal>, and attempt to deliver the
+<literal>&lt;address@mail.domain.com&gt;</literal>, rewrite it as
+<literal>&lt;address@domain.com&gt;</literal>, and attempt to deliver the
 mail to a local mailbox for that name.
-The third entry does the same for "<literal moreinfo="none">example.com</literal>"; mail
+The third entry does the same for "<literal>example.com</literal>"; mail
 addressed to
-<literal moreinfo="none">&lt;address@example.com&gt;</literal> is delivered to the local
-mailbox <literal moreinfo="none">&lt;address@domain.com&gt;</literal>.</para>
+<literal>&lt;address@example.com&gt;</literal> is delivered to the local
+mailbox <literal>&lt;address@domain.com&gt;</literal>.</para>
     </refsect2>
 
     <refsect2 id="makehosteddomains_alias_hosteddomain">
-      <title><literal moreinfo="none">alias@hosteddomain</literal></title>
+      <title><literal>alias@hosteddomain</literal></title>
 
       <para>
 This is a special local mail delivery rule for
-<filename moreinfo="none">hosteddomain</filename>-listed
-domains. This rule allows the <application moreinfo="none">Courier</application>
+<filename>hosteddomain</filename>-listed
+domains. This rule allows the <application>Courier</application>
 mail server accept mail to any
-<literal moreinfo="none">address@hosteddomain</literal>, where "hosteddomain" is a domain listed in the
-<literal moreinfo="none">hosteddomains</literal> file, but there is no corresponding account for
-<literal moreinfo="none">address@hosteddomain</literal>. To provide delivery instructions for any
-non-existing address in a <filename moreinfo="none">hosteddomain</filename>-listed
+<literal>address@hosteddomain</literal>, where "hosteddomain" is a domain listed in the
+<literal>hosteddomains</literal> file, but there is no corresponding account for
+<literal>address@hosteddomain</literal>. To provide delivery instructions for any
+non-existing address in a <filename>hosteddomain</filename>-listed
 domain:</para>
 
       <para>
-1) Create the local address <literal moreinfo="none">alias@hosteddomain</literal>.  For example, if the
-<filename moreinfo="none">hosteddomains</filename> file contains "example.com", create the local
-account <literal moreinfo="none">alias@example.com</literal>.  This should be a normal account, with its
+1) Create the local address <literal>alias@hosteddomain</literal>.  For example, if the
+<filename>hosteddomains</filename> file contains "example.com", create the local
+account <literal>alias@example.com</literal>.  This should be a normal account, with its
 own home directory, userid and groupid.</para>
 
       <para>
-2) Create <filename moreinfo="none">$HOME/.courier-default</filename> file in this account,
+2) Create <filename>$HOME/.courier-default</filename> file in this account,
 containing the delivery instructions. See the
 <ulink url="dot-courier.html"><citerefentry><refentrytitle>dot-courier</refentrytitle><manvolnum>5</manvolnum></citerefentry></ulink>
 manual page for available delivery instructions.</para>
 
       <para>
-NOTE that <literal moreinfo="none">alias@example.com</literal> must be a real account, not a mail
-alias. If you want to forward <literal moreinfo="none">alias@example.com</literal> to another address, put
-forwarding instructions in the <filename moreinfo="none">.courier-default</filename> file. However,
-<literal moreinfo="none">alias@example.com</literal> can be a clone of another account (with the same home
+NOTE that <literal>alias@example.com</literal> must be a real account, not a mail
+alias. If you want to forward <literal>alias@example.com</literal> to another address, put
+forwarding instructions in the <filename>.courier-default</filename> file. However,
+<literal>alias@example.com</literal> can be a clone of another account (with the same home
 directory, userid, and groupid).</para>
 
     </refsect2>
@@ -148,12 +148,12 @@ directory, userid, and groupid).</para>
 Wildcard DNS is supported for hosteddomains by placing a single period
 character before the domain name. For example, the hosted domain entry
 <quote>.domain.com</quote>
-will cause the <application moreinfo="none">Courier</application>
+will cause the <application>Courier</application>
 mail server to accept mail for
 <quote>anything.domain.com</quote>.</para>
 
       <para>
-The <application moreinfo="none">Courier</application> mail server will accept
+The <application>Courier</application> mail server will accept
 mail for
 &lt;<replaceable>address@any.thing.domain.com</replaceable>&gt;
 and attempt
@@ -183,6 +183,62 @@ domain.com
       </informalexample>
       </note>
     </refsect2>
+  </refsect1>
+
+  <refsect1 id="makehosteddomains_subdir">
+    <title>Subdirectory checks</title>
+
+    <para>
+      <filename>@sysconfdir@/hosteddomains</filename>
+      can be a subdirectory instead of
+      a text file. This has the effect of concatenating all files in that
+      directory (subject to the following checks) and then using the result
+      as the
+      <filename>@sysconfdir@/hosteddomains</filename>.
+      The following checks are made:
+    </para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+	  Files whose names contain a tilde, <quote>~</quote> are skipped over.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the following suffixes result in an error
+	  message: <quote>.rpmsave</quote>, <quote>.rpmnew</quote>, and
+	  <quote>.dpkg-<replaceable>suffix</replaceable></quote>. These files
+	  are backup files created by package manager when updating to a newer
+	  version of the package and contain the old or the new version of a
+	  configuration file whose settings may be new or obsolete.
+	</para>
+	<para>
+	  The contents of the file whose name does not have the suffix should
+	  be checked against the backup. The backup file should be deleted
+	  after making any needed manual changes to the configuration file.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the <quote>.dist</quote> suffix is also
+	  treated as a configuration file backup or template, but with the
+	  following exception: the <quote>.dist</quote> file gets ignored
+	  and automatically skipped over, without any error message, if
+	  the suffix-less file exists and its modification time is more recent
+	  than the <quote>.dist</quote> file's modification time.
+	</para>
+
+	<para>
+	  Otherwise an error message gets reported. Resolving the error
+	  message is done by either copying the
+	  <quote>.dist</quote> file or editing and saving the file without
+	  the suffix (resulting in a newer timestamp).
+	</para>
+      </listitem>
+    </itemizedlist>
   </refsect1>
 
   <refsect1 id="makehosteddomains_see_also">

@@ -220,6 +220,58 @@ Other useful environment variables are listed in the
     </refsect2>
   </refsect1>
 
+  <refsect1 id="makesmtpaccess_subdir">
+    <title><filename>@sysconfdir@/smtpaccess</filename>
+      subdirectory</title>
+
+    <para>
+      The following checks are made on the contents of
+      <filename>@sysconfdir@/smtpaccess</filename>:
+    </para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+	  Files whose names contain a tilde, <quote>~</quote> are skipped over.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the following suffixes result in an error
+	  message: <quote>.rpmsave</quote>, <quote>.rpmnew</quote>, and
+	  <quote>.dpkg-<replaceable>suffix</replaceable></quote>. These files
+	  are backup files created by package manager when updating to a newer
+	  version of the package and contain the old or the new version of a
+	  configuration file whose settings may be new or obsolete.
+	</para>
+	<para>
+	  The contents of the file whose name does not have the suffix should
+	  be checked against the backup. The backup file should be deleted
+	  after making any needed manual changes to the configuration file.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the <quote>.dist</quote> suffix is also
+	  treated as a configuration file backup or template, but with the
+	  following exception: the <quote>.dist</quote> file gets ignored
+	  and automatically skipped over, without any error message, if
+	  the suffix-less file exists and its modification time is more recent
+	  than the <quote>.dist</quote> file's modification time.
+	</para>
+
+	<para>
+	  Otherwise an error message gets reported. Resolving the error
+	  message is done by either copying the
+	  <quote>.dist</quote> file or editing and saving the file without
+	  the suffix (resulting in a newer timestamp).
+	</para>
+      </listitem>
+    </itemizedlist>
+  </refsect1>
+
   <refsect1 id="makesmtpaccess_see_also">
     <title>SEE ALSO</title>
     <para>

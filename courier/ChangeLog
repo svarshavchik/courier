@@ -1,3 +1,10 @@
+2025-12-28  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Update makedat script to handle automatic configuration
+	file backups created by package managers (shared makesmtpaccess,
+	makeimapaccess, makeacceptmailfor, makepercentrelay and
+	makehosteddomains).
+
 2025-12-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Update links to RFCs.

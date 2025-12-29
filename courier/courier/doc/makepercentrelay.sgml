@@ -17,7 +17,7 @@
 
   <refsynopsisdiv>
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">makepercentrelay</command>
+      <command>makepercentrelay</command>
     </cmdsynopsis>
   </refsynopsisdiv>
 
@@ -25,62 +25,113 @@
     <title>DESCRIPTION</title>
 
     <para>
-<command moreinfo="none">makepercentrelay</command> reads
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay.dir</filename>
-and creates <filename moreinfo="none">@sysconfdir@/esmtppercentrelay.dat</filename> which is a
+<command>makepercentrelay</command> reads
+<filename>@sysconfdir@/esmtppercentrelay.dir</filename>
+and creates <filename>@sysconfdir@/esmtppercentrelay.dat</filename> which is a
 binary
-database file. The files <filename moreinfo="none">@sysconfdir@/esmtppercentrelay</filename>
+database file. The files <filename>@sysconfdir@/esmtppercentrelay</filename>
 and
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay.dat</filename> specify a list of
+<filename>@sysconfdir@/esmtppercentrelay.dat</filename> specify a list of
 "percent-hack"
-domains. <filename moreinfo="none">@sysconfdir@/esmtppercentrelay</filename> is a plain text
+domains. <filename>@sysconfdir@/esmtppercentrelay</filename> is a plain text
 file,
 containing one domain per line.
-The <application moreinfo="none">Courier</application> mail server loads the
+The <application>Courier</application> mail server loads the
 contents of
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay</filename> into memory, so if you
+<filename>@sysconfdir@/esmtppercentrelay</filename> into memory, so if you
 have a lot of
 domains, you will want to use the binary database file.  The
-<command moreinfo="none">makepercentrelay</command> command reads
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay.dir</filename>, which can be either
+<command>makepercentrelay</command> command reads
+<filename>@sysconfdir@/esmtppercentrelay.dir</filename>, which can be either
 a plain text
 file itself, or a directory containing plain text files. All files in the
 subdirectory are concatenated, and the binary database file is created from
 the result.</para>
 
     <para>
-the <application moreinfo="none">Courier</application> mail server can use both <filename moreinfo="none">@sysconfdir@/esmtppercentrelay</filename> and
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay.dat</filename> at the same time.
+the <application>Courier</application> mail server can use both <filename>@sysconfdir@/esmtppercentrelay</filename> and
+<filename>@sysconfdir@/esmtppercentrelay.dat</filename> at the same time.
 Usually you
 would put a couple of your most frequent domains in
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay</filename>, then put the rest in
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay.dir</filename>, and use
-<command moreinfo="none">makepercentrelay</command> to turn it into a database file.</para>
+<filename>@sysconfdir@/esmtppercentrelay</filename>, then put the rest in
+<filename>@sysconfdir@/esmtppercentrelay.dir</filename>, and use
+<command>makepercentrelay</command> to turn it into a database file.</para>
 
     <para>
-"percent-hack" domains are a list of domains for which the <application moreinfo="none">Courier</application> mail server accepts mail
+"percent-hack" domains are a list of domains for which the <application>Courier</application> mail server accepts mail
 via ESMTP addressed as "local%percent.hack.domain@local.domain", where
 "percent.hack.domain" is a domain found in
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay</filename> or
-<filename moreinfo="none">@sysconfdir@/esmtppercentrelay.dat</filename>, and
-"<literal moreinfo="none">local.domain</literal>" is any domain
-found in <filename moreinfo="none">@sysconfdir@/locals</filename>.
-The <application moreinfo="none">Courier</application> mail server removes the local
+<filename>@sysconfdir@/esmtppercentrelay</filename> or
+<filename>@sysconfdir@/esmtppercentrelay.dat</filename>, and
+"<literal>local.domain</literal>" is any domain
+found in <filename>@sysconfdir@/locals</filename>.
+The <application>Courier</application> mail server removes the local
 domain, and
-rewrites the address as "<literal moreinfo="none">local@percent.hack.domain</literal>", then
+rewrites the address as "<literal>local@percent.hack.domain</literal>", then
 attempts to deliver it.</para>
 
     <para>
 The percent hack applies only to mail received via ESMTP.
-The <application moreinfo="none">Courier</application> mail server does not
+The <application>Courier</application> mail server does not
 check this list of domains if the message is received via any other way (such
-as by running <command moreinfo="none">@bindir@/sendmail</command> directly from the command
+as by running <command>@bindir@/sendmail</command> directly from the command
 line).
-"<literal moreinfo="none">percent.hack.domain</literal>" would likely to be a domain that
-the <application moreinfo="none">Courier</application> mail server
+"<literal>percent.hack.domain</literal>" would likely to be a domain that
+the <application>Courier</application> mail server
 knows how to handle via some other means.  It might be an entry in
-<filename moreinfo="none">@sysconfdir@/aliases</filename>, or an entry in
-<filename moreinfo="none">@sysconfdir@/esmtproutes</filename>.</para>
+<filename>@sysconfdir@/aliases</filename>, or an entry in
+<filename>@sysconfdir@/esmtproutes</filename>.</para>
+  </refsect1>
+
+  <refsect1 id="makepercentrelay_subdir">
+    <title>Subdirectory checks</title>
+
+    <para>
+      The following checks are made on the contents of
+      <filename>@sysconfdir@/esmtppercentrelay.dir</filename>:
+    </para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+	  Files whose names contain a tilde, <quote>~</quote> are skipped over.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the following suffixes result in an error
+	  message: <quote>.rpmsave</quote>, <quote>.rpmnew</quote>, and
+	  <quote>.dpkg-<replaceable>suffix</replaceable></quote>. These files
+	  are backup files created by package manager when updating to a newer
+	  version of the package and contain the old or the new version of a
+	  configuration file whose settings may be new or obsolete.
+	</para>
+	<para>
+	  The contents of the file whose name does not have the suffix should
+	  be checked against the backup. The backup file should be deleted
+	  after making any needed manual changes to the configuration file.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the <quote>.dist</quote> suffix is also
+	  treated as a configuration file backup or template, but with the
+	  following exception: the <quote>.dist</quote> file gets ignored
+	  and automatically skipped over, without any error message, if
+	  the suffix-less file exists and its modification time is more recent
+	  than the <quote>.dist</quote> file's modification time.
+	</para>
+
+	<para>
+	  Otherwise an error message gets reported. Resolving the error
+	  message is done by either copying the
+	  <quote>.dist</quote> file or editing and saving the file without
+	  the suffix (resulting in a newer timestamp).
+	</para>
+      </listitem>
+    </itemizedlist>
   </refsect1>
 
   <refsect1 id="makepercentrelay_see_also">

@@ -17,7 +17,7 @@
 
   <refsynopsisdiv>
     <cmdsynopsis sepchar=" ">
-      <command moreinfo="none">makeacceptmailfor</command>
+      <command>makeacceptmailfor</command>
     </cmdsynopsis>
   </refsynopsisdiv>
 
@@ -25,25 +25,76 @@
     <title>DESCRIPTION</title>
 
     <para>
-<command moreinfo="none">makeacceptmailfor</command> reads
-<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dir</filename> and creates
-<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dat</filename> which is a binary
+<command>makeacceptmailfor</command> reads
+<filename>@sysconfdir@/esmtpacceptmailfor.dir</filename> and creates
+<filename>@sysconfdir@/esmtpacceptmailfor.dat</filename> which is a binary
 database file.
-<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dat</filename> is a list of domains
-that the <application moreinfo="none">Courier</application> mail server
+<filename>@sysconfdir@/esmtpacceptmailfor.dat</filename> is a list of domains
+that the <application>Courier</application> mail server
 accepts mail for, via ESMTP.
-<filename moreinfo="none">@sysconfdir@/esmtpacceptmailfor.dir</filename> is a
+<filename>@sysconfdir@/esmtpacceptmailfor.dir</filename> is a
 subdirectory containing one or more files. Each file in this subdirectory is
 plain text file, containing a list of mail domains, one per line, in
 lowercase. All files in the subdirectory are concatenated, and the binary
 database file is created from the result.</para>
 
     <para>
-The <command moreinfo="none">makeacceptmailfor</command> can be executed while the
-<application moreinfo="none">Courier</application> mail server is
+The <command>makeacceptmailfor</command> can be executed while the
+<application>Courier</application> mail server is
 running, and any changes take effect immediately. However, only one instance of
-<command moreinfo="none">makeacceptmailfor</command> can be executed at the same time.</para>
+<command>makeacceptmailfor</command> can be executed at the same time.</para>
 
+  </refsect1>
+
+  <refsect1 id="makeacceptmailfor_subdir">
+    <title>Subdirectory checks</title>
+
+    <para>
+      The following checks are made on the contents of
+      <filename>@sysconfdir@/esmtpacceptmailfor.dir</filename>:
+    </para>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+	  Files whose names contain a tilde, <quote>~</quote> are skipped over.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the following suffixes result in an error
+	  message: <quote>.rpmsave</quote>, <quote>.rpmnew</quote>, and
+	  <quote>.dpkg-<replaceable>suffix</replaceable></quote>. These files
+	  are backup files created by package manager when updating to a newer
+	  version of the package and contain the old or the new version of a
+	  configuration file whose settings may be new or obsolete.
+	</para>
+	<para>
+	  The contents of the file whose name does not have the suffix should
+	  be checked against the backup. The backup file should be deleted
+	  after making any needed manual changes to the configuration file.
+	</para>
+      </listitem>
+
+      <listitem>
+	<para>
+	  Files whose names end with the <quote>.dist</quote> suffix is also
+	  treated as a configuration file backup or template, but with the
+	  following exception: the <quote>.dist</quote> file gets ignored
+	  and automatically skipped over, without any error message, if
+	  the suffix-less file exists and its modification time is more recent
+	  than the <quote>.dist</quote> file's modification time.
+	</para>
+
+	<para>
+	  Otherwise an error message gets reported. Resolving the error
+	  message is done by either copying the
+	  <quote>.dist</quote> file or editing and saving the file without
+	  the suffix (resulting in a newer timestamp).
+	</para>
+      </listitem>
+    </itemizedlist>
   </refsect1>
 
   <refsect1 id="makeacceptmailfor_see_also">
