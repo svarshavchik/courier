@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2000 - 2022 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([sysconftool],[0.21],[courier-users@lists.sourceforge.net])
+AC_INIT([sysconftool],[0.22],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR(sysconftool.in)
 AM_INIT_AUTOMAKE(foreign)
