@@ -419,7 +419,7 @@ $ DEBGCC=10 ./courier-debuild -us -uc]]></programlisting>
 	  <listitem>
 	    <para>
 Download the Courier Socks 5 proxy client library from <ulink
-url="https://www.courier-mta.org/download.php#sox">https://www.courier-mta.org/download.php#sox</ulink>
+url="https://www.courier-mta.org/download.html#sox">https://www.courier-mta.org/download.html#sox</ulink>
 and follow its installation instructions.</para>
 
 	    <para>
@@ -435,7 +435,7 @@ Download and install the Courier-Unicode library from
 	  <listitem>
 	    <para>
 Download the source code tarball from
-<ulink url="https://www.courier-mta.org/download.php#cone">https://www.courier-mta.org/download.php#cone</ulink> and unpack it.</para>
+<ulink url="https://www.courier-mta.org/download.html#cone">https://www.courier-mta.org/download.html#cone</ulink> and unpack it.</para>
 	  </listitem>
 
 	  <listitem>
@@ -777,7 +777,7 @@ The Courier Socks 5 proxy client API toolkit is required for Socks 5
 support.
 Other Socks 5 proxy client libraries may or may not work.
 Download the Courier Socks 5 proxy client library from <ulink
-url="https://www.courier-mta.org/download.php#sox">https://www.courier-mta.org/download.php#sox</ulink>
+url="https://www.courier-mta.org/download.html#sox">https://www.courier-mta.org/download.html#sox</ulink>
 and follow its installation instructions.</para>
 	</listitem>
       </itemizedlist>
