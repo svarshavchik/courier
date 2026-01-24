@@ -37,7 +37,10 @@ mkdir -p debian/tmp/etc/cron.hourly
 cat >debian/tmp/etc/cron.hourly/sqwebmail-cron-cleancache <<EOF
 #! /bin/sh
 
-su - $cacheowner -s /bin/sh -c $scriptdir/cleancache.pl
+if test -x $scriptdir/cleancache.pl
+then
+	su - $cacheowner -s /bin/sh -c $scriptdir/cleancache.pl
+fi
 EOF
 chmod +x debian/tmp/etc/cron.hourly/sqwebmail-cron-cleancache
 

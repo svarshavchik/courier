@@ -177,7 +177,10 @@ then
     cat >debian/courier-webmail.cron.hourly <<EOF
 #! @SHELL@
 
-su - bin -s @SHELL@ -c @datadir@/sqwebmail/cleancache.pl
+if test -x @datadir@/sqwebmail/cleancache.pl
+then
+	su - bin -s @SHELL@ -c @datadir@/sqwebmail/cleancache.pl
+fi
 EOF
 fi
 

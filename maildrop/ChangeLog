@@ -1,3 +1,9 @@
+2026-01-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mailbot: fix non-plain text autoreplies, removing a broken error
+	message, a bonus. Using -m automatically implies -N and everything
+	works out just right.
+
 3.3.0
 
 2025-12-28  Sam Varshavchik  <mrsam@courier-mta.com>

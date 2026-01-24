@@ -1,3 +1,15 @@
+2026-01-23  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* mailbot: fix non-plain text autoreplies, removing a broken error
+	message, a bonus. Using -m automatically implies -N and everything
+	works out just right.
+
+	* sqwebmail: Convert modules that parse MIME messages to C++, and
+	update them to use the new C++ MIME parsing library. Clean up
+	autoreplies. When editing mail filters peek at the autoreply content,
+	and block non-functional DSN and non-quoting autoreplies when the
+	autoreply content was uploaded as a non text-plain message.
+
 1.6.0
 
 2025-12-28  Sam Varshavchik  <mrsam@courier-mta.com>

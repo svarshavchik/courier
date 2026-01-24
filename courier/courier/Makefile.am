@@ -426,6 +426,7 @@ webmlmd_SOURCES=webmlmd.C webmlmd.H \
 webmlmd_DEPENDENCIES=../libs/sqwebmail/libwebmail.la \
 			../libs/cgi/libcgi.la ../libs/rfc2045/librfc2045.la \
 			../libs/rfc822/librfc822.la ../libs/numlib/libnumlib.la \
+			../libs/gpglib/libgpg.la \
 			../libs/liblock/liblock.la \
 			@dblibrary@
 webmlmd_LDADD=$(webmlmd_DEPENDENCIES) -lcourier-unicode @NETLIBS@
