@@ -1,8 +1,14 @@
+2026-01-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* reformime: handle "binary" transfer encoding analogous to
+	8bit handling.
+
 2026-01-23  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* mailbot: fix non-plain text autoreplies, removing a broken error
 	message, a bonus. Using -m automatically implies -N and everything
-	works out just right.
+	works out just right. Use POSIX exit codes for errors, to fix some
+	issues when invoking mailbot from maildrop's .mailfilter
 
 3.3.0
 
