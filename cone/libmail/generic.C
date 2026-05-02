@@ -1424,7 +1424,7 @@ void mail::generic::genericMakeMimeStructure(
 			continue;
 		}
 
-		rfc2045::entity::rfc2231_header parsed_header{value};
+		rfc2045::entity::rfc2231_header parsed_header{value, true};
 
 		*name=parsed_header.value;
 		mail::upper(*name);

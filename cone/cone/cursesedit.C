@@ -819,7 +819,7 @@ void CursesEdit::init()
 		s.content_disposition="attachment";
 
 		rfc2045::entity::rfc2231_header content_disposition{
-			entity.content_disposition
+			entity.content_disposition, true
 		};
 
 		auto iter=content_disposition.parameters.find("name");
