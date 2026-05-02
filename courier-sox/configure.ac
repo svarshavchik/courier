@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([courier-sox],[0.20],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.20.20260502],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AC_CONFIG_HEADERS([courier_socks_config.h])
@@ -163,7 +163,6 @@ AC_SUBST(sys_select_h)
 AC_SUBST(sys_poll_h)
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 AC_SYS_LARGEFILE
 
 # Checks for library functions.
@@ -323,7 +322,7 @@ AC_CHECK_FUNCS([memset strchr strdup getaddrinfo poll inet_pton])
 AC_MSG_CHECKING([whether we have figured out all the prototypes correctly.])
 
 AC_COMPILE_IFELSE([
-AC_LANG_SOURCE( [
+AC_LANG_PROGRAM( [
 #include "$srcdir/stubfuncs.h"
 
 extern void makeused(void *);

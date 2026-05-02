@@ -56,7 +56,6 @@ AC_CHECK_HEADERS_ONCE([sys/time.h])
 AC_CHECK_HEADERS(strings.h fcntl.h limits.h unistd.h syslog.h sys/types.h sys/stat.h sys/time.h sys/ioctl.h sys/statfs.h sys/param.h sys/mount.h sys/select.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 AC_TYPE_PID_T
 AC_TYPE_UID_T
 AC_TYPE_SIZE_T

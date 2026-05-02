@@ -760,7 +760,6 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(sys/stat.h sys/time.h sys/wait.h sys/select.h unistd.h fcntl.h crypt.h termios.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 AC_TYPE_PID_T
 AC_TYPE_UID_T
 dnl Other checks
@@ -860,7 +859,6 @@ int main()
 {
 int i;
 FILE *f;
-char	*p;
 
 	for (i=0; ids $LB i $RB; i++)
 		if (getpwnam(ids $LB i $RB))	break;

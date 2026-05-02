@@ -28,7 +28,6 @@ dnl Checks for header files.
 AC_CHECK_HEADERS(unistd.h strings.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_SYS_LARGEFILE

@@ -89,7 +89,6 @@ AC_DEFINE_UNQUOTED(HAS_FUNCTIONKEYS,1,[Whether curses implements function keys w
 LIBS="$save_LIBS"
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 
 dnl Checks for library functions.
 

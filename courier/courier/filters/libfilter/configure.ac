@@ -23,7 +23,6 @@ dnl Checks for header files.
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 AC_SYS_LARGEFILE
 
 AC_CACHE_CHECK([for socklen_t],
