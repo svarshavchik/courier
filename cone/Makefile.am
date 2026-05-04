@@ -4,7 +4,7 @@
 # See COPYING for distribution information.
 #
 SUBDIRS=libs/numlib libs/liblock libs/soxwrap libs/md5 libs/sha1 libs/libhmac libs/random128 libs/rfc822 libs/rfc2045 libs/rfc1035 libs/gpglib libs/maildir libs/tcpd curses libs/ldapaddressbook libmail libs/rootcerts cone
-AM_DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
+DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
 
 sysconf_DATA=cone.dist
 
@@ -205,7 +205,7 @@ check-am:
 
 distrelease:
 	cd cone/po && make update-po
-	$(MAKE) distcheck 'DISTCHECK_CONFIGURE_FLAGS=CPPFLAGS="-I /usr/include/ncursesw"'
+	$(MAKE) distcheck
 	$(MAKE) rpm
 	$(MAKE) -$(MAKEFLAGS)
 	$(MAKE) -$(MAKEFLAGS)
