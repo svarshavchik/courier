@@ -5,11 +5,10 @@
 @SET_MAKE@
 
 AUTOMAKE_OPTIONS=dist-bzip2
-AM_DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode
 
 # make distcheck fix
 
-DISTCHECK_CONFIGURE_FLAGS=--enable-cgibindir=$$dc_install_base/cgi-bin --enable-imagedir=$$dc_install_base/images
+DISTCHECK_CONFIGURE_FLAGS=--with-notice=unicode --enable-cgibindir=$$dc_install_base/cgi-bin --enable-imagedir=$$dc_install_base/images
 
 HTML2TXT=elinks -dump -no-numbering --no-references
 

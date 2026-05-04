@@ -158,8 +158,6 @@ pid_t	pid=fork();
 	close(pipefd[1]);
 	tmpfile.close();
 
-unsigned	addrcnt=0;
-
 	{
 		afxipipestream reformime(pipefd[0]);
 
@@ -184,7 +182,6 @@ unsigned	addrcnt=0;
 				unlink (tname.c_str());
 				return (rc);
 			}
-			++addrcnt;
 		}
 	}
 

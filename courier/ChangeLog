@@ -1,3 +1,9 @@
+2026-05-03  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fedora: handle Changes/droppingOfCertPemFile. After updating,
+	manually set TLS_TRUSTCERTS in the courierd configuration file
+	to /etc/ssl/certs/ca-certificates.crt
+
 2026-04-24  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* sqwebmail: Replace --enable-bannerprog configure option with an

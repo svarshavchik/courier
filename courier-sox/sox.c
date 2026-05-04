@@ -504,7 +504,7 @@ static int sys_dup2(int fd, int fdto)
 }
 
 #if HAVE_POLL
-static int sys_poll(struct pollfd *ufds, unsigned int nfds, int timeout)
+static int sys_poll(struct pollfd *ufds, NFDS_T nfds, int timeout)
 {
 	if (!initflag) init();
 	return (*ptr_poll)(ufds, nfds, timeout);

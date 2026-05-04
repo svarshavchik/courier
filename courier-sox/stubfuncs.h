@@ -47,7 +47,7 @@ static int (*ptr_dup)(int fd);
 static int (*ptr_dup2)(int fd, int fdto);
 
 #if HAVE_POLL
-static int (*ptr_poll)(struct pollfd *ufds, unsigned int nfds, int timeout);
+static int (*ptr_poll)(struct pollfd *ufds, NFDS_T nfds, int timeout);
 #endif
 
 #endif

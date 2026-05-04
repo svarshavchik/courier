@@ -347,7 +347,6 @@ std::vector<std::string> read_dir_sort_filenames(const char *dirname,
 						 const char *fnpfix)
 {
 	std::vector<std::string> ret;
-	unsigned cnt=0;
 	DIR *dirp;
 
 	if ((dirp=opendir(dirname)) != NULL)
@@ -363,7 +362,6 @@ std::vector<std::string> read_dir_sort_filenames(const char *dirname,
 			filename += de->d_name;
 
 			ret.push_back(filename);
-			++cnt;
 		}
 		closedir(dirp);
 	}

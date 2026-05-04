@@ -12,6 +12,9 @@
 
 #define GET_SOCKADDR(a) GET_SOCKADDR_PTR(a)
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+
 /*
 ** libsockswrap intercepts the system functions by forwarding them to
 ** the socksing version in libsocks
@@ -84,3 +87,4 @@ int getpeername(int s, SOCKADDR_ARG_PTR name, SOCKLEN_T *namelen)
 	return Rgetpeername(s, GET_SOCKADDR(name), namelen);
 }
 
+#pragma GCC diagnostic pop

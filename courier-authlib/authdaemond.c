@@ -654,7 +654,7 @@ static void dopasswd(int, const char *, const char *, const char *,
 static void passwd(int fd, char *prebuf)
 {
 	char *p;
-	const char *service;
+	char *service;
 	const char *userid;
 	const char *opwd;
 	const char *npwd;

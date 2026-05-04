@@ -41,7 +41,6 @@ output_iter towidechar(input_iter beg_iter,
 			{
 				const char *b=&cbuf[0];
 				const char *e=b+cbuf.size();
-				size_t cnt=0;
 
 				while (b != e)
 				{
@@ -69,7 +68,6 @@ output_iter towidechar(input_iter beg_iter,
 					*out_iter++=wc;
 
 					b += r;
-					cnt += r;
 				}
 			}
 			cbuf.clear();

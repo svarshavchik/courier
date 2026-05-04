@@ -2,6 +2,9 @@
 
 	* Fedora 44: workaround for the autoconf-archive.gcc 16 issue.
 
+	* Fixes for allowing -Wall -Werror compiler flags. Drop conflicting
+	workarounds for pre-C90 support.
+
 0.72.7
 
 2025-12-28  Sam Varshavchik  <mrsam@courier-mta.com>
