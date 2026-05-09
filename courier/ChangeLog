@@ -1,3 +1,7 @@
+2026-05-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/cmlmmoderate.C (cmdmoderate): Replace C with C++ API.
+
 2026-05-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fedora: handle Changes/droppingOfCertPemFile. After updating,

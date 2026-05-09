@@ -7,6 +7,7 @@
 #include	"cmlm.h"
 #include	"cmlmmoderate.h"
 #include	"rfc2045/rfc2045.h"
+#include	"rfc822/rfc822.h"
 #include	<fstream>
 #include	<iterator>
 #include	<algorithm>
@@ -138,14 +139,6 @@ static int domodreject(afxipipestream &, std::string);
 static int domodbounce(afxipipestream &, std::string);
 static int cmdmoderate(afxipipestream &);
 
-static int doconvtoutf8_stdout(const char *ptr, size_t n, void *dummy)
-{
-	if (fwrite(ptr, n, 1, (FILE *)dummy) != 1)
-		return -1;
-
-	return 0;
-}
-
 // Process moderation response.
 
 int cmdmoderate()
@@ -154,9 +147,12 @@ int cmdmoderate()
 	std::string tmpfile1 = tmpfile_base + ".1";
 	std::string tmpfile2 = tmpfile_base + ".2";
 
-	FILE *f1=fopen(tmpfile1.c_str(), "w+");
+	rfc822::fdstreambuf f1{
+		open(tmpfile1.c_str(), O_RDWR | O_CREAT | O_TRUNC,
+		     0600)
+	};
 
-	if (!f1)
+	if (f1.error())
 	{
 		perror(tmpfile1.c_str());
 		return (EX_OSERR);
@@ -168,7 +164,6 @@ int cmdmoderate()
 
 	if (!f2)
 	{
-		fclose(f1);
 		perror(tmpfile2.c_str());
 		return (EX_OSERR);
 	}
@@ -177,58 +172,45 @@ int cmdmoderate()
 
 	// Copy message from stdin to tmpfile1
 
+	std::ostream{&f1} << std::cin.rdbuf();
+	f1.pubseekpos(0);
+
+	if (f1.error())
 	{
-		int dup_fd=dup(fileno(f1));
-
-		if (dup_fd < 0)
-		{
-			perror("dup");
-			fclose(f1);
-			fclose(f2);
-		}
-
-		afxiopipestream iopipe(dup_fd);
-
-		std::copy(std::istreambuf_iterator<char>(std::cin),
-			  std::istreambuf_iterator<char>(),
-			  std::ostreambuf_iterator<char>(iopipe));
-		iopipe.sync();
-		iopipe.seekg(0);
+		perror("copy");
+		return (EX_OSERR);
 	}
 
 	// Convert message in tmpfile1 to utf8, into tmpfile2
 
 	int rc=EX_SOFTWARE;
 
-	struct rfc2045 *p=rfc2045_fromfp(f1);
-
-	if (!p)
 	{
-		perror("rfc2045_from_fp");
-	}
-	else
-	{
-		struct rfc2045src *src=rfc2045src_init_fd(fileno(f1));
+		std::istreambuf_iterator<char> b{&f1}, e;
 
-		fseek(f1, 0, SEEK_SET);
+		rfc2045::entity::line_iter<false>::iter parser{b, e};
 
-		if (!src)
+		rfc2045::entity message;
+
+		message.parse(parser);
+
+		rfc822::mime_decoder src{
+			[&]
+			(const char *buf, size_t len)
+			{
+				fwrite(buf, len, 1, f2);
+			},
+			f1,
+			unicode::utf_8
+		};
+
+		src.decode<false>(message);
+		if (ferror(f2) || f1.error())
 		{
-			perror("rfc2045src_init_fd");
+			perror("copy");
 		}
 		else
-		{
-			struct rfc2045_decodemsgtoutf8_cb cb;
-
-			memset(&cb, 0, sizeof(cb));
-
-			cb.output_func=doconvtoutf8_stdout;
-			cb.arg=f2;
-
-			rc=rfc2045_decodemsgtoutf8(src, p, &cb);
-			rfc2045src_deinit(src);
-		}
-		rfc2045_free(p);
+			rc=0;
 	}
 	fseek(f2, 0, SEEK_SET);
 
@@ -245,7 +227,6 @@ int cmdmoderate()
 			rc=cmdmoderate(p);
 		}
 	}
-	fclose(f1);
 	fclose(f2);
 	return rc;
 }
