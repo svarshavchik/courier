@@ -408,9 +408,9 @@ couriermlm_LDADD=$(couriermlm_DEPENDENCIES) -lcourier-unicode -lpthread
 
 # webmlm
 
-webmlm_SOURCES=webmlm.c
+webmlm_SOURCES=webmlm.C
 webmlm_DEPENDENCIES=../libs/cgi/libcgi.la
-webmlm_LDADD=$(webmlm_DEPENDENCIES) @NETLIBS@
+webmlm_LDADD=$(webmlm_DEPENDENCIES) @NETLIBS@ -lcourier-unicode
 
 # webmlmd
 

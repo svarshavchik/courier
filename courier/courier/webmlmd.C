@@ -1210,12 +1210,9 @@ static void listrequest2(std::string list_name, std::string path_info)
 
 		if (*password && getoption("LISTPW") == password)
 		{
-			struct cgi_set_cookie_info cookie_info;
+			cgi_set_cookie_info cookie_info;
 
-			cgi_set_cookie_info_init(&cookie_info);
-
-			cgi_set_cookie_session(&cookie_info, "password",
-					       password);
+			cookie_info.session("password", password);
 
 			std::string cookie_path;
 
@@ -1224,10 +1221,9 @@ static void listrequest2(std::string list_name, std::string path_info)
 			cookie_path += "/";
 			cookie_path += list_name;
 
-			cgi_set_cookie_url(&cookie_info, cookie_path.c_str());
+			cookie_info.set_from_url(cookie_path);
 
-			cgi_set_cookies(&cookie_info, 1);
-			cgi_set_cookie_info_free(&cookie_info);
+			cgi_set_cookies({cookie_info});
 			adminrequest(std::string(p, e));
 			return;
 		}
@@ -1238,11 +1234,9 @@ static void listrequest2(std::string list_name, std::string path_info)
 	// Clear the password cookie when returning to the list screen
 
 	{
-		struct cgi_set_cookie_info cookie_info;
+		cgi_set_cookie_info cookie_info;
 
-		cgi_set_cookie_info_init(&cookie_info);
-
-		cgi_set_cookie_expired(&cookie_info, "password");
+		cookie_info.expired("password");
 
 		std::string cookie_path;
 
@@ -1251,10 +1245,9 @@ static void listrequest2(std::string list_name, std::string path_info)
 		cookie_path += "/";
 		cookie_path += list_name;
 
-		cgi_set_cookie_url(&cookie_info, cookie_path.c_str());
+		cookie_info.set_from_url(cookie_path);
 
-		cgi_set_cookies(&cookie_info, 1);
-		cgi_set_cookie_info_free(&cookie_info);
+		cgi_set_cookies({cookie_info});
 	}
 
 	webmlmd::showhtmlform("webmlmlistindex.tmpl.html");
