@@ -1,3 +1,10 @@
+2026-05-17  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop: convert maildrop to use the C++ MIME parser. Drop
+	rarely used maildrop configure options: pre-C++11 const/non-const
+	pointer exception caching, and CRLF format for messages, in order
+	to simply the main set of changes
+
 2026-04-24  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fedora 44: workaround for the autoconf-archive/gcc 16 issue.

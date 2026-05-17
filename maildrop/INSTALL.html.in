@@ -461,11 +461,6 @@ $ DEBGCC=10 ./courier-debuild -us -uc</pre>
     code. This is intended to stop runaway mail filters. The default is 300
     seconds (five minutes).<br />
     <br /></li>
-    <li><code>--enable-crlf-term=<i>flag</i></code> - if set to 1,
-    <i>maildrop</i> saves messages in the mailbox with each line terminated by
-    a carriage return/line feed sequence. When set to 0, lines will be
-    terminated by the linefeed character only. The default value is 0.<br />
-    <br /></li>
     <li><code>--enable-restrict-trusted=<i>flag</i></code> - if set to 1,
     <i>maildrop</i> permits only certain "trusted" user or group IDs to use the
     -d option. Setting this variable to 0 allows anyone to use the -d option

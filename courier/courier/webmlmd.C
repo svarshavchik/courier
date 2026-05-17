@@ -1191,19 +1191,16 @@ static void listrequest2(std::string list_name, std::string path_info)
 
 	if (w == "admin")
 	{
-		char *password_cookie=cgi_get_cookie("password");
+		std::string password_cookie=cgi_get_cookie("password");
 		const char *password;
 
-		if (password_cookie)
+		if (!password_cookie.empty())
 		{
 			if (getoption("LISTPW") == password_cookie)
 			{
-				free(password_cookie);
 				adminrequest(std::string(p, e));
 				return;
 			}
-
-			free(password_cookie);
 		}
 
 		password=cgi("password");
