@@ -129,31 +129,31 @@ jobs:
           rpm -ivh ../rpm/courier-sox*rpm
 
       - name: Upload sysconftool tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sysconftool
           path: "sysconftool/*.tar.bz2"
 
       - name: Upload courier-unicode tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: courier-unicode
           path: "libs/unicode/*.tar.bz2"
 
       - name: Upload courier-authlib tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: courier-authlib
           path: "courier-authlib/*.tar.bz2"
 
       - name: Upload courier-sox tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: courier-sox
           path: "courier-sox/*.tar.bz2"
 
       - name: Upload common dist rpms
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: distrpms
           path: "rpm/*.rpm"
@@ -193,7 +193,7 @@ jobs:
           sh ci-scripts/make_dist_installdeps
 
       - name: Download common dist rpms
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: distrpms
 
@@ -218,7 +218,7 @@ jobs:
           make rpm
 
       - name: Upload dist for ${{ matrix.project }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.project }}
           path: "${{ matrix.project }}/*.tar.bz2"
@@ -255,22 +255,22 @@ jobs:
           path: '.'
 
       - name: Download sysconftool tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: sysconftool
 
       - name: Download courier-unicode tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: courier-unicode
 
       - name: Download courier-authlib tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: courier-authlib
 
       - name: Download courier-sox tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: courier-sox
 
@@ -298,7 +298,7 @@ jobs:
           sh ci-scripts/${{ matrix.platform[1] }}/build_shared courier-sox
 
       - name: Upload shared for ${{ matrix.platform[1] }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.platform[2] }}-shared-packages
           path: "packages/*"
@@ -334,7 +334,7 @@ jobs:
           path: '.'
 
       - name: Download shared packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ matrix.platform[2] }}-shared-packages
 
@@ -343,7 +343,7 @@ jobs:
           sh ci-scripts/${{ matrix.platform[1] }}/build_all_setup
 
       - name: Download package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ matrix.project }}
 
