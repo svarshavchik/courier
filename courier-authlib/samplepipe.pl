@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
 # This is a sample authentication module for authpipe. It uses the same
 # protocol that pop3d/imapd/webmail use to communicate with authdaemon.
