@@ -18,6 +18,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cstring>
+#include <fstream>
 
 using namespace std;
 
@@ -78,18 +79,16 @@ void mail::Attachment::check_multipart_encoding()
 {
 	string::iterator cte_start, cte_end;
 
-	multipart_type=find_header("CONTENT-TYPE:", cte_start, cte_end);
-	mail::upper(multipart_type);
+	find_header("CONTENT-TYPE:", cte_start, cte_end);
+	multipart_type=rfc2231::header(std::string{cte_start, cte_end}, true);
 
-	const char *p=multipart_type.c_str();
-
-	if (strncmp(p, "MULTIPART/", 10) == 0 ||
-	    rfc2045_message_content_type(p))
+	if (std::string_view{multipart_type.value}.substr(0, 10) ==
+	    "multipart/" || rfc2045::message_content_type(multipart_type.value))
 		transfer_encoding="8bit";
 }
 
 mail::Attachment::Attachment(string h, int fd)
-	: headers(h)
+	: headers{h}
 {
 	common_init();
 	common_fd_init(fd);
@@ -182,20 +181,19 @@ void mail::Attachment::add_content_encoding()
 {
 	string::iterator cte_start, cte_end;
 
-	multipart_type=find_header("CONTENT-TYPE:", cte_start, cte_end);
-	mail::upper(multipart_type);
+	find_header("CONTENT-TYPE:", cte_start, cte_end);
+	multipart_type=rfc2231::header(std::string{cte_start, cte_end}, true);
 
 	string existing_transfer_encoding=
 		find_header("CONTENT-TRANSFER-ENCODING:", cte_start,
 			    cte_end);
 
-	const char *p=multipart_type.c_str();
-
 	if (cte_start != cte_end ||
 	    // Already have the header. Must be already encoded.
 
-	    strncmp(p, "MULTIPART/", 10) == 0 ||
-	    rfc2045_message_content_type(p))
+	    std::string_view{multipart_type.value}.substr(0, 10)
+	    == "multipart/" ||
+	    rfc2045::message_content_type(multipart_type.value))
 	{
 		transfer_encoding="8bit";
 		return;
@@ -217,16 +215,23 @@ mail::Attachment::Attachment(string h,
 
 mail::Attachment::Attachment(string h,
 			     const vector<Attachment *> &partsArg,
-			     string multipart_typeArg,
-			     const mail::mimestruct::parameterList
-			     &multipart_parametersArg)
-	: headers(h)
+			     const rfc2231::header &multipart_typeArg)
+	: headers(h), multipart_type{multipart_typeArg}
 {
 	common_init();
 	parts=partsArg;
-	multipart_type=multipart_typeArg;
-	multipart_parameters=multipart_parametersArg;
 	common_multipart_init();
+
+	// Copy over the parameters from the passed-in multipart type which
+	// were not set in common_multipart_init(). This is done in order to
+	// preserve parameters in the original message that we do not
+	// explicitly create in common_multipart_init(), such as "protocol"
+	// for multipart/signed content. Yes, this does likely mean that the
+	// signature will be broken, but at least the end result still looks
+	// like complete.
+
+	for (auto &[name, value] : multipart_typeArg.parameters)
+		multipart_type.parameters.emplace(name, value);
 }
 
 string mail::Attachment::find_header(const char *header_name,
@@ -311,32 +316,33 @@ void mail::Attachment::common_multipart_init()
 
 	mail::Header::mime mimeHeader= mail::Header::mime::fromString(header);
 
-	if (multipart_type.size() == 0)
-		multipart_type=mimeHeader.value;
-	multipart_parameters=mimeHeader.parameters;
+	if (multipart_type.value.empty())
+		multipart_type.value=mimeHeader.header.value;
+	multipart_type.parameters=mimeHeader.header.parameters;
 
 	if (parts.size() == 0) // Woot?
 	{
-		multipart_type="text/plain";
+		multipart_type.value="text/plain";
 		transfer_encoding="8bit";
 		return;
 	}
 
-	mail::upper(multipart_type);
+	rfc2045::entity::tolowercase(multipart_type.value);
 
-	if (rfc2045_message_content_type(multipart_type.c_str()))
+	if (rfc2045::message_content_type(multipart_type.value))
 	{
 		if (parts.size() > 1) // Woot?
 		{
-			multipart_type="MULTIPART/MIXED";
+			multipart_type.value="multipart/mixed";
 			return;
 		}
 		message_rfc822=parts[0];
 	}
 	else
 	{
-		if (strncmp(multipart_type.c_str(), "MESSAGE/", 8) == 0)
-			multipart_type="MULTIPART/MIXED";
+		if (std::string_view{multipart_type.value}.substr(0, 8)
+		    == "message/")
+			multipart_type.value="multipart/mixed";
 	}
 
 }
@@ -437,8 +443,13 @@ bool mail::Attachment::try_boundary(std::string templ, int level)
 
 	if (parts.size() > 0)
 	{
-		multipart_parameters.erase("boundary");
-		multipart_parameters.set_simple("boundary", boundary);
+		multipart_type.parameters.erase("boundary");
+		multipart_type.parameters.emplace(
+			"boundary",
+			rfc2231::header_parameter_value{
+				std::move(boundary)
+			}
+		);
 	}
 
 	return true;
@@ -462,14 +473,22 @@ string mail::Attachment::generate(bool &error)
 		{
 			generating=true;
 			mail::Header::mime content_type("Content-Type",
-							multipart_type);
+							multipart_type.value);
 
-			content_type.parameters=multipart_parameters;
+			content_type.header.parameters=
+				multipart_type.parameters;
 
 			return headers + content_type.toString() + "\n\n";
 		}
 		return message_rfc822->generate(error);
 	}
+
+	auto boundary_iter=multipart_type.parameters.find("boundary");
+
+	std::string boundary;
+
+	if (boundary_iter != multipart_type.parameters.end())
+		boundary=boundary_iter->second.value;
 
 	if (parts.size() > 0)
 	{
@@ -479,14 +498,16 @@ string mail::Attachment::generate(bool &error)
 			multipart_iterator=parts.begin();
 
 			mail::Header::mime content_type("Content-Type",
-							multipart_type);
+							multipart_type.value);
 
-			content_type.parameters=multipart_parameters;
+			content_type.header.parameters=
+				multipart_type.parameters;
+
 
 			return headers +
 				content_type.toString() + "\n\n"
 				RFC2045MIMEMSG "\n--"
-				+ multipart_parameters.get("boundary")
+				+ boundary
 				+ "\n";
 		}
 
@@ -503,7 +524,7 @@ string mail::Attachment::generate(bool &error)
 
 		++multipart_iterator;
 
-		return "\n--" + multipart_parameters.get("boundary")
+		return "\n--" + boundary
 			+ (multipart_iterator == parts.end()
 			   ? "--\n":"\n");
 	}
@@ -623,7 +644,6 @@ mail::Attachment &mail::Attachment::operator=(const Attachment &o)
 		message_rfc822=parts[0];
 
 	CPY(multipart_type);
-	CPY(multipart_parameters);
 	CPY(generating);
 	CPY(multipart_iterator);
 	CPY(encode_info);

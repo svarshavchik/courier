@@ -19,228 +19,14 @@
 
 #include <map>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
-mail::mimestruct::parameterList::parameterList()
-{
-}
-
-mail::mimestruct::parameterList::~parameterList()
-{
-}
-
-static int ins_param(const char *param,
-		     const char *value,
-		     void *voidp)
-{
-	string v=value;
-
-	if (v.size() > 2 && v[0] == '"' && v[v.size()-1] == '"')
-		v=v.substr(1, v.size()-2);
-
-	((std::map<string, string> *)voidp)
-		->insert(make_pair(string(param), v));
-	return 0;
-}
-
-void mail::mimestruct::parameterList::set(string name, string value,
-					  string charset,
-					  string language)
-{
-	iterator p, b, e;
-
-	mail::upper(name);
-	p=begin();
-	e=end();
-
-	size_t s=name.size();
-
-	while (p != e)
-	{
-		b=p++;
-		if (b->first == name)
-		{
-			param_map.erase(b);
-			continue;
-		}
-
-		if (b->first.size() > s &&
-		    b->first.substr(0, s) == name &&
-		    b->first[s] == '*') // RFC 2231
-		{
-			param_map.erase(b);
-			continue;
-		}
-	}
-
-	rfc2231_attrCreate(name.c_str(),
-			   value.c_str(),
-			   charset.c_str(),
-			   language.c_str(),
-			   ins_param,
-			   &param_map);
-}
-
-bool mail::mimestruct::parameterList::exists(string name) const
-{
-	mail::upper(name);
-
-	const_iterator b, e;
-
-	b=begin();
-	e=end();
-
-	size_t s=name.size();
-
-	while (b != e)
-	{
-		if (b->first == name)
-			return true;
-
-		if (b->first.size() > s &&
-		    b->first.substr(0, s) == name &&
-		    b->first[s] == '*') // RFC 2231
-			return true;
-		b++;
-	}
-	return false;
-}
-
-string mail::mimestruct::parameterList::get(string name,
-					    string chset)
-	const
-{
-	mail::upper(name);
-
-	struct rfc2231param *paramList=NULL;
-
-	const_iterator b, e;
-
-	b=begin();
-	e=end();
-
-	string stringRet;
-
-	try {
-		while (b != e)
-		{
-			if (rfc2231_buildAttrList(&paramList,
-						  name.c_str(),
-						  b->first.c_str(),
-						  b->second.c_str()) < 0)
-				LIBMAIL_THROW("Out of memory.");
-
-			b++;
-		}
-
-		int charsetLen;
-		int langLen;
-		int textLen;
-
-		rfc2231_paramDecode(paramList, NULL, NULL, NULL,
-				    &charsetLen,
-				    &langLen,
-				    &textLen);
-
-		vector<char> charsetStr, langStr, textStr;
-
-		charsetStr.insert(charsetStr.begin(), charsetLen, 0);
-		langStr.insert(langStr.begin(), langLen, 0);
-		textStr.insert(textStr.begin(), textLen, 0);
-
-		rfc2231_paramDecode(paramList, &*charsetStr.begin(),
-				    &*langStr.begin(),
-				    &*textStr.begin(),
-				    &charsetLen,
-				    &langLen,
-				    &textLen);
-
-		stringRet=&textStr[0];
-
-		if (chset.size() > 0 && !charsetStr.empty() && charsetStr[0])
-		{
-			bool err;
-
-			string s=unicode::iconvert::convert(stringRet,
-							 &charsetStr[0],
-							 chset,
-							 err);
-
-			if (!err)
-				stringRet=s;
-		}
-
-		rfc2231_paramDestroy(paramList);
-
-	} catch (...) {
-		rfc2231_paramDestroy(paramList);
-		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-	}
-
-	return stringRet;
-}
-
-std::string mail::mimestruct::parameterList::toString(string s) const
-{
-	const_iterator b=begin(), e=end();
-
-	while (b != e)
-	{
-		s += ";\n  ";
-
-		s += b->first;
-		if (b->second.size())
-		{
-			s += "=";
-
-			string::const_iterator p=b->second.begin(),
-				q=b->second.end();
-
-			while (p != q)
-			{
-				if (!rfc2047_qp_allow_word(*p))
-					break;
-				++p;
-			}
-
-			if (p != q)
-			{
-				s += "\"";
-
-				for (p=b->second.begin(); p != q; )
-				{
-					string::const_iterator r=p;
-
-					while (p != q)
-					{
-						if (*p == '"' || *p == '\\')
-							break;
-						++p;
-					}
-
-					s += string(r, p);
-
-					if (p != q)
-					{
-						s += "\\";
-						s += string(p, p+1);
-						++p;
-					}
-				}
-				s += "\"";
-			}
-			else
-				s += b->second;
-		}
-		++b;
-	}
-
-	return s;
-}
-
 mail::mimestruct::mimestruct()
-	: content_size(0), content_lines(0), smtputf8(false),
+	: content_type{"", true},
+	  content_disposition{"", true},
+	  content_size(0), content_lines(0), smtputf8(false),
 	  message_rfc822_envelope(0), parent(0)
 {
 }
@@ -251,7 +37,9 @@ mail::mimestruct::~mimestruct()
 }
 
 mail::mimestruct::mimestruct(const mail::mimestruct &cpy)
-	: content_size(0), content_lines(0),
+	: content_type{"", true},
+	  content_disposition{"", true},
+	  content_size(0), content_lines(0),
 	  message_rfc822_envelope(0), parent(0)
 {
 	(*this)=cpy;
@@ -259,9 +47,7 @@ mail::mimestruct::mimestruct(const mail::mimestruct &cpy)
 
 bool mail::mimestruct::messagerfc822() const
 {
-	std::string s=type + "/" + subtype;
-
-	return rfc2045_message_content_type(s.c_str());
+	return rfc2045::message_content_type(content_type.value);
 }
 
 mail::mimestruct &mail::mimestruct::operator=(const mail::mimestruct &cpy)
@@ -281,9 +67,8 @@ mail::mimestruct &mail::mimestruct::operator=(const mail::mimestruct &cpy)
 #define CPY(x) (x)=(cpy.x)
 
 	CPY(mime_id);
-	CPY(type);
-	CPY(subtype);
-	CPY(type_parameters);
+	CPY(content_type);
+	CPY(content_disposition);
 	CPY(content_id);
 	CPY(content_description);
 	CPY(content_transfer_encoding);
@@ -291,8 +76,6 @@ mail::mimestruct &mail::mimestruct::operator=(const mail::mimestruct &cpy)
 	CPY(content_lines);
 	CPY(content_md5);
 	CPY(content_language);
-	CPY(content_disposition);
-	CPY(content_disposition_parameters);
 #undef CPY
 
 	if (cpy.message_rfc822_envelope)

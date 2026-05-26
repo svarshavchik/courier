@@ -135,15 +135,13 @@ void CursesMessage::Shownpart::getflowed(bool &flowed, bool &delsp) const
 	flowed=false;
 	delsp=false;
 
-	if (structure->type_parameters.exists("FORMAT") &&
-	    rfc822hdr_namecmp(structure->type_parameters.get("FORMAT").c_str(),
-			      "FLOWED") == 0)
+	if (structure->content_type.format_flowed())
+	{
 		flowed=true;
 
-	if (flowed && structure->type_parameters.exists("DELSP") &&
-	    rfc822hdr_namecmp(structure->type_parameters.get("DELSP").c_str(),
-			      "YES") == 0)
-		delsp=true;
+		if (structure->content_type.delsp_yes())
+			delsp=true;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -274,7 +272,7 @@ bool CursesMessage::init(std::string mimeId,
 
 void CursesMessage::grok(mail::mimestruct &s, std::string mimeid)
 {
-	std::string disposition=s.content_disposition;
+	std::string disposition=s.content_disposition.value;
 
 	if (mimeid.size() > 0 && s.mime_id == mimeid)
 	{
@@ -318,7 +316,7 @@ void CursesMessage::grok(mail::mimestruct &s, std::string mimeid)
 
 	size_t n;
 
-	if (strcasecmp(s.subtype.c_str(), "alternative") == 0
+	if (s.content_type.value == "multipart/alternative"
 	    && mimeid.size() == 0)
 	{
 		size_t i;
@@ -327,12 +325,10 @@ void CursesMessage::grok(mail::mimestruct &s, std::string mimeid)
 		{
 			mail::mimestruct *c=s.getChild(n);
 
-			if (c->multipartsigned() &&
-			    c->getNumChildren() > 0)
+			if (c->multipartsigned() && c->getNumChildren() > 0)
 				c=c->getChild(0);
 
-			if (c->type == "MULTIPART" &&
-			    c->subtype == "X-MIMEGPG" &&
+			if (c->content_type.value == "multipart/x-mimegpg" &&
 			    tmpaccount && usingTmpaccount &&
 			    c->getNumChildren() > 1)
 				c=c->getChild(1);
@@ -350,7 +346,8 @@ void CursesMessage::grok(mail::mimestruct &s, std::string mimeid)
 
 	// Mark end of decrypted/verified content with a MULTIPART/X-MIMEGPG
 
-	if (s.subtype == "X-MIMEGPG" && tmpaccount && usingTmpaccount &&
+	if (s.content_type.value == "multipart/x-mimegpg" &&
+	    tmpaccount && usingTmpaccount &&
 	    mimeid.size() == 0)
 	{
 		shown.push_back(Shownpart());
@@ -362,20 +359,19 @@ void CursesMessage::grok(mail::mimestruct &s, std::string mimeid)
 
 bool (CursesMessage::* CursesMessage::getHandler(mail::mimestruct &s))(size_t)
 {
-	mail::upper(s.type);
-	mail::upper(s.subtype);
+	rfc2045::entity::tolowercase(s.content_type.value);
 
-	if (s.type == "TEXT")
+	if (s.content_type.value == "text" ||
+	    std::string_view{s.content_type.value}.substr(0, 5) == "text/")
 	{
-		if (s.subtype == "PLAIN" ||
-		    s.subtype == "HTML" ||
-		    (s.subtype == "X-GPG-OUTPUT" &&
+		if (s.content_type.value == "text/plain" ||
+		    s.content_type.value == "text/html" ||
+		    (s.content_type.value == "text/x-gpg-output" &&
 		     tmpaccount && usingTmpaccount))
 			return &CursesMessage::readTextPlain;
 	}
 
-	if (rfc2045_message_headers_content_type( (s.type + "/" + s.subtype)
-						  .c_str()))
+	if (rfc2045::message_headers_content_type(s.content_type.value))
 		return &CursesMessage::readTextPlain;
 
 	if (reformatCompletedFunc)
@@ -388,13 +384,11 @@ bool (CursesMessage::* CursesMessage::getHandler(mail::mimestruct &s))(size_t)
 
 	// Check for an external filter.
 
-	std::string fn=s.type + "." + s.subtype;
+	std::string fn=s.content_type.value;
 
-	size_t n;
+	std::replace(fn.begin(), fn.end(),'/', '.');
 
-	while ((n=fn.find('/')) != std::string::npos)
-		fn[n]='.'; // Joker
-
+	mail::upper(fn);
 	fn= fn + ".filter";
 
 	pid_t p=fork();
@@ -415,8 +409,9 @@ bool (CursesMessage::* CursesMessage::getHandler(mail::mimestruct &s))(size_t)
 		open("/dev/null", O_WRONLY);
 		dup2(1, 2);
 
-		std::string n=s.type + "/" + s.subtype;
+		std::string n=s.content_type.value;
 
+		mail::upper(n);
 		std::string execfn = myServer::getConfigDir() + "/" + fn;
 
 		execl(execfn.c_str(), execfn.c_str(), "check",
@@ -522,12 +517,11 @@ bool CursesMessage::filterExternal(size_t n)
 		}
 	}
 
-	std::string fn=s.type + "." + s.subtype;
+	std::string fn=s.content_type.value;
 
-	size_t x;
+	std::replace(fn.begin(), fn.end(), '/', '.');
 
-	while ((x=fn.find('/')) != std::string::npos)
-		fn[x]='.'; // Joker
+	mail::upper(fn);
 
 	fn= fn + ".filter";
 
@@ -601,8 +595,9 @@ bool CursesMessage::filterExternal(size_t n)
 			fflush(stdout);
 
 		}
-		std::string mimetype=s.type + "/" + s.subtype;
+		std::string mimetype=s.content_type.value;
 
+		mail::upper(mimetype);
 		std::string execfn = myServer::getConfigDir() + "/" + fn;
 
 		execl(execfn.c_str(), execfn.c_str(), "filter",
@@ -827,8 +822,8 @@ bool CursesMessage::reformat()
 				return false;
 		}
 
-		if (part.structure && part.structure->type == "MULTIPART"
-		    && part.structure->subtype == "X-MIMEGPG"
+		if (part.structure && part.structure->content_type.value
+		    == "multipart/x-mimegpg"
 		    && !part.envelope)
 		{
 			// End of decrypted/verified content
@@ -874,24 +869,35 @@ bool CursesMessage::reformat()
 		reformat_file.clear();
 		reformat_file.open(part.contents.c_str(), std::ios::in);
 
-		if (part.structure &&
-		    part.structure->type_parameters.exists("CHARSET"))
-		{
-			part.content_chset=part.structure->type_parameters
-				.get("CHARSET");
-		}
+		rfc2231::header::parameters_t::const_iterator charset;
 
 		if (part.structure &&
-		    part.structure->type == "TEXT" &&
-		    part.structure->subtype == "X-GPG-OUTPUT" &&
+		    (charset=part.structure->content_type.parameters.find(
+			    "charset"
+		    )) != part.structure->content_type.parameters.end())
+			part.content_chset=charset->second.value;
+
+		if (part.structure &&
+		    part.structure->content_type.value ==
+		    "text/x-gpg-output" &&
 		    tmpaccount && usingTmpaccount)
 		{
 			mail::mimestruct *s=part.structure->getParent();
 
-			if (s && s->type == "MULTIPART" &&
-			    s->subtype == "X-MIMEGPG")
+			if (s && s->content_type.value ==
+			    "multipart/x-mimegpg")
 			{
-				std::string rc=s->type_parameters.get("XPGPSTATUS");
+				std::string rc;
+
+				auto sval=s->content_type.parameters.find(
+					"xpgpstatus"
+				);
+
+				if (sval != s->content_type.parameters.end())
+				{
+					rc=sval->second.value;
+				}
+
 				int n=1;
 				if (rc.size() > 0)
 				{
@@ -925,8 +931,7 @@ bool CursesMessage::reformat()
 
 		if (part.filtered_content || // External filter HTML output
 		    ( part.structure &&
-		      part.structure->type == "TEXT" &&
-		      part.structure->subtype == "HTML"))
+		      part.structure->content_type.value == "text/html"))
 		{
 			HtmlParser *p=
 				new HtmlParser(this, part.content_chset,
@@ -1234,17 +1239,24 @@ void CursesMessage::getDescriptionOf(mail::mimestruct *mime,
 		name=mail::rfc2047::decoder().decode(name,
 						     unicode_default_chset());
 
-		if (name.size() == 0 &&
-		    mime->type_parameters.exists("NAME"))
-			name=mime->type_parameters.get("NAME",
-						       unicode_default_chset());
+		rfc2231::header::parameters_t::const_iterator param_iter;
 
-		if (mime->content_disposition_parameters
-		    .exists("FILENAME"))
+		if (name.size() == 0 &&
+		    (param_iter=mime->content_type.parameters.find("name")) !=
+		    mime->content_type.parameters.end())
 		{
-			filename=mime->content_disposition_parameters
-				.get("FILENAME",
-				     unicode_default_chset());
+			name=param_iter->second.value_in_charset(
+				unicode_default_chset()
+			);
+		}
+
+		if ((param_iter=mime->content_disposition.parameters
+		     .find("filename")) !=
+		    mime->content_disposition.parameters.end())
+		{
+			filename=param_iter->second.value_in_charset(
+				unicode_default_chset()
+			);
 		}
 
 		if (name.size() == 0)
@@ -1275,15 +1287,15 @@ void CursesMessage::getDescriptionOf(mail::mimestruct *mime,
 
 	if (mime)
 	{
-		std::string mimeType=mime->type
-			+ "/" +
-			mime->subtype;
+		std::string mimeType=mime->content_type.value;
 
 		if (showEncoding && mime->content_transfer_encoding.size() > 0)
 		{
 			mimeType += "; ";
 			mimeType += mime->content_transfer_encoding;
 		}
+
+		mail::upper(mimeType);
 
 		if (name.size() > 0)
 			name=Gettext(_("%1%; %2%"))
@@ -2446,10 +2458,13 @@ void CursesMessage::reply()
 
 	while (n < shown.size() &&
 	       tmpaccount && usingTmpaccount &&
-	       shown[n].structure &&
-	       shown[n].structure->type == "TEXT" &&
-	       shown[n].structure->subtype == "X-GPG-OUTPUT")
-		++n;
+	       shown[n].structure)
+	{
+		if (shown[n].structure->content_type.value == "text/x-gpg-output")
+			++n;
+		else
+			break;
+	}
 
 	bool flowed=false;
 	bool delsp=false;
@@ -2464,8 +2479,7 @@ void CursesMessage::reply()
 
 		if (part.structure)
 		{
-			content_type=part.structure->type + "/" +
-				part.structure->subtype;
+			content_type=part.structure->content_type.value;
 
 			part.getflowed(flowed, delsp);
 		}
@@ -2879,11 +2893,15 @@ void CursesMessage::forward()
 
 		while (n < shown.size() &&
 		       tmpaccount && usingTmpaccount &&
-		       shown[n].structure &&
-		       shown[n].structure->type == "TEXT" &&
-		       shown[n].structure->subtype == "X-GPG-OUTPUT")
-			++n;
-
+		       shown[n].structure
+		)
+		{
+			if (shown[n].structure->content_type.value ==
+			    "text/x-gpg-output")
+				++n;
+			else
+				break;
+		}
 		if (n < shown.size() && shown[n].contents.size())
 		{
 			std::ifstream i{shown[n].contents};
@@ -2897,9 +2915,8 @@ void CursesMessage::forward()
 
 			if (shown[n].structure)
 			{
-				content_type=shown[n].structure->type + "/" +
-					shown[n].structure->subtype;
-				shown[n].getflowed(flowed, delsp);
+				content_type=
+					shown[n].structure->content_type.value;
 			}
 			std::string line;
 

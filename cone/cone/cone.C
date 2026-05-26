@@ -89,11 +89,6 @@ char32_t ucwatchend;
 
 static Macros *macroPtr;
 
-extern "C" void rfc2045_error(const char *errmsg)
-{
-	LIBMAIL_THROW(errmsg);
-}
-
 //
 // Login and Cancel buttons on the account add/edit screens
 //

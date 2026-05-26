@@ -71,8 +71,7 @@ public:
 	virtual void assembleMultipart(size_t &,
 				       std::string,
 				       const std::vector<size_t> &,
-				       std::string,
-				       const mail::mimestruct::parameterList &,
+				       const rfc2231::header &content_type,
 				       mail::callback &);
 	void assembleMultipart(size_t &handleRet,
 			       std::string headers,
@@ -80,10 +79,9 @@ public:
 			       std::string multipart_type,
 			       mail::callback &cb)
 	{
-		mail::mimestruct::parameterList dummy;
-
 		return assembleMultipart(handleRet,
-					 headers, parts, multipart_type, dummy,
+					 headers, parts,
+					 rfc2231::header{multipart_type, true},
 					 cb);
 	}
 
@@ -136,4 +134,3 @@ public:
 LIBMAIL_END
 
 #endif
-

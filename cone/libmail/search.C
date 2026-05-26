@@ -20,6 +20,7 @@
 #include <iomanip>
 #include <errno.h>
 #include <string.h>
+#include <fstream>
 
 using namespace std;
 
@@ -589,11 +590,20 @@ void mail::searchOneMessage::checkNextHeader()
 				return;
 			}
 
-			if (hdrs->type == "TEXT" &&
-			    hdrs->type_parameters.exists("CHARSET"))
 			{
-				bodyCharset=hdrs->type_parameters
-					.get("CHARSET");
+				rfc2231::header::parameters_t::const_iterator
+					charset;
+
+				if ((hdrs->content_type.value == "text" ||
+					std::string_view{hdrs->content_type.value
+					}.substr(0, 5)
+					== "text/") &&
+					(charset=hdrs->content_type.parameters
+					 .find(
+						 "charset"
+					 )) != hdrs->content_type.parameters
+					.end())
+					bodyCharset=charset->second.value;
 			}
 			break;
 		default:

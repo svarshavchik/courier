@@ -1,3 +1,7 @@
+2026-05-25  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Switch to the C++ MIME parser.
+
 2026-05-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Fedora: handle Changes/droppingOfCertPemFile. After updating,

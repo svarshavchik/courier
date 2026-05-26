@@ -805,49 +805,19 @@ void CursesEdit::init()
 		s.content_transfer_encoding=
 			rfc2045::to_cte(entity.content_transfer_encoding);
 
-		s.type=entity.content_type.value;
+		s.content_type.value=entity.content_type.value;
 
-		size_t sn=s.type.find('/');
+		s.content_disposition.value="attachment";
 
-		if (sn != std::string::npos)
-		{
-			s.subtype=s.type.substr(sn+1);
-
-			s.type=s.type.substr(0, sn);
-		}
-
-		s.content_disposition="attachment";
-
-		rfc2045::entity::rfc2231_header content_disposition{
+		rfc2231::header content_disposition{
 			entity.content_disposition, true
 		};
 
-		auto iter=content_disposition.parameters.find("name");
-
-		if (iter != content_disposition.parameters.end())
-		{
-			s.content_disposition_parameters.set(
-				"NAME",
-				iter->second.value,
-				iter->second.charset,
-				iter->second.language
-			);
-		}
-
-		iter=content_disposition.parameters.find("filename");
-
-		if (iter != content_disposition.parameters.end())
-		{
-			s.content_disposition_parameters.set(
-				"FILENAME",
-				iter->second.value,
-				iter->second.charset,
-				iter->second.language
-			);
-		}
+		s.content_disposition.parameters=
+			content_disposition.parameters;
 
 		if (!content_disposition.value.empty())
-			s.content_disposition=content_disposition.value;
+			s.content_disposition.value=content_disposition.value;
 		s.content_size=stat_buf.st_size;
 
 		std::string name;
@@ -1220,15 +1190,23 @@ std::string CursesEdit::attach(std::string filename, std::string description,
 		}
 		else
 		{
-			mail::mimestruct::parameterList paramList;
+			fprintf(fp, "Content-Disposition: %s",
+				disposition.c_str()
+			);
 
-			paramList.set("filename", name_cpy,
-				      unicode_default_chset(),
-				      "");
-
-			std::string s=paramList.toString(disposition);
-
-			fprintf(fp, "Content-Disposition: %s\n", s.c_str());
+			rfc2231::attr_encode(
+				"filename",
+				name_cpy,
+				unicode_default_chset(),
+				"",
+				[&]
+				(auto name, auto value)
+				{
+					fprintf(fp, "; %s=%s",
+						name, value);
+				}
+			);
+			fprintf(fp, "\n");
 		}
 
 		// Figure out the MIME type.
@@ -1279,18 +1257,10 @@ std::string CursesEdit::attach(std::string filename, std::string description,
 					encoding);
 
 				pps.content_transfer_encoding=encoding;
-				pps.type=contentType;
-
-				{
-					size_t n=pps.type.find('/');
-
-					if (n != std::string::npos)
-					{
-						pps.subtype=pps.type
-							.substr(n+1);
-						pps.type=pps.type.substr(0, n);
-					}
-				}
+				pps.content_type.value=contentType;
+				rfc2045::entity::tolowercase(
+					pps.content_type.value
+				);
 
 				struct libmail_encode_info encodeInfo;
 
@@ -1348,12 +1318,19 @@ std::string CursesEdit::attach(std::string filename, std::string description,
 
 	pps.content_description=description;
 	pps.content_size=stat_buf.st_size;
-	pps.content_disposition=disposition;
+	pps.content_disposition.value=disposition;
+
+	rfc2045::entity::tolowercase(pps.content_disposition.value);
 
 	if (name_cpy.size() > 0)
-		pps.content_disposition_parameters
-			.set("FILENAME", name_cpy,
-			     unicode_default_chset(), "");
+		pps.content_disposition.parameters.emplace(
+			"filename",
+			rfc2231::header_parameter_value{
+				0,
+				unicode_default_chset(),
+				"",
+				name_cpy}
+		);
 
 	if (rename(tmpname.c_str(), attname.c_str()) < 0)
 	{

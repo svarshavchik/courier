@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
+#include <fstream>
 
 using namespace std;
 
@@ -106,8 +107,7 @@ bool mail::smapFETCHATTR::go()
 		msgList << " CONTENTS.PEEK=MIME(:MIME)";
 		hasAttr=true;
 		fetchingStructure=mail::mimestruct();
-		fetchingStructure.type="TEXT";
-		fetchingStructure.subtype="PLAIN";
+		fetchingStructure.content_type.value="text/plain";
 	}
 	else /* MIMESTRUCTURE can also be used to build an envelope */
 
@@ -177,8 +177,8 @@ void mail::smapFETCHATTR::beginProcessData(imap &imapAccount,
 						.messageStructureCallback(oldFetchingMessageNum-1,
 									  fetchingStructure);
 					fetchingStructure= mail::mimestruct();
-					fetchingStructure.type="TEXT";
-					fetchingStructure.subtype="PLAIN";
+					fetchingStructure.content_type.value=
+						"text/plain";
 				}
 
 				unsigned long mimeSize=0;
@@ -239,10 +239,9 @@ void mail::smapFETCHATTR::beginProcessData(imap &imapAccount,
 					{
 						doFetchingStructure=
 							p->addChild();
-						doFetchingStructure->type
-							="TEXT";
-						doFetchingStructure->subtype
-							="PLAIN";
+						doFetchingStructure
+							->content_type.value=
+							"text/plain";
 					}
 				}
 
@@ -313,8 +312,7 @@ void mail::smapFETCHATTR::checkMimeVersion()
 
 	mail::mimestruct dummy;
 
-	dummy.type="TEXT";
-	dummy.subtype="PLAIN";
+	dummy.content_type.value="text/plain";
 
 	dummy.content_size= doFetchingStructure->content_size;
 	dummy.content_lines= doFetchingStructure->content_lines;
@@ -492,25 +490,8 @@ void mail::smapFETCHATTR::processFetchedHeader(string hdr)
 			seenMimeVersion=1;
 
 		if (h == "CONTENT-TYPE")
-		{
-			string t;
-
-			parseMimeHeader(v, t,
-					doFetchingStructure->type_parameters);
-
-			size_t n=t.find('/');
-
-			if (n == std::string::npos)
-			{
-				doFetchingStructure->type=t;
-				doFetchingStructure->subtype="";
-			}
-			else
-			{
-				doFetchingStructure->type=t.substr(0, n);
-				doFetchingStructure->subtype=t.substr(n+1);
-			}
-		}
+			doFetchingStructure->content_type=
+				rfc2231::header{v, true};
 
 		if (h == "CONTENT-ID")
 			doFetchingStructure->content_id=v;
@@ -524,98 +505,7 @@ void mail::smapFETCHATTR::processFetchedHeader(string hdr)
 		if (h == "CONTENT-LANGUAGE")
 			doFetchingStructure->content_language=v;
 		if (h == "CONTENT-DISPOSITION")
-		{
-			parseMimeHeader(v, doFetchingStructure->
-					content_disposition,
-					doFetchingStructure->
-					content_disposition_parameters);
-		}
-	}
-}
-
-void mail::smapFETCHATTR::parseMimeHeader(std::string hdr,
-					  std::string &name,
-					  mail::mimestruct::parameterList &p)
-{
-	p=mail::mimestruct::parameterList();
-
-	string::iterator b=hdr.begin(), e=hdr.end();
-
-	name.clear();
-
-	while (b != e && *b != ';')
-	{
-		if (!unicode_isspace((unsigned char)*b))
-			name += *b;
-		++b;
-	}
-
-	mail::upper(name);
-
-	while (b != e)
-	{
-		if (unicode_isspace((unsigned char)*b) || *b == ';')
-		{
-			b++;
-			continue;
-		}
-
-		string::iterator s=b;
-
-		while (b != e)
-		{
-			if (*b == ';' ||
-			    unicode_isspace((unsigned char)*b) || *b == '=')
-				break;
-			++b;
-		}
-
-		string name(s, b), value;
-
-		while (b != e && unicode_isspace((unsigned char)*b))
-			++b;
-
-		if (b != e && *b == '=')
-		{
-			++b;
-
-			while (b != e && unicode_isspace((unsigned char)*b))
-				++b;
-
-			bool inQuote=false;
-
-			while (b != e)
-			{
-				if (!inQuote && (*b == ';' ||
-						 unicode_isspace(*b)))
-				{
-					b++;
-					break;
-				}
-
-				if (*b == '"')
-				{
-					++b;
-					inQuote= !inQuote;
-					continue;
-				}
-
-				if (*b == '\\')
-				{
-					++b;
-					if (b == e)
-						break;
-				}
-
-				value += *b;
-				b++;
-			}
-		}
-		else
-			value="1";
-
-		mail::upper(name);
-
-		p.set_simple(name, value);
+			doFetchingStructure->content_disposition=
+				rfc2231::header{v, true};
 	}
 }

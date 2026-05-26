@@ -15,6 +15,7 @@
 #include <vector>
 #include <errno.h>
 #include <cstring>
+#include <fstream>
 
 using namespace std;
 
@@ -97,9 +98,11 @@ void mail::addressbook::Add::go()
 
 	mail::Header::list headers;
 
-	headers << mail::Header::mime("Content-Type", "text/plain")
-		("charset", "utf-8");
+	mail::Header::mime content_type("Content-Type", "text/plain");
 
+	content_type.header.parameters.insert({"charset", "utf-8"});
+
+	headers << content_type;
 
 	mail::Attachment intro(headers,
 			       "This message is used to store Libmail's"

@@ -71,11 +71,6 @@ private:
 	static mail::mimestruct *findMimeId(mail::mimestruct *p,
 					    std::string mimeid,
 					    size_t recursionLevel);
-
-	static void parseMimeHeader(std::string,
-				    std::string &,
-				    mail::mimestruct::parameterList &);
-
 };
 
 LIBMAIL_END

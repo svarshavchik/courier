@@ -76,9 +76,7 @@ void mail::addMessage::assembleMessageRfc822(size_t &handleRet,
 void mail::addMessage::assembleMultipart(size_t &handleRet,
 					 std::string headers,
 					 const std::vector<size_t> &atts,
-					 std::string type,
-					 const mail::mimestruct
-					 ::parameterList &typeParams,
+					 const rfc2231::header &content_type,
 					 mail::callback &cb)
 {
 	std::vector<Attachment *> parts;
@@ -96,8 +94,8 @@ void mail::addMessage::assembleMultipart(size_t &handleRet,
 		++b;
 	}
 
-	assembleContent(handleRet, Attachment(headers, parts, type,
-					      typeParams), cb);
+	assembleContent(handleRet, Attachment(headers, parts, content_type),
+			cb);
 }
 
 bool mail::addMessage::assemble()

@@ -7,8 +7,8 @@
 #include "misc.H"
 #include "addressbookget.H"
 #include <courier-unicode.h>
-#include <ctype.h>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -63,8 +63,7 @@ void mail::addressbook::GetAddressList<T>::readstructure(string successMsg)
 	mail::mimestruct *lastChild;
 
 	if (n > 0 && (lastChild=mimeStructure.getChild(n-1))
-	    -> type == "TEXT" &&
-	    lastChild->subtype == "X-LIBMAIL-ADDRESSBOOK")
+	    ->content_type.value == "text/x-libmail-addressbook")
 	{
 		successFunc=&mail::addressbook::GetAddressList<T>::readContents;
 		addressBook->server->readMessageContentDecoded(msgNum, false,

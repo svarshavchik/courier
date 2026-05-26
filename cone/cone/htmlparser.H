@@ -136,8 +136,12 @@ class htmlParser {
 	public:
 		class towidth_iter;
 
+		using linebuf_calc_linebreak::submit;
+
 		linebuf(htmlParser *parserArg, size_t desiredWidthArg);
 		~linebuf();
+
+		using linebuf_calc_linebreak::finish;
 
 		void submit(char32_t ch, textAttributes attr)
 		{
@@ -152,7 +156,6 @@ class htmlParser {
 		}
 
 		void flush();
-
 		bool empty()
 		{
 			return isempty;

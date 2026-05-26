@@ -148,8 +148,7 @@ void CursesAttachmentDisplay::createAttList(mail::mimestruct *mimePtr,
 		// A multipart attachment.
 
 		CursesLabel *l=new CursesLabel(this,
-					       mimePtr->type + "/"
-					       + mimePtr->subtype);
+					       mimePtr->content_type.value);
 
 		if (!l)
 			LIBMAIL_THROW("Out of memory");
@@ -556,8 +555,7 @@ void CursesAttachmentDisplay::open(mail::mimestruct *mime)
 	if (messageInfoPtr.isDestroyed())
 		return;
 
-	if (mime && strcasecmp(mime->type.c_str(), GPGKEYMIMETYPEPART) == 0 &&
-	    strcasecmp(mime->subtype.c_str(), GPGKEYMIMESUBTYPEPART) == 0 &&
+	if (mime && mime->content_type.value == GPGKEYMIMETYPE &&
 	    GPG::gpg_installed())
 	{
 		myServer::promptInfo importPrompt=

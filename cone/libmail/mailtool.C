@@ -29,6 +29,7 @@
 #include <ctype.h>
 
 #include <sstream>
+#include <fstream>
 #include <errno.h>
 
 using namespace std;
@@ -42,12 +43,6 @@ static void error(string errmsg)
 static void error(mail::ACCOUNT *p)
 {
 	error(p->errmsg);
-}
-
-extern "C" void rfc2045_error(const char *p)
-{
-	cerr << "ERROR: " << p << endl;
-	exit (0);
 }
 
 static void showenvelope(const mail::envelope &env, string pfix="")
@@ -99,19 +94,13 @@ static void showenvelope(const mail::envelope &env, string pfix="")
 static void showstructure(const mail::mimestruct &mps, string pfix="")
 {
 	cout << pfix << "                  Mime-ID: " << mps.mime_id << endl;
-	cout << pfix << "             Content-Type: " << mps.type << "/"
-	     << mps.subtype << endl;
+	cout << pfix << "             Content-Type: " << mps.content_type.value
+	     << endl;
 
-	mail::mimestruct::parameterList::const_iterator b, e;
-
-	b=mps.type_parameters.begin();
-	e=mps.type_parameters.end();
-
-	while (b != e)
+	for (const auto &[name, value]:mps.content_type.parameters)
 	{
 		cout << pfix << "                          "
-		     << b->first << "=" << b->second << endl;
-		b++;
+		     << name << "=" << value.value << endl;
 	}
 
 	cout << pfix << "               Content-Id: " << mps.content_id << endl;
@@ -128,16 +117,12 @@ static void showstructure(const mail::mimestruct &mps, string pfix="")
 	cout << pfix << "         Content-Language: " << mps.content_language
 	     << endl;
 	cout << pfix << "      Content-Disposition: "
-	     << mps.content_disposition << endl;
+	     << mps.content_disposition.value << endl;
 
-	b=mps.content_disposition_parameters.begin();
-	e=mps.content_disposition_parameters.end();
-
-	while (b != e)
+	for (const auto &[name, value]:mps.content_disposition.parameters)
 	{
 		cout << pfix << "                          "
-		     << b->first << "=" << b->second << endl;
-		b++;
+		     << name << "=" << value.value << endl;
 	}
 
 	if (mps.messagerfc822())

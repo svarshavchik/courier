@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <vector>
 #include <cstring>
+#include <fstream>
 
 using namespace std;
 
@@ -367,8 +368,7 @@ void mail::addMessage
 
 	add->assembleMultipart(toDoInfo.handleId, collectedHeaders,
 			       parts,
-			       ct.value,
-			       ct.parameters,
+			       ct.header,
 			       *this);
 }
 

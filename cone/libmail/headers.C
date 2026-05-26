@@ -6,10 +6,10 @@
 #include "libmail_config.h"
 #include "rfcaddr.H"
 #include "headers.H"
-#include "rfc2047decode.H"
 #include "rfc2045/rfc2045.h"
 #include "rfc822/rfc2047.h"
 #include <errno.h>
+#include <fstream>
 
 using namespace std;
 
@@ -130,12 +130,12 @@ std::string mail::Header::addresslist::toString() const
 }
 
 mail::Header::mime::mime(string name)
-	: mail::Header(name)
+	: mail::Header(name), header{"", true}
 {
 }
 
 mail::Header::mime::mime(string name, string valueArg)
-	: mail::Header(name), value(valueArg)
+	: mail::Header(name), header{valueArg, true}
 {
 }
 
@@ -150,32 +150,8 @@ mail::Header::mime mail::Header::mime::fromString(string header)
 
 	mime m(header.substr(0, n));
 
-	header=header.substr(n);
-
-	rfc2045_parse_mime_header(header.c_str(), cb_type, cb_param, &m);
+	m.header=rfc2231::header{header.substr(n), true};
 	return m;
-}
-
-void mail::Header::mime::cb_type(const char *t, void *void_arg)
-{
-	mail::Header::mime *a=(mail::Header::mime *)void_arg;
-
-	a->value=t;
-	mail::upper(a->value);
-}
-
-void mail::Header::mime::cb_param(const char *name,
-				  const char *value,
-				  void *void_arg)
-{
-	mail::Header::mime *a=(mail::Header::mime *)void_arg;
-
-	string n=name;
-
-	mail::upper(n);
-
-	if (!a->parameters.exists(name))
-		a->parameters.set_simple(name, value);
 }
 
 mail::Header::mime::~mime()
@@ -184,79 +160,55 @@ mail::Header::mime::~mime()
 
 string mail::Header::mime::toString() const
 {
-	string h=name + ": " + value;
-	size_t init_offset=name.size()+2;
+	string h=name;
 
-	const_parameter_iterator b=begin();
-	const_parameter_iterator e=end();
-
-	size_t offset=h.size();
-
-	while (b != e)
+	char prevch=0;
+	for (char &c:h)
 	{
-		string w=b->first;
-		string s=b->second;
-
-		string::iterator sb=s.begin(), se=s.end();
-
-		if (sb != se)
-			w += "=";
-
-		while (sb != se)
+		if ((prevch < 'a' || prevch > 'z') &&
+		    (c >= 'a' && c <= 'z'))
 		{
-			if (!strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?*+-/=_", *sb))
-				break;
-			++sb;
+			c += 'A'-'a';
 		}
 
-		if (sb == se)
-		{
-			w += s;
-		}
-		else
-		{
-			w += "\"";
-
-			string::iterator p=s.begin();
-
-			for (sb=p; sb != se; sb++)
-			{
-				if (*sb == '\\' || *sb == '"')
-				{
-					w += string(p, sb) + "\\";
-					w += *sb;
-					p=sb+1;
-				}
-			}
-			w += string(p, sb);
-			w += "\"";
-		}
-
-		if (offset + w.size() > 74)
-		{
-			h += ";\n";
-			h.insert(h.end(), init_offset, ' ');
-			offset=init_offset;
-		}
-		else
-		{
-			h += "; ";
-			offset += 2;
-		}
-		h += w;
-		offset += w.size();
-		++b;
+		prevch=c;
+		if (prevch >= 'A' && prevch <= 'Z')
+			prevch += 'a'-'A';
 	}
+
+	h += ": " + header.value;
+
+	const char *sep="; ";
+
+	for (auto &[name, value] : header.parameters)
+	{
+		rfc2231::attr_encode(
+			name,
+			value.value,
+			value.charset,
+			value.language,
+			[&]
+			(const char *param, const char *value)
+			{
+				h += sep;
+				sep=";\n  ";
+				h += param;
+				h += "=";
+				h += value;
+			}
+		);
+	}
+
 	return h;
 }
 
 mail::Header *mail::Header::mime::clone() const
 {
-	mail::Header::mime *c=new mime(name, value);
+	mail::Header::mime *c=new mime(name, header.value);
 
 	if (!c)
 		throw strerror(errno);
-	c->parameters=parameters;
+	c->header=header;
 	return c;
 }
 

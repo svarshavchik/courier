@@ -7,12 +7,13 @@
 #include "config.h"
 #include "htmlparser.H"
 #include "htmlentity.h"
+#include <courier-unicode.h>
 #include <string.h>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
 #include <iterator>
-#include <errno.h>
+#include <fstream>
 
 #include "libmail/mail.H"
 #include "curses/widechar.H"
@@ -699,6 +700,7 @@ const struct htmlParser::taginfo * const htmlParser::knownTags[]={
 void htmlParser::flush()
 {
 	tounicode.end();
+	currentLine.finish();
 	currentLine.flush();
 	tounicode.begin(htmlCharset);
 }
@@ -1036,6 +1038,10 @@ void htmlParser::cgiDecode(const std::u32string &uc,
 void htmlParser::newTag()
 {
 	inTag=0;
+
+	// Flush anything left over in the bowels of linebreak processing.
+
+	currentLine.finish();
 
 	std::u32string tagStr=currentTag;
 

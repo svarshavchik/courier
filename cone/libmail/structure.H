@@ -14,7 +14,7 @@
 
 #include "namespace.H"
 #include "misc.H"
-
+#include	"rfc2045/rfc2045.h"
 LIBMAIL_START
 
 class envelope;
@@ -31,76 +31,22 @@ class mimestruct {
 
 public:
 
-	// The Content-Type: and Content-Disposition: headers have an
-	// optional parameter=value; list, which is parsed into a hash.
-	//
-	// The get() method fetches the parameter.  It's a pretty smart get()
-	// method.  If a character set is provided, the parameter value is
-	// mapped to the specified character set.  Additionally, the get()
-	// method automatically handles RFC 2231-encoded attributes.
-	// Ain't that cool?
-
-	class parameterList {
-		std::map<std::string, std::string> param_map;
-
-	public:
-		typedef std::map<std::string, std::string>::iterator iterator;
-		typedef std::map<std::string, std::string>::const_iterator
-			const_iterator;
-
-		iterator begin() { return param_map.begin(); }
-		iterator end() { return param_map.end(); }
-		const_iterator begin() const { return param_map.begin(); }
-		const_iterator end() const { return param_map.end(); }
-
-		parameterList();
-		~parameterList();
-
-		void set_simple(std::string name, std::string value)
-		{
-			mail::upper(name);
-			param_map.insert(std::make_pair(name, value));
-		}
-
-		void erase(std::string name)
-		{
-			mail::upper(name);
-			iterator p=param_map.find(name);
-
-			if (p != end())
-				param_map.erase(p);
-		}
-
-		void set(std::string name, std::string value,
-			 std::string charset,
-			 std::string language="");
-
-		bool exists(std::string name) const;
-		std::string get(std::string name,
-				std::string chset="") const;
-
-		std::string toString(std::string type) const;
-		// Create a header from "type", plus these parameters
-	};
-
 	std::string mime_id;	// An opaque identifier of this MIME section.
 
 
-	std::string type, subtype;	// text, plain
+	rfc2231::header content_type, content_disposition;
 
 	bool messagerfc822() const;
 
 	bool multipartsigned() const
 	{
-		return type == "MULTIPART" && subtype == "SIGNED";
+		return content_type.value == "multipart/signed";
 	}
 
 	bool multipartencrypted() const
 	{
-		return type == "MULTIPART" && subtype == "ENCRYPTED";
+		return content_type.value == "multipart/encrypted";
 	}
-
-	parameterList type_parameters;
 
 	// <charset, iso-8859-1>
 
@@ -113,10 +59,6 @@ public:
 
 	std::string content_md5;
 	std::string content_language;
-
-	std::string content_disposition;
-
-	parameterList content_disposition_parameters;
 
 	bool smtputf8;
 	/* 8 bit headers exist, set only when parsing a message from a file. */

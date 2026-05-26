@@ -14,7 +14,7 @@
 #include <errno.h>
 #include "rfc822/rfc822.h"
 #include <cstring>
-
+#include <fstream>
 using namespace std;
 
 mail::smapHandler::smapHandler(int timeoutValArg)
@@ -226,6 +226,7 @@ int mail::smapHandler::multiLineProcessBinary(imap &imapAccount,
 		imapAccount.smapBinaryCount -= buffer.size();
 		setTimeout();
 		processData(imapAccount, buffer);
+
 		return buffer.size(); // Processed everything
 	}
 
@@ -235,6 +236,7 @@ int mail::smapHandler::multiLineProcessBinary(imap &imapAccount,
 	imapAccount.smapBinaryCount=0;
 	setTimeout();
 	processData(imapAccount, buffer_cpy);
+
 	return buffer_cpy.size();
 }
 

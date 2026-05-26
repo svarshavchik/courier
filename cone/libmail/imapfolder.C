@@ -32,6 +32,7 @@
 #include <sstream>
 #include <limits.h>
 #include <errno.h>
+#include <fstream>
 
 using namespace std;
 
@@ -1589,6 +1590,8 @@ void mail::imapFOLDER_COUNT::get_envelope(mail::imap &imapAccount, Token t)
 static void fill_type_parameters(mail::imapparsefmt *ptr,
 				  mail::mimestruct &bodystructure)
 {
+	rfc2231::parameter_parser parser;
+
 	vector<mail::imapparsefmt *>::iterator
 		bb=ptr->children.begin(),
 		ee=ptr->children.end();
@@ -1599,11 +1602,11 @@ static void fill_type_parameters(mail::imapparsefmt *ptr,
 
 		if (bb != ee)
 		{
-			bodystructure.type_parameters.
-				set_simple(name, (*bb)->value);
+			parser(std::move(name), (*bb)->value);
 			bb++;
 		}
 	}
+	parser >> bodystructure.content_type.parameters;
 }
 
 
@@ -1611,11 +1614,13 @@ static void fill_disposition(mail::imapparsefmt *ptr,
 			     mail::mimestruct &bodystructure)
 {
 	if (ptr->children.size() > 0)
-		bodystructure.content_disposition=
+		bodystructure.content_disposition.value=
 			ptr->children[0]->value;
 
 	if (ptr->children.size() < 2)
 		return;
+
+	rfc2231::parameter_parser parser;
 
 	vector<mail::imapparsefmt *>::iterator
 		bb=ptr->children[1]->children.begin(),
@@ -1627,11 +1632,11 @@ static void fill_disposition(mail::imapparsefmt *ptr,
 
 		if (bb != ee)
 		{
-			bodystructure.content_disposition_parameters
-				.set_simple(name, (*bb)->value);
+			parser(std::move(name), (*bb)->value);
 			bb++;
 		}
 	}
+	parser >> bodystructure.content_disposition.parameters;
 }
 
 bool mail::imapFOLDER_COUNT::fillbodystructure(mail::imap &imapAccount,
@@ -1656,16 +1661,17 @@ bool mail::imapFOLDER_COUNT::fillbodystructure(mail::imap &imapAccount,
 		if (mime_id.length() == 0)
 			mime_id="1";
 
-		bodystructure.type= (*b)->value; b++;
+		bodystructure.content_type.value= (*b)->value; b++;
 
 		if (b != e)
 		{
-			bodystructure.subtype= (*b)->value;
+			bodystructure.content_type.value += "/";
+			bodystructure.content_type.value += (*b)->value;
 			b++;
 		}
 
-		mail::upper(bodystructure.type);
-		mail::upper(bodystructure.subtype);
+		rfc2045::entity::tolowercase(bodystructure.content_type.value);
+
 
 		if (b != e)
 		{
@@ -1737,7 +1743,10 @@ bool mail::imapFOLDER_COUNT::fillbodystructure(mail::imap &imapAccount,
 						bodystructure.content_lines;
 				}
 			}
-			else if (bodystructure.type == "TEXT")
+			else if (bodystructure.content_type.value == "text" ||
+				 std::string_view{
+					 bodystructure.content_type.value
+				 }.substr(0, 5) == "text/")
 			{
 				if (b != e)
 				{
@@ -1788,16 +1797,16 @@ bool mail::imapFOLDER_COUNT::fillbodystructure(mail::imap &imapAccount,
 			b++;
 		}
 
-		bodystructure.type="MULTIPART";
-		bodystructure.subtype="MIXED";
+		bodystructure.content_type.value="multipart/mixed";
 
 		if (b != e)
 		{
-			bodystructure.subtype= (*b)->value;
+			bodystructure.content_type.value="multipart/";
+			bodystructure.content_type.value+= (*b)->value;
 			b++;
 		}
 
-		mail::upper(bodystructure.subtype);
+		rfc2045::entity::tolowercase(bodystructure.content_type.value);
 
 		if (b != e)
 		{

@@ -16,6 +16,7 @@
 #include "structure.H"
 #include "rfcaddr.H"
 #include "namespace.H"
+#include "rfc2045/rfc2045.h"
 
 LIBMAIL_START
 
@@ -124,51 +125,29 @@ public:
 class Header::mime : public Header {
 
 public:
-	std::string value;
-	mimestruct::parameterList parameters;
+	rfc2231::header header;
 
-	typedef mimestruct::parameterList::iterator parameter_iterator;
-	typedef mimestruct::parameterList::const_iterator const_parameter_iterator;
+	typedef rfc2231::header::parameters_t::iterator parameter_iterator;
+	typedef rfc2231::header::parameters_t::const_iterator const_parameter_iterator;
 
 	mime(std::string name);
 	mime(std::string name, std::string value);
 
 	static mime fromString(std::string);
-private:
-	static void cb_type(const char *, void *);
-	static void cb_param(const char *, const char *, void *);
-public:
 
 	~mime();
 	std::string toString() const override;
-
-	mime &operator()(std::string name,
-			 std::string value)
-	{
-		parameters.set_simple(name, value);
-		return *this;
-	}
-
-	mime &operator()(std::string name,
-			 std::string value,
-			 std::string charset,
-			 std::string language="")
-	{
-		parameters.set(name, value, charset, language);
-		return *this;
-	}
-
-	parameter_iterator begin() { return parameters.begin(); }
-	parameter_iterator end() { return parameters.end(); }
+	parameter_iterator begin() { return header.parameters.begin(); }
+	parameter_iterator end() { return header.parameters.end(); }
 
 	const_parameter_iterator begin() const
 	{
-		return parameters.begin();
+		return header.parameters.begin();
 	}
 
 	const_parameter_iterator end() const
 	{
-		return parameters.end();
+		return header.parameters.end();
 	}
 	mail::Header *clone() const override;
 };

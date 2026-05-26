@@ -19,8 +19,6 @@
 // smtp::getSendFolder() creates a fake folder object.  Copying
 // messages to the fake folder sends them via SMTP.
 
-struct rfc2045;
-
 LIBMAIL_START
 
 class smtpFolder : public mail::folder {

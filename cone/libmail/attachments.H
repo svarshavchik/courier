@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include "namespace.H"
 #include "structure.H"
+#include "rfc2045/rfc2045.h"
 #include "rfc2045/encode.h"
 
 LIBMAIL_START
@@ -44,8 +45,7 @@ class Attachment {
 
 	std::vector<mail::Attachment *> parts; // This is a multipart object
 
-	std::string multipart_type;
-	mail::mimestruct::parameterList multipart_parameters;
+	rfc2231::header multipart_type{"", true};
 
 	bool try_boundary(std::string, int level);
 
@@ -87,9 +87,7 @@ public:
 		   const std::vector<Attachment *> &parts);
 	Attachment(std::string headers,
 		   const std::vector<Attachment *> &parts,
-		   std::string multipart_type,
-		   const mail::mimestruct::parameterList
-		   &multipart_parameters);
+		   const rfc2231::header &multipart_type);
 private:
 	void check_multipart_encoding();
 

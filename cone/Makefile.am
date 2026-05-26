@@ -1,5 +1,5 @@
 #
-# Copyright 2003-2021, S. Varshavchik.
+# Copyright 2003-2026, S. Varshavchik.
 #
 # See COPYING for distribution information.
 #

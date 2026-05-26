@@ -559,10 +559,7 @@ bool myServer::remoteConfig::loadconfig2(std::string filename,
 			return false;
 		}
 
-		if (strcasecmp(callbackInfo.mimeinfo.type.c_str(),
-			       MYTYPE) ||
-		    strcasecmp(callbackInfo.mimeinfo.subtype.c_str(),
-			       MYSUBTYPE))
+		if (callbackInfo.mimeinfo.content_type.value != CONTENTTYPE)
 		{
 			errmsg=notfound;
 			return false;

@@ -10,7 +10,9 @@
 #include "mbox.H"
 #include "mboxlock.H"
 
-struct rfc2045;
+namespace rfc2045 {
+	class entity;
+};
 
 LIBMAIL_START
 

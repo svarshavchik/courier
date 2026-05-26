@@ -26,6 +26,7 @@
 #include <queue>
 #include <set>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -1356,9 +1357,9 @@ void mail::generic::genericMakeMimeStructure(
 
 	s.mime_id=mime_id;
 
-	s.type="text/plain"; // Fixed below
+	s.content_type.value="text/plain";
 
-	s.content_transfer_encoding="8BIT";
+	s.content_transfer_encoding="8bit";
 
 	// Now read the headers, and figure out the rest
 
@@ -1404,17 +1405,17 @@ void mail::generic::genericMakeMimeStructure(
 
 		string *name;
 
-		mail::mimestruct::parameterList *attributes;
+		rfc2231::header::parameters_t *attributes;
 
 		if (header == "content-type")
 		{
-			name= &s.type;
-			attributes= &s.type_parameters;
+			name= &s.content_type.value;
+			attributes= &s.content_type.parameters;
 		}
 		else if (header == "content-disposition")
 		{
-			name= &s.content_disposition;
-			attributes= &s.content_disposition_parameters;
+			name= &s.content_disposition.value;
+			attributes= &s.content_disposition.parameters;
 		}
 		else
 		{
@@ -1424,30 +1425,14 @@ void mail::generic::genericMakeMimeStructure(
 			continue;
 		}
 
-		rfc2045::entity::rfc2231_header parsed_header{value, true};
+		rfc2231::header parsed_header{value, true};
 
 		*name=parsed_header.value;
-		mail::upper(*name);
 
-		for (const auto &[key, value] : parsed_header.parameters)
-		{
-			attributes->set_simple(key, value.value);
-		}
+		*attributes=parsed_header.parameters;
 	} while (headers.next());
 
-	// Fix content type/subtype
-
-	size_t n=s.type.find('/');
-
-	if (n != std::string::npos)
-	{
-		s.subtype=s.type.substr(n+1);
-		s.type=s.type.substr(0, n);
-	}
-
-	mail::upper(s.type);
-	mail::upper(s.subtype);
-	mail::upper(s.content_transfer_encoding);
+	rfc2045::entity::tolowercase(s.content_transfer_encoding);
 
 	// Now, parse the subsections
 	//
@@ -1455,8 +1440,9 @@ void mail::generic::genericMakeMimeStructure(
 	mail::envelope *env=NULL;
 
 	if (s.messagerfc822())
+	{
 		env= &s.getEnvelope(); // Subsection needs an envelope
-
+	}
 	if (mime_id.size() > 0)
 		mime_id += ".";
 

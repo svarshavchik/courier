@@ -5,6 +5,7 @@
 */
 
 #include "smapfetch.H"
+#include <fstream>
 
 using namespace std;
 
@@ -119,6 +120,7 @@ void mail::smapFETCH::beginProcessData(imap &imapAccount,
 void mail::smapFETCH::processData(imap &imapAccount,
 				  std::string data)
 {
+	std::ofstream{"/tmp/dump", std::ios::app} << data;
 	if (fetchingMessageNum > 0)
 	{
 		if ((sizeDone += data.size()) > estimatedSize)
