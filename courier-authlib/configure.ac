@@ -588,7 +588,7 @@ AC_ARG_WITH(mysql-includes,
 	MYSQL_CFLAGS="-I$withval"
 )
 
-AC_PATH_PROGS(MYSQL_CONFIG, mysql_config, mysql_config, $LPATH)
+AC_PATH_PROGS(MYSQL_CONFIG, mariadb_config mysql_config, mysql_config, $LPATH)
 
 if test -x "$MYSQL_CONFIG"
 then

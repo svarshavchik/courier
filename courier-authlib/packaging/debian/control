@@ -10,7 +10,6 @@ Build-Depends:
 	autoconf-archive,
 	libldap2-dev,
 	libmariadb-dev,
-	libmariadb-dev-compat,
 	libz-dev,
 	libsqlite3-dev,
 	libpq-dev,

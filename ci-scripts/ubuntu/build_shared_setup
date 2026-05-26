@@ -33,7 +33,6 @@ apt install -y \
 	libldap2-dev		\
 	libltdl-dev		\
 	libmariadb-dev		\
-	libmariadb-dev-compat   \
 	libnet-cidr-perl        \
 	libncurses-dev		\
 	locales			\
