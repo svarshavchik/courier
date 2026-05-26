@@ -1069,7 +1069,7 @@ static void adminrequest(std::string admin_path)
 				printf("Content-Type: %s\n\n",
 				       part->content_type.value.c_str());
 
-				rfc822::mime_decoder decoder{
+				rfc2045::mime_decoder decoder{
 					[&]
 					(const char *ptr, size_t n)
 					{

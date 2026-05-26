@@ -2785,9 +2785,3 @@ struct rw_transport *modulep=rw_search_transport(module);
 	exit (getsender(input, modulep));
 	return (0);
 }
-
-extern "C" void rfc2045_error(const char *errmsg)
-{
-	std::cout << "430 " << errmsg << std::endl << std::flush;
-	exit(1);
-}

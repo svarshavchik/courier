@@ -2188,22 +2188,24 @@ static void mk_one_receip_idna_or_utf8(struct esmtp_info *info,
 
 	if (utf8_or_idna_orig_receip)
 	{
-		char *encoded;
+		std::string encoded;
 
 		if (info->hassmtputf8)
 		{
-			encoded=rfc6533_encode(utf8_or_idna_orig_receip, 0);
+			encoded=rfc6533::encode(
+				utf8_or_idna_orig_receip,
+				rfc6533::format::utf_8
+			);
 		}
 		else
 		{
-			char *p=udomainace(utf8_or_idna_orig_receip);
-
-			encoded=rfc6533_encode(p, 1);
-			free(p);
+			encoded=rfc6533::encode(
+				utf8_or_idna_orig_receip,
+				rfc6533::format::rfc822
+			);
 		}
 		(*builder)(" ORCPT=", arg);
-		(*builder)(encoded, arg);
-		free(encoded);
+		(*builder)(encoded.c_str(), arg);
 	}
 
 	(*builder)("\r\n", arg);

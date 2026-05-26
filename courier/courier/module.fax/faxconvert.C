@@ -58,12 +58,6 @@
 #include <sstream>
 #include <algorithm>
 
-void rfc2045_error(const char *errmsg)
-{
-	fprintf(stderr, "faxconvert: %s\n", errmsg);
-	exit(1);
-}
-
 struct faxconvert_info {
 	rfc822::fdstreambuf &fd;
 	rfc2045::entity &topp;
@@ -412,7 +406,7 @@ static int do_filter(const rfc2045::entity *m,		/* The MIME section */
 		** filtering script.
 		*/
 
-		rfc822::mime_decoder decoder{
+		rfc2045::mime_decoder decoder{
 			[&filter_fd]
 			(const char *ptr, size_t n)
 			{

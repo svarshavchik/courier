@@ -73,14 +73,6 @@ struct my_esmtp_info {
 extern struct rw_list *esmtp_rw_install(const struct rw_install_info *);
 extern int isloopback(const char *);
 
-void rfc2045_error(const char *p)
-{
-	clog_msg_start_err();
-	clog_msg_str(p);
-	clog_msg_send();
-	_exit(1);
-}
-
 static struct esmtp_info *libesmtp_init(const char *host);
 
 static void libesmtp_deinit(struct esmtp_info *info);

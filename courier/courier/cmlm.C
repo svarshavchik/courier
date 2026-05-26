@@ -54,12 +54,6 @@
 #include <vector>
 #include <set>
 
-extern "C" void rfc2045_error(const char *errmsg)
-{
-        std::cerr << errmsg << std::endl;
-        exit(EX_SOFTWARE);
-}
-
 //	Keywords we try to trap for messages sent to the list address.
 
 

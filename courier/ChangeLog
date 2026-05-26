@@ -1,3 +1,7 @@
+2026-05-20  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* More compliant implementation of bounce formatting (RFC 6533).
+
 2026-05-08  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/cmlmmoderate.C (cmdmoderate): Replace C with C++ API.

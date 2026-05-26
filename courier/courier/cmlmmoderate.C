@@ -194,7 +194,7 @@ int cmdmoderate()
 
 		message.parse(parser);
 
-		rfc822::mime_decoder src{
+		rfc2045::mime_decoder src{
 			[&]
 			(const char *buf, size_t len)
 			{

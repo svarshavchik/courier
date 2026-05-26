@@ -760,8 +760,7 @@ static int rcpttolocal(const char *p, const char *r, const char *q)
 static int dorcptto2(const char *p, const char *q)
 {
 int	notifyn=0,notifyf=0,notifys=0,notifyd=0;
-char	*orcpt_utf8=0;
-size_t  orcpt_utf8_len=0;
+std::string orcpt_utf8;
 const char *r, *s;
 char	*t, *buf;
 const char *relayclient=getenv("RELAYCLIENT");
@@ -812,15 +811,12 @@ int	rc;
 				abort();
 			memcpy(encoded_orcpt, r, s-r);
 			encoded_orcpt[s-r]=0;
-			orcpt_utf8=rfc6533_decode(encoded_orcpt);
+			orcpt_utf8=rfc6533::decode(encoded_orcpt);
 			free(encoded_orcpt);
 		}
 	}
 
-	if (orcpt_utf8)
-		orcpt_utf8_len=strlen(orcpt_utf8);
-
-	buf=(char *)courier_malloc(q-p + relayclientl + orcpt_utf8_len + 10);
+	buf=(char *)courier_malloc(q-p + relayclientl + orcpt_utf8.size() + 10);
 	memcpy(buf, p, q-p);
 	t=buf + (q-p);
 	if (relayclientl)
@@ -841,11 +837,8 @@ int	rc;
 	}
 	*t++ = '\t';
 
-	if (orcpt_utf8_len)
-		memcpy(t, orcpt_utf8, orcpt_utf8_len);
-	t[orcpt_utf8_len]=0;
-	if (orcpt_utf8)
-		free(orcpt_utf8);
+	memcpy(t, orcpt_utf8.data(), orcpt_utf8.size());
+	t[orcpt_utf8.size()]=0;
 
 	submit_write_message(buf);
 	free(buf);

@@ -34,15 +34,6 @@
 #define SOFTFAIL_STATUS "430"
 #define VERIFICATION_FAILED_FORMAT	"%s <%s> verification failed.\n"
 
-extern "C" {
-
-	void rfc2045_error(const char *p)
-	{
-		fprintf(stderr, "%s\n", p);
-		exit(1);
-	}
-}
-
 struct verify_info {
 
 	char	sent[256];

@@ -999,21 +999,28 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 			}
 		}
 
-		fprintf(fp, "\nFinal-Recipient: rfc822; %s\nAction: %s\n",
-			ctf->receipients[i], action);
+		std::string recip=rfc6533::encode(
+			ctf->receipients[i],
+			rfc6533::format::utf_8
+		);
+		fprintf(fp, "\nFinal-Recipient: %s\nAction: %s\n",
+			recip.c_str(), action);
 
 		if (ctf->oreceipients_utf8[i] &&
 		    ctf->oreceipients_utf8[i][0])
 		{
-			char *encoded=rfc6533_encode(ctf->oreceipients_utf8[i],
-						     0);
-			char *p=strchr(encoded, ';');
-			if (p) *p=0;
+			auto encoded=rfc6533::encode(
+				ctf->oreceipients_utf8[i],
+				rfc6533::format::utf_8
+			);
+			auto semicolon=encoded.find(';');
+
+			if (semicolon != encoded.npos)
+				encoded=encoded.substr(0, semicolon);
 
 			fprintf(fp, "Original-Recipient: %s; %s\n",
-				encoded,
+				encoded.c_str(),
 				ctf->oreceipients_utf8[i]);
-			free(encoded);
 		}
 		fprintf(fp, "Status: %s\n", status);
 
