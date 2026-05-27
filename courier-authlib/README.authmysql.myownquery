@@ -168,7 +168,7 @@ value_length	- should be set to zero - it is used as a value size cache
 explanation: size is used to increase speed of calculation proccess
 	     value_length is used to cache length of a value during the
 	     parsing subroutines - it helps when substitution variable
-	     occures more than once within the query
+	     occurs more than once within the query
  
 Example:
 
@@ -285,7 +285,7 @@ DESCRIPTION
 
 RETURN VALUE
 
-	This function returns -1 if an error has occured and 0 if
+	This function returns -1 if an error has occurred and 0 if
 	everything went good.
 	
 4.3 ParsePlugin_counter
@@ -314,7 +314,7 @@ DESCRIPTION
 RETURN VALUE
 
 	This function returns the variable size or -1 if an error
-	has occured, 0 if everything went good.
+	has occurred, 0 if everything went good.
 
 4.4 ParsePlugin_builder
 
@@ -342,7 +342,7 @@ DESCRIPTION
 RETURN VALUE
 
 	This function returns the variable size or -1 if an error
-	has occured, 0 if everything went good.
+	has occurred, 0 if everything went good.
 
 4.5 parse_string
 
@@ -377,7 +377,7 @@ DESCRIPTION
 RETURN VALUE
 			   
 	Function returns pointer to the result buffer or NULL
-	if an error has occured.
+	if an error has occurred.
 
 WARNINGS
 
@@ -405,7 +405,7 @@ DESCRIPTION
 RETURN VALUE
 
 	It returns a pointer to the static buffer which contains
-	validated password string or NULL if an error has occured.
+	validated password string or NULL if an error has occurred.
 
 
 4.7 get_localpart

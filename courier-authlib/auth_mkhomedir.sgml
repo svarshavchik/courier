@@ -71,7 +71,7 @@
 
     <para>
       <function>auth_mkhomedir</function>() returns a non-zero value if
-      an error occured while creating the new account's home directory.
+      an error occurred while creating the new account's home directory.
       <function>auth_mkhomedir</function>() returns zero if the new
       account's home directory was created successfully, or if the
       account's home directory already exists.

@@ -52,7 +52,7 @@ passwords for different services.
 
     <para>
 <function>auth_passwd</function> returns 0 if the password was
-succesfully changed.
+successfully changed.
 A non-0 error code indicates a failure..</para>
   </refsect1>
   <refsect1 id="auth_passwd_see_also">
