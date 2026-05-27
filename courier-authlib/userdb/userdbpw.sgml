@@ -65,7 +65,7 @@ actual application that installs the <option>userdb</option> library.</para>
 password, it's really not.  HMAC-based challenge/response authentication
 mechanisms require the cleartext password to be available as cleartext.
 Computing an intermediate HMAC context does scramble the cleartext password,
-however if its compromised, it WILL be possible for an attacker to succesfully
+however if its compromised, it WILL be possible for an attacker to successfully
 authenticate.  Therefore, applications that use challenge/response
 authentication will store intermediate HMAC contexts in the "pw" fields in the
 userdb database, which will be compiled into the

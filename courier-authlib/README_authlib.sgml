@@ -1158,7 +1158,7 @@ int auth_changepwd(const char *service, const char *user,
 <literal>service</literal> is the name of the service whose password is to
 be changed (such as <quote>imap</quote> or <quote>pop3</quote>).
 <function>auth_changepwd</function> should return 0 if the password was
-changed succesfully, a negative value if <literal>user</literal> is invalid
+changed successfully, a negative value if <literal>user</literal> is invalid
 (the next authentication module will be tried), or a positive value if
 the password change request failed (no more modules will be tried).</para>
 

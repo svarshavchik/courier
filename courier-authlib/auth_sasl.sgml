@@ -132,7 +132,7 @@ information for the login ID specified by
     <title>RETURNS</title>
 
     <para>
-If the <acronym>SASL</acronym> conversation succesfully completes,
+If the <acronym>SASL</acronym> conversation successfully completes,
 <function>auth_sasl</function> or <function>auth_sasl_ex</function>
 initializes <parameter>*authtype_ret</parameter> and
 <parameter>*authdata_ret</parameter>.
@@ -148,9 +148,9 @@ these buffers when it's done with them.</para>
 <function>auth_sasl</function> or <function>auth_sasl_ex</function>
 returns
 <literal>AUTHSASL_OK</literal> when the
-<acronym>SASL</acronym> conversation succesfully completes, and
+<acronym>SASL</acronym> conversation successfully completes, and
 <parameter>*authtype_ret</parameter> and
-<parameter>*authdata_ret</parameter> are succesfully assembled.
+<parameter>*authdata_ret</parameter> are successfully assembled.
 Any other return indicates an error condition.
 Right now two error conditions are defined:</para>
     <variablelist>
