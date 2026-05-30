@@ -14,6 +14,7 @@
 #include "gettext.H"
 #include "curses/cursesstatusbar.H"
 #include "rfc822/rfc822.h"
+#include "rfc822/imaprefs.h"
 #include "rfc2045/rfc2045.h"
 #include "libmail/rfc2047decode.H"
 #include <courier-unicode.h>
@@ -52,17 +53,17 @@ public:
 
 	static void resort(myFolder &f);
 
-	static void resort(myFolder &f,	struct imap_refmsgtable *t);
+	static void resort(myFolder &f,	imap_refmsgtable *t);
 
 	static void resort_layout(myFolder &,
-				  struct imap_refmsg *,
-				  struct imap_refmsg *&,
+				  imap_refmsg *,
+				  imap_refmsg *&,
 
 				  vector<size_t> &,
 				  size_t);
 
 	static void resort_layout(myFolder &,
-				  struct imap_refmsg *,
+				  imap_refmsg *,
 				  vector<size_t> &,
 				  size_t, bool);
 
@@ -2471,25 +2472,14 @@ void myFolder::resort()
 //
 // Threading implementation
 
-#include "rfc822/imaprefs.h"
-
 void myFolder::thread::resort(myFolder &f)
 {
-	struct imap_refmsgtable *t=rfc822_threadalloc();
+	imap_refmsgtable t;
 
-	if (!t)
-		LIBMAIL_THROW((strerror(errno)));
-
-	try {
-		resort(f, t);
-		rfc822_threadfree(t);
-	} catch (...) {
-		rfc822_threadfree(t);
-		throw;
-	}
+	resort(f, &t);
 }
 
-void myFolder::thread::resort(myFolder &f, struct imap_refmsgtable *t)
+void myFolder::thread::resort(myFolder &f, imap_refmsgtable *t)
 {
 	vector<myFolder::Index>::iterator ib, ie;
 
@@ -2514,14 +2504,14 @@ void myFolder::thread::resort(myFolder &f, struct imap_refmsgtable *t)
 
 		refArray.push_back(0);
 
-		if (!rfc822_threadmsgrefs(t, ib->messageid.c_str(),
-					  &refArray[0],
-					  ib->subject_utf8.c_str(),
-					  NULL, ib->messageDate, n++))
+		if (!t->threadmsgrefs(ib->messageid.c_str(),
+				      &refArray[0],
+				      ib->subject_utf8.c_str(),
+				      NULL, ib->messageDate, n++))
 			LIBMAIL_THROW((strerror(errno)));
 	}
 
-	struct imap_refmsg *root=rfc822_thread(t);
+	imap_refmsg *root=t->thread();
 
 	if (!root)
 		LIBMAIL_THROW((strerror(errno)));
@@ -2529,7 +2519,7 @@ void myFolder::thread::resort(myFolder &f, struct imap_refmsgtable *t)
 	vector<size_t> active_threads;
 	size_t threadLevel=0;
 
-	struct imap_refmsg *lastMsg=NULL;
+	imap_refmsg *lastMsg=NULL;
 
 	f.sorted_index.clear();
 	f.sorted_index.reserve(cnt);
@@ -2565,8 +2555,8 @@ void myFolder::thread::resort(myFolder &f, struct imap_refmsgtable *t)
 
 
 void myFolder::thread::resort_layout(myFolder &f,
-				     struct imap_refmsg *nodePtr,
-				     struct imap_refmsg *&lastPtr,
+				     imap_refmsg *nodePtr,
+				     imap_refmsg *&lastPtr,
 
 				     vector<size_t> &active_threads,
 				     size_t threadLevel)
@@ -2590,7 +2580,7 @@ void myFolder::thread::resort_layout(myFolder &f,
 }
 
 void myFolder::thread::resort_layout(myFolder &f,
-				     struct imap_refmsg *node,
+				     imap_refmsg *node,
 				     vector<size_t> &active_threads,
 				     size_t threadLevel,
 				     bool popLast)
@@ -2621,7 +2611,7 @@ void myFolder::thread::resort_layout(myFolder &f,
 
 	active_threads.push_back(threadLevel);
 
-	struct imap_refmsg *last=NULL;
+	imap_refmsg *last=NULL;
 
 	if (threadLevel < MAXTHREADLEVEL)
 		for (node=node->firstchild; node; node=node->nextsib)
