@@ -6,6 +6,7 @@
 #include	"config.h"
 #include	"courier.h"
 #include	"rfc822/rfc822.h"
+#include	"rfc822/rfc2047.h"
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
@@ -14,12 +15,11 @@
 #if	HAVE_UNISTD_H
 #include	<unistd.h>
 #endif
+#include	<unordered_set>
+#include	<string>
+#include	<algorithm>
 
-
-struct delivered_to {
-	struct delivered_to *next;
-	char *addr;
-	} *delivtolist=0;
+std::unordered_set<std::string> delivtolist;
 char *myaddr;
 static int exit_code;
 
@@ -31,7 +31,6 @@ static void initdelivto()
 {
 char	buf[BUFSIZ];
 char	*p, *r, *s;
-struct delivered_to *q;
 int inheader=1;
 
 	p=getenv("DTLINE");
@@ -71,15 +70,7 @@ int inheader=1;
 			s=ss;
 		}
 
-		q=malloc(sizeof(*q)+1+strlen(s));
-		if (!q)
-		{
-			perror("malloc");
-			exit(EX_TEMPFAIL);
-		}
-		strcpy(q->addr=(char *)(q+1), s);
-		q->next=delivtolist;
-		delivtolist=q;
+		delivtolist.insert(s);
 		free(s);
 	}
 }
@@ -88,10 +79,7 @@ static void readforward(FILE *f, int n)
 {
 char	buf[BUFSIZ];
 char	*p;
-struct	rfc822t *t;
-struct	rfc822a *a;
-int	i;
-char	*sep;
+const char	*sep;
 
 	while (fgets(buf, sizeof(buf), f))
 	{
@@ -127,109 +115,84 @@ char	*sep;
 			printf("%s\n", p);
 			continue;
 		}
-		t=rfc822t_alloc_new(p, NULL, NULL);
-		if (!t || !(a=rfc822a_alloc(t)))
-		{
-			perror("malloc");
-			exit(EX_NOUSER);
-		}
+		rfc822::tokens t{p};
+		rfc822::addresses a{t};
 
-		for (i=0; i<a->naddrs; i++)
+		for (auto &addr:a)
 		{
-			if (a->addrs[i].tokens &&
-			    a->addrs[i].tokens->token == '"' &&
-			    a->addrs[i].tokens->next == NULL)
-				a->addrs[i].tokens->token=0;
+			std::string p;
 
-			p=rfc822_getaddr(a, i);
-			if (!p)
-			{
-				perror("malloc");
-				exit(EX_NOUSER);
+			addr.address.unquote(
+				std::back_inserter(p)
+			);
+
+			if (p.empty())
+				continue;
+
+			switch (p[0]) {
+			case '|':
+			case '/':
+			case '.':
+				printf("%s\n", p.c_str());
 			}
-			if (*p == '|' || *p == '/')
-			{
-				printf("%s\n", p);
-			}
-			free(p);
 		}
 		sep=0;
-		for (i=0; i<a->naddrs; i++)
+		for (auto &addr:a)
 		{
-		char	*q, *r;
-		struct delivered_to *s;
-		char	*t;
-		char	*orig;
+			std::string p;
 
-			p=rfc822_getaddr(a, i);
-			if (!p)
-			{
-				perror("malloc");
-				exit(EX_NOUSER);
-			}
-			if (*p == '|' || *p == '/' || *p == '.')
-			{
-				free(p);
+			addr.address.unquote(
+				std::back_inserter(p)
+			);
+
+			if (p.empty())
+				continue;
+
+			switch (p[0]) {
+			case '|':
+			case '/':
+			case '.':
 				continue;
 			}
-			q=p;
-			if (*q == '\\')
-				++q;
 
-			q=udomainutf8(q);
-			free(p);
-			p=q;
-			r=strchr(q, '@');
+			std::string q;
+
+			addr.address.display_address(
+				unicode::utf_8,
+				std::back_inserter(q)
+			);
+
+			auto r=strchr(q.data(), '@');
 
 			if (!r || config_islocal(r+1, 0))
 			{
-				q=ulocallower(q);
-				free(p);
-				p=q;
+				auto ptr=ulocallower(q.data());
+				q=ptr;
+				free(ptr);
 			}
 
-			t=0;
-			orig=q;
+			std::string orig=q;
 
-			if (strchr(q, '@') == 0)
+			if (strchr(q.data(), '@') == 0)
 			{
-				t=malloc(strlen(q)+1+strlen(myaddr));
-					/* overkill, yeah */
-				if (!t)
-				{
-					perror("malloc");
-					exit(EX_NOUSER);
-				}
-				strcat(strcpy(t, q), strchr(myaddr, '@'));
-				q=t;
+				q += strchr(myaddr, '@');
 			}
 
-			if (strcmp(myaddr, q) == 0)
+			if (q == myaddr)
 			{
 				exit_code=0;
-				free(p);
-				if (t)	free(t);
 				continue;
 			}
 
-			for (s=delivtolist; s; s=s->next)
-			{
-				if (strcmp(s->addr, q) == 0)
-					break;
-			}
-			if (!s)
+			if (delivtolist.find(q) == delivtolist.end())
 			{
 				if (sep)	printf("%s", sep);
 				else	printf("!");
 				sep=", ";
-				printf("%s", orig);
+				printf("%s", orig.c_str());
 			}
-			free(p);
-			if (t)	free(t);
 		}
 		if (sep)	printf("\n");
-		rfc822a_free(a);
-		rfc822t_free(t);
 	}
 }
 

@@ -8,6 +8,7 @@
 #include	"cmlmsubunsubmsg.h"
 #include	"afx/afx.h"
 #include	"rfc822/rfc822.h"
+#include	"rfc822/rfc2047.h"
 #include	"random128/random128.h"
 #include	"dbobj.h"
 #include	"mydirent.h"
@@ -48,36 +49,14 @@ int dounsub(const char *address)
 		0, 0));
 }
 
-extern "C" {
-#if 0
-}
-#endif
-
-static void display_header(const char *p,
-			   size_t cnt,
-			   void *dummy)
-{
-	std::string *s=reinterpret_cast<std::string *>(dummy);
-
-	s->append(p, cnt);
-}
-
-#if 0
-{
-#endif
-}
 std::string extract_alias_to_subscribe(const std::string &msg)
 {
 	std::string h(header_s(msg, "subject"));
 
 	std::string decoded_header;
 
-	rfc822_display_hdrvalue("Subject",
-				h.c_str(),
-				"utf-8",
-				display_header,
-				NULL,
-				&decoded_header);
+	rfc822::display_header("subject", h, unicode::utf_8,
+			       std::back_inserter(decoded_header));
 
 	return decoded_header;
 }

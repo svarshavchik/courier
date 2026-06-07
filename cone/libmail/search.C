@@ -734,34 +734,20 @@ void mail::searchOneMessage::searchEnvelope(const mail::envelope &envelope)
 		return;
 	}
 
-	char *q=rfc822_display_hdrvalue_tobuf(header,
-					      searchStr.c_str(),
-					      "utf-8",
-					      NULL, NULL);
+	std::u32string uc;
 
-	if (!q)
-		return;
+	rfc822::display_header_unicode(header, searchStr,
+				       std::back_inserter(uc));
 
 	if (!searchEngine.setString(searchInfo.param2, searchCharset))
 	{
-		free(q);
 		return;
 	}
 
 	if (searchEngine.getSearchLen() == 0)
 	{
-		free(q);
 		return;
 	}
-
-	std::u32string uc;
-
-	if (!unicode::iconvert::convert(q, "utf-8", uc))
-	{
-		free(q);
-		return;
-	}
-	free(q);
 
 	for (std::u32string::iterator
 		     b(uc.begin()), e(uc.end()); b != e; ++b)
@@ -890,40 +876,16 @@ void mail::searchOneMessage::search(string text)
 					      searchInfo.param1.c_str()))
 				continue;
 
-			char *value=
-				rfc822_display_hdrvalue_tobuf(headername
-							      .c_str(),
-							      s.c_str(),
-							      "utf-8",
-							      NULL,
-							      NULL);
+			std::u32string uc;
 
-			if (!value)
-				continue;
+			rfc822::display_header_unicode(
+				headername,
+				s,
+				std::back_inserter(uc)
+			);
 
-
-			char32_t *uc;
-			size_t ucsize;
-
-			if (unicode_convert_tou_tobuf(value,
-							strlen(value),
-							"utf-8",
-							&uc,
-							&ucsize,
-							NULL))
-			{
-				free(value);
-				continue;
-			}
-			free(value);
-
-			size_t n;
-
-			for (n=0; n<ucsize; ++n)
-			{
-				searchEngine << uc[n];
-			}
-			free(uc);
+			for (auto c:uc)
+				searchEngine << c;
 
 			if (searchEngine)
 				searchFlag=true;

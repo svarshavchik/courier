@@ -110,28 +110,28 @@ static void getmsginfo(unsigned long n, struct idxinfo &info)
 	info.msgsender=header_s(headers, "from");
 
 	{
-		char *p=rfc822_display_hdrvalue_tobuf("subject",
-						      info.msgsubj.c_str(),
-						      "utf-8",
-						      NULL, NULL);
+		std::string p;
 
-		if (p)
-		{
-			info.msgsubj=p;
-			free(p);
-		}
+		rfc822::display_header(
+			"subject",
+			info.msgsubj,
+			unicode::utf_8,
+			std::back_inserter(p)
+		);
+
+		info.msgsubj=p;
 	}
 
 	{
-		char *p=rfc822_display_hdrvalue_tobuf("from",
-						      info.msgsender.c_str(),
-						      "utf-8",
-						      NULL, NULL);
-		if (p)
-		{
-			info.msgsender=p;
-			free(p);
-		}
+		std::string p;
+
+		rfc822::display_header(
+			"from",
+			info.msgsender,
+			unicode::utf_8,
+			std::back_inserter(p)
+		);
+		info.msgsender=p;
 	}
 
 	TrimLeft(info.msgsubj);

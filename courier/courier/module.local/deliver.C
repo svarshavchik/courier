@@ -42,14 +42,15 @@
 #endif
 
 #include	"rfc822/rfc822.h"
+#include	"rfc822/rfc2047.h"
 #include	"maildir/maildircreate.h"
 #include	"maildir/maildirquota.h"
 #include	"liblock/config.h"
 #include	"liblock/liblock.h"
 #include	"liblock/mail.h"
 
-extern char *local_dotcourier(const char *, const char *, const char **);
-extern char *local_extension();
+extern "C" char *local_dotcourier(const char *, const char *, const char **);
+extern "C" char *local_extension();
 
 static int chkdelto(FILE *, const char *);
 static void dodel(const char *, const char *, FILE *, char *,
@@ -244,11 +245,14 @@ static void mkdelheaders_ace(const char *sender,
 
 	time(&t);
 	curtime=ctime(&t);
-	if ((*ufromline=malloc(strlen(curtime)+strlen(sender)+30))==0||
-	    (*dtline=malloc(strlen(receipient)+
-			    sizeof("Delivered-To: "))) == 0 ||
-	    (*rpline=malloc(strlen(sender) +
-			    sizeof("Return-Path: <>"))) == 0)
+	if ((*ufromline=reinterpret_cast<char *>(
+		     malloc(strlen(curtime)+strlen(sender)+30)))==0||
+	    (*dtline=reinterpret_cast<char *>(
+		    malloc(strlen(receipient)+
+			   sizeof("Delivered-To: ")))) == 0 ||
+	    (*rpline=reinterpret_cast<char *>(
+		    malloc(strlen(sender) +
+			   sizeof("Return-Path: <>")))) == 0)
 	{
 		perror("malloc");
 		exit(EX_TEMPFAIL);
@@ -304,7 +308,8 @@ static void dodel(const char *username, const char *userhome,
 	{
 	const char *p= *defaultmail ? defaultmail:config_defaultdelivery();
 
-		if ((ctl=malloc(strlen(p)+1)) == 0)
+		if ((ctl=reinterpret_cast<char *>(
+			     malloc(strlen(p)+1))) == 0)
 		{
 			perror("malloc");
 			exit(EX_TEMPFAIL);
@@ -399,40 +404,25 @@ static void dodel(const char *username, const char *userhome,
 		if (*ctl == '&' || *ctl == '!')	++ctl;	/* Legacy */
 		{
 			const char *addresses=ctl;
-			struct rfc822t *tokens;
-			struct rfc822a *addrlist;
-			int n;
 
 			ctl=skip_eol(ctl, 1);
-			if ((tokens=rfc822t_alloc_new(addresses, NULL,
-						      NULL)) == 0 ||
-				(addrlist=rfc822a_alloc(tokens)) == 0)
-			{
-				perror("malloc");
-				exit(EX_TEMPFAIL);
-			}
 
-			for (n=0; n<addrlist->naddrs; ++n)
-			{
-				char *p;
+			rfc822::tokens t{addresses};
+			rfc822::addresses a{t};
 
-				if (addrlist->addrs[n].tokens == NULL)
+			for (auto &addr:a)
+			{
+				std::string s;
+
+				addr.address.display_address(
+					unicode::utf_8,
+					std::back_inserter(s)
+				);
+
+				if (s.empty())
 					continue;
-
-				p=rfc822_display_addr_tobuf(addrlist, n,
-							    NULL);
-
-				if (!p)
-				{
-					perror(addresses);
-					exit(EX_TEMPFAIL);
-				}
-
-				printf("%s\n", p);
-				free(p);
+				printf("%s\n", s.c_str());
 			}
-			rfc822a_free(addrlist);
-			rfc822t_free(tokens);
 			fflush(stdout);
 		}
 	}
@@ -624,7 +614,7 @@ struct maildir_tmpcreate_info createInfo;
 		int n;
 
 		while ((n=fread(buffer, 1, sizeof(buffer), f)) > 0)
-			if (fwrite(buffer, 1, n, delivf)  != n)
+			if (fwrite(buffer, 1, n, delivf)  != (size_t)n)
 				break;
 	}
 
@@ -700,13 +690,21 @@ const char *shell=getenv("SHELL");
 	if (!shell)
 		shell="/bin/sh";
 
-	envs[0]=courier_malloc(strlen(userhome)+sizeof("HOME="));
+	envs[0]=reinterpret_cast<char *>(
+		courier_malloc(strlen(userhome)+sizeof("HOME="))
+	);
 	strcat(strcpy(envs[0], "HOME="), userhome);
-	envs[1]=courier_malloc(strlen(username)+sizeof("USER="));
+	envs[1]=reinterpret_cast<char *>(
+		courier_malloc(strlen(username)+sizeof("USER="))
+	);
 	strcat(strcpy(envs[1], "USER="), username);
-	envs[2]=courier_malloc(strlen(sender)+sizeof("SENDER="));
+	envs[2]=reinterpret_cast<char *>(
+		courier_malloc(strlen(sender)+sizeof("SENDER="))
+	);
 	strcat(strcpy(envs[2], "SENDER="), sender);
-	envs[3]=courier_malloc(strlen(receipient)+sizeof("RECIPIENT="));
+	envs[3]=reinterpret_cast<char *>(
+		courier_malloc(strlen(receipient)+sizeof("RECIPIENT="))
+	);
 	strcat(strcpy(envs[3], "RECIPIENT="), receipient);
 
 	p=strrchr(receipient, '@');
@@ -717,63 +715,91 @@ const char *shell=getenv("SHELL");
 		p=receipient+strlen(receipient);
 	}
 
-	envs[4]=courier_malloc(strlen(hostp)+sizeof("HOST="));
+	envs[4]=reinterpret_cast<char *>(
+		courier_malloc(strlen(hostp)+sizeof("HOST="))
+	);
 	strcat(strcpy(envs[4], "HOST="), hostp);
-	envs[5]=courier_malloc(p-receipient + sizeof("LOCAL="));
+	envs[5]=reinterpret_cast<char *>(
+		courier_malloc(p-receipient + sizeof("LOCAL="))
+	);
 	strcpy(envs[5], "LOCAL=");
 	memcpy(envs[5]+6, receipient,  p-receipient);
 	envs[5][6+(p-receipient)]=0;
 
-	envs[6]=courier_malloc(strlen(extension)+sizeof("EXT="));
+	envs[6]=reinterpret_cast<char *>(
+		courier_malloc(strlen(extension)+sizeof("EXT="))
+	);
 	strcat(strcpy(envs[6], "EXT="), extension);
 
 	p=strchr(extension, '-');
 	if (p)	p++;
 
-	envs[7]=courier_malloc((p ? strlen(p):0)+sizeof("EXT2="));
+	envs[7]=reinterpret_cast<char *>(
+		courier_malloc((p ? strlen(p):0)+sizeof("EXT2="))
+	);
 	strcat(strcpy(envs[7], "EXT2="), p ? p:"");
 
 	if (p)
 		p=strchr(p, '-');
 	if (p)	p++;
 
-	envs[8]=courier_malloc((p ? strlen(p):0)+sizeof("EXT3="));
+	envs[8]=reinterpret_cast<char *>(
+		courier_malloc((p ? strlen(p):0)+sizeof("EXT3="))
+	);
 	strcat(strcpy(envs[8], "EXT3="), p ? p:"");
 
 	if (p)
 		p=strchr(p, '-');
 	if (p)	p++;
 
-	envs[9]=courier_malloc((p ? strlen(p):0)+sizeof("EXT4="));
+	envs[9]=reinterpret_cast<char *>(
+		courier_malloc((p ? strlen(p):0)+sizeof("EXT4="))
+	);
 	strcat(strcpy(envs[9], "EXT4="), p ? p:"");
 
-	envs[10]=courier_malloc((defaultext ? strlen(defaultext):0)+sizeof("DEFAULT="));
+	envs[10]=reinterpret_cast<char *>(
+		courier_malloc((defaultext ? strlen(defaultext):0)+sizeof("DEFAULT="))
+	);
 	strcat(strcpy(envs[10], "DEFAULT="), defaultext ? defaultext:"");
 
-	envs[11]=courier_malloc(strlen(dtline)+sizeof("DTLINE="));
+	envs[11]=reinterpret_cast<char *>(
+		courier_malloc(strlen(dtline)+sizeof("DTLINE="))
+	);
 	strcat(strcpy(envs[11], "DTLINE="), dtline);
 
-	envs[12]=courier_malloc(strlen(rpline)+sizeof("RPLINE="));
+	envs[12]=reinterpret_cast<char *>(
+		courier_malloc(strlen(rpline)+sizeof("RPLINE="))
+	);
 	strcat(strcpy(envs[12], "RPLINE="), rpline);
 
-	envs[13]=courier_malloc(strlen(ufromline)+sizeof("UFLINE="));
+	envs[13]=reinterpret_cast<char *>(
+		courier_malloc(strlen(ufromline)+sizeof("UFLINE="))
+	);
 	strcat(strcpy(envs[13], "UFLINE="), ufromline);
 
 	p=getenv("PATH");
 	if (!p)	p="/bin:/usr/bin:/usr/local/bin";
 
-	envs[14]=courier_malloc(strlen(p)+sizeof("PATH="));
+	envs[14]=reinterpret_cast<char *>(
+		courier_malloc(strlen(p)+sizeof("PATH="))
+	);
 	strcat(strcpy(envs[14], "PATH="), p);
 
-	envs[15]=courier_malloc(strlen(quota)+sizeof("MAILDIRQUOTA="));
+	envs[15]=reinterpret_cast<char *>(
+		courier_malloc(strlen(quota)+sizeof("MAILDIRQUOTA="))
+	);
 	strcat(strcpy(envs[15], "MAILDIRQUOTA="), quota);
 
-	envs[16]=courier_malloc(strlen(maildropdefault)
-				+sizeof("MAILDROPDEFAULT="));
+	envs[16]=reinterpret_cast<char *>(
+		courier_malloc(strlen(maildropdefault)
+			       +sizeof("MAILDROPDEFAULT="))
+	);
 	strcat(strcpy(envs[16], "MAILDROPDEFAULT="), maildropdefault);
 
-	envs[17]=courier_malloc(strlen(shell)
-				+sizeof("SHELL="));
+	envs[17]=reinterpret_cast<char *>(
+		courier_malloc(strlen(shell)
+			       +sizeof("SHELL="))
+	);
 	strcat(strcpy(envs[17], "SHELL="), shell);
 	envs[18]=0;
 
@@ -904,7 +930,7 @@ const char *shell=getenv("SHELL");
 static char *read_command(int fd)
 {
 char	buf[BUFSIZ];
-int	n;
+size_t	n;
 char	*p;
 
 	n=0;

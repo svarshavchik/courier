@@ -243,24 +243,19 @@ int cmdset(const std::vector<std::string> &argv, bool autoencode)
 		{
 			if (h_name != "NAME=")
 			{
-				std::string conv_p=
-					unicode::iconvert::convert(w,
-								   unicode_default_chset(),
-								   "utf-8");
-
-				n=std::string(b,p) + conv_p;
+				n=h_name + unicode::iconvert::convert(
+					w,
+					unicode_default_chset(),
+					unicode::utf_8
+				);
 			}
 			else
 			{
-				char *q=rfc2047_encode_str(w.c_str(),
-							   unicode_default_chset(),
-							   rfc2047_qp_allow_word);
-
-				if (q)
-				{
-					n=std::string(b,p)+q;
-					free(q);
-				}
+				n=h_name + rfc2047::encode(
+					w,
+					unicode_default_chset(),
+					rfc2047_qp_allow_word
+				).first;
 			}
 		}
 

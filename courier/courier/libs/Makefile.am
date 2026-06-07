@@ -17,7 +17,7 @@ libcommon_la_SOURCES= aliases.h \
 	comaliases1.C comaliases2.C \
 	comaliases3.C comaliases4.C combatchsize.c comcargs.c comcargs.h \
 	comconfig.c comconfig.h comctlfile.c \
-	comctlfile.h comdsn.c comdsn2.c comerrmsg.c \
+	comctlfile.h comdsn.C comdsn2.c comerrmsg.c \
 	commsgcancel.c commsgcancel.h comesmtpidstring.c comfax.C comfax.h \
 	comparseqid.c comparseqid.h comqueuename.c comqueuename.h \
 	comqueuename2.c \

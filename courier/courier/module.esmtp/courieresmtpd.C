@@ -255,35 +255,24 @@ static void badfork()
 
 static void expnvrfy(const char *line, const char *cmd)
 {
-struct	rfc822t *t=rfc822t_alloc_new(line, NULL, NULL);
-struct	rfc822a *a;
-char	*addr;
-char	*argv[5];
-int	rc;
+	rfc822::tokens t{line};
+	rfc822::addresses a{t};
+	char	*argv[5];
+	int	rc;
 
-	if (!t)	clog_msg_errno();
-
-	a=rfc822a_alloc(t);
-	if (!a)	clog_msg_errno();
-
-	if (a->naddrs < 1 || a->addrs[0].tokens == 0)
+	if (a.empty() || a[0].address.empty())
 	{
 		addiovec_error("502 EXPN syntax error.");
-		rfc822a_free(a);
-		rfc822t_free(t);
 		return;
 	}
 
-	addr=rfc822_getaddr(a, 0);
-	rfc822a_free(a);
-	rfc822t_free(t);
-	if (!addr)	clog_msg_errno();
+	std::string addr{cmd};
+	a[0].address.display_address(unicode::utf_8,
+				     std::back_inserter(addr));
 
 	static char submit_str[]="submit";
 	argv[0]=submit_str;
-	argv[1]=strcat(strcpy((char *)courier_malloc(strlen(cmd)+strlen(addr)+1),
-		cmd), addr);
-	free(addr);
+	argv[1]=addr.data();
 
 	static char local_str[]="local";
 	argv[2]=local_str;	/* Use the LOCAL rewrite module */

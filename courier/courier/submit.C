@@ -1541,26 +1541,11 @@ static std::string a_r_from_env(const std::string& cme_name)
 				}
 				else
 				{
-					char *q=rfc2047_encode_str(txt,
-								   "UTF-8",
-								   rfc2047_qp_allow_word);
-
-					if (q)
-					{
-						a_r += q;
-						free(q);
-					}
-					else
-					{
-						while (*txt)
-						{
-							if ((*txt & 0x80) == 0
-							    && *txt != '"'
-							    && *txt != '\\')
-								a_r += *txt;
-							++txt;
-						}
-					}
+					a_r += rfc2047::encode(
+						txt,
+						unicode::utf_8,
+						rfc2047_qp_allow_word
+					).first;
 				}
 				a_r += '"';
 			}

@@ -565,13 +565,10 @@ HANDLER("ADMINUPDATE", do_admin_update)
 		new_cmds.push_back(o.str());
 	}
 
-	char *p=rfc2047_encode_str(cgi("optname"), "utf-8",
-				   rfc2047_qp_allow_word);
+	auto p=rfc2047::encode(cgi("optname"), unicode::utf_8,
+			       rfc2047_qp_allow_word).first;
 
-	new_cmds.push_back(std::string("NAME=") + (p ? p:""));
-
-	if (p)
-		free(p);
+	new_cmds.push_back(std::string("NAME=") + p);
 
 	std::vector<std::string> args_array;
 
@@ -661,20 +658,10 @@ HANDLER("OPTNAME", emit_name)
 {
 	std::string n=getoption("NAME");
 
-	char *p=rfc822_display_hdrvalue_tobuf("subject",
-					      n.c_str(),
-					      "utf-8",
-					      NULL,
-					      NULL);
-	if (p)
-	{
-		std::u32string u;
+	std::u32string u;
 
-		unicode::iconvert::convert(p, "utf-8", u);
-
-		emit_input("optname", u, 32, 255,  "");
-		free(p);
-	}
+	rfc822::display_header_unicode("subject", n, std::back_inserter(u));
+	emit_input("optname", u, 32, 255,  "");
 }
 
 HANDLER("OPTLISTNAME", emit_listname)
