@@ -2338,36 +2338,9 @@ bool myFolder::sortByDate(size_t a, size_t b)
 
 bool myFolder::sortBySubject(size_t a, size_t b)
 {
-	string sa=serverIndex[a].upperSubject_utf8;
-	string sb=serverIndex[b].upperSubject_utf8;
+	auto [sa, arefwd]=rfc822::coresubj_nouc(serverIndex[a].upperSubject_utf8);
 
-	int arefwd, brefwd;
-
-	char *as=rfc822_coresubj_nouc(sa.c_str(), &arefwd);
-
-	if (!as)
-		outofmemory();
-
-	try {
-		sa=as;
-		free(as);
-	} catch (...) {
-		free(as);
-		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-	}
-
-	char *bs=rfc822_coresubj_nouc(sb.c_str(), &brefwd);
-
-	if (!bs)
-		outofmemory();
-
-	try {
-		sb=bs;
-		free(bs);
-	} catch (...) {
-		free(bs);
-		LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-	}
+	auto [sb, brefwd]=rfc822::coresubj_nouc(serverIndex[b].upperSubject_utf8);
 
 	if (sa == sb)
 	{

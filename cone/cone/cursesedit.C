@@ -3459,9 +3459,7 @@ bool CursesEdit::save(SaveSink &sink,
 
 	saveheaders(fromhdr, replytohdr, customhdr, &sink);
 
-	char datebuf[200];
-
-	rfc822_mkdate_buf(time(NULL), datebuf);
+	std::string datebuf=rfc822::mkdate(time(NULL));
 
 	if (newsgroups)
 		newsgroupsV=newsgroups->getText();

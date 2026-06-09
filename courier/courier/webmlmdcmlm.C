@@ -186,13 +186,10 @@ bool cmlm::wait()
 
 void cmlm::mk_received_header()
 {
-	char buf[100];
 	const char *ip=getenv("REMOTE_ADDR");
 
-	rfc822_mkdate_buf(time(NULL), buf);
-
 	fprintf(stdin_filep.fp, "Received: from ([%s]) via http; %s\n",
-		ip ? ip:"(unknown)", buf);
+		ip ? ip:"(unknown)", rfc822::mkdate(time(NULL)).c_str());
 }
 
 std::string cmlm::format_error_message()

@@ -76,11 +76,8 @@ void mail::smapAddMessage::go()
 
 		if (messageDate)
 		{
-			char buf[80];
-
-			rfc822_mkdate_buf(messageDate, buf);
-
-			o << " \"INTERNALDATE=" << buf << "\"";
+			o << " \"INTERNALDATE=" << rfc822::mkdate(messageDate)
+			  << "\"";
 		}
 
 		o << "\n";

@@ -437,11 +437,8 @@ bool mail::smapHandler::processLine(imap &imapAccount,
 
 				if (strncasecmp( *b, "INTERNALDATE=", 13) == 0)
 				{
-					time_t n;
-
-					if (rfc822_parsedate_chk(*b + 13,
-								 &n) == 0)
-						fetchedInternalDate(msgNum, n);
+					if (auto parsed_dt=rfc822::parse_date(*b + 13))
+						fetchedInternalDate(msgNum, *parsed_dt);
 				}
 			}
 		}

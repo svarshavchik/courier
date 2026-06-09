@@ -48,8 +48,7 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#include <functional>
-#include <set>
+#include <iomanip>
 
 #include <sys/types.h>
 #if HAVE_UNISTD_H
@@ -970,32 +969,30 @@ bool CursesMessage::reformat()
 
 	if (part.envelope && !fullEnvelopeHeaders)
 	{
-		char dateStr[200];
-
-		dateStr[0]=0;
+		std::string dateStr;
 
 		if (part.envelope->date)
 		{
-			rfc822_mkdate_buf(part.envelope->date, dateStr);
+			dateStr=rfc822::mkdate(part.envelope->date);
 
 			/* Use librfc822 func just to get the tz offset */
 
-			size_t l=strlen(dateStr);
+			size_t l=dateStr.size();
 
 			if (l > 5)
 			{
 				char suffix[6];
 
-				strcpy(suffix, dateStr+l-5);
+				strcpy(suffix, dateStr.data()+l-5);
 
 				struct tm *tmptr=
 					localtime(&part.envelope->date);
 
-				if (strftime(dateStr, sizeof(dateStr),
-					     "%a, %d %b %Y %H:%M:%S ", tmptr) <= 0)
-					dateStr[0]=0;
-				else
-					strcat(dateStr, suffix);
+				std::ostringstream o;
+
+				o << std::put_time(tmptr, "%a, %d %b %Y %H:%M:%S ");
+				o << suffix;
+				dateStr=o.str();
 			}
 		}
 
@@ -2398,18 +2395,9 @@ void CursesMessage::reply()
 	if (to.size() == 0 && cc.size() == 0)
 		to.insert(to.end(), me.begin(), me.end());
 
-	char *p=rfc822_coresubj_keepblobs(shown[n].envelope->subject.c_str());
-
-	std::string subject="";
-
-	if (p)
-		try {
-			subject=p;
-			free(p);
-		} catch (...) {
-			free(p);
-			LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-		}
+	auto [subject, flags] = rfc822::coresubj_keepblobs(
+		shown[n].envelope->subject
+	);
 
 	std::string senderName="";
 
@@ -2725,18 +2713,9 @@ void CursesMessage::forward()
 	if (response.abortflag || DESTROYED())
 		return;
 
-	char *p=rfc822_coresubj_keepblobs(shown[n].envelope->subject.c_str());
-
-	std::string subject="";
-
-	if (p)
-		try {
-			subject=p;
-			free(p);
-		} catch (...) {
-			free(p);
-			LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-		}
+	auto [subject, flags]=rfc822::coresubj_keepblobs(
+		shown[n].envelope->subject
+	);
 
 	bool isMimeAttachment=(std::string)response == "Y";
 

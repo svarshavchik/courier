@@ -1595,11 +1595,9 @@ void mail::imapAPPEND::go()
 			cnt_s=o.str();
 		}
 
-		char buffer[100];
+		std::string buffer=rfc822::mkdate(messageDate);
 
-		rfc822_mkdate_buf(messageDate, buffer);
-
-		char *p=strchr(buffer, ',');
+		char *p=strchr(buffer.data(), ',');
 
 		if (p && *++p && *++p)
 		{
@@ -1614,7 +1612,7 @@ void mail::imapAPPEND::go()
 				*q='-';
 		}
 		else
-			p=buffer;
+			p=buffer.data();
 
 		appendcmd="APPEND " + imapAccount.quoteSimple(path)
 			+ " (" + flags + ") "

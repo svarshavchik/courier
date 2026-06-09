@@ -392,7 +392,8 @@ void mail::smapFETCHATTR::processFetchedHeader(string hdr)
 	{
 		if (h == "DATE")
 		{
-			rfc822_parsedate_chk(v.c_str(), &fetchingEnvelope.date);
+			if (auto parsed_dt=rfc822::parse_date(v))
+				fetchingEnvelope.date=*parsed_dt;
 		}
 
 		if (h == "SUBJECT")

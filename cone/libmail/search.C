@@ -436,8 +436,9 @@ void mail::searchOneMessage::go()
 
 			searchInfo.param2 += " 00:00:00 -0000";
 
-			if (rfc822_parsedate_chk(searchInfo.param2.c_str(),
-						 &cmpDate))
+			if (auto parsed_dt=rfc822::parse_date(searchInfo.param2))
+				cmpDate=*parsed_dt;
+			else
 			{
 				my_callback.fail("Invalid date specified");
 				return;

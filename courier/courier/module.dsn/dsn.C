@@ -699,7 +699,7 @@ static int isfax(const char *p)
 }
 
 static void print_header(FILE *f, char *template_str, const char *me,
-			 const char *from_time, const char *from_mta)
+			 const std::string &from_time, const char *from_mta)
 {
         unsigned char c, c2;
         int i = 0;
@@ -749,7 +749,7 @@ static void print_header(FILE *f, char *template_str, const char *me,
 		}
 		else if (strcmp(kw, "FROMTIME") == 0)
 		{
-			fprintf(f, "%s", from_time);
+			fprintf(f, "%s", from_time.c_str());
 		}
 		else if (strcmp(kw, "FROMMTA") == 0)
 		{
@@ -772,7 +772,6 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 	int	msg8flag=0;
 	const	char *from_mta;
 	const	char *from_mta_p;
-	const	char *from_time;
 	char *sender_ace;
 
 	datfilename=qmsgsdatname(ctf->n);
@@ -861,7 +860,7 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 	}
 	else	from_mta_p=0;
 
-	from_time=rfc822_mkdate(stat_buf.st_mtime);
+	std::string from_time=rfc822::mkdate(stat_buf.st_mtime);
 
 	print_header(fp, dsnheader, config_me(), from_time,
 		from_mta_p && *from_mta_p ? from_mta_p:"unknown");
@@ -946,7 +945,7 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 		? "message/global-delivery-status"
 		: "message/delivery-status",
 		dsn8flag ? "8bit":"7bit",
-		config_me(), from_time);
+		config_me(), from_time.c_str());
 
 	if (  (j=ctlfile_searchfirst(ctf, COMCTLFILE_ENVID)) >= 0 &&
 		ctf->lines[j][1])
@@ -1054,7 +1053,9 @@ static int dodsn(struct ctlfile *ctf, FILE *fp, const char *sender,
 					       COMCTLFILE_FAXEXPIRES:
 					       COMCTLFILE_EXPIRES)) >= 0)
 			fprintf(fp, "Will-Retry-Until: %s\n",
-				rfc822_mkdate(strtotime(ctf->lines[j]+1)));
+				rfc822::mkdate(
+					strtotime(ctf->lines[j]+1)
+				).c_str());
 	}
 	fprintf(fp, "\n--%s\n", boundary);
 

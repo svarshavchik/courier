@@ -1779,7 +1779,7 @@ static void getrcpts(struct rw_info *rwi)
 
 	line += "; ";
 
-	line += rfc822_mkdate(submit_time);
+	line += rfc822::mkdate(submit_time);
 
 	line += "\n";
 
@@ -2122,7 +2122,7 @@ static void getrcpts(struct rw_info *rwi)
 			if (!p || *p == '0')
 			{
 				header="Date: ";
-				header += rfc822_mkdate(submit_time);
+				header += rfc822::mkdate(submit_time);
 				header += '\n';
 				my_rcptinfo.submitfile.Message(header.c_str());
 			}

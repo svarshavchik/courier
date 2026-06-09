@@ -213,7 +213,7 @@ static void prepend_me(struct rw_info *p, void (*func)(struct rw_info *))
 		for (; hb != he && ab != ae; ++hb, ++ab)
 		{
 			if (hb->type != ab->type)	break;
-			if (!rfc822_is_atom(hb->type))	continue;
+			if (!hb->is_atom())	continue;
 
 			if (hb->str.size() != ab->str.size()) break;
 			if (memcmp(hb->str.data(),

@@ -49,9 +49,7 @@ static void showenvelope(const mail::envelope &env, string pfix="")
 {
 	if (env.date > 0)
 	{
-		char buffer[200];
-
-		rfc822_mkdate_buf(env.date, buffer);
+		std::string buffer=rfc822::mkdate(env.date);
 		cout << pfix << "      Date: " << buffer
 		     << endl;
 	}
@@ -65,7 +63,7 @@ static void showenvelope(const mail::envelope &env, string pfix="")
 
 	while (b != e)
 	{
-		cout << pfix << " Reference: <" << *b << ">" << endl;
+		cout << pfix << " Reference: " << *b << endl;
 		b++;
 	}
 
@@ -218,11 +216,9 @@ static void showFolderList(mail::ACCOUNT *p,
 
 static void showEnvelope(mail::xenvelope &env)
 {
-	char date[100];
-
 	if (env.arrivalDate)
 	{
-		rfc822_mkdate_buf(env.arrivalDate, date);
+		std::string date=rfc822::mkdate(env.arrivalDate);
 
 		cout << " Arrival-Date: " << date << endl;
 	}
@@ -231,7 +227,7 @@ static void showEnvelope(mail::xenvelope &env)
 
 	if (env.date)
 	{
-		rfc822_mkdate_buf(env.date, date);
+		std::string date=rfc822::mkdate(env.date);
 
 		cout << "         Date: " << date << endl;
 	}
@@ -246,7 +242,7 @@ static void showEnvelope(mail::xenvelope &env)
 
 	while (b != e)
 	{
-		cout << "    Reference: <" << *b << ">" << endl;
+		cout << "    Reference: " << *b << endl;
 		b++;
 	}
 

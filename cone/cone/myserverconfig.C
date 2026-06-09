@@ -2537,11 +2537,8 @@ void myServer::saveFolderIndex(myFolder *mf)
 				outofmemory();
 			}
 
-			char arrivalDateStr[200];
-			char messageDateStr[200];
-
-			rfc822_mkdate_buf(i.arrivalDate, arrivalDateStr);
-			rfc822_mkdate_buf(i.messageDate, messageDateStr);
+			std::string arrivalDateStr=rfc822::mkdate(i.arrivalDate);
+			std::string messageDateStr=rfc822::mkdate(i.messageDate);
 
 			std::string sizebuf;
 
@@ -2608,11 +2605,11 @@ void myServer::saveFolderIndex(myFolder *mf)
 			    (i.arrivalDate &&
 			     !xmlSetProp(messageNode,
 					 (xmlChar *)"ARRIVAL",
-					 (xmlChar *)arrivalDateStr)) ||
+					 (xmlChar *)arrivalDateStr.c_str())) ||
 			    (i.messageDate &&
 			     !xmlSetProp(messageNode,
 					 (xmlChar *)"SENT",
-					 (xmlChar *)messageDateStr)) ||
+					 (xmlChar *)messageDateStr.c_str())) ||
 
 			    !xmlSetProp(messageNode,
 					(xmlChar *)"SIZE",
@@ -2628,13 +2625,11 @@ void myServer::saveFolderIndex(myFolder *mf)
 
 			    !xmlNewTextChild(messageNode, NULL,
 					     (xmlChar *)"SUBJECT",
-					     (xmlChar *)subject.c_str()
-					     ) ||
+					     (xmlChar *)subject.c_str()) ||
 
 			    !xmlNewTextChild(messageNode, NULL,
 					     (xmlChar *)"NAME",
-					     (xmlChar *)name.c_str()
-					     ))
+					     (xmlChar *)name.c_str()))
 				outofmemory();
 
 #if 0
@@ -2858,10 +2853,10 @@ bool myServer::loadFolderIndex(std::string filename,
 					}
 				}
 
-				rfc822_parsedate_chk(arrival.c_str(),
-						     &i.arrivalDate);
-				rfc822_parsedate_chk(sent.c_str(),
-						     &i.messageDate);
+				if (auto parsed_dt=rfc822::parse_date(arrival))
+					i.arrivalDate=*parsed_dt;
+				if (auto parsed_dt=rfc822::parse_date(sent))
+					i.messageDate=*parsed_dt;
 				i.messageid=messageId(folder->msgIds,
 						      messageid);
 

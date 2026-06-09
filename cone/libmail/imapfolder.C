@@ -1492,8 +1492,9 @@ static bool fillenvelope(mail::imapparsefmt &imapenvelope,
 
 	vector<mail::imapparsefmt *>::iterator b=imapenvelope.children.begin();
 
-
-	rfc822_parsedate_chk((*b)->value.c_str(), &envelope.date); b++;
+	if (auto parsed_dt=rfc822::parse_date((*b)->value))
+		envelope.date=*parsed_dt;
+	b++;
 
 	envelope.subject= (*b)->value; b++;
 
@@ -1519,7 +1520,7 @@ void mail::imapFOLDER_COUNT::get_internaldate(mail::imap &imapAccount, Token t)
 
 	if (imapAccount.currentFetch)
 	{
-		// Make IMAP date presentable for rfc822_parsedate_chk() by
+		// Make IMAP date presentable for rfc822::parse_date() by
 		// replacing dd-mmm-yyyy with dd mmm yyyy
 
 		string d=t.text;
@@ -1533,11 +1534,9 @@ void mail::imapFOLDER_COUNT::get_internaldate(mail::imap &imapAccount, Token t)
 		while ((n=d.find('-')) < spacepos)
 			d[n]=' ';
 
-		time_t tm;
-
-		if (rfc822_parsedate_chk(d.c_str(), &tm) == 0)
+		if (auto parsed_dt=rfc822::parse_date(d))
 			imapAccount.currentFetch
-				->messageArrivalDateCallback(count-1, tm);
+				->messageArrivalDateCallback(count-1, *parsed_dt);
 	}
 
 	next_func= &mail::imapFOLDER_COUNT::get_fetch_item;

@@ -434,21 +434,9 @@ void CursesIndexDisplay::drawLine(size_t row)
 		    ->getFolderConfiguration(getFolderIndex()->getFolder(),
 					     "INDEXBLOBS") == "1")
 		{
-			int subj_flags;
-			char *p=rfc822_coresubj_nouc(subjectStr.c_str(),
-						     &subj_flags);
+			auto [p, subj_flags]=rfc822::coresubj_nouc(subjectStr);
 
-			if (!p)
-				LIBMAIL_THROW (strerror(errno));
-
-			try {
-				subjectStr=p;
-				free(p);
-			} catch (...)
-			{
-				free(p);
-				LIBMAIL_THROW(LIBMAIL_THROW_EMPTY);
-			}
+			subjectStr=std::move(p);
 
 			if (subj_flags & CORESUBJ_RE)
 				subjectStr="Re: " + subjectStr;

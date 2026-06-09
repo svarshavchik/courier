@@ -333,7 +333,7 @@ void mail::generic::Attributes::messageTextCallback(size_t dummy,
 		genericBuildEnvelope(header, value, envelope);
 		// Accumulate envelope information
 
-		if (strcasecmp(header.c_str(), "Received:") == 0 &&
+		if (strcasecmp(header.c_str(), "Received") == 0 &&
 		    arrivalDate == 0)
 		{
 			// Attempt to synthesize arrival date, based on the
@@ -344,9 +344,8 @@ void mail::generic::Attributes::messageTextCallback(size_t dummy,
 			while (n > 0)
 				if (value[--n] == ';')
 				{
-					rfc822_parsedate_chk(value.c_str()
-							     + n + 1,
-							     &arrivalDate);
+					if (auto parsed_dt=rfc822::parse_date(value.c_str() + n + 1))
+						arrivalDate=*parsed_dt;
 					break;
 				}
 		}
@@ -422,9 +421,8 @@ void mail::generic::genericBuildEnvelope(string_view header, string_view value,
 	}
 	else if (header == "date")
 	{
-		rfc822_parsedate_chk(
-			std::string{value.begin(), value.end()}.c_str(),
-			&envelope.date);
+		if (auto parsed_dt=rfc822::parse_date(value))
+			envelope.date=*parsed_dt;
 	}
 	else if (header == "references")
 	{
