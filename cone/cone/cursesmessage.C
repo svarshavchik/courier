@@ -27,7 +27,6 @@
 #include "messagesize.H"
 #include "rfc2045/rfc2045.h"
 #include "rfc822/rfc822.h"
-#include "rfc822/rfc822hdr.h"
 #include "curses/cursesscreen.H"
 #include "libmail/addmessage.H"
 #include "rfc822/rfc2047.h"
@@ -1065,6 +1064,8 @@ bool CursesMessage::reformat()
 		bool errflag=conversionErrorFlag;
 
 		std::string orig_charset=part.content_chset;
+		std::string orig_charset_lc=orig_charset;
+		rfc2045::entity::tolowercase(orig_charset_lc);
 
 		NEXTPART;
 
@@ -1092,10 +1093,11 @@ bool CursesMessage::reformat()
 
 			std::string display_chset=unicode_default_chset();
 
+			rfc2045::entity::tolowercase(display_chset);
+
 			std::string msg=
 				Gettext(
-					rfc822hdr_namecmp(display_chset.c_str(),
-							  orig_charset.c_str())
+					display_chset != orig_charset
 					?
 					_("The previous text contained"
 					  " some characters that could not be"
@@ -1110,7 +1112,7 @@ bool CursesMessage::reformat()
 					  " characters in the \"%1%\" character"
 					  " set.")
 					) << orig_charset
-					  << display_chset;
+					  << unicode_default_chset();
 
 			std::vector< std::u32string > lines;
 

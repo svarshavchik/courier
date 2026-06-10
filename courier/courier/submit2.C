@@ -16,7 +16,6 @@
 #include	"localstatedir.h"
 #include	"sysconfdir.h"
 #include	"numlib/numlib.h"
-#include	"rfc822/rfc822hdr.h"
 #include	"rfc2045/rfc2045.h"
 #include	"rfc2045/rfc2045charset.h"
 #include	"rfc2045/encode.h"

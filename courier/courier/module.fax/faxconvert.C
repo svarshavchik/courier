@@ -15,7 +15,6 @@
 #include <signal.h>
 
 #include "rfc822/rfc822.h"
-#include "rfc822/rfc822hdr.h"
 #include "rfc822/rfc2047.h"
 #include "rfc2045/rfc2045.h"
 #include "rfc2045/rfc2045charset.h"

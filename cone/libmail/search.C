@@ -13,7 +13,6 @@
 #include <courier-unicode.h>
 
 #include "rfc822/rfc822.h"
-#include "rfc822/rfc822hdr.h"
 #include "rfc822/rfc2047.h"
 
 #include <sstream>
@@ -848,6 +847,10 @@ void mail::searchOneMessage::search(string text)
 	if (searchFlag)
 		return;
 
+	std::string param1=searchInfo.param1;
+
+	rfc2045::entity::tolowercase(param1);
+
 	if (searchInfo.criteria == searchInfo.header)
 	{
 		text=headerSearchBuffer + text;
@@ -872,9 +875,9 @@ void mail::searchOneMessage::search(string text)
 				s=s.substr(colon+1);
 			}
 
-			if (searchInfo.param1.size() > 0 &&
-			    rfc822hdr_namecmp(headername.c_str(),
-					      searchInfo.param1.c_str()))
+			rfc2045::entity::tolowercase(headername);
+
+			if (param1.size() > 0 && headername != param1)
 				continue;
 
 			std::u32string uc;
