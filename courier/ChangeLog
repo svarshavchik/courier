@@ -1,3 +1,14 @@
+2026-06-14  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone, sqwebmail: Show a notewhen a message uses an unknown character
+	set, and we default to iso-8859-1.
+
+2026-06-11  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* sqwebmail: handle garbled emails that specify "unknown-8bit" or
+	some other random nonsense as their character set. Process them as
+	iso-8859-1 instead of refusing to show them at all.
+
 2026-06-03  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier/cmlm2.C: Fix buggy encoding of non-ASCII characters.

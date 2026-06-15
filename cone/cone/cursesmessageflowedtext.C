@@ -32,14 +32,19 @@ CursesMessage::FlowedTextParser
 		   size_t displayWidthArg,
 		   bool flowed,
 		   bool delsp)
-	: messagePtr(messagePtrArg),
+	: mail::textplainparser{
+			content_chsetArg,
+			flowed,
+			delsp
+		},
+	  messagePtr(messagePtrArg),
 	  content_chset(content_chsetArg),
 	  my_chset(my_chsetArg),
 	  displayWidth(displayWidthArg),
 	  conversionErrorFlag(false),
 	  currentQuoteLevel(0)
 {
-	if (!begin(content_chset, flowed, delsp))
+	if (!begun)
 		conversionErrorFlag=true;
 }
 
