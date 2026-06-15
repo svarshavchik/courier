@@ -963,6 +963,15 @@ bool CursesMessage::reformat()
 				outofmemory();
 
 			textReformatter=p;
+
+			if (p->unknown_charset)
+			{
+				(*p) << "# The following message uses an unknown \"";
+				(*p) << part.content_chset;
+				(*p) << "\" character set.\n"
+					"# Some characters may not be shown correctly.\n\n";
+			}
+
 		}
 	}
 
@@ -2119,10 +2128,15 @@ class CursesMessage::newmsgformatter : public mail::textplainparser {
 	};
 public:
 
-	newmsgformatter(const std::string &my_chsetArg,
+	newmsgformatter(const std::string &content_chset,
+			bool isflowed,
+			bool isdelsp,
+			const std::string &my_chsetArg,
 			size_t quoteLevelAdjustmentArg,
 			std::ostream &oArg)
-		: my_chset(my_chsetArg), o(oArg),
+		: mail::textplainparser{
+				content_chset, isflowed, isdelsp
+			}, my_chset(my_chsetArg), o(oArg),
 		  quoteLevelAdjustment(quoteLevelAdjustmentArg)
 	{
 	}
@@ -2654,9 +2668,11 @@ void CursesMessage::reply()
 		}
 		else
 		{
-			newmsgformatter fmtreply(my_chset, 1, otmpfile);
+			newmsgformatter fmtreply(
+				content_chset, flowed, delsp,
+				my_chset, 1, otmpfile);
 
-			if (fmtreply.begin(content_chset, flowed, delsp))
+			if (fmtreply.begun)
 			{
 				if (ifs.is_open())
 					fmtreply.read(ifs);
@@ -2960,12 +2976,12 @@ void CursesMessage::forward()
 					std::string my_chset=
 						unicode_default_chset();
 
-					newmsgformatter
-						fmtforward(my_chset, 0,
-							   otmpfile);
+					newmsgformatter	fmtforward(
+						content_chset,
+						flowed, delsp,
+						my_chset, 0, otmpfile);
 
-					if (fmtforward.begin(content_chset,
-							     flowed, delsp))
+					if (fmtforward.begun)
 					{
 						fmtforward.read(i);
 						fmtforward.end();
