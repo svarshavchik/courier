@@ -98,7 +98,7 @@ static rfc822::tokens tokenize_name(std::string_view name,
 			name.begin(),
 			name.end(),
 			unicode_default_chset(),
-			rfc2047_qp_allow_word
+			rfc2047::qp_allow_word
 		);
 
 		encoded_namebuf=std::move(s);

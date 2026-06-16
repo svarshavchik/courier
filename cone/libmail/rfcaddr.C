@@ -244,7 +244,7 @@ std::string mail::emailAddress::setDisplayName(const std::string &s,
 
 	decodedName=ucbuf;
 
-	name=::rfc2047::encode(s, charset, rfc2047_qp_allow_word).first;
+	name=::rfc2047::encode(s, charset, ::rfc2047::qp_allow_word).first;
 
 	return "";
 }

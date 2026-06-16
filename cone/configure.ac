@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2003 - 2025 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([cone],[1.18.20260502],[courier-cone@lists.sourceforge.net])
+AC_INIT([cone],[1.18.20260615],[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)

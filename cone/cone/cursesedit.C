@@ -1159,7 +1159,7 @@ std::string CursesEdit::attach(std::string filename, std::string description,
 			std::string s=
 				::rfc2047::encode(description,
 						  unicode_default_chset(),
-						  rfc2047_qp_allow_any).first;
+						  rfc2047::qp_allow_any).first;
 
 			fprintf(fp, "Content-Description: %s\n",
 				s.c_str());
@@ -3736,7 +3736,7 @@ std::string CursesEdit::getFcc(SaveSink *sink)
 		{
 			(*sink) << "X-Fcc: "
 				<< ::rfc2047::encode(xfcc, "UTF-8",
-						     rfc2047_qp_allow_any).first
+						     rfc2047::qp_allow_any).first
 				<< "\n";
 		}
 	}
@@ -3849,7 +3849,7 @@ void CursesEdit::saveheaders(std::string &fromhdr, std::string &replytohdr,
 		{
 			std::string h=ch->name + " "
 				+ ::rfc2047::encode(v, charset,
-						    rfc2047_qp_allow_any
+						    rfc2047::qp_allow_any
 				).first;
 
 			if (sink)
@@ -3893,7 +3893,7 @@ void CursesEdit::saved(std::string fromhdr,
 	if (!s)
 		return;
 
-	xfcc=::rfc2047::encode(xfcc, "UTF-8", rfc2047_qp_allow_any).first;
+	xfcc=::rfc2047::encode(xfcc, "UTF-8", rfc2047::qp_allow_any).first;
 
 	if (xfcc == "")
 		xfcc="=?UTF-8?" "?=";  // Heh -- trigraph warning :-)

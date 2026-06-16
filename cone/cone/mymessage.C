@@ -549,13 +549,13 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 			o << "X-Server: "
 			  << ::rfc2047::encode(serverPtr->url,
 					       "iso-8859-1",
-					       rfc2047_qp_allow_any).first
+					       rfc2047::qp_allow_any).first
 			  << "\n";
 		if (folderPtr)
 			o << "X-Folder: "
 			  << ::rfc2047::encode(folderPtr->getPath(),
 					       "iso-8859-1",
-					       rfc2047_qp_allow_any).first
+					       rfc2047::qp_allow_any).first
 			  << "\n";
 
 		{
@@ -569,7 +569,7 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 		if (fcc.size() > 0)
 			o << "X-Fcc: "
 			  << ::rfc2047::encode(fcc, "UTF-8",
-					       rfc2047_qp_allow_any).first
+					       rfc2047::qp_allow_any).first
 			  << "\n";
 
 		if (customheaders.size() > 0)
@@ -610,7 +610,7 @@ void myMessage::newMessage(const mail::folder *folderPtr,
 			{
 				ss=::rfc2047::encode(
 					ss, "utf-8",
-					rfc2047_qp_allow_any
+					rfc2047::qp_allow_any
 				).first;
 
 				o << "Subject: " <<

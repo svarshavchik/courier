@@ -85,7 +85,7 @@ string mail::Header::encoded::encode(string text, string charset, string lang)
 	if (lang.size() > 0)
 		charset += "*" + lang;
 
-	return ::rfc2047::encode(text, charset, rfc2047_qp_allow_any).first;
+	return ::rfc2047::encode(text, charset, rfc2047::qp_allow_any).first;
 }
 
 mail::Header::encoded::encoded(string name,

@@ -254,7 +254,7 @@ int cmdset(const std::vector<std::string> &argv, bool autoencode)
 				n=h_name + rfc2047::encode(
 					w,
 					unicode_default_chset(),
-					rfc2047_qp_allow_word
+					rfc2047::qp_allow_word
 				).first;
 			}
 		}

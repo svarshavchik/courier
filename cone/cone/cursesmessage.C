@@ -2443,16 +2443,16 @@ void CursesMessage::reply()
 
 	std::string r_server=::rfc2047::encode(myfolder->getServer()->url,
 					       "iso-8859-1",
-					       rfc2047_qp_allow_any).first;
+					       rfc2047::qp_allow_any).first;
 
 	std::string r_folder=::rfc2047::encode(myfolder->getFolder()->getPath(),
 					       "iso-8859-1",
-					       rfc2047_qp_allow_any).first;
+					       rfc2047::qp_allow_any).first;
 
 	std::string r_uid=::rfc2047::encode(
 		myfolder->getIndex(messagesortednum).uid,
 		"iso-8859-1",
-		rfc2047_qp_allow_any).first;
+		rfc2047::qp_allow_any).first;
 
 	std::string content_type="TEXT/PLAIN";
 
@@ -2601,7 +2601,7 @@ void CursesMessage::reply()
 	if (fcc.size() > 0)
 		otmpfile << "X-Fcc: "
 			 << ::rfc2047::encode(fcc, "UTF-8",
-					rfc2047_qp_allow_any).first
+					rfc2047::qp_allow_any).first
 			 << std::endl;
 
 	otmpfile << "X-Server: " << r_server << std::endl
@@ -2822,16 +2822,16 @@ void CursesMessage::forward()
 	if (fcc.size() > 0)
 		otmpfile << "X-Fcc: "
 			 << ::rfc2047::encode(fcc, "UTF-8",
-					      rfc2047_qp_allow_any).first
+					      rfc2047::qp_allow_any).first
 			 << std::endl;
 
 	std::string r_server=::rfc2047::encode(myfolder->getServer()->url,
 					       "iso-8859-1",
-					       rfc2047_qp_allow_any).first;
+					       rfc2047::qp_allow_any).first;
 
 	std::string r_folder=::rfc2047::encode(myfolder->getFolder()->getPath(),
 					       "iso-8859-1",
-					       rfc2047_qp_allow_any).first;
+					       rfc2047::qp_allow_any).first;
 
 	otmpfile << "X-Server: " << r_server << std::endl
 		 << "X-Folder: " << r_folder << std::endl;

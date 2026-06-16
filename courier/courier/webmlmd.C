@@ -566,7 +566,7 @@ HANDLER("ADMINUPDATE", do_admin_update)
 	}
 
 	auto p=rfc2047::encode(cgi("optname"), unicode::utf_8,
-			       rfc2047_qp_allow_word).first;
+			       rfc2047::qp_allow_word).first;
 
 	new_cmds.push_back(std::string("NAME=") + p);
 

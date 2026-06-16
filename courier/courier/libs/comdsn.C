@@ -24,7 +24,7 @@ static const char defaultdsnfrom[]="Courier mail server at ~ <@>";
 		auto s=rfc2047::encode(
 			me,
 			RFC2045CHARSET,
-			rfc2047_qp_allow_word
+			rfc2047::qp_allow_word
 		).first;
 
 		std::string tt=defaultdsnfrom;

@@ -1544,7 +1544,7 @@ static std::string a_r_from_env(const std::string& cme_name)
 					a_r += rfc2047::encode(
 						txt,
 						unicode::utf_8,
-						rfc2047_qp_allow_word
+						rfc2047::qp_allow_word
 					).first;
 				}
 				a_r += '"';

@@ -673,13 +673,13 @@ void myServer::config::save()
 		std::string sUrl=::rfc2047::encode(
 			myServer::remoteConfigURL,
 			myCharset,
-			rfc2047_qp_allow_any
+			rfc2047::qp_allow_any
 		).first;
 
 		std::string sFolder=::rfc2047::encode(
 			myServer::remoteConfigFolder,
 			myCharset,
-			rfc2047_qp_allow_any
+			rfc2047::qp_allow_any
 		).first;
 		if (!xmlSetProp(d, (xmlChar *)"REMOTECONFIG",
 				(xmlChar *)sUrl.c_str()) ||
@@ -696,15 +696,15 @@ void myServer::config::save()
 		urls.insert(p->url);
 
 		std::string sName=::rfc2047::encode(
-			p->serverName, myCharset, rfc2047_qp_allow_any
+			p->serverName, myCharset, rfc2047::qp_allow_any
 		).first;
 		std::string sUrl=::rfc2047::encode(
-			p->url, myCharset, rfc2047_qp_allow_any).first;
+			p->url, myCharset, rfc2047::qp_allow_any).first;
 
 		std::string sNewsrc=::rfc2047::encode(
-			p->newsrc, myCharset, rfc2047_qp_allow_any).first;
+			p->newsrc, myCharset, rfc2047::qp_allow_any).first;
 		std::string sCert=::rfc2047::encode(
-			p->certificate, myCharset, rfc2047_qp_allow_any).first;
+			p->certificate, myCharset, rfc2047::qp_allow_any).first;
 
 		xmlNodePtr serverNode=xmlNewNode (NULL,
 						  (xmlChar *)
@@ -786,7 +786,7 @@ void myServer::config::save()
 		while (fb != fe)
 		{
 			std::string path=::rfc2047::encode(
-				*fb++, myCharset, rfc2047_qp_allow_any).first;
+				*fb++, myCharset, rfc2047::qp_allow_any).first;
 
 			xmlNodePtr f=xmlNewNode(NULL,
 						(xmlChar *)"NAMESPACE"
@@ -811,9 +811,9 @@ void myServer::config::save()
 			std::string name
 				=::rfc2047::encode(scb->first,
 						   myCharset,
-						   rfc2047_qp_allow_any).first;
+						   rfc2047::qp_allow_any).first;
 			std::string value=::rfc2047::encode(
-				scb->second, myCharset, rfc2047_qp_allow_any
+				scb->second, myCharset, rfc2047::qp_allow_any
 			).first;
 
 			xmlNodePtr f=xmlNewNode(NULL,
@@ -840,7 +840,7 @@ void myServer::config::save()
 		while (ffb != ffe)
 		{
 			std::string path=::rfc2047::encode(
-				ffb->first, myCharset, rfc2047_qp_allow_any
+				ffb->first, myCharset, rfc2047::qp_allow_any
 			).first;
 
 			std::map<std::string, std::string>
@@ -867,12 +867,12 @@ void myServer::config::save()
 			{
 				std::string name=::rfc2047::encode(
 					cb->first, myCharset,
-					rfc2047_qp_allow_any
+					rfc2047::qp_allow_any
 				).first;
 
 				std::string val=::rfc2047::encode(
 					cb->second, myCharset,
-					rfc2047_qp_allow_any
+					rfc2047::qp_allow_any
 				).first;
 
 				if (name == "INDEX" ||
@@ -937,7 +937,7 @@ void myServer::config::save()
 	{
 		std::string address=
 			::rfc2047::encode(
-				*sb++, myCharset,rfc2047_qp_allow_any
+				*sb++, myCharset,rfc2047::qp_allow_any
 			).first;
 
 		if (!xmlNewTextChild(REMOTE->children, NULL,
@@ -952,7 +952,7 @@ void myServer::config::save()
 	while (sb != se)
 	{
 		std::string address=::rfc2047::encode(
-			*sb++, myCharset, rfc2047_qp_allow_any
+			*sb++, myCharset, rfc2047::qp_allow_any
 		).first;
 
 		if (!xmlNewTextChild(REMOTE->children, NULL,
@@ -984,22 +984,22 @@ void myServer::config::save()
 
 			std::string idString=
 				::rfc2047::encode(id, myCharset,
-						  rfc2047_qp_allow_any).first;
+						  rfc2047::qp_allow_any).first;
 
 			std::string serverString=
 				::rfc2047::encode(sb->serverUrl,
 						  myCharset,
-						  rfc2047_qp_allow_any).first;
+						  rfc2047::qp_allow_any).first;
 
 			std::string pathString=
 				::rfc2047::encode(sb->serverPath,
 						  myCharset,
-						  rfc2047_qp_allow_any).first;
+						  rfc2047::qp_allow_any).first;
 
 			std::string nameString=
 				::rfc2047::encode(sb->nameUTF8,
 						  "utf-8",
-						  rfc2047_qp_allow_any).first;
+						  rfc2047::qp_allow_any).first;
 			if (!f || !xmlSetProp(f, (xmlChar *)"ID",
 					      (xmlChar *)
 					      idString.c_str())
@@ -1034,7 +1034,7 @@ void myServer::config::save()
 
 	std::string smtpUrl=::rfc2047::encode(myServer::smtpServerURL,
 					      myCharset,
-					      rfc2047_qp_allow_any).first;
+					      rfc2047::qp_allow_any).first;
 
 	f=xmlNewNode(NULL, (xmlChar *)"SMTP");
 
@@ -1060,7 +1060,7 @@ void myServer::config::save()
 		std::string c=::rfc2047::encode(
 			nntpCommandFolder::nntpCommand,
 			myCharset,
-			rfc2047_qp_allow_any).first;
+			rfc2047::qp_allow_any).first;
 
 		f=xmlNewNode(NULL, (xmlChar *)"NNTP");
 
@@ -1105,11 +1105,11 @@ void myServer::config::save()
 
 		std::string gpgopt1=::rfc2047::encode(
 			GPG::gpg.extraEncryptSignOptions, myCharset,
-					rfc2047_qp_allow_any).first;
+					rfc2047::qp_allow_any).first;
 		std::string gpgopt2=::rfc2047::encode(
 			GPG::gpg.extraDecryptVerifyOptions,
 			myCharset,
-			rfc2047_qp_allow_any).first;
+			rfc2047::qp_allow_any).first;
 
 		f=xmlNewNode(NULL, (xmlChar *)"OPTIONS");
 		if (!f || !xmlSetProp(f, (xmlChar *)"DEMORONIZATION",
@@ -1194,7 +1194,7 @@ void myServer::config::save()
 
 				std::string n=::rfc2047::encode(
 					Tags::tags.names[i], myCharset,
-					rfc2047_qp_allow_any).first;
+					rfc2047::qp_allow_any).first;
 
 				if (!f || !xmlSetProp(f, (xmlChar *)"NAME",
 						      (xmlChar *)n.c_str())
@@ -1223,15 +1223,15 @@ void myServer::config::save()
 
 		std::string nameString=::rfc2047::encode(p->getName(),
 							 myCharset,
-							 rfc2047_qp_allow_any
+							 rfc2047::qp_allow_any
 		).first;
 		std::string urlString=::rfc2047::encode(p->getURL(),
 							myCharset,
-							rfc2047_qp_allow_any
+							rfc2047::qp_allow_any
 		).first;
 		std::string folderString=::rfc2047::encode(p->getFolder(),
 							   myCharset,
-							   rfc2047_qp_allow_any
+							   rfc2047::qp_allow_any
 		).first;
 
 		if (!f || !xmlSetProp(f, (xmlChar *)"NAME",
@@ -1294,7 +1294,7 @@ void myServer::config::save()
 						(xmlChar *)
 						::rfc2047::encode(
 							s, myCharset,
-							rfc2047_qp_allow_any
+							rfc2047::qp_allow_any
 						).first.c_str()))
 					outofmemory();
 			}
@@ -1304,7 +1304,7 @@ void myServer::config::save()
 					      (mb->first.n, "utf-8"));
 
 				s=::rfc2047::encode(s, "utf-8",
-						    rfc2047_qp_allow_any).first;
+						    rfc2047::qp_allow_any).first;
 
 				if (!xmlSetProp(n,
 						(xmlChar *)"NAME",
@@ -2550,7 +2550,7 @@ void myServer::saveFolderIndex(myFolder *mf)
 			}
 
 			std::string uid=::rfc2047::encode(i.uid, myCharset,
-							  rfc2047_qp_allow_any
+							  rfc2047::qp_allow_any
 			).first;
 
 #if 0
@@ -2562,16 +2562,16 @@ void myServer::saveFolderIndex(myFolder *mf)
 			std::string subject=::rfc2047::encode(
 				i.subject_utf8,
 				"utf-8",
-				rfc2047_qp_allow_any).first;
+				rfc2047::qp_allow_any).first;
 			std::string name=::rfc2047::encode(
 				i.name_utf8,
 				"utf-8",
-				rfc2047_qp_allow_any).first;
+				rfc2047::qp_allow_any).first;
 
 			std::string messageid=::rfc2047::encode(
 				i.messageid,
 				"utf-8",
-				rfc2047_qp_allow_any).first;
+				rfc2047::qp_allow_any).first;
 
 			std::string references;
 
@@ -2597,7 +2597,7 @@ void myServer::saveFolderIndex(myFolder *mf)
 							"", vec
 						),
 						myCharset,
-						rfc2047_qp_allow_any).first;
+						rfc2047::qp_allow_any).first;
 			}
 			if (!xmlSetProp(messageNode,
 					(xmlChar *)"UID",
@@ -2648,7 +2648,7 @@ void myServer::saveFolderIndex(myFolder *mf)
 			size_t depth=wb->second.depth;
 
 			messageid=::rfc2047::encode(messageid, myCharset,
-						    rfc2047_qp_allow_any
+						    rfc2047::qp_allow_any
 			).first;
 
 			std::ostringstream o1;

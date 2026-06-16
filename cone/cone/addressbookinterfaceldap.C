@@ -114,7 +114,7 @@ int AddressBook::Interface::LDAP::callback_func(const char *utf8_name,
 			(callback_info *)callback_arg;
 
 		mail::address n(::rfc2047::encode(utf8_name, "UTF-8",
-						  rfc2047_qp_allow_word).first,
+						  rfc2047::qp_allow_word).first,
 			address);
 
 		info->addrList->push_back(n);
