@@ -1,11 +1,11 @@
+0.21
+
 2026-05-02  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Required minimum C++17 support.
 
 	* Fixes for allowing -Wall -Werror compiler flags. Drop conflicting
 	workarounds for pre-C90 support.
-
-	* Fedora 44: workaround for the autoconf-archive.gcc 16 issue.
 
 0.20
 

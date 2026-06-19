@@ -1,3 +1,5 @@
+4.0.0
+
 2026-05-17  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* maildrop: convert maildrop to use the C++ MIME parser. Drop
@@ -6,8 +8,6 @@
 	to simply the main set of changes
 
 2026-04-24  Sam Varshavchik  <mrsam@courier-mta.com>
-
-	* Fedora 44: workaround for the autoconf-archive/gcc 16 issue.
 
 	* Fixes for allowing -Wall -Werror compiler flags. Drop conflicting
 	workarounds for pre-C90 support.

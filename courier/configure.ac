@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2022 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier],[1.6.0.20260615],[courier-users@lists.sourceforge.net])
+AC_INIT([courier],[2.0.0],[courier-users@lists.sourceforge.net])
 version=$PACKAGE_VERSION
 AC_CONFIG_SRCDIR(courier/courier.c)
 AM_INIT_AUTOMAKE
@@ -16,11 +16,11 @@ LT_INIT
 
 AC_PROG_MAKE_SET
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX_17
+AX_CXX_COMPILE_STDCXX_17([ext], [mandatory])
 AC_PROG_SYSCONFTOOL
 AC_PATH_PROGS(SETENV, env)
 AC_PATH_PROGS(PERL, perl5 perl, perl, $LPATH)
-AX_COURIER_UNICODE_VERSION(2.1)
+AX_COURIER_UNICODE_VERSION(2.6)
 AC_ARG_WITH(notice,[AS_HELP_STRING([--with-notice=unicode],
 [The --with-notice=unicode option is required, and indicates that you
 are aware of the instructions in INSTALL for upgrading to this

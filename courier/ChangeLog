@@ -1,6 +1,8 @@
+2.0.0
+
 2026-06-14  Sam Varshavchik  <mrsam@courier-mta.com>
 
-	* cone, sqwebmail: Show a notewhen a message uses an unknown character
+	* cone, sqwebmail: Show a note when a message uses an unknown character
 	set, and we default to iso-8859-1.
 
 2026-06-11  Sam Varshavchik  <mrsam@courier-mta.com>

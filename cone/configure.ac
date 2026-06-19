@@ -3,7 +3,7 @@ dnl
 dnl Copyright 2003 - 2025 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([cone],[1.18.20260615],[courier-cone@lists.sourceforge.net])
+AC_INIT([cone],[2.0],[courier-cone@lists.sourceforge.net])
 >confdefs.h  # Kill PACKAGE_ macros
 AC_CONFIG_SRCDIR(cone.spec.in)
 AC_CONFIG_HEADERS(config.h)
@@ -22,6 +22,9 @@ eval "datarootdir=$datarootdir"
 eval "datadir=$datadir"
 
 dnl Checks for programs.
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_17([ext], [mandatory])
+
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -71,7 +74,7 @@ with this option.
 	;;
 esac
 
-AX_COURIER_UNICODE_VERSION(2.4)
+AX_COURIER_UNICODE_VERSION(2.6)
 
 dnl Checks for libraries.
 

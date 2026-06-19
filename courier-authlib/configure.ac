@@ -4,7 +4,7 @@ dnl
 dnl Copyright 1998 - 2025 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier-authlib],[0.72.7.20260502],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-authlib],[0.73.0],[courier-users@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([courierauth.h])
 
@@ -18,7 +18,7 @@ dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX_17
+AX_CXX_COMPILE_STDCXX_17([ext], [mandatory])
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -161,7 +161,7 @@ fi
 LIBS="$saveLIBS"
 AC_SUBST(NETLIBS)
 
-AX_COURIER_UNICODE_VERSION(2.1)
+AX_COURIER_UNICODE_VERSION(2.6)
 
 dnl #########################################################################
 

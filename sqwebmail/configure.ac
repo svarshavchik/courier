@@ -4,7 +4,7 @@ dnl
 dnl Copyright 1998 - 2023 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([sqwebmail],[6.3.1.20260615],[courier-sqwebmail@lists.sourceforge.net])
+AC_INIT([sqwebmail],[7.0.0],[courier-sqwebmail@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(dbobj.config.in)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
@@ -16,6 +16,8 @@ AC_PROG_MAKE_SET
 AC_PROG_LN_S
 AC_PROG_SYSCONFTOOL
 AC_PROG_CC
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_17([ext], [mandatory])
 
 LT_INIT
 AC_PATH_PROGS(PERL, perl5 perl, perl)
@@ -188,7 +190,7 @@ AC_SUBST(USE_GDBM)
 AC_SUBST(USE_DB)
 AC_SUBST(dblibrary)
 
-AX_COURIER_UNICODE_VERSION(2.1)
+AX_COURIER_UNICODE_VERSION(2.6)
 
 dnl Checks for header files.
 

@@ -3,9 +3,6 @@
 # distribution information.
 #
 
-# Fix for autoconf-archive/gcc 16 issue
-%define _pkg_extra_cxxflags -std=gnu++17
-
 # --- Build behavior defines --------------------------------------------------
 
 %{?_without_fax:    %define with_fax 0}

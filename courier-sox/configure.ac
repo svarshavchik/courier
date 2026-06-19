@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([courier-sox],[0.20.20260502],[courier-users@lists.sourceforge.net])
+AC_INIT([courier-sox],[0.21],[courier-users@lists.sourceforge.net])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([sox.c])
 AC_CONFIG_HEADERS([courier_socks_config.h])
@@ -17,7 +17,7 @@ LT_INIT(dlopen)
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX_17
+AX_CXX_COMPILE_STDCXX_17([ext], [mandatory])
 LT_INIT(dlopen)
 LTDL_INIT
 AC_SUBST(LTDLINCL)

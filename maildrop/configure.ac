@@ -3,14 +3,14 @@ dnl
 dnl Copyright 1998 - 2022 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([maildrop],[3.3.0.20260615],[courier-maildrop@lists.sourceforge.net])
+AC_INIT([maildrop],[4.0.0],[courier-maildrop@lists.sourceforge.net])
 
 AC_CONFIG_SRCDIR([maildrop.spec.in])
 AM_INIT_AUTOMAKE([foreign no-define])
 
 AC_PROG_CC
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX_17
+AX_CXX_COMPILE_STDCXX_17([ext], [mandatory])
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -131,7 +131,7 @@ then
 	AC_MSG_ERROR([libidn not found])
 fi
 
-AX_COURIER_UNICODE_VERSION(2.1)
+AX_COURIER_UNICODE_VERSION(2.6)
 
 AC_ARG_WITH(plentyofbeer,
 [  --enable-sendmail=prog       set sendmail location

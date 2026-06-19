@@ -3,13 +3,16 @@ dnl
 dnl Copyright 1998 - 2025 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier-imap],[5.3.2.20260615],[courier-imap@lists.sourceforge.net])
+AC_INIT([courier-imap],[6.0.0],[courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.C)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(foreign)
 >confdefs.h # Kill PACKAGE_ macros
 
 AC_PROG_CC
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_17([ext], [mandatory])
+
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -102,7 +105,7 @@ fi
 courierlogger=$authsbindir/courierlogger$EXEEXT
 AC_SUBST(courierlogger)
 
-AX_COURIER_UNICODE_VERSION(2.1)
+AX_COURIER_UNICODE_VERSION(2.6)
 
 if test x$prefix = xNONE
 then
