@@ -41,14 +41,13 @@ jobs:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
-          fetch-depth: 0
+
       - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
         uses: actions/checkout@v6
         with:
           repository: ${{ inputs.libsrepo }}
           ref: ${{ inputs.libsbranch }}
           path: libs
-          fetch-depth: 0
 
       - name: Install dependencies
         run: |
@@ -181,7 +180,6 @@ jobs:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
-          fetch-depth: 0
 
       - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
         uses: actions/checkout@v6
@@ -189,7 +187,6 @@ jobs:
           repository: ${{ inputs.libsrepo }}
           ref: ${{ inputs.libsbranch }}
           path: libs
-          fetch-depth: 0
 
       - name: Install dependencies
         run: |
@@ -256,7 +253,6 @@ jobs:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
-          fetch-depth: 0
 
       - name: Download sysconftool tarball
         uses: actions/download-artifact@v8
@@ -336,7 +332,6 @@ jobs:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
-          fetch-depth: 0
 
       - name: Download shared packages
         uses: actions/download-artifact@v8
