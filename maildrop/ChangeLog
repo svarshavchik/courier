@@ -1,3 +1,10 @@
+4.0.1
+
+2026-06-21  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* maildrop/search.C (Search::search_cb): Fix anchored searches and
+	match variable settings.
+
 4.0.0
 
 2026-05-17  Sam Varshavchik  <mrsam@courier-mta.com>
