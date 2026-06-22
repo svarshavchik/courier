@@ -36,14 +36,14 @@ jobs:
       image: "fedora:latest"
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
 
       - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.libsrepo }}
           ref: ${{ inputs.libsbranch }}
@@ -175,14 +175,14 @@ jobs:
       image: fedora:latest
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
           path: '.'
 
       - name: Check out the ${{ inputs.libsrepo }} repository (${{ inputs.libsbranch }})
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.libsrepo }}
           ref: ${{ inputs.libsbranch }}
@@ -248,7 +248,7 @@ jobs:
       image: ${{ matrix.platform[0] }}
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
@@ -327,7 +327,7 @@ jobs:
       image: ${{ matrix.platform[0] }}
     steps:
       - name: Check out the ${{ inputs.thisrepo }} repository (${{ inputs.thisbranch }})
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.thisrepo }}
           ref: ${{ inputs.thisbranch }}
