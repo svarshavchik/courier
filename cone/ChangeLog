@@ -1,3 +1,11 @@
+2.1
+
+2026-06-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix replies and forwards of HTML content.
+
+2.0
+
 2026-06-14  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* Note when a message uses an unknown character set, and we default to

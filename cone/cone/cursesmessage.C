@@ -2454,7 +2454,7 @@ void CursesMessage::reply()
 		"iso-8859-1",
 		rfc2047::qp_allow_any).first;
 
-	std::string content_type="TEXT/PLAIN";
+	std::string content_type="text/plain";
 
 	++n;
 
@@ -2628,7 +2628,7 @@ void CursesMessage::reply()
 
 	reformatter *reformatterPtr=NULL;
 
-	if (content_type == "TEXT/HTML")
+	if (content_type == "text/html")
 	{
 		HtmlParser *p=new HtmlParser(otmpfile,
 					     true,
@@ -2906,7 +2906,7 @@ void CursesMessage::forward()
 			std::string content_chset
 				=shown[n].content_chset;
 
-			std::string content_type="TEXT/PLAIN";
+			std::string content_type="text/plain";
 			bool flowed=false;
 			bool delsp=false;
 
@@ -2921,7 +2921,7 @@ void CursesMessage::forward()
 
 			reformatter *reformatterPtr=NULL;
 
-			if (content_type == "TEXT/HTML")
+			if (content_type == "text/html")
 			{
 				HtmlParser *p=
 					new HtmlParser(otmpfile,

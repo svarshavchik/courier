@@ -1,3 +1,9 @@
+2.0.2
+
+2026-06-26  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier-imap: Hard cap on limit-less IMAP constructs, to return
+	an error instead of exhausting stack or heap.
 2.0.1
 
 2026-06-21  Sam Varshavchik  <mrsam@courier-mta.com>
