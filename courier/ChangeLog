@@ -1,5 +1,9 @@
 2.0.2
 
+2026-06-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* FreeBSD compilation fix
+
 2026-06-26  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* courier-imap: Hard cap on limit-less IMAP constructs, to return

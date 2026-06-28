@@ -1,3 +1,9 @@
+4.0.2
+
+2026-06-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* FreeBSD compilation fix.
+
 4.0.1
 
 2026-06-21  Sam Varshavchik  <mrsam@courier-mta.com>

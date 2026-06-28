@@ -1,3 +1,9 @@
+2.2
+
+2026-06-27  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* cone/configure.ac: FreeBSD compilation fix.
+
 2.1
 
 2026-06-26  Sam Varshavchik  <mrsam@courier-mta.com>
