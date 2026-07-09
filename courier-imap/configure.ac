@@ -3,7 +3,7 @@ dnl
 dnl Copyright 1998 - 2025 S. Varshavchik.  See COPYING for
 dnl distribution information.
 
-AC_INIT([courier-imap],[6.0.1],[courier-imap@lists.sourceforge.net])
+AC_INIT([courier-imap],[6.0.2],[courier-imap@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(libs/imap/imapd.C)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(foreign)

@@ -1,3 +1,15 @@
+2.0.3
+
+2026-07-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* sqwebmail: Fix bad Javascript generated on 32-bit
+	platforms.
+
+	* Fix a compilation error in maildirwatch.h on some platforms.
+
+	* maildrop: Fix inconsistent maildir filename when delivering a
+	message with broken MIME formatting.
+
 2.0.2
 
 2026-06-27  Sam Varshavchik  <mrsam@courier-mta.com>

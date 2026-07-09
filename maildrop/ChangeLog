@@ -1,3 +1,12 @@
+4.0.3
+
+2026-07-09  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix a compilation error in maildirwatch.h on some platforms.
+
+	* Fix inconsistent maildir filename when delivering a message with
+	broken MIME formatting.
+
 4.0.2
 
 2026-06-27  Sam Varshavchik  <mrsam@courier-mta.com>
