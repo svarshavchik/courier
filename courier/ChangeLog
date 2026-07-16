@@ -26,6 +26,8 @@
 
 	* courier-imap: Hard cap on limit-less IMAP constructs, to return
 	an error instead of exhausting stack or heap.
+
+	Reported-By: Tristan Madani
 2.0.1
 
 2026-06-21  Sam Varshavchik  <mrsam@courier-mta.com>
