@@ -286,7 +286,6 @@ static void expnvrfy(const char *line, const char *cmd)
 		free(argv[1]);
 		return;
 	}
-	free(argv[1]);
 	fclose(submit_to);
 	rc=submit_readrcprintcrlf();
 	(void)submit_wait();

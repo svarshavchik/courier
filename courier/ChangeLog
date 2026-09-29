@@ -1,3 +1,17 @@
+2.0.8
+
+2026-09-29  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* courier/module.esmtp/courieresmtpd.C (expnvrfy): Fix crash.
+
+2026-09-26  "Andrey V. Malyshev" <amal@krasn.ru>
+
+	* pop3dserver.C: Fix typo in syslog messages.
+
+2026-09-14  Soren Stoutner <soren@debian.org>
+
+	* Move webmlmd.rc into @libexecdir@/courier
+
 2.0.7
 
 2026-08-02  Sam Varshavchik  <mrsam@courier-mta.com>
