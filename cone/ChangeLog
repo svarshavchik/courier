@@ -1,3 +1,9 @@
+2.5
+
+2026-09-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* MIME boundary delimiter values are not case sensitive.
+
 2026-07-27  Sam Varshavchik  <mrsam@courier-mta.com>
 
 	* packaging/debian/control (Build-Depends): Explicit dependency

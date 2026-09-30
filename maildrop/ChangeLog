@@ -1,3 +1,9 @@
+4.0.5
+
+2026-09-08  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* MIME boundary delimiter values are not case sensitive.
+
 4.0.4
 
 2026-07-24  Sam Varshavchik  <mrsam@courier-mta.com>
