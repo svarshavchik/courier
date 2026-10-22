@@ -1,3 +1,13 @@
+2.0.9
+
+2026-10-22  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* sqwebmail: Fix several issues with adding attachments.
+
+2026-09-30  Sam Varshavchik  <mrsam@courier-mta.com>
+
+	* Fix rare testsuite failure.
+
 2.0.8
 
 2026-09-29  Sam Varshavchik  <mrsam@courier-mta.com>
