@@ -74,7 +74,7 @@ jobs:
           make check
           make dist
           make rpm
-          rpm -ivh rpm/RPMS/noarch/*.rpm
+          rpm -ivh --nosignature rpm/RPMS/noarch/*.rpm
           mv rpm/RPMS/*/*.rpm ../rpm/.
 
       - name: Build courier-unicode
@@ -90,7 +90,7 @@ jobs:
           make rpm
           rm -f rpm/RPMS/*/*debuginfo*
           rm -f rpm/RPMS/*/*debugsource*
-          rpm -ivh rpm/RPMS/*/*rpm
+          rpm -ivh --nosignature rpm/RPMS/*/*rpm
           mv rpm/RPMS/*/*rpm ../../rpm/.
 
       - name: Build courier-authlib
@@ -109,7 +109,7 @@ jobs:
           mv rpm/RPMS/*/courier-authlib-config*rpm ../rpm/.
           rm -f rpm/RPMS/*/courier-authlib-*-*-*rpm
           mv rpm/RPMS/*/courier-authlib*rpm ../rpm/.
-          rpm -ivh ../rpm/courier-authlib*rpm
+          rpm -ivh --nosignature ../rpm/courier-authlib*rpm
 
       - name: Build courier-sox
         run: |
@@ -126,7 +126,7 @@ jobs:
           rm -f rpm/RPMS/*/*server*
           rm -f rpm/RPMS/*/*utils*
           mv rpm/RPMS/*/*rpm ../rpm/.
-          rpm -ivh ../rpm/courier-sox*rpm
+          rpm -ivh --nosignature ../rpm/courier-sox*rpm
 
       - name: Upload sysconftool tarball
         uses: actions/upload-artifact@v7
@@ -200,7 +200,7 @@ jobs:
       - name: Install common dist rpms
         run: |
           set -evx
-          rpm -ivh *.rpm
+          rpm -ivh --nosignature *.rpm
           mkdir -p $HOME/bin
           echo '#! /bin/sh' >$HOME/bin/rpmrepos.sh
           chmod +x $HOME/bin/rpmrepos.sh
@@ -308,10 +308,10 @@ jobs:
         platform:
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["rockylinux:9",     "rocky",     "rocky-9"]
-           - ["ubuntu:20.04",     "ubuntu-gcc10",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
            - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
-           - ["ubuntu:24.04",     "ubuntu-clang20",    "ubuntu-24-clang"]
+           - ["ubuntu:26.04",     "ubuntu",    "ubuntu-26"]
+           - ["ubuntu:26.04",     "ubuntu-clang22",    "ubuntu-26-clang"]
            - ["debian:12",        "ubuntu",    "debian-12"]
            - ["debian:13",        "ubuntu",    "debian-13"]
            - ["archlinux:latest", "arch",      "arch"]
@@ -356,10 +356,10 @@ jobs:
         platform:
            - ["rockylinux:8",     "rocky",     "rocky-8"]
            - ["rockylinux:9",     "rocky",     "rocky-9"]
-           - ["ubuntu:20.04",     "ubuntu-gcc10",    "ubuntu-20"]
            - ["ubuntu:22.04",     "ubuntu",    "ubuntu-22"]
            - ["ubuntu:24.04",     "ubuntu",    "ubuntu-24"]
-           - ["ubuntu:24.04",     "ubuntu-clang20",    "ubuntu-24-clang"]
+           - ["ubuntu:26.04",     "ubuntu",    "ubuntu-26"]
+           - ["ubuntu:26.04",     "ubuntu-clang22",    "ubuntu-26-clang"]
            - ["debian:12",        "ubuntu",    "debian-12"]
            - ["debian:13",        "ubuntu",    "debian-13"]
            - ["archlinux:latest", "arch",      "arch"]
